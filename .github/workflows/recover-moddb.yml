@@ -40,8 +40,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y p7zip-full innoextract
           mkdir -p work/source/unpacked work/reports work/decompiled work/export
+          UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36"
+          curl --fail --location --retry 3 --retry-all-errors --connect-timeout 30 \
+            --user-agent "$UA" --cookie-jar work/source/moddb-cookies.txt \
+            --cookie work/source/moddb-cookies.txt \
+            "https://www.moddb.com/downloads/start/130316/all" -o work/source/moddb-start.html
           curl --fail --location --retry 4 --retry-all-errors --connect-timeout 30 \
-            --user-agent "Mozilla/5.0 (compatible; CrisisResponsePort/1.0)" \
+            --user-agent "$UA" --referer "https://www.moddb.com/downloads/start/130316/all" \
+            --cookie-jar work/source/moddb-cookies.txt --cookie work/source/moddb-cookies.txt \
             "$SOURCE_URL" -o work/source/cr-setup-0.0.9.7919f.exe
           file work/source/cr-setup-0.0.9.7919f.exe
           echo "Official ModDB installer MD5 (expected): 9e00a2b43b7140aaac57c828bd6566ce" | tee work/reports/source-verification.txt
