@@ -7,6 +7,7 @@ on:
       - "scripts/audit_original_player.py"
       - "scripts/export_operator_manifest.py"
       - "scripts/export_operator_animations.py"
+      - "scripts/export_weapon_manifest.py"
       - "scripts/unity_mesh_to_obj.py"
       - ".github/workflows/original-player-audit.yml"
 
@@ -36,6 +37,7 @@ jobs:
           python3 scripts/export_operator_manifest.py work/recovery/export/ExportedProject work/operator-package
           python3 scripts/export_operator_animations.py work/recovery/export/ExportedProject work/operator-package/animations.json
           cat work/operator-package/operator.json
+          python3 scripts/export_weapon_manifest.py work/recovery/export/ExportedProject work/weapon-package
           cat work/operator-package/animations.json
           mkdir -p work/game-assets game/assets
           python3 scripts/unity_mesh_to_obj.py "work/recovery/export/ExportedProject/Assets/Mesh/Combined Mesh (root_ scene)_1.asset" work/game-assets/mission01.obj
@@ -43,6 +45,8 @@ jobs:
           cp work/game-assets/mission01.obj game/assets/mission01.obj
           rm -rf game/assets/operator
           cp -a work/operator-package game/assets/operator
+          rm -rf game/assets/weapons
+          cp -a work/weapon-package game/assets/weapons
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -f game/assets
@@ -62,4 +66,5 @@ jobs:
             work/operator-package
             work/game-assets/mission01.obj
             work/game-assets/mission01.mesh-report.json
+            work/weapon-package
           retention-days: 30
