@@ -194,12 +194,18 @@ cat > "$OUT_ROOT/app/Pages/Home.razor" <<'RAZOR'
                 throw new InvalidOperationException("Original BallisticMaterialProperties defaults changed.");
             var volume = global::BallisticMaterial.ChannelVolume(2f, 4f, 6f);
             if (Math.Abs(volume - 157.07963f) > 0.001f) throw new InvalidOperationException("Original BallisticMaterial.ChannelVolume result changed: " + volume);
-            var material = new global::BallisticMaterial { SurfaceThickness = 0.2f, SurfaceDensity = 1000f };
-            var projectile = new global::Projectile();
+            properties.surfaceThickness = 0.1f;
+            var material = new global::BallisticMaterial { properties = properties, impenetrable = true };
+            material.Awake();
+            var projectile = new global::Projectile { Status = global::BallisticResult.Continue, Energy = 100f, EnergyNormalized = 0f };
             projectile.Ammunition.MetricLength = 0.1f;
+            projectile.Ammunition.bounceThreshold = 1f;
             var surfaceEnergy = material.EnergyToPenetrateSurface(projectile);
             if (Math.Abs(surfaceEnergy - 50f) > 0.001f) throw new InvalidOperationException("Original BallisticMaterial.EnergyToPenetrateSurface clamp changed: " + surfaceEnergy);
-            _result = "PASS — original Target.cs, BallisticMaterialProperties.cs, and BallisticMaterial.cs compiled under browser WebAssembly; Target lifecycle fixture, material defaults, original ChannelVolume, and surface-thickness clamp passed.";
+            var handled = material.HandleProjectile(projectile, new UnityEngine.Vector3(0f, 0f, 1f));
+            if (handled.Status != global::BallisticResult.Stop || handled.Energy != 0f)
+                throw new InvalidOperationException("Original BallisticMaterial impenetrable entry transition changed: status=" + handled.Status + ", energy=" + handled.Energy);
+            _result = "PASS — original Target.cs, BallisticMaterialProperties.cs, and BallisticMaterial.cs compiled under browser WebAssembly; lifecycle fixture, material defaults, original ChannelVolume, surface clamp, and impenetrable-entry state transition passed.";
         }
         catch (Exception ex)
         {
@@ -216,7 +222,7 @@ cat > "$OUT_ROOT/wasm-spike-report.md" <<EOF
 - Build target: Blazor WebAssembly on .NET 8
 - Unity API surface implemented: MonoBehaviour, TooltipAttribute, HeaderAttribute, RangeAttribute, Vector2, Vector3/Transform test stubs, GetComponent<T>() and a test-only component attachment hook.
 - CharacterBody and ballistic effect types are test fixtures, not the game's original classes.
-- Scope: compile three original scripts; invoke Target.Awake, check material-property defaults, execute original BallisticMaterial.ChannelVolume, and test EnergyToPenetrateSurface thickness clamping. Projectile.EnergyToPenetrate remains a simplified fixture, not original physics.
+- Scope: compile three original scripts; invoke Target.Awake, check material-property defaults, execute original BallisticMaterial.ChannelVolume and EnergyToPenetrateSurface, and exercise the original impenetrable-entry state transition. Projectile energy math, vectors, transforms, random, effects and timing are test fixtures, not original physics.
 - This does not prove the rest of the Unity API, original scene import, physics, rendering parity, or a playable port.
 EOF
 echo "Published WASM feasibility app at $OUT_ROOT/published/wwwroot"
