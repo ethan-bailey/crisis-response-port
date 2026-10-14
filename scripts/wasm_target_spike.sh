@@ -153,6 +153,7 @@ namespace UnityEngine
     {
         public Vector3 position { get; set; }
         public Vector3 localScale { get; set; } = Vector3.one;
+        public Vector3 localEulerAngles { get; set; }
         public Transform parent { get; private set; }
         public int childCount => 0;
         public Quaternion rotation { get; set; } = Quaternion.identity;
@@ -169,6 +170,7 @@ namespace UnityEngine
     public class Ray { public Vector3 origin, direction; public Ray(Vector3 o, Vector3 d) { origin=o; direction=d; } }
     public struct RaycastHit { public Transform transform; public Vector3 point, normal; public float distance; }
     public static class Physics { public static bool Raycast(Ray ray, out RaycastHit hit, float distance, int mask) { hit = default; return false; } }
+    public class AnimationCurve { public float Evaluate(float value) => 1f; }
     public class AnimationCurve { public float Evaluate(float value) => 1f; }
     public class Material { }
     public class MeshRenderer { public Material material { get; set; } }
@@ -206,6 +208,7 @@ namespace UnityEngine.Events
 }
 
 public sealed class CharacterBody { public AudioInstigator AudioInstigator; public void OnSuccessfulAttack(object victim, int swarmId) { } }
+public sealed class Masks { public static Masks Instance { get; } = new Masks(); public int Limbs => 1; public int BallisticTargets => 2; public int BallisticTargetsSansLimbs => 3; }
 public sealed class WeaponBase { public CharacterBody Owner; public AmmunitionBase ammunition = new AmmunitionBase(); public bool rifledBarrel; public float rifleTwistRate; }
 public sealed class Marksman { public void OnSuccessfulAttack(object victim) { } }
 public sealed class AudioInstigator { }
@@ -220,19 +223,22 @@ public sealed class DelayedBallisticExit { public float activationTime; public P
 public sealed class Trace { public static implicit operator bool(Trace value) => value != null; public void SpawnHitEffect(UnityEngine.Vector3 position, UnityEngine.Transform container, UnityEngine.Vector3 normal) { } }
 public sealed class AmmunitionBase
 {
- public float mass = 0.01f, diameter = 9f, velocity = 800f, velocityModifier, frictionFactor = 0.1f, MuzzleEnergy = 3200f, elasticity, bounceThreshold = 0.1f, flightDrag = 0.001f, ballisticCoefficient = 1f;
+ public float mass = 10f, diameter = 9f, length = 100f, velocity = 800f, velocityModifier, frictionFactor = 0.1f, elasticity, bounceThreshold = 0.1f, flightDrag = 0.001f, ballisticCoefficient = 0.2f;
+ public float MetricLength => length * 0.001f;
+ public float MuzzleEnergy => 0.5f * mass * 0.001f * velocity * velocity;
  public UnityEngine.AnimationCurve expansionFunction = new UnityEngine.AnimationCurve();
+ public float DiameterAtEnergy(float frictionEnergy, float originalDiameterInMillimeters) => originalDiameterInMillimeters * expansionFunction.Evaluate(frictionEnergy / MuzzleEnergy);
+ public float TemporalCavityFactor(float velocity) => 1f;
+ public float PermanentCavityFactor(float velocity) => 1f;
+ public float FragmentationEnergy(float mass) => float.PositiveInfinity;
  public enum ExplosionMode { None, OnFragmentation, Timed }
  public ExplosionMode explosionMode;
  public float explosionTime;
  public enum FragmentationMode { None, Randomized, Specified }
  public sealed class FragmentationSpecification { public float mass, diameter, deflection; }
- public float MetricLength, velocity, elasticity, bounceThreshold, fragmentMainBodyMass, fragmentMassMin, fragmentMassMax, fragmentDiameterMin, fragmentDiameterMax, fragmentDeflectionMin, fragmentDeflectionMax;
+ public float fragmentMainBodyMass = 0.5f, fragmentMassMin = 1f, fragmentMassMax = 2f, fragmentDiameterMin = 3f, fragmentDiameterMax = 5f, fragmentDeflectionMin, fragmentDeflectionMax = 10f;
  public bool fragmentEvenPattern;
  public FragmentationMode fragmentationMode;
- public float TemporalCavityFactor(float velocity) => 1f;
- public float PermanentCavityFactor(float velocity) => 1f;
- public float FragmentationEnergy(float mass) => float.MaxValue;
  public System.Collections.Generic.List<FragmentationSpecification> specificFragmentation = new System.Collections.Generic.List<FragmentationSpecification>();
 }
 public sealed class PerformanceManager
@@ -298,15 +304,15 @@ cat > "$OUT_ROOT/app/Pages/Home.razor" <<'RAZOR'
             properties.surfaceThickness = 0.1f;
             var material = new global::BallisticMaterial { properties = properties, impenetrable = true };
             material.Awake();
-            var projectile = new global::Projectile { Status = global::BallisticResult.Continue, Energy = 100f, EnergyNormalized = 0f };
-            projectile.Ammunition.MetricLength = 0.1f;
-            projectile.Ammunition.bounceThreshold = 1f;
+            var ammo = new global::AmmunitionBase { mass = 10f, diameter = 9f, length = 100f, velocity = 800f, frictionFactor = 0.1f };
+            var projectile = new global::Projectile { meshTransform = new UnityEngine.Transform(), Status = global::BallisticResult.Continue };
+            projectile.InitializeBenchmark(ammo);
             var surfaceEnergy = material.EnergyToPenetrateSurface(projectile);
-            if (Math.Abs(surfaceEnergy - 50f) > 0.001f) throw new InvalidOperationException("Original BallisticMaterial.EnergyToPenetrateSurface clamp changed: " + surfaceEnergy);
+            if (!(surfaceEnergy > 0f && surfaceEnergy < projectile.Energy)) throw new InvalidOperationException("Original BallisticMaterial.EnergyToPenetrateSurface returned invalid cost: " + surfaceEnergy + " of " + projectile.Energy);
             var handled = material.HandleProjectile(projectile, new UnityEngine.Vector3(0f, 0f, 1f));
             if (handled.Status != global::BallisticResult.Stop || handled.Energy != 0f)
                 throw new InvalidOperationException("Original BallisticMaterial impenetrable entry transition changed: status=" + handled.Status + ", energy=" + handled.Energy);
-            _result = "PASS — original Target.cs, BallisticMaterialProperties.cs, and BallisticMaterial.cs compiled under browser WebAssembly; lifecycle fixture, material defaults, Unity math shims, ChannelVolume, surface clamp, and impenetrable-entry state transition passed.";
+            _result = "PASS — original Target.cs, BallisticMaterialProperties.cs, BallisticMaterial.cs, and Projectile.cs compiled under browser WebAssembly; lifecycle fixture, material defaults, Unity math shims, ChannelVolume, surface cost, and impenetrable-entry state transition passed.";
             RunShot();
         }
         catch (Exception ex)
@@ -327,14 +333,11 @@ cat > "$OUT_ROOT/app/Pages/Home.razor" <<'RAZOR'
             var properties = new global::BallisticMaterialProperties { surfaceThickness = _thickness };
             var material = new global::BallisticMaterial { properties = properties, impenetrable = _impenetrable };
             material.Awake();
-            var projectile = new global::Projectile
-            {
-                Status = global::BallisticResult.Continue,
-                Energy = _energy,
-                EnergyNormalized = 0f
-            };
-            projectile.Ammunition.MetricLength = 0.1f;
-            projectile.Ammunition.bounceThreshold = 1f;
+            var massGrams = 10f;
+            var desiredVelocity = MathF.Sqrt(2f * _energy / (massGrams * 0.001f));
+            var ammo = new global::AmmunitionBase { mass = massGrams, diameter = 9f, length = 100f, velocity = desiredVelocity, frictionFactor = 0.1f, bounceThreshold = 0.1f };
+            var projectile = new global::Projectile { meshTransform = new UnityEngine.Transform(), Status = global::BallisticResult.Continue };
+            projectile.InitializeBenchmark(ammo);
             var before = projectile.Energy;
             var result = material.HandleProjectile(projectile, UnityEngine.Vector3.forward);
             _shotResult = $"Original HandleProjectile returned {result.Status}. Energy before: {before:F2}; energy after: {result.Energy:F2}. Surface thickness: {_thickness:F2}; impenetrable: {_impenetrable}. Fixture physics and effects are simplified.";
@@ -354,7 +357,7 @@ cat > "$OUT_ROOT/wasm-spike-report.md" <<EOF
 - Build target: Blazor WebAssembly on .NET 8
 - Unity API surface implemented: MonoBehaviour, inspector attributes, Vector2, Vector3/Quaternion/Transform math, GetComponent<T>() and a test-only component attachment hook.
 - CharacterBody and ballistic effect types are test fixtures, not the game's original classes.
-- Scope: compile four original scripts, including Projectile.cs, with fixtures only for Unity and other dependencies; invoke Target.Awake, check material-property defaults, execute original BallisticMaterial.ChannelVolume and EnergyToPenetrateSurface, exercise the original impenetrable-entry state transition, and expose a browser control that invokes original BallisticMaterial.HandleProjectile with adjustable energy, surface thickness, and impenetrability. Projectile energy math, vectors, transforms, random, effects and timing are test fixtures, not original physics.
+- Scope: compile four original scripts, including Projectile.cs, with fixtures only for Unity and other dependencies; invoke Target.Awake, check material-property defaults, execute original BallisticMaterial.ChannelVolume and EnergyToPenetrateSurface, exercise the original impenetrable-entry state transition, and expose a browser control that invokes original BallisticMaterial.HandleProjectile with adjustable energy, surface thickness, and impenetrability. Projectile energy, friction, penetration-distance, and diameter calculations come from original Projectile.cs. Remaining Unity APIs, ammunition data, vectors, transforms, random, effects, and timing are test fixtures.
 - This does not prove the rest of the Unity API, original scene import, physics, rendering parity, or a playable port.
 EOF
 echo "Published WASM feasibility app at $OUT_ROOT/published/wwwroot"
