@@ -61,8 +61,11 @@ namespace UnityEngine
         public Vector3(float x, float y, float z) { this.x=x; this.y=y; this.z=z; }
         public static Vector3 zero => new Vector3(0,0,0);
         public static Vector3 one => new Vector3(1,1,1);
+        public static Vector3 right => new Vector3(1,0,0);
+        public static Vector3 up => new Vector3(0,1,0);
+        public static Vector3 forward => new Vector3(0,0,1);
         public float magnitude => MathF.Sqrt(x*x+y*y+z*z);
-        public Vector3 normalized => magnitude > 0 ? this / magnitude : zero;
+        public Vector3 normalized => magnitude > 1e-20f ? this / magnitude : zero;
         public static Vector3 operator +(Vector3 a, Vector3 b) => new Vector3(a.x+b.x,a.y+b.y,a.z+b.z);
         public static Vector3 operator -(Vector3 a, Vector3 b) => new Vector3(a.x-b.x,a.y-b.y,a.z-b.z);
         public static Vector3 operator -(Vector3 a) => new Vector3(-a.x,-a.y,-a.z);
@@ -71,22 +74,85 @@ namespace UnityEngine
         public static Vector3 operator /(Vector3 a, float b) => new Vector3(a.x/b,a.y/b,a.z/b);
         public static float Dot(Vector3 a, Vector3 b) => a.x*b.x+a.y*b.y+a.z*b.z;
         public static Vector3 Cross(Vector3 a, Vector3 b) => new Vector3(a.y*b.z-a.z*b.y,a.z*b.x-a.x*b.z,a.x*b.y-a.y*b.x);
-        public static float Angle(Vector3 a, Vector3 b) => 0f;
-        public static Vector3 Lerp(Vector3 a, Vector3 b, float t) => a+(b-a)*t;
+        public static float Angle(Vector3 a, Vector3 b)
+        {
+            float denom = a.magnitude * b.magnitude;
+            if (denom < 1e-15f) return 0f;
+            float cosine = Math.Clamp(Dot(a,b)/denom,-1f,1f);
+            return MathF.Acos(cosine) * (180f / MathF.PI);
+        }
+        public static Vector3 Lerp(Vector3 a, Vector3 b, float t) => a+(b-a)*Math.Clamp(t,0f,1f);
         public static Vector3 Reflect(Vector3 v, Vector3 n) => v-2f*Dot(v,n)*n;
         public static Vector3 Scale(Vector3 a, Vector3 b) => new Vector3(a.x*b.x,a.y*b.y,a.z*b.z);
     }
-
-    public struct Quaternion { public static Quaternion LookRotation(Vector3 forward) => new Quaternion(); }
+    public struct Quaternion
+    {
+        public float x, y, z, w;
+        public Quaternion(float x,float y,float z,float w) { this.x=x; this.y=y; this.z=z; this.w=w; }
+        public static Quaternion identity => new Quaternion(0,0,0,1);
+        public static Quaternion AngleAxis(float degrees, Vector3 axis)
+        {
+            Vector3 n = axis.normalized;
+            if (n.magnitude < 1e-20f) return identity;
+            float half = degrees * (MathF.PI / 180f) * 0.5f;
+            float sin = MathF.Sin(half);
+            return new Quaternion(n.x*sin,n.y*sin,n.z*sin,MathF.Cos(half));
+        }
+        public static Quaternion Inverse(Quaternion q) => new Quaternion(-q.x,-q.y,-q.z,q.w);
+        public static Quaternion operator *(Quaternion a, Quaternion b) => new Quaternion(
+            a.w*b.x+a.x*b.w+a.y*b.z-a.z*b.y,
+            a.w*b.y-a.x*b.z+a.y*b.w+a.z*b.x,
+            a.w*b.z+a.x*b.y-a.y*b.x+a.z*b.w,
+            a.w*b.w-a.x*b.x-a.y*b.y-a.z*b.z);
+        public static Vector3 operator *(Quaternion q, Vector3 v)
+        {
+            Vector3 u = new Vector3(q.x,q.y,q.z);
+            Vector3 uv = Vector3.Cross(u,v);
+            Vector3 uuv = Vector3.Cross(u,uv);
+            return v + (uv*q.w + uuv)*2f;
+        }
+        public static Quaternion LookRotation(Vector3 forward)
+        {
+            Vector3 f = forward.normalized;
+            if (f.magnitude < 1e-20f) return identity;
+            Vector3 r = Vector3.Cross(Vector3.up,f).normalized;
+            if (r.magnitude < 1e-20f) r = Vector3.Cross(Vector3.right,f).normalized;
+            Vector3 u = Vector3.Cross(f,r);
+            float m00=r.x, m01=u.x, m02=f.x;
+            float m10=r.y, m11=u.y, m12=f.y;
+            float m20=r.z, m21=u.z, m22=f.z;
+            float trace=m00+m11+m22;
+            if (trace > 0f)
+            {
+                float k=MathF.Sqrt(trace+1f)*2f;
+                return new Quaternion((m21-m12)/k,(m02-m20)/k,(m10-m01)/k,0.25f*k);
+            }
+            if (m00 > m11 && m00 > m22)
+            {
+                float k=MathF.Sqrt(1f+m00-m11-m22)*2f;
+                return new Quaternion(0.25f*k,(m01+m10)/k,(m02+m20)/k,(m21-m12)/k);
+            }
+            if (m11 > m22)
+            {
+                float k=MathF.Sqrt(1f+m11-m00-m22)*2f;
+                return new Quaternion((m01+m10)/k,0.25f*k,(m12+m21)/k,(m02-m20)/k);
+            }
+            else
+            {
+                float k=MathF.Sqrt(1f+m22-m00-m11)*2f;
+                return new Quaternion((m02+m20)/k,(m12+m21)/k,0.25f*k,(m10-m01)/k);
+            }
+        }
+    }
     public class Transform
     {
         public Vector3 position { get; set; }
-        public Vector3 forward { get; set; } = new Vector3(0,0,1);
-        public Quaternion rotation { get; set; }
-        public Vector3 TransformPoint(Vector3 p) => position+p;
-        public Vector3 InverseTransformPoint(Vector3 p) => p-position;
-        public Vector3 InverseTransformDirection(Vector3 p) => p;
-        public void Rotate(Vector3 axis, float angle) { }
+        public Quaternion rotation { get; set; } = Quaternion.identity;
+        public Vector3 forward { get => rotation * Vector3.forward; set => rotation = Quaternion.LookRotation(value); }
+        public Vector3 TransformPoint(Vector3 p) => position + rotation*p;
+        public Vector3 InverseTransformPoint(Vector3 p) => Quaternion.Inverse(rotation)*(p-position);
+        public Vector3 InverseTransformDirection(Vector3 p) => Quaternion.Inverse(rotation)*p;
+        public void Rotate(Vector3 axis, float angle) { rotation = rotation * Quaternion.AngleAxis(angle, axis); }
     }
     public class Collider { }
     public class GameObject { public void SetActive(bool active) { } }
