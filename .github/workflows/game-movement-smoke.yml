@@ -5,6 +5,8 @@ on:
     paths:
       - "game/assets/mission01.obj"
       - "game/assets/operator/operator.json"
+      - "game/index.html"
+      - "scripts/game_movement_smoke.mjs"
   workflow_dispatch:
 
 permissions:
