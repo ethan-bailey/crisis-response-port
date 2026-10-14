@@ -33,12 +33,8 @@ The static scene manifest contains 3,160 serialized records, 698 GameObjects, 30
 
 The corrected recursive asset-reference audit reached 417 readable serialized assets and 708 dependency edges. It now reports one unresolved serialized asset GUID: `b4b69dc6c74eeb54cbd22d28e37f9a19`, referenced by the .308 casing/projectile prefabs. A similarly named casing mesh exists with a different GUID, so no substitution has been made.
 
-## C# WebAssembly runtime gate: first pass passed
+## C# WebAssembly runtime gate: first two passes passed
 
 In [workflow run 38590382729](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38590382729), a .NET 8 Blazor WebAssembly app compiled the original decompiled `Target.cs`, ran in Chromium, and invoked its original private `Awake` method. The test passed the component attachment/GetComponent behavior and reported zero browser errors. The `CharacterBody` type was a test fixture, and the shim implemented only a tiny part of UnityEngine; this is not a playable slice or a parity claim.
 
-## Current expansion: material properties component
-
-A second iteration is now testing the original `BallisticMaterialProperties.cs` alongside `Target.cs`. It adds a minimal `Vector2` and Unity inspector attributes, then checks the original material-property defaults in browser WASM. The `BallisticHitEffect` and `BallisticHitMeshEffect` classes remain test fixtures. Current run: https://github.com/ethan-bailey/crisis-response-port/actions/runs/38590980350.
-
-The next real gate after this is a behavior-bearing subsystem whose required Unity APIs can be implemented and tested without replacing the original gameplay algorithm. The complete Unity API and scene dependency surface still needs substantial implementation. Unity compilation remains blocked by missing license secrets, and no full-game browser build exists.
+undefined
