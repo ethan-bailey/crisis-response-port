@@ -1,0 +1,47 @@
+name: Publish private original-mesh viewer asset
+on:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - ".github/workflows/publish-original-mesh-viewer.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  attach-verified-mesh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download the verified original mesh export from CI
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [ -s marksman-combined.obj ]; then
+            echo "Original mesh already present; nothing to do."
+            exit 0
+          fi
+          mkdir -p /tmp/crisis-response-mesh
+          gh run download 38589625850 --repo "$GITHUB_REPOSITORY" --name crisis-response-original-mesh-export --dir /tmp/crisis-response-mesh
+          test -s /tmp/crisis-response-mesh/marksman-combined.obj
+          test -s /tmp/crisis-response-mesh/marksman-combined.mesh-report.json
+          cp /tmp/crisis-response-mesh/marksman-combined.obj marksman-combined.obj
+          cp /tmp/crisis-response-mesh/marksman-combined.mesh-report.json marksman-combined.mesh-report.json
+          wc -c marksman-combined.obj
+          cat marksman-combined.mesh-report.json
+      - name: Commit recovered mesh for the private Vercel deployment
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- marksman-combined.obj marksman-combined.mesh-report.json; then
+            echo "No mesh changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add marksman-combined.obj marksman-combined.mesh-report.json
+          git commit -m "Add verified original scene mesh for private interactive viewer"
+          git push origin "HEAD:$GITHUB_REF_NAME"
