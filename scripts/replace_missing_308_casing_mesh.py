@@ -34,14 +34,14 @@ def main() -> None:
             raise SystemExit(f"Required recovered asset is missing: {path}")
 
     meta_text = meta.read_text(encoding="utf-8")
-    guid_match = re.search(r"(?m)^guid:\\s*([0-9a-f]{32})\\s*$", meta_text)
+    guid_match = re.search(r"(?m)^guid:\s*([0-9a-f]{32})\s*$", meta_text)
     if not guid_match or guid_match.group(1) != CANDIDATE_GUID:
         raise SystemExit("Candidate mesh GUID did not match the reviewed asset; refusing substitution.")
 
     text = prefab.read_text(encoding="utf-8")
     # Restrict replacement to the first MeshFilter block, which belongs to the
     # casing root. Do not alter the child GameObject named Projectile.
-    blocks = list(re.finditer(r"(?ms)^--- !u!33 &.*?(?=^--- !u!|\\Z)", text))
+    blocks = list(re.finditer(r"(?ms)^--- !u!33 &.*?(?=^--- !u!|\Z)", text))
     target = None
     for block in blocks:
         if MISSING_GUID in block.group(0):
@@ -70,7 +70,7 @@ def main() -> None:
         prefab.write_text(patched, encoding="utf-8")
         (root / "reports").mkdir(parents=True, exist_ok=True)
         (root / "reports" / "308-casing-mesh-substitution.json").write_text(
-            json.dumps(report, indent=2) + "\\n", encoding="utf-8"
+            json.dumps(report, indent=2) + "\n", encoding="utf-8"
         )
         print(json.dumps(report, indent=2))
     else:
