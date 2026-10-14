@@ -1,5 +1,9 @@
 name: Build recovered Crisis Response for WebGL
 
+concurrency:
+  group: crisis-response-port-preflight
+  cancel-in-progress: true
+
 on:
   push:
     paths:
