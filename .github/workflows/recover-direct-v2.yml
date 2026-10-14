@@ -67,10 +67,10 @@ jobs:
             exit 13
           fi
           echo "PASS: gameplay assembly exactly matches the user's archive." | tee -a work/reports/source-verification.txt
-          printf '%s\\n' "$GAME_DLL" > work/reports/game-dll-path.txt
+          printf '%s\n' "$GAME_DLL" > work/reports/game-dll-path.txt
           GAME_ROOT="$(dirname "$(find work/source/unpacked -maxdepth 10 -type f -iname 'Crisis Response.exe' -print -quit)")"
           test -n "$GAME_ROOT" -a -d "$GAME_ROOT"
-          printf '%s\\n' "$GAME_ROOT" > work/reports/game-root-path.txt
+          printf '%s\n' "$GAME_ROOT" > work/reports/game-root-path.txt
 
       - name: Decompile original managed gameplay assembly
         if: success()
