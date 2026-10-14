@@ -5,6 +5,7 @@ on:
     paths:
       - ".github/workflows/unity-webgl-build.yml"
       - "scripts/webgl_preflight.py"
+      - "scripts/scene_dependency_audit.py"
   workflow_dispatch:
 
 permissions:
@@ -39,6 +40,23 @@ jobs:
             work/recovery-artifact/export/ExportedProject \
             work/WEBGL_PREFLIGHT.md
           cat work/WEBGL_PREFLIGHT.md
+
+      - name: Run recursive Marksman range scene dependency audit
+        run: |
+          set -euo pipefail
+          python3 scripts/scene_dependency_audit.py \
+            work/recovery-artifact/export/ExportedProject \
+            work/MARKSMAN_RANGE_DEPENDENCIES.md
+          cat work/MARKSMAN_RANGE_DEPENDENCIES.md
+
+      - name: Upload scene dependency report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crisis-response-marksman-range-dependencies
+          path: work/MARKSMAN_RANGE_DEPENDENCIES.md
+          if-no-files-found: error
+          retention-days: 30
 
       - name: Upload static preflight report
         if: always()
