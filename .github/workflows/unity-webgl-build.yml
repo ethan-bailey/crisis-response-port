@@ -148,7 +148,7 @@ jobs:
           retention-days: 30
 
       - name: Publish the compiled original-C# WebAssembly gate to the browser site
-        if: steps.wasm_build.outcome == 'success'
+        if: steps.wasm_build.outcome == 'success' && steps.wasm_smoke.outcome == 'success'
         run: |
           set -euo pipefail
           test -f work/wasm-target/published/wwwroot/index.html
