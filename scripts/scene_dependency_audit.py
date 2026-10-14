@@ -68,8 +68,8 @@ def main() -> int:
         except OSError:
             continue
         source = str(current.relative_to(project))
-        for guid in set(GUID_RE.findall(data)):
-            if guid in BUILTIN_GUIDS:
+        for guid in set(ASSET_REF_RE.findall(data)):
+            if guid in BUILTIN_GUIDS or guid in UNITY_UI_SCRIPT_GUIDS:
                 continue
             target = guid_to_asset.get(guid)
             if target is None:
