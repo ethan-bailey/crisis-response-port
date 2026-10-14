@@ -18,7 +18,7 @@
 - `Assembly-CSharp.dll`: 1,504,768 bytes; SHA-256 `482f8bd6ef4546965b060463377470fc2da2db996de7ec16f29eb88f56a021b3`.
 - ECMA-335 metadata inspection of `Assembly-CSharp.dll`: 1,534 TypeDef rows, 8,640 MethodDef rows, 9,025 Field rows, and 1,112 Property rows. The prior type/method counts are confirmed.
 - `Assembly-CSharp-firstpass.dll` is present (118,784 bytes).
-- Managed folder: 143 top-level files, including 56 DLLs, 44 MDB debug-symbol files, and 43 XML documentation files.
+- Managed folder: 143 top-level files, including 56 DLLs, 44 MDB debug-symbol files, and 43 XML documentation files. The 44 MDB files are associated with UnityEngine modules; there is no `Assembly-CSharp.dll.mdb`, so the game assembly does not have a matching Mono debug-symbol file in this archive.
 - Mono runtime folder: 12 files.
 - Unity resources include `level0` through `level5`, `resources.assets`, `resources.assets.resS`, `sharedassets*.assets`, and `globalgamemanagers.assets`.
 - The archive does not contain the original editable Unity project structure (`Assets/`, `ProjectSettings/`) or original `.cs` source files.
