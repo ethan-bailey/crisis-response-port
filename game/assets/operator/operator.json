@@ -1,8 +1,1691 @@
 {
   "sourcePrefab": "Assets/Resources/characters/Operator.prefab",
+  "nodeCount": 70,
   "limbRendererCount": 17,
   "texturedLimbCount": 17,
   "copiedTextureCount": 11,
+  "nodes": [
+    {
+      "transformFileID": "4215879266689626",
+      "gameObjectFileID": "1709254077376921",
+      "name": "Operator",
+      "parentTransformFileID": null,
+      "parentGameObjectFileID": null,
+      "path": "",
+      "position": [
+        0.0,
+        0.0,
+        1.5
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4829625606037309",
+      "gameObjectFileID": "1730242686860875",
+      "name": "Pelvis",
+      "parentTransformFileID": "4215879266689626",
+      "parentGameObjectFileID": "1709254077376921",
+      "path": "Pelvis",
+      "position": [
+        0.0,
+        0.915,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4964469411310401",
+      "gameObjectFileID": "1724804207875695",
+      "name": "Renderer",
+      "parentTransformFileID": "4829625606037309",
+      "parentGameObjectFileID": "1730242686860875",
+      "path": "Pelvis/Renderer",
+      "position": [
+        0.003,
+        0.0,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.281623,
+        0.19245856,
+        0.83490646
+      ]
+    },
+    {
+      "transformFileID": "4699617135816954",
+      "gameObjectFileID": "1618682377417806",
+      "name": "Medic pouch",
+      "parentTransformFileID": "4829625606037309",
+      "parentGameObjectFileID": "1730242686860875",
+      "path": "Pelvis/Medic pouch",
+      "position": [
+        -0.051,
+        0.10400003,
+        0.03
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.05216163,
+        0.9986387
+      ],
+      "scale": [
+        0.10413091,
+        0.1851827,
+        1.066955
+      ]
+    },
+    {
+      "transformFileID": "4658330495870062",
+      "gameObjectFileID": "1703437598541787",
+      "name": "IK target",
+      "parentTransformFileID": "4699617135816954",
+      "parentGameObjectFileID": "1618682377417806",
+      "path": "Pelvis/Medic pouch/IK target",
+      "position": [
+        0.19,
+        0.386,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4703931505913403",
+      "gameObjectFileID": "1884547391421755",
+      "name": "Abdomen",
+      "parentTransformFileID": "4829625606037309",
+      "parentGameObjectFileID": "1730242686860875",
+      "path": "Pelvis/Abdomen",
+      "position": [
+        -0.019,
+        0.025,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4123703392571528",
+      "gameObjectFileID": "1099118695303065",
+      "name": "Renderer",
+      "parentTransformFileID": "4703931505913403",
+      "parentGameObjectFileID": "1884547391421755",
+      "path": "Pelvis/Abdomen/Renderer",
+      "position": [
+        0.035,
+        0.064,
+        -0.01
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.27154475,
+        0.27296823,
+        0.86408186
+      ]
+    },
+    {
+      "transformFileID": "4167524263268962",
+      "gameObjectFileID": "1243736805655561",
+      "name": "Torso",
+      "parentTransformFileID": "4703931505913403",
+      "parentGameObjectFileID": "1884547391421755",
+      "path": "Pelvis/Abdomen/Torso",
+      "position": [
+        0.0,
+        0.1,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4617365563186364",
+      "gameObjectFileID": "1061268324235159",
+      "name": "Renderer",
+      "parentTransformFileID": "4167524263268962",
+      "parentGameObjectFileID": "1243736805655561",
+      "path": "Pelvis/Abdomen/Torso/Renderer",
+      "position": [
+        0.076,
+        0.26,
+        0.02
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        -0.10452837,
+        0.9945219
+      ],
+      "scale": [
+        0.40302405,
+        0.5233286,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4633296557590524",
+      "gameObjectFileID": "1587765826080250",
+      "name": "Neck",
+      "parentTransformFileID": "4167524263268962",
+      "parentGameObjectFileID": "1243736805655561",
+      "path": "Pelvis/Abdomen/Torso/Neck",
+      "position": [
+        0.078,
+        0.504,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4528911807818478",
+      "gameObjectFileID": "1709867586078768",
+      "name": "Renderer",
+      "parentTransformFileID": "4633296557590524",
+      "parentGameObjectFileID": "1587765826080250",
+      "path": "Pelvis/Abdomen/Torso/Neck/Renderer",
+      "position": [
+        0.009,
+        -0.0,
+        0.01
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        -0.074369594,
+        0.99723077
+      ],
+      "scale": [
+        0.2359548,
+        0.13407098,
+        0.93964046
+      ]
+    },
+    {
+      "transformFileID": "4771092198208730",
+      "gameObjectFileID": "1044625135789424",
+      "name": "Head",
+      "parentTransformFileID": "4633296557590524",
+      "parentGameObjectFileID": "1587765826080250",
+      "path": "Pelvis/Abdomen/Torso/Neck/Head",
+      "position": [
+        -0.001,
+        0.049,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4168105826085154",
+      "gameObjectFileID": "1589667821646929",
+      "name": "Renderer",
+      "parentTransformFileID": "4771092198208730",
+      "parentGameObjectFileID": "1044625135789424",
+      "path": "Pelvis/Abdomen/Torso/Neck/Head/Renderer",
+      "position": [
+        0.021999998,
+        0.109,
+        -0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        0.29450613,
+        0.27450624,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4592664909728774",
+      "gameObjectFileID": "1372920208702427",
+      "name": "Helmet",
+      "parentTransformFileID": "4771092198208730",
+      "parentGameObjectFileID": "1044625135789424",
+      "path": "Pelvis/Abdomen/Torso/Neck/Head/Helmet",
+      "position": [
+        0.021999998,
+        0.12899998,
+        0.01
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.01404944,
+        0.9999013
+      ],
+      "scale": [
+        0.2693233,
+        0.2764976,
+        0.93964046
+      ]
+    },
+    {
+      "transformFileID": "4589652054545887",
+      "gameObjectFileID": "1025901758691103",
+      "name": "Eye",
+      "parentTransformFileID": "4771092198208730",
+      "parentGameObjectFileID": "1044625135789424",
+      "path": "Pelvis/Abdomen/Torso/Neck/Head/Eye",
+      "position": [
+        0.107,
+        0.11700001,
+        -0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4220697728379336",
+      "gameObjectFileID": "1985305603660343",
+      "name": "Mouth",
+      "parentTransformFileID": "4771092198208730",
+      "parentGameObjectFileID": "1044625135789424",
+      "path": "Pelvis/Abdomen/Torso/Neck/Head/Mouth",
+      "position": [
+        0.11799999,
+        0.043999817,
+        -0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4817325062191328",
+      "gameObjectFileID": "1705390221481576",
+      "name": "Right upper arm",
+      "parentTransformFileID": "4167524263268962",
+      "parentGameObjectFileID": "1243736805655561",
+      "path": "Pelvis/Abdomen/Torso/Right upper arm",
+      "position": [
+        0.0,
+        0.43,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4689010887986514",
+      "gameObjectFileID": "1977153420339851",
+      "name": "Renderer",
+      "parentTransformFileID": "4817325062191328",
+      "parentGameObjectFileID": "1705390221481576",
+      "path": "Pelvis/Abdomen/Torso/Right upper arm/Renderer",
+      "position": [
+        0.008285812,
+        -0.112342834,
+        0.055
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.07323812,
+        0.9973145
+      ],
+      "scale": [
+        0.3866103,
+        0.40640974,
+        0.41465905
+      ]
+    },
+    {
+      "transformFileID": "4056905764334025",
+      "gameObjectFileID": "1336590748365959",
+      "name": "Right lower arm",
+      "parentTransformFileID": "4817325062191328",
+      "parentGameObjectFileID": "1705390221481576",
+      "path": "Pelvis/Abdomen/Torso/Right upper arm/Right lower arm",
+      "position": [
+        -0.01,
+        -0.251,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4181586030114204",
+      "gameObjectFileID": "1256069497284392",
+      "name": "Renderer",
+      "parentTransformFileID": "4056905764334025",
+      "parentGameObjectFileID": "1336590748365959",
+      "path": "Pelvis/Abdomen/Torso/Right upper arm/Right lower arm/Renderer",
+      "position": [
+        -0.011999913,
+        -0.16899997,
+        0.05
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        0.4117729,
+        0.36215234,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4477794280538272",
+      "gameObjectFileID": "1161607090078389",
+      "name": "Right hand",
+      "parentTransformFileID": "4056905764334025",
+      "parentGameObjectFileID": "1336590748365959",
+      "path": "Pelvis/Abdomen/Torso/Right upper arm/Right lower arm/Right hand",
+      "position": [
+        -0.01,
+        -0.317,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4066338149260220",
+      "gameObjectFileID": "1002669891404536",
+      "name": "Layers",
+      "parentTransformFileID": "4477794280538272",
+      "parentGameObjectFileID": "1161607090078389",
+      "path": "Pelvis/Abdomen/Torso/Right upper arm/Right lower arm/Right hand/Layers",
+      "position": [
+        0.0,
+        0.0,
+        0.05
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4407886329842316",
+      "gameObjectFileID": "1470112387431263",
+      "name": "Trigger finger",
+      "parentTransformFileID": "4066338149260220",
+      "parentGameObjectFileID": "1002669891404536",
+      "path": "Pelvis/Abdomen/Torso/Right upper arm/Right lower arm/Right hand/Layers/Trigger finger",
+      "position": [
+        0.001,
+        -0.086,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.043619394,
+        0.99904823
+      ],
+      "scale": [
+        0.13011229,
+        0.20415695,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4932862749439555",
+      "gameObjectFileID": "1313026266067498",
+      "name": "Safe finger",
+      "parentTransformFileID": "4066338149260220",
+      "parentGameObjectFileID": "1002669891404536",
+      "path": "Pelvis/Abdomen/Torso/Right upper arm/Right lower arm/Right hand/Layers/Safe finger",
+      "position": [
+        -0.0021000886,
+        -0.090599984,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.043619394,
+        0.99904823
+      ],
+      "scale": [
+        0.12,
+        0.2,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4197515695889172",
+      "gameObjectFileID": "1621510681728303",
+      "name": "Fist",
+      "parentTransformFileID": "4066338149260220",
+      "parentGameObjectFileID": "1002669891404536",
+      "path": "Pelvis/Abdomen/Torso/Right upper arm/Right lower arm/Right hand/Layers/Fist",
+      "position": [
+        -0.003,
+        -0.055,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.043619394,
+        0.99904823
+      ],
+      "scale": [
+        0.130065,
+        0.12949874,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4416529295595857",
+      "gameObjectFileID": "1632457200066912",
+      "name": "Pistol pivot",
+      "parentTransformFileID": "4477794280538272",
+      "parentGameObjectFileID": "1161607090078389",
+      "path": "Pelvis/Abdomen/Torso/Right upper arm/Right lower arm/Right hand/Pistol pivot",
+      "position": [
+        0.007999799,
+        -0.06999996,
+        -0.010000033
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4446691751160785",
+      "gameObjectFileID": "1634108722742392",
+      "name": "Grab point",
+      "parentTransformFileID": "4477794280538272",
+      "parentGameObjectFileID": "1161607090078389",
+      "path": "Pelvis/Abdomen/Torso/Right upper arm/Right lower arm/Right hand/Grab point",
+      "position": [
+        0.0,
+        -0.08,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4904079258986964",
+      "gameObjectFileID": "1302127217294661",
+      "name": "Left upper arm",
+      "parentTransformFileID": "4167524263268962",
+      "parentGameObjectFileID": "1243736805655561",
+      "path": "Pelvis/Abdomen/Torso/Left upper arm",
+      "position": [
+        0.0,
+        0.43,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4689224686120706",
+      "gameObjectFileID": "1969106005120503",
+      "name": "Renderer",
+      "parentTransformFileID": "4904079258986964",
+      "parentGameObjectFileID": "1302127217294661",
+      "path": "Pelvis/Abdomen/Torso/Left upper arm/Renderer",
+      "position": [
+        0.008285812,
+        -0.112342834,
+        -0.02
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.07323812,
+        0.9973145
+      ],
+      "scale": [
+        0.3866103,
+        0.40640974,
+        0.41465905
+      ]
+    },
+    {
+      "transformFileID": "4007271993718322",
+      "gameObjectFileID": "1642988549198181",
+      "name": "Left lower arm",
+      "parentTransformFileID": "4904079258986964",
+      "parentGameObjectFileID": "1302127217294661",
+      "path": "Pelvis/Abdomen/Torso/Left upper arm/Left lower arm",
+      "position": [
+        -0.01,
+        -0.251,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4989434536655964",
+      "gameObjectFileID": "1946936116752871",
+      "name": "Renderer",
+      "parentTransformFileID": "4007271993718322",
+      "parentGameObjectFileID": "1642988549198181",
+      "path": "Pelvis/Abdomen/Torso/Left upper arm/Left lower arm/Renderer",
+      "position": [
+        -0.011999913,
+        -0.16899997,
+        -0.015
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        0.4117729,
+        0.36215234,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4562080017223558",
+      "gameObjectFileID": "1711914853252429",
+      "name": "Left hand",
+      "parentTransformFileID": "4007271993718322",
+      "parentGameObjectFileID": "1642988549198181",
+      "path": "Pelvis/Abdomen/Torso/Left upper arm/Left lower arm/Left hand",
+      "position": [
+        -0.01,
+        -0.317,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4415925016355036",
+      "gameObjectFileID": "1918264173551851",
+      "name": "Layers",
+      "parentTransformFileID": "4562080017223558",
+      "parentGameObjectFileID": "1711914853252429",
+      "path": "Pelvis/Abdomen/Torso/Left upper arm/Left lower arm/Left hand/Layers",
+      "position": [
+        0.0,
+        0.0,
+        -0.02
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4346445019804701",
+      "gameObjectFileID": "1587397909062814",
+      "name": "Fist",
+      "parentTransformFileID": "4415925016355036",
+      "parentGameObjectFileID": "1918264173551851",
+      "path": "Pelvis/Abdomen/Torso/Left upper arm/Left lower arm/Left hand/Layers/Fist",
+      "position": [
+        -0.003,
+        -0.055,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.043619394,
+        0.99904823
+      ],
+      "scale": [
+        0.130065,
+        0.12949874,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4094283985748868",
+      "gameObjectFileID": "1875609422105747",
+      "name": "Forward assist",
+      "parentTransformFileID": "4415925016355036",
+      "parentGameObjectFileID": "1918264173551851",
+      "path": "Pelvis/Abdomen/Torso/Left upper arm/Left lower arm/Left hand/Layers/Forward assist",
+      "position": [
+        0.002,
+        -0.109,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0871554,
+        -0.9961947
+      ],
+      "scale": [
+        0.14483063,
+        0.2788204,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4838352681112328",
+      "gameObjectFileID": "1371939378208658",
+      "name": "Grab point",
+      "parentTransformFileID": "4562080017223558",
+      "parentGameObjectFileID": "1711914853252429",
+      "path": "Pelvis/Abdomen/Torso/Left upper arm/Left lower arm/Left hand/Grab point",
+      "position": [
+        0.0,
+        -0.08,
+        -0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4993076962757715",
+      "gameObjectFileID": "1694121525821480",
+      "name": "Rifle pivot",
+      "parentTransformFileID": "4167524263268962",
+      "parentGameObjectFileID": "1243736805655561",
+      "path": "Pelvis/Abdomen/Torso/Rifle pivot",
+      "position": [
+        0.01,
+        0.44,
+        0.03
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4911451331743778",
+      "gameObjectFileID": "1320256170494724",
+      "name": "Pistol IK target",
+      "parentTransformFileID": "4167524263268962",
+      "parentGameObjectFileID": "1243736805655561",
+      "path": "Pelvis/Abdomen/Torso/Pistol IK target",
+      "position": [
+        0.488,
+        0.64,
+        -0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4105912343260855",
+      "gameObjectFileID": "1017697238300914",
+      "name": "Audio sources",
+      "parentTransformFileID": "4167524263268962",
+      "parentGameObjectFileID": "1243736805655561",
+      "path": "Pelvis/Abdomen/Torso/Audio sources",
+      "position": [
+        0.035,
+        0.403,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4350143044813081",
+      "gameObjectFileID": "1733206282342372",
+      "name": "Impact",
+      "parentTransformFileID": "4105912343260855",
+      "parentGameObjectFileID": "1017697238300914",
+      "path": "Pelvis/Abdomen/Torso/Audio sources/Impact",
+      "position": [
+        0.0,
+        -0.126,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4573076885614623",
+      "gameObjectFileID": "1217368724061974",
+      "name": "Footstep",
+      "parentTransformFileID": "4105912343260855",
+      "parentGameObjectFileID": "1017697238300914",
+      "path": "Pelvis/Abdomen/Torso/Audio sources/Footstep",
+      "position": [
+        0.0,
+        -0.498,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4964675957374274",
+      "gameObjectFileID": "1089843903986396",
+      "name": "Communication",
+      "parentTransformFileID": "4105912343260855",
+      "parentGameObjectFileID": "1017697238300914",
+      "path": "Pelvis/Abdomen/Torso/Audio sources/Communication",
+      "position": [
+        0.0,
+        0.164,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4016782227057731",
+      "gameObjectFileID": "1672306508523268",
+      "name": "Equipment",
+      "parentTransformFileID": "4105912343260855",
+      "parentGameObjectFileID": "1017697238300914",
+      "path": "Pelvis/Abdomen/Torso/Audio sources/Equipment",
+      "position": [
+        0.0,
+        -0.156,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4231676679060417",
+      "gameObjectFileID": "1808113985169905",
+      "name": "Chest rig IK target",
+      "parentTransformFileID": "4167524263268962",
+      "parentGameObjectFileID": "1243736805655561",
+      "path": "Pelvis/Abdomen/Torso/Chest rig IK target",
+      "position": [
+        0.194,
+        0.291,
+        -0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4934287144746640",
+      "gameObjectFileID": "1060945828524476",
+      "name": "Right upper leg",
+      "parentTransformFileID": "4829625606037309",
+      "parentGameObjectFileID": "1730242686860875",
+      "path": "Pelvis/Right upper leg",
+      "position": [
+        -0.017,
+        -0.03,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4463579974499585",
+      "gameObjectFileID": "1900271049623953",
+      "name": "Renderer",
+      "parentTransformFileID": "4934287144746640",
+      "parentGameObjectFileID": "1060945828524476",
+      "path": "Pelvis/Right upper leg/Renderer",
+      "position": [
+        0.013,
+        -0.17499998,
+        -0.01
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        0.26711202,
+        0.5475408,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4559203567323380",
+      "gameObjectFileID": "1472185465350827",
+      "name": "Holster",
+      "parentTransformFileID": "4934287144746640",
+      "parentGameObjectFileID": "1060945828524476",
+      "path": "Pelvis/Right upper leg/Holster",
+      "position": [
+        0.037,
+        -0.226,
+        0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.06627391,
+        0.9978015
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4580109562975512",
+      "gameObjectFileID": "1518489005915545",
+      "name": "Anchor",
+      "parentTransformFileID": "4559203567323380",
+      "parentGameObjectFileID": "1472185465350827",
+      "path": "Pelvis/Right upper leg/Holster/Anchor",
+      "position": [
+        -0.017,
+        0.13,
+        -0.005
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.7071066,
+        -0.70710695
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4173334745350128",
+      "gameObjectFileID": "1220653531496868",
+      "name": "Back",
+      "parentTransformFileID": "4559203567323380",
+      "parentGameObjectFileID": "1472185465350827",
+      "path": "Pelvis/Right upper leg/Holster/Back",
+      "position": [
+        0.006,
+        0.147,
+        -0.005
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        -0.024170391,
+        0.9997079
+      ],
+      "scale": [
+        0.22213528,
+        0.36726946,
+        1.066955
+      ]
+    },
+    {
+      "transformFileID": "4382656168358062",
+      "gameObjectFileID": "1841364053301648",
+      "name": "Front",
+      "parentTransformFileID": "4559203567323380",
+      "parentGameObjectFileID": "1472185465350827",
+      "path": "Pelvis/Right upper leg/Holster/Front",
+      "position": [
+        0.024,
+        0.058,
+        0.0055
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.06142527,
+        -0.99811167
+      ],
+      "scale": [
+        0.14376274,
+        0.1977713,
+        1.066955
+      ]
+    },
+    {
+      "transformFileID": "4044586276341600",
+      "gameObjectFileID": "1967328832014496",
+      "name": "Right lower leg",
+      "parentTransformFileID": "4934287144746640",
+      "parentGameObjectFileID": "1060945828524476",
+      "path": "Pelvis/Right upper leg/Right lower leg",
+      "position": [
+        0.038,
+        -0.412,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4173644300073267",
+      "gameObjectFileID": "1291844617409189",
+      "name": "Renderer",
+      "parentTransformFileID": "4044586276341600",
+      "parentGameObjectFileID": "1967328832014496",
+      "path": "Pelvis/Right upper leg/Right lower leg/Renderer",
+      "position": [
+        -0.017,
+        -0.19300002,
+        -0.015
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.008726465,
+        0.999962
+      ],
+      "scale": [
+        0.17005,
+        0.5390501,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4329446674688094",
+      "gameObjectFileID": "1344419225485095",
+      "name": "Right foot",
+      "parentTransformFileID": "4044586276341600",
+      "parentGameObjectFileID": "1967328832014496",
+      "path": "Pelvis/Right upper leg/Right lower leg/Right foot",
+      "position": [
+        -0.027,
+        -0.403,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4458735412797113",
+      "gameObjectFileID": "1919942235722503",
+      "name": "Renderer",
+      "parentTransformFileID": "4329446674688094",
+      "parentGameObjectFileID": "1344419225485095",
+      "path": "Pelvis/Right upper leg/Right lower leg/Right foot/Renderer",
+      "position": [
+        0.041,
+        -0.048999965,
+        -0.02
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        0.23661,
+        0.12956999,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4785416887765914",
+      "gameObjectFileID": "1107629493147155",
+      "name": "Right toes",
+      "parentTransformFileID": "4329446674688094",
+      "parentGameObjectFileID": "1344419225485095",
+      "path": "Pelvis/Right upper leg/Right lower leg/Right foot/Right toes",
+      "position": [
+        0.1311,
+        -0.0819,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4616352195932608",
+      "gameObjectFileID": "1833703512093738",
+      "name": "Renderer",
+      "parentTransformFileID": "4785416887765914",
+      "parentGameObjectFileID": "1107629493147155",
+      "path": "Pelvis/Right upper leg/Right lower leg/Right foot/Right toes/Renderer",
+      "position": [
+        0.032000005,
+        0.004999995,
+        -0.015
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        0.113919996,
+        0.07124,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4688331903957256",
+      "gameObjectFileID": "1632746491512912",
+      "name": "Left upper leg",
+      "parentTransformFileID": "4829625606037309",
+      "parentGameObjectFileID": "1730242686860875",
+      "path": "Pelvis/Left upper leg",
+      "position": [
+        -0.017,
+        -0.03,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4904400124545405",
+      "gameObjectFileID": "1719342369648492",
+      "name": "Renderer",
+      "parentTransformFileID": "4688331903957256",
+      "parentGameObjectFileID": "1632746491512912",
+      "path": "Pelvis/Left upper leg/Renderer",
+      "position": [
+        0.013,
+        -0.17499998,
+        -0.02
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        0.26711,
+        0.54754,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4751888446361502",
+      "gameObjectFileID": "1726790013014859",
+      "name": "Left lower leg",
+      "parentTransformFileID": "4688331903957256",
+      "parentGameObjectFileID": "1632746491512912",
+      "path": "Pelvis/Left upper leg/Left lower leg",
+      "position": [
+        0.038,
+        -0.412,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4386568470988373",
+      "gameObjectFileID": "1436073260064126",
+      "name": "Renderer",
+      "parentTransformFileID": "4751888446361502",
+      "parentGameObjectFileID": "1726790013014859",
+      "path": "Pelvis/Left upper leg/Left lower leg/Renderer",
+      "position": [
+        -0.017,
+        -0.19300002,
+        -0.025
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.008726465,
+        0.999962
+      ],
+      "scale": [
+        0.17005,
+        0.5390501,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4249237965167194",
+      "gameObjectFileID": "1693329660128220",
+      "name": "Left foot",
+      "parentTransformFileID": "4751888446361502",
+      "parentGameObjectFileID": "1726790013014859",
+      "path": "Pelvis/Left upper leg/Left lower leg/Left foot",
+      "position": [
+        -0.027,
+        -0.403,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4081524457781149",
+      "gameObjectFileID": "1801075752484240",
+      "name": "Renderer",
+      "parentTransformFileID": "4249237965167194",
+      "parentGameObjectFileID": "1693329660128220",
+      "path": "Pelvis/Left upper leg/Left lower leg/Left foot/Renderer",
+      "position": [
+        0.041,
+        -0.048999965,
+        -0.03
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        0.23661,
+        0.12956999,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4033903555039309",
+      "gameObjectFileID": "1000955326284023",
+      "name": "Left toes",
+      "parentTransformFileID": "4249237965167194",
+      "parentGameObjectFileID": "1693329660128220",
+      "path": "Pelvis/Left upper leg/Left lower leg/Left foot/Left toes",
+      "position": [
+        0.1311,
+        -0.0819,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4023566878023198",
+      "gameObjectFileID": "1397768327470545",
+      "name": "Renderer",
+      "parentTransformFileID": "4033903555039309",
+      "parentGameObjectFileID": "1000955326284023",
+      "path": "Pelvis/Left upper leg/Left lower leg/Left foot/Left toes/Renderer",
+      "position": [
+        0.032000005,
+        0.004999995,
+        -0.025
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        0.113919996,
+        0.07124,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4548862692844868",
+      "gameObjectFileID": "1571718729274231",
+      "name": "Stun grenade anchor",
+      "parentTransformFileID": "4829625606037309",
+      "parentGameObjectFileID": "1730242686860875",
+      "path": "Pelvis/Stun grenade anchor",
+      "position": [
+        -0.118,
+        0.067,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        -0.094195105,
+        0.9955538
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4566389953100910",
+      "gameObjectFileID": "1581786255902400",
+      "name": "Frag grenade anchor",
+      "parentTransformFileID": "4829625606037309",
+      "parentGameObjectFileID": "1730242686860875",
+      "path": "Pelvis/Frag grenade anchor",
+      "position": [
+        -0.10683131,
+        0.1670813,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        -0.13052624,
+        0.9914449
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4536148047902537",
+      "gameObjectFileID": "1477046003934300",
+      "name": "Plasticuffs",
+      "parentTransformFileID": "4829625606037309",
+      "parentGameObjectFileID": "1730242686860875",
+      "path": "Pelvis/Plasticuffs",
+      "position": [
+        -0.138,
+        -0.02,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        0.0,
+        0.71934,
+        -0.6946582
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        0.2
+      ]
+    },
+    {
+      "transformFileID": "4504506843557392",
+      "gameObjectFileID": "1045458335737618",
+      "name": "Plasticuffs",
+      "parentTransformFileID": "4536148047902537",
+      "parentGameObjectFileID": "1477046003934300",
+      "path": "Pelvis/Plasticuffs/Plasticuffs",
+      "position": [
+        0.0,
+        0.0,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4547349145286502",
+      "gameObjectFileID": "1722951815217645",
+      "name": "Plasticuffs",
+      "parentTransformFileID": "4536148047902537",
+      "parentGameObjectFileID": "1477046003934300",
+      "path": "Pelvis/Plasticuffs/Plasticuffs",
+      "position": [
+        -0.022,
+        -0.001,
+        -0.0
+      ],
+      "rotation": [
+        -0.03808704,
+        -0.028842172,
+        -0.078362286,
+        0.9957796
+      ],
+      "scale": [
+        1.0000005,
+        1.0000005,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4450063812975771",
+      "gameObjectFileID": "1924050743934937",
+      "name": "Plasticuffs",
+      "parentTransformFileID": "4536148047902537",
+      "parentGameObjectFileID": "1477046003934300",
+      "path": "Pelvis/Plasticuffs/Plasticuffs",
+      "position": [
+        -0.059,
+        0.006,
+        -0.0
+      ],
+      "rotation": [
+        -0.09954055,
+        -0.04572811,
+        -0.1943177,
+        0.97480327
+      ],
+      "scale": [
+        1.0128164,
+        1.0162014,
+        1.0288838
+      ]
+    }
+  ],
   "limbs": [
     {
       "name": "Renderer",
@@ -14,10 +1697,10 @@
         1.5
       ],
       "rotation": [
-        0,
-        0,
-        0,
-        1
+        0.0,
+        0.0,
+        0.0,
+        1.0
       ],
       "scale": [
         0.281623,
@@ -42,10 +1725,10 @@
         1.49
       ],
       "rotation": [
-        0,
-        0,
-        0,
-        1
+        0.0,
+        0.0,
+        0.0,
+        1.0
       ],
       "scale": [
         0.27154475,
@@ -70,15 +1753,15 @@
         1.52
       ],
       "rotation": [
-        0,
-        0,
+        0.0,
+        0.0,
         -0.10452837,
         0.9945219
       ],
       "scale": [
         0.40302405,
         0.5233286,
-        1
+        1.0
       ],
       "skinGuids": [
         "8ae0405cae01eb84bbfac4af23499da0"
@@ -98,8 +1781,8 @@
         1.51
       ],
       "rotation": [
-        0,
-        0,
+        0.0,
+        0.0,
         -0.074369594,
         0.99723077
       ],
@@ -126,15 +1809,15 @@
         1.5
       ],
       "rotation": [
-        0,
-        0,
-        0,
-        1
+        0.0,
+        0.0,
+        0.0,
+        1.0
       ],
       "scale": [
         0.29450613,
         0.27450624,
-        1
+        1.0
       ],
       "skinGuids": [
         "7b0292089147ec442a3161d62c0470e9",
@@ -162,8 +1845,8 @@
         1.555
       ],
       "rotation": [
-        0,
-        0,
+        0.0,
+        0.0,
         -0.07323812,
         0.9973145
       ],
@@ -190,15 +1873,15 @@
         1.55
       ],
       "rotation": [
-        0,
-        0,
-        0,
-        1
+        0.0,
+        0.0,
+        0.0,
+        1.0
       ],
       "scale": [
         0.4117729,
         0.36215234,
-        1
+        1.0
       ],
       "skinGuids": [
         "99f5e930d9901504d8400a9b6303ea41"
@@ -218,8 +1901,8 @@
         1.48
       ],
       "rotation": [
-        0,
-        0,
+        0.0,
+        0.0,
         -0.07323812,
         0.9973145
       ],
@@ -246,15 +1929,15 @@
         1.485
       ],
       "rotation": [
-        0,
-        0,
-        0,
-        1
+        0.0,
+        0.0,
+        0.0,
+        1.0
       ],
       "scale": [
         0.4117729,
         0.36215234,
-        1
+        1.0
       ],
       "skinGuids": [
         "99f5e930d9901504d8400a9b6303ea41"
@@ -274,15 +1957,15 @@
         1.49
       ],
       "rotation": [
-        0,
-        0,
-        0,
-        1
+        0.0,
+        0.0,
+        0.0,
+        1.0
       ],
       "scale": [
         0.26711202,
         0.5475408,
-        1
+        1.0
       ],
       "skinGuids": [
         "ef2345e580c248d469ef0b3ade9ce1c9"
@@ -302,15 +1985,15 @@
         1.485
       ],
       "rotation": [
-        0,
-        0,
+        0.0,
+        0.0,
         -0.008726465,
         0.999962
       ],
       "scale": [
         0.17005,
         0.5390501,
-        1
+        1.0
       ],
       "skinGuids": [
         "4c76e3fe80907fa4a8b66b1fbaddab53"
@@ -330,15 +2013,15 @@
         1.48
       ],
       "rotation": [
-        0,
-        0,
-        0,
-        1
+        0.0,
+        0.0,
+        0.0,
+        1.0
       ],
       "scale": [
         0.23661,
         0.12956999,
-        1
+        1.0
       ],
       "skinGuids": [
         "86fd777ed483d3042b8ee677a7405259"
@@ -358,15 +2041,15 @@
         1.485
       ],
       "rotation": [
-        0,
-        0,
-        0,
-        1
+        0.0,
+        0.0,
+        0.0,
+        1.0
       ],
       "scale": [
         0.113919996,
         0.07124,
-        1
+        1.0
       ],
       "skinGuids": [
         "a53564d13106a29468ca9657720e1a9f"
@@ -386,15 +2069,15 @@
         1.48
       ],
       "rotation": [
-        0,
-        0,
-        0,
-        1
+        0.0,
+        0.0,
+        0.0,
+        1.0
       ],
       "scale": [
         0.26711,
         0.54754,
-        1
+        1.0
       ],
       "skinGuids": [
         "ef2345e580c248d469ef0b3ade9ce1c9"
@@ -414,15 +2097,15 @@
         1.475
       ],
       "rotation": [
-        0,
-        0,
+        0.0,
+        0.0,
         -0.008726465,
         0.999962
       ],
       "scale": [
         0.17005,
         0.5390501,
-        1
+        1.0
       ],
       "skinGuids": [
         "4c76e3fe80907fa4a8b66b1fbaddab53"
@@ -442,15 +2125,15 @@
         1.47
       ],
       "rotation": [
-        0,
-        0,
-        0,
-        1
+        0.0,
+        0.0,
+        0.0,
+        1.0
       ],
       "scale": [
         0.23661,
         0.12956999,
-        1
+        1.0
       ],
       "skinGuids": [
         "86fd777ed483d3042b8ee677a7405259"
@@ -470,15 +2153,15 @@
         1.475
       ],
       "rotation": [
-        0,
-        0,
-        0,
-        1
+        0.0,
+        0.0,
+        0.0,
+        1.0
       ],
       "scale": [
         0.113919996,
         0.07124,
-        1
+        1.0
       ],
       "skinGuids": [
         "a53564d13106a29468ca9657720e1a9f"
@@ -488,6 +2171,5 @@
         "boot toes.png"
       ]
     }
-  ],
-  "runtimeBuild": "separate Mission 01 original-asset movement prototype"
+  ]
 }
