@@ -31,10 +31,16 @@ This proves one original combined mesh can be decoded and displayed in a browser
 
 The static scene manifest contains 3,160 serialized records, 698 GameObjects, 302 MeshFilters, 302 MeshRenderers, and 646 MonoBehaviour records. 470 GameObjects contain at least one MonoBehaviour component according to the heuristic extraction.
 
-The corrected recursive asset-reference audit reached 417 readable serialized assets and 708 dependency edges. It now reports one unresolved serialized asset GUID: `b4b69dc6c74eeb54cbd22d28e37f9a19`, referenced by the .308 casing/projectile prefabs. A similarly named casing mesh exists with a different GUID, so no substitution has been made.
+The corrected recursive asset-reference audit reached 417 readable serialized assets and 708 dependency edges. It now reports one unresolved serialized asset GUID: `b4b69dc6c74eeb54cbd22d28e37f9a19`, referenced by the .308 casing/projectile prefabs. A similarly named casing mesh exists with a different GUID, so no substitution has been made. See [issue #5](https://github.com/ethan-bailey/crisis-response-port/issues/5).
 
 ## C# WebAssembly runtime gate: first two passes passed
 
 In [workflow run 38590382729](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38590382729), a .NET 8 Blazor WebAssembly app compiled the original decompiled `Target.cs`, ran in Chromium, and invoked its original private `Awake` method. The test passed the component attachment/GetComponent behavior and reported zero browser errors. The `CharacterBody` type was a test fixture, and the shim implemented only a tiny part of UnityEngine; this is not a playable slice or a parity claim.
 
-undefined
+The second pass, [workflow run 38590980350](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38590980350), also compiled original `BallisticMaterialProperties.cs`, checked its default material values and ran in Chromium with zero errors. It used minimal `Vector2` and inspector-attribute shims; `CharacterBody` and ballistic effect classes were fixtures, not the original game classes.
+
+## Current expansion: original ballistics method
+
+The next test compiles the original `BallisticMaterial.cs` without rewriting it and invokes its original static `ChannelVolume` method with a deterministic reference case. This adds Unity math/transform type stubs only to satisfy compilation; those stubs are not being presented as a full physics implementation. Current run: https://github.com/ethan-bailey/crisis-response-port/actions/runs/38591962729. The full penetration, deflection, fragmentation and collision paths remain unimplemented and untested.
+
+The broader API inventory and implementation gaps are recorded in [the Unity API compatibility matrix](UNITY_API_COMPATIBILITY_MATRIX_WASM_2026-10-14.md). Unity's licensed build path remains blocked by missing license secrets. No full-game browser build exists, and no 1:1 parity claim is justified yet.
