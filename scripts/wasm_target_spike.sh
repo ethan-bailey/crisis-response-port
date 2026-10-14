@@ -75,7 +75,7 @@ cat > "$OUT_ROOT/app/Pages/Home.razor" <<'RAZOR'
     }
 }
 RAZOR
-dotnet publish "$OUT_ROOT/app" --configuration Release --output "$OUT_ROOT/published"
+dotnet publish "$OUT_ROOT/app" --configuration Release --output "$OUT_ROOT/published" -p:PublishTrimmed=false
 cat > "$OUT_ROOT/wasm-spike-report.md" <<EOF
 # C# WebAssembly compatibility spike
 
