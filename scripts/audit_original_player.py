@@ -70,7 +70,7 @@ def main():
 
     runtime_prefabs = []
     for prefab in sorted(assets.rglob("*.prefab")):
-        if prefab.stem.lower() not in {"operator", "marksman", "occupant"}:
+        if prefab.stem.lower() not in {"operator", "marksman", "occupant", "pelvis", "abdomen", "torso", "head", "neck", "upper leg", "lower leg", "foot", "toes", "upper arm", "lower arm", "hand", "eye", "mouth", "helmet"}:
             continue
         ptext = prefab.read_text(errors="ignore")
         refs = sorted(set(GUID.findall(ptext)))
