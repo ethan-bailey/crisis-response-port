@@ -1,0 +1,50 @@
+name: Browser character movement smoke test
+
+on:
+  push:
+    paths:
+      - "index.html"
+      - "marksman-combined.obj"
+      - "scripts/browser_character_smoke.mjs"
+      - ".github/workflows/browser-character-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: crisis-response-character-smoke
+  cancel-in-progress: true
+
+jobs:
+  character-movement:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        name: Check out port
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install browser test dependencies
+        run: |
+          npm init -y
+          npm install --no-audit --no-fund playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Serve browser build
+        run: |
+          python3 -m http.server 8000 >/tmp/crisis-character-server.log 2>&1 &
+          echo $! > /tmp/crisis-character-server.pid
+          sleep 2
+      - name: Verify scene loads and character actually moves
+        run: node scripts/browser_character_smoke.mjs
+      - name: Upload character movement evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crisis-response-character-movement-smoke
+          path: |
+            character-movement-smoke.json
+            character-movement-smoke.png
+          if-no-files-found: warn
+          retention-days: 30
