@@ -95,7 +95,14 @@ def main():
             if tex_url:
                 exported.append({"gameObjectFileID":renderer["gameObject"],"name":go["name"],"texture":tex_url,
                                  "material":texref.get("material") if texref else None})
+        rpm=re.search(r"roundsPerMinute:\s*([0-9.]+)",text)
+        reload=re.search(r"reloadTime:\s*([0-9.]+)",text)
+        ammo=re.search(r"defaultAmmunition:\s*\{fileID: -?\d+, guid: ([0-9a-f]{32})",text)
+        ammo_path=guid_path.get(ammo.group(1)) if ammo else None
         report={"sourcePrefab":str(prefab.relative_to(root)),"nodes":nodes,"renderers":exported,
+                "stats":{"roundsPerMinute":float(rpm.group(1)) if rpm else 600,
+                         "reloadTime":float(reload.group(1)) if reload else 1,
+                         "defaultAmmunition":str(ammo_path.relative_to(root)) if ammo_path else None},
                 "nodeCount":len(nodes),"rendererCount":len(exported),"textureCount":len(texture_map)}
         (out/"weapon.json").write_text(json.dumps(report,indent=2))
         print(weapon,"nodes",len(nodes),"renderers",len(exported),"textures",len(texture_map))
