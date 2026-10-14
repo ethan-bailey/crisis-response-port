@@ -10,10 +10,10 @@
 | Confirm engine and player | Complete | Unity 2017.2.0f3; Windows x86 Mono player. |
 | Inspect managed assembly metadata | Complete | 1,534 types; 8,640 methods; 9,025 fields; 1,112 properties in `Assembly-CSharp.dll`. |
 | Map gameplay symbols | Initial pass complete | Type and method names are present in metadata/string heaps. This is not source decompilation. |
-| Decompile C# assemblies | Blocked in current environment | No ILSpy/monodis/.NET runtime available and package download is unavailable. |
-| Export Unity assets/scenes | Not started | Requires an asset extraction tool such as AssetRipper or UnityPy and inspection of recovered output. |
-| Reconstruct Unity project | Not started | Compiled player archive lacks original `Assets/` and `ProjectSettings/` project structure. |
-| Produce WebGL build | Not started | Requires a compatible Unity Editor and reconstructed project; no verified build currently exists. |
+| Decompile C# assemblies | Complete in cloud runner | ILSpy produced 1,333 C# files from the gameplay assembly whose SHA-256 matches the user's original archive. Decompiled source is included in the recovery artifact. |
+| Export Unity assets/scenes | Complete | AssetRipper CLI exported 7,231 files (about 169 MiB) including six scenes, scripts, assets, and project settings. |
+| Reconstruct Unity project | Initial recovery complete | AssetRipper reconstructed an editable Unity project with `Assets/`, `ProjectSettings/`, `Packages/manifest.json`, and scenes. It may need repairs and is not yet verified to compile. |
+| Produce WebGL build | Blocked on Unity activation | A cloud WebGL build workflow is in place. No Unity license secrets are configured; the retired activation-file action was removed. The build is skipped until the repository has valid `UNITY_LICENSE`, `UNITY_EMAIL`, and `UNITY_PASSWORD` Actions secrets. |
 | iPhone Safari testing | Not started | Requires a WebGL build and actual browser/device test pass. |
 | Behavioral parity tests | Not started | Must be based on observed original-game behavior and linked to specific systems. |
 
@@ -55,5 +55,6 @@ The current Unity 6.0 system requirements list iOS Safari 15+ as a supported bro
 ## Immediate blockers
 
 - The original C# source and editable Unity project are absent from the archive.
-- The current workspace lacks a C# decompiler/.NET runtime and a Unity Editor.
-- A faithful WebGL build cannot be honestly claimed until project reconstruction, compilation, runtime testing, and subsystem comparisons succeed.
+- The original C# source and editable Unity project were absent; ILSpy and AssetRipper have now recovered a decompiled codebase and a Unity project in a cloud runner.
+- Unity WebGL compilation still requires a valid Unity activation/license in GitHub Actions. This account has no Unity license secrets configured, and the current GameCI activation-file action is retired.
+- A faithful WebGL build cannot be honestly claimed until the recovered project compiles, runs in Safari, and passes subsystem comparisons.
