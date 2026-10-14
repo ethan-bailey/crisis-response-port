@@ -12,6 +12,7 @@ on:
       - "scripts/scene_dependency_audit.py"
       - "scripts/unity_api_inventory.py"
       - "scripts/scene_manifest.py"
+      - "scripts/validate_scene_manifest.py"
       - "scripts/unity_mesh_to_obj.py"
       - "scripts/browser_mesh_smoke.mjs"
       - "runtime-spike/mesh-viewer/index.html"
@@ -170,6 +171,22 @@ jobs:
           name: crisis-response-marksman-range-scene-manifest
           path: work/MARKSMAN_RANGE_SCENE_MANIFEST.json
           if-no-files-found: error
+          retention-days: 30
+
+      - name: Validate Marksman range scene hierarchy and component references
+        run: |
+          set -euo pipefail
+          python3 scripts/validate_scene_manifest.py \
+            work/MARKSMAN_RANGE_SCENE_MANIFEST.json \
+            work/MARKSMAN_RANGE_SCENE_VALIDATION.json
+
+      - name: Upload scene hierarchy validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crisis-response-marksman-range-hierarchy-validation
+          path: work/MARKSMAN_RANGE_SCENE_VALIDATION.json
+          if-no-files-found: warn
           retention-days: 30
 
       - name: Inventory Unity API use in recovered C# source
