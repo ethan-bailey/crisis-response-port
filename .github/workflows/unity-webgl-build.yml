@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - ".github/workflows/unity-webgl-build.yml"
+      - "scripts/webgl_preflight.py"
   workflow_dispatch:
 
 permissions:
@@ -31,6 +32,23 @@ jobs:
           test -f work/recovery-artifact/export/ExportedProject/ProjectSettings/ProjectVersion.txt
           cat work/recovery-artifact/export/ExportedProject/ProjectSettings/ProjectVersion.txt
 
+      - name: Run static WebGL preflight
+        run: |
+          set -euo pipefail
+          python3 scripts/webgl_preflight.py \
+            work/recovery-artifact/export/ExportedProject \
+            work/WEBGL_PREFLIGHT.md
+          cat work/WEBGL_PREFLIGHT.md
+
+      - name: Upload static preflight report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crisis-response-webgl-preflight
+          path: work/WEBGL_PREFLIGHT.md
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Check Unity license secrets
         id: license-check
         env:
@@ -43,7 +61,7 @@ jobs:
             echo "Unity license secrets are present; attempting WebGL build."
           else
             echo "ready=false" >> "$GITHUB_OUTPUT"
-            echo "Unity license secrets are not configured. The Unity build will be skipped; configure Unity credentials/license in GitHub Actions secrets to proceed."
+            echo "Unity license secrets are not configured. The Unity build will be skipped; configure valid Unity credentials/license in GitHub Actions secrets to proceed."
           fi
 
       - name: Build WebGL player
@@ -78,12 +96,13 @@ jobs:
             echo
             echo "- Recovery run: https://github.com/ethan-bailey/crisis-response-port/actions/runs/38582072502"
             if [ "${{ steps.license-check.outputs.ready }}" = "true" ]; then
-              echo "- Unity license secrets: configured; check the Unity build step and its output artifact."
+              echo "- Unity license secrets: configured; inspect the Unity build step and output artifact."
             else
-              echo "- Unity license secrets: missing. The recovered project is ready for a licensed build, but Unity activation is required. Add UNITY_LICENSE, UNITY_EMAIL, and UNITY_PASSWORD as GitHub Actions secrets; do not send them in chat."
+              echo "- Unity license secrets: missing. The static preflight runs without them, but a Unity build requires valid activation."
+              echo "- Configure UNITY_LICENSE, UNITY_EMAIL, and UNITY_PASSWORD as GitHub Actions secrets only if a valid license is available; do not send them in chat."
               echo "- No license credentials were requested in chat or committed to the repository."
             fi
-            echo "- The source project is Unity 2017.2.0f3. A successful compilation still needs runtime checks and parity tests before it can be called a working port."
+            echo "- The source project is Unity 2017.2.0f3. Static scan results are not compiler errors. A successful compilation still needs runtime checks and parity tests before it can be called a working port."
           } > work/WEBGL_BUILD_GATE.md
           cat work/WEBGL_BUILD_GATE.md
 
