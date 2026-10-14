@@ -259,7 +259,7 @@ cat > "$OUT_ROOT/app/Pages/Home.razor" <<'RAZOR'
 
 <h1>Crisis Response — original ballistics code in WebAssembly</h1>
 <p id="result">@_result</p>
-<p id="scope">This browser app compiles and executes original decompiled Target.cs, BallisticMaterialProperties.cs, and BallisticMaterial.cs. The collision control below invokes the original BallisticMaterial.HandleProjectile method. Unity APIs and dependent game types remain minimal test fixtures; this is a gameplay-system slice, not a complete game.</p>
+<p id="scope">This browser app compiles and executes recovered original Target.cs, BallisticMaterialProperties.cs, BallisticMaterial.cs, and Projectile.cs. The collision control invokes the original BallisticMaterial.HandleProjectile method and original Projectile energy / penetration methods. Unity APIs and dependent game types remain minimal test fixtures; this is a gameplay-system slice, not a complete game.</p>
 <section class="card p-3 mt-3" aria-labelledby="shot-heading">
   <h2 id="shot-heading">Original projectile / material interaction</h2>
   <label for="energy">Projectile energy: @_energy</label>
@@ -267,7 +267,7 @@ cat > "$OUT_ROOT/app/Pages/Home.razor" <<'RAZOR'
   <label for="thickness">Surface thickness: @_thickness.ToString("F2")</label>
   <input id="thickness" type="range" min="0.01" max="0.50" step="0.01" @bind="_thickness" />
   <label class="form-check mt-2"><input id="impenetrable" class="form-check-input" type="checkbox" @bind="_impenetrable" /> Impenetrable material (forces the original method to stop the projectile and zero its remaining energy)</label>
-  <p class="text-muted">Start with this off to test penetration. The result uses original collision code with simplified projectile/Unity fixtures.</p>
+  <p class="text-muted">Start with this off to test penetration. Surface thickness is adjustable; the test slab depth is fixed at 0.10 m. Projectile energy and penetration calculations use original Projectile.cs; Unity physics and effects remain simplified fixtures.</p>
   <button id="runShot" class="btn btn-primary mt-3" @onclick="RunShot">Run original collision method</button>
   <pre id="shotResult" class="mt-3">@_shotResult</pre>
 </section>
