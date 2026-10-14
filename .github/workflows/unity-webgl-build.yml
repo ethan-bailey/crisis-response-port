@@ -157,6 +157,10 @@ jobs:
           print("Class counts:", data["classCounts"])
           print("Objects with scripts:", sum(any(c.get("script") for c in o.get("componentDetails", [])) for o in data["gameObjects"]))
           print("Objects with mesh filters:", sum(any(c.get("className") == "MeshFilter" for c in o.get("componentDetails", [])) for o in data["gameObjects"]))
+          print("Hierarchy roots:", len(data["hierarchy"]["rootGameObjectFileIDs"]))
+          print("Parent-child edges:", data["hierarchy"]["parentChildEdges"])
+          print("Objects without transform:", len(data["hierarchy"]["gameObjectsWithoutTransform"]))
+          print("Unresolved parent refs:", len(data["hierarchy"]["unresolvedParentTransformReferences"]))
           PY
 
       - name: Upload original scene manifest
