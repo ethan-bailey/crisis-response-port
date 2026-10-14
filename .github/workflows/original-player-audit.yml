@@ -1,0 +1,38 @@
+name: Audit original Mission 01 player dependencies
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/audit_original_player.py"
+      - ".github/workflows/original-player-audit.yml"
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  audit-original-player:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download verified private recovery artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p work/recovery
+          gh run download 38582072502 --repo "$GITHUB_REPOSITORY" --name crisis-response-recovery-direct-v3-1 --dir work/recovery
+          test -f work/recovery/export/ExportedProject/Assets/Scenes/Mission\ 01.unity
+      - name: Find original player, controller, and weapon references
+        run: |
+          set -euo pipefail
+          python3 scripts/audit_original_player.py work/recovery/export/ExportedProject work/ORIGINAL_MISSION01_PLAYER_AUDIT.json
+          cat work/ORIGINAL_MISSION01_PLAYER_AUDIT.json
+      - name: Upload original player dependency audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: crisis-response-original-mission01-player-audit
+          path: work/ORIGINAL_MISSION01_PLAYER_AUDIT.json
+          retention-days: 30
