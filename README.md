@@ -26,6 +26,7 @@ A separate generated file named `CrisisResponseMobile_iPhone.zip` is a from-scra
 - Verified gameplay assembly metadata: 1,534 types and 8,640 methods in `Assembly-CSharp.dll`.
 - Original C# source and editable Unity project structure are not present in the archive.
 - Cloud recovery completed successfully using a signed official mirror. The downloaded gameplay DLL exactly matches the SHA-256 recorded from the user's archive; ILSpy produced 1,333 C# files and AssetRipper exported a 7,231-file Unity project. See the recovery report for the artifact link and remaining gates.
-- No verified faithful WebGL build exists yet; decompilation, asset export, reconstruction, compilation, and behavioral tests remain.
+- No verified faithful browser build exists yet. The new cloud dependency audit successfully traversed 417 readable serialized assets and 708 dependency edges from the original Marksman range scene; seven non-built-in GUIDs remain unresolved. This is static analysis, not a renderer, compiler, or gameplay test.
+- The WebAssembly engine-replacement plan is now tracked in [issue #4](https://github.com/ethan-bailey/crisis-response-port/issues/4).
 
 The goal is to preserve original logic and assets wherever possible, document unavoidable changes, and validate behavior subsystem by subsystem. Do not claim full parity without evidence and tests.
