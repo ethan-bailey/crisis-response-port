@@ -8,7 +8,7 @@ page.on("pageerror", e => errors.push(e.message));
 page.on("console", m => { if (m.type() === "error") errors.push(m.text()); });
 try {
   await page.goto("http://127.0.0.1:8000/game/", { waitUntil: "networkidle", timeout: 90000 });
-  await page.waitForFunction(() => window.__gameState?.().loaded || document.querySelector("#error")?.style.display === "block", { timeout: 90000 });
+  await page.waitForFunction(() => window.__gameState?.().loaded && window.__gameState?.().weaponsLoaded || document.querySelector("#error")?.style.display === "block", { timeout: 90000 });
   const before = await page.evaluate(() => window.__gameState?.() ?? null);
   if (!before?.loaded) throw new Error("Game runtime did not finish loading: " + (await page.locator("#error").textContent()));
   const rightBox = await page.locator("#right").boundingBox();
@@ -16,13 +16,17 @@ try {
   await page.mouse.down();
   await page.waitForTimeout(700);
   await page.mouse.up();
+  const afterMove = await page.evaluate(() => window.__gameState?.() ?? null);
+  const moved = !!afterMove && afterMove.playerX > before.playerX + 0.05;
+  await page.mouse.click(850, 360);
+  await page.waitForTimeout(100);
   const after = await page.evaluate(() => window.__gameState?.() ?? null);
-  const moved = !!after && after.playerX > before.playerX + 0.05;
+  const fired = !!after && after.ammo < afterMove.ammo;
   await page.screenshot({ path: "mission01-game-smoke.png", fullPage: true });
-  const result = { before, after, moved, errors };
+  const result = { before, afterMove, after, moved, fired, errors };
   fs.writeFileSync("mission01-game-smoke.json", JSON.stringify(result, null, 2));
   console.log(JSON.stringify(result, null, 2));
-  if (!before.sceneMesh || before.limbCount < 10 || !moved || after.animation !== "Body walk" || errors.length) process.exitCode = 1;
+  if (!before.sceneMesh || !before.weaponsLoaded || before.limbCount < 10 || !moved || afterMove.animation !== "Body walk" || !fired || errors.length) process.exitCode = 1;
 } finally {
   await browser.close();
 }
