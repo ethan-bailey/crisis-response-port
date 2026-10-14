@@ -79,6 +79,32 @@ def main():
         if parent not in ("0","") and parent in transforms: result=compose(world(parent,stack),local)
         cache[tid]=result; return result
     out.mkdir(parents=True,exist_ok=True); (out/"skins").mkdir(exist_ok=True)
+    node_paths={}
+    def node_path(tid, stack=None):
+        if tid in node_paths: return node_paths[tid]
+        stack=stack or set()
+        if tid in stack: return ""
+        stack.add(tid)
+        t=transforms[tid]; obj=objects.get(t["gameObject"],{"name":"unknown"})
+        name=obj["name"]; parent=t["parent"]
+        if parent not in ("0","") and parent in transforms:
+            pp=node_path(parent,stack)
+            result=(name if pp=="" else pp+"/"+name)
+        else:
+            result=""
+        node_paths[tid]=result
+        return result
+    nodes=[]
+    for tid,t in transforms.items():
+        obj=objects.get(t["gameObject"],{"name":"unknown","components":[]})
+        parent=t["parent"]
+        parent_go=transforms[parent]["gameObject"] if parent not in ("0","") and parent in transforms else None
+        lp=t["position"]; lp=[lp[0],lp[1],-lp[2]]
+        lq=t["rotation"]; lq=[-lq[0],-lq[1],lq[2],lq[3]]
+        nodes.append({"transformFileID":tid,"gameObjectFileID":t["gameObject"],"name":obj["name"],
+                      "parentTransformFileID":parent if parent not in ("0","") else None,
+                      "parentGameObjectFileID":parent_go,"path":node_path(tid),
+                      "position":lp,"rotation":lq,"scale":t["scale"]})
     limbs=[]; copied={}
     for comp in component_records:
         script=guid_path.get(comp["scriptGuid"])
@@ -106,9 +132,9 @@ def main():
         limbs.append({"name":go["name"],"gameObjectFileID":comp["gameObject"],"transformFileID":tid,
                       "position":pos,"rotation":rot,"scale":scale,"skinGuids":comp["skinGuids"],
                       "texture":texture_url,"skinCandidates":[guid_path[g].name for g in comp["skinGuids"] if g in guid_path]})
-    report={"sourcePrefab":"Assets/Resources/characters/Operator.prefab","limbRendererCount":len(limbs),
-            "texturedLimbCount":sum(1 for x in limbs if x["texture"]),"copiedTextureCount":len(copied),
-            "limbs":limbs}
+    report={"sourcePrefab":"Assets/Resources/characters/Operator.prefab","nodeCount":len(nodes),
+            "limbRendererCount":len(limbs),"texturedLimbCount":sum(1 for x in limbs if x["texture"]),
+            "copiedTextureCount":len(copied),"nodes":nodes,"limbs":limbs}
     (out/"operator.json").write_text(json.dumps(report,indent=2))
     print(json.dumps({k:report[k] for k in ("sourcePrefab","limbRendererCount","texturedLimbCount","copiedTextureCount")},indent=2))
     for limb in limbs: print(limb["name"],limb["position"],limb["scale"],limb["texture"])
