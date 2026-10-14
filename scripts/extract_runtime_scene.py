@@ -12,6 +12,15 @@ HEADER = re.compile(r'^--- !u!(\d+) &(-?\d+)(?: stripped)?\s*$', re.M)
 GUID = re.compile(r'guid: ([0-9a-f]{32})')
 
 
+def execution_value(value, key=None):
+    # Unity prefab references exceed JavaScript's exact integer range. Keep
+    # identity values decimal strings through every JSON/JS/.NET boundary.
+    if isinstance(value, dict): return {k:execution_value(v,k) for k,v in value.items()}
+    if isinstance(value, list): return [execution_value(v) for v in value]
+    if isinstance(value, int) and (key=='fileID' or abs(value)>2**53-1): return str(value)
+    return value
+
+
 def parse_asset(path, relative):
     data = path.read_bytes()
     try: text = data.decode('utf-8')
@@ -25,7 +34,7 @@ def parse_asset(path, relative):
         if not isinstance(parsed, dict) or len(parsed) != 1: raise ValueError(f'Bad record {relative}:{match.group(2)}')
         kind, fields = next(iter(parsed.items()))
         records.append({'fileID':match.group(2), 'classID':int(match.group(1)), 'className':kind,
-            'fields':fields, 'rawYaml':raw})
+            'fields':execution_value(fields), 'rawYaml':raw})
     return {'path':relative, 'sha256':hashlib.sha256(data).hexdigest(), 'sourceText':text,
         'records':records, 'externalGuids':sorted(set(GUID.findall(text)))}
 

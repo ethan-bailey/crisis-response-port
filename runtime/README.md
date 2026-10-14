@@ -28,6 +28,7 @@ they do not execute firing, flight, collision, fragmentation spawning or damage.
 - Parent/child transforms preserving serialized child order, local position,
   quaternion rotation and scale; world/inverse conversions; cycle checks and
   reparenting. Sheared reparenting that cannot be decomposed fails explicitly.
+  RectTransform spatial records are imported, but UI anchoring/layout is not implemented.
 - Supported Awake, OnEnable, Start, FixedUpdate, Update, LateUpdate, OnDisable and
   OnDestroy dispatch. Cross-script Unity execution-order parity is not verified.
 - Scaled/unscaled time, fixed-step accumulation, pause, and maximum allowed timestep.
@@ -64,6 +65,8 @@ The expanded extraction contains **818 assets and 20,952 serialized records**.
 All 55 seed asset source texts were checked against the recovered source bytes.
 31 unresolved GUID *references* are reported; this is not 31 distinct missing assets.
 Serialized dependencies outside the current executable scope remain inventoried.
+All serialized reference fileIDs are decimal strings in the execution view so
+large Unity prefab identifiers survive JavaScript without integer rounding.
 
 `SceneLoader` reconstructs both scene object hierarchies and supported components:
 

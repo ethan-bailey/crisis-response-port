@@ -4,6 +4,8 @@ import assert from 'node:assert/strict';
 
 const reports=[];
 const packageData=JSON.parse(fs.readFileSync('work/runtime/scene-execution.json','utf8'));
+const originalAmmoRecords=packageData.assets['Assets/Resources/weapons/ammunition/5.56-JHP.prefab'].records;
+assert.equal(originalAmmoRecords.find(r=>r.classID===114).fields.projectile.fileID,'114703437598541787','Unity reference identity must survive JS parsing');
 const packageFor=path=>JSON.stringify({guidPaths:packageData.guidPaths,assets:{
  [path]:packageData.assets[path],
  'ProjectSettings/TimeManager.asset':packageData.assets['ProjectSettings/TimeManager.asset']
