@@ -64,12 +64,14 @@ def main():
         if any(t in lname for t in ("player", "firstperson", "first person", "fpscontroller", "character")): score += 3
         if any(t in scripts for t in ("player", "charactercontroller", "movement", "firstperson", "fpscontroller")): score += 4
         if any(t in scripts for t in ("weapon", "inventory", "input")): score += 1
-        if score:
+        # Keep every script-bearing object, including generated/opaque object names.
+        if score or any(comp.get("classID") == 114 for comp in comps):
             records.append({"score": score, "name": name, "gameObjectFileID": obj["fileID"], "components": comps})
     records.sort(key=lambda x: (-x["score"], x["name"]))
+    all_scripts = sorted({comp.get("scriptPath") for item in records for comp in item["components"] if comp.get("scriptPath")})
     output = {"sourceScene": str(scene.relative_to(root)), "sceneObjectCount": len(objects),
               "sceneComponentCount": len(components), "scriptGuidCount": len(script_guid),
-              "candidates": records}
+              "scriptBearingObjectCount": len(records), "scriptPaths": all_scripts, "candidates": records}
     out = Path(sys.argv[2]); out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(output, indent=2), encoding="utf-8")
     print(f"Objects: {len(objects)}; components: {len(components)}; candidate player/controller objects: {len(records)}")
