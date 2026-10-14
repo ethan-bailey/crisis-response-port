@@ -76,6 +76,15 @@ def main():
         refs = sorted(set(GUID.findall(ptext)))
         resolved = [{"guid": g, "path": guid_to_asset.get(g)} for g in refs]
         component_scripts = sorted({guid_to_asset[g] for g in refs if g in guid_to_asset and guid_to_asset[g].endswith(".cs")})
+        mesh_refs = []
+        for cls, fid, body in docs(ptext):
+            if cls in (33, 137) and "m_Mesh:" in body:
+                tail = body.split("m_Mesh:", 1)[1]
+                gm = re.search(r"guid: ([0-9a-f]{32})", tail)
+                go = re.search(r"m_GameObject:\\s*\\{fileID: (-?\\d+)\\}", body)
+                if gm:
+                    mesh_refs.append({"classID": cls, "gameObjectID": go.group(1) if go else None,
+                                      "guid": gm.group(1), "path": guid_to_asset.get(gm.group(1))})
         runtime_prefabs.append({"path": str(prefab.relative_to(root)), "bytes": len(ptext.encode("utf-8")),
                                 "gameObjectNames": [m.group(1).strip() for m in NAME.finditer(ptext)],
                                 "scriptComponents": component_scripts,
