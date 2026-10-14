@@ -48,6 +48,10 @@ The Unity serialized files identify themselves as Unity `2017.2.0f3`. A prelimin
 
 The current official [AssetRipper documentation](https://assetripper.github.io/AssetRipper/docs/index.html) says it supports Unity versions from 3.5.0 through 6000.4.x, with version-dependent support quality. Unity asset export is therefore a reasonable next tool-assisted step once a runnable build of AssetRipper is available.
 
+## iPhone web-runtime feasibility note
+
+The current Unity 6.0 system requirements list iOS Safari 15+ as a supported browser target ([Unity 6.0 system requirements](https://docs.unity3d.com/6000.0/Documentation/Manual/system-requirements.html)). That establishes a possible modern Web runtime target, **not** a guarantee that this recovered Unity 2017 game will compile or perform acceptably on iPhone. The old project must be reconstructed and migrated as needed, then tested for startup memory, frame time, touch controls, audio, and browser lifecycle behavior.
+
 ## Immediate blockers
 
 - The original C# source and editable Unity project are absent from the archive.
