@@ -81,7 +81,7 @@ def main():
             if cls in (33, 137) and "m_Mesh:" in body:
                 tail = body.split("m_Mesh:", 1)[1]
                 gm = re.search(r"guid: ([0-9a-f]{32})", tail)
-                go = re.search(r"m_GameObject:\\s*\\{fileID: (-?\\d+)\\}", body)
+                go = re.search(r"m_GameObject:\s*\{fileID: (-?\d+)\}", body)
                 if gm:
                     mesh_refs.append({"classID": cls, "gameObjectID": go.group(1) if go else None,
                                       "guid": gm.group(1), "path": guid_to_asset.get(gm.group(1))})
