@@ -1,0 +1,42 @@
+name: Mission 01 separate game movement smoke test
+
+on:
+  push:
+    paths:
+      - "game/assets/mission01.obj"
+      - "game/assets/operator/operator.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  game-movement:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install browser test dependencies
+        run: |
+          npm init -y
+          npm install --no-audit --no-fund playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Serve the separate game build
+        run: |
+          python3 -m http.server 8000 >/tmp/crisis-game-server.log 2>&1 &
+          sleep 2
+      - name: Verify original scene, original Operator textures, and movement
+        run: node scripts/game_movement_smoke.mjs
+      - name: Upload separate game build evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crisis-response-mission01-game-smoke
+          path: |
+            mission01-game-smoke.json
+            mission01-game-smoke.png
+          if-no-files-found: warn
+          retention-days: 30
