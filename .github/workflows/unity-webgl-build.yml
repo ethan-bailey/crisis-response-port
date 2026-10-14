@@ -19,10 +19,11 @@ on:
       - "runtime-spike/mesh-viewer/index.html"
       - "scripts/wasm_target_spike.sh"
       - "scripts/wasm_target_smoke.mjs"
+      - "scripts/replace_missing_308_casing_mesh.py"
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   actions: read
 
 jobs:
@@ -45,6 +46,11 @@ jobs:
             --dir work/recovery-artifact
           test -f work/recovery-artifact/export/ExportedProject/ProjectSettings/ProjectVersion.txt
           cat work/recovery-artifact/export/ExportedProject/ProjectSettings/ProjectVersion.txt
+
+      - name: Apply the user-approved best-effort .308 casing mesh substitution
+        run: |
+          set -euo pipefail
+          python3 scripts/replace_missing_308_casing_mesh.py work/recovery-artifact/export/ExportedProject --write
 
       - name: Run static WebGL preflight
         run: |
@@ -140,6 +146,25 @@ jobs:
             work/wasm-target-smoke.png
           if-no-files-found: warn
           retention-days: 30
+
+      - name: Publish the compiled original-C# WebAssembly gate to the browser site
+        if: steps.wasm_build.outcome == 'success'
+        run: |
+          set -euo pipefail
+          test -f work/wasm-target/published/wwwroot/index.html
+          mkdir -p wasm-ballistics
+          cp -a work/wasm-target/published/wwwroot/. wasm-ballistics/
+          # Blazor is hosted below a subpath on the static Vercel site.
+          sed -i 's#<base href="/" />#<base href="/wasm-ballistics/" />#' wasm-ballistics/index.html
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f wasm-ballistics
+          if git diff --cached --quiet; then
+            echo "Generated WebAssembly site is unchanged."
+          else
+            git commit -m "Publish original C# WebAssembly compatibility gate"
+            git push
+          fi
 
       - name: Extract original Marksman range scene manifest
         run: |
