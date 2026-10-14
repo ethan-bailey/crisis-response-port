@@ -1,76 +1,83 @@
-# Porting status and parity gates
+# Marksman range scene dependency audit — 2026-10-14
 
-## Current verified status
+## Scope and method
 
-| Work item | Status | Evidence / remaining work |
-|---|---|---|
-| Locate original archive | Complete | `Crisis Response.rar` was found in the user's ChatGPT Library. |
-| Extract original files | Complete | 415 regular files / 204,344,165 bytes extracted without reported errors. |
-| Record original hashes | Complete locally | Archive SHA-256 and per-file SHA-256 manifest generated; binary assets are not committed to Git. |
-| Confirm engine and player | Complete | Unity 2017.2.0f3; Windows x86 Mono player. |
-| Inspect managed assembly metadata | Complete | 1,534 types; 8,640 methods; 9,025 fields; 1,112 properties in `Assembly-CSharp.dll`. |
-| Map gameplay symbols | Initial pass complete | Type and method names are present in metadata/string heaps. This is not source decompilation. |
-| Decompile C# assemblies | Complete in cloud runner | ILSpy produced 1,333 C# files from the gameplay assembly whose SHA-256 matches the user's original archive. Decompiled source is included in the recovery artifact. |
-| Export Unity assets/scenes | Complete | AssetRipper CLI exported 7,231 files (about 169 MiB) including six scenes, scripts, assets, and project settings. |
-| Reconstruct Unity project | Initial recovery complete | AssetRipper reconstructed an editable Unity project with `Assets/`, `ProjectSettings/`, `Packages/manifest.json`, and scenes. It may need repairs and is not yet verified to compile. |
-| Static WebGL compatibility audit | Complete (static scan only) | `docs/WEBGL_COMPATIBILITY_AUDIT_2026-10-14.md` records likely blockers: threaded `System.Net.WebRequest` calls, Windows Registry access, desktop file-browser/filesystem assumptions, and touch input work. These are candidates to test, not confirmed compile errors. |
-| Produce WebGL build | Blocked on Unity activation | A cloud WebGL build workflow is in place. No Unity license secrets are configured; the retired activation-file action was removed. The build is skipped until the repository has valid `UNITY_LICENSE`, `UNITY_EMAIL`, and `UNITY_PASSWORD` Actions secrets. |
-| iPhone Safari testing | Not started | Requires a WebGL build and actual browser/device test pass. |
-| Behavioral parity tests | Not started | Must be based on observed original-game behavior and linked to specific systems. |
+Static inspection of the recovered AssetRipper project at `Assets/Scenes/Marksman range.unity`. This is a data-level inventory only; it does not execute Unity, validate references in the original editor, or prove runtime parity.
 
-## Subsystem parity matrix
+## Scene measurements
 
-No subsystem is marked as implemented or parity-verified merely because its symbols exist in the assembly.
+- Scene YAML size: 1,475,238 bytes.
+- GameObject records: 698.
+- Transform records: 586.
+- MonoBehaviour records: 646.
+- MeshRenderer records: 302.
+- MeshFilter records: 302.
+- Unique GUID references in scene text: 129, across 1,910 GUID occurrences.
+- Two non-built-in GUIDs were not resolved by the direct scene scan. The recursive scan found seven unresolved non-built-in GUIDs across the scene's reachable serialized assets. These need explicit investigation before claiming the dependency closure is self-contained.
 
-| Subsystem | Evidence found in assembly | Parity evidence required |
-|---|---|---|
-| Character locomotion, animation, ragdolls | `CharacterBody` (311 methods), `Limb`, `IKArmController` | Matched scenarios, movement/animation state transitions, collision and ragdoll outcomes |
-| AI and team behavior | `CharacterBehavior`, `TeamOperator`, `TeamController` (`CommandMoveTo`, `CommandMoveOut`, `CommandHoldPosition`, `IssueRulesOfEngagement`), `Blackboard` | Decision traces for visibility, threat response, commands, cover, restraint, and team coordination |
-| Weapons, aiming, reloads, malfunctions | `WeaponBase` (141 methods), `Firearm`, `WeaponAimer`, `CyclingBolt` | Weapon configuration, input sequences, ammo transitions, recoil, malfunction and reload outcomes |
-| Ballistics and damage | `Projectile` (126 methods), `BallisticMaterial` (`HandleProjectile`, `EnergyToPenetrateSurface`, `DeflectProjectile`), `ProjectileLimbEvent` | Reproducible shots across materials, penetration/deflection, damage and hit-location results |
-| Doors and traps | `DoorController` (`SetOpen`, `SetClosed`, `ForceOpen`, `ForceClose`), `DoorTrap`, `DoorExplosive` | Lock/open/breach/trap scenarios and corresponding AI path/decision behavior |
-| Grenades and explosions | `Grenade` (`PullPin`, `StartFuse`, `Throw`, `Detonate`), `FragmentationGrenade` | Fuse timing, blast effects, stun/fragmentation outcomes, door/room interactions |
-| Physiology, wounds, bleeding | `Physiology` (119 methods), `LimbPhysiology` (`CreateWound`, `UpdateHemorrhaging`, `InflictVitalTrauma`), `VitalFunctions`, `Wound` | Injury progression, blood loss, consciousness, treatment, vital state transitions |
-| Missions, campaigns, scoring, saves | `Mission` (128 methods), `CampaignManager` (`ProgressCampaign`, `StartMission`, `ContinueCampaign`, `SetMissionCompleted`), `ScoreKeeper` (92 methods) | Mission completion/failure, score calculations, persistence and load/resume |
-| UI, menus, input/settings | `MainMenu`, `PauseMenu`, `InputHandler` (`StartBinding`, `UpdateBinding`, `SetNewKeyCode`, `SetNewKeyAxis`), `InputMapping` | Screen flows, bindings, menu behavior, settings persistence and touch mapping |
-| Audio, particles, decals, rendering | `BloodStream`, Unity audio/particle/render references | Asset mapping, effect timing, visual output and mobile performance |
+The cloud dependency workflow now recursively traverses the scene and readable serialized dependencies. The latest run reached 417 assets and 708 dependency edges, with seven unresolved non-built-in GUIDs after classifying the common Unity built-in GUIDs correctly. See [the successful workflow run](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38587439160) and its `crisis-response-marksman-range-dependencies` artifact for the generated full graph. This remains static analysis: the scene is not imported by a running engine, and the report does not establish runtime behavior.
 
-## Port strategy gate
+The scene is not a tiny test map. It is a substantial, serialized Unity scene with many script components, renderable geometry, and repeated material/prefab references. A generic canvas mockup would not be a meaningful port test.
 
-**Updated 2026-10-14:** Unity WebGL compilation is no longer the sole path. See [Browser port strategy pivot](BROWSER_PORT_STRATEGY_PIVOT_2026-10-14.md).
+## Highest-frequency resolved dependencies
 
-**Track A:** time-boxed feasibility test of browser-hosted WINE/PROTON compatibility for the original 32-bit Unity Windows executable. This could preserve the original game most directly, but support for Unity 2017/Mono/3D graphics and iPhone Safari is unverified.
+- `Scripts/Assembly-CSharp/BallisticMaterial.cs` — 253 references.
+- `Mesh/Combined Mesh (root_ scene)_0.asset` — 208 references.
+- `GameObject/Wood.prefab` — 102 references.
+- `GameObject/Bricks.prefab` — 95 references.
+- `Material/Brown.mat` — 75 references.
+- `Scripts/Assembly-CSharp/BallisticWindow.cs` — 69 references.
+- `GameObject/Window glass.prefab` — 69 references.
+- `Texture2D/window glass.png` and `Texture2D/glass hole.png` — 69 references each.
+- `Material/Window glass.mat` — 68 references.
+- `Material/Brick wall red.mat` — 47 references.
 
-**Track B:** if compatibility runtime fails, prototype a native WebAssembly browser port using recovered C# as behavioral evidence and recovered assets/scenes. The decompiled C# depends on Unity APIs and cannot be compiled directly to WASM; first build a small tested vertical slice before expanding.
+These are serialized GUID occurrence counts, not runtime execution counts. In particular, the high count for `BallisticMaterial` means material/ballistics metadata is attached throughout the scene; it does not by itself tell us the cost of implementing the behavior.
 
-**Track C:** retain Unity WebGL as an optional route if valid activation becomes available, not as the only hard gate.
+## Scene script dependencies identified from GUIDs
 
-Do not replace the whole game with an invented HTML game and call it a port. Defer a wholesale Rust rewrite unless a concrete subsystem justifies it.
+- `GlobalContextInitializer.cs`
+- `Mission.cs`
+- `BallisticMaterial.cs`
+- `BallisticWindow.cs`
+- `DEPRECATED_LightController.cs`
+- `Target.cs`
+- `PaintableSurface.cs`
+- `Room.cs`
+- `MarksmanshipTutorialTarget.cs`
+- `Marksmen.cs`
+- `UIInteriorModeTextIndicator.cs`
+- `AudioSourcePriority.cs`
+- `PoweredLight.cs`
+- `LightFlasher.cs`
+- `UIClickAudio.cs`
+- `MissionEndMenu.cs`
+- `ScoreKeeper.cs`
+- `TimeScaler.cs`
+- `TutorialMode.cs`
+- `UIResourceCounter.cs`
+- `MissionUI.cs`
+- `IntroParagraphs.cs`
+- `UIScoreBreakdown.cs`
+- `IndicatorArrow.cs`
+- `UIHitAnnouncements.cs`
+- `MarksmanshipTutorial.cs`
+- `UIMissionEndOverlay.cs`
+- `TextFader.cs`
+- `UIMissionStatus.cs`
+- `OccupantSpawner.cs`
 
-## WebAssembly replacement work — 2026-10-14
+This is a first pass from scene GUID references; prefab dependencies can add further scripts and assets.
 
-The source-preserving engine replacement is now the explicit goal; see [the WebAssembly engine replacement plan](WEBASSEMBLY_ENGINE_REPLACEMENT_PLAN_2026-10-14.md) and [issue #4](https://github.com/ethan-bailey/crisis-response-port/issues/4).
+## Consequences for an engine replacement
 
-A cloud static-analysis run succeeded at [run 38587729815](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38587729815):
-- 1,420 C# files scanned.
-- 67 recognized Unity API tokens and 9,625 lexical API-token occurrences recorded in the API inventory artifact.
-- The Marksman range dependency traversal reached 417 readable serialized assets and 708 dependency edges; seven unresolved non-built-in GUIDs remain.
-- These are inventories only. They do not prove the game compiles, renders, or runs in a browser. Unity compilation remains skipped because license secrets are not configured.
+1. **Do not begin by rewriting the whole game.** Start with a dependency closure for this scene: scene → prefabs → scripts → materials/shaders → meshes/textures → audio → physics and UI.
+2. **Preserve serialized identity.** Retain GUIDs, object IDs, original names, and references in a machine-readable intermediate representation. Avoid lossy manual conversion to a different scene format before references are resolved.
+3. **Ballistics are central to this scene.** Inspect `BallisticMaterial.cs`, `BallisticWindow.cs`, `PaintableSurface.cs`, `Target.cs`, and their callers together. Rendering a room alone would not demonstrate gameplay compatibility.
+4. **Renderer/physics parity must be explicit.** A WebGL/WebGPU renderer and a browser physics engine may look similar but will not automatically reproduce Unity 2017 rendering, collision ordering, raycasts, or fixed-step timing.
+5. **Touch input is a separate adapter.** Preserve original action semantics; map touch controls to existing gameplay methods rather than rewriting those methods around a new control scheme.
+6. **Resolve missing GUIDs first.** Determine whether each is an AssetRipper omission, an external package asset, or a built-in Unity reference before attempting runtime conversion.
 
-The first vertical-slice target remains the original Marksman range scene. Its dependency graph shows why a static room render is not enough: the scene includes the original ballistics/material system, breakable window behavior, target feedback, audio, UI, and tutorial state. The next runtime experiment must consume original scene/content and invoke original gameplay logic; mock content is not an acceptable parity test.
+## Next action
 
-## Asset/scene reconnaissance
-
-The Unity serialized files identify themselves as Unity `2017.2.0f3`. A preliminary printable-string scan of the scene files surfaced UI/object labels such as `Disclaimer text`, `Loading text`, `Player open door`, `Scene loader`, `Rooms checked`, and `Resource counters`. These are clues only: the scene files have not yet been parsed into a reliable hierarchy, and labels are not sufficient to reconstruct scenes.
-
-The current official [AssetRipper documentation](https://assetripper.github.io/AssetRipper/docs/index.html) says it supports Unity versions from 3.5.0 through 6000.4.x, with version-dependent support quality. Unity asset export is therefore a reasonable next tool-assisted step once a runnable build of AssetRipper is available.
-
-## iPhone web-runtime feasibility note
-
-The current Unity 6.0 system requirements list iOS Safari 15+ as a supported browser target ([Unity 6.0 system requirements](https://docs.unity3d.com/6000.0/Documentation/Manual/system-requirements.html)). That establishes a possible modern Web runtime target, **not** a guarantee that this recovered Unity 2017 game will compile or perform acceptably on iPhone. The old project must be reconstructed and migrated as needed, then tested for startup memory, frame time, touch controls, audio, and browser lifecycle behavior.
-
-## Immediate blockers
-
-- The original C# source and editable Unity project are absent from the archive; ILSpy and AssetRipper have recovered decompiled C# and a reconstructed Unity project in a cloud runner.
-- Unity WebGL compilation still requires a valid Unity activation/license in GitHub Actions. This account has no Unity license secrets configured, and the current GameCI activation-file action is retired.
-- A faithful WebGL build cannot be honestly claimed until the recovered project compiles, runs in Safari, and passes subsystem comparisons.
+Produce a recursive dependency graph for the Marksman range scene and inspect the original ballistics/target code, then select one representative original object to drive the first browser/WASM experiment. No compilation or browser execution has been performed by this audit.
