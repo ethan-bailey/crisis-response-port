@@ -17,6 +17,7 @@ A separate generated file named `CrisisResponseMobile_iPhone.zip` is a from-scra
 - [Verified archive inventory](docs/ARCHIVE_INVENTORY.md)
 - [Subsystem parity matrix and porting status](docs/PORTING_STATUS.md)
 - [WebGL compatibility audit](docs/WEBGL_COMPATIBILITY_AUDIT_2026-10-14.md) — static scan of the recovered project for likely browser build blockers.
+- [WebAssembly runtime architecture decision](docs/WEBASSEMBLY_RUNTIME_ARCHITECTURE_DECISION_2026-10-14.md) — selected source-preserving C# WASM approach and implementation gates.
 - [WebAssembly engine replacement plan](docs/WEBASSEMBLY_ENGINE_REPLACEMENT_PLAN_2026-10-14.md) — preserve original game logic and define parity gates.
 - [Unity API compatibility matrix](docs/UNITY_API_COMPATIBILITY_MATRIX_WASM_2026-10-14.md) — verified shim coverage versus outstanding engine services.
 - [Browser geometry / WASM feasibility status](docs/WASM_RUNTIME_SPIKE_2026-10-14.md) — original Unity mesh decoding and Chromium/WebGL test results.
