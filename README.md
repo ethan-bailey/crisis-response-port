@@ -17,6 +17,7 @@ A separate generated file named `CrisisResponseMobile_iPhone.zip` is a from-scra
 - [Verified archive inventory](docs/ARCHIVE_INVENTORY.md)
 - [Subsystem parity matrix and porting status](docs/PORTING_STATUS.md)
 - [WebGL compatibility audit](docs/WEBGL_COMPATIBILITY_AUDIT_2026-10-14.md) — static scan of the recovered project for likely browser build blockers.
+- [Browser port strategy pivot](docs/BROWSER_PORT_STRATEGY_PIVOT_2026-10-14.md) — evaluates WINE/PROTON-in-WebAssembly and source-port approaches so Unity activation is not the only path.
 
 ## Current state
 
