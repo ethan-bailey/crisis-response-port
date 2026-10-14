@@ -12,6 +12,7 @@ A separate generated file named `CrisisResponseMobile_iPhone.zip` is a from-scra
 
 - [Verified recovery results](docs/RECOVERY_RUN_2026-10-14.md) — the matching game assembly was decompiled and AssetRipper recovered a 7,231-file Unity project.
 - [Cloud WebGL build gate](.github/workflows/unity-webgl-build.yml) — downloads the verified recovery artifact and attempts a licensed WebGL build; Unity licensing and mobile parity tests remain required.
+- [Unity license gate instructions](docs/UNITY_BUILD_GATE.md) — explains the missing build activation requirement and how to configure repository secrets without sharing credentials in chat.
 - [Cloud recovery pipeline](.github/workflows/recover-moddb.yml) — downloads the publicly hosted Sandbox 7 installer in GitHub Actions, verifies its MD5 against ModDB and its gameplay DLL against the exact SHA-256 from the user's archive, then attempts C# decompilation and Unity asset/project recovery. A mismatch intentionally stops the pipeline.
 - [Reverse-engineering plan](docs/REVERSE_ENGINEERING_PLAN.md)
 - [Verified archive inventory](docs/ARCHIVE_INVENTORY.md)
