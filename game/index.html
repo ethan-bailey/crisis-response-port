@@ -29,7 +29,7 @@ const camera=new THREE.OrthographicCamera(-viewHeight*innerWidth/innerHeight/2,v
 camera.position.set(-3,2.5,60);camera.lookAt(-3,2.5,0);
 const world=new THREE.Group();scene.add(world);
 const character=new THREE.Group();character.name="Original Operator prefab";scene.add(character);
-const keys={left:false,right:false,sprint:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0;
+const keys={left:false,right:false,sprint:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,applyAnimation=()=>{};
 function showError(e){errorBox.style.display="block";errorBox.textContent=String(e?.stack||e);status.textContent="Build failed to load; see error details."}
 function setInput(id,key){const b=document.querySelector("#"+id);const on=e=>{e.preventDefault();keys[key]=true;b.classList.add("active");try{b.setPointerCapture(e.pointerId)}catch{}};const off=e=>{e.preventDefault();keys[key]=false;b.classList.remove("active")};b.addEventListener("pointerdown",on);b.addEventListener("pointerup",off);b.addEventListener("pointercancel",off);b.addEventListener("lostpointercapture",off);b.addEventListener("contextmenu",e=>e.preventDefault())}
 setInput("left","left");setInput("right","right");setInput("sprint","sprint");
@@ -79,7 +79,7 @@ async function load(){
   }
   function resetPose(){for(const node of manifest.nodes){const group=nodeById.get(node.gameObjectFileID),base=baseTransforms.get(node.gameObjectFileID);group.position.copy(base.position);group.quaternion.copy(base.quaternion);group.scale.copy(base.scale)}}
   function applyTrack(track,time){const group=nodeByPath.get(track.path);if(!group)return;const value=sample(track,time);if(track.property==="rotation")group.quaternion.fromArray(value);else if(track.property==="position")group.position.fromArray(value);else if(track.property==="scale")group.scale.fromArray(value)}
-  function applyAnimation(dt){
+  applyAnimation=function(dt){
    const moving=Math.abs(velocity)>.15;
    const backwards=moving&&Math.sign(velocity)!==facingDirection;
    const next=moving?(backwards?"Body walk backward":"Body walk"):"Body stand";
@@ -99,7 +99,7 @@ async function load(){
      else {const v=new THREE.Vector3(...a).lerp(new THREE.Vector3(...b),blend);if(tr.property==="position")group.position.copy(v);else group.scale.copy(v)}
     }
    }else for(const track of clip.tracks)applyTrack(track,t);
-  }
+  };
   const box=sceneBounds;const size=box.getSize(new THREE.Vector3());viewHeight=Math.max(8,Math.min(13,size.y*.75||11));
   camera.left=-viewHeight*innerWidth/innerHeight/2;camera.right=viewHeight*innerWidth/innerHeight/2;camera.top=viewHeight/2;camera.bottom=-viewHeight/2;camera.updateProjectionMatrix();
   groundY=1.5;loaded=true;
