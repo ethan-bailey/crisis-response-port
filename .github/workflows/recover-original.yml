@@ -81,8 +81,8 @@ jobs:
           sudo mkdir -p /opt/github/AssetRipper
           sudo chown -R "$USER":"$USER" /opt/github/AssetRipper
           git clone --depth 1 --branch 2.0.0 https://github.com/AssetRipper/AssetRipper.git /opt/github/AssetRipper/AssetRipper
-          git clone --depth 1 https://github.com/neoedmund/AssetRipperCLI.git /opt/github/AssetRipper/AssetRipperCLI
-          dotnet publish /opt/github/AssetRipper/AssetRipperCLI/AssetRipperCLI.csproj \
+          git clone --depth 1 https://github.com/neoedmund/AssetRipperCLI.git /opt/github/AssetRipperCLI
+          dotnet publish /opt/github/AssetRipperCLI/AssetRipperCLI.csproj \
             --configuration Release --runtime linux-x64 --output work/assetripper-cli \
             2>&1 | tee work/reports/assetripper-build.log
 
@@ -90,7 +90,7 @@ jobs:
         if: success()
         run: |
           set -euo pipefail
-          GAME_ROOT="$(cat work/reports/game-root-path.txt)"
+          GAME_ROOT="$(dirname "$(dirname "$(cat work/reports/game-dll-path.txt)")")"
           chmod +x work/assetripper-cli/AssetRipperCLI
           work/assetripper-cli/AssetRipperCLI "$GAME_ROOT" work/export \
             2>&1 | tee work/reports/assetripper-export.log
