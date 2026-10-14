@@ -192,6 +192,22 @@ jobs:
           print("Unresolved parent refs:", len(data["hierarchy"]["unresolvedParentTransformReferences"]))
           PY
 
+      - name: Publish extracted scene manifest for browser inspection
+        run: |
+          set -euo pipefail
+          mkdir -p scene-data
+          cp work/MARKSMAN_RANGE_SCENE_MANIFEST.json scene-data/marksman-range.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scene-data/marksman-range.json
+          if git diff --cached --quiet; then
+            echo "Scene manifest is unchanged."
+          else
+            git commit -m "Publish recovered Marksman range scene manifest"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
       - name: Upload original scene manifest
         if: always()
         uses: actions/upload-artifact@v4
