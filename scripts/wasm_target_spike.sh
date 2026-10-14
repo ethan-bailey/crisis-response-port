@@ -245,7 +245,8 @@ cat > "$OUT_ROOT/app/Pages/Home.razor" <<'RAZOR'
   <input id="energy" type="range" min="1" max="500" step="1" @bind="_energy" />
   <label for="thickness">Surface thickness: @_thickness.ToString("F2")</label>
   <input id="thickness" type="range" min="0.01" max="0.50" step="0.01" @bind="_thickness" />
-  <label class="form-check mt-2"><input id="impenetrable" class="form-check-input" type="checkbox" @bind="_impenetrable" /> Impenetrable material</label>
+  <label class="form-check mt-2"><input id="impenetrable" class="form-check-input" type="checkbox" @bind="_impenetrable" /> Impenetrable material (forces the original method to stop the projectile and zero its remaining energy)</label>
+  <p class="text-muted">Start with this off to test penetration. The result uses original collision code with simplified projectile/Unity fixtures.</p>
   <button id="runShot" class="btn btn-primary mt-3" @onclick="RunShot">Run original collision method</button>
   <pre id="shotResult" class="mt-3">@_shotResult</pre>
 </section>
@@ -301,9 +302,9 @@ cat > "$OUT_ROOT/app/Pages/Home.razor" <<'RAZOR'
         }
     }
 
-    private float _energy = 100f;
-    private float _thickness = 0.10f;
-    private bool _impenetrable = true;
+    private float _energy = 500f;
+    private float _thickness = 0.01f;
+    private bool _impenetrable = false;
     private string _shotResult = "Ready. Adjust the parameters and run the original collision method.";
 
     private void RunShot()
