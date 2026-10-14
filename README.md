@@ -10,6 +10,7 @@ A separate generated file named `CrisisResponseMobile_iPhone.zip` is a from-scra
 
 ## Start here
 
+- [Non-negotiable original-game parity requirements](docs/ORIGINAL_GAME_PARITY_REQUIREMENTS.md) — original code/assets and verified behavior are mandatory; inspection demos are not accepted as a completed port.
 - [Verified recovery results](docs/RECOVERY_RUN_2026-10-14.md) — the matching game assembly was decompiled and AssetRipper recovered a 7,231-file Unity project.
 - [Cloud WebGL build gate](.github/workflows/unity-webgl-build.yml) — downloads the verified recovery artifact and attempts a licensed WebGL build; Unity licensing and mobile parity tests remain required.
 - [Unity license gate instructions](docs/UNITY_BUILD_GATE.md) — explains the missing build activation requirement and how to configure repository secrets without sharing credentials in chat.
