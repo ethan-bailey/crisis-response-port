@@ -23,15 +23,15 @@ No subsystem is marked as implemented or parity-verified merely because its symb
 
 | Subsystem | Evidence found in assembly | Parity evidence required |
 |---|---|---|
-| Character locomotion, animation, ragdolls | `CharacterBody`, `Limb`, `IKArmController` | Matched scenarios, movement/animation state transitions, collision and ragdoll outcomes |
-| AI and team behavior | `CharacterBehavior`, `TeamOperator`, `TeamController`, `Blackboard` | Decision traces for visibility, threat response, commands, cover, restraint, and team coordination |
-| Weapons, aiming, reloads, malfunctions | `WeaponBase`, `Firearm`, `WeaponAimer`, `CyclingBolt` | Weapon configuration, input sequences, ammo transitions, recoil, malfunction and reload outcomes |
-| Ballistics and damage | `Projectile`, `BallisticMaterial`, `ProjectileLimbEvent` | Reproducible shots across materials, penetration/deflection, damage and hit-location results |
-| Doors and traps | `DoorController`, `DoorTrap`, `DoorExplosive` | Lock/open/breach/trap scenarios and corresponding AI path/decision behavior |
-| Grenades and explosions | `Grenade`, `FragmentationGrenade` | Fuse timing, blast effects, stun/fragmentation outcomes, door/room interactions |
-| Physiology, wounds, bleeding | `Physiology`, `LimbPhysiology`, `VitalFunctions`, `Wound` | Injury progression, blood loss, consciousness, treatment, vital state transitions |
-| Missions, campaigns, scoring, saves | `Mission`, `CampaignManager`, `ScoreKeeper` | Mission completion/failure, score calculations, persistence and load/resume |
-| UI, menus, input/settings | `MainMenu`, `PauseMenu`, `InputHandler`, `InputMapping` | Screen flows, bindings, menu behavior, settings persistence and touch mapping |
+| Character locomotion, animation, ragdolls | `CharacterBody` (311 methods), `Limb`, `IKArmController` | Matched scenarios, movement/animation state transitions, collision and ragdoll outcomes |
+| AI and team behavior | `CharacterBehavior`, `TeamOperator`, `TeamController` (`CommandMoveTo`, `CommandMoveOut`, `CommandHoldPosition`, `IssueRulesOfEngagement`), `Blackboard` | Decision traces for visibility, threat response, commands, cover, restraint, and team coordination |
+| Weapons, aiming, reloads, malfunctions | `WeaponBase` (141 methods), `Firearm`, `WeaponAimer`, `CyclingBolt` | Weapon configuration, input sequences, ammo transitions, recoil, malfunction and reload outcomes |
+| Ballistics and damage | `Projectile` (126 methods), `BallisticMaterial` (`HandleProjectile`, `EnergyToPenetrateSurface`, `DeflectProjectile`), `ProjectileLimbEvent` | Reproducible shots across materials, penetration/deflection, damage and hit-location results |
+| Doors and traps | `DoorController` (`SetOpen`, `SetClosed`, `ForceOpen`, `ForceClose`), `DoorTrap`, `DoorExplosive` | Lock/open/breach/trap scenarios and corresponding AI path/decision behavior |
+| Grenades and explosions | `Grenade` (`PullPin`, `StartFuse`, `Throw`, `Detonate`), `FragmentationGrenade` | Fuse timing, blast effects, stun/fragmentation outcomes, door/room interactions |
+| Physiology, wounds, bleeding | `Physiology` (119 methods), `LimbPhysiology` (`CreateWound`, `UpdateHemorrhaging`, `InflictVitalTrauma`), `VitalFunctions`, `Wound` | Injury progression, blood loss, consciousness, treatment, vital state transitions |
+| Missions, campaigns, scoring, saves | `Mission` (128 methods), `CampaignManager` (`ProgressCampaign`, `StartMission`, `ContinueCampaign`, `SetMissionCompleted`), `ScoreKeeper` (92 methods) | Mission completion/failure, score calculations, persistence and load/resume |
+| UI, menus, input/settings | `MainMenu`, `PauseMenu`, `InputHandler` (`StartBinding`, `UpdateBinding`, `SetNewKeyCode`, `SetNewKeyAxis`), `InputMapping` | Screen flows, bindings, menu behavior, settings persistence and touch mapping |
 | Audio, particles, decals, rendering | `BloodStream`, Unity audio/particle/render references | Asset mapping, effect timing, visual output and mobile performance |
 
 ## Port strategy gate
@@ -41,6 +41,12 @@ No subsystem is marked as implemented or parity-verified merely because its symb
 **Fallback:** if a complete Unity/WebGL reconstruction proves infeasible, evaluate a minimal compatibility implementation subsystem by subsystem, explicitly marking reconstructed behavior and gaps. Do not replace the whole game with an invented HTML game and call it a port.
 
 **Rust:** defer unless profiling or a specific platform dependency demonstrates a reason to introduce a Rust/WASM component. A wholesale rewrite would increase parity risk.
+
+## Asset/scene reconnaissance
+
+The Unity serialized files identify themselves as Unity `2017.2.0f3`. A preliminary printable-string scan of the scene files surfaced UI/object labels such as `Disclaimer text`, `Loading text`, `Player open door`, `Scene loader`, `Rooms checked`, and `Resource counters`. These are clues only: the scene files have not yet been parsed into a reliable hierarchy, and labels are not sufficient to reconstruct scenes.
+
+The current official [AssetRipper documentation](https://assetripper.github.io/AssetRipper/docs/index.html) says it supports Unity versions from 3.5.0 through 6000.4.x, with version-dependent support quality. Unity asset export is therefore a reasonable next tool-assisted step once a runnable build of AssetRipper is available.
 
 ## Immediate blockers
 
