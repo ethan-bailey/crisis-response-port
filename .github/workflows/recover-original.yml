@@ -90,7 +90,8 @@ jobs:
         if: success()
         run: |
           set -euo pipefail
-          GAME_ROOT="$(dirname "$(dirname "$(cat work/reports/game-dll-path.txt)")")"
+          GAME_ROOT="$(dirname "$(find work/source/unpacked -maxdepth 4 -type f -iname 'Crisis Response.exe' -print -quit)")"
+          test -n "$GAME_ROOT" -a -d "$GAME_ROOT"
           chmod +x work/assetripper-cli/AssetRipperCLI
           work/assetripper-cli/AssetRipperCLI "$GAME_ROOT" work/export \
             2>&1 | tee work/reports/assetripper-export.log
