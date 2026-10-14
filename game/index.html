@@ -39,29 +39,70 @@ addEventListener("blur",()=>{keys.left=keys.right=keys.sprint=false;document.que
 function setMeshMaterials(root){root.traverse(o=>{if(o.isMesh){o.material=new THREE.MeshStandardMaterial({color:0x858b91,roughness:1,metalness:0,side:THREE.DoubleSide});o.castShadow=false;o.receiveShadow=true}})}
 async function load(){
  try{
-  const [objResponse,manifestResponse]=await Promise.all([fetch("./assets/mission01.obj"),fetch("./assets/operator/operator.json")]);
+  const [objResponse,manifestResponse,animationResponse]=await Promise.all([fetch("./assets/mission01.obj"),fetch("./assets/operator/operator.json"),fetch("./assets/operator/animations.json")]);
   if(!objResponse.ok)throw new Error("Mission 01 geometry missing: HTTP "+objResponse.status);
   if(!manifestResponse.ok)throw new Error("Original Operator manifest missing: HTTP "+manifestResponse.status);
+  if(!animationResponse.ok)throw new Error("Original Operator animation data missing: HTTP "+animationResponse.status);
   const manifest=await manifestResponse.json();
+  const animationData=await animationResponse.json();
   const objText=await objResponse.text();
   sceneMesh=new OBJLoader().parse(objText);setMeshMaterials(sceneMesh);sceneMesh.name="Recovered Mission 01 combined mesh";world.add(sceneMesh);
   sceneBounds=new THREE.Box3().setFromObject(sceneMesh);
   const texLoader=new THREE.TextureLoader();
+  const nodeById=new Map(),nodeByPath=new Map(),baseTransforms=new Map();
+  for(const node of manifest.nodes){
+   const group=new THREE.Group();group.name=node.name;group.position.fromArray(node.position);group.quaternion.fromArray(node.rotation);group.scale.fromArray(node.scale);
+   nodeById.set(node.gameObjectFileID,group);nodeByPath.set(node.path,group);
+   baseTransforms.set(node.gameObjectFileID,{position:group.position.clone(),quaternion:group.quaternion.clone(),scale:group.scale.clone()});
+  }
+  for(const node of manifest.nodes){
+   const group=nodeById.get(node.gameObjectFileID),parent=node.parentGameObjectFileID?nodeById.get(node.parentGameObjectFileID):null;
+   (parent||character).add(group);
+  }
   let textured=0;
   for(const limb of manifest.limbs){
-   const g=new THREE.PlaneGeometry(1,1);
-   let material;
+   const parent=nodeById.get(limb.gameObjectFileID);if(!parent)continue;
+   const g=new THREE.PlaneGeometry(1,1);let material;
    if(limb.texture){const tex=await texLoader.loadAsync("./assets/operator/"+limb.texture);tex.colorSpace=THREE.SRGBColorSpace;material=new THREE.MeshBasicMaterial({map:tex,transparent:true,alphaTest:.025,side:THREE.DoubleSide,depthWrite:false});textured++}
    else material=new THREE.MeshBasicMaterial({color:0x777777,side:THREE.DoubleSide,transparent:true,opacity:.8,depthWrite:false});
-   const part=new THREE.Mesh(g,material);part.name=limb.name;
-   part.position.fromArray(limb.position);part.quaternion.fromArray(limb.rotation);part.scale.fromArray(limb.scale);part.renderOrder=Math.round((part.position.z+10)*10);
-   character.add(part);
+   const part=new THREE.Mesh(g,material);part.name="Original skin: "+limb.name;part.renderOrder=1;parent.add(part);
   }
-  character.position.set(-3,1.5,1.5);
+  const clips=animationData.clips;
+  let activeAnimation="Body stand",animationTime=0;
+  function sample(track,time){
+   const ks=track.keys;if(ks.length===1||time<=ks[0].time)return ks[0].value;
+   if(time>=ks[ks.length-1].time)return ks[ks.length-1].value;
+   let i=0;while(i<ks.length-1&&ks[i+1].time<time)i++;
+   const a=ks[i],b=ks[i+1],alpha=(time-a.time)/Math.max(1e-8,b.time-a.time);
+   if(track.property==="rotation"){const qa=new THREE.Quaternion(...a.value),qb=new THREE.Quaternion(...b.value),q=new THREE.Quaternion();q.slerpQuaternions(qa,qb,alpha);return q.toArray()}
+   return new THREE.Vector3(...a.value).lerp(new THREE.Vector3(...b.value),alpha).toArray();
+  }
+  function resetPose(){for(const node of manifest.nodes){const group=nodeById.get(node.gameObjectFileID),base=baseTransforms.get(node.gameObjectFileID);group.position.copy(base.position);group.quaternion.copy(base.quaternion);group.scale.copy(base.scale)}}
+  function applyTrack(track,time){const group=nodeByPath.get(track.path);if(!group)return;const value=sample(track,time);if(track.property==="rotation")group.quaternion.fromArray(value);else if(track.property==="position")group.position.fromArray(value);else if(track.property==="scale")group.scale.fromArray(value)}
+  function applyAnimation(dt){
+   const moving=Math.abs(velocity)>.15;
+   const next=moving?(keys.sprint?"Body sprint":"Body walk"):"Body stand";
+   if(next!==activeAnimation){activeAnimation=next;animationTime=0}
+   const clip=clips[activeAnimation];if(!clip)return;
+   animationTime+=dt;
+   const t=clip.duration>0?(clip.loop?animationTime%clip.duration:Math.min(animationTime,clip.duration)):0;
+   resetPose();
+   if(activeAnimation==="Body walk"&&clips["Body sprint"]){
+    const sprint=clips["Body sprint"],blend=Math.max(0,Math.min(.5,(Math.abs(velocity)-1.2)/(3.2-1.2)*.5));
+    const walkMap=new Map(clip.tracks.map(tr=>[tr.path+"|"+tr.property,tr]));
+    const sprintMap=new Map(sprint.tracks.map(tr=>[tr.path+"|"+tr.property,tr]));
+    for(const [keyId,tr] of walkMap){
+     const other=sprintMap.get(keyId);if(!other){applyTrack(tr,t);continue}
+     const a=sample(tr,t),b=sample(other,sprint.duration>0?(animationTime%sprint.duration):0),group=nodeByPath.get(tr.path);if(!group)continue;
+     if(tr.property==="rotation"){const q=new THREE.Quaternion(...a).slerp(new THREE.Quaternion(...b),blend);group.quaternion.copy(q)}
+     else {const v=new THREE.Vector3(...a).lerp(new THREE.Vector3(...b),blend);if(tr.property==="position")group.position.copy(v);else group.scale.copy(v)}
+    }
+   }else for(const track of clip.tracks)applyTrack(track,t);
+  }
   const box=sceneBounds;const size=box.getSize(new THREE.Vector3());viewHeight=Math.max(8,Math.min(13,size.y*.75||11));
   camera.left=-viewHeight*innerWidth/innerHeight/2;camera.right=viewHeight*innerWidth/innerHeight/2;camera.top=viewHeight/2;camera.bottom=-viewHeight/2;camera.updateProjectionMatrix();
   groundY=1.5;loaded=true;
-  window.__gameState=()=>({loaded,playerX,limbCount:character.children.length,sceneMesh:!!sceneMesh,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
+  window.__gameState=()=>({loaded,playerX,limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
   status.textContent="Recovered Mission 01 geometry + original Operator limb textures. Horizontal movement uses recovered walk/sprint speeds; original animation, physics, weapons and AI are not yet running.";
   positionLabel.textContent="Walk 1.2 m/s · Sprint 3.2 m/s · original spawn X −3";
  }catch(e){showError(e)}
@@ -75,6 +116,8 @@ function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-last)/10
  else velocity*=Math.exp(-5.5*dt);
  if(Math.abs(velocity)<.015)velocity=0;
  playerX+=velocity*dt;character.position.x=playerX;
+ if(dir)character.rotation.y=dir<0?Math.PI:0;
+ applyAnimation(dt);
  camera.position.x+=(playerX-camera.position.x)*Math.min(1,5*dt);
  camera.position.y+=(2.6-camera.position.y)*Math.min(1,3*dt);camera.lookAt(camera.position.x,2.6,0);
  positionLabel.textContent="X "+playerX.toFixed(2)+" · speed "+Math.abs(velocity).toFixed(2)+" m/s"+(keys.sprint?" · sprint":"");
