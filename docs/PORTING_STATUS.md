@@ -14,7 +14,7 @@
 | Export Unity assets/scenes | Complete | AssetRipper CLI exported 7,231 files (about 169 MiB) including six scenes, scripts, assets, and project settings. |
 | Reconstruct Unity project | Initial recovery complete | AssetRipper reconstructed an editable Unity project with `Assets/`, `ProjectSettings/`, `Packages/manifest.json`, and scenes. It may need repairs and is not yet verified to compile. |
 | Static WebGL compatibility audit | Complete (static scan only) | `docs/WEBGL_COMPATIBILITY_AUDIT_2026-10-14.md` records likely blockers: threaded `System.Net.WebRequest` calls, Windows Registry access, desktop file-browser/filesystem assumptions, and touch input work. These are candidates to test, not confirmed compile errors. |
-| Produce WebGL build | Blocked on Unity activation | A cloud WebGL build workflow is in place. No Unity license secrets are configured; the retired activation-file action was removed. The build is skipped until the repository has valid `UNITY_LICENSE`, `UNITY_EMAIL`, and `UNITY_PASSWORD` Actions secrets. |
+| Produce Unity WebGL build | Optional / skipped | The Unity Editor build requires valid Unity activation, so this route is not a prerequisite. The selected primary route is a license-free browser runtime using recovered original C# through .NET WebAssembly plus a Unity API compatibility layer. See `docs/UNITY_BUILD_GATE.md`. |
 | iPhone Safari testing | Not started | Requires a WebGL build and actual browser/device test pass. |
 | Behavioral parity tests | Not started | Must be based on observed original-game behavior and linked to specific systems. |
 
@@ -39,11 +39,11 @@ No subsystem is marked as implemented or parity-verified merely because its symb
 
 **Updated 2026-10-14:** Unity WebGL compilation is no longer the sole path. See [Browser port strategy pivot](BROWSER_PORT_STRATEGY_PIVOT_2026-10-14.md).
 
-**Track A:** time-boxed feasibility test of browser-hosted WINE/PROTON compatibility for the original 32-bit Unity Windows executable. This could preserve the original game most directly, but support for Unity 2017/Mono/3D graphics and iPhone Safari is unverified.
+**Primary route (license-free):** a browser runtime using recovered original C# compiled to .NET WebAssembly, with a compatibility layer for Unity APIs and a browser renderer/input host. This route requires no Unity license key or Unity account credentials. The compatibility layer is not yet complete.
 
-**Track B:** if compatibility runtime fails, prototype a native WebAssembly browser port using recovered C# as behavioral evidence and recovered assets/scenes. The decompiled C# depends on Unity APIs and cannot be compiled directly to WASM; first build a small tested vertical slice before expanding.
+**Secondary route:** retain Unity WebGL as an optional route only if a valid license is already available. Do not make activation or Unity secrets a prerequisite.
 
-**Track C:** retain Unity WebGL as an optional route if valid activation becomes available, not as the only hard gate.
+**Not selected as primary:** browser-hosted WINE/PROTON for the original Windows player. Its Unity 2017/Mono/3D graphics and iPhone Safari compatibility is unverified and its Windows API dependencies make it a poor first path.
 
 Do not replace the whole game with an invented HTML game and call it a port. Defer a wholesale Rust rewrite unless a concrete subsystem justifies it.
 
@@ -57,7 +57,7 @@ The corrected scene-reference audit reached 417 readable serialized assets and 7
 
 A meaningful browser geometry gate passed in [run 38589625850](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38589625850): the original combined mesh was decoded from Unity's serialized vertex/index buffers (14,187 source vertices, 9,455 triangles, 274 submeshes) and rendered in headless Chromium through WebGL. The browser reported 274 mesh groups, 9,455 triangles, a 1280×800 canvas, and zero page/console errors. This validates only one static original mesh; it does not execute Unity gameplay and is not yet a WebAssembly game engine. See [the browser geometry/WASM status report](WASM_RUNTIME_SPIKE_2026-10-14.md).
 
-The first runtime gate passed in [run 38590382729](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38590382729): original `Target.cs` compiled to .NET WebAssembly and its `Awake`/`GetComponent` behavior passed in Chromium. The expanded gate adds original `BallisticMaterialProperties.cs`; see [the Unity API compatibility matrix](UNITY_API_COMPATIBILITY_MATRIX_WASM_2026-10-14.md) for verified coverage and remaining services. The current run is tracked at [38590980350](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38590980350). The current workflow is testing this; it is not a playable slice. Full Unity lifecycle, rendering, physics, animation, audio, UI, input, serialization, and game-specific systems remain to be implemented and validated. Unity's own WebGL build remains skipped because valid Unity license secrets are not configured.
+The first runtime gate passed in [run 38590382729](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38590382729): original `Target.cs` compiled to .NET WebAssembly and its `Awake`/`GetComponent` behavior passed in Chromium. The expanded gate adds original `BallisticMaterialProperties.cs`; see [the Unity API compatibility matrix](UNITY_API_COMPATIBILITY_MATRIX_WASM_2026-10-14.md) for verified coverage and remaining services. The expanded original-source math/ballistics feasibility gate passed at [run 38593586937](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38593586937). It compiles selected original C# files and checks selected behaviors in a test harness, including vector/quaternion/transform math and ballistic-material branches. The harness still substitutes test fixtures for Unity physics, projectile energy, effects, timing, and other engine services; it is not a playable slice. The hierarchy-aware scene/geometry preflight also passed at [run 38594581681](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38594581681). Full scene loading, Unity lifecycle, materials/shaders, physics, animation, audio, UI, input, serialization, and game-specific systems remain to be implemented and validated. Unity's own WebGL build remains skipped, by design, because the primary route must not require Unity license secrets.
 
 ## Asset/scene reconnaissance
 
@@ -72,5 +72,5 @@ The current Unity 6.0 system requirements list iOS Safari 15+ as a supported bro
 ## Immediate blockers
 
 - The original C# source and editable Unity project are absent from the archive; ILSpy and AssetRipper have recovered decompiled C# and a reconstructed Unity project in a cloud runner.
-- Unity WebGL compilation still requires a valid Unity activation/license in GitHub Actions. This account has no Unity license secrets configured, and the current GameCI activation-file action is retired.
+- The license-free runtime still needs a production-grade Unity API compatibility layer; the current WASM harness is only a narrow test fixture. Unity Editor activation is not a prerequisite for this route.
 - A faithful WebGL build cannot be honestly claimed until the recovered project compiles, runs in Safari, and passes subsystem comparisons.
