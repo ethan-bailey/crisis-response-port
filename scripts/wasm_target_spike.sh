@@ -214,7 +214,8 @@ public sealed class Marksman { public void OnSuccessfulAttack(object victim) { }
 public sealed class AudioInstigator { }
 public sealed class Limb { public CharacterBody Body = new CharacterBody(); public Projectile HandleProjectile(Projectile projectile, UnityEngine.Vector3 normal) => projectile; }
 public sealed class ProjectileLimbEvent { public void Invoke(Projectile p, Limb limb) { } }
-public sealed class ProjectileTrace { public void Initialize(Projectile p) { } public void AddPosition(UnityEngine.Vector3 p) { } }
+public sealed class ProjectileTrace { public void Initialize(Projectile p) { } public void AddPosition(UnityEngine.Vector3 p) { } public void SpawnHitEffect(UnityEngine.Vector3 position, UnityEngine.Transform container, UnityEngine.Vector3 normal) { } }
+public sealed class Explosion : UnityEngine.MonoBehaviour { }
 public sealed class BallisticHitEffect { public float offset; public void InitializeTransform(UnityEngine.Transform parent, UnityEngine.Vector3 position, UnityEngine.Vector3 direction) { } public void PlayEntry(Projectile projectile) { } public void PlayExit(Projectile projectile, UnityEngine.Vector3 normal, object instigator) { } }
 public sealed class BallisticHitMeshEffect { }
 public sealed class ProjectileEvent { public void Invoke(Projectile projectile) { } }
@@ -234,6 +235,7 @@ public sealed class AmmunitionBase
  public enum ExplosionMode { None, OnFragmentation, Timed }
  public ExplosionMode explosionMode;
  public float explosionTime;
+ public Explosion explosionPrefab;
  public enum FragmentationMode { None, Randomized, Specified }
  public sealed class FragmentationSpecification { public float mass, diameter, deflection; }
  public float fragmentMainBodyMass = 0.5f, fragmentMassMin = 1f, fragmentMassMax = 2f, fragmentDiameterMin = 3f, fragmentDiameterMax = 5f, fragmentDeflectionMin, fragmentDeflectionMax = 10f;
