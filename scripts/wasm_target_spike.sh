@@ -152,7 +152,13 @@ namespace UnityEngine
     public class Transform
     {
         public Vector3 position { get; set; }
+        public Vector3 localScale { get; set; } = Vector3.one;
+        public Transform parent { get; private set; }
+        public int childCount => 0;
         public Quaternion rotation { get; set; } = Quaternion.identity;
+        public void SetParent(Transform value, bool worldPositionStays = true) { parent = value; }
+        public Transform GetChild(int index) => new Transform();
+        public T GetComponent<T>() where T : class => null;
         public Vector3 forward { get => rotation * Vector3.forward; set => rotation = Quaternion.LookRotation(value); }
         public Vector3 TransformPoint(Vector3 p) => position + rotation*p;
         public Vector3 InverseTransformPoint(Vector3 p) => Quaternion.Inverse(rotation)*(p-position);
@@ -160,10 +166,17 @@ namespace UnityEngine
         public void Rotate(Vector3 axis, float angle) { rotation = rotation * Quaternion.AngleAxis(angle, axis); }
     }
     public class Collider { }
-    public class GameObject { public void SetActive(bool active) { } }
+    public class Ray { public Vector3 origin, direction; public Ray(Vector3 o, Vector3 d) { origin=o; direction=d; } }
+    public struct RaycastHit { public Transform transform; public Vector3 point, normal; public float distance; }
+    public static class Physics { public static bool Raycast(Ray ray, out RaycastHit hit, float distance, int mask) { hit = default; return false; } }
+    public class AnimationCurve { public float Evaluate(float value) => 1f; }
+    public class Material { }
+    public class MeshRenderer { public Material material { get; set; } }
+    public class MeshFilter { public Transform transform { get; } = new Transform(); public T GetComponent<T>() where T : class => null; }
+    public class GameObject { public void SetActive(bool active) { } public T GetComponent<T>() where T : class => null; }
     public static class Time { public static float time => 0f; public static float deltaTime => 1f/60f; public static int frameCount => 0; }
-    public static class Random { public static float Range(float min, float max) => min; public static int Range(int min, int max) => min; }
-    public static class Mathf { public static float Pow(float f, float p) => MathF.Pow(f,p); public static float Min(float a,float b) => MathF.Min(a,b); public static float Abs(float x) => MathF.Abs(x); }
+    public static class Random { public static float Range(float min, float max) => min; public static int Range(int min, int max) => min; public static float value => 0.5f; public static Vector3 onUnitSphere => Vector3.forward; }
+    public static class Mathf { public static float Pow(float f, float p) => MathF.Pow(f,p); public static float Min(float a,float b) => MathF.Min(a,b); public static float Max(float a,float b) => MathF.Max(a,b); public static float Abs(float x) => MathF.Abs(x); public static float Sqrt(float x) => MathF.Sqrt(x); public static float Tan(float x) => MathF.Tan(x); public static float Atan(float x) => MathF.Atan(x); public static float Clamp01(float x) => Math.Clamp(x,0f,1f); }
     public static class Debug { public static void LogWarningFormat(string format, params object[] args) { } }
     public class Object { public static T Instantiate<T>(T original) where T : class => original; public static void Destroy(object obj) { } }
 
@@ -187,7 +200,18 @@ namespace UnityEngine
     }
 }
 
-public sealed class CharacterBody { }
+namespace UnityEngine.Events
+{
+    public delegate void UnityAction<T1, T2>(T1 arg1, T2 arg2);
+}
+
+public sealed class CharacterBody { public AudioInstigator AudioInstigator; public void OnSuccessfulAttack(object victim, int swarmId) { } }
+public sealed class WeaponBase { public CharacterBody Owner; public AmmunitionBase ammunition = new AmmunitionBase(); public bool rifledBarrel; public float rifleTwistRate; }
+public sealed class Marksman { public void OnSuccessfulAttack(object victim) { } }
+public sealed class AudioInstigator { }
+public sealed class Limb { }
+public sealed class ProjectileLimbEvent { public void Invoke(Projectile p, Limb limb) { } }
+public sealed class ProjectileTrace { public void Initialize(Projectile p) { } public void AddPosition(UnityEngine.Vector3 p) { } }
 public sealed class BallisticHitEffect { public float offset; public void InitializeTransform(UnityEngine.Transform parent, UnityEngine.Vector3 position, UnityEngine.Vector3 direction) { } public void PlayEntry(Projectile projectile) { } public void PlayExit(Projectile projectile, UnityEngine.Vector3 normal, object instigator) { } }
 public sealed class BallisticHitMeshEffect { }
 public sealed class ProjectileEvent { public void Invoke(Projectile projectile) { } }
@@ -196,11 +220,19 @@ public sealed class DelayedBallisticExit { public float activationTime; public P
 public sealed class Trace { public static implicit operator bool(Trace value) => value != null; public void SpawnHitEffect(UnityEngine.Vector3 position, UnityEngine.Transform container, UnityEngine.Vector3 normal) { } }
 public sealed class AmmunitionBase
 {
+ public float mass = 0.01f, diameter = 9f, velocity = 800f, velocityModifier, frictionFactor = 0.1f, MuzzleEnergy = 3200f, elasticity, bounceThreshold = 0.1f, flightDrag = 0.001f, ballisticCoefficient = 1f;
+ public UnityEngine.AnimationCurve expansionFunction = new UnityEngine.AnimationCurve();
+ public enum ExplosionMode { None, OnFragmentation, Timed }
+ public ExplosionMode explosionMode;
+ public float explosionTime;
  public enum FragmentationMode { None, Randomized, Specified }
  public sealed class FragmentationSpecification { public float mass, diameter, deflection; }
  public float MetricLength, velocity, elasticity, bounceThreshold, fragmentMainBodyMass, fragmentMassMin, fragmentMassMax, fragmentDiameterMin, fragmentDiameterMax, fragmentDeflectionMin, fragmentDeflectionMax;
  public bool fragmentEvenPattern;
  public FragmentationMode fragmentationMode;
+ public float TemporalCavityFactor(float velocity) => 1f;
+ public float PermanentCavityFactor(float velocity) => 1f;
+ public float FragmentationEnergy(float mass) => float.MaxValue;
  public System.Collections.Generic.List<FragmentationSpecification> specificFragmentation = new System.Collections.Generic.List<FragmentationSpecification>();
 }
 public sealed class PerformanceManager
