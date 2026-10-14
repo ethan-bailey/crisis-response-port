@@ -100,6 +100,42 @@ def main() -> int:
         rec["componentDetails"] = components
         rec["transform"] = next((c for c in components if c["className"] in ("Transform","RectTransform")), None)
         game_objects.append(rec)
+
+    # Reconstruct parent/child GameObject links from serialized Transform references.
+    transform_to_game_object = {
+        rec["fileID"]: rec["gameObjectFileID"]
+        for rec in records.values()
+        if rec["classID"] in (4, 224) and "gameObjectFileID" in rec
+    }
+    by_game_object = {rec["fileID"]: rec for rec in game_objects}
+    hierarchy_edges = 0
+    unresolved_parent_refs = []
+    roots = []
+    without_transform = []
+    for go in game_objects:
+        tr = next(
+            (records.get(cid) for cid in go.get("components", [])
+             if records.get(cid, {}).get("classID") in (4, 224)),
+            None,
+        )
+        if tr is None:
+            without_transform.append(go["fileID"])
+            continue
+        parent_transform = tr.get("parentFileID", 0)
+        if parent_transform in (0, None):
+            go["parentGameObjectFileID"] = None
+            roots.append(go["fileID"])
+        elif parent_transform in transform_to_game_object:
+            parent_go = transform_to_game_object[parent_transform]
+            go["parentGameObjectFileID"] = parent_go
+            parent = by_game_object.get(parent_go)
+            if parent is not None:
+                parent.setdefault("childGameObjectFileIDs", []).append(go["fileID"])
+                hierarchy_edges += 1
+        else:
+            go["parentGameObjectFileID"] = None
+            unresolved_parent_refs.append({"gameObjectFileID": go["fileID"], "parentTransformFileID": parent_transform})
+
     counts = {}
     for rec in records.values():
         key = rec["className"]
@@ -111,11 +147,12 @@ def main() -> int:
         "classCounts": dict(sorted(counts.items())),
         "guidIndexEntries": len(guid_paths),
         "gameObjects": game_objects,
+        "hierarchy": {"rootGameObjectFileIDs": roots, "parentChildEdges": hierarchy_edges, "gameObjectsWithoutTransform": without_transform, "unresolvedParentTransformReferences": unresolved_parent_refs},
         "otherRecords": [r for r in records.values() if r["classID"] != 1]
     }
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-    print(f"records={len(records)} gameObjects={len(game_objects)} classes={len(counts)} guidIndex={len(guid_paths)} output={output}")
+    print(f"records={len(records)} gameObjects={len(game_objects)} classes={len(counts)} guidIndex={len(guid_paths)} roots={len(roots)} hierarchyEdges={hierarchy_edges} withoutTransform={len(without_transform)} unresolvedParents={len(unresolved_parent_refs)} output={output}")
     return 0
 
 if __name__ == "__main__":
