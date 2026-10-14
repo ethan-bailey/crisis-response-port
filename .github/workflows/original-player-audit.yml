@@ -6,6 +6,7 @@ on:
     paths:
       - "scripts/audit_original_player.py"
       - "scripts/export_operator_manifest.py"
+      - "scripts/export_operator_animations.py"
       - "scripts/unity_mesh_to_obj.py"
       - ".github/workflows/original-player-audit.yml"
 
@@ -33,7 +34,9 @@ jobs:
           python3 scripts/audit_original_player.py work/recovery/export/ExportedProject work/ORIGINAL_MISSION01_PLAYER_AUDIT.json
           cat work/ORIGINAL_MISSION01_PLAYER_AUDIT.json
           python3 scripts/export_operator_manifest.py work/recovery/export/ExportedProject work/operator-package
+          python3 scripts/export_operator_animations.py work/recovery/export/ExportedProject work/operator-package/animations.json
           cat work/operator-package/operator.json
+          cat work/operator-package/animations.json
           mkdir -p work/game-assets game/assets
           python3 scripts/unity_mesh_to_obj.py "work/recovery/export/ExportedProject/Assets/Mesh/Combined Mesh (root_ scene)_1.asset" work/game-assets/mission01.obj
           test -s work/game-assets/mission01.obj
