@@ -63,8 +63,9 @@ def validate(data: dict) -> dict:
         errors.append(f"parent cycles detected from {len(cycle_nodes)} starting GameObjects")
 
     hierarchy = data.get("hierarchy", {})
-    roots = [oid for oid, obj in by_id.items() if obj.get("parentGameObjectFileID") is None
-             and obj.get("transform") is not None]
+    roots = [oid for oid, obj in by_id.items()
+             if obj.get("transform") is not None
+             and obj["transform"].get("parentFileID", 0) in (0, None)]
     recorded_roots = set(map(int, hierarchy.get("rootGameObjectFileIDs", [])))
     if set(roots) != recorded_roots:
         errors.append("recorded root list does not match GameObject parent fields")
