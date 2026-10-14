@@ -65,9 +65,10 @@ def main() -> int:
         c = channels[index]
         if c["dimension"] == 0:
             return None
-        if c["format"] != 0 or c["dimension"] < expected_dimension:
+        if c["format"] not in (0, 1) or c["dimension"] < expected_dimension:
             raise ValueError(f"unsupported vertex channel {index}: {c}")
-        if c["offset"] + c["dimension"] * 4 > stride:
+        component_size = 4 if c["format"] == 0 else 2
+        if c["offset"] + c["dimension"] * component_size > stride:
             raise ValueError(f"channel exceeds vertex stride: {c}")
         return c["offset"]
     pos_offset = channel_offset(0, 3)
