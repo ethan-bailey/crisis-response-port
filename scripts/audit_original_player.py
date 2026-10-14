@@ -87,7 +87,7 @@ def main():
                                       "guid": gm.group(1), "path": guid_to_asset.get(gm.group(1))})
         runtime_prefabs.append({"path": str(prefab.relative_to(root)), "bytes": len(ptext.encode("utf-8")),
                                 "gameObjectNames": [m.group(1).strip() for m in NAME.finditer(ptext)],
-                                "scriptComponents": component_scripts,
+                                "scriptComponents": component_scripts, "meshComponents": mesh_refs,
                                 "assetReferences": resolved})
     source_files = {}
     for name in ("OperatorSpawner.cs", "OccupantSpawner.cs", "Marksmen.cs", "Mission.cs", "GlobalContextInitializer.cs", "CharacterBody.cs", "TeamOperator.cs", "WeaponAimer.cs", "MuscleControl.cs", "Limb.cs", "TeamController.cs", "PlayerController.cs", "InputHandler.cs", "InputManager.cs", "PlayerInput.cs"):
