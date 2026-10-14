@@ -90,7 +90,7 @@ async function load(){
   weaponInstances["Glock-18"]=await buildWeapon("Glock-18","Pelvis/Abdomen/Torso/Pistol pivot");
   weaponInstances["Glock-18"].root.visible=false;
   function updateWeaponStatus(){const cap=capacityByWeapon[activeWeaponName],count=ammoByWeapon[activeWeaponName];weaponStatus.textContent=activeWeaponName+" · "+count+"/"+cap+(weaponReloading?" · RELOADING":"")}
-  function swapToWeapon(name){if(!weaponInstances[name])return;activeWeaponName=name;for(const [n,w] of Object.entries(weaponInstances))w.root.visible=n===name;weaponReloading=false;updateWeaponStatus()}
+  swapToWeapon=function(name){if(!weaponInstances[name])return;activeWeaponName=name;for(const [n,w] of Object.entries(weaponInstances))w.root.visible=n===name;weaponReloading=false;updateWeaponStatus()};
   swapWeapon=()=>swapToWeapon(activeWeaponName==="M4A1"?"Glock-18":"M4A1");
   reloadWeapon=()=>{if(weaponReloading||ammoByWeapon[activeWeaponName]===capacityByWeapon[activeWeaponName])return;weaponReloading=true;updateWeaponStatus();const delay=(weaponInstances[activeWeaponName]?.stats.reloadTime||1)*1000;setTimeout(()=>{ammoByWeapon[activeWeaponName]=capacityByWeapon[activeWeaponName];weaponReloading=false;updateWeaponStatus()},delay)};
   updateWeaponStatus();
