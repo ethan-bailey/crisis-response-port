@@ -26,7 +26,7 @@ The replacement is not "WebAssembly instead of an engine": WebAssembly is the ex
 ## Ordered implementation gates
 
 1. **Source/build gate — partially passed:** keep the C# WASM smoke app compiling the selected original source files; do not include test fixtures as production implementations.
-2. **Math/transform gate — under test:** validate vector, quaternion, and transform contracts; compare edge cases and coordinate conventions.
+2. **Math/transform gate — basic math passed:** Vector3 angle, quaternion axis-angle rotation and local/world transform round-trip assertions passed in [run 38593586937](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38593586937). Parent/child hierarchy, scale, update order and full Unity semantics remain unimplemented.
 3. **Scene graph gate:** use the extracted manifest to preserve GameObject IDs, component order, parent relationships, local transforms, and asset references.
 4. **Asset gate:** render all required original mesh/material/texture dependencies; resolve the missing .308 casing mesh without substituting an unverified asset.
 5. **Physics/ballistics gate:** compile the original projectile and ammunition sources; implement the needed Unity physics contracts; test raycasts, collision ordering, energy loss, penetration, deflection, and damage against reference cases.
