@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><base href="/">
+<title>Crisis Response original runtime</title>
+<style>html{background:#111820;color:#e9eef5;font:15px system-ui}body{margin:0;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}h1{font-size:20px}pre{white-space:pre-wrap;overflow-wrap:anywhere}#inputControls{display:flex;gap:8px;flex-wrap:wrap}button{min-height:48px;padding:10px;background:#26384a;color:white;border:1px solid #8393a5;border-radius:8px;touch-action:none;user-select:none}.active{background:#326786}#inputState{font-size:12px}</style></head><body>
+<div id="app"></div><div id="blazor-error-ui" style="display:none">Runtime error. Reload to reset.</div>
+<script type="module">
+import { BrowserInput } from './browser-input.mjs';
+window.startOriginalRuntime=async()=>{
+ try{
+  const call=(method,...args)=>DotNet.invokeMethodAsync('Crisis.Runtime.Browser',method,...args);
+  window.runtimeCall=call;
+  const contracts=JSON.parse(await call('Verify'));
+  document.querySelector('#contracts').textContent=contracts.status+' · '+contracts.contracts.length+' verified runtime contracts';
+  window.__runtimeContracts=contracts;
+  await call('ResetInput');
+  const held={left:false,right:false,sprint:false,fire:false,kneel:false,stand:false,magazine:false,switchWeapons:false};
+  const adapter=new BrowserInput({onChange(action,pressed){held[action]=pressed;document.querySelector(`[data-action="${action}"]`)?.classList.toggle('active',pressed)}});
+  document.querySelectorAll('button[data-action]').forEach(button=>adapter.bindButton(button,button.dataset.action));
+  adapter.bindKeyboard(window,{KeyA:'left',KeyD:'right',ShiftLeft:'sprint',KeyR:'magazine',Tab:'switchWeapons',KeyW:'stand',KeyS:'kneel'});
+  adapter.bindLifecycle(window,document);
+  let previous=performance.now(),busy=false;
+  async function frame(now){requestAnimationFrame(frame);if(busy)return;busy=true;const dt=(now-previous)/1000;previous=now;
+   try{const state=JSON.parse(await call('Tick',dt,JSON.stringify(held)));window.__originalInput=state;
+    document.querySelector('#inputState').textContent=JSON.stringify(Object.fromEntries(Object.entries(state).filter(([_,s])=>s.Pressed||s.Up)),null,2);
+   }catch(error){document.querySelector('#contracts').textContent=String(error);window.__runtimeError=String(error)}finally{busy=false}}
+  requestAnimationFrame(frame);
+ }catch(error){document.querySelector('#contracts').textContent=String(error);window.__runtimeError=String(error)}
+};
+</script><script src="_framework/blazor.webassembly.js"></script></body></html>

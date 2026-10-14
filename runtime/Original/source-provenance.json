@@ -1,0 +1,96 @@
+{
+  "originalFiles": {
+    "DecayingObject.cs": "09eff3ac3de9f1f8b7d81a9dd9d8086fd4fd104c912bf2eca82157097c0edffe",
+    "ObjectRemover.cs": "b44cc5440a481fa0583549c9a8f576757755296e581687502b1e7abe3f9ed65d",
+    "AudioMaterial.cs": "3755bc5b0389a194737d0f385c2689ae8eb241cdeeed217c0b97829189dd1243",
+    "BuildingController.cs": "8f0e47f06747714c7597224b21a6c93cad3e323fbb5962763f6cd4b8d9b27643",
+    "InputKey.cs": "bcf11ec47585f2fe43ef453e6bd5895b61b335bd665b212791de0438f2d2389c",
+    "InputMapping.cs": "dcfa60e3ac596cab635a3bc8f1179a25c80d9a4e86752934a1b02f4a28e732a8",
+    "InputHandler.cs": "db16bfc942f816201d7c34215a4b0000aa27062f5a905aeb42042bc220cb780c"
+  },
+  "methodSelections": {
+    "InputMapping.cs": {
+      "public InputMapping()": "cb02c8026eede9ec986a6dceaf46ad16a89b21f72803ad759bf00aac73b42d8d",
+      "private void RegisterAllKeys()": "5b2e017b3e0b09e08527597f78820d52a739d9a9e878a1bc9c10de9bf102b187",
+      "private void Overwrite(InputMapping data)": "47c90394c7e07c665fa2154e29eee376a19a19f4586004236102b7e84b96174e"
+    },
+    "InputHandler.cs": {
+      "public void SetMapping(InputMapping keys)": "ad1285309d3086771b63d71ce8d5b396cc4c64aacf239a196b6a40ed72fdd095",
+      "private void UpdateKeys()": "57ba1bb4f4db855f343066a368b9b031ac8a0776f5c8b547c5a9875bd49dcb6c",
+      "public List<InputKey> FindKeyCodeBindings(KeyCode code)": "141f6dc8480908d226f8b9b5c84323cb8d136ad49f82418b9d951fe703abeb40",
+      "public List<InputKey> FindAxisBindings(string axis, float direction)": "eb51efeba825f33583352ce1666e4e006be071f66724daf55219068bb8f8a14f",
+      "public void EnableAll()": "105c50a74fd87881f47eb30aa5d40a440fa5fb351e543d1baf0fb151596e6d1a",
+      "public void DisableAll()": "3b5e06757cb003595bc7cc20cf3731528e3006086b284a87d749c7549857452e",
+      "public void OnMissionStart()": "282a8baf640cc209d36ba2faf74008815350e270cf111ed30659298147535112",
+      "public void OnMissionEnd()": "a8e94d101cf7d8b19ba16f7e68639638e46ed971b5df511ca93902940a767126",
+      "public void DisableOperatorInput(bool disable = true)": "8775ad03670fb91c2691b5342b3865df9fe5d95437839af003a8afbc6ded43d6",
+      "public void SuspendInput(bool suspend, bool reset = false)": "52f1d48384fed8aa2bcc0bd14990f2b9e0b66ac638b13cc45d83adf1fbab645c",
+      "public void ResetAll()": "4be7548f5c0463f31a135e98dd0190060a65742ac96bef2651ba1aa4c58c8c1b",
+      "public void EnableCategory(InputKey.Category category, bool enable = true)": "67e103e2922c9756da456ec47e5a4c7442de6646d7239723d11e24f76c41565f"
+    }
+  },
+  "excludedFeatures": [
+    "Input binding dialog/UI",
+    "InputMapping disk serialization and version migration",
+    "Unselected gameplay classes; this extraction is not the whole game"
+  ],
+  "keyCodeNames": [
+    "A",
+    "Alpha1",
+    "Alpha2",
+    "Alpha3",
+    "Alpha4",
+    "Alpha5",
+    "B",
+    "Backslash",
+    "D",
+    "Delete",
+    "DownArrow",
+    "E",
+    "Escape",
+    "F",
+    "F1",
+    "F2",
+    "G",
+    "H",
+    "Home",
+    "Insert",
+    "Keypad0",
+    "KeypadEnter",
+    "KeypadMinus",
+    "KeypadPlus",
+    "L",
+    "LeftArrow",
+    "LeftControl",
+    "LeftShift",
+    "Mouse0",
+    "Mouse1",
+    "None",
+    "O",
+    "PageUp",
+    "R",
+    "S",
+    "Space",
+    "T",
+    "Tab",
+    "U",
+    "UpArrow",
+    "W"
+  ],
+  "transformations": [
+    "Unity Object alias resolves .NET name collision",
+    "Omitted FullSerializer annotations; no serialization implementation claimed",
+    "Selected original method bodies copied verbatim with individual SHA-256",
+    "Runtime host invokes original UpdateKeys before scene Update; rebinding is excluded"
+  ],
+  "generatedFiles": {
+    "InputMapping.cs": "0670d39bbee6692fe848e6c2942572f76df2e152cbe1af24be4e05a0a7e48241",
+    "BuildingController.cs": "5bd1596db99116cc4aca2a9843e1f8a5f17d5771411c77a0c7b2742ff1574275",
+    "KeyCode.cs": "ae2eec63fff7f420ff5f3261593f106e6297929afa339aa0581f6810b9d2fa54",
+    "DecayingObject.cs": "317f3a8373d81f01f7ce43f478ed6d2c99abafedbf4c74b4efbd327a22e49e9d",
+    "AudioMaterial.cs": "3755bc5b0389a194737d0f385c2689ae8eb241cdeeed217c0b97829189dd1243",
+    "InputHandler.cs": "e1d4a90dcf8a6706b65ef9337b17eafd673dcab274b254a18c944c7778f95b99",
+    "InputKey.cs": "2bbcafdd110707dea7bb3b27906c8e391af1b7472909d09a2ed7dbd30ec9b1d8",
+    "ObjectRemover.cs": "168d2d6175b0051cac2d3af2ca34cfdcd90105272f49e0e0cc92d1c3b2ace171"
+  }
+}

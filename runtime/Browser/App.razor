@@ -1,0 +1,17 @@
+@using Microsoft.JSInterop
+@inject IJSRuntime JS
+<main>
+    <h1>Crisis Response runtime</h1>
+    <p>Recovered original input methods execute in WebAssembly. Scene loading and box-collider queries use extracted original data. Full gameplay is still incomplete.</p>
+    <pre id="contracts">Loading original C# runtime…</pre>
+    <div id="inputControls">
+        <button data-action="left">LEFT</button><button data-action="right">RIGHT</button>
+        <button data-action="sprint">SPRINT</button><button data-action="fire">FIRE</button>
+        <button data-action="kneel">KNEEL</button><button data-action="stand">STAND</button>
+        <button data-action="magazine">RELOAD</button><button data-action="switchWeapons">SWITCH</button>
+    </div>
+    <pre id="inputState"></pre>
+</main>
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender){if(firstRender)await JS.InvokeVoidAsync("startOriginalRuntime");}
+}
