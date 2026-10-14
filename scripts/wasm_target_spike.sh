@@ -23,6 +23,8 @@ cp "$ORIGINAL_TARGET" "$OUT_ROOT/app/OriginalTarget.cs"
 cp "$ORIGINAL_BALLISTIC_PROPERTIES" "$OUT_ROOT/app/OriginalBallisticMaterialProperties.cs"
 cp "$ORIGINAL_BALLISTIC_MATERIAL" "$OUT_ROOT/app/OriginalBallisticMaterial.cs"
 cp "$ORIGINAL_PROJECTILE" "$OUT_ROOT/app/OriginalProjectile.cs"
+# Resolve Unity names that collide with System names in the standalone .NET project.
+sed -i '1i using Object = UnityEngine.Object;\nusing Random = UnityEngine.Random;' "$OUT_ROOT/app/OriginalProjectile.cs"
 cat > "$OUT_ROOT/app/UnityShim.cs" <<'CS'
 using System;
 using System.Collections.Generic;
@@ -155,6 +157,7 @@ namespace UnityEngine
         public Vector3 localScale { get; set; } = Vector3.one;
         public Vector3 localEulerAngles { get; set; }
         public Transform parent { get; private set; }
+        public GameObject gameObject { get; } = new GameObject();
         public int childCount => 0;
         public Quaternion rotation { get; set; } = Quaternion.identity;
         public void SetParent(Transform value, bool worldPositionStays = true) { parent = value; }
@@ -170,16 +173,18 @@ namespace UnityEngine
     public class Rigidbody { public void AddForceAtPosition(Vector3 force, Vector3 position) { } }
     public class Ray { public Vector3 origin, direction; public Ray(Vector3 o, Vector3 d) { origin=o; direction=d; } }
     public struct RaycastHit { public Transform transform; public Collider collider; public Vector3 point, normal; public float distance; }
-    public static class Physics { public static bool Raycast(Ray ray, out RaycastHit hit, float distance, int mask) { hit = default; return false; } }
+    public enum QueryTriggerInteraction { UseGlobal, Ignore, Collide }
+    public static class Physics { public static bool Raycast(Ray ray, out RaycastHit hit, float distance, int mask) { hit = default; return false; } public static bool Raycast(Vector3 origin, Vector3 direction, out RaycastHit hit, float distance, int mask) { hit = default; return false; } }
     public class AnimationCurve { public float Evaluate(float value) => 1f; }
     public class Material { }
     public class MeshRenderer { public Material material { get; set; } }
     public class MeshFilter { public Transform transform { get; } = new Transform(); public T GetComponent<T>() where T : class => null; }
-    public class GameObject { public void SetActive(bool active) { } public T GetComponent<T>() where T : class => null; }
+    public struct Color { public static Color green => new Color(); }
+    public class GameObject { public bool activeInHierarchy => true; public void SetActive(bool active) { } public T GetComponent<T>() where T : class => null; }
     public static class Time { public static float time => 0f; public static float deltaTime => 1f/60f; public static int frameCount => 0; }
     public static class Random { public static float Range(float min, float max) => min; public static int Range(int min, int max) => min; public static float value => 0.5f; public static Vector3 onUnitSphere => Vector3.forward; }
     public static class Mathf { public static float Pow(float f, float p) => MathF.Pow(f,p); public static float Min(float a,float b) => MathF.Min(a,b); public static float Max(float a,float b) => MathF.Max(a,b); public static float Abs(float x) => MathF.Abs(x); public static float Sqrt(float x) => MathF.Sqrt(x); public static float Tan(float x) => MathF.Tan(x); public static float Atan(float x) => MathF.Atan(x); public static float Clamp01(float x) => Math.Clamp(x,0f,1f); public static float Lerp(float a,float b,float t) => a+(b-a)*Math.Clamp(t,0f,1f); }
-    public static class Debug { public static void LogWarningFormat(string format, params object[] args) { } }
+    public static class Debug { public static void LogWarningFormat(string format, params object[] args) { } public static void DrawLine(Vector3 start, Vector3 end, Color color, float duration) { } }
     public class Object { public static T Instantiate<T>(T original) where T : class => original; public static void Destroy(object obj) { } }
 
     // Minimal API surface for this feasibility test only. This is not a full UnityEngine replacement.
@@ -213,8 +218,9 @@ public sealed class WeaponBase { public CharacterBody Owner; public AmmunitionBa
 public sealed class Marksman { public void OnSuccessfulAttack(object victim) { } }
 public sealed class AudioInstigator { }
 public sealed class Limb { public CharacterBody Body = new CharacterBody(); public Projectile HandleProjectile(Projectile projectile, UnityEngine.Vector3 normal) => projectile; }
+public sealed class TutorialSoftTarget { }
 public sealed class ProjectileLimbEvent { public void Invoke(Projectile p, Limb limb) { } }
-public sealed class ProjectileTrace { public void Initialize(Projectile p) { } public void AddPosition(UnityEngine.Vector3 p) { } public void SpawnHitEffect(UnityEngine.Vector3 position, UnityEngine.Transform container, UnityEngine.Vector3 normal) { } }
+public sealed class ProjectileTrace { public static implicit operator bool(ProjectileTrace value) => value != null; public void Initialize(Projectile p) { } public void AddPosition(UnityEngine.Vector3 p) { } public void SpawnHitEffect(UnityEngine.Vector3 position, UnityEngine.Transform container, UnityEngine.Vector3 normal) { } }
 public sealed class Explosion : UnityEngine.MonoBehaviour { }
 public sealed class BallisticHitEffect { public float offset; public void InitializeTransform(UnityEngine.Transform parent, UnityEngine.Vector3 position, UnityEngine.Vector3 direction) { } public void PlayEntry(Projectile projectile) { } public void PlayExit(Projectile projectile, UnityEngine.Vector3 normal, object instigator) { } }
 public sealed class BallisticHitMeshEffect { }
