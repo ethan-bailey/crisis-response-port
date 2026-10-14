@@ -51,7 +51,9 @@ def main():
                         tex_guid=None
                         if mat_path and mat_path.is_file():
                             mt=mat_path.read_text(errors="ignore")
-                            tm=re.search(r"_MainTex:\s*\{fileID: -?\d+, guid: ([0-9a-f]{32})",mt)
+                            start=mt.find("_MainTex:")
+                            tex_block=mt[start:start+500] if start>=0 else mt
+                            tm=re.search(r"m_Texture:\s*\{fileID: -?\d+, guid: ([0-9a-f]{32})",tex_block)
                             if tm: tex_guid=tm.group(1)
                         tex_path=guid_path.get(tex_guid) if tex_guid else None
                         if tex_path and not tex_path.is_file():
