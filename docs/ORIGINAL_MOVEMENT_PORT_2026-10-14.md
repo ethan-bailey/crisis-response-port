@@ -28,3 +28,9 @@ The source is decompiled/reconstructed C#, not the developer's original source t
 This is a partial port of the source movement logic, not full Unity physics parity. The browser build does not yet reproduce the original Rigidbody/PhysX simulation, colliders, body-limb ragdoll, aiming-driven turning, or the complete animation state machine. Facing is deliberately not changed by directional movement because the original `Body.Move()` method does not turn the character; turning is a separate `CharacterBody.Turn()` system. Until that system is ported, movement and turning behavior cannot be claimed to match the original fully.
 
 No weapon, projectile, damage, enemy-AI, or mission behavior was added in this change.
+
+## Next source-traced dependency: facing and aim
+
+Inspection of `PlayerController.cs` shows facing is updated by `HandleChangeDirection()` using `WeaponPointer.WorldPoint.x` compared with the operator's right-shoulder X coordinate. `WeaponPointer.cs` derives that point from the camera ray and a physics raycast against the original Aim layer mask, storing the hit in body-local coordinates. `CharacterBody.Turn()` then updates direction, rotation, and limb flips.
+
+That chain is intentionally not replaced with a screen-side guess: the browser runtime still lacks the original Aim-layer colliders/raycast semantics and weapon muzzle/aim transforms. A faithful next step must port or reconstruct those source-backed dependencies before connecting pointer movement to facing or weapon aim.
