@@ -36,7 +36,7 @@ jobs:
       - name: Commit recovered mesh for the private Vercel deployment
         run: |
           set -euo pipefail
-          if git diff --quiet -- marksman-combined.obj marksman-combined.mesh-report.json; then
+          if [ -f marksman-combined.obj ] && git ls-files --error-unmatch marksman-combined.obj >/dev/null 2>&1 && git diff --quiet -- marksman-combined.obj marksman-combined.mesh-report.json; then
             echo "No mesh changes to commit."
             exit 0
           fi
