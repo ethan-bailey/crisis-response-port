@@ -102,7 +102,7 @@ def main():
     for name in ("OperatorSpawner.cs", "OccupantSpawner.cs", "Marksmen.cs", "Mission.cs", "GlobalContextInitializer.cs", "CharacterBody.cs", "TeamOperator.cs", "WeaponAimer.cs", "MuscleControl.cs", "Limb.cs", "TeamController.cs", "PlayerController.cs", "InputHandler.cs", "InputManager.cs", "PlayerInput.cs"):
         candidates = list(assets.rglob(name))
         if candidates:
-            source_files[name] = [{"path": str(p.relative_to(root)), "text": p.read_text(errors="ignore")[:16000]} for p in candidates[:3]]
+            source_files[name] = [{"path": str(p.relative_to(root)), "text": p.read_text(errors="ignore")[:(100000 if name in {"CharacterBody.cs", "PlayerController.cs"} else 16000)]} for p in candidates[:3]]
     output = {"sourceScene": str(scene.relative_to(root)), "sceneObjectCount": len(objects),
               "sceneComponentCount": len(components), "scriptGuidCount": len(script_guid),
               "assetGuidCount": len(guid_to_asset), "scriptBearingObjectCount": len(records),
