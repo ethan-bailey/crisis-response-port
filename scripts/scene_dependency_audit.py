@@ -15,6 +15,7 @@ BUILTIN = "0000000000000000e000000000000000"
 TEXT_EXTS = {
     ".unity", ".prefab", ".asset", ".mat", ".controller", ".anim",
     ".overrideController", ".renderTexture", ".mixer", ".guiskin", ".meta",
+    ".cs", ".shader", ".cginc", ".json", ".xml", ".txt",
 }
 SCRIPT_PREFIX = "Assets/Scripts/Assembly-CSharp/"
 
