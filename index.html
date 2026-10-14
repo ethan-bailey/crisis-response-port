@@ -35,6 +35,8 @@ button:active{background:#3c4858}button[aria-pressed=true]{background:#30465a;bo
 <button id="grid" aria-pressed="false">Grid</button>
 <button id="rotate" aria-pressed="false">Auto-rotate</button>
 <button id="light" aria-pressed="false">Alternate lighting</button>
+<button id="explore" aria-pressed="false">Explore mode</button>
+<button id="forward">Forward</button><button id="back">Back</button><button id="left">Left</button><button id="right">Right</button>
 </div>
 <div class="warn">This is an interactive asset-inspection prototype, not a playable game. The mesh is original recovered geometry; original materials, scene lighting, characters, animation, physics, audio, AI, UI and gameplay are not yet running.</div>
 </section>
@@ -52,7 +54,7 @@ scene.add(new THREE.HemisphereLight(0xe5edff,0x34302a,2.1));
 const key=new THREE.DirectionalLight(0xffffff,2.2);key.position.set(20,40,15);scene.add(key);
 const fill=new THREE.DirectionalLight(0x91b6ff,.7);fill.position.set(-20,10,-15);scene.add(fill);
 const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.075;controls.enablePan=true;controls.screenSpacePanning=true;controls.minDistance=2;controls.maxDistance=200;controls.target.set(0,0,0);
-let object=null,baseMaterials=[],wire=false,altLight=false,grid=null,homePosition=null,homeTarget=new THREE.Vector3(),auto=false;
+let object=null,baseMaterials=[],wire=false,altLight=false,grid=null,homePosition=null,homeTarget=new THREE.Vector3(),auto=false,explore=false,moveStep=1;
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 window.__viewerStatus="loading";window.__viewerStats=null;
 function setButton(id,on){document.querySelector("#"+id).setAttribute("aria-pressed",String(on))}
@@ -61,13 +63,17 @@ document.querySelector("#wire").addEventListener("click",()=>{wire=!wire;setButt
 document.querySelector("#grid").addEventListener("click",()=>{if(!grid){grid=new THREE.GridHelper(60,60,0x58687c,0x303946);grid.position.y=-.15;scene.add(grid)}else{grid.visible=!grid.visible}setButton("grid",grid.visible)});
 document.querySelector("#rotate").addEventListener("click",()=>{auto=!auto;controls.autoRotate=auto;controls.autoRotateSpeed=1.1;setButton("rotate",auto)});
 document.querySelector("#light").addEventListener("click",()=>{altLight=!altLight;scene.background.set(altLight?0x202a35:0x101318);key.intensity=altLight?3.1:2.2;fill.intensity=altLight?1.2:.7;setButton("light",altLight)});
+function moveView(direction){if(!object)return;const forward=new THREE.Vector3().subVectors(controls.target,camera.position);forward.y=0;if(forward.lengthSq()<1e-8)forward.set(0,0,-1);forward.normalize();const right=new THREE.Vector3().crossVectors(forward,new THREE.Vector3(0,1,0)).normalize();let delta=new THREE.Vector3();if(direction==="forward")delta.copy(forward);if(direction==="back")delta.copy(forward).negate();if(direction==="left")delta.copy(right).negate();if(direction==="right")delta.copy(right);delta.multiplyScalar(moveStep);camera.position.add(delta);controls.target.add(delta);controls.update()}
+for(const direction of ["forward","back","left","right"])document.querySelector("#"+direction).addEventListener("click",()=>moveView(direction));
+document.querySelector("#explore").addEventListener("click",()=>{explore=!explore;controls.enableRotate=!explore;controls.enableZoom=!explore;controls.enablePan=!explore;controls.autoRotate=false;auto=false;setButton("rotate",false);setButton("explore",explore);inspect.textContent=explore?"Explore mode: use Forward/Back/Left/Right or W/A/S/D. Turn off Explore mode to orbit and zoom.":"Orbit mode: drag to rotate, pinch to zoom, two-finger drag to pan."});
+addEventListener("keydown",e=>{if(!explore||/INPUT|TEXTAREA|BUTTON/.test(e.target.tagName))return;const k=e.key.toLowerCase();const map={w:"forward",arrowup:"forward",s:"back",arrowdown:"back",a:"left",arrowleft:"left",d:"right",arrowright:"right"};if(map[k]){e.preventDefault();moveView(map[k])}});
 const meshLoader=new OBJLoader();
 const meshLoaded=obj=>{
  object=obj;let meshes=0,vertices=0,triangles=0;
  const material=new THREE.MeshStandardMaterial({color:0xb8bec8,roughness:.88,metalness:.02,side:THREE.DoubleSide});
  object.traverse(c=>{if(!c.isMesh)return;meshes++;c.material=material;if(!c.geometry.boundingBox)c.geometry.computeBoundingBox();const p=c.geometry.getAttribute("position"),idx=c.geometry.getIndex();if(p)vertices+=p.count;triangles+=idx?idx.count/3:(p?p.count/3:0)});
  object.updateMatrixWorld(true);const bounds=new THREE.Box3().setFromObject(object),center=bounds.getCenter(new THREE.Vector3()),sphere=bounds.getBoundingSphere(new THREE.Sphere());object.position.sub(center);scene.add(object);
- const radius=Math.max(sphere.radius,1);camera.position.set(radius*1.7,radius*1.25,radius*1.8);camera.near=Math.max(radius/10000,.001);camera.far=radius*100;camera.updateProjectionMatrix();controls.target.set(0,0,0);controls.update();homePosition=camera.position.clone();homeTarget.copy(controls.target);
+ const radius=Math.max(sphere.radius,1);moveStep=Math.max(radius*.035,.15);camera.position.set(radius*1.7,radius*1.25,radius*1.8);camera.near=Math.max(radius/10000,.001);camera.far=radius*100;camera.updateProjectionMatrix();controls.target.set(0,0,0);controls.update();homePosition=camera.position.clone();homeTarget.copy(controls.target);
  window.__viewerStats={meshes,vertices,triangles:Math.round(triangles),radius};window.__viewerStatus="loaded";
  status.textContent="Loaded original mesh\n"+meshes.toLocaleString()+" mesh groups · "+vertices.toLocaleString()+" vertices · "+Math.round(triangles).toLocaleString()+" triangles";
 };
