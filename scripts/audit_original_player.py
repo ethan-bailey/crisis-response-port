@@ -81,7 +81,7 @@ def main():
                                 "scriptComponents": component_scripts,
                                 "assetReferences": resolved})
     source_files = {}
-    for name in ("OperatorSpawner.cs", "OccupantSpawner.cs", "Marksmen.cs", "Mission.cs", "GlobalContextInitializer.cs"):
+    for name in ("OperatorSpawner.cs", "OccupantSpawner.cs", "Marksmen.cs", "Mission.cs", "GlobalContextInitializer.cs", "CharacterBody.cs", "TeamOperator.cs", "WeaponAimer.cs", "MuscleControl.cs", "Limb.cs", "TeamController.cs"):
         candidates = list(assets.rglob(name))
         if candidates:
             source_files[name] = [{"path": str(p.relative_to(root)), "text": p.read_text(errors="ignore")[:16000]} for p in candidates[:3]]
