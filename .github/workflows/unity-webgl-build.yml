@@ -201,7 +201,9 @@ jobs:
         with:
           name: crisis-response-webgl-build-gate
           path: work/WEBGL_BUILD_GATE.md
-          retention-days: 14      - name: Fail the run if original mesh extraction did not validate
+          retention-days: 14
+
+      - name: Fail the run if original mesh extraction did not validate
         if: always()
         run: |
           if [ "${{ steps.mesh_export.outcome }}" != "success" ]; then
