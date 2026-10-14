@@ -34,3 +34,14 @@ No weapon, projectile, damage, enemy-AI, or mission behavior was added in this c
 Inspection of `PlayerController.cs` shows facing is updated by `HandleChangeDirection()` using `WeaponPointer.WorldPoint.x` compared with the operator's right-shoulder X coordinate. `WeaponPointer.cs` derives that point from the camera ray and a physics raycast against the original Aim layer mask, storing the hit in body-local coordinates. `CharacterBody.Turn()` then updates direction, rotation, and limb flips.
 
 That chain is intentionally not replaced with a screen-side guess: the browser runtime still lacks the original Aim-layer colliders/raycast semantics and weapon muzzle/aim transforms. A faithful next step must port or reconstruct those source-backed dependencies before connecting pointer movement to facing or weapon aim.
+
+## Follow-up build: source-traced aiming and turning
+
+The browser runtime now also ports the following recovered chain:
+
+- The recovered `Aim quad.prefab` is a 25×5 MeshCollider on layer `AimQuad`, at local Z = -1.5, rotated 180° around X.
+- `WeaponPointer.Update()` positions this target at `(Body.Position + Body.Direction * 20, 2.5, -1.5)`, raycasts the pointer against the AimQuad layer, retains the hit in body-local coordinates, and reconstructs `WorldPoint` from that local point.
+- `PlayerController.HandleChangeDirection()` compares `WorldPoint.x` with the right upper arm's world X coordinate and calls `Body.Turn(±1)` unless interaction UI or free aim is active. The browser runtime does not yet implement those two mode states, so this turn check currently runs continuously.
+- The runtime no longer turns based on which side of the screen was tapped; the previous screen-side heuristic was removed.
+
+This is still a partial port: the browser scene does not yet reproduce all Unity camera/raycast ordering, Rigidbody/PhysX behavior, the `Limb.Flip()` visual-depth/attachment updates, active weapon muzzle transforms, precision aiming, or weapon firing. Those are documented gaps, not substituted systems.
