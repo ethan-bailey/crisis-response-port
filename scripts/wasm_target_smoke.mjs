@@ -12,15 +12,18 @@ try {
     const el = document.querySelector("#result");
     return el && (el.textContent.startsWith("PASS") || el.textContent.startsWith("FAIL"));
   }, { timeout: 90000 });
+  await page.locator("#runShot").click();
+  await page.waitForFunction(() => document.querySelector("#shotResult")?.textContent?.includes("Original HandleProjectile returned"));
   const result = await page.evaluate(() => ({
     text: document.querySelector("#result")?.textContent ?? "",
     scope: document.querySelector("#scope")?.textContent ?? "",
-    title: document.querySelector("h1")?.textContent ?? ""
+    title: document.querySelector("h1")?.textContent ?? "",
+    shot: document.querySelector("#shotResult")?.textContent ?? ""
   }));
   fs.writeFileSync("work/wasm-target-smoke.json", JSON.stringify({ ...result, errors }, null, 2));
   await page.screenshot({ path: "work/wasm-target-smoke.png", fullPage: true });
   console.log(JSON.stringify({ ...result, errors }, null, 2));
-  if (!result.text.startsWith("PASS") || errors.length) process.exitCode = 1;
+  if (!result.text.startsWith("PASS") || !result.shot.includes("Original HandleProjectile returned Stop") || errors.length) process.exitCode = 1;
 } finally {
   await browser.close();
 }
