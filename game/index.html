@@ -29,7 +29,7 @@ const camera=new THREE.OrthographicCamera(-viewHeight*innerWidth/innerHeight/2,v
 camera.position.set(-3,2.5,60);camera.lookAt(-3,2.5,0);
 const world=new THREE.Group();scene.add(world);
 const character=new THREE.Group();character.name="Original Operator prefab";scene.add(character);
-const keys={left:false,right:false,sprint:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,applyAnimation=()=>{};
+const keys={left:false,right:false,sprint:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),pointerHasMoved=false;
 function showError(e){errorBox.style.display="block";errorBox.textContent=String(e?.stack||e);status.textContent="Build failed to load; see error details."}
 function setInput(id,key){const b=document.querySelector("#"+id);const on=e=>{e.preventDefault();keys[key]=true;b.classList.add("active");};const off=e=>{e.preventDefault();keys[key]=false;b.classList.remove("active")};b.addEventListener("pointerdown",on);b.addEventListener("pointerup",off);b.addEventListener("pointercancel",off);b.addEventListener("contextmenu",e=>e.preventDefault())}
 setInput("left","left");setInput("right","right");setInput("sprint","sprint");
@@ -89,7 +89,7 @@ async function load(){
    const t=clip.duration>0?(clip.loop?animationTime%clip.duration:Math.min(animationTime,clip.duration)):0;
    resetPose();
    if(activeAnimation==="Body walk"&&clips["Body sprint"]){
-    const sprint=clips["Body sprint"],blend=Math.max(0,Math.min(.5,(Math.abs(velocity)-1.2)/(3.2-1.2)*.5));
+    const sprint=clips["Body sprint"],blend=Math.max(0,Math.min(.5,(Math.abs(velocity)-1.5)/(4.2-1.5)*.5));
     const walkMap=new Map(clip.tracks.map(tr=>[tr.path+"|"+tr.property,tr]));
     const sprintMap=new Map(sprint.tracks.map(tr=>[tr.path+"|"+tr.property,tr]));
     for(const [keyId,tr] of walkMap){
@@ -101,21 +101,30 @@ async function load(){
     }
    }else for(const track of clip.tracks)applyTrack(track,t);
   };
+  rightUpperArm=nodeByPath.get("Pelvis/Abdomen/Torso/Right upper arm")||null;
+  // WeaponPointer raycasts only against the original AimQuad layer. Its prefab is a 25×5
+  // plane at z=-1.5; reproduce that actual target collider for pointer-to-world mapping.
+  aimQuad=new THREE.Mesh(new THREE.PlaneGeometry(25,5),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide,colorWrite:false}));
+  aimQuad.name="Original Aim quad collider (layer AimQuad)";aimQuad.rotation.x=Math.PI;aimQuad.position.set(playerX+facingDirection*20,2.5,-1.5);scene.add(aimQuad);
   const box=sceneBounds;const size=box.getSize(new THREE.Vector3());viewHeight=Math.max(8,Math.min(13,size.y*.75||11));
   camera.left=-viewHeight*innerWidth/innerHeight/2;camera.right=viewHeight*innerWidth/innerHeight/2;camera.top=viewHeight/2;camera.bottom=-viewHeight/2;camera.updateProjectionMatrix();
   groundY=1.5;loaded=true;
-  window.__gameState=()=>({loaded,playerX,limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
-  status.textContent="Recovered Mission 01 geometry and Operator assets. Movement now follows recovered CharacterBody.FixedUpdate force equations and Operator prefab speeds; Rigidbody drag is not invented. Aiming/turning, collision physics, weapons, and AI remain unported.";
-  positionLabel.textContent="Walk 1.2 m/s · Sprint 3.2 m/s · original spawn X −3";
+  window.__gameState=()=>({loaded,playerX,facingDirection,aimPoint:character.localToWorld(localAimPoint.clone()).toArray(),limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
+  status.textContent="Recovered Mission 01 and Operator assets. Movement uses recovered CharacterBody force logic and prefab speeds. Pointer aiming now follows the recovered WeaponPointer AimQuad raycast and PlayerController shoulder-based turn check. Full Unity physics, limb flip attachments, weapons, and AI remain unported.";
+  positionLabel.textContent="Walk 1.5 m/s · Sprint 4.2 m/s · original spawn X −3";
  }catch(e){showError(e)}
 }
 function resize(){renderer.setSize(innerWidth,innerHeight);camera.left=-viewHeight*innerWidth/innerHeight/2;camera.right=viewHeight*innerWidth/innerHeight/2;camera.top=viewHeight/2;camera.bottom=-viewHeight/2;camera.updateProjectionMatrix()}
 addEventListener("resize",resize);
-let aiming=false;
-function updateAim(e){const r=renderer.domElement.getBoundingClientRect(),screenX=(e.clientX-r.left)/r.width;const worldX=camera.position.x+(screenX-.5)*(camera.right-camera.left);facingDirection=worldX>=playerX?1:-1;if(loaded)character.rotation.y=facingDirection<0?Math.PI:0}
-renderer.domElement.addEventListener("pointerdown",e=>{aiming=true;updateAim(e)});
-renderer.domElement.addEventListener("pointermove",e=>{if(aiming)updateAim(e)});
-addEventListener("pointerup",()=>aiming=false);
+function updateAim(e){
+ const rect=renderer.domElement.getBoundingClientRect();
+ pointerNdc.x=((e.clientX-rect.left)/rect.width)*2-1;
+ pointerNdc.y=-(((e.clientY-rect.top)/rect.height)*2-1);
+ pointerHasMoved=true;
+}
+renderer.domElement.addEventListener("pointerdown",e=>{updateAim(e);});
+renderer.domElement.addEventListener("pointermove",updateAim);
+renderer.domElement.addEventListener("pointercancel",()=>{pointerHasMoved=false;});
 let last=performance.now();
 function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-last)/1000,.05);last=now;if(loaded){
  // PlayerController.Update(): left takes precedence, then Body.Move(direction).
@@ -145,8 +154,27 @@ function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-last)/10
   fixedAccumulator-=step;
  }
  character.position.x=playerX;
- // Direction is controlled by the original aiming/turning system, not by Move().
- character.rotation.y=facingDirection<0?Math.PI:0;
+ // WeaponPointer.Update(): move the AimQuad from the operator, raycast the pointer against
+ // that collider, retain its body-local hit point, then reconstruct WorldPoint from the body.
+ if(aimQuad){
+  aimQuad.position.set(playerX+facingDirection*20,2.5,-1.5);
+  if(pointerHasMoved){
+   character.updateMatrixWorld(true);aimQuad.updateMatrixWorld(true);camera.updateMatrixWorld(true);
+   aimRaycaster.setFromCamera(pointerNdc,camera);
+   const hit=aimRaycaster.intersectObject(aimQuad,false)[0];
+   if(hit)localAimPoint.copy(character.worldToLocal(hit.point.clone()));
+  }
+  character.updateMatrixWorld(true);
+  const worldPoint=character.localToWorld(localAimPoint.clone());
+  if(rightUpperArm){
+   rightUpperArm.updateWorldMatrix(true,false);
+   const shoulder=rightUpperArm.getWorldPosition(new THREE.Vector3());
+   // PlayerController.HandleChangeDirection(): WorldPoint.x compared to RightUpperArm.x.
+   if(worldPoint.x>=shoulder.x)facingDirection=1;else facingDirection=-1;
+  }
+  character.rotation.y=facingDirection<0?Math.PI:0;
+  aimQuad.position.set(playerX+facingDirection*20,2.5,-1.5);
+ }
  applyAnimation(dt);
  camera.position.x+=(playerX-camera.position.x)*Math.min(1,5*dt);
  camera.position.y+=(2.6-camera.position.y)*Math.min(1,3*dt);camera.lookAt(camera.position.x,2.6,0);
