@@ -1,0 +1,111 @@
+name: Build recovered Crisis Response for WebGL
+
+on:
+  push:
+    paths:
+      - ".github/workflows/unity-webgl-build.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  webgl:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        name: Check out porting repository
+
+      - name: Download verified recovery artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p work/recovery-artifact
+          gh run download 38582072502 \
+            --repo "$GITHUB_REPOSITORY" \
+            --name crisis-response-recovery-direct-v3-1 \
+            --dir work/recovery-artifact
+          test -f work/recovery-artifact/export/ExportedProject/ProjectSettings/ProjectVersion.txt
+          cat work/recovery-artifact/export/ExportedProject/ProjectSettings/ProjectVersion.txt
+
+      - name: Check Unity license secrets
+        id: license-check
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        run: |
+          if [ -n "$UNITY_LICENSE" ] && [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+            echo "Unity license secrets are present; attempting WebGL build."
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "Unity license secrets are not configured. The Unity build will be skipped and an activation request will be generated."
+          fi
+
+      - name: Request Unity activation file
+        if: steps.license-check.outputs.ready != 'true'
+        id: activation
+        uses: game-ci/unity-request-activation-file@v2
+        with:
+          unityVersion: 2017.2.0f3
+
+      - name: Upload Unity activation request
+        if: steps.license-check.outputs.ready != 'true' && steps.activation.outputs.filePath != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: unity-activation-request-2017-2
+          path: ${{ steps.activation.outputs.filePath }}
+          retention-days: 14
+
+      - name: Build WebGL player
+        if: steps.license-check.outputs.ready == 'true'
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: work/recovery-artifact/export/ExportedProject
+          unityVersion: 2017.2.0f3
+          targetPlatform: WebGL
+          buildName: CrisisResponse
+          allowDirtyBuild: true
+
+      - name: Upload WebGL output
+        if: always() && steps.license-check.outputs.ready == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: crisis-response-webgl-build
+          path: build/
+          if-no-files-found: warn
+          compression-level: 1
+          retention-days: 14
+
+      - name: Record build gate status
+        if: always()
+        run: |
+          {
+            echo "# WebGL build gate"
+            echo
+            echo "- Recovery run: https://github.com/ethan-bailey/crisis-response-port/actions/runs/38582072502"
+            if [ "${{ steps.license-check.outputs.ready }}" = "true" ]; then
+              echo "- Unity license secrets: configured; check the Unity build step and its output artifact."
+            else
+              echo "- Unity license secrets: missing. The recovered project is ready for a licensed build, but Unity activation is required."
+              echo "- No license credentials were requested in chat or committed to the repository."
+            fi
+            echo "- The source project is Unity 2017.2.0f3. A successful compilation still needs runtime checks and parity tests before it can be called a working port."
+          } > work/WEBGL_BUILD_GATE.md
+          cat work/WEBGL_BUILD_GATE.md
+
+      - name: Upload build gate report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crisis-response-webgl-build-gate
+          path: work/WEBGL_BUILD_GATE.md
+          retention-days: 14
