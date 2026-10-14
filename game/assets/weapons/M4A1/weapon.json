@@ -655,6 +655,11 @@
       "material": "Assets/Material/operating rod.mat"
     }
   ],
+  "stats": {
+    "roundsPerMinute": 900.0,
+    "reloadTime": 1.0,
+    "defaultAmmunition": "Assets/Resources/weapons/ammunition/5.56-FMJ.prefab"
+  },
   "nodeCount": 27,
   "rendererCount": 5,
   "textureCount": 5

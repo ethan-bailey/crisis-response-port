@@ -569,6 +569,11 @@
       "material": "Assets/Material/barrel_0.mat"
     }
   ],
+  "stats": {
+    "roundsPerMinute": 1200.0,
+    "reloadTime": 1.0,
+    "defaultAmmunition": "Assets/Resources/weapons/ammunition/9-FMJ.prefab"
+  },
   "nodeCount": 23,
   "rendererCount": 6,
   "textureCount": 5
