@@ -258,6 +258,17 @@ cat > "$OUT_ROOT/app/Pages/Home.razor" <<'RAZOR'
             var properties = new global::BallisticMaterialProperties();
             if (properties.surfaceDensity != 1000f || properties.density != 1000f || properties.densityRandomness.x != 1f || properties.densityRandomness.y != 1f)
                 throw new InvalidOperationException("Original BallisticMaterialProperties defaults changed.");
+            var angle = UnityEngine.Vector3.Angle(UnityEngine.Vector3.forward, UnityEngine.Vector3.right);
+            if (Math.Abs(angle - 90f) > 0.01f) throw new InvalidOperationException("Unity Vector3.Angle shim failed: " + angle);
+            var quarterTurn = UnityEngine.Quaternion.AngleAxis(90f, UnityEngine.Vector3.up);
+            var rotatedForward = quarterTurn * UnityEngine.Vector3.forward;
+            if (Math.Abs(rotatedForward.x - 1f) > 0.001f || Math.Abs(rotatedForward.z) > 0.001f)
+                throw new InvalidOperationException("Unity Quaternion rotation shim failed: " + rotatedForward.x + "," + rotatedForward.y + "," + rotatedForward.z);
+            var transformFixture = new UnityEngine.Transform { position = new UnityEngine.Vector3(1f, 2f, 3f), rotation = quarterTurn };
+            var localPoint = new UnityEngine.Vector3(2f, -1f, 4f);
+            var roundTrip = transformFixture.InverseTransformPoint(transformFixture.TransformPoint(localPoint));
+            if (Math.Abs(roundTrip.x-localPoint.x) > 0.001f || Math.Abs(roundTrip.y-localPoint.y) > 0.001f || Math.Abs(roundTrip.z-localPoint.z) > 0.001f)
+                throw new InvalidOperationException("Unity Transform local/world round trip failed.");
             var volume = global::BallisticMaterial.ChannelVolume(2f, 4f, 6f);
             if (Math.Abs(volume - 157.07963f) > 0.001f) throw new InvalidOperationException("Original BallisticMaterial.ChannelVolume result changed: " + volume);
             properties.surfaceThickness = 0.1f;
@@ -286,7 +297,7 @@ cat > "$OUT_ROOT/wasm-spike-report.md" <<EOF
 
 - Original sources included: Target.cs, BallisticMaterialProperties.cs, and BallisticMaterial.cs from Assets/Scripts/Assembly-CSharp
 - Build target: Blazor WebAssembly on .NET 8
-- Unity API surface implemented: MonoBehaviour, TooltipAttribute, HeaderAttribute, RangeAttribute, Vector2, Vector3/Transform test stubs, GetComponent<T>() and a test-only component attachment hook.
+- Unity API surface implemented: MonoBehaviour, inspector attributes, Vector2, Vector3/Quaternion/Transform math, GetComponent<T>() and a test-only component attachment hook.
 - CharacterBody and ballistic effect types are test fixtures, not the game's original classes.
 - Scope: compile three original scripts; invoke Target.Awake, check material-property defaults, execute original BallisticMaterial.ChannelVolume and EnergyToPenetrateSurface, and exercise the original impenetrable-entry state transition. Projectile energy math, vectors, transforms, random, effects and timing are test fixtures, not original physics.
 - This does not prove the rest of the Unity API, original scene import, physics, rendering parity, or a playable port.
