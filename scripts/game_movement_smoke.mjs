@@ -20,7 +20,7 @@ try {
   const result = { before, after, moved, errors };
   fs.writeFileSync("mission01-game-smoke.json", JSON.stringify(result, null, 2));
   console.log(JSON.stringify(result, null, 2));
-  if (!before.sceneMesh || before.limbCount < 10 || !moved || errors.length) process.exitCode = 1;
+  if (!before.sceneMesh || before.limbCount < 10 || !moved || after.animation !== "Body walk" || errors.length) process.exitCode = 1;
 } finally {
   await browser.close();
 }
