@@ -11,6 +11,8 @@ import sys
 from pathlib import Path
 
 GUID_RE = re.compile(r"guid: ([0-9a-f]{32})")
+ASSET_REF_RE = re.compile(r"\\{fileID: -?\\d+, guid: ([0-9a-f]{32}), type: \\d+\\}")
+UNITY_UI_SCRIPT_GUIDS = {"f5f67c52d1564df4a8936ccd202a3bd8"}
 BUILTIN_GUIDS = {"0000000000000000e000000000000000", "0000000000000000f000000000000000"}
 TEXT_EXTS = {
     ".unity", ".prefab", ".asset", ".mat", ".controller", ".anim",
@@ -47,7 +49,7 @@ def main() -> int:
     except OSError as exc:
         raise SystemExit(str(exc))
 
-    direct_counts = collections.Counter(GUID_RE.findall(scene_text))
+    direct_counts = collections.Counter(ASSET_REF_RE.findall(scene_text))
     unresolved_direct = sorted(g for g in direct_counts if g not in guid_to_asset and g not in BUILTIN_GUIDS)
     visited: set[Path] = set()
     unresolved: collections.Counter[str] = collections.Counter()
@@ -102,11 +104,11 @@ def main() -> int:
         f"- Scene MonoBehaviour records: {scene_text.count('!u!114 &'):,}",
         f"- Scene MeshRenderer records: {scene_text.count('!u!23 &'):,}",
         f"- Scene MeshFilter records: {scene_text.count('!u!33 &'):,}",
-        f"- Unique GUIDs referenced directly by scene: {len(direct_counts):,}",
-        f"- Direct GUID occurrences: {sum(direct_counts.values()):,}",
+        f"- Unique serialized asset GUID references directly by scene: {len(direct_counts):,}",
+        f"- Direct serialized asset-reference occurrences: {sum(direct_counts.values()):,}",
         f"- Unique readable serialized assets reached recursively (including scene): {len(visited):,}",
         f"- Dependency edges found: {len(edges):,}",
-        f"- Distinct unresolved GUIDs seen recursively (excluding Unity built-in GUIDs): {len(unresolved):,}",
+        f"- Distinct unresolved serialized asset GUIDs seen recursively (excluding known Unity built-ins and Unity UI package script GUID): {len(unresolved):,}",
         "",
         "## Most frequent direct scene asset references",
         "",
@@ -124,7 +126,7 @@ def main() -> int:
         for guid, count in sorted(unresolved.items(), key=lambda item: (-item[1], item[0]))[:100]:
             lines.append(f"| `{guid}` | {count} |")
     else:
-        lines.append("No unresolved non-built-in GUIDs were found in traversed readable assets.")
+        lines.append("No unresolved serialized asset references were found in traversed readable assets.")
     lines += [
         "",
         "## Dependency edge list",
@@ -138,7 +140,7 @@ def main() -> int:
         "",
         "## Interpretation",
         "",
-        "- GUID resolution only means a matching `.meta` file exists in the recovered project; it does not guarantee that the asset imports correctly.",
+        "- Asset-reference resolution only means a matching `.meta` file exists in the recovered project; it does not guarantee that the asset imports correctly.",
         "- Some Unity-generated or binary dependencies may not be traversable from text. AssetBundles, built-in resources, shader behavior, physics settings, and runtime-instantiated content need separate inspection.",
         "- Use this report to define the source-preserving vertical-slice dependency closure, not as proof of browser compatibility or behavioral parity.",
         "",
