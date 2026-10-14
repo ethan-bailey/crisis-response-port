@@ -78,7 +78,7 @@ async function load(){
    return new THREE.Vector3(...a.value).lerp(new THREE.Vector3(...b.value),alpha).toArray();
   }
   function resetPose(){for(const node of manifest.nodes){const group=nodeById.get(node.gameObjectFileID),base=baseTransforms.get(node.gameObjectFileID);group.position.copy(base.position);group.quaternion.copy(base.quaternion);group.scale.copy(base.scale)}}
-  function applyTrack(track,time){const group=nodeByPath.get(track.path);if(!group)return;const value=sample(track,time);if(track.property==="rotation")group.quaternion.fromArray(value);else if(track.property==="position")group.position.fromArray(value);else if(track.property==="scale")group.scale.fromArray(value)}
+  function applyTrack(track,time){if(track.property==="position"&&track.path==="Pelvis")return;const group=nodeByPath.get(track.path);if(!group)return;const value=sample(track,time);if(track.property==="rotation")group.quaternion.fromArray(value);else if(track.property==="position")group.position.fromArray(value);else if(track.property==="scale")group.scale.fromArray(value)}
   applyAnimation=function(dt){
    const moving=Math.abs(velocity)>.15;
    const backwards=moving&&Math.sign(velocity)!==facingDirection;
@@ -93,6 +93,7 @@ async function load(){
     const walkMap=new Map(clip.tracks.map(tr=>[tr.path+"|"+tr.property,tr]));
     const sprintMap=new Map(sprint.tracks.map(tr=>[tr.path+"|"+tr.property,tr]));
     for(const [keyId,tr] of walkMap){
+     if(tr.path==="Pelvis"&&tr.property==="position")continue;
      const other=sprintMap.get(keyId);if(!other){applyTrack(tr,t);continue}
      const a=sample(tr,t),b=sample(other,sprint.duration>0?(animationTime%sprint.duration):0),group=nodeByPath.get(tr.path);if(!group)continue;
      if(tr.property==="rotation"){const q=new THREE.Quaternion(...a).slerp(new THREE.Quaternion(...b),blend);group.quaternion.copy(q)}
