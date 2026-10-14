@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Crisis Response — Mission 01 runtime</title>
 <style>
-:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101318;color:#eef2f7;touch-action:none}#stage{position:absolute;inset:0}canvas{display:block;width:100%;height:100%}#hud{position:absolute;left:12px;top:12px;max-width:min(440px,calc(100vw - 24px));padding:10px 12px;border:1px solid #505965;border-radius:9px;background:#111820e8;pointer-events:none;font-size:12px;line-height:1.4}#title{font-size:14px;font-weight:750;margin-bottom:3px}#status{color:#c5d0dc}#position{color:#a8d9ff;margin-top:4px;font-variant-numeric:tabular-nums}#weaponStatus{color:#ffd9a3;margin-top:3px;font-weight:700}#controls{position:absolute;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));display:flex;justify-content:space-between;align-items:end;gap:12px;pointer-events:none} .cluster{display:flex;gap:6px;pointer-events:auto;flex-wrap:wrap;max-width:52vw;justify-content:flex-end}button{min-width:56px;min-height:54px;padding:10px 12px;border:1px solid #778391;border-radius:12px;background:#18222edc;color:#f6f8fa;font-size:14px;font-weight:700;touch-action:none;user-select:none;-webkit-user-select:none}button.active{background:#315a79;border-color:#9bd8ff}#sprint{min-width:60px}#reload{min-width:64px}#help{position:absolute;right:12px;top:12px;padding:7px 9px;border:1px solid #505965;border-radius:8px;background:#111820e8;font-size:11px;color:#d4dde7}#error{display:none;position:absolute;left:12px;right:12px;top:92px;padding:12px;border:1px solid #a33;border-radius:8px;background:#351818;color:#ffe4e4;white-space:pre-wrap}
+:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101318;color:#eef2f7;touch-action:none}#stage{position:absolute;inset:0}canvas{display:block;width:100%;height:100%}#hud{position:absolute;left:12px;top:12px;max-width:min(440px,calc(100vw - 24px));padding:10px 12px;border:1px solid #505965;border-radius:9px;background:#111820e8;pointer-events:none;font-size:12px;line-height:1.4}#title{font-size:14px;font-weight:750;margin-bottom:3px}#status{color:#c5d0dc}#position{color:#a8d9ff;margin-top:4px;font-variant-numeric:tabular-nums}#weaponStatus{color:#ffd9a3;margin-top:3px;font-weight:700}#controls{position:absolute;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));display:flex;justify-content:space-between;align-items:end;gap:12px;pointer-events:none} .cluster{display:flex;gap:6px;pointer-events:auto;flex-wrap:wrap;max-width:52vw;justify-content:flex-end}button{min-width:56px;min-height:54px;padding:10px 12px;border:1px solid #778391;border-radius:12px;background:#18222edc;color:#f6f8fa;font-size:14px;font-weight:700;touch-action:none;user-select:none;-webkit-user-select:none}button.active{background:#315a79;border-color:#9bd8ff}#sprint{min-width:60px}#reload{min-width:64px}#help{position:absolute;right:12px;top:12px;padding:7px 9px;border:1px solid #505965;border-radius:8px;background:#111820e8;font-size:11px;color:#d4dde7}#error{display:none;position:absolute;left:12px;right:12px;top:92px;padding:12px;border:1px solid #a33;border-radius:8px;background:#351818;color:#ffe4e4;white-space:pre-wrap}#rotateNotice{display:none;position:absolute;inset:0;z-index:20;background:#101318f5;align-items:center;justify-content:center;text-align:center;padding:32px;font-size:18px;font-weight:700}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
 </head>
@@ -13,7 +13,7 @@
 <div id="stage"></div>
 <div id="hud"><div id="title">Crisis Response · Mission 01</div><div id="status">Loading recovered scene and original Operator prefab…</div><div id="position"></div><div id="weaponStatus">Loading original weapons…</div></div>
 <div id="help">A/D · Shift sprint · drag to aim · hold FIRE · R reload · Q swap</div>
-<div id="error"></div>
+<div id="error"></div><div id="rotateNotice">Rotate your phone to landscape to play Crisis Response.</div>
 <div id="controls"><div class="cluster"><button id="left" aria-label="Move left">◀ LEFT</button><button id="right" aria-label="Move right">RIGHT ▶</button></div><div class="cluster"><button id="sprint" aria-label="Sprint">SPRINT</button><button id="fire" aria-label="Fire weapon">FIRE</button><button id="reload" aria-label="Reload weapon">RELOAD</button><button id="swap" aria-label="Swap weapon">SWAP</button></div></div>
 <script type="module">
 import * as THREE from "three";
@@ -26,7 +26,7 @@ scene.add(new THREE.HemisphereLight(0xe8f0ff,0x55505a,2.0));
 const key=new THREE.DirectionalLight(0xffffff,1.5);key.position.set(-4,12,18);scene.add(key);
 let viewHeight=11;
 const camera=new THREE.OrthographicCamera(-viewHeight*innerWidth/innerHeight/2,viewHeight*innerWidth/innerHeight/2,viewHeight/2,-viewHeight/2,.1,1000);
-camera.position.set(-3,2.5,60);camera.lookAt(-3,2.5,0);
+camera.position.set(-3+(innerWidth>=innerHeight?7.5:0),2.5,60);camera.lookAt(camera.position.x,2.5,0);
 const world=new THREE.Group();scene.add(world);
 const character=new THREE.Group();character.name="Original Operator prefab";scene.add(character);
 const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),updateWeaponAim=()=>{},fireWeapon=()=>{},reloadWeapon=()=>{},swapWeapon=()=>{},swapToWeapon=()=>{},activeWeaponName="M4A1",weaponReloading=false,lastShotAt={"M4A1":0,"Glock-18":0},ammoByWeapon={"M4A1":30,"Glock-18":33},capacityByWeapon={"M4A1":30,"Glock-18":33},weaponInstances={},firePressed=false;
@@ -135,7 +135,7 @@ async function load(){
   // plane at z=-1.5; reproduce that actual target collider for pointer-to-world mapping.
   aimQuad=new THREE.Mesh(new THREE.PlaneGeometry(25,5),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide,colorWrite:false}));
   aimQuad.name="Original Aim quad collider (layer AimQuad)";aimQuad.rotation.x=Math.PI;aimQuad.position.set(playerX+facingDirection*20,2.5,-1.5);scene.add(aimQuad);
-  const box=sceneBounds;const size=box.getSize(new THREE.Vector3());viewHeight=Math.max(8,Math.min(13,size.y*.75||11));
+  const box=sceneBounds;const size=box.getSize(new THREE.Vector3());viewHeight=Math.max(13,Math.min(16,size.y*.9||13));
   camera.left=-viewHeight*innerWidth/innerHeight/2;camera.right=viewHeight*innerWidth/innerHeight/2;camera.top=viewHeight/2;camera.bottom=-viewHeight/2;camera.updateProjectionMatrix();
   groundY=1.5;loaded=true;
   window.__gameState=()=>({loaded,playerX,facingDirection,aimPoint:character.localToWorld(localAimPoint.clone()).toArray(),limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,ammo:ammoByWeapon[activeWeaponName],weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
@@ -143,8 +143,8 @@ async function load(){
   positionLabel.textContent="Walk 1.5 m/s · Sprint 4.2 m/s · original spawn X −3";
  }catch(e){showError(e)}
 }
-function resize(){renderer.setSize(innerWidth,innerHeight);camera.left=-viewHeight*innerWidth/innerHeight/2;camera.right=viewHeight*innerWidth/innerHeight/2;camera.top=viewHeight/2;camera.bottom=-viewHeight/2;camera.updateProjectionMatrix()}
-addEventListener("resize",resize);
+function resize(){renderer.setSize(innerWidth,innerHeight);camera.left=-viewHeight*innerWidth/innerHeight/2;camera.right=viewHeight*innerWidth/innerHeight/2;camera.top=viewHeight/2;camera.bottom=-viewHeight/2;camera.updateProjectionMatrix();document.querySelector("#rotateNotice").style.display=innerWidth<innerHeight?"flex":"none"}
+addEventListener("resize",resize);document.querySelector("#rotateNotice").style.display=innerWidth<innerHeight?"flex":"none";
 function updateAim(e){
  const rect=renderer.domElement.getBoundingClientRect();
  pointerNdc.x=((e.clientX-rect.left)/rect.width)*2-1;
@@ -206,7 +206,7 @@ function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-last)/10
  applyAnimation(dt);
  updateWeaponAim();
  if((keys.fire||firePressed)&&activeWeaponName==="M4A1")fireWeapon();
- camera.position.x+=(playerX-camera.position.x)*Math.min(1,5*dt);
+ const lead=innerWidth>=innerHeight?7.5:0;camera.position.x+=(playerX+lead-camera.position.x)*Math.min(1,5*dt);
  camera.position.y+=(2.6-camera.position.y)*Math.min(1,3*dt);camera.lookAt(camera.position.x,2.6,0);
  positionLabel.textContent="X "+playerX.toFixed(2)+" · speed "+Math.abs(velocity).toFixed(2)+" m/s"+(keys.sprint?" · sprint input":"");
  }renderer.render(scene,camera)}
