@@ -36,10 +36,13 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
       const movement = { x: box.x + box.width / 2, y: box.y + box.height / 2, id: 1 };
       const sprint = { x: sprintBox.x + sprintBox.width / 2, y: sprintBox.y + sprintBox.height / 2, id: 2 };
       await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [movement] });
-      await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [movement, sprint] });
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [sprint] });
       assert.equal(await right.evaluate(el => el.classList.contains('active')), true);
       assert.equal(await page.locator('#sprint').evaluate(el => el.classList.contains('active')), true);
-      await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [movement] });
+      // Chromium's default dispatch path ends the listed changed points, not
+      // the omitted points. Release sprint while movement remains held.
+      // https://issues.chromium.org/issues/569778218
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [sprint] });
       assert.equal(await right.evaluate(el => el.classList.contains('active')), true, 'Other finger remains held');
       assert.equal(await page.locator('#sprint').evaluate(el => el.classList.contains('active')), false);
       await cdp.send('Input.dispatchTouchEvent', { type: 'touchCancel', touchPoints: [] });
