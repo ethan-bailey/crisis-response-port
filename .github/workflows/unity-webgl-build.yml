@@ -7,6 +7,7 @@ on:
       - "scripts/webgl_preflight.py"
       - "scripts/scene_dependency_audit.py"
       - "scripts/unity_api_inventory.py"
+      - "scripts/scene_manifest.py"
   workflow_dispatch:
 
 permissions:
@@ -41,6 +42,35 @@ jobs:
             work/recovery-artifact/export/ExportedProject \
             work/WEBGL_PREFLIGHT.md
           cat work/WEBGL_PREFLIGHT.md
+
+      - name: Extract original Marksman range scene manifest
+        run: |
+          set -euo pipefail
+          python3 scripts/scene_manifest.py \
+            work/recovery-artifact/export/ExportedProject \
+            "Assets/Scenes/Marksman range.unity" \
+            work/MARKSMAN_RANGE_SCENE_MANIFEST.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path("work/MARKSMAN_RANGE_SCENE_MANIFEST.json")
+          data = json.loads(p.read_text())
+          print("Scene:", data["sourceScene"])
+          print("Serialized records:", data["records"])
+          print("GameObjects:", len(data["gameObjects"]))
+          print("Class counts:", data["classCounts"])
+          print("Objects with scripts:", sum(any(c.get("script") for c in o.get("componentDetails", [])) for o in data["gameObjects"]))
+          print("Objects with mesh filters:", sum(any(c.get("className") == "MeshFilter" for c in o.get("componentDetails", [])) for o in data["gameObjects"]))
+          PY
+
+      - name: Upload original scene manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crisis-response-marksman-range-scene-manifest
+          path: work/MARKSMAN_RANGE_SCENE_MANIFEST.json
+          if-no-files-found: error
+          retention-days: 30
 
       - name: Inventory Unity API use in recovered C# source
         run: |
