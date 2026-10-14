@@ -17,6 +17,10 @@ A separate generated file named `CrisisResponseMobile_iPhone.zip` is a from-scra
 - [Verified archive inventory](docs/ARCHIVE_INVENTORY.md)
 - [Subsystem parity matrix and porting status](docs/PORTING_STATUS.md)
 - [WebGL compatibility audit](docs/WEBGL_COMPATIBILITY_AUDIT_2026-10-14.md) — static scan of the recovered project for likely browser build blockers.
+- [WebAssembly engine replacement plan](docs/WEBASSEMBLY_ENGINE_REPLACEMENT_PLAN_2026-10-14.md) — preserve original game logic and define parity gates.
+- [Browser geometry / WASM feasibility status](docs/WASM_RUNTIME_SPIKE_2026-10-14.md) — original Unity mesh decoding and Chromium/WebGL test results.
+- [Marksman range scene dependency audit](docs/MARKSMAN_RANGE_SCENE_DEPENDENCY_AUDIT_2026-10-14.md) — recursive original asset dependency graph.
+- [Successful original mesh browser smoke run](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38589625850) — 9,455 original triangles rendered without browser console errors.
 - [Browser port strategy pivot](docs/BROWSER_PORT_STRATEGY_PIVOT_2026-10-14.md) — evaluates WINE/PROTON-in-WebAssembly and source-port approaches so Unity activation is not the only path.
 
 ## Current state
@@ -26,7 +30,7 @@ A separate generated file named `CrisisResponseMobile_iPhone.zip` is a from-scra
 - Verified gameplay assembly metadata: 1,534 types and 8,640 methods in `Assembly-CSharp.dll`.
 - Original C# source and editable Unity project structure are not present in the archive.
 - Cloud recovery completed successfully using a signed official mirror. The downloaded gameplay DLL exactly matches the SHA-256 recorded from the user's archive; ILSpy produced 1,333 C# files and AssetRipper exported a 7,231-file Unity project. See the recovery report for the artifact link and remaining gates.
-- No verified faithful browser build exists yet. The new cloud dependency audit successfully traversed 417 readable serialized assets and 708 dependency edges from the original Marksman range scene; seven non-built-in GUIDs remain unresolved. This is static analysis, not a renderer, compiler, or gameplay test.
+- No verified faithful browser build exists yet. Static scene analysis reached 417 readable serialized assets and 708 dependency edges, with one unresolved serialized asset GUID in the .308 casing/projectile prefabs. A separate headless Chromium test rendered one original combined mesh; this is not a playable game or a WebAssembly engine replacement.
 - The WebAssembly engine-replacement plan is now tracked in [issue #4](https://github.com/ethan-bailey/crisis-response-port/issues/4).
 
 The goal is to preserve original logic and assets wherever possible, document unavoidable changes, and validate behavior subsystem by subsystem. Do not claim full parity without evidence and tests.
