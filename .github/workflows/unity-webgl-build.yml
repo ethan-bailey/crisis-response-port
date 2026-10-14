@@ -163,6 +163,8 @@ jobs:
             echo "Generated WebAssembly site is unchanged."
           else
             git commit -m "Publish original C# WebAssembly compatibility gate"
+            # Another deployment workflow may have advanced main after checkout.
+            git pull --rebase origin main
             git push
           fi
 
