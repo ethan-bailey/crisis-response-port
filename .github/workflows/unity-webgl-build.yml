@@ -6,6 +6,7 @@ on:
       - ".github/workflows/unity-webgl-build.yml"
       - "scripts/webgl_preflight.py"
       - "scripts/scene_dependency_audit.py"
+      - "scripts/unity_api_inventory.py"
   workflow_dispatch:
 
 permissions:
@@ -40,6 +41,23 @@ jobs:
             work/recovery-artifact/export/ExportedProject \
             work/WEBGL_PREFLIGHT.md
           cat work/WEBGL_PREFLIGHT.md
+
+      - name: Inventory Unity API use in recovered C# source
+        run: |
+          set -euo pipefail
+          python3 scripts/unity_api_inventory.py \
+            work/recovery-artifact/export/ExportedProject \
+            work/UNITY_API_INVENTORY.md
+          cat work/UNITY_API_INVENTORY.md
+
+      - name: Upload Unity API inventory
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crisis-response-unity-api-inventory
+          path: work/UNITY_API_INVENTORY.md
+          if-no-files-found: error
+          retention-days: 30
 
       - name: Run recursive Marksman range scene dependency audit
         run: |
