@@ -37,18 +37,20 @@ A previously generated artifact, `CrisisResponseMobile_iPhone.zip`, contains a s
 ### Phase 2 — Runtime and code reconnaissance
 - [x] Inspect the Unity version, player architecture, managed assembly metadata, and key gameplay symbol names.
 - [x] Add a dependency-free metadata inspection script at `tools/inspect_assembly_metadata.py`.
-- [ ] Decompile `Assembly-CSharp.dll` and supporting assemblies for analysis.
-- [ ] Map key systems in source-like detail: AI, teams/missions, doors, weapons, projectiles/ballistics, grenades, physiology, UI, save/config, and input.
+- [x] Decompile `Assembly-CSharp.dll` with ILSpy in a cloud runner; 1,333 C# files were produced.
+- [x] AssetRipper decompiled and exported the game assemblies as part of project recovery.
+- [x] Map key systems at symbol level; deeper source review and behavior tracing remain.
 - [ ] Identify all native plugins and Windows-only APIs.
 
 ### Phase 3 — Feasibility gate
-- [ ] Export Unity assets/scenes and inspect the recovered project structure.
-- [ ] Determine whether a Unity project can be reconstructed sufficiently for a supported WebGL build.
+- [x] Export Unity assets/scenes; 7,231 files (about 169 MiB) were recovered.
+- [x] Reconstruct an initial Unity project with `Assets/`, `ProjectSettings/`, `Packages/manifest.json`, and six scenes.
+- [ ] Compile and repair the recovered project.
 - [ ] Document missing project metadata/assets and each blocker.
 - [ ] Validate a compatible Unity Editor/toolchain before selecting the final route.
 
 ### Phase 4 — Port and parity validation
-- [ ] Implement the smallest viable changes needed for the selected runtime.
+- [ ] Obtain valid Unity build activation through GitHub Actions secrets, then compile the recovered project for WebGL.
 - [ ] Create a subsystem parity matrix linking original behavior, evidence, implementation, and test status.
 - [ ] Compare deterministic scenarios and capture discrepancies before fixing them.
 - [ ] Test touch input, viewport/resolution, audio, performance, and reload/resume behavior on mobile Safari.
@@ -60,12 +62,13 @@ A previously generated artifact, `CrisisResponseMobile_iPhone.zip`, contains a s
 - [x] Earlier mobile HTML prototype identified as a from-scratch adaptation, not the original game.
 - [x] Verified archive inventory committed.
 - [x] Subsystem parity matrix and porting gates committed.
-- [ ] C# decompilation and Unity asset export.
-- [ ] Reconstructed Unity project and WebGL build.
+- [x] C# decompilation and Unity asset export.
+- [x] Initial reconstructed Unity project.
+- [ ] WebGL build; currently blocked by missing Unity license secrets.
 - [ ] iPhone Safari testing and subsystem parity verification.
 
 See [the porting status matrix](PORTING_STATUS.md) for the evidence and outstanding work for each subsystem.
 
 ## Current toolchain limitation
 
-The current execution environment has no Unity Editor, .NET SDK/runtime, `monodis`, or ILSpy CLI, and cannot fetch packages from registries. Full decompilation and a WebGL build are therefore not completed in this environment. The extracted files are available in the current working container, but a separate cloud build environment would need the files transferred into it. Do not claim extraction, decompilation, or a playable faithful port is complete beyond the evidence listed above.
+The current cloud workflow has successfully downloaded a publicly hosted installer whose gameplay assembly exactly matches the user's original archive, decompiled the assembly with ILSpy, and exported a Unity project with AssetRipper. The recovery artifact is linked in `docs/RECOVERY_RUN_2026-10-14.md`. The WebGL build workflow can fetch that artifact, but the current Unity license activation action is retired and no valid Unity license secrets are configured. Do not claim a playable faithful port until a licensed WebGL build and iPhone Safari parity tests succeed.
