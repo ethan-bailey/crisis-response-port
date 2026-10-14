@@ -9,15 +9,20 @@ fi
 ORIGINAL_TARGET="$PROJECT_ROOT/Assets/Scripts/Assembly-CSharp/Target.cs"
 ORIGINAL_BALLISTIC_PROPERTIES="$PROJECT_ROOT/Assets/Scripts/Assembly-CSharp/BallisticMaterialProperties.cs"
 ORIGINAL_BALLISTIC_MATERIAL="$PROJECT_ROOT/Assets/Scripts/Assembly-CSharp/BallisticMaterial.cs"
+ORIGINAL_PROJECTILE="$PROJECT_ROOT/Assets/Scripts/Assembly-CSharp/Projectile.cs"
 test -f "$ORIGINAL_TARGET"
 test -f "$ORIGINAL_BALLISTIC_PROPERTIES"
 test -f "$ORIGINAL_BALLISTIC_MATERIAL"
+test -f "$ORIGINAL_PROJECTILE"
+# Print recovered penetration methods to CI logs so the source, not a guessed stub, drives the next compatibility pass.
+grep -n -A18 -B4 -E "PotentialPenetrationDistance|EnergyToPenetrate\(|ConvertEnergyToFriction|ConvertRemainingEnergyToFriction" "$ORIGINAL_PROJECTILE" || true
 rm -rf "$OUT_ROOT"
 mkdir -p "$OUT_ROOT"
 dotnet new blazorwasm --framework net8.0 --no-restore --output "$OUT_ROOT/app"
 cp "$ORIGINAL_TARGET" "$OUT_ROOT/app/OriginalTarget.cs"
 cp "$ORIGINAL_BALLISTIC_PROPERTIES" "$OUT_ROOT/app/OriginalBallisticMaterialProperties.cs"
 cp "$ORIGINAL_BALLISTIC_MATERIAL" "$OUT_ROOT/app/OriginalBallisticMaterial.cs"
+cp "$ORIGINAL_PROJECTILE" "$OUT_ROOT/app/OriginalProjectile.cs"
 cat > "$OUT_ROOT/app/UnityShim.cs" <<'CS'
 using System;
 using System.Collections.Generic;
@@ -198,30 +203,6 @@ public sealed class AmmunitionBase
  public FragmentationMode fragmentationMode;
  public System.Collections.Generic.List<FragmentationSpecification> specificFragmentation = new System.Collections.Generic.List<FragmentationSpecification>();
 }
-public sealed class Projectile : UnityEngine.MonoBehaviour
-{
- public bool FiredByMarksman, HasFragmented;
- public BallisticResult Status;
- public AmmunitionBase Ammunition = new AmmunitionBase();
- public float Energy, EnergyNormalized, Diameter, DisplacedMaterialVolume, PenetrationDistance, PermanentCavityFactor, Mass, Velocity;
- public UnityEngine.Vector3 StartPosition, NextPosition;
- public Trace Trace;
- public object AudioInstigator;
- public void BeginNewInteraction() { }
- public float EnergyToPenetrate(float distance, float density) => distance*density;
- public void ConvertEnergyToFriction(float energy) { Energy = MathF.Max(0,Energy-energy); }
- public void ConvertRemainingEnergyToFriction() { Energy=0; }
- public void AssignNewSpinAndTumble() { }
- public float PotentialPenetrationDistance(float density) => 0;
- public void Deflect(float amount) { }
- public bool TestFragmentation() => false;
- public void RestartAtPosition(UnityEngine.Vector3 position) { transform.position=position; }
- public void InitializeProjectileFragment(Projectile parent,int frame,UnityEngine.Vector3 position,float mass,float diameter,float velocity,float deflection,float spin,float distance) { }
- public void SpawnRandomFragments(UnityEngine.Vector3 position,System.Action<Projectile,bool> onExit) { }
- public void SpawnSpecificFragments(UnityEngine.Vector3 position,System.Action<Projectile,bool> onExit) { }
- public void OnFragmentation() { }
- public void ChangeToFragmentedMesh(bool value) { }
-}
 public sealed class PerformanceManager
 {
  public static PerformanceManager Instance { get; } = new PerformanceManager();
@@ -337,11 +318,11 @@ dotnet publish "$OUT_ROOT/app" --configuration Release --output "$OUT_ROOT/publi
 cat > "$OUT_ROOT/wasm-spike-report.md" <<EOF
 # C# WebAssembly compatibility spike
 
-- Original sources included: Target.cs, BallisticMaterialProperties.cs, and BallisticMaterial.cs from Assets/Scripts/Assembly-CSharp
+- Original sources included: Target.cs, BallisticMaterialProperties.cs, BallisticMaterial.cs, and Projectile.cs from Assets/Scripts/Assembly-CSharp
 - Build target: Blazor WebAssembly on .NET 8
 - Unity API surface implemented: MonoBehaviour, inspector attributes, Vector2, Vector3/Quaternion/Transform math, GetComponent<T>() and a test-only component attachment hook.
 - CharacterBody and ballistic effect types are test fixtures, not the game's original classes.
-- Scope: compile three original scripts; invoke Target.Awake, check material-property defaults, execute original BallisticMaterial.ChannelVolume and EnergyToPenetrateSurface, exercise the original impenetrable-entry state transition, and expose a browser control that invokes original BallisticMaterial.HandleProjectile with adjustable energy, surface thickness, and impenetrability. Projectile energy math, vectors, transforms, random, effects and timing are test fixtures, not original physics.
+- Scope: compile four original scripts, including Projectile.cs, with fixtures only for Unity and other dependencies; invoke Target.Awake, check material-property defaults, execute original BallisticMaterial.ChannelVolume and EnergyToPenetrateSurface, exercise the original impenetrable-entry state transition, and expose a browser control that invokes original BallisticMaterial.HandleProjectile with adjustable energy, surface thickness, and impenetrability. Projectile energy math, vectors, transforms, random, effects and timing are test fixtures, not original physics.
 - This does not prove the rest of the Unity API, original scene import, physics, rendering parity, or a playable port.
 EOF
 echo "Published WASM feasibility app at $OUT_ROOT/published/wwwroot"
