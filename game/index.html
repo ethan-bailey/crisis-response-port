@@ -29,13 +29,13 @@ const camera=new THREE.OrthographicCamera(-viewHeight*innerWidth/innerHeight/2,v
 camera.position.set(-3,2.5,60);camera.lookAt(-3,2.5,0);
 const world=new THREE.Group();scene.add(world);
 const character=new THREE.Group();character.name="Original Operator prefab";scene.add(character);
-const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),updateWeaponAim=()=>{},fireWeapon=()=>{},reloadWeapon=()=>{},swapWeapon=()=>{},swapToWeapon=()=>{},activeWeaponName="M4A1",weaponReloading=false,lastShotAt={"M4A1":0,"Glock-18":0},ammoByWeapon={"M4A1":30,"Glock-18":33},capacityByWeapon={"M4A1":30,"Glock-18":33},weaponInstances={},firePressed=false;
+const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),updateWeaponAim=()=>{},fireWeapon=()=>{},reloadWeapon=()=>{},swapWeapon=()=>{},swapToWeapon=()=>{},activeWeaponName="M4A1",weaponReloading=false,lastShotAt={"M4A1":0,"Glock-18":0},ammoByWeapon={"M4A1":30,"Glock-18":33},capacityByWeapon={"M4A1":30,"Glock-18":33},weaponInstances={},firePressed=false;
 function showError(e){errorBox.style.display="block";errorBox.textContent=String(e?.stack||e);status.textContent="Build failed to load; see error details."}
 function setInput(id,key){const b=document.querySelector("#"+id);const on=e=>{e.preventDefault();keys[key]=true;b.classList.add("active");if(key==="fire")fireWeapon();};const off=e=>{e.preventDefault();keys[key]=false;b.classList.remove("active")};b.addEventListener("pointerdown",on);b.addEventListener("pointerup",off);b.addEventListener("pointercancel",off);b.addEventListener("contextmenu",e=>e.preventDefault())}
 setInput("left","left");setInput("right","right");setInput("sprint","sprint");setInput("fire","fire");
 document.querySelector("#reload").addEventListener("click",()=>reloadWeapon());
 document.querySelector("#swap").addEventListener("click",()=>swapWeapon());
-addEventListener("keydown",e=>{const k=e.key.toLowerCase();if(["arrowleft","arrowright","a","d","shift","r","q","1","2"].includes(k))e.preventDefault();if(k==="arrowleft"||k==="a")keys.left=true;if(k==="arrowright"||k==="d")keys.right=true;if(k==="shift")keys.sprint=true;if(k==="r")reloadWeapon();if(k==="q")swapWeapon();if(k==="1")swapToWeapon("M4A1");if(k==="2")swapToWeapon("Glock-18")});
+addEventListener("keydown",e=>{const k=e.key.toLowerCase();if(["arrowleft","arrowright","a","d","shift","r","q","1","2","tab"].includes(k))e.preventDefault();if(k==="arrowleft"||k==="a")keys.left=true;if(k==="arrowright"||k==="d")keys.right=true;if(k==="shift")keys.sprint=true;if(k==="r")reloadWeapon();if(k==="tab"||k==="q")swapWeapon();if(k==="1")swapToWeapon("M4A1");if(k==="2")swapToWeapon("Glock-18");if(k==="s")isKneeling=true;if(k==="w")isKneeling=false});
 addEventListener("keyup",e=>{const k=e.key.toLowerCase();if(k==="arrowleft"||k==="a")keys.left=false;if(k==="arrowright"||k==="d")keys.right=false;if(k==="shift")keys.sprint=false});
 addEventListener("blur",()=>{keys.left=keys.right=keys.sprint=keys.fire=false;firePressed=false;document.querySelectorAll("button").forEach(b=>b.classList.remove("active"))});
 function setMeshMaterials(root){root.traverse(o=>{if(o.isMesh){o.material=new THREE.MeshStandardMaterial({color:0x858b91,roughness:1,metalness:0,side:THREE.DoubleSide});o.castShadow=false;o.receiveShadow=true}})}
@@ -111,7 +111,7 @@ async function load(){
   applyAnimation=function(dt){
    const moving=Math.abs(velocity)>.15;
    const backwards=moving&&Math.sign(velocity)!==facingDirection;
-   const next=moving?(backwards?"Body walk backward":"Body walk"):"Body stand";
+   const next=moving?(backwards?"Body walk backward":"Body walk"):(isKneeling?"Body kneel":"Body stand");
    if(next!==activeAnimation){activeAnimation=next;animationTime=0}
    const clip=clips[activeAnimation];if(!clip)return;
    animationTime+=dt;
@@ -139,7 +139,7 @@ async function load(){
   camera.left=-viewHeight*innerWidth/innerHeight/2;camera.right=viewHeight*innerWidth/innerHeight/2;camera.top=viewHeight/2;camera.bottom=-viewHeight/2;camera.updateProjectionMatrix();
   groundY=1.5;loaded=true;
   window.__gameState=()=>({loaded,playerX,facingDirection,aimPoint:character.localToWorld(localAimPoint.clone()).toArray(),limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,ammo:ammoByWeapon[activeWeaponName],weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
-  status.textContent="Recovered Mission 01 geometry, Operator textures and walk animation, plus original M4A1/Glock prefab textures and fire-rate data. Movement and AimQuad turning follow recovered source rules; full Unity physics, projectile ballistics, reload animation, damage, AI and mission flow remain unported.";
+  status.textContent="Recovered Mission 01 geometry, Operator textures and original stand/walk/kneel animation curves. Original M4A1/Glock prefabs, fire-rate metadata, AimQuad aiming and CharacterBody acceleration are integrated; full Unity physics, projectile ballistics, reload animation, damage, AI and mission flow remain unported.";
   positionLabel.textContent="Walk 1.5 m/s · Sprint 4.2 m/s · original spawn X −3";
  }catch(e){showError(e)}
 }
