@@ -166,11 +166,11 @@ namespace UnityEngine
         public Vector3 InverseTransformDirection(Vector3 p) => Quaternion.Inverse(rotation)*p;
         public void Rotate(Vector3 axis, float angle) { rotation = rotation * Quaternion.AngleAxis(angle, axis); }
     }
-    public class Collider { }
+    public class Collider { public Rigidbody attachedRigidbody; public T GetComponent<T>() where T : class => null; }
+    public class Rigidbody { public void AddForceAtPosition(Vector3 force, Vector3 position) { } }
     public class Ray { public Vector3 origin, direction; public Ray(Vector3 o, Vector3 d) { origin=o; direction=d; } }
-    public struct RaycastHit { public Transform transform; public Vector3 point, normal; public float distance; }
+    public struct RaycastHit { public Transform transform; public Collider collider; public Vector3 point, normal; public float distance; }
     public static class Physics { public static bool Raycast(Ray ray, out RaycastHit hit, float distance, int mask) { hit = default; return false; } }
-    public class AnimationCurve { public float Evaluate(float value) => 1f; }
     public class AnimationCurve { public float Evaluate(float value) => 1f; }
     public class Material { }
     public class MeshRenderer { public Material material { get; set; } }
@@ -207,12 +207,12 @@ namespace UnityEngine.Events
     public delegate void UnityAction<T1, T2>(T1 arg1, T2 arg2);
 }
 
-public sealed class CharacterBody { public AudioInstigator AudioInstigator; public void OnSuccessfulAttack(object victim, int swarmId) { } }
+public sealed class CharacterBody { public AudioInstigator AudioInstigator; public Limb LastHitLimb; public void OnSuccessfulAttack(object victim, int swarmId) { } public void OnWasHit(Projectile p) { } public void OnWasAttacked(Projectile p) { } }
 public sealed class Masks { public static Masks Instance { get; } = new Masks(); public int Limbs => 1; public int BallisticTargets => 2; public int BallisticTargetsSansLimbs => 3; }
 public sealed class WeaponBase { public CharacterBody Owner; public AmmunitionBase ammunition = new AmmunitionBase(); public bool rifledBarrel; public float rifleTwistRate; }
 public sealed class Marksman { public void OnSuccessfulAttack(object victim) { } }
 public sealed class AudioInstigator { }
-public sealed class Limb { }
+public sealed class Limb { public CharacterBody Body = new CharacterBody(); public Projectile HandleProjectile(Projectile projectile, UnityEngine.Vector3 normal) => projectile; }
 public sealed class ProjectileLimbEvent { public void Invoke(Projectile p, Limb limb) { } }
 public sealed class ProjectileTrace { public void Initialize(Projectile p) { } public void AddPosition(UnityEngine.Vector3 p) { } }
 public sealed class BallisticHitEffect { public float offset; public void InitializeTransform(UnityEngine.Transform parent, UnityEngine.Vector3 position, UnityEngine.Vector3 direction) { } public void PlayEntry(Projectile projectile) { } public void PlayExit(Projectile projectile, UnityEngine.Vector3 normal, object instigator) { } }
