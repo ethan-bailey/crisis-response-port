@@ -17,11 +17,13 @@ window.startOriginalRuntime=async()=>{
   document.querySelectorAll('button[data-action]').forEach(button=>adapter.bindButton(button,button.dataset.action));
   adapter.bindKeyboard(window,{KeyA:'left',KeyD:'right',ShiftLeft:'sprint',KeyR:'magazine',Tab:'switchWeapons',KeyW:'stand',KeyS:'kneel'});
   adapter.bindLifecycle(window,document);
-  let previous=performance.now(),busy=false;
-  async function frame(now){requestAnimationFrame(frame);if(busy)return;busy=true;const dt=(now-previous)/1000;previous=now;
+  // Initialize from rAF's own clock. Mixing performance.now() at registration
+  // with the first frame timestamp can produce a negative delta in Chromium.
+  let previous=null,busy=false,failed=false;
+  async function frame(now){requestAnimationFrame(frame);if(busy||failed)return;busy=true;const dt=previous===null?0:(now-previous)/1000;previous=now;
    try{const state=JSON.parse(await call('Tick',dt,JSON.stringify(held)));window.__originalInput=state;window.__runtimeReady=true;
     document.querySelector('#inputState').textContent=JSON.stringify(Object.fromEntries(Object.entries(state).filter(([_,s])=>s.Pressed||s.Up)),null,2);
-   }catch(error){document.querySelector('#contracts').textContent=String(error);window.__runtimeError=String(error)}finally{busy=false}}
+   }catch(error){failed=true;document.querySelector('#contracts').textContent=String(error);window.__runtimeError=String(error)}finally{busy=false}}
   requestAnimationFrame(frame);
  }catch(error){document.querySelector('#contracts').textContent=String(error);window.__runtimeError=String(error)}
 };

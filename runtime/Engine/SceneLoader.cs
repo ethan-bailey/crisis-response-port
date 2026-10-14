@@ -28,6 +28,18 @@ public static class SceneLoader {
     static float Number(JsonElement fields,string name,float fallback=0)=>fields.TryGetProperty(name,out var v)?v.GetSingle():fallback;
     static Vector3 Vector(JsonElement value)=>new(Number(value,"x"),Number(value,"y"),Number(value,"z"));
     static Quaternion Rotation(JsonElement value)=>new(Number(value,"x"),Number(value,"y"),Number(value,"z"),Number(value,"w",1));
+    public static object VerifyImportedRay(SceneLoadResult result){
+        result.world.MakeCurrent();
+        var box=result.world.Objects.OfType<BoxCollider>().First(b=>b.isActiveAndEnabled&&MathF.Abs(b.size.x)>1e-5f&&MathF.Abs(b.size.y)>1e-5f&&MathF.Abs(b.size.z)>1e-5f);
+        var origin=box.transform.TransformPoint(box.center-new Vector3(0,0,MathF.Abs(box.size.z)*.5f+1));
+        var direction=box.transform.TransformVector(Vector3.forward).normalized;
+        var ray=new Ray(origin,direction);
+        if(!box.Raycast(ray,out var direct,10000))throw new InvalidOperationException("Imported original collider does not answer its entering ray");
+        if(!Physics.Raycast(ray,out var nearest,10000,1<<box.gameObject.layer,QueryTriggerInteraction.Collide))throw new InvalidOperationException("Imported original scene query failed");
+        if(nearest.distance>direct.distance+1e-3f)throw new InvalidOperationException("Nearest imported hit exceeded known collider");
+        return new {sourceColliderFileID=result.objects.First(p=>ReferenceEquals(p.Value,box)).Key,
+            sourceObject=box.name,directDistance=direct.distance,nearestObject=nearest.collider.name,nearestDistance=nearest.distance};
+    }
     public static SceneLoadResult Load(string json,string scene) {
         using var document=JsonDocument.Parse(json);
         var package=document.RootElement;

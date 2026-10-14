@@ -30,8 +30,9 @@ for(const [name,type] of [['chromium',chromium],['webkit',webkit]]){
   for(const path of ['Assets/Scenes/Marksman range.unity','Assets/Scenes/Mission 01.unity']){
    stage='scene '+path;const scene=await page.evaluate(async([text,path])=>JSON.parse(await window.runtimeCall('LoadScene',text,path)),[packageFor(path),path]);
    assert.ok(scene.gameObjects>600);assert.ok(scene.boxColliders>300);assert.equal(scene.unresolvedReferences.length,0);
-   // Ask a loaded original box for a geometrically guaranteed entering ray.
-   scenes.push(scene);
+   const query=await page.evaluate(async()=>JSON.parse(await window.runtimeCall('VerifySceneRay')));
+   assert.ok(query.nearestDistance>=0&&query.nearestDistance<=query.directDistance+.001);
+   scenes.push({...scene,query});
   }
   const ammunition=[];
   for(const path of ['Assets/Resources/weapons/ammunition/5.56-JHP.prefab','Assets/Resources/weapons/ammunition/308-Win-BSP.prefab']){

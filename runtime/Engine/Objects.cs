@@ -124,6 +124,7 @@ public sealed class RuntimeWorld {
     readonly Dictionary<(Type,string),MethodInfo> messages=[];
     public bool Initialized {get;private set;}
     public RuntimeWorld(){current=this;Time.Reset();Input.Reset();}
+    public void MakeCurrent()=>current=this;
     internal void Register(Object obj)=>Objects.Add(obj);
     internal void QueueDestroy(Object obj)=>destroyQueue.Add(obj);
     public void Invoke(MonoBehaviour target,string message){
@@ -145,6 +146,7 @@ public sealed class RuntimeWorld {
         if(!m.isActiveAndEnabled&&m.enableNotified){m.enableNotified=false;Invoke(m,"OnDisable");}
     }}
     public void Tick(float realDelta,Action beforeUpdate=null){
+        MakeCurrent();
         if(!Initialized)Initialize();
         Input.BeginFrame();Time.BeginFrame(realDelta);
         foreach(var m in Objects.OfType<MonoBehaviour>().Where(m=>m.isActiveAndEnabled&&!m.started).ToArray()){m.started=true;Invoke(m,"Start");}
