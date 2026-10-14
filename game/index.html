@@ -29,7 +29,7 @@ const camera=new THREE.OrthographicCamera(-viewHeight*innerWidth/innerHeight/2,v
 camera.position.set(-3,2.5,60);camera.lookAt(-3,2.5,0);
 const world=new THREE.Group();scene.add(world);
 const character=new THREE.Group();character.name="Original Operator prefab";scene.add(character);
-const keys={left:false,right:false,sprint:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),pointerHasMoved=false;
+const keys={left:false,right:false,sprint:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0);
 function showError(e){errorBox.style.display="block";errorBox.textContent=String(e?.stack||e);status.textContent="Build failed to load; see error details."}
 function setInput(id,key){const b=document.querySelector("#"+id);const on=e=>{e.preventDefault();keys[key]=true;b.classList.add("active");};const off=e=>{e.preventDefault();keys[key]=false;b.classList.remove("active")};b.addEventListener("pointerdown",on);b.addEventListener("pointerup",off);b.addEventListener("pointercancel",off);b.addEventListener("contextmenu",e=>e.preventDefault())}
 setInput("left","left");setInput("right","right");setInput("sprint","sprint");setInput("fire","fire");
@@ -149,11 +149,10 @@ function updateAim(e){
  const rect=renderer.domElement.getBoundingClientRect();
  pointerNdc.x=((e.clientX-rect.left)/rect.width)*2-1;
  pointerNdc.y=-(((e.clientY-rect.top)/rect.height)*2-1);
- pointerHasMoved=true;
 }
 renderer.domElement.addEventListener("pointerdown",e=>{updateAim(e);});
 renderer.domElement.addEventListener("pointermove",updateAim);
-renderer.domElement.addEventListener("pointercancel",()=>{pointerHasMoved=false;});
+
 let last=performance.now();
 function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-last)/1000,.05);last=now;if(loaded){
  // PlayerController.Update(): left takes precedence, then Body.Move(direction).
@@ -187,12 +186,10 @@ function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-last)/10
  // that collider, retain its body-local hit point, then reconstruct WorldPoint from the body.
  if(aimQuad){
   aimQuad.position.set(playerX+facingDirection*20,2.5,-1.5);
-  if(pointerHasMoved){
-   character.updateMatrixWorld(true);aimQuad.updateMatrixWorld(true);camera.updateMatrixWorld(true);
-   aimRaycaster.setFromCamera(pointerNdc,camera);
-   const hit=aimRaycaster.intersectObject(aimQuad,false)[0];
-   if(hit)localAimPoint.copy(character.worldToLocal(hit.point.clone()));
-  }
+  character.updateMatrixWorld(true);aimQuad.updateMatrixWorld(true);camera.updateMatrixWorld(true);
+  aimRaycaster.setFromCamera(pointerNdc,camera);
+  const hit=aimRaycaster.intersectObject(aimQuad,false)[0];
+  if(hit)localAimPoint.copy(character.worldToLocal(hit.point.clone()));
   character.updateMatrixWorld(true);
   const worldPoint=character.localToWorld(localAimPoint.clone());
   if(rightUpperArm){
