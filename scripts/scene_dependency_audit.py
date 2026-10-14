@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 GUID_RE = re.compile(r"guid: ([0-9a-f]{32})")
-ASSET_REF_RE = re.compile(r"\\{fileID: -?\\d+, guid: ([0-9a-f]{32}), type: \\d+\\}")
+ASSET_REF_RE = re.compile(r"\{fileID: -?\d+, guid: ([0-9a-f]{32}), type: \d+\}")
 UNITY_UI_SCRIPT_GUIDS = {"f5f67c52d1564df4a8936ccd202a3bd8"}
 BUILTIN_GUIDS = {"0000000000000000e000000000000000", "0000000000000000f000000000000000"}
 TEXT_EXTS = {
