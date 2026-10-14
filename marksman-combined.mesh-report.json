@@ -1,0 +1,14 @@
+{
+  "source": "work/recovery-artifact/export/ExportedProject/Assets/Mesh/Combined Mesh (root_ scene)_0.asset",
+  "output": "work/mesh/marksman-combined.obj",
+  "vertices": 14187,
+  "strideBytes": 48,
+  "indices": 28365,
+  "triangles": 9455,
+  "submeshes": 274,
+  "maxVertexIndex": 14186,
+  "hasNormals": true,
+  "hasUV0": true,
+  "conversion": "Unity left-handed coordinates to right-handed by negating Z and reversing triangle winding",
+  "validation": "vertex/index bounds and buffer lengths passed"
+}
