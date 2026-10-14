@@ -236,9 +236,19 @@ cat > "$OUT_ROOT/app/Pages/Home.razor" <<'RAZOR'
 @page "/"
 @using System.Reflection
 
-<h1>Crisis Response — C# to WebAssembly feasibility gate</h1>
+<h1>Crisis Response — original ballistics code in WebAssembly</h1>
 <p id="result">@_result</p>
-<p id="scope">This test compiles three original decompiled scripts: Target.cs, BallisticMaterialProperties.cs, and BallisticMaterial.cs. Unity APIs and dependent game types are deliberately minimal compile/test shims; only selected original methods are invoked, so this is not a playable game or a parity claim.</p>
+<p id="scope">This browser app compiles and executes original decompiled Target.cs, BallisticMaterialProperties.cs, and BallisticMaterial.cs. The collision control below invokes the original BallisticMaterial.HandleProjectile method. Unity APIs and dependent game types remain minimal test fixtures; this is a gameplay-system slice, not a complete game.</p>
+<section class="card p-3 mt-3" aria-labelledby="shot-heading">
+  <h2 id="shot-heading">Original projectile / material interaction</h2>
+  <label for="energy">Projectile energy: @_energy</label>
+  <input id="energy" type="range" min="1" max="500" step="1" @bind="_energy" />
+  <label for="thickness">Surface thickness: @_thickness.ToString("F2")</label>
+  <input id="thickness" type="range" min="0.01" max="0.50" step="0.01" @bind="_thickness" />
+  <label class="form-check mt-2"><input id="impenetrable" class="form-check-input" type="checkbox" @bind="_impenetrable" /> Impenetrable material</label>
+  <button id="runShot" class="btn btn-primary mt-3" @onclick="RunShot">Run original collision method</button>
+  <pre id="shotResult" class="mt-3">@_shotResult</pre>
+</section>
 
 @code {
     private string _result = "RUNNING";
@@ -282,11 +292,42 @@ cat > "$OUT_ROOT/app/Pages/Home.razor" <<'RAZOR'
             var handled = material.HandleProjectile(projectile, new UnityEngine.Vector3(0f, 0f, 1f));
             if (handled.Status != global::BallisticResult.Stop || handled.Energy != 0f)
                 throw new InvalidOperationException("Original BallisticMaterial impenetrable entry transition changed: status=" + handled.Status + ", energy=" + handled.Energy);
-            _result = "PASS — original Target.cs, BallisticMaterialProperties.cs, and BallisticMaterial.cs compiled under browser WebAssembly; lifecycle fixture, material defaults, Vector3/Quaternion/Transform math checks, original ChannelVolume, surface clamp, and impenetrable-entry state transition passed.";
+            _result = "PASS — original Target.cs, BallisticMaterialProperties.cs, and BallisticMaterial.cs compiled under browser WebAssembly; lifecycle fixture, material defaults, Unity math shims, ChannelVolume, surface clamp, and impenetrable-entry state transition passed.";
+            RunShot();
         }
         catch (Exception ex)
         {
             _result = "FAIL — " + ex.ToString();
+        }
+    }
+
+    private float _energy = 100f;
+    private float _thickness = 0.10f;
+    private bool _impenetrable = true;
+    private string _shotResult = "Ready. Adjust the parameters and run the original collision method.";
+
+    private void RunShot()
+    {
+        try
+        {
+            var properties = new global::BallisticMaterialProperties { surfaceThickness = _thickness };
+            var material = new global::BallisticMaterial { properties = properties, impenetrable = _impenetrable };
+            material.Awake();
+            var projectile = new global::Projectile
+            {
+                Status = global::BallisticResult.Continue,
+                Energy = _energy,
+                EnergyNormalized = 0f
+            };
+            projectile.Ammunition.MetricLength = 0.1f;
+            projectile.Ammunition.bounceThreshold = 1f;
+            var before = projectile.Energy;
+            var result = material.HandleProjectile(projectile, UnityEngine.Vector3.forward);
+            _shotResult = $"Original HandleProjectile returned {result.Status}. Energy before: {before:F2}; energy after: {result.Energy:F2}. Surface thickness: {_thickness:F2}; impenetrable: {_impenetrable}. Fixture physics and effects are simplified.";
+        }
+        catch (Exception ex)
+        {
+            _shotResult = "This parameter combination reached an unimplemented Unity/game dependency in the test fixtures: " + ex.Message;
         }
     }
 }
@@ -299,7 +340,7 @@ cat > "$OUT_ROOT/wasm-spike-report.md" <<EOF
 - Build target: Blazor WebAssembly on .NET 8
 - Unity API surface implemented: MonoBehaviour, inspector attributes, Vector2, Vector3/Quaternion/Transform math, GetComponent<T>() and a test-only component attachment hook.
 - CharacterBody and ballistic effect types are test fixtures, not the game's original classes.
-- Scope: compile three original scripts; invoke Target.Awake, check material-property defaults, execute original BallisticMaterial.ChannelVolume and EnergyToPenetrateSurface, and exercise the original impenetrable-entry state transition. Projectile energy math, vectors, transforms, random, effects and timing are test fixtures, not original physics.
+- Scope: compile three original scripts; invoke Target.Awake, check material-property defaults, execute original BallisticMaterial.ChannelVolume and EnergyToPenetrateSurface, exercise the original impenetrable-entry state transition, and expose a browser control that invokes original BallisticMaterial.HandleProjectile with adjustable energy, surface thickness, and impenetrability. Projectile energy math, vectors, transforms, random, effects and timing are test fixtures, not original physics.
 - This does not prove the rest of the Unity API, original scene import, physics, rendering parity, or a playable port.
 EOF
 echo "Published WASM feasibility app at $OUT_ROOT/published/wwwroot"
