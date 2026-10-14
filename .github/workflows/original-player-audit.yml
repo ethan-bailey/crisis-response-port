@@ -30,9 +30,13 @@ jobs:
           set -euo pipefail
           python3 scripts/audit_original_player.py work/recovery/export/ExportedProject work/ORIGINAL_MISSION01_PLAYER_AUDIT.json
           cat work/ORIGINAL_MISSION01_PLAYER_AUDIT.json
+          python3 scripts/export_operator_manifest.py work/recovery/export/ExportedProject work/operator-package
+          cat work/operator-package/operator.json
       - name: Upload original player dependency audit
         uses: actions/upload-artifact@v4
         with:
           name: crisis-response-original-mission01-player-audit
-          path: work/ORIGINAL_MISSION01_PLAYER_AUDIT.json
+          path: |
+            work/ORIGINAL_MISSION01_PLAYER_AUDIT.json
+            work/operator-package
           retention-days: 30
