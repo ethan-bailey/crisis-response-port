@@ -531,8 +531,45 @@
       ]
     }
   ],
-  "renderers": [],
+  "renderers": [
+    {
+      "gameObjectFileID": "1709867586078768",
+      "name": "Frame",
+      "texture": "textures/material_00.png",
+      "material": "Assets/Material/frame.mat"
+    },
+    {
+      "gameObjectFileID": "1044625135789424",
+      "name": "Back",
+      "texture": "textures/material_00.png",
+      "material": "Assets/Material/frame.mat"
+    },
+    {
+      "gameObjectFileID": "1589667821646929",
+      "name": "Slide",
+      "texture": "textures/material_01.png",
+      "material": "Assets/Material/slide right.mat"
+    },
+    {
+      "gameObjectFileID": "1372920208702427",
+      "name": "Back",
+      "texture": "textures/material_02.png",
+      "material": "Assets/Material/slide left.mat"
+    },
+    {
+      "gameObjectFileID": "1977153420339851",
+      "name": "Right",
+      "texture": "textures/material_03.png",
+      "material": "Assets/Material/barrel.mat"
+    },
+    {
+      "gameObjectFileID": "1336590748365959",
+      "name": "Left",
+      "texture": "textures/material_04.png",
+      "material": "Assets/Material/barrel_0.mat"
+    }
+  ],
   "nodeCount": 23,
-  "rendererCount": 0,
-  "textureCount": 0
+  "rendererCount": 6,
+  "textureCount": 5
 }

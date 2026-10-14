@@ -623,8 +623,39 @@
       ]
     }
   ],
-  "renderers": [],
+  "renderers": [
+    {
+      "gameObjectFileID": "1705390221481576",
+      "name": "Receiver right",
+      "texture": "textures/material_00.png",
+      "material": "Assets/Material/receiver right.mat"
+    },
+    {
+      "gameObjectFileID": "1977153420339851",
+      "name": "Receiver left",
+      "texture": "textures/material_01.png",
+      "material": "Assets/Material/receiver left.mat"
+    },
+    {
+      "gameObjectFileID": "1256069497284392",
+      "name": "Transform",
+      "texture": "textures/material_02.png",
+      "material": "Assets/Material/bolt.mat"
+    },
+    {
+      "gameObjectFileID": "1470112387431263",
+      "name": "Ejector port background",
+      "texture": "textures/material_03.png",
+      "material": "Assets/Material/ejector bg.mat"
+    },
+    {
+      "gameObjectFileID": "1313026266067498",
+      "name": "Operating rod",
+      "texture": "textures/material_04.png",
+      "material": "Assets/Material/operating rod.mat"
+    }
+  ],
   "nodeCount": 27,
-  "rendererCount": 0,
-  "textureCount": 0
+  "rendererCount": 5,
+  "textureCount": 5
 }
