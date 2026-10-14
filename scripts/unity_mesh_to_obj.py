@@ -93,7 +93,7 @@ def main() -> int:
             n = struct.unpack_from("<3f", vertex_bytes, base + normal_offset)
             normals.append((n[0], n[1], -n[2]))
         if uv_offset is not None:
-            uvs.append(struct.unpack_from("<2f", vertex_bytes, base + uv_offset))
+            uv_format = channels[3]["format"]\n            uvs.append(struct.unpack_from("<2e" if uv_format == 1 else "<2f", vertex_bytes, base + uv_offset))
     faces_by_submesh = []
     total_faces = 0
     max_index = -1
