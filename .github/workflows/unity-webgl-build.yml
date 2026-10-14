@@ -10,6 +10,7 @@ on:
       - ".github/workflows/unity-webgl-build.yml"
       - "scripts/webgl_preflight.py"
       - "scripts/scene_dependency_audit.py"
+      - "scripts/search_missing_mesh_guid.py"
       - "scripts/unity_api_inventory.py"
       - "scripts/scene_manifest.py"
       - "scripts/validate_scene_manifest.py"
@@ -220,6 +221,23 @@ jobs:
         with:
           name: crisis-response-marksman-range-dependencies
           path: work/MARKSMAN_RANGE_DEPENDENCIES.md
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Search recovery inputs for the exact missing .308 casing mesh GUID
+        run: |
+          set -euo pipefail
+          python3 scripts/search_missing_mesh_guid.py \
+            work/recovery-artifact \
+            work/MISSING_CASING_MESH_GUID_SEARCH.md
+          cat work/MISSING_CASING_MESH_GUID_SEARCH.md
+
+      - name: Upload missing casing mesh search report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crisis-response-missing-casing-mesh-guid-search
+          path: work/MISSING_CASING_MESH_GUID_SEARCH.md
           if-no-files-found: error
           retention-days: 30
 
