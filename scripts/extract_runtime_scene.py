@@ -38,6 +38,8 @@ def main():
         if m: index[m.group(1)] = str(meta.with_suffix('').relative_to(project))
     seeds = ['Assets/Scenes/Marksman range.unity', 'Assets/Scenes/Mission 01.unity',
         'Assets/Resources/characters/Operator.prefab', 'ProjectSettings/TimeManager.asset', 'ProjectSettings/TagManager.asset']
+    # Resources.Load paths are runtime strings, not serialized GUID edges.
+    seeds.extend(str(p.relative_to(project)) for p in sorted((project/'Assets/Resources/weapons/ammunition').glob('*.prefab')))
     queue = deque(seeds); assets = {}; missing = []
     while queue:
         relative = queue.popleft()
@@ -54,6 +56,12 @@ def main():
     payload = {'format':'crisis-unity-records-v1','seeds':seeds,'guidPaths':index,'assets':assets,
         'unresolvedGuids':missing,'sourceOfTruth':'sourceText/rawYaml preserve original text; parsed fields are an execution view'}
     output.parent.mkdir(parents=True, exist_ok=True); output.write_text(json.dumps(payload, separators=(',',':')))
+    execution = {'format':payload['format'],'guidPaths':index,'assets':{
+        path:{'path':a['path'],'sha256':a['sha256'],'records':[{k:v for k,v in r.items() if k!='rawYaml'} for r in a.get('records',[])]}
+        for path,a in assets.items()}}
+    # The archive preserves raw text; the browser only needs each requested
+    # asset's exact parsed fields. Avoid loading all raw copies on an iPhone.
+    output.with_name('scene-execution.json').write_text(json.dumps(execution,separators=(',',':')))
     summary = {'assets':len(assets),'records':sum(len(a.get('records',[])) for a in assets.values()),
         'unresolvedGuids':len(missing),'bytes':output.stat().st_size}
     output.with_suffix('.report.json').write_text(json.dumps(summary, indent=2)); print(json.dumps(summary))

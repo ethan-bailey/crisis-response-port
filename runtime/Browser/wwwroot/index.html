@@ -19,7 +19,7 @@ window.startOriginalRuntime=async()=>{
   adapter.bindLifecycle(window,document);
   let previous=performance.now(),busy=false;
   async function frame(now){requestAnimationFrame(frame);if(busy)return;busy=true;const dt=(now-previous)/1000;previous=now;
-   try{const state=JSON.parse(await call('Tick',dt,JSON.stringify(held)));window.__originalInput=state;
+   try{const state=JSON.parse(await call('Tick',dt,JSON.stringify(held)));window.__originalInput=state;window.__runtimeReady=true;
     document.querySelector('#inputState').textContent=JSON.stringify(Object.fromEntries(Object.entries(state).filter(([_,s])=>s.Pressed||s.Up)),null,2);
    }catch(error){document.querySelector('#contracts').textContent=String(error);window.__runtimeError=String(error)}finally{busy=false}}
   requestAnimationFrame(frame);

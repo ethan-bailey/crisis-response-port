@@ -6,7 +6,9 @@
     "BuildingController.cs": "8f0e47f06747714c7597224b21a6c93cad3e323fbb5962763f6cd4b8d9b27643",
     "InputKey.cs": "bcf11ec47585f2fe43ef453e6bd5895b61b335bd665b212791de0438f2d2389c",
     "InputMapping.cs": "dcfa60e3ac596cab635a3bc8f1179a25c80d9a4e86752934a1b02f4a28e732a8",
-    "InputHandler.cs": "db16bfc942f816201d7c34215a4b0000aa27062f5a905aeb42042bc220cb780c"
+    "InputHandler.cs": "db16bfc942f816201d7c34215a4b0000aa27062f5a905aeb42042bc220cb780c",
+    "AmmunitionBase.cs": "c004ccd8df9ef4ec95aa7c7fe3f2bcd266bdae5def79efb772c438c9a55864bd",
+    "Projectile.cs": "ef6443c2d6fece6866526fa8c9d4262c31fbc26a2ed77da57e607d681a0302b2"
   },
   "methodSelections": {
     "InputMapping.cs": {
@@ -27,12 +29,39 @@
       "public void SuspendInput(bool suspend, bool reset = false)": "52f1d48384fed8aa2bcc0bd14990f2b9e0b66ac638b13cc45d83adf1fbab645c",
       "public void ResetAll()": "4be7548f5c0463f31a135e98dd0190060a65742ac96bef2651ba1aa4c58c8c1b",
       "public void EnableCategory(InputKey.Category category, bool enable = true)": "67e103e2922c9756da456ec47e5a4c7442de6646d7239723d11e24f76c41565f"
+    },
+    "AmmunitionBase.cs": {
+      "public float DiameterAtEnergy(float frictionEnergy, float originalDiameterInMillimeters)": "d2f35b422e71f0af706562914224807ac4d236817bf9787510958c14ac10c297",
+      "public float FragmentationEnergy(float mass)": "9719b8748e7d674c85d223c042a4dbef4d7526edbdc0b1c0b2cfadd373680f69",
+      "public float TemporalCavityFactor(float velocity)": "3d0f0be0012923e2e244569e5d839ed1f5123e7a01ece8167293fb6781230247",
+      "public float PermanentCavityFactor(float velocity)": "a73b18ae7acc9958c26eda8816623eeea16a0b8b7463a8e06bd92e3287f17895"
+    },
+    "Projectile.cs": {
+      "public static float KineticEnergy(float massInKilograms, float velocityInMetersPerSecond)": "d52faf164ee0252fc7387a6907dfc4a8a155ae492c9fd42cdb6f5aeaee0b5109",
+      "public void RecalculateVelocity()": "4d1d110d95e386cf1e9076062c330b7b3ea168ad640d259578906d4e69d8e219",
+      "public float DistanceAtPosition(Vector3 worldPosition)": "6ea04cb3b1016b7659665095bd5a3b853abf6f709fcbcbf9935c5a0af24bbc41",
+      "public float DragVelocityAtPosition(Vector3 worldPosition)": "180335a368044a14a3890ecaaca7657777fc96111c0877623f78674e795e4b96",
+      "public float VelocityAtPosition(Vector3 worldPosition)": "d9535f5db8890953e4af04ceff3f5020eed1e0ba7fe36f5e04ad42d0f067f118",
+      "public Vector3 GravityVelocityAtTime(float time)": "1ff480e95898664abec5540bea762aecbe2355d8a90578e1ed8970e1be3eeb20",
+      "public float DiameterAtFrictionEnergy(float frictionEnergy, bool skipRotation = false)": "b12b93472f17f97cf56d6acc5a52bfbd2bd43d7dd7c39cb959559fff7551684e",
+      "public float VelocityToEnergy(float velocity)": "fd368f9e1a74f9146b331ff8c98a4601745165ae52aa3c1499f9adc927def0d5",
+      "public void RemoveEnergy(float energy)": "771bfa173b5e3a9aa74a9f4677bbb5933fbf5100de027d5c626fb5bdcd3b8942",
+      "public float ConvertEnergyToFriction(float energy)": "05ca5b5519005ff40cdf721e0ea7e636a2e9794793fb23e9e72a55c117ac2186",
+      "public void ConvertRemainingEnergyToFriction()": "119d2e8f3416876459c8e2aa8a84652823c57e771e16ce706ee8c1733b3fbc0c",
+      "public float PotentialPenetrationDistance(float energy, float density, float diameterInMillimeters, float frictionFactor)": "4ec19295feac1aa7c4e9a30493916e28a968cafd2ba0dc46c3bd5a5d261cbf71",
+      "public float PotentialPenetrationDistance(float density)": "c6995bd762f514fdc399508ec489042adc789fbd5b1def70f95f80ddc358546a",
+      "public float EnergyToPenetrate(float distance, float density)": "980428ef3f6d6381b3300c8058c571ffd5f942381b2b2260afd77beff5cb4b16",
+      "public float EnergyToPenetrate(float distance, float density, float frictionFactor, float diameterInMillimeters)": "75a0ef9f5e637ba2b3c8b4f4c2b5c9b4ea61038fdd98bbe5d3401e153e2a4869",
+      "public bool TestFragmentation()": "b5bf6b7f4f5e309666bb8b8b511813e3320462052ea6e0d13abd24b5de63e3a9",
+      "public static float MaximumRange(float muzzleVelocity, float ballisticCoefficient, float flightDrag)": "41fe27e4c6253996145f156e07c8f0a6e4cc5ad59e0f13457702a49cee68ed88"
     }
   },
   "excludedFeatures": [
     "Input binding dialog/UI",
     "InputMapping disk serialization and version migration",
-    "Unselected gameplay classes; this extraction is not the whole game"
+    "Unselected gameplay classes; this extraction is not the whole game",
+    "Projectile flight/collision/damage/effect lifecycle is not selected",
+    "Ammunition UI, availability, resource lookup and fragmentation spawning are not selected"
   ],
   "keyCodeNames": [
     "A",
@@ -84,6 +113,7 @@
     "Runtime host invokes original UpdateKeys before scene Update; rebinding is excluded"
   ],
   "generatedFiles": {
+    "AmmunitionBase.cs": "f1d3224b7a2a6137cbd399d79052bed67a6c540a3b462b0e95bc03db6684262a",
     "InputMapping.cs": "0670d39bbee6692fe848e6c2942572f76df2e152cbe1af24be4e05a0a7e48241",
     "BuildingController.cs": "5bd1596db99116cc4aca2a9843e1f8a5f17d5771411c77a0c7b2742ff1574275",
     "KeyCode.cs": "ae2eec63fff7f420ff5f3261593f106e6297929afa339aa0581f6810b9d2fa54",
@@ -91,6 +121,7 @@
     "AudioMaterial.cs": "3755bc5b0389a194737d0f385c2689ae8eb241cdeeed217c0b97829189dd1243",
     "InputHandler.cs": "e1d4a90dcf8a6706b65ef9337b17eafd673dcab274b254a18c944c7778f95b99",
     "InputKey.cs": "2bbcafdd110707dea7bb3b27906c8e391af1b7472909d09a2ed7dbd30ec9b1d8",
+    "Projectile.cs": "35b4eabc9d3bcd94878af72cce65599d9ab3faaa185ec0f588cbd6490c8d6817",
     "ObjectRemover.cs": "168d2d6175b0051cac2d3af2ca34cfdcd90105272f49e0e0cc92d1c3b2ace171"
   }
 }

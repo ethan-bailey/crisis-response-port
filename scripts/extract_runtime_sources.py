@@ -24,6 +24,14 @@ def block(text, signature):
     raise ValueError(f'Unbalanced method: {signature}')
 
 
+def member(text, name):
+    match = re.search(r'^\s*((?:public|private) [\w<>]+ ' + re.escape(name) + r')(?=\s*(?:[;{=]|=>))', text, re.M)
+    if not match: raise ValueError('Original member not found: ' + name)
+    start = match.start(1); tail = text[match.end(1):].lstrip()
+    if tail.startswith('{'): return block(text, match.group(1))
+    return text[start:text.index(';', match.end(1)) + 1]
+
+
 def main():
     source = Path(sys.argv[1]) / 'Assets/Scripts/Assembly-CSharp'
     out = Path(sys.argv[2]); out.mkdir(parents=True, exist_ok=True)
@@ -73,6 +81,46 @@ public class InputHandler : MonoBehaviour {
          re.search(r'public InputMapping Keys \{ get; private set; \}', handler).group() + '\n' +
          '\n'.join(methods) + '\n}\n')
     report['methodSelections']['InputHandler.cs'] = {sig: digest(body) for sig, body in zip(signatures, methods)}
+
+    ammunition = read('AmmunitionBase.cs')
+    scalar_region = ammunition[ammunition.index('public Availability availability;'):ammunition.index('public float MetricMass')]
+    declarations = re.findall(r'^\s*(public (?:float|int|bool|string) \w+(?: = [^;]+)?;)', scalar_region, re.M)
+    signatures = ['public float DiameterAtEnergy(float frictionEnergy, float originalDiameterInMillimeters)',
+        'public float FragmentationEnergy(float mass)', 'public float TemporalCavityFactor(float velocity)',
+        'public float PermanentCavityFactor(float velocity)']
+    methods = [block(ammunition, sig) for sig in signatures]
+    getters = [member(ammunition, name) for name in ['MetricMass','DiameterInMeters','MetricLength','MuzzleEnergy',
+        'MuzzleEnergyTotal','Subsonic','MuzzleBlastRange','DetonationAudioPower']]
+    save('AmmunitionBase.cs', 'using UnityEngine;\npublic class AmmunitionBase : MonoBehaviour {\n' +
+        block(ammunition, 'public enum FragmentationMode') + '\n' + '\n'.join(declarations) + '\n' +
+        re.search(r'public AnimationCurve expansionFunction;', ammunition).group() + '\n' +
+        re.search(r'public FragmentationMode fragmentationMode;', ammunition).group() + '\n' +
+        '\n'.join(getters + methods) + '\n}\n')
+    report['methodSelections']['AmmunitionBase.cs'] = {sig: digest(body) for sig, body in zip(signatures, methods)}
+
+    projectile = read('Projectile.cs')
+    member_names = ['meshTransform','diameter','freeFallTimestamp','FrictionEnergy','Ammunition','StartPosition',
+        'Mass','MetricMass','BaseVelocity','StartEnergy','Diameter','MetricDiameter','FrictionEnergyNormalized',
+        'DeformationRatio','BallisticCoefficient','SuperSonic','TemporalCavityFactor','PermanentCavityFactor',
+        'PenetrationDistance','DisplacedMaterialVolume','InteractionEnergy','Distance','Velocity','Drag',
+        'PotentialFlightRangeLeft','Energy','EnergyNormalized','HasFragmented']
+    members = []
+    for name in member_names: members.append(member(projectile, name))
+    signatures = ['public static float KineticEnergy(float massInKilograms, float velocityInMetersPerSecond)',
+        'public void RecalculateVelocity()', 'public float DistanceAtPosition(Vector3 worldPosition)',
+        'public float DragVelocityAtPosition(Vector3 worldPosition)', 'public float VelocityAtPosition(Vector3 worldPosition)',
+        'public Vector3 GravityVelocityAtTime(float time)', 'public float DiameterAtFrictionEnergy(float frictionEnergy, bool skipRotation = false)',
+        'public float VelocityToEnergy(float velocity)', 'public void RemoveEnergy(float energy)',
+        'public float ConvertEnergyToFriction(float energy)', 'public void ConvertRemainingEnergyToFriction()',
+        'public float PotentialPenetrationDistance(float energy, float density, float diameterInMillimeters, float frictionFactor)',
+        'public float PotentialPenetrationDistance(float density)', 'public float EnergyToPenetrate(float distance, float density)',
+        'public float EnergyToPenetrate(float distance, float density, float frictionFactor, float diameterInMillimeters)',
+        'public bool TestFragmentation()', 'public static float MaximumRange(float muzzleVelocity, float ballisticCoefficient, float flightDrag)']
+    methods = [block(projectile, sig) for sig in signatures]
+    save('Projectile.cs', 'using UnityEngine;\npublic class Projectile : MonoBehaviour {\n' + '\n'.join(members + methods) + '\n}\n')
+    report['methodSelections']['Projectile.cs'] = {sig: digest(body) for sig, body in zip(signatures, methods)}
+    report['excludedFeatures'].extend(['Projectile flight/collision/damage/effect lifecycle is not selected',
+        'Ammunition UI, availability, resource lookup and fragmentation spawning are not selected'])
 
     keys = sorted(set(re.findall(r'KeyCode\.(\w+)', mapping + handler)))
     # Enum names are extracted, not used as invented Unity numeric key values.

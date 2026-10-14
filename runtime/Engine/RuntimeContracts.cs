@@ -73,6 +73,11 @@ public static class RuntimeContracts {
         IEnumerator Routine(){yield return new WaitForSeconds(.04f);called=true;}
         probe.StartCoroutine(Routine());world.Tick(.02f);Check(!called,"Coroutine waits");world.Tick(.02f);Check(called,"Coroutine resumed");
         passed.Add("Coroutine scaled wait and resume");
+        var curve=new AnimationCurve(new Keyframe(0,0,1,1),new Keyframe(1,1,1,1));
+        Near(curve.Evaluate(.25f),.25f,"Hermite curve retains tangents");
+        curve=new AnimationCurve(new Keyframe(0,0,0,0),new Keyframe(1,1,0,0));
+        Near(curve.Evaluate(.25f),.15625f,"Hermite curve is not linear interpolation");
+        passed.Add("Unweighted original curve key/tangent interpolation within key domain");
         return JsonSerializer.Serialize(new {status="PASS",contracts=passed,originalSourceExecution=true,fullGameParity=false});
     }
 }

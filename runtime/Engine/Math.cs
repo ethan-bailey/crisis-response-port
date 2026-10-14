@@ -50,6 +50,11 @@ public static class Mathf {
     public static float Max(float a,float b) => MathF.Max(a,b);
     public static float Clamp(float f,float min,float max) => Math.Clamp(f,min,max);
     public static float Clamp01(float f) => Math.Clamp(f,0,1);
+    public static float Lerp(float a,float b,float t)=>a+(b-a)*Clamp01(t);
+    public static float Pow(float value,float power)=>MathF.Pow(value,power);
+    public static float Sqrt(float value)=>MathF.Sqrt(value);
+    public static float Tan(float value)=>MathF.Tan(value);
+    public static float Atan(float value)=>MathF.Atan(value);
 }
 [AttributeUsage(AttributeTargets.Field)] public sealed class TooltipAttribute(string text):Attribute { }
 [AttributeUsage(AttributeTargets.Field)] public sealed class HeaderAttribute(string text):Attribute { }
