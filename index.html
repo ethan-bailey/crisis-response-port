@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101318">
+<title>Crisis Response — original scene viewer</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#101318;color:#edf0f5}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101318}
+#viewport{position:absolute;inset:0}canvas{display:block;width:100%;height:100%;touch-action:none}
+.panel{position:absolute;z-index:2;left:12px;top:12px;right:12px;max-width:560px;padding:13px 14px;border:1px solid #414854;border-radius:12px;background:rgba(13,16,21,.91);backdrop-filter:blur(10px);box-shadow:0 8px 30px #0004}
+h1{font-size:15px;line-height:1.25;margin:0 0 6px;font-weight:750}.sub{font-size:12px;color:#c5cfdb;line-height:1.45}.warn{font-size:11px;color:#e5c58b;line-height:1.4;margin-top:7px}
+#status{white-space:pre-line;margin-top:8px;font-variant-numeric:tabular-nums}
+.controls{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;pointer-events:auto}
+button{appearance:none;border:1px solid #525c6b;border-radius:9px;background:#242b35;color:#f5f7fa;padding:9px 11px;font-size:12px;font-weight:650;min-height:38px}
+button:active{background:#3c4858}button[aria-pressed=true]{background:#30465a;border-color:#8bb9dc}
+#inspect{position:absolute;left:12px;bottom:12px;z-index:2;max-width:calc(100vw - 24px);padding:9px 11px;border:1px solid #414854;border-radius:9px;background:rgba(13,16,21,.88);color:#c5cfdb;font-size:11px;line-height:1.4}
+@media(min-width:700px){.panel{left:16px;top:16px}.controls button{padding:8px 12px}}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}
+</script>
+</head>
+<body>
+<div id="viewport" aria-label="Interactive 3D view of original Crisis Response scene geometry"></div>
+<section class="panel">
+<h1>Crisis Response — original scene geometry</h1>
+<div class="sub">Marksman range environment · reconstructed from the recovered Unity mesh · drag to orbit, pinch or scroll to zoom, two-finger drag to pan.</div>
+<div id="status">Loading original mesh…</div>
+<div class="controls">
+<button id="reset">Reset view</button>
+<button id="wire" aria-pressed="false">Wireframe</button>
+<button id="grid" aria-pressed="false">Grid</button>
+<button id="rotate" aria-pressed="false">Auto-rotate</button>
+<button id="light" aria-pressed="false">Alternate lighting</button>
+</div>
+<div class="warn">This is an interactive asset-inspection prototype, not a playable game. The mesh is original recovered geometry; original materials, scene lighting, characters, animation, physics, audio, AI, UI and gameplay are not yet running.</div>
+</section>
+<div id="inspect">Tap/click the environment to inspect a point. No game actions are simulated.</div>
+<script type="module">
+import * as THREE from "three";
+import {OBJLoader} from "three/addons/loaders/OBJLoader.js";
+import {OrbitControls} from "three/addons/controls/OrbitControls.js";
+const viewport=document.querySelector("#viewport"),status=document.querySelector("#status"),inspect=document.querySelector("#inspect");
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x101318);
+const camera=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,.01,10000);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:"high-performance"});
+renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.75));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;viewport.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xe5edff,0x34302a,2.1));
+const key=new THREE.DirectionalLight(0xffffff,2.2);key.position.set(20,40,15);scene.add(key);
+const fill=new THREE.DirectionalLight(0x91b6ff,.7);fill.position.set(-20,10,-15);scene.add(fill);
+const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.075;controls.enablePan=true;controls.screenSpacePanning=true;controls.minDistance=2;controls.maxDistance=200;controls.target.set(0,0,0);
+let object=null,baseMaterials=[],wire=false,altLight=false,grid=null,homePosition=null,homeTarget=new THREE.Vector3(),auto=false;
+const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
+window.__viewerStatus="loading";window.__viewerStats=null;
+function setButton(id,on){document.querySelector("#"+id).setAttribute("aria-pressed",String(on))}
+document.querySelector("#reset").addEventListener("click",()=>{if(!homePosition)return;camera.position.copy(homePosition);controls.target.copy(homeTarget);controls.update();inspect.textContent="View reset. Drag to orbit; zoom or pan to inspect the recovered environment."});
+document.querySelector("#wire").addEventListener("click",()=>{wire=!wire;setButton("wire",wire);if(object)object.traverse(c=>{if(c.isMesh)c.material.wireframe=wire})});
+document.querySelector("#grid").addEventListener("click",()=>{if(!grid){grid=new THREE.GridHelper(60,60,0x58687c,0x303946);grid.position.y=-.15;scene.add(grid)}else{grid.visible=!grid.visible}setButton("grid",grid.visible)});
+document.querySelector("#rotate").addEventListener("click",()=>{auto=!auto;controls.autoRotate=auto;controls.autoRotateSpeed=1.1;setButton("rotate",auto)});
+document.querySelector("#light").addEventListener("click",()=>{altLight=!altLight;scene.background.set(altLight?0x202a35:0x101318);key.intensity=altLight?3.1:2.2;fill.intensity=altLight?1.2:.7;setButton("light",altLight)});
+new OBJLoader().load("./marksman-combined.obj",obj=>{
+ object=obj;let meshes=0,vertices=0,triangles=0;
+ const material=new THREE.MeshStandardMaterial({color:0xb8bec8,roughness:.88,metalness:.02,side:THREE.DoubleSide});
+ object.traverse(c=>{if(!c.isMesh)return;meshes++;c.material=material;if(!c.geometry.boundingBox)c.geometry.computeBoundingBox();const p=c.geometry.getAttribute("position"),idx=c.geometry.getIndex();if(p)vertices+=p.count;triangles+=idx?idx.count/3:(p?p.count/3:0)});
+ object.updateMatrixWorld(true);const bounds=new THREE.Box3().setFromObject(object),center=bounds.getCenter(new THREE.Vector3()),sphere=bounds.getBoundingSphere(new THREE.Sphere());object.position.sub(center);scene.add(object);
+ const radius=Math.max(sphere.radius,1);camera.position.set(radius*1.7,radius*1.25,radius*1.8);camera.near=Math.max(radius/10000,.001);camera.far=radius*100;camera.updateProjectionMatrix();controls.target.set(0,0,0);controls.update();homePosition=camera.position.clone();homeTarget.copy(controls.target);
+ window.__viewerStats={meshes,vertices,triangles:Math.round(triangles),radius};window.__viewerStatus="loaded";
+ status.textContent="Loaded original mesh\n"+meshes.toLocaleString()+" mesh groups · "+vertices.toLocaleString()+" vertices · "+Math.round(triangles).toLocaleString()+" triangles";
+},xhr=>{if(xhr.total)status.textContent="Loading original mesh… "+Math.round(xhr.loaded/xhr.total*100)+"%"},err=>{window.__viewerStatus="error";status.textContent="Mesh failed to load. "+String(err);console.error(err)});
+renderer.domElement.addEventListener("pointerdown",e=>{renderer.domElement.dataset.downX=e.clientX;renderer.domElement.dataset.downY=e.clientY});
+renderer.domElement.addEventListener("pointerup",e=>{if(!object)return;const dx=e.clientX-Number(renderer.domElement.dataset.downX||e.clientX),dy=e.clientY-Number(renderer.domElement.dataset.downY||e.clientY);if(Math.hypot(dx,dy)>7)return;const r=renderer.domElement.getBoundingClientRect();pointer.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObject(object,true);if(hits.length){const p=hits[0].point;inspect.textContent="Surface point · X "+p.x.toFixed(2)+" · Y "+p.y.toFixed(2)+" · Z "+p.z.toFixed(2)+" · distance "+hits[0].distance.toFixed(2)}});
+addEventListener("resize",()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+renderer.setAnimationLoop(()=>{controls.update();renderer.render(scene,camera)});
+</script>
+</body>
+</html>
