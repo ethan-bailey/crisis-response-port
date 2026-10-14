@@ -3,106 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Crisis Response — original mesh browser spike</title>
-  <style>
-    :root { color-scheme: dark; font-family: system-ui, -apple-system, sans-serif; }
-    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #101318; color: #edf0f5; }
-    #viewport { position: absolute; inset: 0; }
-    canvas { display: block; width: 100%; height: 100%; touch-action: pan-y; }
-    #panel { position: absolute; left: 12px; top: 12px; right: 12px; max-width: 540px; padding: 12px 14px; border: 1px solid #414854; border-radius: 10px; background: rgba(13,16,21,.88); pointer-events: none; }
-    #heading { font-size: 14px; font-weight: 700; margin-bottom: 5px; }
-    #status { font-size: 12px; line-height: 1.4; color: #c5cfdb; white-space: pre-wrap; }
-    #warning { font-size: 11px; color: #e5c58b; margin-top: 6px; line-height: 1.35; }
-  </style>
-  <script type="importmap">
-    {"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}
-  </script>
+  <meta http-equiv="refresh" content="0;url=/game/">
+  <title>Crisis Response — Browser Runtime</title>
+  <script>location.replace("/game/");</script>
 </head>
 <body>
-  <div id="viewport"></div>
-  <section id="panel">
-    <div id="heading">Crisis Response — original scene mesh test</div>
-    <div id="status">Loading extracted original mesh…</div>
-    <div id="warning">Engineering spike only: this displays converted original geometry, not the game. Original materials, lights, scene transforms, animation, physics, UI, audio, AI, and gameplay are not implemented here.</div>
-  </section>
-  <script type="module">
-    import * as THREE from "three";
-    import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
-    import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-
-    const viewport = document.querySelector("#viewport");
-    const status = document.querySelector("#status");
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x101318);
-    const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.01, 100000);
-    camera.position.set(15, 12, 15);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
-    renderer.setSize(innerWidth, innerHeight);
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    viewport.appendChild(renderer.domElement);
-
-    scene.add(new THREE.HemisphereLight(0xe5edff, 0x34302a, 2.1));
-    const key = new THREE.DirectionalLight(0xffffff, 2.2);
-    key.position.set(20, 40, 15);
-    scene.add(key);
-    const fill = new THREE.DirectionalLight(0x91b6ff, 0.7);
-    fill.position.set(-20, 10, -15);
-    scene.add(fill);
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.08;
-    controls.enablePan = true;
-
-    window.__viewerStatus = "loading";
-    window.__viewerStats = null;
-    const loader = new OBJLoader();
-    loader.load("./marksman-combined.obj", object => {
-      let meshes = 0, vertices = 0, triangles = 0;
-      const material = new THREE.MeshStandardMaterial({ color: 0xb8bec8, roughness: 0.88, metalness: 0.02, side: THREE.DoubleSide });
-      object.traverse(child => {
-        if (!child.isMesh) return;
-        meshes++;
-        child.material = material;
-        if (!child.geometry.boundingBox) child.geometry.computeBoundingBox();
-        const pos = child.geometry.getAttribute("position");
-        if (pos) vertices += pos.count;
-        const index = child.geometry.getIndex();
-        triangles += index ? index.count / 3 : (pos ? pos.count / 3 : 0);
-      });
-      object.updateMatrixWorld(true);
-      const bounds = new THREE.Box3().setFromObject(object);
-      const center = bounds.getCenter(new THREE.Vector3());
-      const sphere = bounds.getBoundingSphere(new THREE.Sphere());
-      object.position.sub(center);
-      scene.add(object);
-      controls.target.set(0, 0, 0);
-      const radius = Math.max(sphere.radius, 1);
-      camera.position.set(radius * 1.7, radius * 1.25, radius * 1.8);
-      camera.near = Math.max(radius / 10000, 0.001);
-      camera.far = radius * 100;
-      camera.updateProjectionMatrix();
-      controls.update();
-      window.__viewerStats = { meshes, vertices, triangles, radius, objectCount: object.children.length };
-      window.__viewerStatus = "loaded";
-      status.textContent = "Loaded original geometry\nMeshes: " + meshes.toLocaleString() + "\nVertices: " + vertices.toLocaleString() + "\nTriangles: " + Math.round(triangles).toLocaleString() + "\nBounding radius: " + radius.toFixed(2);
-    }, xhr => {
-      if (xhr.total) status.textContent = "Loading original geometry… " + Math.round(xhr.loaded / xhr.total * 100) + "%";
-    }, error => {
-      window.__viewerStatus = "error";
-      status.textContent = "Failed to load geometry: " + String(error);
-      console.error(error);
-    });
-
-    addEventListener("resize", () => {
-      camera.aspect = innerWidth / innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(innerWidth, innerHeight);
-    });
-    renderer.setAnimationLoop(() => {
-      controls.update();
-      renderer.render(scene, camera);
-    });
-  </script>
+  <p>Opening the Crisis Response browser runtime…</p>
+  <p><a href="/game/">Continue to Mission 01</a></p>
 </body>
 </html>
