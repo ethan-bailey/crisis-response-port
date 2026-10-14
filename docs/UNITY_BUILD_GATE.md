@@ -1,25 +1,26 @@
-# Unity WebGL build gate
+# Unity build gate and license-free port strategy
 
-The recovered Unity project is available in the verified recovery artifact documented in [RECOVERY_RUN_2026-10-14.md](RECOVERY_RUN_2026-10-14.md). The cloud workflow downloads that artifact successfully.
+## Decision: the target browser port must not require a Unity license
 
-## Why the WebGL build is currently skipped
+The project will proceed on a license-free path that does **not** require Unity Editor, Unity Hub activation, or Unity license secrets. The primary approach is to execute recovered original C# gameplay code through a .NET WebAssembly runtime, provide browser-side compatibility implementations for the Unity APIs that code actually uses, and render/input through browser technologies.
 
-GitHub Actions confirmed that no Unity license secrets are configured for this repository. Unity Editor builds require valid activation; the project cannot be compiled into WebGL merely by running a C# compiler. The former `game-ci/unity-request-activation-file` action is retired, so the workflow no longer pretends it can generate a license request.
+This preserves original code wherever feasible without depending on a Unity Editor build. It is not a Unity WebGL player, and it is not yet a complete or playable game. The compatibility layer must be implemented and validated incrementally against the original project.
 
-## Required GitHub Actions secrets
+## Current Unity WebGL workflow status
 
-If a valid Unity license is already available, add the following as repository secrets (do not post these values in chat or commit them to the repository):
+The GitHub Actions workflow checks whether Unity license secrets exist. They are currently absent, so the Unity Editor build step is skipped. That skip is expected and does not block the license-free runtime experiments or static recovery/audit steps.
 
-- `UNITY_LICENSE` — the license file contents for the Unity account/license used by the build.
-- `UNITY_EMAIL` — the Unity account email.
-- `UNITY_PASSWORD` — the Unity account password, stored only as a GitHub Actions secret.
+The Unity build route is optional only. Do not ask the user to create Unity account credentials, provide passwords, activate Unity on another machine, or configure license secrets as a prerequisite for this browser port. Do not bypass Unity licensing checks.
 
-On GitHub's mobile website: open the private repository, go to **Settings → Secrets and variables → Actions → New repository secret**, then create each secret. GitHub may require the repository owner or an administrator role to manage secrets.
+## Existing evidence for the alternative route
 
-After the secrets are configured, rerun **Build recovered Crisis Response for WebGL** from the repository's **Actions** tab. The workflow downloads the already verified recovery artifact and attempts a WebGL build with Unity 2017.2.0f3.
+- The recovered project and decompiled C# source are available from the verified recovery artifact.
+- Selected original source files, including `Target.cs` and ballistic-material logic, have compiled and executed in a browser WebAssembly test harness.
+- A mesh extracted from the original Unity assets has rendered in a headless browser using WebGL.
+- These are focused feasibility tests, not proof of a complete game runtime or behavioral parity.
 
-If no valid Unity license file exists and there is no computer available to activate Unity Hub, this is a genuine external licensing blocker. Do not share passwords in chat and do not attempt to bypass Unity's licensing checks. The current workflow will keep the build skipped rather than claim a WebGL app exists.
+## Remaining implementation and validation
 
-## Validation still required after compilation
+The license-free path still needs the Unity scene/object lifecycle, serialized component and asset loading, materials/shaders, physics and projectile collision behavior, animation, touch controls, UI, audio, mission transitions, persistence, and iPhone Safari validation. Test shims used in the current proof of concept are not production implementations and must not be mistaken for parity.
 
-A successful compiler run is not enough. The resulting WebGL player must be opened in iPhone 16 Safari and checked for scene loading, UI/input, audio, physics, AI, memory use, performance, reload/resume, and behavioral parity against the original game.
+A complete result must load and play the original game content in iPhone Safari without Unity license secrets. Record any missing or irrecoverable original assets explicitly rather than silently substituting new content.
