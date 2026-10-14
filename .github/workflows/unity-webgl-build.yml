@@ -9,6 +9,8 @@ on:
       - "scripts/unity_api_inventory.py"
       - "scripts/scene_manifest.py"
       - "scripts/unity_mesh_to_obj.py"
+      - "scripts/browser_mesh_smoke.mjs"
+      - "runtime-spike/mesh-viewer/index.html"
   workflow_dispatch:
 
 permissions:
@@ -63,6 +65,34 @@ jobs:
           path: |
             work/mesh/marksman-combined.obj
             work/mesh/marksman-combined.mesh-report.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Browser-render smoke test for extracted original geometry
+        id: browser_smoke
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          mkdir -p work/mesh-viewer
+          cp runtime-spike/mesh-viewer/index.html work/mesh-viewer/index.html
+          cp work/mesh/marksman-combined.obj work/mesh-viewer/marksman-combined.obj
+          npm init -y
+          npm install --no-audit --no-fund three@0.180.0 playwright@1.55.0
+          npx playwright install --with-deps chromium
+          python3 -m http.server 8000 > /tmp/crisis-response-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          sleep 2
+          node scripts/browser_mesh_smoke.mjs
+
+      - name: Upload browser geometry smoke results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crisis-response-browser-geometry-smoke
+          path: |
+            work/mesh-viewer-smoke.png
+            work/mesh-viewer-smoke.json
           if-no-files-found: warn
           retention-days: 30
 
@@ -206,8 +236,8 @@ jobs:
       - name: Fail the run if original mesh extraction did not validate
         if: always()
         run: |
-          if [ "${{ steps.mesh_export.outcome }}" != "success" ]; then
-            echo "Original mesh export failed; inspect the step log. Other audit artifacts were still collected."
+          if [ "${{ steps.mesh_export.outcome }}" != "success" ] || [ "${{ steps.browser_smoke.outcome }}" != "success" ]; then
+            echo "Original mesh export or browser geometry smoke test failed; inspect the step logs. Other audit artifacts were still collected."
             exit 1
           fi
 
