@@ -10,9 +10,11 @@ This matrix records actual evidence from the source-preserving browser runtime e
 | `GetComponent<T>()` | Original private `Target.Awake()` was invoked in Chromium and cached the attached test component | Single-component fixture; no real scene/component registry |
 | `TooltipAttribute`, `HeaderAttribute` | Original `Target.cs` and `BallisticMaterialProperties.cs` compile against shim attributes | Inspector metadata only; no Unity Inspector behavior |
 | `Vector2` | Original `BallisticMaterialProperties.cs` compiled and its default vector was checked | Minimal two-float struct; no complete Unity math API |
-| Original `Target.active` default and `BallisticMaterialProperties` defaults | Browser WASM test assertions | Does not execute ballistic physics or target damage |
+| Original `Target.active` default and `BallisticMaterialProperties` defaults | Browser WASM test assertions in run 38590980350 | Does not execute ballistic physics or target damage |
+| Original `BallisticMaterial.ChannelVolume` | Executed in Chromium WASM in [run 38591962729](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38591962729) and compared against a deterministic numeric case | Other methods in BallisticMaterial are not yet parity-tested |
+| Original `BallisticMaterial.EnergyToPenetrateSurface` | Current test checks its surface-thickness clamp in [run 38592470882](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38592470882) | Projectile.EnergyToPenetrate is a simplified fixture; only the original wrapper/clamp is being tested |
 
-First source-execution proof: [workflow run 38590382729](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38590382729). Expanded test: [workflow run 38590980350](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38590980350).
+First source-execution proof: [workflow run 38590382729](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38590382729). Expanded component test: [workflow run 38590980350](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38590980350). Original ballistics method test: [workflow run 38591962729](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38591962729).
 
 ## Required engine-service implementations — not yet implemented
 
