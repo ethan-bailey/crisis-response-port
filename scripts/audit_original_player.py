@@ -67,10 +67,28 @@ def main():
             records.append({"score": score, "name": name, "gameObjectFileID": obj["fileID"], "components": comps})
     records.sort(key=lambda x: (-x["score"], x["name"]))
     all_scripts = sorted({comp.get("scriptPath") for item in records for comp in item["components"] if comp.get("scriptPath")})
+
+    runtime_prefabs = []
+    for prefab in sorted(assets.rglob("*.prefab")):
+        if prefab.stem.lower() not in {"operator", "marksman", "occupant"}:
+            continue
+        ptext = prefab.read_text(errors="ignore")
+        refs = sorted(set(GUID.findall(ptext)))
+        resolved = [{"guid": g, "path": guid_to_asset.get(g)} for g in refs]
+        component_scripts = sorted({guid_to_asset[g] for g in refs if g in guid_to_asset and guid_to_asset[g].endswith(".cs")})
+        runtime_prefabs.append({"path": str(prefab.relative_to(root)), "bytes": len(ptext.encode("utf-8")),
+                                "gameObjectNames": [m.group(1).strip() for m in NAME.finditer(ptext)],
+                                "scriptComponents": component_scripts,
+                                "assetReferences": resolved})
+    source_files = {}
+    for name in ("OperatorSpawner.cs", "OccupantSpawner.cs", "Marksmen.cs", "Mission.cs", "GlobalContextInitializer.cs"):
+        candidates = list(assets.rglob(name))
+        if candidates:
+            source_files[name] = [{"path": str(p.relative_to(root)), "text": p.read_text(errors="ignore")[:16000]} for p in candidates[:3]]
     output = {"sourceScene": str(scene.relative_to(root)), "sceneObjectCount": len(objects),
               "sceneComponentCount": len(components), "scriptGuidCount": len(script_guid),
               "assetGuidCount": len(guid_to_asset), "scriptBearingObjectCount": len(records),
-              "scriptPaths": all_scripts, "candidates": records}
+              "scriptPaths": all_scripts, "candidates": records, "runtimePrefabs": runtime_prefabs, "sourceFiles": source_files}
     out = Path(sys.argv[2]); out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(output, indent=2), encoding="utf-8")
     print(f"Objects: {len(objects)}; components: {len(components)}; script-bearing objects: {len(records)}")
