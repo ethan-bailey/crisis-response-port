@@ -43,8 +43,12 @@ The second pass, [workflow run 38590980350](https://github.com/ethan-bailey/cris
 
 In [workflow run 38591962729](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38591962729), the original `BallisticMaterial.cs` compiled into browser WASM without rewriting its algorithm. Chromium invoked the original static `ChannelVolume(2, 4, 6)` method and verified the expected result within tolerance. The Unity math/transform APIs and dependent game classes were minimal test fixtures; this proves execution of that one original method, not full ballistic physics.
 
-## Current expansion: surface-thickness clamp
+## C# WebAssembly surface clamp gate: passed
 
-The current run, [38592470882](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38592470882), adds a test of the original `EnergyToPenetrateSurface` method using a test projectile. The original method's thickness clamp is under test, but the projectile's `EnergyToPenetrate` function is still a simplified fixture. Penetration, deflection, fragmentation, collisions, and delayed exits remain unimplemented and untested.
+In [workflow run 38592470882](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38592470882), the original `EnergyToPenetrateSurface` method passed a deterministic surface-thickness clamp test. The test projectile’s `EnergyToPenetrate` function is still a simplified fixture, so this validates the original wrapper/clamp logic, not the game’s true energy model.
+
+## Current expansion: original impenetrable-entry state transition
+
+The current run, [38592900397](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38592900397), exercises the original `BallisticMaterial.HandleProjectile` path through an impenetrable surface and checks the expected stop/zero-energy state transition. The engine math, projectile energy model, effects, and timing are still test fixtures; a pass is a limited source-method test, not full ballistic or gameplay parity.
 
 The broader API inventory and implementation gaps are recorded in [the Unity API compatibility matrix](UNITY_API_COMPATIBILITY_MATRIX_WASM_2026-10-14.md). Unity's licensed build path remains blocked by missing license secrets. No full-game browser build exists, and no 1:1 parity claim is justified yet.
