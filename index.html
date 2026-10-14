@@ -1,94 +1,108 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#101318">
-<title>Crisis Response — original scene viewer</title>
-<!-- Re-trigger original mesh asset publication after the reported OBJ 404. -->
-<style>
-:root{color-scheme:dark;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#101318;color:#edf0f5}
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101318}
-#viewport{position:absolute;inset:0}canvas{display:block;width:100%;height:100%;touch-action:none}
-.panel{position:absolute;z-index:2;left:12px;top:12px;right:12px;max-width:560px;padding:13px 14px;border:1px solid #414854;border-radius:12px;background:rgba(13,16,21,.91);backdrop-filter:blur(10px);box-shadow:0 8px 30px #0004}
-h1{font-size:15px;line-height:1.25;margin:0 0 6px;font-weight:750}.sub{font-size:12px;color:#c5cfdb;line-height:1.45}.warn{font-size:11px;color:#e5c58b;line-height:1.4;margin-top:7px}
-#status{white-space:pre-line;margin-top:8px;font-variant-numeric:tabular-nums}
-.controls{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;pointer-events:auto}
-button{appearance:none;border:1px solid #525c6b;border-radius:9px;background:#242b35;color:#f5f7fa;padding:9px 11px;font-size:12px;font-weight:650;min-height:38px}
-button:active{background:#3c4858}button[aria-pressed=true]{background:#30465a;border-color:#8bb9dc}
-#inspect{position:absolute;left:12px;bottom:12px;z-index:2;max-width:calc(100vw - 24px);padding:9px 11px;border:1px solid #414854;border-radius:9px;background:rgba(13,16,21,.88);color:#c5cfdb;font-size:11px;line-height:1.4}
-@media(min-width:700px){.panel{left:16px;top:16px}.controls button{padding:8px 12px}}
-</style>
-<script type="importmap">
-{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}
-</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Crisis Response — original mesh browser spike</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, -apple-system, sans-serif; }
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #101318; color: #edf0f5; }
+    #viewport { position: absolute; inset: 0; }
+    canvas { display: block; width: 100%; height: 100%; touch-action: pan-y; }
+    #panel { position: absolute; left: 12px; top: 12px; right: 12px; max-width: 540px; padding: 12px 14px; border: 1px solid #414854; border-radius: 10px; background: rgba(13,16,21,.88); pointer-events: none; }
+    #heading { font-size: 14px; font-weight: 700; margin-bottom: 5px; }
+    #status { font-size: 12px; line-height: 1.4; color: #c5cfdb; white-space: pre-wrap; }
+    #warning { font-size: 11px; color: #e5c58b; margin-top: 6px; line-height: 1.35; }
+  </style>
+  <script type="importmap">
+    {"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}
+  </script>
 </head>
 <body>
-<div id="viewport" aria-label="Interactive 3D view of original Crisis Response scene geometry"></div>
-<section class="panel">
-<h1>Crisis Response — original scene geometry</h1>
-<div class="sub">Recovered Marksman range geometry with an experimental third-person movement controller. Move the soldier with the on-screen controls or WASD/arrow keys; drag to orbit and pinch/scroll to zoom.</div>
-<div id="status">Loading original mesh…</div>
-<div class="controls">
-<button id="reset">Reset view</button>
-<button id="wire" aria-pressed="false">Wireframe</button>
-<button id="grid" aria-pressed="false">Grid</button>
-<button id="rotate" aria-pressed="false">Auto-rotate</button>
-<button id="light" aria-pressed="false">Alternate lighting</button>
-<button id="explore" aria-pressed="false">Explore mode</button>
-<button id="forward">Move forward</button><button id="back">Move back</button><button id="left">Move left</button><button id="right">Move right</button>
-</div>
-<div class="controls"><button id="wasmGate" onclick="location.href='./wasm-ballistics/'">Open original C# WebAssembly gate</button>
-<button id="sceneGate" onclick="location.href='./scene-hierarchy.html'">Inspect recovered scene hierarchy</button></div>
-<div class="warn">Movement prototype: the environment mesh is recovered original geometry, but the visible soldier and movement controller are provisional and are not claimed to be the original character, original collision/animation, or full gameplay. This build tests browser movement on the recovered scene.</div>
-</section>
-<div id="inspect">Tap/click the environment to inspect a point. No game actions are simulated.</div>
-<script type="module">
-import * as THREE from "three";
-import {OBJLoader} from "three/addons/loaders/OBJLoader.js";
-import {OrbitControls} from "three/addons/controls/OrbitControls.js";
-const viewport=document.querySelector("#viewport"),status=document.querySelector("#status"),inspect=document.querySelector("#inspect");
-const scene=new THREE.Scene();scene.background=new THREE.Color(0x101318);
-const camera=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,.01,10000);
-const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:"high-performance"});
-renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.75));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;viewport.appendChild(renderer.domElement);
-scene.add(new THREE.HemisphereLight(0xe5edff,0x34302a,2.1));
-const key=new THREE.DirectionalLight(0xffffff,2.2);key.position.set(20,40,15);scene.add(key);
-const fill=new THREE.DirectionalLight(0x91b6ff,.7);fill.position.set(-20,10,-15);scene.add(fill);
-const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.075;controls.enablePan=true;controls.screenSpacePanning=true;controls.minDistance=2;controls.maxDistance=200;controls.target.set(0,0,0);
-let object=null,baseMaterials=[],wire=false,altLight=false,grid=null,homePosition=null,homeTarget=new THREE.Vector3(),auto=false,explore=false,moveStep=1,player=null,playerParts={},playerSpeed=0;
-const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
-window.__viewerStatus="loading";window.__viewerStats=null;
-function setButton(id,on){document.querySelector("#"+id).setAttribute("aria-pressed",String(on))}
-document.querySelector("#reset").addEventListener("click",()=>{if(!homePosition)return;camera.position.copy(homePosition);controls.target.copy(homeTarget);controls.update();inspect.textContent="View reset. Drag to orbit; zoom or pan to inspect the recovered environment."});
-document.querySelector("#wire").addEventListener("click",()=>{wire=!wire;setButton("wire",wire);if(object)object.traverse(c=>{if(c.isMesh)c.material.wireframe=wire})});
-document.querySelector("#grid").addEventListener("click",()=>{if(!grid){grid=new THREE.GridHelper(60,60,0x58687c,0x303946);grid.position.y=-.15;scene.add(grid)}else{grid.visible=!grid.visible}setButton("grid",grid.visible)});
-document.querySelector("#rotate").addEventListener("click",()=>{auto=!auto;controls.autoRotate=auto;controls.autoRotateSpeed=1.1;setButton("rotate",auto)});
-document.querySelector("#light").addEventListener("click",()=>{altLight=!altLight;scene.background.set(altLight?0x202a35:0x101318);key.intensity=altLight?3.1:2.2;fill.intensity=altLight?1.2:.7;setButton("light",altLight)});
-function moveCharacter(direction){if(!player||!object)return;const forward=new THREE.Vector3(controls.target.x-camera.position.x,0,controls.target.z-camera.position.z);if(forward.lengthSq()<1e-8)forward.set(0,0,-1);forward.normalize();const right=new THREE.Vector3().crossVectors(forward,new THREE.Vector3(0,1,0)).normalize();const delta=new THREE.Vector3();if(direction==="forward")delta.copy(forward);if(direction==="back")delta.copy(forward).negate();if(direction==="left")delta.copy(right).negate();if(direction==="right")delta.copy(right);delta.multiplyScalar(moveStep);const old=player.position.clone();player.position.x+=delta.x;player.position.z+=delta.z;const down=new THREE.Raycaster(new THREE.Vector3(player.position.x,player.position.y+4,player.position.z),new THREE.Vector3(0,-1,0),0,12);const hits=down.intersectObject(object,true);const floor=hits.find(h=>h.face&&h.face.normal.y>.45);if(floor){const localNormal=floor.face.normal.clone().transformDirection(floor.object.matrixWorld);if(localNormal.y>.45)player.position.y=floor.point.y+.04;else player.position.y=old.y}else player.position.y=old.y;const actual=new THREE.Vector3().subVectors(player.position,old);camera.position.add(actual);controls.target.add(actual);player.rotation.y=Math.atan2(delta.x,delta.z);playerSpeed=delta.length();if(playerParts.leftLeg)playerParts.leftLeg.rotation.x=Math.sin(performance.now()*.018)*.45;if(playerParts.rightLeg)playerParts.rightLeg.rotation.x=-Math.sin(performance.now()*.018)*.45;if(playerParts.leftArm)playerParts.leftArm.rotation.x=-Math.sin(performance.now()*.018)*.25;if(playerParts.rightArm)playerParts.rightArm.rotation.x=Math.sin(performance.now()*.018)*.25;controls.update();inspect.textContent="Soldier position · X "+player.position.x.toFixed(2)+" · Y "+player.position.y.toFixed(2)+" · Z "+player.position.z.toFixed(2)+" · movement controller active";}
-for(const direction of ["forward","back","left","right"]){const button=document.querySelector("#"+direction);button.addEventListener("click",()=>moveCharacter(direction));button.addEventListener("pointerdown",e=>{if(e.pointerType==="touch")e.preventDefault()})}
-document.querySelector("#explore").addEventListener("click",()=>{explore=!explore;controls.enableRotate=!explore;controls.enableZoom=!explore;controls.enablePan=!explore;controls.autoRotate=false;auto=false;setButton("rotate",false);setButton("explore",explore);inspect.textContent=explore?"Explore mode: use Forward/Back/Left/Right or W/A/S/D. Turn off Explore mode to orbit and zoom.":"Orbit mode: drag to rotate, pinch to zoom, two-finger drag to pan."});
-addEventListener("keydown",e=>{if(/INPUT|TEXTAREA/.test(e.target.tagName))return;const k=e.key.toLowerCase();const map={w:"forward",arrowup:"forward",s:"back",arrowdown:"back",a:"left",arrowleft:"left",d:"right",arrowright:"right"};if(map[k]){e.preventDefault();moveCharacter(map[k])}});
-const meshLoader=new OBJLoader();
-const meshLoaded=obj=>{
- object=obj;let meshes=0,vertices=0,triangles=0;
- const material=new THREE.MeshStandardMaterial({color:0xb8bec8,roughness:.88,metalness:.02,side:THREE.DoubleSide});
- object.traverse(c=>{if(!c.isMesh)return;meshes++;c.material=material;if(!c.geometry.boundingBox)c.geometry.computeBoundingBox();const p=c.geometry.getAttribute("position"),idx=c.geometry.getIndex();if(p)vertices+=p.count;triangles+=idx?idx.count/3:(p?p.count/3:0)});
- object.updateMatrixWorld(true);const bounds=new THREE.Box3().setFromObject(object),center=bounds.getCenter(new THREE.Vector3()),sphere=bounds.getBoundingSphere(new THREE.Sphere());object.position.sub(center);scene.add(object);
- const radius=Math.max(sphere.radius,1);moveStep=Math.max(radius*.018,.08);const floorY=bounds.min.y-center.y;const scale=Math.min(Math.max(radius*.035,.6),1.2);player=new THREE.Group();player.name="Experimental movable soldier";const uniform=new THREE.MeshStandardMaterial({color:0x59634a,roughness:.9}),dark=new THREE.MeshStandardMaterial({color:0x252a2c,roughness:.85}),skin=new THREE.MeshStandardMaterial({color:0xb68d70,roughness:.95});function part(parent,geometry,material,x,y,z){const m=new THREE.Mesh(geometry,material);m.position.set(x,y,z);parent.add(m);return m}const torso=part(player,new THREE.BoxGeometry(scale*.72,scale*1.05,scale*.38),uniform,0,scale*1.35,0);part(player,new THREE.SphereGeometry(scale*.22,10,8),skin,0,scale*2.08,0);part(player,new THREE.BoxGeometry(scale*.78,scale*.18,scale*.4),dark,0,scale*2.27,0);playerParts.leftArm=part(player,new THREE.CapsuleGeometry(scale*.105,scale*.42,3,6),uniform,-scale*.48,scale*1.42,0);playerParts.rightArm=part(player,new THREE.CapsuleGeometry(scale*.105,scale*.42,3,6),uniform,scale*.48,scale*1.42,0);playerParts.leftLeg=part(player,new THREE.CapsuleGeometry(scale*.12,scale*.48,3,6),dark,-scale*.2,scale*.57,0);playerParts.rightLeg=part(player,new THREE.CapsuleGeometry(scale*.12,scale*.48,3,6),dark,scale*.2,scale*.57,0);part(player,new THREE.BoxGeometry(scale*.14,scale*.12,scale*.85),dark,scale*.2,scale*1.6,-scale*.45);player.scale.setScalar(1);player.position.set(0,floorY+.02,0);scene.add(player);camera.position.set(radius*1.7,radius*1.25,radius*1.8);camera.near=Math.max(radius/10000,.001);camera.far=radius*100;camera.updateProjectionMatrix();controls.target.set(0,floorY+scale*1.2,0);camera.position.set(radius*.35,floorY+radius*.2,radius*.55);controls.update();homePosition=camera.position.clone();homeTarget.copy(controls.target);
- window.__viewerStats={meshes,vertices,triangles:Math.round(triangles),radius};window.__playerPosition=()=>player?player.position.toArray():null;window.__viewerStatus="loaded";
- status.textContent="Loaded original mesh\n"+meshes.toLocaleString()+" mesh groups · "+vertices.toLocaleString()+" vertices · "+Math.round(triangles).toLocaleString()+" triangles";
-};
-const meshProgress=xhr=>{if(xhr.total)status.textContent="Loading original mesh… "+Math.round(xhr.loaded/xhr.total*100)+"%"};
-meshLoader.load("./marksman-combined.obj",meshLoaded,meshProgress,localErr=>{
- console.warn("Local mesh URL failed; trying the verified public repository asset.",localErr);
- status.textContent="Local mesh unavailable; loading verified original asset…";
- meshLoader.load("https://raw.githubusercontent.com/ethan-bailey/crisis-response-port/main/marksman-combined.obj",meshLoaded,meshProgress,remoteErr=>{window.__viewerStatus="error";status.textContent="Mesh failed to load from both the deployment and repository. "+String(remoteErr);console.error(remoteErr)});
-});
-renderer.domElement.addEventListener("pointerdown",e=>{renderer.domElement.dataset.downX=e.clientX;renderer.domElement.dataset.downY=e.clientY});
-renderer.domElement.addEventListener("pointerup",e=>{if(!object)return;const dx=e.clientX-Number(renderer.domElement.dataset.downX||e.clientX),dy=e.clientY-Number(renderer.domElement.dataset.downY||e.clientY);if(Math.hypot(dx,dy)>7)return;const r=renderer.domElement.getBoundingClientRect();pointer.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObject(object,true);if(hits.length){const p=hits[0].point;inspect.textContent="Surface point · X "+p.x.toFixed(2)+" · Y "+p.y.toFixed(2)+" · Z "+p.z.toFixed(2)+" · distance "+hits[0].distance.toFixed(2)}});
-addEventListener("resize",()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
-renderer.setAnimationLoop(()=>{controls.update();renderer.render(scene,camera)});
-</script>
+  <div id="viewport"></div>
+  <section id="panel">
+    <div id="heading">Crisis Response — original scene mesh test</div>
+    <div id="status">Loading extracted original mesh…</div>
+    <div id="warning">Engineering spike only: this displays converted original geometry, not the game. Original materials, lights, scene transforms, animation, physics, UI, audio, AI, and gameplay are not implemented here.</div>
+  </section>
+  <script type="module">
+    import * as THREE from "three";
+    import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
+    import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+    const viewport = document.querySelector("#viewport");
+    const status = document.querySelector("#status");
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x101318);
+    const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.01, 100000);
+    camera.position.set(15, 12, 15);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    viewport.appendChild(renderer.domElement);
+
+    scene.add(new THREE.HemisphereLight(0xe5edff, 0x34302a, 2.1));
+    const key = new THREE.DirectionalLight(0xffffff, 2.2);
+    key.position.set(20, 40, 15);
+    scene.add(key);
+    const fill = new THREE.DirectionalLight(0x91b6ff, 0.7);
+    fill.position.set(-20, 10, -15);
+    scene.add(fill);
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.enablePan = true;
+
+    window.__viewerStatus = "loading";
+    window.__viewerStats = null;
+    const loader = new OBJLoader();
+    loader.load("./marksman-combined.obj", object => {
+      let meshes = 0, vertices = 0, triangles = 0;
+      const material = new THREE.MeshStandardMaterial({ color: 0xb8bec8, roughness: 0.88, metalness: 0.02, side: THREE.DoubleSide });
+      object.traverse(child => {
+        if (!child.isMesh) return;
+        meshes++;
+        child.material = material;
+        if (!child.geometry.boundingBox) child.geometry.computeBoundingBox();
+        const pos = child.geometry.getAttribute("position");
+        if (pos) vertices += pos.count;
+        const index = child.geometry.getIndex();
+        triangles += index ? index.count / 3 : (pos ? pos.count / 3 : 0);
+      });
+      object.updateMatrixWorld(true);
+      const bounds = new THREE.Box3().setFromObject(object);
+      const center = bounds.getCenter(new THREE.Vector3());
+      const sphere = bounds.getBoundingSphere(new THREE.Sphere());
+      object.position.sub(center);
+      scene.add(object);
+      controls.target.set(0, 0, 0);
+      const radius = Math.max(sphere.radius, 1);
+      camera.position.set(radius * 1.7, radius * 1.25, radius * 1.8);
+      camera.near = Math.max(radius / 10000, 0.001);
+      camera.far = radius * 100;
+      camera.updateProjectionMatrix();
+      controls.update();
+      window.__viewerStats = { meshes, vertices, triangles, radius, objectCount: object.children.length };
+      window.__viewerStatus = "loaded";
+      status.textContent = "Loaded original geometry\nMeshes: " + meshes.toLocaleString() + "\nVertices: " + vertices.toLocaleString() + "\nTriangles: " + Math.round(triangles).toLocaleString() + "\nBounding radius: " + radius.toFixed(2);
+    }, xhr => {
+      if (xhr.total) status.textContent = "Loading original geometry… " + Math.round(xhr.loaded / xhr.total * 100) + "%";
+    }, error => {
+      window.__viewerStatus = "error";
+      status.textContent = "Failed to load geometry: " + String(error);
+      console.error(error);
+    });
+
+    addEventListener("resize", () => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    });
+    renderer.setAnimationLoop(() => {
+      controls.update();
+      renderer.render(scene, camera);
+    });
+  </script>
 </body>
 </html>
