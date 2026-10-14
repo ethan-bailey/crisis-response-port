@@ -8,6 +8,7 @@ window.startOriginalRuntime=async()=>{
  try{
   const call=(method,...args)=>DotNet.invokeMethodAsync('Crisis.Runtime.Browser',method,...args);
   window.runtimeCall=call;
+  if(new URLSearchParams(location.search).has("bridge")){await call("ResetInput");window.__runtimeReady=true;return;}
   const contracts=JSON.parse(await call('Verify'));
   document.querySelector('#contracts').textContent=contracts.status+' · '+contracts.contracts.length+' verified runtime contracts';
   window.__runtimeContracts=contracts;

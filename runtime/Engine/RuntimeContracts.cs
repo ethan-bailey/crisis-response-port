@@ -12,6 +12,14 @@ public sealed class LifecycleProbe:MonoBehaviour {
     void Update()=>trace.Add("Update");void FixedUpdate()=>trace.Add("FixedUpdate");void LateUpdate()=>trace.Add("LateUpdate");
     void OnDisable()=>trace.Add("OnDisable");void OnDestroy()=>trace.Add("OnDestroy");
 }
+public sealed class CloneProbe:MonoBehaviour {
+    public Transform child;
+    public BoxCollider colliderReference;
+    public List<Transform> linkedTransforms=[];
+    public bool valid;
+    [NonSerialized] public bool awakeSawReferences;
+    void Awake(){awakeSawReferences=valid&&child!=null&&colliderReference!=null&&child==colliderReference.transform&&linkedTransforms[0]==child;}
+}
 public static class RuntimeContracts {
     static void Check(bool condition,string name){if(!condition)throw new InvalidOperationException(name);}
     static void Near(float actual,float expected,string name){if(!float.IsFinite(actual)||MathF.Abs(actual-expected)>1e-4f)throw new InvalidOperationException($"{name}: {actual} != {expected}");}
@@ -78,6 +86,22 @@ public static class RuntimeContracts {
         curve=new AnimationCurve(new Keyframe(0,0,0,0),new Keyframe(1,1,0,0));
         Near(curve.Evaluate(.25f),.15625f,"Hermite curve is not linear interpolation");
         passed.Add("Unweighted original curve key/tangent interpolation within key domain");
+        world=new RuntimeWorld();world.Tick(.01f);
+        var template=new GameObject("Original-configured template",world);template.assetObject=true;
+        var templateChild=new GameObject("child",world);templateChild.transform.SetParent(template.transform,false);templateChild.transform.localPosition=new(2,3,4);
+        box=templateChild.AddComponent<BoxCollider>();box.size=new(2,4,6);
+        var sourceProbe=template.AddComponent<CloneProbe>();sourceProbe.child=templateChild.transform;sourceProbe.colliderReference=box;sourceProbe.linkedTransforms.Add(templateChild.transform);sourceProbe.valid=true;
+        var copyGO=UObject.Instantiate(template);var copyProbe=copyGO.GetComponent<CloneProbe>();
+        Check(!ReferenceEquals(copyGO,template)&&copyGO.name==template.name+"(Clone)","Distinct clone identity and name");
+        Check(copyProbe.awakeSawReferences,"Clone references and fields resolve before original lifecycle");
+        Check(copyProbe.child!=sourceProbe.child&&copyProbe.child==copyGO.transform.GetChild(0),"Internal Transform reference remap");
+        Check(copyProbe.colliderReference!=box&&copyProbe.colliderReference.size.y==4,"Internal component remap and collider data");
+        copyProbe.linkedTransforms.Clear();Check(sourceProbe.linkedTransforms.Count==1,"Serialized list is independent");
+        var parentGO=new GameObject("instance parent",world);parentGO.transform.localPosition=new(10,0,0);
+        var componentCopy=UObject.Instantiate(box,parentGO.transform,false);
+        Check(componentCopy.gameObject!=box.gameObject&&componentCopy.transform.parent==parentGO.transform,"Component Instantiate clones owning subtree with parent");
+        Near(componentCopy.transform.localPosition.x,2,"Parented clone local pose");
+        passed.Add("Prefab clone identity, hierarchy, serialized fields, list/reference remapping and deferred activation");
         return JsonSerializer.Serialize(new {status="PASS",contracts=passed,originalSourceExecution=true,fullGameParity=false});
     }
 }

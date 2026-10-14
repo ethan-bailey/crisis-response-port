@@ -11,7 +11,7 @@ It copies complete original DecayingObject, ObjectRemover, AudioMaterial and
 BuildingController components, the original InputKey code, and selected original
 InputMapping, InputHandler, AmmunitionBase and Projectile members.
 
-The 36 selected method bodies are copied verbatim. Source-file, method-body and
+The 37 selected method bodies are copied verbatim. Source-file, method-body and
 generated-file SHA-256 values are recorded in `Original/source-provenance.json`.
 The retained properties and field initializers are also extracted from the source.
 Serialization annotations and unrelated UI/platform features are explicitly
@@ -44,6 +44,15 @@ they do not execute firing, flight, collision, fragmentation spawning or damage.
 - IEnumerator coroutine nesting, scaled/unscaled waits, and cancellation. Other
   Unity yield instructions fail explicitly; exact Unity coroutine phase parity
   remains unverified.
+- Scoped GameObject/component instantiation with distinct identities, child order,
+  serialized field/list copies, internal-reference remapping, and lifecycle deferral
+  until all clone fields are bound. Complete unknown prefab components are still
+  not executable. This is not a claim of complete Unity serialization parity.
+- Ammunition resource lookup and caching from original prefab data. The recovered
+  GetAmmunition method now executes unchanged, including its missing-resource
+  fallback. Cached resource prefabs are inactive assets; instantiated objects are
+  independent scene instances. Equipment/UI/foreign asset references excluded from
+  the selected AmmunitionBase type remain outside this scope.
 - Unweighted cubic Hermite AnimationCurve evaluation using original key values and
   incoming/outgoing tangents. Weighted curves, duplicate key times and multi-key
   extrapolation are unsupported. Native infinity metadata is preserved without
@@ -83,7 +92,7 @@ runtime scenarios. The partial scene graph is not a playable scene.
 
 ## Verification and builds
 
-`Checks/Crisis.Runtime.Checks.csproj` runs nine runtime contract groups and imports
+`Checks/Crisis.Runtime.Checks.csproj` runs ten runtime contract groups and imports
 both original scene hierarchies. It also configures the selected original Projectile
 methods from original 5.56-JHP and .308-Win-BSP ammunition prefabs. Firing and
 projectile initialization are a test configuration fixture, not gameplay execution.
@@ -105,8 +114,8 @@ retaining the tested source fileID in their reports.
 
 ## Remaining runtime gates
 
-1. Restore full prefab/resource instantiation and reference binding for the required
-   gameplay dependency closure. The current Instantiate API throws.
+1. Expand scoped cloning/resource loading to the full prefab dependency closure,
+   serialized reference types and Unity asset classes required by gameplay.
 2. Implement and compare original rigidbody/collider/joint behavior before executing
    CharacterBody, its ragdoll and character collision world.
 3. Implement renderer/material, Animator/animation, IK, audio, UI and UnityEvent
@@ -116,5 +125,8 @@ retaining the tested source fileID in their reports.
 5. Run original mission/AI/interaction/saving code and repeatable original-versus-port
    behavioral comparisons, followed by actual iPhone Safari testing.
 
-No full-game parity result is claimed. The existing JavaScript prototype is not
-automatically connected to this runtime by this change.
+No full-game parity result is claimed. The separate character prototype now consumes
+original C# InputHandler state through the runtime host. Its legacy movement and
+animation remain partial; full CharacterBody/physics is not executable. Invented
+ammo counters, reload timers, visibility-only weapon switching and shot rays were
+removed. Those controls stay disabled until their original systems are executable.

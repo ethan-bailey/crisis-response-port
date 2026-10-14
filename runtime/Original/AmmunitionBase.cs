@@ -126,4 +126,13 @@ public float PermanentCavityFactor(float velocity)
 	{
 		return 1f + Mathf.Tan(0.00125f * velocity) * permanentCavityFactor;
 	}
+public static AmmunitionBase GetAmmunition(string name, AmmunitionBase fallback)
+	{
+		UnityEngine.Object obj = Resources.Load("Weapons/Ammunition/" + name);
+		if (obj == null)
+		{
+			return fallback;
+		}
+		return (obj as GameObject).GetComponent<AmmunitionBase>();
+	}
 }

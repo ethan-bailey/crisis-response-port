@@ -34,7 +34,8 @@
       "public float DiameterAtEnergy(float frictionEnergy, float originalDiameterInMillimeters)": "d2f35b422e71f0af706562914224807ac4d236817bf9787510958c14ac10c297",
       "public float FragmentationEnergy(float mass)": "9719b8748e7d674c85d223c042a4dbef4d7526edbdc0b1c0b2cfadd373680f69",
       "public float TemporalCavityFactor(float velocity)": "3d0f0be0012923e2e244569e5d839ed1f5123e7a01ece8167293fb6781230247",
-      "public float PermanentCavityFactor(float velocity)": "a73b18ae7acc9958c26eda8816623eeea16a0b8b7463a8e06bd92e3287f17895"
+      "public float PermanentCavityFactor(float velocity)": "a73b18ae7acc9958c26eda8816623eeea16a0b8b7463a8e06bd92e3287f17895",
+      "public static AmmunitionBase GetAmmunition(string name, AmmunitionBase fallback)": "c24ea0bc6c7f00b5eb9b61536283b8136f1613512ed7ed52c6fbbca946f66d6d"
     },
     "Projectile.cs": {
       "public static float KineticEnergy(float massInKilograms, float velocityInMetersPerSecond)": "d52faf164ee0252fc7387a6907dfc4a8a155ae492c9fd42cdb6f5aeaee0b5109",
@@ -113,7 +114,7 @@
     "Runtime host invokes original UpdateKeys before scene Update; rebinding is excluded"
   ],
   "generatedFiles": {
-    "AmmunitionBase.cs": "f1d3224b7a2a6137cbd399d79052bed67a6c540a3b462b0e95bc03db6684262a",
+    "AmmunitionBase.cs": "5b75a794185a47169ed6ff211e874fcb3fc1af25359934595fb93f77a026bd84",
     "InputMapping.cs": "0670d39bbee6692fe848e6c2942572f76df2e152cbe1af24be4e05a0a7e48241",
     "BuildingController.cs": "5bd1596db99116cc4aca2a9843e1f8a5f17d5771411c77a0c7b2742ff1574275",
     "KeyCode.cs": "ae2eec63fff7f420ff5f3261593f106e6297929afa339aa0581f6810b9d2fa54",

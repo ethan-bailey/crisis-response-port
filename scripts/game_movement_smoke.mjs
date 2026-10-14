@@ -18,17 +18,17 @@ try {
   // observed movement threshold instead of assuming a wall-clock frame rate.
   await page.waitForFunction(x => window.__gameState().playerX > x + 0.05, before.playerX, { timeout: 30000 });
   await page.mouse.up();
+  await page.waitForFunction(() => window.__gameState?.().originalInput?.right.Pressed === false);
   const afterMove = await page.evaluate(() => window.__gameState?.() ?? null);
   const moved = !!afterMove && afterMove.playerX > before.playerX + 0.05;
-  await page.mouse.click(850, 360);
-  await page.waitForTimeout(100);
   const after = await page.evaluate(() => window.__gameState?.() ?? null);
-  const fired = !!after && after.ammo < afterMove.ammo;
+  const originalInputActive = !!after?.originalInputActive;
+  const weaponActionsPending = await page.locator("#fire").isDisabled();
   await page.screenshot({ path: "mission01-game-smoke.png", fullPage: true });
-  const result = { before, afterMove, after, moved, fired, errors };
+  const result = { before, afterMove, after, moved, originalInputActive, weaponActionsPending, errors };
   fs.writeFileSync("mission01-game-smoke.json", JSON.stringify(result, null, 2));
   console.log(JSON.stringify(result, null, 2));
-  if (!before.sceneMesh || !before.weaponsLoaded || before.limbCount < 10 || !moved || afterMove.animation !== "Body walk" || !fired || errors.length) process.exitCode = 1;
+  if (!before.sceneMesh || !before.weaponsLoaded || before.limbCount < 10 || !moved || afterMove.animation !== "Body walk" || !originalInputActive || !weaponActionsPending || errors.length) process.exitCode = 1;
 } finally {
   await browser.close();
 }

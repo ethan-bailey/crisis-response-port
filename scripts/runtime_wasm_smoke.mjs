@@ -41,9 +41,12 @@ for(const [name,type] of [['chromium',chromium],['webkit',webkit]]){
    stage='ammunition '+path;const sample=await page.evaluate(async([text,path])=>JSON.parse(await window.runtimeCall('VerifyAmmunition',text,path)),[packageFor(path),path]);
    assert.ok(sample.energyAfter<sample.energyBefore&&sample.energyAfter>0);ammunition.push(sample);
   }
+  stage='original resource lookup and prefab clone';
+  const resource=await page.evaluate(async text=>JSON.parse(await window.runtimeCall('VerifyResource',text,'5.56-JHP')),packageFor('Assets/Resources/weapons/ammunition/5.56-JHP.prefab'));
+  assert.ok(resource.independentInstance&&resource.cachedResource&&resource.clockUnchanged&&resource.originalGetAmmunitionExecuted);
   assert.deepEqual(errors,[]);
   await page.screenshot({path:`runtime-${name}.png`});
-  reports.push({browser:name,passed:true,contracts:await page.evaluate(()=>window.__runtimeContracts),inputSnapshot,scenes,ammunition,physicalIPhoneVerified:false});
+  reports.push({browser:name,passed:true,contracts:await page.evaluate(()=>window.__runtimeContracts),inputSnapshot,scenes,ammunition,resource,physicalIPhoneVerified:false});
  }catch(error){reports.push({browser:name,passed:false,stage,error:String(error),pageErrors:errors,runtimeError:await page.evaluate(()=>window.__runtimeError??null)});process.exitCode=1}
  finally{await browser.close()}
 }

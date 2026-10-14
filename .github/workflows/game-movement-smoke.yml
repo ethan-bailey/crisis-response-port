@@ -7,6 +7,7 @@ on:
       - "game/assets/operator/operator.json"
       - "game/index.html"
       - "game/browser-input.mjs"
+      - "runtime/**"
       - "scripts/browser_input_test.mjs"
       - "scripts/iphone_input_smoke.mjs"
       - ".github/workflows/game-movement-smoke.yml"
@@ -25,6 +26,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Build original C# input runtime beside the game prototype
+        run: |
+          cp game/browser-input.mjs runtime/Browser/wwwroot/browser-input.mjs
+          dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release -o work/game-runtime
+          mkdir -p work/game-site/runtime-web
+          cp -a game work/game-site/game
+          cp -a work/game-runtime/wwwroot/. work/game-site/runtime-web/
+          sed -i 's#<base href="/">#<base href="/runtime-web/">#' work/game-site/runtime-web/index.html
       - name: Install browser test dependencies
         run: |
           npm init -y
@@ -34,7 +46,7 @@ jobs:
         run: node --test scripts/browser_input_test.mjs
       - name: Serve the separate game build
         run: |
-          python3 -m http.server 8000 >/tmp/crisis-game-server.log 2>&1 &
+          python3 -m http.server 8000 --directory work/game-site >/tmp/crisis-game-server.log 2>&1 &
           sleep 2
       - name: Verify original scene, original Operator textures, and movement
         run: node scripts/game_movement_smoke.mjs

@@ -87,7 +87,7 @@ public class InputHandler : MonoBehaviour {
     declarations = re.findall(r'^\s*(public (?:float|int|bool|string) \w+(?: = [^;]+)?;)', scalar_region, re.M)
     signatures = ['public float DiameterAtEnergy(float frictionEnergy, float originalDiameterInMillimeters)',
         'public float FragmentationEnergy(float mass)', 'public float TemporalCavityFactor(float velocity)',
-        'public float PermanentCavityFactor(float velocity)']
+        'public float PermanentCavityFactor(float velocity)', 'public static AmmunitionBase GetAmmunition(string name, AmmunitionBase fallback)']
     methods = [block(ammunition, sig) for sig in signatures]
     getters = [member(ammunition, name) for name in ['MetricMass','DiameterInMeters','MetricLength','MuzzleEnergy',
         'MuzzleEnergyTotal','Subsonic','MuzzleBlastRange','DetonationAudioPower']]

@@ -13,7 +13,15 @@ public static class AmmunitionLoader {
             var f=record.GetProperty("fields");var guid=f.GetProperty("m_Script").GetProperty("guid").GetString();
             if(package.GetProperty("guidPaths").TryGetProperty(guid,out var p)&&p.GetString().EndsWith("/AmmunitionBase.cs")){fields=f.Clone();break;}}
         if(fields.ValueKind==JsonValueKind.Undefined)throw new InvalidOperationException("Original ammunition component not found");
-        var ammo=new GameObject(assetPath,world).AddComponent<AmmunitionBase>();
+        var originalRecords=package.GetProperty("assets").GetProperty(assetPath).GetProperty("records").EnumerateArray().ToArray();
+        var rootRecord=originalRecords.Single(r=>r.GetProperty("classID").GetInt32()==1).GetProperty("fields");
+        var go=new GameObject(rootRecord.GetProperty("m_Name").GetString(),world){layer=rootRecord.GetProperty("m_Layer").GetInt32(),tag=rootRecord.GetProperty("m_TagString").GetString()};
+        go.SetActive(rootRecord.GetProperty("m_IsActive").GetInt32()!=0);
+        var transform=originalRecords.Single(r=>r.GetProperty("classID").GetInt32()==4).GetProperty("fields");
+        Vector3 Vector(JsonElement v)=>new(v.GetProperty("x").GetSingle(),v.GetProperty("y").GetSingle(),v.GetProperty("z").GetSingle());
+        go.transform.localPosition=Vector(transform.GetProperty("m_LocalPosition"));go.transform.localScale=Vector(transform.GetProperty("m_LocalScale"));
+        var q=transform.GetProperty("m_LocalRotation");go.transform.localRotation=new(q.GetProperty("x").GetSingle(),q.GetProperty("y").GetSingle(),q.GetProperty("z").GetSingle(),q.GetProperty("w").GetSingle());
+        var ammo=go.AddComponent<AmmunitionBase>();
         foreach(var field in typeof(AmmunitionBase).GetFields(BindingFlags.Instance|BindingFlags.Public)){
             if(!fields.TryGetProperty(field.Name,out var value))throw new InvalidOperationException($"Original ammunition field missing: {field.Name}");
             if(field.FieldType==typeof(float))field.SetValue(ammo,value.GetSingle());
@@ -52,5 +60,22 @@ public static class AmmunitionLoader {
         if(sample!=curve[0].value)throw new InvalidOperationException("Original curve key");
         return new{assetPath,ammo.mass,ammo.velocity,ammo.diameter,energyBefore=before,energyAfter=p.Energy,
             penetrationDistance=penetration,curveKeys=curve.Length,sourceMethodsUnchanged=true,fullProjectileLifecycle=false};
+    }
+    public static object VerifyOriginalResource(string packageText,string name){
+        var world=new RuntimeWorld();world.Tick(.05f);float originalClock=Time.time;
+        Resources.Configure(packageText);
+        var fallback=new GameObject("Fallback only",world).AddComponent<AmmunitionBase>();
+        var ammo=AmmunitionBase.GetAmmunition(name,fallback);
+        if(ReferenceEquals(ammo,fallback))throw new InvalidOperationException("Original resource lookup returned fallback for an existing original prefab");
+        var again=AmmunitionBase.GetAmmunition(name,fallback);
+        if(!ReferenceEquals(ammo,again))throw new InvalidOperationException("Original Resources.Load cache identity");
+        if(Time.time!=originalClock)throw new InvalidOperationException("Asset loading reset active game time");
+        if(ammo.gameObject.activeInHierarchy)throw new InvalidOperationException("Resource prefab became an active scene instance");
+        var instance=UnityEngine.Object.Instantiate(ammo.gameObject);var clone=instance.GetComponent<AmmunitionBase>();
+        if(clone.mass!=ammo.mass||ReferenceEquals(clone,ammo)||ReferenceEquals(clone.expansionFunction,ammo.expansionFunction))throw new InvalidOperationException("Original-configured ammunition clone fields");
+        clone.mass+=1;if(clone.mass==ammo.mass)throw new InvalidOperationException("Clone modified source resource");
+        if(!ReferenceEquals(AmmunitionBase.GetAmmunition("missing-source-resource",fallback),fallback))throw new InvalidOperationException("Original fallback branch");
+        return new{name,sourceName=ammo.name,sourceMass=ammo.mass,instanceName=instance.name,independentInstance=true,
+            cachedResource=true,clockUnchanged=true,originalGetAmmunitionExecuted=true,scope="selected original ammunition fields/calculations; remaining equipment references are excluded"};
     }
 }

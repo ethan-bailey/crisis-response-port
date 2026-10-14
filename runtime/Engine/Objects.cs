@@ -21,17 +21,21 @@ public class Object {
     public override int GetHashCode() => instanceID;
     public static void Destroy(Object obj) { if(obj) obj.world.QueueDestroy(obj); }
     public static T[] FindObjectsOfType<T>() where T:Object => RuntimeWorld.Current.Objects.OfType<T>().Where(o=>o&&! (o is Component c && !c.gameObject.activeInHierarchy)).ToArray();
-    public static T Instantiate<T>(T obj) where T:Object => throw new NotSupportedException("Prefab instantiation is not implemented; original object will not be reused as a clone.");
+    public static T Instantiate<T>(T obj) where T:Object => PrefabCloner.Clone(obj);
+    public static T Instantiate<T>(T obj,Transform parent) where T:Object {var clone=PrefabCloner.Clone(obj,parent,false);return clone;}
+    public static T Instantiate<T>(T obj,Transform parent,bool worldPositionStays) where T:Object => PrefabCloner.Clone(obj,parent,worldPositionStays);
+    public static T Instantiate<T>(T obj,Vector3 position,Quaternion rotation) where T:Object => PrefabCloner.Clone(obj,null,true,position,rotation);
 }
 public class GameObject:Object {
     internal readonly List<Component> components=[];
     bool active=true;
+    internal bool assetObject;
     public int layer {get;set;}
     public bool isStatic {get;set;}
     public string tag {get;set;}="Untagged";
     public Transform transform {get;internal set;}
     public bool activeSelf => active;
-    public bool activeInHierarchy => this&&active&&(transform.parent==null||transform.parent.gameObject.activeInHierarchy);
+    public bool activeInHierarchy => this&&!assetObject&&active&&(transform.parent==null||transform.parent.gameObject.activeInHierarchy);
     public GameObject(string name="GameObject",RuntimeWorld owner=null,bool rect=false) {
         world=owner??RuntimeWorld.Current;this.name=name;world.Register(this);
         transform=rect ? new RectTransform() : new Transform(); Attach(transform);
@@ -122,8 +126,9 @@ public sealed class RuntimeWorld {
     readonly HashSet<Object> destroyQueue=[];
     readonly List<CoroutineHandle> routines=[];
     readonly Dictionary<(Type,string),MethodInfo> messages=[];
+    int activationDeferrals;
     public bool Initialized {get;private set;}
-    public RuntimeWorld(){current=this;Time.Reset();Input.Reset();}
+    public RuntimeWorld(bool makeCurrent=true,bool resetClock=true){if(makeCurrent)current=this;if(resetClock){Time.Reset();Input.Reset();}}
     public void MakeCurrent()=>current=this;
     internal void Register(Object obj)=>Objects.Add(obj);
     internal void QueueDestroy(Object obj)=>destroyQueue.Add(obj);
@@ -136,12 +141,12 @@ public sealed class RuntimeWorld {
         if(method==null)return;
         try{method.Invoke(target,null);}catch(TargetInvocationException e){throw new InvalidOperationException($"{target.GetType().Name}.{message} on {target.name}",e.InnerException);}
     }
-    internal void Activate(Component c){if(c is not MonoBehaviour m||!m.gameObject.activeInHierarchy)return;
+    internal void Activate(Component c){if(activationDeferrals>0||c is not MonoBehaviour m||!m.gameObject.activeInHierarchy)return;
         if(!m.awoken){m.awoken=true;Invoke(m,"Awake");}
         if(m.isActiveAndEnabled&&!m.enableNotified){m.enableNotified=true;Invoke(m,"OnEnable");}
     }
     public void Initialize(){Initialized=true;foreach(var m in Objects.OfType<MonoBehaviour>().ToArray())Activate(m);}
-    internal void RefreshActivation(){if(!Initialized)return;foreach(var m in Objects.OfType<MonoBehaviour>().ToArray()){
+    internal void RefreshActivation(){if(!Initialized||activationDeferrals>0)return;foreach(var m in Objects.OfType<MonoBehaviour>().ToArray()){
         if(m.gameObject.activeInHierarchy)Activate(m);
         if(!m.isActiveAndEnabled&&m.enableNotified){m.enableNotified=false;Invoke(m,"OnDisable");}
     }}
@@ -160,7 +165,7 @@ public sealed class RuntimeWorld {
         Input.EndFrame();
     }
     MonoBehaviour[] Active()=>Objects.OfType<MonoBehaviour>().Where(m=>m.isActiveAndEnabled).ToArray();
-    void DestroyNow(Object obj){if(!obj)return;
+    internal void DestroyNow(Object obj){if(!obj)return;
         if(obj is GameObject go){foreach(var child in go.transform.children.ToArray())DestroyNow(child.gameObject);foreach(var c in go.components.ToArray())DestroyNow(c);go.transform.parent?.children.Remove(go.transform);}
         if(obj is MonoBehaviour m){if(m.enableNotified)Invoke(m,"OnDisable");if(m.awoken)Invoke(m,"OnDestroy");StopRoutines(m);}
         obj.destroyed=true;Objects.Remove(obj);
@@ -168,4 +173,9 @@ public sealed class RuntimeWorld {
     }
     internal CoroutineHandle StartRoutine(MonoBehaviour owner,IEnumerator routine){var handle=new CoroutineHandle(owner,routine);routines.Add(handle);handle.Advance(true);return handle;}
     internal void StopRoutines(MonoBehaviour owner){foreach(var r in routines.Where(r=>r.owner==owner))r.finished=true;}
+    public IDisposable DeferActivation(){activationDeferrals++;return new ActivationScope(this);}
+    sealed class ActivationScope(RuntimeWorld world):IDisposable {
+        RuntimeWorld value=world;
+        public void Dispose(){if(value==null)return;var w=value;value=null;if(--w.activationDeferrals==0)w.RefreshActivation();}
+    }
 }
