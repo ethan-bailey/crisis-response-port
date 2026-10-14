@@ -61,6 +61,7 @@ async function load(){
   const box=sceneBounds;const size=box.getSize(new THREE.Vector3());viewHeight=Math.max(8,Math.min(13,size.y*.75||11));
   camera.left=-viewHeight*innerWidth/innerHeight/2;camera.right=viewHeight*innerWidth/innerHeight/2;camera.top=viewHeight/2;camera.bottom=-viewHeight/2;camera.updateProjectionMatrix();
   groundY=1.5;loaded=true;
+  window.__gameState=()=>({loaded,playerX,limbCount:character.children.length,sceneMesh:!!sceneMesh,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
   status.textContent="Recovered Mission 01 geometry + original Operator limb textures. Horizontal movement uses recovered walk/sprint speeds; original animation, physics, weapons and AI are not yet running.";
   positionLabel.textContent="Walk 1.2 m/s · Sprint 3.2 m/s · original spawn X −3";
  }catch(e){showError(e)}
