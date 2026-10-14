@@ -11,9 +11,11 @@ try {
   await page.waitForFunction(() => window.__gameState?.().loaded || document.querySelector("#error")?.style.display === "block", { timeout: 90000 });
   const before = await page.evaluate(() => window.__gameState?.() ?? null);
   if (!before?.loaded) throw new Error("Game runtime did not finish loading: " + (await page.locator("#error").textContent()));
-  await page.keyboard.down("ArrowRight");
+  const rightBox = await page.locator("#right").boundingBox();
+  await page.mouse.move(rightBox.x + rightBox.width / 2, rightBox.y + rightBox.height / 2);
+  await page.mouse.down();
   await page.waitForTimeout(700);
-  await page.keyboard.up("ArrowRight");
+  await page.mouse.up();
   const after = await page.evaluate(() => window.__gameState?.() ?? null);
   const moved = !!after && after.playerX > before.playerX + 0.05;
   await page.screenshot({ path: "mission01-game-smoke.png", fullPage: true });
