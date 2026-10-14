@@ -116,7 +116,7 @@ public sealed class BallisticHitMeshEffect { }
 public sealed class ProjectileEvent { public void Invoke(Projectile projectile) { } }
 public enum BallisticResult { Continue, Stop, Deflected, Error, Delayed }
 public sealed class DelayedBallisticExit { public float activationTime; public Projectile projectile; public UnityEngine.Vector3 localResumePosition; }
-public sealed class Trace { public void SpawnHitEffect(UnityEngine.Vector3 position, UnityEngine.Transform container, UnityEngine.Vector3 normal) { } }
+public sealed class Trace { public static implicit operator bool(Trace value) => value != null; public void SpawnHitEffect(UnityEngine.Vector3 position, UnityEngine.Transform container, UnityEngine.Vector3 normal) { } }
 public sealed class AmmunitionBase
 {
  public enum FragmentationMode { None, Randomized, Specified }
