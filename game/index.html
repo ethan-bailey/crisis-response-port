@@ -104,7 +104,7 @@ async function load(){
   camera.left=-viewHeight*innerWidth/innerHeight/2;camera.right=viewHeight*innerWidth/innerHeight/2;camera.top=viewHeight/2;camera.bottom=-viewHeight/2;camera.updateProjectionMatrix();
   groundY=1.5;loaded=true;
   window.__gameState=()=>({loaded,playerX,limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
-  status.textContent="Recovered Mission 01 geometry, original Operator limb textures and original walk/sprint animation curves. Horizontal movement uses the recovered CharacterBody speed/acceleration rule; collision, weapons and AI are still being ported.";
+  status.textContent="Recovered Mission 01 geometry, original Operator limb textures and original walk/sprint animation curves. The movement loop follows CharacterBody acceleration rules; collision, weapons and AI are still being ported.";
   positionLabel.textContent="Walk 1.2 m/s · Sprint 3.2 m/s · original spawn X −3";
  }catch(e){showError(e)}
 }
