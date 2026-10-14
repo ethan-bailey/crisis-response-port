@@ -8,6 +8,7 @@ on:
       - "scripts/scene_dependency_audit.py"
       - "scripts/unity_api_inventory.py"
       - "scripts/scene_manifest.py"
+      - "scripts/unity_mesh_to_obj.py"
   workflow_dispatch:
 
 permissions:
@@ -42,6 +43,26 @@ jobs:
             work/recovery-artifact/export/ExportedProject \
             work/WEBGL_PREFLIGHT.md
           cat work/WEBGL_PREFLIGHT.md
+
+      - name: Export the original Marksman range combined mesh
+        run: |
+          set -euo pipefail
+          python3 scripts/unity_mesh_to_obj.py \
+            "work/recovery-artifact/export/ExportedProject/Assets/Mesh/Combined Mesh (root_ scene)_0.asset" \
+            work/mesh/marksman-combined.obj
+          cat work/mesh/marksman-combined.mesh-report.json
+          test -s work/mesh/marksman-combined.obj
+
+      - name: Upload original mesh export and validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crisis-response-original-mesh-export
+          path: |
+            work/mesh/marksman-combined.obj
+            work/mesh/marksman-combined.mesh-report.json
+          if-no-files-found: error
+          retention-days: 30
 
       - name: Extract original Marksman range scene manifest
         run: |
