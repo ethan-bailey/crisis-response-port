@@ -103,10 +103,11 @@ def main():
         candidates = list(assets.rglob(name))
         if candidates:
             source_files[name] = [{"path": str(p.relative_to(root)), "text": p.read_text(errors="ignore")[:(100000 if name in {"CharacterBody.cs", "PlayerController.cs"} else 16000)]} for p in candidates[:3]]
+    combined_meshes = [str(p.relative_to(root)) for p in assets.rglob("*") if p.is_file() and "combined mesh" in p.name.lower()]
     output = {"sourceScene": str(scene.relative_to(root)), "sceneObjectCount": len(objects),
               "sceneComponentCount": len(components), "scriptGuidCount": len(script_guid),
               "assetGuidCount": len(guid_to_asset), "scriptBearingObjectCount": len(records),
-              "scriptPaths": all_scripts, "candidates": records, "runtimePrefabs": runtime_prefabs, "sourceFiles": source_files}
+              "scriptPaths": all_scripts, "candidates": records, "runtimePrefabs": runtime_prefabs, "sourceFiles": source_files, "combinedMeshes": combined_meshes}
     out = Path(sys.argv[2]); out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(output, indent=2), encoding="utf-8")
     print(f"Objects: {len(objects)}; components: {len(components)}; script-bearing objects: {len(records)}")
