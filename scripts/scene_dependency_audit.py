@@ -50,7 +50,7 @@ def main() -> int:
         raise SystemExit(str(exc))
 
     direct_counts = collections.Counter(ASSET_REF_RE.findall(scene_text))
-    unresolved_direct = sorted(g for g in direct_counts if g not in guid_to_asset and g not in BUILTIN_GUIDS)
+    unresolved_direct = sorted(g for g in direct_counts if g not in guid_to_asset and g not in BUILTIN_GUIDS and g not in UNITY_UI_SCRIPT_GUIDS)
     visited: set[Path] = set()
     unresolved: collections.Counter[str] = collections.Counter()
     edges: set[tuple[str, str]] = set()
