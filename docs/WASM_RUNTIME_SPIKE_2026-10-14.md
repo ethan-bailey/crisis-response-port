@@ -47,8 +47,8 @@ In [workflow run 38591962729](https://github.com/ethan-bailey/crisis-response-po
 
 In [workflow run 38592470882](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38592470882), the original `EnergyToPenetrateSurface` method passed a deterministic surface-thickness clamp test. The test projectile’s `EnergyToPenetrate` function is still a simplified fixture, so this validates the original wrapper/clamp logic, not the game’s true energy model.
 
-## Current expansion: original impenetrable-entry state transition
+## C# WebAssembly impenetrable-entry state transition: passed
 
-The current run, [38592900397](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38592900397), exercises the original `BallisticMaterial.HandleProjectile` path through an impenetrable surface and checks the expected stop/zero-energy state transition. The engine math, projectile energy model, effects, and timing are still test fixtures; a pass is a limited source-method test, not full ballistic or gameplay parity.
+In [workflow run 38592900397](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38592900397), Chromium ran the original `BallisticMaterial.HandleProjectile` path through an impenetrable surface and verified the original method returned the projectile in the Stop state with zero remaining energy. This is the first test of a multi-step original ballistic method path under WASM. The engine math, projectile energy model, effects, timing, and collision services are still test fixtures; this is not full ballistic or gameplay parity.
 
 The broader API inventory and implementation gaps are recorded in [the Unity API compatibility matrix](UNITY_API_COMPATIBILITY_MATRIX_WASM_2026-10-14.md). Unity's licensed build path remains blocked by missing license secrets. No full-game browser build exists, and no 1:1 parity claim is justified yet.
