@@ -17,6 +17,7 @@
 | Produce Unity WebGL build | Optional / skipped | The Unity Editor build requires valid Unity activation, so this route is not a prerequisite. The selected primary route is a license-free browser runtime using recovered original C# through .NET WebAssembly plus a Unity API compatibility layer. See `docs/UNITY_BUILD_GATE.md`. |
 | iPhone Safari testing | Not started | Requires a WebGL build and actual browser/device test pass. |
 | Behavioral parity tests | Not started | Must be based on observed original-game behavior and linked to specific systems. |
+| Missing .308 casing mesh GUID | Investigated; unresolved | Full recovery-artifact scan found six serialized references but no `.meta` owner for GUID `b4b69dc6c74eeb54cbd22d28e37f9a19`. No candidate was substituted. See `docs/MISSING_CASING_MESH_GUID_SEARCH_2026-10-14.md`; CI now generates a repeatable search report. |
 
 ## Subsystem parity matrix
 
