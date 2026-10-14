@@ -21,7 +21,7 @@ A separate generated file named `CrisisResponseMobile_iPhone.zip` is a from-scra
 - [Unity API compatibility matrix](docs/UNITY_API_COMPATIBILITY_MATRIX_WASM_2026-10-14.md) — verified shim coverage versus outstanding engine services.
 - [Browser geometry / WASM feasibility status](docs/WASM_RUNTIME_SPIKE_2026-10-14.md) — original Unity mesh decoding and Chromium/WebGL test results.
 - [Marksman range scene dependency audit](docs/MARKSMAN_RANGE_SCENE_DEPENDENCY_AUDIT_2026-10-14.md) — recursive original asset dependency graph.
-- [First successful original C# component in browser WASM](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38590980350) — original Target.cs and BallisticMaterialProperties.cs compiled and passed their limited browser test.
+- [Original C# ballistics method in browser WASM](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38592900397) — original Target.cs, BallisticMaterialProperties.cs and BallisticMaterial.cs compiled; original channel-volume, surface clamp and impenetrable-entry state tests passed with explicitly limited engine fixtures.
 - [Successful original mesh browser smoke run](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38589625850) — 9,455 original triangles rendered without browser console errors.
 - [Browser port strategy pivot](docs/BROWSER_PORT_STRATEGY_PIVOT_2026-10-14.md) — evaluates WINE/PROTON-in-WebAssembly and source-port approaches so Unity activation is not the only path.
 
