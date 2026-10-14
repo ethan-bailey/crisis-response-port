@@ -128,8 +128,7 @@ function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-last)/10
    const maxSpeed=keys.sprint?3.2:1.2;
    const target=moveDir*maxSpeed;
    // Fixed-step acceleration toward the requested speed; reversals pass through zero.
-   const response= Math.abs(velocity)>maxSpeed && Math.sign(velocity)===moveDir ? 0 : (target-velocity)*Math.min(1,step*15);
-   velocity+=response;
+   velocity+=(target-velocity)*Math.min(1,step*15);
   }else{
    // Release input to decelerate instead of sliding forever.
    const drag=10*step;
