@@ -1,0 +1,492 @@
+{
+  "sourcePrefab": "Assets/Resources/characters/Operator.prefab",
+  "limbRendererCount": 17,
+  "texturedLimbCount": 17,
+  "copiedTextureCount": 11,
+  "limbs": [
+    {
+      "name": "Renderer",
+      "gameObjectFileID": "1724804207875695",
+      "transformFileID": "4964469411310401",
+      "position": [
+        0.003,
+        0.915,
+        1.5
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.281623,
+        0.19245856,
+        0.83490646
+      ],
+      "skinGuids": [
+        "38b42807fa7576a44a0d6ea90b08db63"
+      ],
+      "texture": "skins/skin_000.png",
+      "skinCandidates": [
+        "black pelvis.png"
+      ]
+    },
+    {
+      "name": "Renderer",
+      "gameObjectFileID": "1099118695303065",
+      "transformFileID": "4123703392571528",
+      "position": [
+        0.016000000000000004,
+        1.004,
+        1.49
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.27154475,
+        0.27296823,
+        0.86408186
+      ],
+      "skinGuids": [
+        "c7fa97abd80127e4993dd84f554d8771"
+      ],
+      "texture": "skins/skin_001.png",
+      "skinCandidates": [
+        "black abdomen.png"
+      ]
+    },
+    {
+      "name": "Renderer",
+      "gameObjectFileID": "1061268324235159",
+      "transformFileID": "4617365563186364",
+      "position": [
+        0.056999999999999995,
+        1.3,
+        1.52
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.10452837,
+        0.9945219
+      ],
+      "scale": [
+        0.40302405,
+        0.5233286,
+        1.0
+      ],
+      "skinGuids": [
+        "8ae0405cae01eb84bbfac4af23499da0"
+      ],
+      "texture": "skins/skin_002.png",
+      "skinCandidates": [
+        "torso.png"
+      ]
+    },
+    {
+      "name": "Renderer",
+      "gameObjectFileID": "1709867586078768",
+      "transformFileID": "4528911807818478",
+      "position": [
+        0.06799999999999999,
+        1.544,
+        1.51
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.074369594,
+        0.99723077
+      ],
+      "scale": [
+        0.2359548,
+        0.13407098,
+        0.93964046
+      ],
+      "skinGuids": [
+        "2dc75fac6a4a1d245aa10034af96866d"
+      ],
+      "texture": "skins/skin_003.png",
+      "skinCandidates": [
+        "neck protector.png"
+      ]
+    },
+    {
+      "name": "Renderer",
+      "gameObjectFileID": "1589667821646929",
+      "transformFileID": "4168105826085154",
+      "position": [
+        0.07999999799999999,
+        1.702,
+        1.5
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.29450613,
+        0.27450624,
+        1.0
+      ],
+      "skinGuids": [
+        "7b0292089147ec442a3161d62c0470e9",
+        "dc8bececa667dc347998e6dd8e283f71",
+        "3fc8ffd8d01921d4facd66216f545b69",
+        "19e41141a5e7d8840aa0ea0a1ef95fa1",
+        "d701c84638d2d934080508b9fb88f6ce"
+      ],
+      "texture": "skins/skin_004.png",
+      "skinCandidates": [
+        "head 1.png",
+        "head 2.png",
+        "head 3.png",
+        "head 4.png",
+        "head 5.png"
+      ]
+    },
+    {
+      "name": "Renderer",
+      "gameObjectFileID": "1977153420339851",
+      "transformFileID": "4689010887986514",
+      "position": [
+        -0.010714188,
+        1.357657166,
+        1.555
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.07323812,
+        0.9973145
+      ],
+      "scale": [
+        0.3866103,
+        0.40640974,
+        0.41465905
+      ],
+      "skinGuids": [
+        "0aa6bb99b8776644ba8817f736cf34ea"
+      ],
+      "texture": "skins/skin_005.png",
+      "skinCandidates": [
+        "upperarm.png"
+      ]
+    },
+    {
+      "name": "Renderer",
+      "gameObjectFileID": "1256069497284392",
+      "transformFileID": "4181586030114204",
+      "position": [
+        -0.040999913,
+        1.0500000299999999,
+        1.55
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.4117729,
+        0.36215234,
+        1.0
+      ],
+      "skinGuids": [
+        "99f5e930d9901504d8400a9b6303ea41"
+      ],
+      "texture": "skins/skin_006.png",
+      "skinCandidates": [
+        "lowerarm.png"
+      ]
+    },
+    {
+      "name": "Renderer",
+      "gameObjectFileID": "1969106005120503",
+      "transformFileID": "4689224686120706",
+      "position": [
+        -0.010714188,
+        1.357657166,
+        1.48
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.07323812,
+        0.9973145
+      ],
+      "scale": [
+        0.3866103,
+        0.40640974,
+        0.41465905
+      ],
+      "skinGuids": [
+        "0aa6bb99b8776644ba8817f736cf34ea"
+      ],
+      "texture": "skins/skin_005.png",
+      "skinCandidates": [
+        "upperarm.png"
+      ]
+    },
+    {
+      "name": "Renderer",
+      "gameObjectFileID": "1946936116752871",
+      "transformFileID": "4989434536655964",
+      "position": [
+        -0.040999913,
+        1.0500000299999999,
+        1.485
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.4117729,
+        0.36215234,
+        1.0
+      ],
+      "skinGuids": [
+        "99f5e930d9901504d8400a9b6303ea41"
+      ],
+      "texture": "skins/skin_006.png",
+      "skinCandidates": [
+        "lowerarm.png"
+      ]
+    },
+    {
+      "name": "Renderer",
+      "gameObjectFileID": "1900271049623953",
+      "transformFileID": "4463579974499585",
+      "position": [
+        -0.004000000000000002,
+        0.7100000200000001,
+        1.49
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.26711202,
+        0.5475408,
+        1.0
+      ],
+      "skinGuids": [
+        "ef2345e580c248d469ef0b3ade9ce1c9"
+      ],
+      "texture": "skins/skin_007.png",
+      "skinCandidates": [
+        "black upper leg.png"
+      ]
+    },
+    {
+      "name": "Renderer",
+      "gameObjectFileID": "1291844617409189",
+      "transformFileID": "4173644300073267",
+      "position": [
+        0.003999999999999997,
+        0.27999998000000004,
+        1.485
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.008726465,
+        0.999962
+      ],
+      "scale": [
+        0.17005,
+        0.5390501,
+        1.0
+      ],
+      "skinGuids": [
+        "4c76e3fe80907fa4a8b66b1fbaddab53"
+      ],
+      "texture": "skins/skin_008.png",
+      "skinCandidates": [
+        "black lower leg.png"
+      ]
+    },
+    {
+      "name": "Renderer",
+      "gameObjectFileID": "1919942235722503",
+      "transformFileID": "4458735412797113",
+      "position": [
+        0.035,
+        0.021000035000000007,
+        1.48
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.23661,
+        0.12956999,
+        1.0
+      ],
+      "skinGuids": [
+        "86fd777ed483d3042b8ee677a7405259"
+      ],
+      "texture": "skins/skin_009.png",
+      "skinCandidates": [
+        "boot.png"
+      ]
+    },
+    {
+      "name": "Renderer",
+      "gameObjectFileID": "1833703512093738",
+      "transformFileID": "4616352195932608",
+      "position": [
+        0.157100005,
+        -0.006900004999999994,
+        1.485
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.113919996,
+        0.07124,
+        1.0
+      ],
+      "skinGuids": [
+        "a53564d13106a29468ca9657720e1a9f"
+      ],
+      "texture": "skins/skin_010.png",
+      "skinCandidates": [
+        "boot toes.png"
+      ]
+    },
+    {
+      "name": "Renderer",
+      "gameObjectFileID": "1719342369648492",
+      "transformFileID": "4904400124545405",
+      "position": [
+        -0.004000000000000002,
+        0.7100000200000001,
+        1.48
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.26711,
+        0.54754,
+        1.0
+      ],
+      "skinGuids": [
+        "ef2345e580c248d469ef0b3ade9ce1c9"
+      ],
+      "texture": "skins/skin_007.png",
+      "skinCandidates": [
+        "black upper leg.png"
+      ]
+    },
+    {
+      "name": "Renderer",
+      "gameObjectFileID": "1436073260064126",
+      "transformFileID": "4386568470988373",
+      "position": [
+        0.003999999999999997,
+        0.27999998000000004,
+        1.475
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.008726465,
+        0.999962
+      ],
+      "scale": [
+        0.17005,
+        0.5390501,
+        1.0
+      ],
+      "skinGuids": [
+        "4c76e3fe80907fa4a8b66b1fbaddab53"
+      ],
+      "texture": "skins/skin_008.png",
+      "skinCandidates": [
+        "black lower leg.png"
+      ]
+    },
+    {
+      "name": "Renderer",
+      "gameObjectFileID": "1801075752484240",
+      "transformFileID": "4081524457781149",
+      "position": [
+        0.035,
+        0.021000035000000007,
+        1.47
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.23661,
+        0.12956999,
+        1.0
+      ],
+      "skinGuids": [
+        "86fd777ed483d3042b8ee677a7405259"
+      ],
+      "texture": "skins/skin_009.png",
+      "skinCandidates": [
+        "boot.png"
+      ]
+    },
+    {
+      "name": "Renderer",
+      "gameObjectFileID": "1397768327470545",
+      "transformFileID": "4023566878023198",
+      "position": [
+        0.157100005,
+        -0.006900004999999994,
+        1.475
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.113919996,
+        0.07124,
+        1.0
+      ],
+      "skinGuids": [
+        "a53564d13106a29468ca9657720e1a9f"
+      ],
+      "texture": "skins/skin_010.png",
+      "skinCandidates": [
+        "boot toes.png"
+      ]
+    }
+  ]
+}
