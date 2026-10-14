@@ -13,6 +13,7 @@
 | Decompile C# assemblies | Complete in cloud runner | ILSpy produced 1,333 C# files from the gameplay assembly whose SHA-256 matches the user's original archive. Decompiled source is included in the recovery artifact. |
 | Export Unity assets/scenes | Complete | AssetRipper CLI exported 7,231 files (about 169 MiB) including six scenes, scripts, assets, and project settings. |
 | Reconstruct Unity project | Initial recovery complete | AssetRipper reconstructed an editable Unity project with `Assets/`, `ProjectSettings/`, `Packages/manifest.json`, and scenes. It may need repairs and is not yet verified to compile. |
+| Static WebGL compatibility audit | Complete (static scan only) | `docs/WEBGL_COMPATIBILITY_AUDIT_2026-10-14.md` records likely blockers: threaded `System.Net.WebRequest` calls, Windows Registry access, desktop file-browser/filesystem assumptions, and touch input work. These are candidates to test, not confirmed compile errors. |
 | Produce WebGL build | Blocked on Unity activation | A cloud WebGL build workflow is in place. No Unity license secrets are configured; the retired activation-file action was removed. The build is skipped until the repository has valid `UNITY_LICENSE`, `UNITY_EMAIL`, and `UNITY_PASSWORD` Actions secrets. |
 | iPhone Safari testing | Not started | Requires a WebGL build and actual browser/device test pass. |
 | Behavioral parity tests | Not started | Must be based on observed original-game behavior and linked to specific systems. |
@@ -54,7 +55,6 @@ The current Unity 6.0 system requirements list iOS Safari 15+ as a supported bro
 
 ## Immediate blockers
 
-- The original C# source and editable Unity project are absent from the archive.
-- The original C# source and editable Unity project were absent; ILSpy and AssetRipper have now recovered a decompiled codebase and a Unity project in a cloud runner.
+- The original C# source and editable Unity project are absent from the archive; ILSpy and AssetRipper have recovered decompiled C# and a reconstructed Unity project in a cloud runner.
 - Unity WebGL compilation still requires a valid Unity activation/license in GitHub Actions. This account has no Unity license secrets configured, and the current GameCI activation-file action is retired.
 - A faithful WebGL build cannot be honestly claimed until the recovered project compiles, runs in Safari, and passes subsystem comparisons.
