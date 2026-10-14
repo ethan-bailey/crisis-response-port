@@ -282,7 +282,7 @@ cat > "$OUT_ROOT/app/Pages/Home.razor" <<'RAZOR'
             var handled = material.HandleProjectile(projectile, new UnityEngine.Vector3(0f, 0f, 1f));
             if (handled.Status != global::BallisticResult.Stop || handled.Energy != 0f)
                 throw new InvalidOperationException("Original BallisticMaterial impenetrable entry transition changed: status=" + handled.Status + ", energy=" + handled.Energy);
-            _result = "PASS — original Target.cs, BallisticMaterialProperties.cs, and BallisticMaterial.cs compiled under browser WebAssembly; lifecycle fixture, material defaults, original ChannelVolume, surface clamp, and impenetrable-entry state transition passed.";
+            _result = "PASS — original Target.cs, BallisticMaterialProperties.cs, and BallisticMaterial.cs compiled under browser WebAssembly; lifecycle fixture, material defaults, Vector3/Quaternion/Transform math checks, original ChannelVolume, surface clamp, and impenetrable-entry state transition passed.";
         }
         catch (Exception ex)
         {
