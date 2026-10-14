@@ -76,6 +76,15 @@ def main():
         refs = sorted(set(GUID.findall(ptext)))
         resolved = [{"guid": g, "path": guid_to_asset.get(g)} for g in refs]
         component_scripts = sorted({guid_to_asset[g] for g in refs if g in guid_to_asset and guid_to_asset[g].endswith(".cs")})
+        sprite_refs = []
+        for cls, fid, body in docs(ptext):
+            if cls == 212 and "m_Sprite:" in body:
+                tail = body.split("m_Sprite:", 1)[1]
+                gm = re.search(r"guid: ([0-9a-f]{32})", tail)
+                go = re.search(r"m_GameObject:\s*\{fileID: (-?\d+)\}", body)
+                if gm:
+                    sprite_refs.append({"componentFileID": fid, "gameObjectID": go.group(1) if go else None,
+                                        "guid": gm.group(1), "path": guid_to_asset.get(gm.group(1))})
         mesh_refs = []
         for cls, fid, body in docs(ptext):
             if cls in (33, 137) and "m_Mesh:" in body:
@@ -87,7 +96,7 @@ def main():
                                       "guid": gm.group(1), "path": guid_to_asset.get(gm.group(1))})
         runtime_prefabs.append({"path": str(prefab.relative_to(root)), "bytes": len(ptext.encode("utf-8")),
                                 "gameObjectNames": [m.group(1).strip() for m in NAME.finditer(ptext)],
-                                "scriptComponents": component_scripts, "meshComponents": mesh_refs,
+                                "scriptComponents": component_scripts, "meshComponents": mesh_refs, "spriteComponents": sprite_refs,
                                 "assetReferences": resolved})
     source_files = {}
     for name in ("OperatorSpawner.cs", "OccupantSpawner.cs", "Marksmen.cs", "Mission.cs", "GlobalContextInitializer.cs", "CharacterBody.cs", "TeamOperator.cs", "WeaponAimer.cs", "MuscleControl.cs", "Limb.cs", "TeamController.cs", "PlayerController.cs", "InputHandler.cs", "InputManager.cs", "PlayerInput.cs"):
