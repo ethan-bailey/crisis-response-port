@@ -14,16 +14,29 @@ try {
   }, { timeout: 90000 });
   await page.locator("#runShot").click();
   await page.waitForFunction(() => document.querySelector("#shotResult")?.textContent?.includes("Original HandleProjectile returned"));
+  const penetrableShot = await page.locator("#shotResult").textContent();
+  await page.locator("#impenetrable").check();
+  await page.locator("#runShot").click();
+  await page.waitForFunction(() => document.querySelector("#shotResult")?.textContent?.includes("Original HandleProjectile returned"));
+  const impenetrableShot = await page.locator("#shotResult").textContent();
   const result = await page.evaluate(() => ({
     text: document.querySelector("#result")?.textContent ?? "",
     scope: document.querySelector("#scope")?.textContent ?? "",
     title: document.querySelector("h1")?.textContent ?? "",
     shot: document.querySelector("#shotResult")?.textContent ?? ""
   }));
+  result.penetrableShot = penetrableShot;
+  result.impenetrableShot = impenetrableShot;
   fs.writeFileSync("work/wasm-target-smoke.json", JSON.stringify({ ...result, errors }, null, 2));
   await page.screenshot({ path: "work/wasm-target-smoke.png", fullPage: true });
   console.log(JSON.stringify({ ...result, errors }, null, 2));
-  if (!result.text.startsWith("PASS") || !result.shot.includes("Original HandleProjectile returned Stop") || errors.length) process.exitCode = 1;
+  const energyAfter = shot => Number(shot.match(/energy after: ([0-9.]+)/i)?.[1] ?? NaN);
+  if (!result.text.startsWith("PASS") ||
+      !result.penetrableShot.includes("Original HandleProjectile returned") ||
+      !(energyAfter(result.penetrableShot) > 0) ||
+      !result.impenetrableShot.includes("Original HandleProjectile returned Stop") ||
+      energyAfter(result.impenetrableShot) !== 0 ||
+      errors.length) process.exitCode = 1;
 } finally {
   await browser.close();
 }
