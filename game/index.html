@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Crisis Response — Mission 01 runtime</title>
 <style>
-:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101318;color:#eef2f7;touch-action:none}#stage{position:absolute;inset:0}canvas{display:block;width:100%;height:100%}#hud{position:absolute;left:12px;top:12px;max-width:min(440px,calc(100vw - 24px));padding:10px 12px;border:1px solid #505965;border-radius:9px;background:#111820e8;pointer-events:none;font-size:12px;line-height:1.4}#title{font-size:14px;font-weight:750;margin-bottom:3px}#status{color:#c5d0dc}#position{color:#a8d9ff;margin-top:4px;font-variant-numeric:tabular-nums}#controls{position:absolute;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));display:flex;justify-content:space-between;align-items:end;gap:12px;pointer-events:none}.cluster{display:flex;gap:8px;pointer-events:auto}button{min-width:68px;min-height:58px;padding:10px 12px;border:1px solid #778391;border-radius:12px;background:#18222edc;color:#f6f8fa;font-size:14px;font-weight:700;touch-action:none;user-select:none;-webkit-user-select:none}button.active{background:#315a79;border-color:#9bd8ff}#sprint{min-width:78px}#help{position:absolute;right:12px;top:12px;padding:7px 9px;border:1px solid #505965;border-radius:8px;background:#111820e8;font-size:11px;color:#d4dde7}#error{display:none;position:absolute;left:12px;right:12px;top:92px;padding:12px;border:1px solid #a33;border-radius:8px;background:#351818;color:#ffe4e4;white-space:pre-wrap}
+:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101318;color:#eef2f7;touch-action:none}#stage{position:absolute;inset:0}canvas{display:block;width:100%;height:100%}#hud{position:absolute;left:12px;top:12px;max-width:min(440px,calc(100vw - 24px));padding:10px 12px;border:1px solid #505965;border-radius:9px;background:#111820e8;pointer-events:none;font-size:12px;line-height:1.4}#title{font-size:14px;font-weight:750;margin-bottom:3px}#status{color:#c5d0dc}#position{color:#a8d9ff;margin-top:4px;font-variant-numeric:tabular-nums}#weaponStatus{color:#ffd9a3;margin-top:3px;font-weight:700}#controls{position:absolute;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));display:flex;justify-content:space-between;align-items:end;gap:12px;pointer-events:none} .cluster{display:flex;gap:6px;pointer-events:auto;flex-wrap:wrap;max-width:52vw;justify-content:flex-end}button{min-width:56px;min-height:54px;padding:10px 12px;border:1px solid #778391;border-radius:12px;background:#18222edc;color:#f6f8fa;font-size:14px;font-weight:700;touch-action:none;user-select:none;-webkit-user-select:none}button.active{background:#315a79;border-color:#9bd8ff}#sprint{min-width:60px}#reload{min-width:64px}#help{position:absolute;right:12px;top:12px;padding:7px 9px;border:1px solid #505965;border-radius:8px;background:#111820e8;font-size:11px;color:#d4dde7}#error{display:none;position:absolute;left:12px;right:12px;top:92px;padding:12px;border:1px solid #a33;border-radius:8px;background:#351818;color:#ffe4e4;white-space:pre-wrap}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
 </head>
 <body>
 <div id="stage"></div>
-<div id="hud"><div id="title">Crisis Response · Mission 01</div><div id="status">Loading recovered scene and original Operator prefab…</div><div id="position"></div></div>
-<div id="help">A/D or ←/→ · Shift to sprint</div>
+<div id="hud"><div id="title">Crisis Response · Mission 01</div><div id="status">Loading recovered scene and original Operator prefab…</div><div id="position"></div><div id="weaponStatus">Loading original weapons…</div></div>
+<div id="help">A/D · Shift sprint · drag to aim · hold FIRE · R reload · Q swap</div>
 <div id="error"></div>
-<div id="controls"><div class="cluster"><button id="left" aria-label="Move left">◀ LEFT</button><button id="right" aria-label="Move right">RIGHT ▶</button></div><div class="cluster"><button id="sprint" aria-label="Sprint">SPRINT</button></div></div>
+<div id="controls"><div class="cluster"><button id="left" aria-label="Move left">◀ LEFT</button><button id="right" aria-label="Move right">RIGHT ▶</button></div><div class="cluster"><button id="sprint" aria-label="Sprint">SPRINT</button><button id="fire" aria-label="Fire weapon">FIRE</button><button id="reload" aria-label="Reload weapon">RELOAD</button><button id="swap" aria-label="Swap weapon">SWAP</button></div></div>
 <script type="module">
 import * as THREE from "three";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
@@ -32,19 +32,23 @@ const character=new THREE.Group();character.name="Original Operator prefab";scen
 const keys={left:false,right:false,sprint:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),pointerHasMoved=false;
 function showError(e){errorBox.style.display="block";errorBox.textContent=String(e?.stack||e);status.textContent="Build failed to load; see error details."}
 function setInput(id,key){const b=document.querySelector("#"+id);const on=e=>{e.preventDefault();keys[key]=true;b.classList.add("active");};const off=e=>{e.preventDefault();keys[key]=false;b.classList.remove("active")};b.addEventListener("pointerdown",on);b.addEventListener("pointerup",off);b.addEventListener("pointercancel",off);b.addEventListener("contextmenu",e=>e.preventDefault())}
-setInput("left","left");setInput("right","right");setInput("sprint","sprint");
-addEventListener("keydown",e=>{const k=e.key.toLowerCase();if(["arrowleft","arrowright","a","d","shift"].includes(k))e.preventDefault();if(k==="arrowleft"||k==="a")keys.left=true;if(k==="arrowright"||k==="d")keys.right=true;if(k==="shift")keys.sprint=true});
+setInput("left","left");setInput("right","right");setInput("sprint","sprint");setInput("fire","fire");
+document.querySelector("#reload").addEventListener("click",()=>reloadWeapon());
+document.querySelector("#swap").addEventListener("click",()=>swapWeapon());
+addEventListener("keydown",e=>{const k=e.key.toLowerCase();if(["arrowleft","arrowright","a","d","shift","r","q","1","2"].includes(k))e.preventDefault();if(k==="arrowleft"||k==="a")keys.left=true;if(k==="arrowright"||k==="d")keys.right=true;if(k==="shift")keys.sprint=true;if(k==="r")reloadWeapon();if(k==="q")swapWeapon();if(k==="1")swapToWeapon("M4A1");if(k==="2")swapToWeapon("Glock-18")});
 addEventListener("keyup",e=>{const k=e.key.toLowerCase();if(k==="arrowleft"||k==="a")keys.left=false;if(k==="arrowright"||k==="d")keys.right=false;if(k==="shift")keys.sprint=false});
-addEventListener("blur",()=>{keys.left=keys.right=keys.sprint=false;document.querySelectorAll("button").forEach(b=>b.classList.remove("active"))});
+addEventListener("blur",()=>{keys.left=keys.right=keys.sprint=keys.fire=false;firePressed=false;document.querySelectorAll("button").forEach(b=>b.classList.remove("active"))});
 function setMeshMaterials(root){root.traverse(o=>{if(o.isMesh){o.material=new THREE.MeshStandardMaterial({color:0x858b91,roughness:1,metalness:0,side:THREE.DoubleSide});o.castShadow=false;o.receiveShadow=true}})}
 async function load(){
  try{
-  const [objResponse,manifestResponse,animationResponse]=await Promise.all([fetch("./assets/mission01.obj"),fetch("./assets/operator/operator.json"),fetch("./assets/operator/animations.json")]);
+  const [objResponse,manifestResponse,animationResponse,m4Response,glockResponse]=await Promise.all([fetch("./assets/mission01.obj"),fetch("./assets/operator/operator.json"),fetch("./assets/operator/animations.json"),fetch("./assets/weapons/M4A1/weapon.json"),fetch("./assets/weapons/Glock-18/weapon.json")]);
   if(!objResponse.ok)throw new Error("Mission 01 geometry missing: HTTP "+objResponse.status);
   if(!manifestResponse.ok)throw new Error("Original Operator manifest missing: HTTP "+manifestResponse.status);
   if(!animationResponse.ok)throw new Error("Original Operator animation data missing: HTTP "+animationResponse.status);
+  if(!m4Response.ok||!glockResponse.ok)throw new Error("Original M4A1/Glock weapon manifest is missing.");
   const manifest=await manifestResponse.json();
   const animationData=await animationResponse.json();
+  const weaponData={"M4A1":await m4Response.json(),"Glock-18":await glockResponse.json()};
   const objText=await objResponse.text();
   sceneMesh=new OBJLoader().parse(objText);setMeshMaterials(sceneMesh);sceneMesh.name="Recovered Mission 01 combined mesh";world.add(sceneMesh);
   sceneBounds=new THREE.Box3().setFromObject(sceneMesh);
@@ -67,6 +71,31 @@ async function load(){
    else material=new THREE.MeshBasicMaterial({color:0x777777,side:THREE.DoubleSide,transparent:true,opacity:.8,depthWrite:false});
    const part=new THREE.Mesh(g,material);part.name="Original skin: "+limb.name;part.renderOrder=1;parent.add(part);
   }
+  const weaponStatus=document.querySelector("#weaponStatus");
+  async function buildWeapon(name,pivotPath){
+   const data=weaponData[name],byId=new Map(),byPath=new Map();
+   for(const node of data.nodes){const group=new THREE.Group();group.name=node.name;group.position.fromArray(node.position);group.quaternion.fromArray(node.rotation);group.scale.fromArray(node.scale);byId.set(node.gameObjectFileID,group);byPath.set(node.path,group)}
+   const rootNode=data.nodes.find(n=>!n.parentGameObjectFileID),root=byId.get(rootNode.gameObjectFileID);
+   root.position.set(0,0,0);
+   for(const node of data.nodes){const group=byId.get(node.gameObjectFileID);if(node.parentGameObjectFileID){const parent=byId.get(node.parentGameObjectFileID);if(parent)parent.add(group)}}
+   for(const rendererData of data.renderers){const parent=byId.get(rendererData.gameObjectFileID);if(!parent)continue;let material;
+    if(rendererData.texture){const tex=await texLoader.loadAsync("./assets/weapons/"+name+"/"+rendererData.texture);tex.colorSpace=THREE.SRGBColorSpace;material=new THREE.MeshBasicMaterial({map:tex,transparent:true,alphaTest:.015,side:THREE.DoubleSide,depthWrite:false})}
+    else material=new THREE.MeshBasicMaterial({color:0x30343a,side:THREE.DoubleSide,transparent:true,depthWrite:false});
+    const mesh=new THREE.Mesh(new THREE.PlaneGeometry(1,1),material);mesh.name="Original "+name+" component: "+rendererData.name;parent.add(mesh);
+   }
+   const pivot=nodeByPath.get(pivotPath);if(!pivot)throw new Error("Original weapon pivot not found: "+pivotPath);pivot.add(root);
+   return {name,root,nodesByPath:byPath,stats:data.stats};
+  }
+  weaponInstances["M4A1"]=await buildWeapon("M4A1","Pelvis/Abdomen/Torso/Rifle pivot");
+  weaponInstances["Glock-18"]=await buildWeapon("Glock-18","Pelvis/Abdomen/Torso/Pistol pivot");
+  weaponInstances["Glock-18"].root.visible=false;
+  function updateWeaponStatus(){const cap=capacityByWeapon[activeWeaponName],count=ammoByWeapon[activeWeaponName];weaponStatus.textContent=activeWeaponName+" · "+count+"/"+cap+(weaponReloading?" · RELOADING":"")}
+  function swapToWeapon(name){if(!weaponInstances[name])return;activeWeaponName=name;for(const [n,w] of Object.entries(weaponInstances))w.root.visible=n===name;weaponReloading=false;updateWeaponStatus()}
+  swapWeapon=()=>swapToWeapon(activeWeaponName==="M4A1"?"Glock-18":"M4A1");
+  reloadWeapon=()=>{if(weaponReloading||ammoByWeapon[activeWeaponName]===capacityByWeapon[activeWeaponName])return;weaponReloading=true;updateWeaponStatus();const delay=(weaponInstances[activeWeaponName]?.stats.reloadTime||1)*1000;setTimeout(()=>{ammoByWeapon[activeWeaponName]=capacityByWeapon[activeWeaponName];weaponReloading=false;updateWeaponStatus()},delay)};
+  updateWeaponStatus();
+  updateWeaponAim=()=>{const weapon=weaponInstances[activeWeaponName];if(!weapon)return;character.updateMatrixWorld(true);const pivot=weapon.root.parent;if(!pivot)return;const p=pivot.getWorldPosition(new THREE.Vector3());const worldAngle=Math.atan2(aimPoint.y-p.y,aimPoint.x-p.x);const q=pivot.getWorldQuaternion(new THREE.Quaternion()),e=new THREE.Euler().setFromQuaternion(q,"XYZ");weapon.root.rotation.z=(facingDirection>0?worldAngle:Math.PI-worldAngle)-e.z;};
+  fireWeapon=()=>{if(!loaded||weaponReloading||ammoByWeapon[activeWeaponName]<=0)return;const weapon=weaponInstances[activeWeaponName];if(!weapon)return;const now=performance.now(),rpm=weapon.stats.roundsPerMinute||600;if(now-lastShotAt[activeWeaponName]<60000/rpm)return;lastShotAt[activeWeaponName]=now;ammoByWeapon[activeWeaponName]--;updateWeaponStatus();character.updateMatrixWorld(true);sceneMesh.updateMatrixWorld(true);const muzzle=weapon.nodesByPath.get("Transform/Slots/Muzzle");const origin=muzzle?muzzle.getWorldPosition(new THREE.Vector3()):weapon.root.getWorldPosition(new THREE.Vector3());const direction=new THREE.Vector3(aimPoint.x-origin.x,aimPoint.y-origin.y,0).normalize();const ray=new THREE.Raycaster(origin,direction,0,80);const hit=ray.intersectObject(sceneMesh,true).find(h=>h.distance>.1);const end=hit?hit.point:origin.clone().addScaledVector(direction,80);const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints([origin,end]),new THREE.LineBasicMaterial({color:0xffd58a,transparent:true,opacity:.9}));scene.add(line);setTimeout(()=>{scene.remove(line);line.geometry.dispose();line.material.dispose()},70)};
   const clips=animationData.clips;
   let activeAnimation="Body stand",animationTime=0;
   function sample(track,time){
@@ -176,6 +205,8 @@ function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-last)/10
   aimQuad.position.set(playerX+facingDirection*20,2.5,-1.5);
  }
  applyAnimation(dt);
+ updateWeaponAim();
+ if(keys.fire||firePressed)fireWeapon();
  camera.position.x+=(playerX-camera.position.x)*Math.min(1,5*dt);
  camera.position.y+=(2.6-camera.position.y)*Math.min(1,3*dt);camera.lookAt(camera.position.x,2.6,0);
  positionLabel.textContent="X "+playerX.toFixed(2)+" · speed "+Math.abs(velocity).toFixed(2)+" m/s"+(keys.sprint?" · sprint input":"");
