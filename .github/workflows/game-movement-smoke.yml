@@ -6,6 +6,10 @@ on:
       - "game/assets/mission01.obj"
       - "game/assets/operator/operator.json"
       - "game/index.html"
+      - "game/browser-input.mjs"
+      - "scripts/browser_input_test.mjs"
+      - "scripts/iphone_input_smoke.mjs"
+      - ".github/workflows/game-movement-smoke.yml"
       - "scripts/game_movement_smoke.mjs"
   workflow_dispatch:
 
@@ -25,13 +29,17 @@ jobs:
         run: |
           npm init -y
           npm install --no-audit --no-fund playwright@1.55.0
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps chromium webkit
+      - name: Verify independent touch ownership and lifecycle resets
+        run: node --test scripts/browser_input_test.mjs
       - name: Serve the separate game build
         run: |
           python3 -m http.server 8000 >/tmp/crisis-game-server.log 2>&1 &
           sleep 2
       - name: Verify original scene, original Operator textures, and movement
         run: node scripts/game_movement_smoke.mjs
+      - name: Verify landscape input in Chromium and WebKit
+        run: node scripts/iphone_input_smoke.mjs
       - name: Upload separate game build evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -40,5 +48,9 @@ jobs:
           path: |
             mission01-game-smoke.json
             mission01-game-smoke.png
+            iphone-input-smoke.json
+            iphone-input-chromium.png
+            iphone-input-webkit.png
           if-no-files-found: warn
           retention-days: 30
+

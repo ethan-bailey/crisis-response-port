@@ -6,18 +6,24 @@
 <title>Crisis Response — Mission 01 runtime</title>
 <style>
 :root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101318;color:#eef2f7;touch-action:none}#stage{position:absolute;inset:0}canvas{display:block;width:100%;height:100%}#hud{position:absolute;left:12px;top:12px;max-width:min(440px,calc(100vw - 24px));padding:10px 12px;border:1px solid #505965;border-radius:9px;background:#111820e8;pointer-events:none;font-size:12px;line-height:1.4}#title{font-size:14px;font-weight:750;margin-bottom:3px}#status{color:#c5d0dc}#position{color:#a8d9ff;margin-top:4px;font-variant-numeric:tabular-nums}#weaponStatus{color:#ffd9a3;margin-top:3px;font-weight:700}#controls{position:absolute;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));display:flex;justify-content:space-between;align-items:end;gap:12px;pointer-events:none} .cluster{display:flex;gap:6px;pointer-events:auto;flex-wrap:wrap;max-width:52vw;justify-content:flex-end}button{min-width:56px;min-height:54px;padding:10px 12px;border:1px solid #778391;border-radius:12px;background:#18222edc;color:#f6f8fa;font-size:14px;font-weight:700;touch-action:none;user-select:none;-webkit-user-select:none}button.active{background:#315a79;border-color:#9bd8ff}#sprint{min-width:60px}#reload{min-width:64px}#help{position:absolute;right:12px;top:12px;padding:7px 9px;border:1px solid #505965;border-radius:8px;background:#111820e8;font-size:11px;color:#d4dde7}#error{display:none;position:absolute;left:12px;right:12px;top:92px;padding:12px;border:1px solid #a33;border-radius:8px;background:#351818;color:#ffe4e4;white-space:pre-wrap}#rotateNotice{display:none;position:absolute;inset:0;z-index:20;background:#101318f5;align-items:center;justify-content:center;text-align:center;padding:32px;font-size:18px;font-weight:700}
+
+#hud{left:max(12px,env(safe-area-inset-left));top:max(12px,env(safe-area-inset-top))}
+#controls{left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right))}
+#help{right:max(12px,env(safe-area-inset-right));top:max(12px,env(safe-area-inset-top))}
+@media (max-height:500px){#hud{max-width:45vw;font-size:10px}#status{max-height:3em;overflow:auto}#help{max-width:40vw;font-size:10px}.cluster{max-width:54vw}button{min-width:48px;min-height:48px;padding:8px;font-size:12px}}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
 </head>
 <body>
 <div id="stage"></div>
-<div id="hud"><div id="title">Crisis Response · Mission 01</div><div id="status">Loading recovered scene and original Operator prefab…</div><div id="position"></div><div id="weaponStatus">Loading original weapons…</div></div>
-<div id="help">A/D · Shift sprint · drag to aim · hold FIRE · R reload · Q swap</div>
-<div id="error"></div><div id="rotateNotice">Rotate your phone to landscape to play Crisis Response.</div>
-<div id="controls"><div class="cluster"><button id="left" aria-label="Move left">◀ LEFT</button><button id="right" aria-label="Move right">RIGHT ▶</button></div><div class="cluster"><button id="sprint" aria-label="Sprint">SPRINT</button><button id="fire" aria-label="Fire weapon">FIRE</button><button id="reload" aria-label="Reload weapon">RELOAD</button><button id="swap" aria-label="Swap weapon">SWAP</button></div></div>
+<div id="hud"><div id="title">Crisis Response · incomplete port</div><div id="status">Loading recovered scene and original Operator prefab…</div><div id="position"></div><div id="weaponStatus">Loading original weapons…</div></div>
+<div id="help">A/D · Shift sprint · drag to aim · hold FIRE · R reload · Tab swap · S/W kneel/stand</div>
+<div id="error"></div><div id="rotateNotice">Rotate your phone to landscape to view the port prototype.</div>
+<div id="controls"><div class="cluster"><button id="left" data-action="left" aria-label="Move left">◀ LEFT</button><button id="right" data-action="right" aria-label="Move right">RIGHT ▶</button></div><div class="cluster"><button id="kneel" data-action="kneel" aria-label="Kneel">KNEEL</button><button id="stand" data-action="stand" aria-label="Stand">STAND</button><button id="sprint" data-action="sprint" aria-label="Sprint">SPRINT</button><button id="fire" data-action="fire" aria-label="Fire weapon">FIRE</button><button id="reload" data-action="magazine" aria-label="Reload weapon">RELOAD</button><button id="swap" data-action="switchWeapons" aria-label="Swap weapon">SWAP</button></div></div>
 <script type="module">
 import * as THREE from "three";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
+import { BrowserInput } from "./browser-input.mjs";
 
 const stage=document.querySelector("#stage"), status=document.querySelector("#status"), positionLabel=document.querySelector("#position"), errorBox=document.querySelector("#error");
 const scene=new THREE.Scene(); scene.background=new THREE.Color(0x11151b);
@@ -29,15 +35,26 @@ const camera=new THREE.OrthographicCamera(-viewHeight*innerWidth/innerHeight/2,v
 camera.position.set(-3+(innerWidth>=innerHeight?7.5:0),2.5,60);camera.lookAt(camera.position.x,2.5,0);
 const world=new THREE.Group();scene.add(world);
 const character=new THREE.Group();character.name="Original Operator prefab";scene.add(character);
-const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),updateWeaponAim=()=>{},fireWeapon=()=>{},reloadWeapon=()=>{},swapWeapon=()=>{},swapToWeapon=()=>{},activeWeaponName="M4A1",weaponReloading=false,lastShotAt={"M4A1":0,"Glock-18":0},ammoByWeapon={"M4A1":30,"Glock-18":33},capacityByWeapon={"M4A1":30,"Glock-18":33},weaponInstances={},firePressed=false;
+const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),updateWeaponAim=()=>{},fireWeapon=()=>{},reloadWeapon=()=>{},swapWeapon=()=>{},swapToWeapon=()=>{},activeWeaponName="M4A1",weaponReloading=false,lastShotAt={"M4A1":0,"Glock-18":0},ammoByWeapon={"M4A1":30,"Glock-18":33},capacityByWeapon={"M4A1":30,"Glock-18":33},weaponInstances={};
 function showError(e){errorBox.style.display="block";errorBox.textContent=String(e?.stack||e);status.textContent="Build failed to load; see error details."}
-function setInput(id,key){const b=document.querySelector("#"+id);const on=e=>{e.preventDefault();keys[key]=true;b.classList.add("active");if(key==="fire")fireWeapon();};const off=e=>{e.preventDefault();keys[key]=false;b.classList.remove("active")};b.addEventListener("pointerdown",on);b.addEventListener("pointerup",off);b.addEventListener("pointercancel",off);b.addEventListener("contextmenu",e=>e.preventDefault())}
-setInput("left","left");setInput("right","right");setInput("sprint","sprint");setInput("fire","fire");
-document.querySelector("#reload").addEventListener("click",()=>reloadWeapon());
-document.querySelector("#swap").addEventListener("click",()=>swapWeapon());
-addEventListener("keydown",e=>{const k=e.key.toLowerCase();if(["arrowleft","arrowright","a","d","shift","r","q","1","2","tab"].includes(k))e.preventDefault();if(k==="arrowleft"||k==="a")keys.left=true;if(k==="arrowright"||k==="d")keys.right=true;if(k==="shift")keys.sprint=true;if(k==="r")reloadWeapon();if(k==="tab"||k==="q")swapWeapon();if(k==="1")swapToWeapon("M4A1");if(k==="2")swapToWeapon("Glock-18");if(k==="s")isKneeling=true;if(k==="w")isKneeling=false});
-addEventListener("keyup",e=>{const k=e.key.toLowerCase();if(k==="arrowleft"||k==="a")keys.left=false;if(k==="arrowright"||k==="d")keys.right=false;if(k==="shift")keys.sprint=false});
-addEventListener("blur",()=>{keys.left=keys.right=keys.sprint=keys.fire=false;firePressed=false;document.querySelectorAll("button").forEach(b=>b.classList.remove("active"))});
+const input = new BrowserInput({
+ onChange(action, pressed) {
+  if (action in keys) keys[action] = pressed;
+  document.querySelector(`[data-action="${action}"]`)?.classList.toggle("active", pressed);
+ },
+ onPress(action) {
+  if(action === "fire") fireWeapon();
+  if(action === "magazine") reloadWeapon();
+  if(action === "switchWeapons") swapWeapon();
+  if(action === "kneel") isKneeling = true;
+  if(action === "stand") isKneeling = false;
+ }
+});
+for (const button of document.querySelectorAll("button[data-action]")) input.bindButton(button, button.dataset.action);
+// Original InputMapping.cs bindings, plus arrow-key movement aliases.
+input.bindKeyboard(window, {KeyA:"left", ArrowLeft:"left", KeyD:"right", ArrowRight:"right",
+ ShiftLeft:"sprint", KeyR:"magazine", Tab:"switchWeapons", KeyS:"kneel", KeyW:"stand"});
+input.bindLifecycle(window, document);
 function setMeshMaterials(root){root.traverse(o=>{if(o.isMesh){o.material=new THREE.MeshStandardMaterial({color:0x858b91,roughness:1,metalness:0,side:THREE.DoubleSide});o.castShadow=false;o.receiveShadow=true}})}
 async function load(){
  try{
@@ -150,9 +167,7 @@ function updateAim(e){
  pointerNdc.x=((e.clientX-rect.left)/rect.width)*2-1;
  pointerNdc.y=-(((e.clientY-rect.top)/rect.height)*2-1);
 }
-renderer.domElement.addEventListener("pointerdown",e=>{updateAim(e);firePressed=true;fireWeapon();});
-renderer.domElement.addEventListener("pointermove",updateAim);
-addEventListener("pointerup",()=>{firePressed=false});
+input.bindAim(renderer.domElement, updateAim);
 
 let last=performance.now();
 function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-last)/1000,.05);last=now;if(loaded){
@@ -205,7 +220,7 @@ function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-last)/10
  }
  applyAnimation(dt);
  updateWeaponAim();
- if((keys.fire||firePressed)&&activeWeaponName==="M4A1")fireWeapon();
+ if(keys.fire&&activeWeaponName==="M4A1")fireWeapon();
  const lead=innerWidth>=innerHeight?7.5:0;camera.position.x+=(playerX+lead-camera.position.x)*Math.min(1,5*dt);
  camera.position.y+=(2.6-camera.position.y)*Math.min(1,3*dt);camera.lookAt(camera.position.x,2.6,0);
  positionLabel.textContent="X "+playerX.toFixed(2)+" · speed "+Math.abs(velocity).toFixed(2)+" m/s"+(keys.sprint?" · sprint input":"");
