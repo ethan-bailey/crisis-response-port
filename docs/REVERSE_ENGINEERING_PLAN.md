@@ -36,6 +36,7 @@ A previously generated artifact, `CrisisResponseMobile_iPhone.zip`, contains a s
 
 ### Phase 2 — Runtime and code reconnaissance
 - [x] Inspect the Unity version, player architecture, managed assembly metadata, and key gameplay symbol names.
+- [x] Add a dependency-free metadata inspection script at `tools/inspect_assembly_metadata.py`.
 - [ ] Decompile `Assembly-CSharp.dll` and supporting assemblies for analysis.
 - [ ] Map key systems in source-like detail: AI, teams/missions, doors, weapons, projectiles/ballistics, grenades, physiology, UI, save/config, and input.
 - [ ] Identify all native plugins and Windows-only APIs.
