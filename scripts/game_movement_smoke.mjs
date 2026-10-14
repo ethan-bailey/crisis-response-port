@@ -14,7 +14,9 @@ try {
   const rightBox = await page.locator("#right").boundingBox();
   await page.mouse.move(rightBox.x + rightBox.width / 2, rightBox.y + rightBox.height / 2);
   await page.mouse.down();
-  await page.waitForTimeout(700);
+  // Software-rendered CI may produce only a few frames in 700ms. Wait for the
+  // observed movement threshold instead of assuming a wall-clock frame rate.
+  await page.waitForFunction(x => window.__gameState().playerX > x + 0.05, before.playerX, { timeout: 30000 });
   await page.mouse.up();
   const afterMove = await page.evaluate(() => window.__gameState?.() ?? null);
   const moved = !!afterMove && afterMove.playerX > before.playerX + 0.05;
@@ -30,3 +32,4 @@ try {
 } finally {
   await browser.close();
 }
+
