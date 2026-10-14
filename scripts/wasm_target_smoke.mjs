@@ -15,6 +15,13 @@ try {
   await page.locator("#runShot").click();
   await page.waitForFunction(() => document.querySelector("#shotResult")?.textContent?.includes("Original HandleProjectile returned"));
   const penetrableShot = await page.locator("#shotResult").textContent();
+  await page.locator("#thickness").focus();
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
+  await page.locator("#runShot").click();
+  await page.waitForFunction(() => document.querySelector("#shotResult")?.textContent?.includes("Original HandleProjectile returned"));
+  const thickerSurfaceShot = await page.locator("#shotResult").textContent();
   await page.locator("#impenetrable").check();
   await page.locator("#runShot").click();
   await page.waitForFunction(() => document.querySelector("#shotResult")?.textContent?.includes("Original HandleProjectile returned"));
@@ -26,6 +33,7 @@ try {
     shot: document.querySelector("#shotResult")?.textContent ?? ""
   }));
   result.penetrableShot = penetrableShot;
+  result.thickerSurfaceShot = thickerSurfaceShot;
   result.impenetrableShot = impenetrableShot;
   fs.writeFileSync("work/wasm-target-smoke.json", JSON.stringify({ ...result, errors }, null, 2));
   await page.screenshot({ path: "work/wasm-target-smoke.png", fullPage: true });
@@ -34,6 +42,9 @@ try {
   if (!result.text.startsWith("PASS") ||
       !result.penetrableShot.includes("Original HandleProjectile returned") ||
       !(energyAfter(result.penetrableShot) > 0) ||
+      !result.thickerSurfaceShot.includes("Original HandleProjectile returned") ||
+      !(energyAfter(result.thickerSurfaceShot) > 0) ||
+      !(energyAfter(result.thickerSurfaceShot) < energyAfter(result.penetrableShot)) ||
       !result.impenetrableShot.includes("Original HandleProjectile returned Stop") ||
       energyAfter(result.impenetrableShot) !== 0 ||
       errors.length) process.exitCode = 1;
