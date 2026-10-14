@@ -37,11 +37,15 @@ No subsystem is marked as implemented or parity-verified merely because its symb
 
 ## Port strategy gate
 
-**Preferred:** reconstruct a Unity project around recovered original assets and decompiled C# behavior, then build for WebGL with the closest practical Unity version and adapt only platform-specific code. The exact Unity version and project-reconstruction feasibility must be tested before committing to this route.
+**Updated 2026-10-14:** Unity WebGL compilation is no longer the sole path. See [Browser port strategy pivot](BROWSER_PORT_STRATEGY_PIVOT_2026-10-14.md).
 
-**Fallback:** if a complete Unity/WebGL reconstruction proves infeasible, evaluate a minimal compatibility implementation subsystem by subsystem, explicitly marking reconstructed behavior and gaps. Do not replace the whole game with an invented HTML game and call it a port.
+**Track A:** time-boxed feasibility test of browser-hosted WINE/PROTON compatibility for the original 32-bit Unity Windows executable. This could preserve the original game most directly, but support for Unity 2017/Mono/3D graphics and iPhone Safari is unverified.
 
-**Rust:** defer unless profiling or a specific platform dependency demonstrates a reason to introduce a Rust/WASM component. A wholesale rewrite would increase parity risk.
+**Track B:** if compatibility runtime fails, prototype a native WebAssembly browser port using recovered C# as behavioral evidence and recovered assets/scenes. The decompiled C# depends on Unity APIs and cannot be compiled directly to WASM; first build a small tested vertical slice before expanding.
+
+**Track C:** retain Unity WebGL as an optional route if valid activation becomes available, not as the only hard gate.
+
+Do not replace the whole game with an invented HTML game and call it a port. Defer a wholesale Rust rewrite unless a concrete subsystem justifies it.
 
 ## Asset/scene reconnaissance
 
