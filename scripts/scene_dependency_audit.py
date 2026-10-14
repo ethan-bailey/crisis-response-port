@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 GUID_RE = re.compile(r"guid: ([0-9a-f]{32})")
-BUILTIN = "0000000000000000e000000000000000"
+BUILTIN_GUIDS = {"0000000000000000e000000000000000", "0000000000000000f000000000000000"}
 TEXT_EXTS = {
     ".unity", ".prefab", ".asset", ".mat", ".controller", ".anim",
     ".overrideController", ".renderTexture", ".mixer", ".guiskin", ".meta",
@@ -48,7 +48,7 @@ def main() -> int:
         raise SystemExit(str(exc))
 
     direct_counts = collections.Counter(GUID_RE.findall(scene_text))
-    unresolved_direct = sorted(g for g in direct_counts if g not in guid_to_asset and g != BUILTIN)
+    unresolved_direct = sorted(g for g in direct_counts if g not in guid_to_asset and g not in BUILTIN_GUIDS)
     visited: set[Path] = set()
     unresolved: collections.Counter[str] = collections.Counter()
     edges: set[tuple[str, str]] = set()
@@ -67,7 +67,7 @@ def main() -> int:
             continue
         source = str(current.relative_to(project))
         for guid in set(GUID_RE.findall(data)):
-            if guid == BUILTIN:
+            if guid in BUILTIN_GUIDS:
                 continue
             target = guid_to_asset.get(guid)
             if target is None:
@@ -106,7 +106,7 @@ def main() -> int:
         f"- Direct GUID occurrences: {sum(direct_counts.values()):,}",
         f"- Unique readable serialized assets reached recursively (including scene): {len(visited):,}",
         f"- Dependency edges found: {len(edges):,}",
-        f"- Distinct unresolved GUIDs seen recursively (excluding Unity built-in GUID): {len(unresolved):,}",
+        f"- Distinct unresolved GUIDs seen recursively (excluding Unity built-in GUIDs): {len(unresolved):,}",
         "",
         "## Most frequent direct scene asset references",
         "",
