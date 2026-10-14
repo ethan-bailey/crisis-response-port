@@ -49,7 +49,7 @@ Do not replace the whole game with an invented HTML game and call it a port. Def
 
 ## WebAssembly replacement work — 2026-10-14
 
-The source-preserving engine replacement is the explicit goal; see [the WebAssembly engine replacement plan](WEBASSEMBLY_ENGINE_REPLACEMENT_PLAN_2026-10-14.md) and [issue #4](https://github.com/ethan-bailey/crisis-response-port/issues/4).
+The source-preserving engine replacement is the explicit goal; see [the WebAssembly engine replacement plan](WEBASSEMBLY_ENGINE_REPLACEMENT_PLAN_2026-10-14.md), the [runtime architecture decision](WEBASSEMBLY_RUNTIME_ARCHITECTURE_DECISION_2026-10-14.md), and [issue #4](https://github.com/ethan-bailey/crisis-response-port/issues/4).
 
 The cloud audit at [run 38587729815](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38587729815) scanned 1,420 C# files and recorded 67 recognized Unity API tokens with 9,625 lexical occurrences. These are source inventories, not compiler errors.
 
