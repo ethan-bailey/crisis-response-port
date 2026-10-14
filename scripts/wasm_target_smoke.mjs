@@ -38,7 +38,7 @@ try {
   fs.writeFileSync("work/wasm-target-smoke.json", JSON.stringify({ ...result, errors }, null, 2));
   await page.screenshot({ path: "work/wasm-target-smoke.png", fullPage: true });
   console.log(JSON.stringify({ ...result, errors }, null, 2));
-  const energyAfter = shot => Number(shot.match(/energy after: ([0-9.]+)/i)?.[1] ?? NaN);
+  const energyAfter = shot => Number(shot.match(/energy after: ([0-9]+(?:\\.[0-9]+)?)/i)?.[1] ?? NaN);
   if (!result.text.startsWith("PASS") ||
       !result.penetrableShot.includes("Original HandleProjectile returned") ||
       !(energyAfter(result.penetrableShot) > 0) ||
