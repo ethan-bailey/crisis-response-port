@@ -31,6 +31,12 @@ namespace UnityEngine
     }
 
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
+    public sealed class RangeAttribute : Attribute
+    {
+        public RangeAttribute(float min, float max) { }
+    }
+
+    [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
     public sealed class TooltipAttribute : Attribute
     {
         public TooltipAttribute(string text) { }
@@ -203,7 +209,7 @@ cat > "$OUT_ROOT/wasm-spike-report.md" <<EOF
 
 - Original sources included: Target.cs, BallisticMaterialProperties.cs, and BallisticMaterial.cs from Assets/Scripts/Assembly-CSharp
 - Build target: Blazor WebAssembly on .NET 8
-- Unity API surface implemented: MonoBehaviour, TooltipAttribute, HeaderAttribute, Vector2, GetComponent<T>() and a test-only component attachment hook.
+- Unity API surface implemented: MonoBehaviour, TooltipAttribute, HeaderAttribute, RangeAttribute, Vector2, Vector3/Transform test stubs, GetComponent<T>() and a test-only component attachment hook.
 - CharacterBody and ballistic effect types are test fixtures, not the game's original classes.
 - Scope: compile three original scripts; invoke Target.Awake, check material-property defaults, and execute the original static BallisticMaterial.ChannelVolume method in browser WASM.
 - This does not prove the rest of the Unity API, original scene import, physics, rendering parity, or a playable port.
