@@ -39,8 +39,12 @@ In [workflow run 38590382729](https://github.com/ethan-bailey/crisis-response-po
 
 The second pass, [workflow run 38590980350](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38590980350), also compiled original `BallisticMaterialProperties.cs`, checked its default material values and ran in Chromium with zero errors. It used minimal `Vector2` and inspector-attribute shims; `CharacterBody` and ballistic effect classes were fixtures, not the original game classes.
 
-## Current expansion: original ballistics method
+## C# WebAssembly ballistics method gate: passed
 
-The next test compiles the original `BallisticMaterial.cs` without rewriting it and invokes its original static `ChannelVolume` method with a deterministic reference case. This adds Unity math/transform type stubs only to satisfy compilation; those stubs are not being presented as a full physics implementation. Current run: https://github.com/ethan-bailey/crisis-response-port/actions/runs/38591962729. The full penetration, deflection, fragmentation and collision paths remain unimplemented and untested.
+In [workflow run 38591962729](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38591962729), the original `BallisticMaterial.cs` compiled into browser WASM without rewriting its algorithm. Chromium invoked the original static `ChannelVolume(2, 4, 6)` method and verified the expected result within tolerance. The Unity math/transform APIs and dependent game classes were minimal test fixtures; this proves execution of that one original method, not full ballistic physics.
+
+## Current expansion: surface-thickness clamp
+
+The current run, [38592470882](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38592470882), adds a test of the original `EnergyToPenetrateSurface` method using a test projectile. The original method's thickness clamp is under test, but the projectile's `EnergyToPenetrate` function is still a simplified fixture. Penetration, deflection, fragmentation, collisions, and delayed exits remain unimplemented and untested.
 
 The broader API inventory and implementation gaps are recorded in [the Unity API compatibility matrix](UNITY_API_COMPATIBILITY_MATRIX_WASM_2026-10-14.md). Unity's licensed build path remains blocked by missing license secrets. No full-game browser build exists, and no 1:1 parity claim is justified yet.
