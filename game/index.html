@@ -29,9 +29,9 @@ const camera=new THREE.OrthographicCamera(-viewHeight*innerWidth/innerHeight/2,v
 camera.position.set(-3,2.5,60);camera.lookAt(-3,2.5,0);
 const world=new THREE.Group();scene.add(world);
 const character=new THREE.Group();character.name="Original Operator prefab";scene.add(character);
-const keys={left:false,right:false,sprint:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0);
+const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),updateWeaponAim=()=>{},fireWeapon=()=>{},reloadWeapon=()=>{},swapWeapon=()=>{},swapToWeapon=()=>{},activeWeaponName="M4A1",weaponReloading=false,lastShotAt={"M4A1":0,"Glock-18":0},ammoByWeapon={"M4A1":30,"Glock-18":33},capacityByWeapon={"M4A1":30,"Glock-18":33},weaponInstances={},firePressed=false;
 function showError(e){errorBox.style.display="block";errorBox.textContent=String(e?.stack||e);status.textContent="Build failed to load; see error details."}
-function setInput(id,key){const b=document.querySelector("#"+id);const on=e=>{e.preventDefault();keys[key]=true;b.classList.add("active");};const off=e=>{e.preventDefault();keys[key]=false;b.classList.remove("active")};b.addEventListener("pointerdown",on);b.addEventListener("pointerup",off);b.addEventListener("pointercancel",off);b.addEventListener("contextmenu",e=>e.preventDefault())}
+function setInput(id,key){const b=document.querySelector("#"+id);const on=e=>{e.preventDefault();keys[key]=true;b.classList.add("active");if(key==="fire")fireWeapon();};const off=e=>{e.preventDefault();keys[key]=false;b.classList.remove("active")};b.addEventListener("pointerdown",on);b.addEventListener("pointerup",off);b.addEventListener("pointercancel",off);b.addEventListener("contextmenu",e=>e.preventDefault())}
 setInput("left","left");setInput("right","right");setInput("sprint","sprint");setInput("fire","fire");
 document.querySelector("#reload").addEventListener("click",()=>reloadWeapon());
 document.querySelector("#swap").addEventListener("click",()=>swapWeapon());
@@ -138,8 +138,8 @@ async function load(){
   const box=sceneBounds;const size=box.getSize(new THREE.Vector3());viewHeight=Math.max(8,Math.min(13,size.y*.75||11));
   camera.left=-viewHeight*innerWidth/innerHeight/2;camera.right=viewHeight*innerWidth/innerHeight/2;camera.top=viewHeight/2;camera.bottom=-viewHeight/2;camera.updateProjectionMatrix();
   groundY=1.5;loaded=true;
-  window.__gameState=()=>({loaded,playerX,facingDirection,aimPoint:character.localToWorld(localAimPoint.clone()).toArray(),limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
-  status.textContent="Recovered Mission 01 and Operator assets. Movement uses recovered CharacterBody force logic and prefab speeds. Pointer aiming now follows the recovered WeaponPointer AimQuad raycast and PlayerController shoulder-based turn check. Full Unity physics, limb flip attachments, weapons, and AI remain unported.";
+  window.__gameState=()=>({loaded,playerX,facingDirection,aimPoint:character.localToWorld(localAimPoint.clone()).toArray(),limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,ammo:ammoByWeapon[activeWeaponName],weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
+  status.textContent="Recovered Mission 01 geometry, Operator textures and walk animation, plus original M4A1/Glock prefab textures and fire-rate data. Movement and AimQuad turning follow recovered source rules; full Unity physics, projectile ballistics, reload animation, damage, AI and mission flow remain unported.";
   positionLabel.textContent="Walk 1.5 m/s · Sprint 4.2 m/s · original spawn X −3";
  }catch(e){showError(e)}
 }
@@ -150,8 +150,9 @@ function updateAim(e){
  pointerNdc.x=((e.clientX-rect.left)/rect.width)*2-1;
  pointerNdc.y=-(((e.clientY-rect.top)/rect.height)*2-1);
 }
-renderer.domElement.addEventListener("pointerdown",e=>{updateAim(e);});
+renderer.domElement.addEventListener("pointerdown",e=>{updateAim(e);firePressed=true;fireWeapon();});
 renderer.domElement.addEventListener("pointermove",updateAim);
+addEventListener("pointerup",()=>{firePressed=false});
 
 let last=performance.now();
 function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-last)/1000,.05);last=now;if(loaded){
@@ -192,6 +193,7 @@ function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-last)/10
   if(hit)localAimPoint.copy(character.worldToLocal(hit.point.clone()));
   character.updateMatrixWorld(true);
   const worldPoint=character.localToWorld(localAimPoint.clone());
+  aimPoint.set(worldPoint.x,worldPoint.y);
   if(rightUpperArm){
    rightUpperArm.updateWorldMatrix(true,false);
    const shoulder=rightUpperArm.getWorldPosition(new THREE.Vector3());
@@ -203,7 +205,7 @@ function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-last)/10
  }
  applyAnimation(dt);
  updateWeaponAim();
- if(keys.fire||firePressed)fireWeapon();
+ if((keys.fire||firePressed)&&activeWeaponName==="M4A1")fireWeapon();
  camera.position.x+=(playerX-camera.position.x)*Math.min(1,5*dt);
  camera.position.y+=(2.6-camera.position.y)*Math.min(1,3*dt);camera.lookAt(camera.position.x,2.6,0);
  positionLabel.textContent="X "+playerX.toFixed(2)+" · speed "+Math.abs(velocity).toFixed(2)+" m/s"+(keys.sprint?" · sprint input":"");
