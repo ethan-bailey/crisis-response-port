@@ -11,6 +11,8 @@ on:
       - "scripts/unity_mesh_to_obj.py"
       - "scripts/browser_mesh_smoke.mjs"
       - "runtime-spike/mesh-viewer/index.html"
+      - "scripts/wasm_target_spike.sh"
+      - "scripts/wasm_target_smoke.mjs"
   workflow_dispatch:
 
 permissions:
@@ -93,6 +95,43 @@ jobs:
           path: |
             work/mesh-viewer-smoke.png
             work/mesh-viewer-smoke.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Set up .NET WebAssembly toolchain
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Compile original Target.cs into a browser WASM app
+        id: wasm_build
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          bash scripts/wasm_target_spike.sh \
+            work/recovery-artifact/export/ExportedProject \
+            work/wasm-target
+
+      - name: Run original Target.cs in browser WebAssembly
+        id: wasm_smoke
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8001 --directory work/wasm-target/published/wwwroot > /tmp/crisis-response-wasm-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          sleep 2
+          node scripts/wasm_target_smoke.mjs
+
+      - name: Upload C# WebAssembly feasibility results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crisis-response-csharp-wasm-spike
+          path: |
+            work/wasm-target/wasm-spike-report.md
+            work/wasm-target-smoke.json
+            work/wasm-target-smoke.png
           if-no-files-found: warn
           retention-days: 30
 
@@ -236,8 +275,8 @@ jobs:
       - name: Fail the run if original mesh extraction did not validate
         if: always()
         run: |
-          if [ "${{ steps.mesh_export.outcome }}" != "success" ] || [ "${{ steps.browser_smoke.outcome }}" != "success" ]; then
-            echo "Original mesh export or browser geometry smoke test failed; inspect the step logs. Other audit artifacts were still collected."
+          if [ "${{ steps.mesh_export.outcome }}" != "success" ] || [ "${{ steps.browser_smoke.outcome }}" != "success" ] || [ "${{ steps.wasm_build.outcome }}" != "success" ] || [ "${{ steps.wasm_smoke.outcome }}" != "success" ]; then
+            echo "Original mesh export, browser geometry smoke test, or C# WebAssembly feasibility gate failed; inspect the step logs. Other audit artifacts were still collected."
             exit 1
           fi
 
