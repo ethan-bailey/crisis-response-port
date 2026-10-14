@@ -331,7 +331,7 @@ cat > "$OUT_ROOT/app/Pages/Home.razor" <<'RAZOR'
         try
         {
             var properties = new global::BallisticMaterialProperties { surfaceThickness = _thickness };
-            var material = new global::BallisticMaterial { properties = properties, impenetrable = _impenetrable };
+            var material = new global::BallisticMaterial { properties = properties, impenetrable = _impenetrable, width = 0.1f };
             material.Awake();
             var massGrams = 10f;
             var desiredVelocity = MathF.Sqrt(2f * _energy / (massGrams * 0.001f));
@@ -340,7 +340,7 @@ cat > "$OUT_ROOT/app/Pages/Home.razor" <<'RAZOR'
             projectile.InitializeBenchmark(ammo);
             var before = projectile.Energy;
             var result = material.HandleProjectile(projectile, UnityEngine.Vector3.forward);
-            _shotResult = $"Original HandleProjectile returned {result.Status}. Energy before: {before:F2}; energy after: {result.Energy:F2}. Surface thickness: {_thickness:F2}; impenetrable: {_impenetrable}. Fixture physics and effects are simplified.";
+            _shotResult = $"Original HandleProjectile returned {result.Status}. Energy before: {before:F2}; energy after: {result.Energy:F2}. Surface thickness: {_thickness:F2}; slab depth: 0.10 m; impenetrable: {_impenetrable}. Unity physics and effects are simplified fixtures.";
         }
         catch (Exception ex)
         {
