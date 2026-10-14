@@ -45,6 +45,8 @@ jobs:
           cat work/WEBGL_PREFLIGHT.md
 
       - name: Export the original Marksman range combined mesh
+        id: mesh_export
+        continue-on-error: true
         run: |
           set -euo pipefail
           python3 scripts/unity_mesh_to_obj.py \
@@ -61,7 +63,7 @@ jobs:
           path: |
             work/mesh/marksman-combined.obj
             work/mesh/marksman-combined.mesh-report.json
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 30
 
       - name: Extract original Marksman range scene manifest
@@ -199,4 +201,12 @@ jobs:
         with:
           name: crisis-response-webgl-build-gate
           path: work/WEBGL_BUILD_GATE.md
-          retention-days: 14
+          retention-days: 14      - name: Fail the run if original mesh extraction did not validate
+        if: always()
+        run: |
+          if [ "${{ steps.mesh_export.outcome }}" != "success" ]; then
+            echo "Original mesh export failed; inspect the step log. Other audit artifacts were still collected."
+            exit 1
+          fi
+
+
