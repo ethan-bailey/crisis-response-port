@@ -47,6 +47,18 @@ No subsystem is marked as implemented or parity-verified merely because its symb
 
 Do not replace the whole game with an invented HTML game and call it a port. Defer a wholesale Rust rewrite unless a concrete subsystem justifies it.
 
+## WebAssembly replacement work — 2026-10-14
+
+The source-preserving engine replacement is now the explicit goal; see [the WebAssembly engine replacement plan](WEBASSEMBLY_ENGINE_REPLACEMENT_PLAN_2026-10-14.md) and [issue #4](https://github.com/ethan-bailey/crisis-response-port/issues/4).
+
+A cloud static-analysis run succeeded at [run 38587729815](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38587729815):
+- 1,420 C# files scanned.
+- 67 recognized Unity API tokens and 9,625 lexical API-token occurrences recorded in the API inventory artifact.
+- The Marksman range dependency traversal reached 417 readable serialized assets and 708 dependency edges; seven unresolved non-built-in GUIDs remain.
+- These are inventories only. They do not prove the game compiles, renders, or runs in a browser. Unity compilation remains skipped because license secrets are not configured.
+
+The first vertical-slice target remains the original Marksman range scene. Its dependency graph shows why a static room render is not enough: the scene includes the original ballistics/material system, breakable window behavior, target feedback, audio, UI, and tutorial state. The next runtime experiment must consume original scene/content and invoke original gameplay logic; mock content is not an acceptable parity test.
+
 ## Asset/scene reconnaissance
 
 The Unity serialized files identify themselves as Unity `2017.2.0f3`. A preliminary printable-string scan of the scene files surfaced UI/object labels such as `Disclaimer text`, `Loading text`, `Player open door`, `Scene loader`, `Rooms checked`, and `Resource counters`. These are clues only: the scene files have not yet been parsed into a reliable hierarchy, and labels are not sufficient to reconstruct scenes.
