@@ -28,14 +28,16 @@ jobs:
           df -h .
       # Private branch cache: generated Unity import data, never Git history.
       # This does not cache the huge Unity Docker image on ephemeral GitHub runners.
-      - name: Restore Unity imported Library cache
+      - name: Restore Unity imported Library and Bee build cache
         id: library_restore
         uses: actions/cache/restore@v4
         with:
-          path: work/unity-spike/recovery/export/ExportedProject/Library
-          key: unity-marksman-library-linux-2022.3.62f1-recoveryv3-${{ hashFiles('scripts/unity_scoped_legacy_gui_patch.py', 'scripts/unity_webgl_template_fix.py', 'scripts/SpikeWebGL.cs', 'scripts/repair_recovered_wav_headers.py') }}
+          path: |
+            work/unity-spike/recovery/export/ExportedProject/Library
+            work/unity-spike/bee-cache
+          key: unity-marksman-library-bee-linux-2022.3.62f1-recoveryv3-v2-${{ hashFiles('scripts/unity_scoped_legacy_gui_patch.py', 'scripts/unity_webgl_template_fix.py', 'scripts/SpikeWebGL.cs', 'scripts/repair_recovered_wav_headers.py') }}
           restore-keys: |
-            unity-marksman-library-linux-2022.3.62f1-recoveryv3-
+            unity-marksman-library-bee-linux-2022.3.62f1-recoveryv3-v2-
       - name: Unity 2022.3 Personal import and Marksman-only WebGL build
         run: bash scripts/unity_open_spike.sh
       - name: Emergency Personal entitlement deactivation
@@ -50,25 +52,37 @@ jobs:
             docker rm -f "$ID" >/dev/null 2>&1 || true
             echo "Emergency deactivation attempted."
           fi
-      - name: Check Library cache size and disk capacity
+      - name: Check imported Library and Bee cache size before saving
         id: library_size
         if: always()
         shell: bash
         run: |
-          DIR="work/unity-spike/recovery/export/ExportedProject/Library"
-          if [ -d "$DIR" ]; then
-            MB=$(du -sm "$DIR" | awk '{print $1}')
-            echo "Library cache directory: ${MB} MiB"
-            # Avoid unbounded GitHub cache uploads and inadvertent disk exhaustion.
-            if [ "$MB" -gt 0 ] && [ "$MB" -le 4096 ]; then
-              echo "can_save=true" >> "$GITHUB_OUTPUT"
-            fi
+          LIB="work/unity-spike/recovery/export/ExportedProject/Library"
+          BEE="work/unity-spike/bee-cache"
+          library_mb=0
+          bee_mb=0
+          if [ -d "$LIB" ]; then library_mb=$(du -sm "$LIB" | awk '{print $1}'); fi
+          if [ -d "$BEE" ]; then bee_mb=$(du -sm "$BEE" | awk '{print $1}'); fi
+          total_mb=$((library_mb + bee_mb))
+          echo "Unity Library: ${library_mb} MiB; Bee cache: ${bee_mb} MiB; total: ${total_mb} MiB"
+          echo "library_mb=$library_mb" >> "$GITHUB_OUTPUT"
+          echo "bee_mb=$bee_mb" >> "$GITHUB_OUTPUT"
+          # GitHub's default repository-wide cache quota is 10 GiB.
+          # Leave room for other caches and prevent unbounded upload costs.
+          if [ "$total_mb" -gt 0 ] && [ "$total_mb" -le 8192 ]; then
+            echo "can_save=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Unity cache outside safe 1..8192 MiB range; not saved. Build state remains in Git history and logs."
+            echo "can_save=false" >> "$GITHUB_OUTPUT"
           fi
-      - name: Save private Unity imported Library cache
+      - name: Save private Unity Library and Bee build cache
         if: ${{ always() && steps.library_size.outputs.can_save == 'true' && steps.library_restore.outputs.cache-hit != 'true' }}
+        timeout-minutes: 15
         uses: actions/cache/save@v4
         with:
-          path: work/unity-spike/recovery/export/ExportedProject/Library
+          path: |
+            work/unity-spike/recovery/export/ExportedProject/Library
+            work/unity-spike/bee-cache
           key: ${{ steps.library_restore.outputs.cache-primary-key }}
       - name: Classify captured editor and WebGL logs
         if: always()
