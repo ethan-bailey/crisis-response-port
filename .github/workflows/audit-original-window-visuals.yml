@@ -1,4 +1,4 @@
-name: Audit original window renderer provenance once
+name: Audit original window renderer and material provenance once
 
 # Read-only/private source audit; only editing this workflow triggers it.
 on:
