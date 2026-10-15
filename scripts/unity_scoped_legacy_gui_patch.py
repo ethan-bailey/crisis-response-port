@@ -55,6 +55,6 @@ def main():
                           "diagnostic_only":"Unity 2022 temporary UNet exclusion; original source retained"})
     for path,content in planned:path.write_text(content,encoding="utf-8")
     args.out.parent.mkdir(parents=True,exist_ok=True)
-    args.out.write_text(json.dumps({"patch_count":7,"modified_files":4,"changes":audit},indent=2)+"\n")
-    for p in audit:print(f"PATCH {p['file']}:{p['line']} {p['old_type']} => {p['new_type']}")
+    args.out.write_text(json.dumps({"patch_count":len(audit),"modified_files":len(planned),"changes":audit},indent=2)+"\n")
+    for p in audit: print('PATCH '+p['file']+' '+str(p.get('line','guard'))+' '+p.get('old_type','legacy UNet')+' => '+p.get('new_type','excluded in Unity 2022'))
 if __name__=="__main__":main()
