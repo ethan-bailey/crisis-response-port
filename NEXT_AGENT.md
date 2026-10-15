@@ -2,6 +2,13 @@
 
 ## Start here
 
+## WASM/browser source-renderer continuation (2026-10-15 20:24 UTC)
+
+On this same PR branch, commits `2a9f1805df6a0be5ddae3c6c0ba97f1e886e65fd` and `38d04afb7834466c1e7236585b318cce9f487ae6` repair the exact original Wood exit-hole Circle.asset renderer's Unity-to-Three handedness conversion: reflect local vertex/normal Z and reverse triangle winding. This preserves original source mesh data, C# ballistic calculations and engine-generated lifetime. `scripts/weapon_smoke.mjs` now checks every recovered position and triangle and verifies source normals if present. A lightweight mathematical geometry check passed for all 100 source faces, and the repository files were read back. **Browser/native CI has not yet run on these new commits; no new deployment was made.** The existing privately hosted version 8 is unchanged. Do not report these modifications as live until verified and published with matching WASM runtime and assets.
+
+Separate Unity Marksman WebGL run `38800542438` (foundation branch) was still executing its actual WebGL build step when checked. An hourly conditional notification was scheduled to report the outcome. Do not edit the separate Unity branch or launch duplicate expensive Actions runs.
+
+
 Browser work: branch `codex/projectile-material-impacts`, draft [PR #9](https://github.com/ethan-bailey/crisis-response-port/pull/9). Last gameplay source: `cd47a520f31a8b96bd1304f6bfc2c4ecd290db04`; subsequent commits through `2175e7e3bc61408aa59062cf9ee3516e581d1991` only changed documentation. This handoff commit is documentation only.
 
 **All PR #9 gameplay updates are now published privately:** https://crisis-response-runtime.craftysnipe13.chatgpt.site
