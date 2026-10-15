@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { createOriginalImpactMeshRenderer } from './original-impact-mesh.mjs';
+import { sourceEffectAge } from './source-effect-clock.mjs';
 export async function loadWeaponData(){
  const r=await fetch('./assets/weapon-runtime.json.gz');if(!r.ok)throw new Error('Original weapon settings unavailable');
  return new Response(r.body.pipeThrough(new DecompressionStream('gzip'))).json();
@@ -20,23 +21,23 @@ export function createWeaponEffects(data,scene,ballisticsData){
  for(const n of data.magazineVisual.nodes){const g=magNodes.get(n.gameObjectFileID);(magNodes.get(n.parentGameObjectFileID)||magRoot).add(g);}
  for(const r of data.magazineVisual.renderers)new THREE.TextureLoader().loadAsync('./assets/weapon-runtime/M4-magazine/'+r.texture).then(t=>{t.colorSpace=THREE.SRGBColorSpace;const m=new THREE.MeshBasicMaterial({map:t,transparent:true,alphaTest:.015,side:THREE.DoubleSide,depthWrite:false});const mesh=new THREE.Mesh(new THREE.PlaneGeometry(1,1),m);mesh.renderOrder=3;magNodes.get(r.gameObjectFileID).add(mesh);});
  const duration=clip.m_AnimationClipSettings.m_StopTime,active=[];
- function flash(event){
+ function flash(event,sourceTime){
   const group=new THREE.Group(),root=flashNodes.find(n=>n.fields.m_Father.fileID==='0'),child=flashNodes.find(n=>n!==root),f=child.fields;
   const holder=new THREE.Group(),q=f.m_LocalRotation;holder.quaternion.set(-q.x,-q.y,q.z,q.w);holder.scale.set(f.m_LocalScale.x,f.m_LocalScale.y,f.m_LocalScale.z).multiplyScalar(data.weapon.muzzleFlashScale);group.add(holder);
   const m=new THREE.MeshBasicMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,alphaTest:.001});const mesh=new THREE.Mesh(new THREE.PlaneGeometry(1,1),m);holder.add(mesh);
   const p=event.muzzle,r=event.rotation;group.position.set(p[0],p[1],-p[2]);group.quaternion.set(-r[0],-r[1],r[2],r[3]);scene.add(group);
-  const item={group,mesh,material:m,start:performance.now(),texture:null};active.push(item);texturePromise.then(t=>{item.texture=t.clone();item.texture.needsUpdate=true;m.map=item.texture;m.needsUpdate=true;});
+  const item={group,mesh,material:m,start:sourceTime,texture:null,disposed:false};active.push(item);texturePromise.then(t=>{if(item.disposed)return;item.texture=t.clone();item.texture.needsUpdate=true;m.map=item.texture;m.needsUpdate=true;});
  }
- function update(events,magazinePose){
+ function update(events,magazinePose,sourceTime){
   if(magazinePose){const {p,q,visible}=magazinePose;magRoot.visible=visible;magRoot.position.set(p[0],p[1],-p[2]);magRoot.quaternion.set(-q[0],-q[1],q[2],q[3]);}
   for(const e of events){
    if(e.type==='audio'&&context&&buffers.has(e.value)){const src=context.createBufferSource(),gain=context.createGain();src.buffer=buffers.get(e.value);gain.gain.value=data.audio[e.value].volume;src.connect(gain).connect(context.destination);src.onended=()=>{src.disconnect();gain.disconnect();};src.start();}
    if(e.type==='materialEffect'&&context&&buffers.get(e.value.clip)){const src=context.createBufferSource(),gain=context.createGain();src.buffer=buffers.get(e.value.clip);gain.gain.value=e.value.volume;src.connect(gain).connect(context.destination);src.onended=()=>{src.disconnect();gain.disconnect();};src.start();}
-   if(e.type==='shot')flash(e.value);
+   if(e.type==='shot')flash(e.value,e.time);
   }
   originalImpactMeshes.update(events);
-  for(let i=active.length-1;i>=0;i--){const item=active[i],time=(performance.now()-item.start)/1000;
-   if(time>=duration){scene.remove(item.group);item.mesh.geometry.dispose();item.material.dispose();item.texture?.dispose();active.splice(i,1);continue;}
+  for(let i=active.length-1;i>=0;i--){const item=active[i],time=sourceEffectAge(sourceTime,item.start);
+   if(time>=duration){item.disposed=true;scene.remove(item.group);item.mesh.geometry.dispose();item.material.dispose();item.texture?.dispose();active.splice(i,1);continue;}
    if(!item.texture)continue;
    let frame=curve[0];for(const key of curve)if(key.time<=time)frame=key;
    const sprite=data.flash.sprites[frame.value.guid][0].fields,rect=sprite.m_RD.textureRect,ppu=sprite.m_PixelsToUnits,pivot=sprite.m_Pivot,tex=item.texture;
