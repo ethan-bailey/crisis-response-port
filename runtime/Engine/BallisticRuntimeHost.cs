@@ -43,7 +43,7 @@ public sealed class BallisticRuntimeHost {
    // material methods, preserving the existing input clock and scope.
    m.Awake();if(m.isActiveAndEnabled){m.Start();started.Add(m);}materials.Add(m);scene.objects[id]=m;
    m.onInteractionBegin.AddListener(p=>{entryEnergy[p.GetInstanceID()]=p.Energy;contactCount++;});
-   m.onInteractionEnd.AddListener(p=>{var info=new{sourceObject=goid,sourceComponent=id,name=go.name,material=m.properties?.name,entryEnergy=entryEnergy.GetValueOrDefault(p.GetInstanceID(),p.Energy),exitEnergy=p.Energy,status=p.Status.ToString(),p.PenetrationDistance,position=new[]{p.Position.x,p.Position.y,p.Position.z},projectile=p.Id,fragment=p.HasFragmented};if(interactions.Count>=32)interactions.RemoveAt(0);interactions.Add(info);Emit("materialInteraction",info);});
+   m.onInteractionEnd.AddListener(p=>{var info=new{sourceObject=goid,sourceComponent=id,name=go.name,material=m.properties?.name,entryEnergy=entryEnergy.GetValueOrDefault(p.GetInstanceID(),p.Energy),exitEnergy=p.Energy,status=p.Status.ToString(),p.PenetrationDistance,position=new[]{p.Position.x,p.Position.y,p.Position.z},projectile=p.Id,fragment=p.HasFragmented};if(interactions.Count>=32)interactions.RemoveAt(0);interactions.Add(info);Emit("materialInteraction",info);entryEnergy.Remove(p.GetInstanceID());});
    if(m is BallisticWindow window){var texture=(Texture2D)typeof(BallisticWindow).GetField("textureInstance",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(window);texture.Changed=(t,x,y,w,h,pixels)=>Emit("windowStamp",new{sourceObject=goid,texture=t.SourceID,x,y,width=w,height=h,rgba=Convert.ToBase64String(pixels)});}
   }
   var data=c.GetProperty("meshes");foreach(var record in c.GetProperty("meshColliders").EnumerateArray()){
@@ -58,6 +58,12 @@ public sealed class BallisticRuntimeHost {
  public BallisticMaterialProperties Property(string id)=>properties[id];
  public void Emit(string type,object value)=>effects.Emit(type,value);
  public void RegisterProjectile(Projectile p){fragmentCount++;register(p);Emit("fragmentSpawn",new{p.Id,p.Mass,p.BaseVelocity});}
- public void Step(){scene.world.MakeCurrent();foreach(var m in materials)if(m.isActiveAndEnabled){if(started.Add(m))m.Start();m.Update();}foreach(var e in scene.world.Objects.OfType<BallisticHitEffect>().Where(e=>e.isActiveAndEnabled).ToArray())e.Step();foreach(var e in scene.world.Objects.OfType<BallisticHitMeshEffect>().Where(e=>e.isActiveAndEnabled).ToArray())e.StepPresentation();}
+ public void Step(){scene.world.MakeCurrent();
+  // Impact energy is presentation-only telemetry. The original synchronous
+  // onInteractionEnd consumes completed entries immediately. Deferred exits
+  // never invoke onInteractionEnd, so their unused entries expire here rather
+  // than retaining every suspended projectile for the life of the WASM app.
+  entryEnergy.Clear();
+  foreach(var m in materials)if(m.isActiveAndEnabled){if(started.Add(m))m.Start();m.Update();}foreach(var e in scene.world.Objects.OfType<BallisticHitEffect>().Where(e=>e.isActiveAndEnabled).ToArray())e.Step();foreach(var e in scene.world.Objects.OfType<BallisticHitMeshEffect>().Where(e=>e.isActiveAndEnabled).ToArray())e.StepPresentation();}
  public object Snapshot()=>new{contacts=contactCount,fragments=fragmentCount,materials=materials.Count,windows=windowCount,loadedMeshColliders,unsupportedColliders,last=interactions.LastOrDefault()};
 }
