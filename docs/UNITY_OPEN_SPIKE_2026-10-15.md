@@ -1,109 +1,95 @@
-# Unity 2022.3 LTS open/import spike — 2026-10-15
+# Unity 2022.3 LTS recovery open spike — 2026-10-15
 
-## Decision
+## Verdict: PARTIALLY OPENED, DOES NOT COMPILE — CONDITIONAL NO-GO FOR WEBGL TODAY
 
-**Blocked** — editor license validation failed; project importability remains unmeasured.
+**Recovered project reached Unity 2022.3.62f1's AssetDatabase, API Updater and C# compiler, so the original licensing barrier was removed.** The editor did **not** finish a clean import: the firstpass script assembly failed with **4 distinct removed-API errors**, printed **12 times** in the log. This is real evidence that the exported Unity project is readable enough to enter Unity's compilation pipeline, **not** evidence that all scripts/scenes run. No Marksman WebGL build was attempted, appropriately, because compilation failed.
 
-**Conditional NO-GO / hold** for switching the main track to Unity WebGL now. The recovered project has not been proven to import, compile and build. This is *not* a finding that Unity recovery is impossible; continue existing WASM work until a licensed Unity import produces project-level evidence.
+**Decision:** Do not switch the primary port track to Unity WebGL on the basis of this spike. Continue source-backed WASM development while keeping the licensed Unity project viable for a *separate, bounded repair evaluation*. These failures do **not** establish that Unity would be an effective rewrite or that engine replacement is the only road.
 
-This is a single-session import diagnosis. No proprietary asset or recovered Unity project is committed in Git history; only this report, scripts and workflow are.
+## Runs and provenance
 
-## Provenance and preservation
+- Original recovery record: [RECOVERY_RUN_2026-10-14.md](RECOVERY_RUN_2026-10-14.md).
+- Original recovered 2017.2.0f3 project: approximately 7,231 files (169 MiB), Unity `Assets/`, `ProjectSettings/`, `Packages/`, `Marksman range` among build-settings scenes.
+- Source ZIP was **read from existing private release**, not re-uploaded: [recovery-preservation-2026-10-15](https://github.com/ethan-bailey/crisis-response-port/releases/tag/recovery-preservation-2026-10-15). Verified SHA-256: `cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d`.
+- First Personal activation attempt: [run 38763803865](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38763803865). 2022.3.13f1 `Unity.Licensing.Client` rejected `--activate-all --include-personal` (`CommandLine.UnknownOptionError`); 2022.3.62f1 fallback image then exhausted Docker disk. Neither reached project import.
+- Successful-activation **project diagnostic**: [run 38764820365](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38764820365), artifact **`unity-2022-personal-open-spike-evidence`** ID `11990121069`, expires **2026-11-14**. Contains full 1,559-line `import.log`, `classification.json`, sanitized license logs, environment/status and scene inventory. `import.log` has the actual compiler output.
+- No recovered game binaries, original archive, compiled WebGL artifact or proprietary assets were written to Git history; repository must stay private while the source ZIP is attached to its private release.
 
-- Recovery source: [2026-10-14 recovery record](RECOVERY_RUN_2026-10-14.md).
-- Original GitHub Actions run: [38582072502](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38582072502); artifact \`crisis-response-recovery-direct-v3-1\`, ID \`11903811738\`.
-- Original artifact expiry: **2026-10-28 14:38:58 UTC**; expected SHA-256 \`cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d\`.
-- Verified source archive: \`true\`; privately preserved as release attachment: \`true\`.
-- Target private release: [recovery-preservation-2026-10-15](https://github.com/ethan-bailey/crisis-response-port/releases/tag/recovery-preservation-2026-10-15). **Do not change repository visibility while third-party assets are attached**.
-- Diagnostic run: [GitHub Actions run 38764820365](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38764820365).
+## Headless editor and Personal activation
 
-## Environment and editor
+| Check | Observed result |
+| --- | --- |
+| Linux GitHub-hosted runner | Ubuntu 24.04, 2026-10-15 |
+| Docker image | `unityci/editor:ubuntu-2022.3.62f1-base-3` |
+| Disk after runner cleanup | `37,564,948 KiB` free before project/image (approx. 35.8 GiB) |
+| Docker image pull | Exit `0`; verified downloaded |
+| Unity Personal activation via credentials | **Succeeded**, activation exit `0` |
+| Project opened in headless editor | **Partial** — API updater and C# compilation reached |
+| Unity batch import exit | `1`; not a successful import |
+| WebGL module | Not installed (base image); compile blocked build first |
+| Marksman range WebGL build | **Not attempted** |
 
-- Runner: \`Linux_6.17.0-1022-azure_x86_64\`; initial free disk: \`37564948\` KiB.
-- Unity docker image: \`unityci/editor:ubuntu-2022.3.62f1-base-3\`. Image pull exit: \`0\`.
-- Editor executable available: \`true\`. License secret supplied: \`true\`. Import invoked: \`true\`.
-- Unity import exit code: \`1\`. Import log present: \`true\` (1559 lines).
-- WebGL module selection: \`false\`; build attempted: \`false\`.
+Licensing-client excerpt:
 
-## Failure classification (log-line counts, overlapping categories)
+```text
+Trying to activate all seats ...
+Activation processed successfully.
+Status: [200] SameMachine
+Trying to update entitlement license file ...
+Successfully updated UnityEntitlementLicense.xml!
+```
 
-| Category | Observed log lines |
-| --- | ---: |
-| Missing/broken scripts or GUIDs | 0 |
-| C# compiler errors | 12 |
-| Obsolete/API errors (can overlap C#) | 12 |
-| Asset import failures | 0 |
-| Unity licensing diagnostics | 3 |
-| Editor/container/environment failures | 0 |
-| Potential IL2CPP-hostile patterns (references only) | 3 |
+Editor launch uses `/opt/unity/Editor/Unity -batchmode -nographics -quit -projectPath /spike/recovery/export/ExportedProject -logFile /spike/import.log`. The Editor printed some `No ULF license found` / token-cache warnings while also reporting successful Personal entitlement resolution. Those warnings **did not stop asset processing or compilation** and are not the cause of the import failure.
 
-**Important:** Zero when no import log exists means **not measured**, not zero project errors. Compiler errors count log lines, not necessarily distinct root causes. Original AssetRipper archive upload warned of case-insensitive filename collisions; those occurred at artifact creation and are *not* Unity import failures without corresponding editor errors.
+Compiler evidence:
 
-### Actual log excerpts
-
-**C# compile** (12):
-
-\`\`\`text
+```text
+[API Updater] Update finished with success in 5484 ms (0/4 assembly(ies) updated).
+[ScriptCompilation] Requested script compilation because: Assembly Definition File(s) changed
+DisplayProgressbar: Compiling Scripts
 Assets/Plugins/Assembly-CSharp-firstpass/ForcedReset.cs(4,26): error CS0619: 'GUITexture' is obsolete: 'GUITexture has been removed. Use UI.Image instead.'
 Assets/Plugins/Assembly-CSharp-firstpass/UnityStandardAssets/Utility/FPSCounter.cs(5,27): error CS0619: 'GUIText' is obsolete: 'GUIText has been removed. Use UI.Text instead.'
 Assets/Plugins/Assembly-CSharp-firstpass/UnityStandardAssets/Utility/FPSCounter.cs(18,11): error CS0619: 'GUIText' is obsolete: 'GUIText has been removed. Use UI.Text instead.'
 Assets/Plugins/Assembly-CSharp-firstpass/UnityStandardAssets/Utility/SimpleActivatorMenu.cs(7,10): error CS0619: 'GUIText' is obsolete: 'GUIText has been removed. Use UI.Text instead.'
-\`\`\`
+Scripts have compiler errors.
+```
 
-**Scripts/GUID** (0):
+## Failure categories and counts
 
-No matching excerpt in captured import log.
+| Category | Count / interpretation |
+| --- | --- |
+| C# compile | **4 unique CS0619 diagnostics**, repeated **12 times** in Unity's combined log; **3 source files** affected |
+| Obsolete 2017 → 2022 APIs | **4 unique occurrences:** `GUITexture` (1) and `GUIText` (3); same four as C# errors, not additional errors |
+| Missing/broken scripts or GUID references | **0 matching log lines so far**; **not an exhaustive scene/GUID audit**, because compilation failed early |
+| Asset import | **0 matched failures in captured log**, but overall project import **did not finish** |
+| Other C# diagnostics | **0 observed beyond CS0619 in this firstpass compilation phase**; later assemblies may reveal more |
+| IL2CPP-hostile dynamic code | **Not established.** Three `System.Reflection.Emit` lines refer to Unity reference-assembly compile flags, not evidence of game `Reflection.Emit` use |
+| Editor/licensing | Personal activation **succeeded**. Editor emits **3 licensing warning/error lines** about ULF/token cache; not fatal to compilation |
 
-**API obsolescence** (12):
+**Log counts are lines, not a count of independent root causes.** The project is partially importable and blocked at the legacy firstpass assembly. Do not claim there are only four problems in the entire game.
 
-\`\`\`text
-Assets/Plugins/Assembly-CSharp-firstpass/ForcedReset.cs(4,26): error CS0619: 'GUITexture' is obsolete: 'GUITexture has been removed. Use UI.Image instead.'
-Assets/Plugins/Assembly-CSharp-firstpass/UnityStandardAssets/Utility/FPSCounter.cs(5,27): error CS0619: 'GUIText' is obsolete: 'GUIText has been removed. Use UI.Text instead.'
-Assets/Plugins/Assembly-CSharp-firstpass/UnityStandardAssets/Utility/FPSCounter.cs(18,11): error CS0619: 'GUIText' is obsolete: 'GUIText has been removed. Use UI.Text instead.'
-Assets/Plugins/Assembly-CSharp-firstpass/UnityStandardAssets/Utility/SimpleActivatorMenu.cs(7,10): error CS0619: 'GUIText' is obsolete: 'GUIText has been removed. Use UI.Text instead.'
-\`\`\`
+## Marksman range WebGL build
 
-**Asset import** (0):
+**Not attempted.** Script compilation failed and the spike stopped at that gate, as requested. The base Unity image did not include the WebGL module. The next possible build evaluation would require a licensed WebGL image, selection of only the Marksman scene and another *explicitly authorized* bounded attempt; this spike did not repair code or build.
 
-No matching excerpt in captured import log.
+## Rough repair estimate (low confidence)
 
-**Licensing** (3):
+- **Initial observed blockers:** The four GUIText/GUITexture references are small, localized Unity API migrations; an experienced developer may address the known firstpass errors in **hours**.
+- **Whole project compilation and correct 2017-to-2022 scene/game behavior:** **Days or longer, unknown**. Subsequent assembly, asset and runtime errors are hidden behind the firstpass failure. There is **no evidence supporting “effectively a rewrite”** yet, nor evidence that a complete WebGL port is only hours away.
+- **Port-path recommendation:** **NO-GO for promoting Unity WebGL as the primary track today**; **GO for considering another scoped compatibility assessment** once a repair phase is explicitly approved. Keep ongoing WASM work progressing.
 
-\`\`\`text
-[Licensing::Module] Error: Access token is unavailable; failed to update
-[Licensing::Client] Error: Code 500 while processing request (status: Unable to update licenses. Errors: No ULF license found.,Token not found in cache)
-[Licensing::Client] Error: Code 500 while updating license in client (status: Unable to update licenses. Errors: No ULF license found.,Token not found in cache)
-\`\`\`
+## Seat-return cleanup exception — requires verification
 
-**Environment** (0):
+**Important:** Although activation succeeded, the originally scripted seat return did *not* succeed:
 
-No matching excerpt in captured import log.
+```text
+An error occured while trying to return the ULF license. Ulf license file not found (.../Unity_lic.ulf) (1404)
+[Licensing::Module] Error: Failed to return entitlement license
+[Licensing::Module] Error: Serial number unavailable for ULF return; skipping operation
+```
 
-**IL2CPP risk** (3):
+The editor used a **Unity entitlement XML license**, so the `--return-ulf` path was inappropriate. In response a separate [Personal entitlement deactivation run](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38766883502) was started with the correct `--deactivate-all --username / --password` command (and `--show-seats` verification). **Do not assume the Personal seat has been returned until that job's evidence is checked.** If still active, use Unity ID seat management to release it. This should be corrected in any future license-bearing workflow before execution.
 
-\`\`\`text
--r:"/opt/unity/Editor/Data/UnityReferenceAssemblies/unity-4.8-api/Facades/System.Reflection.Emit.ILGeneration.dll"
--r:"/opt/unity/Editor/Data/UnityReferenceAssemblies/unity-4.8-api/Facades/System.Reflection.Emit.Lightweight.dll"
--r:"/opt/unity/Editor/Data/UnityReferenceAssemblies/unity-4.8-api/Facades/System.Reflection.Emit.dll"
-\`\`\`
+## Stop condition / reproducibility
 
-## Marksman range WebGL test
-
-Not attempted. Reason: \`import_or_compilation_failed\`.
-
-The build driver, if reached, selects exactly one scene with filename containing \`Marksman\` from Unity's AssetDatabase; no other scenes are included and no original gameplay code was altered.
-
-## Repair estimate
-
-**Unknown**; a license blocker says nothing about the effort to repair the recovered project.
-
-## Reproduction and logs
-
-- Workflow: \`.github/workflows/unity-open-spike.yml\`.
-- Diagnostics: \`scripts/classify_unity_spike.py\` and \`scripts/report_unity_spike.py\`.
-- Action artifact: \`unity-2022-open-spike-evidence\` includes \`import.log\`, \`webgl.log\` if attempted, \`status.env\`, \`classification.json\`, scene inventory and system/disk notes.
-- No Unity fixes, third-party assets or compiled game binaries were committed.
-
-## Stop condition
-
-One attempt in one working session. If a valid editor/license could not be obtained, this is **infrastructure blocked**, not a conclusive assessment of game recoverability.
+One project diagnosis, no code or asset repair. Workflow: `.github/workflows/unity-open-spike.yml`; script `scripts/unity_open_spike.sh`; classifier `scripts/classify_unity_spike.py`. Original private archive remains outside Git history. Full logs in [run 38764820365](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38764820365).
