@@ -10,11 +10,17 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
   } : {}) });
   const page = await browser.newPage({ viewport: { width: 852, height: 393 }, deviceScaleFactor: 3, hasTouch: true });
   const errors = [];
+  let releaseSidearm;const sidearmGate=new Promise(resolve=>releaseSidearm=resolve);
+  await page.route('**/assets/weapons/Glock-18/weapon.json',async route=>{await sidearmGate;await route.continue();});
+  const textureRequests=new Map();page.on('request',r=>{if(r.url().includes('/assets/operator/skins/'))textureRequests.set(r.url(),(textureRequests.get(r.url())||0)+1);});
   page.on('pageerror', e => errors.push(e.message));
   try {
-    await page.goto('http://127.0.0.1:8000/game/', { waitUntil: 'networkidle', timeout: 90000 });
+    await page.goto('http://127.0.0.1:8000/game/', { waitUntil: 'domcontentloaded', timeout: 90000 });
     await page.waitForFunction(() => window.__gameState?.().loaded || document.querySelector('#error').style.display === 'block', null, { timeout: 90000 });
     assert.equal(await page.evaluate(() => window.__gameState?.().loaded), true, await page.locator('#error').textContent());
+    assert.equal(await page.evaluate(()=>window.__gameState().weaponsLoaded),false,'Playable while inactive weapon is blocked');
+    assert.ok([...textureRequests.values()].every(count=>count===1),'One request per shared character texture');
+    releaseSidearm();
     const buttons = page.locator('#controls button');
     for (const button of await buttons.all()) {
       const box = await button.boundingBox();
@@ -31,6 +37,10 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
     assert.equal(await right.evaluate(el => el.classList.contains('active')), false, 'Release outside button clears input');
     assert.ok(await page.evaluate(() => window.__gameState().playerX) > start, 'Movement input reaches prototype');
 
+    await page.mouse.move(800,160);
+    await page.keyboard.down('ShiftLeft');await page.keyboard.down('KeyD');
+    await page.waitForFunction(()=>window.__gameState().sprintBlend>.7,null,{timeout:30000});
+    await page.keyboard.up('KeyD');await page.keyboard.up('ShiftLeft');
     if (engine === 'chromium') {
       const cdp = await page.context().newCDPSession(page);
       const sprintBox = await page.locator('#sprint').boundingBox();
@@ -59,7 +69,7 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
   } catch (error) {
     results.push({ engine, passed: false, error: String(error), pageErrors: errors });
     process.exitCode = 1;
-  } finally { await browser.close(); }
+  } finally { releaseSidearm();await browser.close(); }
 }
 fs.writeFileSync('iphone-input-smoke.json', JSON.stringify(results, null, 2));
 console.log(JSON.stringify(results, null, 2));

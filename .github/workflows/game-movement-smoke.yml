@@ -10,6 +10,8 @@ on:
       - "scripts/contact_physics_smoke.mjs"
       - "scripts/vendor_physics.mjs"
       - "scripts/animation_pose_test.mjs"
+      - "scripts/game_loading_test.mjs"
+      - "scripts/build_scene_binary.py"
       - "scripts/export_operator_animations.py"
       - "runtime/**"
       - "scripts/browser_input_test.mjs"
@@ -37,6 +39,7 @@ jobs:
         run: |
           npm ci --prefix game --ignore-scripts --no-audit --no-fund
           node scripts/vendor_physics.mjs
+          python3 scripts/build_scene_binary.py game/assets/mission01.obj game/assets/mission01.crg
       - name: Build original C# input runtime beside the game prototype
         run: |
           cp game/browser-input.mjs runtime/Browser/wwwroot/browser-input.mjs
@@ -51,7 +54,7 @@ jobs:
           npm install --no-audit --no-fund playwright@1.55.0
           npx playwright install --with-deps chromium webkit
       - name: Verify independent touch ownership and lifecycle resets
-        run: node --test scripts/browser_input_test.mjs scripts/animation_pose_test.mjs
+        run: node --test scripts/browser_input_test.mjs scripts/animation_pose_test.mjs scripts/game_loading_test.mjs
       - name: Serve the separate game build
         run: |
           python3 -m http.server 8000 --directory work/game-site >/tmp/crisis-game-server.log 2>&1 &

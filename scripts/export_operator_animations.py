@@ -47,6 +47,11 @@ def main():
     apply_root_motion=bool(int(re.search(r"m_ApplyRootMotion: (\d+)",animator).group(1)))
     output={"source":"Recovered Unity AnimationClip YAML","animator":{"applyRootMotion":apply_root_motion,
         "sourcePrefab":"Assets/Resources/characters/Operator.prefab","sourceSha256":hashlib.sha256(prefab_path.read_bytes()).hexdigest()},"clips":{}}
+    controller_path=root/"Assets/AnimatorController/Character animator.controller"
+    controller=controller_path.read_text()
+    tree=next(b for b in re.split(r"(?m)^--- !u!",controller) if b.startswith('206 ') and 'm_BlendParameter: MoveSpeed' in b)
+    thresholds=[float(x) for x in re.findall(r"m_Threshold: ([-+0-9.eE]+)",tree)]
+    output['locomotion']={'thresholds':thresholds,'controllerSha256':hashlib.sha256(controller_path.read_bytes()).hexdigest()}
     for name in names:
         p=assets/name
         if not p.is_file():continue

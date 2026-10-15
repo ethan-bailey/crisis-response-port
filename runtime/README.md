@@ -177,3 +177,22 @@ directions, preservation of standing/kneeling/sprint poses, and the rendered
 pelvis's offset during browser movement. This scoped loop-travel handling is not
 an implementation of the complete original Unity Animator, transitions, IK, or
 Rigidbody render interpolation.
+
+### Sprint and startup corrections
+
+The forward blend maps the recovered MoveSpeed thresholds [0, 0.5] to weights
+[0, 1]. Walk/sprint share normalized gait phase with weighted clip duration;
+changing speed keeps stride phase continuous. Raw curves are unchanged. This
+remains a selected animation adapter, not the complete original Animator.
+
+Input and PhysX startup, scene loading and character assets now overlap. Shared
+textures reuse one in-flight promise and GPU texture; skin/weapon textures load
+concurrently. The inactive sidearm loads after play becomes available. Loading
+stage timings are exposed in window.__loadingTimings for browser evidence.
+
+The original OBJ is repacked by scripts/build_scene_binary.py into an indexed
+binary (1,855,400 vs 5,627,421 bytes). Every triangle corner's original Float32
+position, normal and UV is compared against the OBJ in regression tests. Generate
+the binary before local serving; it is generated automatically in browser CI.
+Existing browser/Blazor HTTP and compiled-WASM caches remain in use; no stale
+cross-deployment application cache or service worker is introduced.

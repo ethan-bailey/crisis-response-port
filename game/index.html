@@ -23,10 +23,9 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 <div id="controls"><div class="cluster"><button id="left" data-action="left" aria-label="Move left">◀ LEFT</button><button id="right" data-action="right" aria-label="Move right">RIGHT ▶</button></div><div class="cluster"><button id="kneel" data-action="kneel" aria-label="Kneel">KNEEL</button><button id="stand" data-action="stand" aria-label="Stand">STAND</button><button id="sprint" data-action="sprint" aria-label="Sprint">SPRINT</button><button id="fire" disabled aria-label="Firing is not implemented">FIRE · PENDING</button><button id="reload" disabled aria-label="Reloading is not implemented">RELOAD · PENDING</button><button id="swap" disabled aria-label="Weapon switching is not implemented">SWAP · PENDING</button></div></div>
 <script type="module">
 import * as THREE from "three";
-import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
+import { promiseCache, decodeScene } from "./loading.mjs";
 import { BrowserInput } from "./browser-input.mjs";
-import { createContactPhysics } from "./contact-physics.mjs";
-import { posePosition } from "./animation-pose.mjs";
+import { posePosition, locomotionBlend, advanceGait } from "./animation-pose.mjs";
 
 const stage=document.querySelector("#stage"), status=document.querySelector("#status"), positionLabel=document.querySelector("#position"), errorBox=document.querySelector("#error");
 const scene=new THREE.Scene(); scene.background=new THREE.Color(0x11151b);
@@ -38,7 +37,9 @@ const camera=new THREE.OrthographicCamera(-viewHeight*innerWidth/innerHeight/2,v
 camera.position.set(-3+(innerWidth>=innerHeight?7.5:0),2.5,60);camera.lookAt(camera.position.x,2.5,0);
 const world=new THREE.Group();scene.add(world);
 const character=new THREE.Group();character.name="Original Operator prefab";scene.add(character);
-const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,physicsState=null,physicsTime=0;
+const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,physicsState=null,physicsTime=0,sprintBlend=0,gaitPhase=0;
+const loadStart=performance.now(),loadingTimings={};window.__loadingTimings=loadingTimings;
+const markLoaded=name=>loadingTimings[name]=performance.now()-loadStart;
 function showError(e){errorBox.style.display="block";errorBox.textContent=String(e?.stack||e);status.textContent="Build failed to load; see error details."}
 const rawActions={left:false,right:false,sprint:false,fire:false,kneel:false,stand:false,magazine:false,switchWeapons:false};
 const input = new BrowserInput({onChange(action,pressed){rawActions[action]=pressed;document.querySelector(`[data-action="${action}"]`)?.classList.toggle("active",pressed)}});
@@ -61,18 +62,26 @@ input.bindLifecycle(window, document);
 function setMeshMaterials(root){root.traverse(o=>{if(o.isMesh){o.material=new THREE.MeshStandardMaterial({color:0x858b91,roughness:1,metalness:0,side:THREE.DoubleSide});o.castShadow=false;o.receiveShadow=true}})}
 async function load(){
  try{
-  const [objResponse,manifestResponse,animationResponse,m4Response,glockResponse]=await Promise.all([fetch("./assets/mission01.obj"),fetch("./assets/operator/operator.json"),fetch("./assets/operator/animations.json"),fetch("./assets/weapons/M4A1/weapon.json"),fetch("./assets/weapons/Glock-18/weapon.json")]);
-  if(!objResponse.ok)throw new Error("Mission 01 geometry missing: HTTP "+objResponse.status);
-  if(!manifestResponse.ok)throw new Error("Original Operator manifest missing: HTTP "+manifestResponse.status);
-  if(!animationResponse.ok)throw new Error("Original Operator animation data missing: HTTP "+animationResponse.status);
-  if(!m4Response.ok||!glockResponse.ok)throw new Error("Original M4A1/Glock weapon manifest is missing.");
-  const manifest=await manifestResponse.json();
-  const animationData=await animationResponse.json();
-  const weaponData={"M4A1":await m4Response.json(),"Glock-18":await glockResponse.json()};
-  const objText=await objResponse.text();
-  sceneMesh=new OBJLoader().parse(objText);setMeshMaterials(sceneMesh);sceneMesh.name="Recovered Mission 01 combined mesh";world.add(sceneMesh);
-  sceneBounds=new THREE.Box3().setFromObject(sceneMesh);
+  markLoaded("start");
+  status.textContent="Loading original character and runtimes…";
+  const json=async url=>{const r=await fetch(url);if(!r.ok)throw new Error(url+": HTTP "+r.status);return r.json();};
+  const runtimeReady=initializeOriginalRuntime().then(()=>markLoaded("inputReady"));
+  const manifestReady=json("./assets/operator/operator.json");
+  const animationReady=json("./assets/operator/animations.json");
+  const physicsReady=Promise.all([import("./contact-physics.mjs"),json("./assets/contact-physics.json"),manifestReady]).then(async([module,data,manifest])=>{
+   contactPhysics=await module.createContactPhysics(data,{x:playerX,y:playerY,z:manifest.nodes.find(n=>!n.parentGameObjectFileID).position[2]});markLoaded("physicsReady");
+  });
+  const geometryReady=(async()=>{
+   const r=await fetch("./assets/mission01.crg");if(!r.ok)throw new Error("Original scene binary missing: "+r.status);
+   const data=decodeScene(await r.arrayBuffer()),geometry=new THREE.BufferGeometry();
+   geometry.setAttribute("position",new THREE.BufferAttribute(data.positions,3));geometry.setAttribute("normal",new THREE.BufferAttribute(data.normals,3));geometry.setAttribute("uv",new THREE.BufferAttribute(data.uvs,2));geometry.setIndex(new THREE.BufferAttribute(data.indices,1));
+   sceneMesh=new THREE.Mesh(geometry);setMeshMaterials(sceneMesh);sceneMesh.name="Recovered Mission 01 combined mesh";world.add(sceneMesh);
+   sceneBounds=new THREE.Box3().setFromObject(sceneMesh);markLoaded("sceneReady");
+  })();
+  const startupReady=Promise.all([runtimeReady,physicsReady,geometryReady]);startupReady.catch(()=>{});
+  const [manifest,animationData]=await Promise.all([manifestReady,animationReady]);
   const texLoader=new THREE.TextureLoader();
+  const texture=promiseCache(async url=>{const tex=await texLoader.loadAsync(url);tex.colorSpace=THREE.SRGBColorSpace;return tex;});
   const nodeById=new Map(),nodeByPath=new Map(),baseTransforms=new Map();
   for(const node of manifest.nodes){
    const group=new THREE.Group();group.name=node.name;group.position.fromArray(node.parentGameObjectFileID?node.position:[0,0,0]);group.quaternion.fromArray(node.rotation);group.scale.fromArray(node.scale);
@@ -84,31 +93,30 @@ async function load(){
    (parent||character).add(group);
   }
   let textured=0;
-  for(const limb of manifest.limbs){
-   const parent=nodeById.get(limb.gameObjectFileID);if(!parent)continue;
+  const skinReady=Promise.all(manifest.limbs.map(async limb=>{
+   const parent=nodeById.get(limb.gameObjectFileID);if(!parent)return;
    const g=new THREE.PlaneGeometry(1,1);let material;
-   if(limb.texture){const tex=await texLoader.loadAsync("./assets/operator/"+limb.texture);tex.colorSpace=THREE.SRGBColorSpace;material=new THREE.MeshBasicMaterial({map:tex,transparent:true,alphaTest:.025,side:THREE.DoubleSide,depthWrite:false});textured++}
+   if(limb.texture){const tex=await texture("./assets/operator/"+limb.texture);material=new THREE.MeshBasicMaterial({map:tex,transparent:true,alphaTest:.025,side:THREE.DoubleSide,depthWrite:false});textured++}
    else material=new THREE.MeshBasicMaterial({color:0x777777,side:THREE.DoubleSide,transparent:true,opacity:.8,depthWrite:false});
    const part=new THREE.Mesh(g,material);part.name="Original skin: "+limb.name;part.renderOrder=1;parent.add(part);
-  }
+  })).then(()=>markLoaded("skinsReady"));
   const weaponStatus=document.querySelector("#weaponStatus");
   async function buildWeapon(name,pivotPath){
-   const data=weaponData[name],byId=new Map(),byPath=new Map();
+   const data=await json("./assets/weapons/"+name+"/weapon.json"),byId=new Map(),byPath=new Map();
    for(const node of data.nodes){const group=new THREE.Group();group.name=node.name;group.position.fromArray(node.position);group.quaternion.fromArray(node.rotation);group.scale.fromArray(node.scale);byId.set(node.gameObjectFileID,group);byPath.set(node.path,group)}
    const rootNode=data.nodes.find(n=>!n.parentGameObjectFileID),root=byId.get(rootNode.gameObjectFileID);
    root.position.set(0,0,0);
    for(const node of data.nodes){const group=byId.get(node.gameObjectFileID);if(node.parentGameObjectFileID){const parent=byId.get(node.parentGameObjectFileID);if(parent)parent.add(group)}}
-   for(const rendererData of data.renderers){const parent=byId.get(rendererData.gameObjectFileID);if(!parent)continue;let material;
-    if(rendererData.texture){const tex=await texLoader.loadAsync("./assets/weapons/"+name+"/"+rendererData.texture);tex.colorSpace=THREE.SRGBColorSpace;material=new THREE.MeshBasicMaterial({map:tex,transparent:true,alphaTest:.015,side:THREE.DoubleSide,depthWrite:false})}
+   await Promise.all(data.renderers.map(async rendererData=>{const parent=byId.get(rendererData.gameObjectFileID);if(!parent)return;let material;
+    if(rendererData.texture){const tex=await texture("./assets/weapons/"+name+"/"+rendererData.texture);material=new THREE.MeshBasicMaterial({map:tex,transparent:true,alphaTest:.015,side:THREE.DoubleSide,depthWrite:false})}
     else material=new THREE.MeshBasicMaterial({color:0x30343a,side:THREE.DoubleSide,transparent:true,depthWrite:false});
     const mesh=new THREE.Mesh(new THREE.PlaneGeometry(1,1),material);mesh.name="Original "+name+" component: "+rendererData.name;parent.add(mesh);
-   }
+   }));
    const pivot=nodeByPath.get(pivotPath);if(!pivot)throw new Error("Original weapon pivot not found: "+pivotPath);pivot.add(root);
    return {name,root,nodesByPath:byPath,stats:data.stats};
   }
-  weaponInstances["M4A1"]=await buildWeapon("M4A1","Pelvis/Abdomen/Torso/Rifle pivot");
-  weaponInstances["Glock-18"]=await buildWeapon("Glock-18","Pelvis/Abdomen/Torso/Right upper arm/Right lower arm/Right hand/Pistol pivot");
-  weaponInstances["Glock-18"].root.visible=false;
+  const activeWeaponReady=buildWeapon("M4A1","Pelvis/Abdomen/Torso/Rifle pivot").then(w=>{weaponInstances.M4A1=w;markLoaded("activeWeaponReady");});
+  const characterReady=Promise.all([skinReady,activeWeaponReady]);characterReady.catch(()=>{});
   // Original weapon action state machines are not executable yet. Preserve the
   // recovered models without inventing ammo counters, reload timers or shot rays.
   weaponStatus.textContent="Original weapon models · actions pending";
@@ -129,35 +137,37 @@ async function load(){
    const moving=Math.abs(velocity)>.15;
    const backwards=moving&&Math.sign(velocity)!==facingDirection;
    const next=moving?(backwards?"Body walk backward":"Body walk"):(isKneeling?"Body kneel":"Body stand");
-   if(next!==activeAnimation){activeAnimation=next;animationTime=0}
+   if(next!==activeAnimation){activeAnimation=next;animationTime=0;gaitPhase=0}
    const clip=clips[activeAnimation];if(!clip)return;
    animationTime+=dt;
-   const t=clip.duration>0?(clip.loop?animationTime%clip.duration:Math.min(animationTime,clip.duration)):0;
+   let t=clip.duration>0?(clip.loop?animationTime%clip.duration:Math.min(animationTime,clip.duration)):0;
    resetPose();
    if(activeAnimation==="Body walk"&&clips["Body sprint"]){
-    const sprint=clips["Body sprint"],blend=Math.max(0,Math.min(.5,(Math.abs(velocity)-1.5)/(4.2-1.5)*.5));
+    const sprint=clips["Body sprint"],movement=contactPhysics.data.character.movement;
+    const blend=locomotionBlend(velocity,movement.walkSpeed,movement.sprintSpeed,animationData.locomotion.thresholds);sprintBlend=blend;
+    const gait=advanceGait(gaitPhase,dt,blend,clip.duration,sprint.duration);gaitPhase=gait.phase;t=gait.walkTime;
     const walkMap=new Map(clip.tracks.map(tr=>[tr.path+"|"+tr.property,tr]));
     const sprintMap=new Map(sprint.tracks.map(tr=>[tr.path+"|"+tr.property,tr]));
     for(const [keyId,tr] of walkMap){
      const other=sprintMap.get(keyId);if(!other){applyTrack(tr,t,clip);continue}
-     const a=samplePose(tr,t,clip),b=samplePose(other,sprint.duration>0?(animationTime%sprint.duration):0,sprint),group=nodeByPath.get(tr.path);if(!group)continue;
+     const a=samplePose(tr,t,clip),b=samplePose(other,gait.sprintTime,sprint),group=nodeByPath.get(tr.path);if(!group)continue;
      if(tr.property==="rotation"){const q=new THREE.Quaternion(...a).slerp(new THREE.Quaternion(...b),blend);group.quaternion.copy(q)}
      else {const v=new THREE.Vector3(...a).lerp(new THREE.Vector3(...b),blend);if(tr.property==="position")group.position.copy(v);else group.scale.copy(v)}
     }
-   }else for(const track of clip.tracks)applyTrack(track,t,clip);
+   }else {sprintBlend=0;for(const track of clip.tracks)applyTrack(track,t,clip);}
   };
   rightUpperArm=nodeByPath.get("Pelvis/Abdomen/Torso/Right upper arm")||null;
   // WeaponPointer raycasts only against the original AimQuad layer. Its prefab is a 25×5
   // plane at z=-1.5; reproduce that actual target collider for pointer-to-world mapping.
   aimQuad=new THREE.Mesh(new THREE.PlaneGeometry(25,5),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide,colorWrite:false}));
   aimQuad.name="Original Aim quad collider (layer AimQuad)";aimQuad.rotation.x=Math.PI;aimQuad.position.set(playerX+facingDirection*20,2.5,-1.5);scene.add(aimQuad);
+  await Promise.all([startupReady,characterReady]);
   const box=sceneBounds;const size=box.getSize(new THREE.Vector3());viewHeight=Math.max(13,Math.min(16,size.y*.9||13));
   camera.left=-viewHeight*innerWidth/innerHeight/2;camera.right=viewHeight*innerWidth/innerHeight/2;camera.top=viewHeight/2;camera.bottom=-viewHeight/2;camera.updateProjectionMatrix();
-  groundY=1.5;await initializeOriginalRuntime();
-  const physicsResponse=await fetch("./assets/contact-physics.json");if(!physicsResponse.ok)throw new Error("Original collision data missing");
-  contactPhysics=await createContactPhysics(await physicsResponse.json(),{x:playerX,y:playerY,z:manifest.nodes.find(n=>!n.parentGameObjectFileID).position[2]});
-  physicsState=contactPhysics.snapshot();loaded=true;
-  window.__gameState=()=>({loaded,originalInputActive:!!runtimeCall,originalInput:originalInputState,playerX,playerY,velocity,pelvisLocalPosition:nodeByPath.get("Pelvis").position.toArray(),physics:physicsState,physicsTime,facingDirection,aimPoint:character.localToWorld(localAimPoint.clone()).toArray(),limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,weaponActionsImplemented:false,weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
+  physicsState=contactPhysics.snapshot();loaded=true;markLoaded("playable");
+  // The inactive sidearm must not delay play. Fetch it after the first playable frame.
+  requestAnimationFrame(()=>setTimeout(()=>buildWeapon("Glock-18","Pelvis/Abdomen/Torso/Right upper arm/Right lower arm/Right hand/Pistol pivot").then(w=>{w.root.visible=false;weaponInstances["Glock-18"]=w;markLoaded("sidearmReady");}).catch(()=>{weaponStatus.textContent="Original active weapon loaded · sidearm preview unavailable";}),0));
+  window.__gameState=()=>({loaded,originalInputActive:!!runtimeCall,originalInput:originalInputState,playerX,playerY,velocity,pelvisLocalPosition:nodeByPath.get("Pelvis").position.toArray(),physics:physicsState,physicsTime,sprintBlend,gaitPhase,loadingTimings,facingDirection,aimPoint:character.localToWorld(localAimPoint.clone()).toArray(),limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,weaponActionsImplemented:false,weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
   status.textContent="Original C# input and recovered character assets. PhysX ground contacts enabled. Movement/animation remain partial; weapons, damage and AI are pending.";
   positionLabel.textContent="Walk 1.5 m/s · Sprint 4.2 m/s · original spawn X −3";
  }catch(e){showError(e)}
