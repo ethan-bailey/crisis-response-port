@@ -39,6 +39,14 @@ if [[ ! -d "$PROJECT/Assets" || ! -f "$PROJECT/ProjectSettings/ProjectVersion.tx
   exit 0
 fi
 note project_detected true
+if [[ "${UNITY_SPIKE_SCOPED_REPAIR:-0}" == 1 ]]; then
+  python3 scripts/unity_scoped_legacy_gui_patch.py "$PROJECT" --out "$WORK/scoped-patch.json" || {
+    note repair_patch_failed true
+    note build_skipped_reason scoped_patch_guard_failed
+    exit 0
+  }
+  note repair_patch_applied true
+fi
 find "$PROJECT/Assets" -name '*.unity' -type f | sort > "$WORK/scene-inventory.txt"
 find "$PROJECT/Assets" -name '*.cs' -type f | wc -l > "$WORK/project-script-count.txt"
 cat "$PROJECT/ProjectSettings/ProjectVersion.txt" > "$WORK/recovered-project-version.txt"
@@ -138,6 +146,12 @@ python3 scripts/classify_unity_spike.py --log "$WORK/import.log" \
   --status-file "$STATUS" --out "$WORK/pre-build.json" \
   > "$WORK/classify.stdout.log" 2>&1 || true
 ERRORS="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["counts"]["compile"])' "$WORK/pre-build.json" 2>/dev/null || echo 999)"
+# Scoped compatibility measurement ends after one C# compilation attempt;
+# no WebGL build or further fixes in this run.
+if [[ "${UNITY_SPIKE_SCOPED_REPAIR:-0}" == 1 ]]; then
+  note build_skipped_reason scoped_test_import_only
+  exit 0
+fi
 if [[ "$IMPORT" -ne 0 || "$ERRORS" -gt 0 ]]; then
   note build_skipped_reason import_or_compilation_failed; exit 0
 fi
