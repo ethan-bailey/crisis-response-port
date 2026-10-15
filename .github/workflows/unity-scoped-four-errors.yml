@@ -1,10 +1,14 @@
-name: Unity four-error scoped recompilation
+name: Unity compile migration diagnostic
 
 on:
   push:
     paths:
       - ".github/workflows/unity-scoped-four-errors.yml"
       - "scripts/unity_scoped_legacy_gui_patch.py"
+
+concurrency:
+  group: unity-compiler-migration
+  cancel-in-progress: false
 
 permissions:
   contents: read
