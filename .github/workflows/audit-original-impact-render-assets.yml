@@ -6,6 +6,7 @@ on:
     paths:
       - ".github/workflows/audit-original-impact-render-assets.yml"
       - "scripts/audit_original_effect_render_assets.py"
+      - "scripts/extract_original_exit_hole_mesh.py"
   workflow_dispatch:
 permissions:
   contents: read
@@ -31,12 +32,15 @@ jobs:
           printf 'cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d  work/original-effect-audit/crisis-response-recovery-direct-v3-1.zip\n' | sha256sum -c -
           unzip -q work/original-effect-audit/crisis-response-recovery-direct-v3-1.zip 'export/ExportedProject/Assets/*' -d work/original-effect-audit/recovery
           python scripts/audit_original_effect_render_assets.py work/original-effect-audit/recovery/export/ExportedProject --out work/original-effect-audit/effect-refs.json
+          python scripts/extract_original_exit_hole_mesh.py work/original-effect-audit/recovery/export/ExportedProject --out work/original-effect-audit/exit-hole-source.json
           rm -rf work/original-effect-audit/recovery work/original-effect-audit/crisis-response-recovery-direct-v3-1.zip
       - name: Preserve reference metadata only, no recovered assets or binary files
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: source-effect-render-reference-audit
-          path: work/original-effect-audit/effect-refs.json
+          path: |
+            work/original-effect-audit/effect-refs.json
+            work/original-effect-audit/exit-hole-source.json
           retention-days: 14
           if-no-files-found: warn
