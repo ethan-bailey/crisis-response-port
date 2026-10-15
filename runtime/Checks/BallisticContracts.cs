@@ -38,6 +38,15 @@ public static class BallisticContracts {
   var center=target.transform.TransformPoint(target.center);var axis=target.transform.TransformVector(Vector3.right).normalized;float extent=target.transform.TransformVector(new Vector3(target.size.x/2,0,0)).magnitude;
   Check(target.Raycast(new Ray(center+axis*(extent+.01f),-axis),out var hit,extent+.1f),"Source scene collider ray");
   var live=Bullet(hit.point+hit.normal*.005f,-hit.normal);live.StepFlight();int after=JsonSerializer.SerializeToElement(runtime.Snapshot()).GetProperty("contacts").GetInt32();Check(after>contacts,"Live flight did not invoke recovered scene material");
-  return JsonSerializer.Serialize(new{ballistics="PASS",sourceMaterials=386,meshColliders=runtime.loadedMeshColliders,unresolvedBuiltins=runtime.unsupportedColliders,liveSceneContact=true,thinPenetration=true,thickStop=true,impenetrable=true,delayedExitResumes=true,glassHolePassThrough=true,fragmentCount=count,fragmentMassConserved=true,fullUnityParity=false});
+  // Regression: the source exit mesh immediately resets scale after parenting.
+  // A rotated, very thin parent makes generic matrix decomposition fail.
+  var shearParent=new GameObject("Contract thin rotated wall",world).transform;
+  shearParent.localScale=new(8,.25f,.01f);shearParent.localRotation=Quaternion.AngleAxis(27,Vector3.forward);
+  var exitBullet=Bullet(new(1,2,0),new Vector3(1,.4f,.3f));var exitPosition=exitBullet.Position;var exitForward=exitBullet.transform.forward;
+  var exitMesh=new GameObject("Contract original exit mesh",world).AddComponent<BallisticHitMeshEffect>();exitMesh.Play(shearParent,exitBullet);
+  Check((exitMesh.transform.position-exitPosition).magnitude<.0001f,"Exit mesh lost world position under nonuniform scale");
+  Check(Vector3.Dot(exitMesh.transform.forward,exitForward)>.9999f,"Exit mesh lost world rotation under nonuniform scale");
+  Check(exitMesh.transform.parent==shearParent&&Mathf.Abs(exitMesh.transform.localScale.z-.01f)<.000001f,"Source exit mesh scale reset changed");
+  return JsonSerializer.Serialize(new{ballistics="PASS",sourceMaterials=386,meshColliders=runtime.loadedMeshColliders,unresolvedBuiltins=runtime.unsupportedColliders,shearedExitMeshReparent=true,liveSceneContact=true,thinPenetration=true,thickStop=true,impenetrable=true,delayedExitResumes=true,glassHolePassThrough=true,fragmentCount=count,fragmentMassConserved=true,fullUnityParity=false});
  }
 }

@@ -22,5 +22,9 @@ public sealed class BallisticHitEffect:MonoBehaviour {
  public void Step(){if(Time.time-spawnTime>=Lifetime)Object.Destroy(gameObject);}
 }
 public partial class BallisticHitMeshEffect {
+ // Play immediately resets localScale after parenting. Preserve only the world
+ // pose here, avoiding an impossible shear-to-TRS decomposition of the old scale.
+ // Source final scale and growth animation remain unchanged.
+ void ReparentBeforeScaleReset(Transform parent){var p=transform.position;var q=transform.rotation;transform.SetParent(parent,false);transform.position=p;transform.rotation=q;}
  public string SourceID;public void StepPresentation(){Update();if(this){var p=transform.position;var q=transform.rotation;var s=transform.localScale;BallisticRuntimeHost.Current.Emit("impactMesh",new{instance=gameObject.GetInstanceID(),source=SourceID,position=new[]{p.x,p.y,p.z},rotation=new[]{q.x,q.y,q.z,q.w},scale=new[]{s.x,s.y,s.z}});}}
 }

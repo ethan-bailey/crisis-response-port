@@ -31,7 +31,7 @@ public partial class BallisticHitMeshEffect : MonoBehaviour
 	{
 		base.transform.position = projectile.Position;
 		base.transform.rotation = projectile.transform.rotation;
-		base.transform.SetParent(parent, true);
+		ReparentBeforeScaleReset(parent); // Engine adapter: next source statement resets localScale.
 		base.transform.localScale = new Vector3(1f, 1f, 0.01f);
 		base.gameObject.layer = parent.gameObject.layer;
 		spawnTime = Time.time;

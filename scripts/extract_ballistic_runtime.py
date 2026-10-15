@@ -25,7 +25,7 @@ def clean(s):
 prefix='using System;\nusing System.Collections.Generic;\nusing UnityEngine;\nusing Object=UnityEngine.Object;\nusing Random=UnityEngine.Random;\n'
 for name in ['BallisticMaterial.cs','BallisticWindow.cs','BallisticMaterialProperties.cs','DelayedBallisticExit.cs','BallisticResult.cs','StaticUtilities.cs','BallisticHitMeshEffect.cs']:
  s=code(name)
- if name=='BallisticHitMeshEffect.cs':s=s.replace('public class BallisticHitMeshEffect','public partial class BallisticHitMeshEffect')
+ if name=='BallisticHitMeshEffect.cs':s=s.replace('public class BallisticHitMeshEffect','public partial class BallisticHitMeshEffect').replace('base.transform.SetParent(parent, true);','ReparentBeforeScaleReset(parent); // Engine adapter: next source statement resets localScale.')
  (dest/name).write_text(prefix+clean(s))
 # Preserve the full original non-limb hit and fragment arithmetic; native effects
 # creation is bridged explicitly, without replacing material decisions.
