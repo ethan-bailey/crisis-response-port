@@ -77,7 +77,18 @@ for guid,count in sorted(materials.items()):
     saved=item.get("m_SavedProperties",{})
     shader=item.get("m_Shader",{}).get("guid")
     if shader:
-        assets["shaders"][shader]=fingerprint(source_path(shader))
+        if shader in guid_index:
+            assets["shaders"][shader]=fingerprint(source_path(shader))
+        elif shader.startswith("0000000000000000") and len(shader)==32:
+            # Unity built-ins do not have a source .meta file. Inventory their
+            # exact GUID; never synthesize shader code or silently omit them.
+            assets["shaders"][shader]={
+                "unityBuiltinGuid":shader,
+                "unresolvedEngineShader":True,
+                "note":"Requires verified original Unity built-in shader behavior"
+            }
+        else:
+            raise SystemExit("STOP missing original particle shader asset "+shader)
     texture_refs={}
     tex_envs=saved.get("m_TexEnvs",{})
     if isinstance(tex_envs,dict):
@@ -86,7 +97,12 @@ for guid,count in sorted(materials.items()):
                 texture=val.get("m_Texture",{}).get("guid")
                 if texture:
                     texture_refs[key]=texture
-                    assets["textures"][texture]=fingerprint(source_path(texture))
+                    if texture in guid_index:
+                        assets["textures"][texture]=fingerprint(source_path(texture))
+                    elif texture.startswith("0000000000000000") and len(texture)==32:
+                        assets["textures"][texture]={"unityBuiltinGuid":texture,"unresolvedEngineTexture":True}
+                    else:
+                        raise SystemExit("STOP missing original particle texture "+texture)
     assets["materials"][guid]={
         **fingerprint(path),"references":count,
         "shaderGuid":shader,
