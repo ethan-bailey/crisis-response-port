@@ -1,4 +1,4 @@
-name: Audit native original particle system settings once
+name: Audit active native particle settings and source renderer modes once
 on:
   push:
     branches:
