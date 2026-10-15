@@ -12,6 +12,7 @@
 #help{right:max(12px,env(safe-area-inset-right));top:max(12px,env(safe-area-inset-top))}
 @media (max-height:500px){#hud{max-width:45vw;font-size:10px}#status{max-height:3em;overflow:auto}#help{max-width:40vw;font-size:10px}.cluster{max-width:54vw}button{min-width:48px;min-height:48px;padding:8px;font-size:12px}}
 button:disabled{opacity:.45}#help a{color:#a8d9ff}
+@media(max-height:500px){#hud{padding:5px 8px;max-width:270px}#hud #status,#hud #position{display:none}#title{font-size:11px;margin:0}#weaponStatus{font-size:10px;margin:0}}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
 </head>
@@ -37,7 +38,7 @@ const camera=new THREE.PerspectiveCamera(20,innerWidth/innerHeight,5,20);
 camera.position.set(-3,1.2,9.8);
 const world=new THREE.Group();scene.add(world);
 const character=new THREE.Group();character.name="Original Operator prefab";scene.add(character);
-const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(2,0,0),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,physicsState=null,physicsTime=0,sprintBlend=0,gaitPhase=0,upperBody=null,presentationData=null;
+const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(2,0,0),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,physicsState=null,physicsTime=0,sprintBlend=0,gaitPhase=0,upperBody=null,presentationData=null,hasAimPointer=false;
 const loadStart=performance.now(),loadingTimings={};window.__loadingTimings=loadingTimings;
 const markLoaded=name=>loadingTimings[name]=performance.now()-loadStart;
 function showError(e){errorBox.style.display="block";errorBox.textContent=String(e?.stack||e);status.textContent="Build failed to load; see error details."}
@@ -177,6 +178,7 @@ async function load(){
 function resize(){renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();document.querySelector("#rotateNotice").style.display=innerWidth<innerHeight?"flex":"none"}
 addEventListener("resize",resize);document.querySelector("#rotateNotice").style.display=innerWidth<innerHeight?"flex":"none";
 function updateAim(e){
+ hasAimPointer=true;
  const rect=renderer.domElement.getBoundingClientRect();
  pointerNdc.x=((e.clientX-rect.left)/rect.width)*2-1;
  pointerNdc.y=-(((e.clientY-rect.top)/rect.height)*2-1);
@@ -226,7 +228,7 @@ async function frame(now){requestAnimationFrame(frame);if(frameBusy)return;const
   character.updateMatrixWorld(true);aimQuad.updateMatrixWorld(true);camera.updateMatrixWorld(true);
   aimRaycaster.setFromCamera(pointerNdc,camera);
   const hit=aimRaycaster.intersectObject(aimQuad,false)[0];
-  if(hit)localAimPoint.copy(character.worldToLocal(hit.point.clone()));
+  if(hit&&hasAimPointer)localAimPoint.copy(character.worldToLocal(hit.point.clone()));
   character.updateMatrixWorld(true);
   const worldPoint=character.localToWorld(localAimPoint.clone());
   aimPoint.set(worldPoint.x,worldPoint.y);

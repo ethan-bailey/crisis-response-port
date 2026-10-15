@@ -11,6 +11,8 @@ try {
   await page.waitForFunction(() => window.__gameState?.().loaded && window.__gameState?.().weaponsLoaded || document.querySelector("#error")?.style.display === "block", { timeout: 90000 });
   const before = await page.evaluate(() => window.__gameState?.() ?? null);
   if (!before?.loaded) throw new Error("Game runtime did not finish loading: " + (await page.locator("#error").textContent()));
+  await page.mouse.move(1000,220);
+  await page.waitForFunction(()=>window.__gameState().facingDirection===1);
   const rightBox = await page.locator("#right").boundingBox();
   await page.mouse.move(rightBox.x + rightBox.width / 2, rightBox.y + rightBox.height / 2);
   await page.evaluate(() => {

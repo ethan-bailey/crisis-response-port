@@ -58,6 +58,7 @@ jobs:
       - name: Verify independent touch ownership and lifecycle resets
         run: node --test scripts/browser_input_test.mjs scripts/animation_pose_test.mjs scripts/game_loading_test.mjs
       - name: Serve the separate game build
+        id: serve
         run: |
           python3 -m http.server 8000 --directory work/game-site >/tmp/crisis-game-server.log 2>&1 &
           sleep 2
@@ -68,6 +69,7 @@ jobs:
       - name: Verify landscape input in Chromium and WebKit
         run: node scripts/iphone_input_smoke.mjs
       - name: Verify original camera and upper-body aiming
+        if: ${{ !cancelled() && steps.serve.outcome == 'success' }}
         run: node scripts/presentation_smoke.mjs
       - name: Upload separate game build evidence
         if: always()
