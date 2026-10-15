@@ -14,7 +14,17 @@ namespace UnityEngine {
   public void SetPixels(int x,int y,int w,int h,Color[] values){var patch=new byte[w*h*4];for(int row=0;row<h;row++)for(int col=0;col<w;col++){var c=values[row*w+col];float[] v=[c.r,c.g,c.b,c.a];for(int channel=0;channel<4;channel++){byte b=(byte)Math.Clamp((int)MathF.Round(v[channel]*255),0,255);rgba[((y+row)*width+x+col)*4+channel]=b;patch[(row*w+col)*4+channel]=b;}}Changed?.Invoke(this,x,y,w,h,patch);}
   public void Apply(){} // CPU writes are immediate; there is no native GPU copy in this adapter.
  }
- public sealed class Material:Object {public Texture2D mainTexture;}
+ public sealed class Material:Object {
+  Texture2D texture;
+  // Presentation observer only: source BallisticWindow.Reset assigns mainTexture
+  // on a freshly cloned original CPU texture. Rebind browser stamp forwarding
+  // without changing the recovered source Reset or StampAlpha algorithms.
+  public Action<Texture2D> OnMainTextureAssigned;
+  public Texture2D mainTexture {
+   get=>texture;
+   set {texture=value;OnMainTextureAssigned?.Invoke(value);}
+  }
+ }
  public sealed class Renderer:Component {public Material material=new();}
  // Imported source vertices. Convex planes are the hull of those vertices; this
  // is not a claim about matching Unity's PhysX cooking/reduction algorithm.
