@@ -6,11 +6,17 @@ p=argparse.ArgumentParser()
 p.add_argument("output",type=Path)
 p.add_argument("--out",type=Path,required=True)
 a=p.parse_args()
+def sha_file(file_path):
+ h=hashlib.sha256()
+ with file_path.open("rb") as handle:
+  for chunk in iter(lambda:handle.read(4*1024*1024),b""):
+   h.update(chunk)
+ return h.hexdigest()
 entries=[]
 for f in sorted(a.output.rglob("*")) if a.output.is_dir() else []:
  if f.is_file():
   entries.append({"relative_path":f.relative_to(a.output).as_posix(),"size_bytes":f.stat().st_size,
-                  "sha256":hashlib.sha256(f.read_bytes()).hexdigest()})
+                  "sha256":sha_file(f)})
 names=[x["relative_path"] for x in entries]
 state={"index_present":"index.html" in names,
        "wasm_present":any(s.endswith(".wasm") or s.endswith(".wasm.unityweb") or s.endswith(".wasm.br") or s.endswith(".wasm.gz") for s in names),
