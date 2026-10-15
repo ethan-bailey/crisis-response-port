@@ -195,6 +195,37 @@ if [[ "${UNITY_SPIKE_WEBGL:-0}" == 1 && "${UNITY_SPIKE_SINGLE_PASS:-0}" == 1 ]];
   exit 0
 fi
 
+
+# Fast path: one editor startup/import/build. No second Unity process.
+# Only for the full WebGL image; exit code describes BUILD, not standalone import.
+if [[ "${UNITY_SPIKE_WEBGL:-0}" == 1 && "${UNITY_SPIKE_SINGLE_PASS:-0}" == 1 ]]; then
+  mkdir -p "$PROJECT/Assets/Editor"
+  cp scripts/SpikeWebGL.cs "$PROJECT/Assets/Editor/SpikeWebGL.cs"
+  note single_pass true
+  note import_attempted true
+  note editor_detected true
+  note build_attempted true
+  note build_skipped_reason none
+  timeout 1500 docker exec "$CONTAINER" /opt/unity/Editor/Unity \
+    -batchmode -nographics -quit -projectPath /spike/recovery/export/ExportedProject \
+    -executeMethod SpikeWebGL.BuildMarksman -logFile /spike/webgl.log \
+    > "$WORK/docker-webgl.log" 2>&1
+  RC=$?
+  note build_exit "$RC"
+  note import_exit not_separately_measured
+  python3 scripts/classify_unity_spike.py --log "$WORK/webgl.log" \
+    --status-file "$STATUS" --out "$WORK/pre-build.json" \
+    > "$WORK/classify.stdout.log" 2>&1 || true
+  python3 scripts/audit_unity_webgl_output.py "$WORK/webgl" \
+    --out "$WORK/webgl-output-manifest.json" > "$WORK/output-inventory.log" 2>&1 || true
+  if [[ "$RC" == 0 ]]; then
+    python3 scripts/smoke_unity_webgl_http.py "$WORK/webgl" \
+      --manifest "$WORK/webgl-output-manifest.json" --results "$WORK/webgl-http-smoke.json" \
+      > "$WORK/webgl-http-smoke.log" 2>&1 || note http_smoke_failed true
+  fi
+  exit 0
+fi
+
 touch "$WORK/import.log"
 note import_attempted true; note editor_detected true
 timeout 900 docker exec "$CONTAINER" /opt/unity/Editor/Unity \
