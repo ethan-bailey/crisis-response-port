@@ -22,6 +22,7 @@ jobs:
       UNITY_SPIKE_SCOPED_REPAIR: "1"
       UNITY_SPIKE_ALLOW_UNET_EXCLUSION: "1"
       UNITY_SPIKE_WEBGL: "1"
+      UNITY_SPIKE_SINGLE_PASS: "1"
     steps:
       - uses: actions/checkout@v4
       - name: Free runner disk for Unity WebGL editor
