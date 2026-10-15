@@ -25,6 +25,7 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 import * as THREE from "three";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 import { BrowserInput } from "./browser-input.mjs";
+import { createContactPhysics } from "./contact-physics.mjs";
 
 const stage=document.querySelector("#stage"), status=document.querySelector("#status"), positionLabel=document.querySelector("#position"), errorBox=document.querySelector("#error");
 const scene=new THREE.Scene(); scene.background=new THREE.Color(0x11151b);
@@ -36,7 +37,7 @@ const camera=new THREE.OrthographicCamera(-viewHeight*innerWidth/innerHeight/2,v
 camera.position.set(-3+(innerWidth>=innerHeight?7.5:0),2.5,60);camera.lookAt(camera.position.x,2.5,0);
 const world=new THREE.Group();scene.add(world);
 const character=new THREE.Group();character.name="Original Operator prefab";scene.add(character);
-const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null;
+const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,physicsState=null,physicsTime=0;
 function showError(e){errorBox.style.display="block";errorBox.textContent=String(e?.stack||e);status.textContent="Build failed to load; see error details."}
 const rawActions={left:false,right:false,sprint:false,fire:false,kneel:false,stand:false,magazine:false,switchWeapons:false};
 const input = new BrowserInput({onChange(action,pressed){rawActions[action]=pressed;document.querySelector(`[data-action="${action}"]`)?.classList.toggle("active",pressed)}});
@@ -121,7 +122,7 @@ async function load(){
    return new THREE.Vector3(...a.value).lerp(new THREE.Vector3(...b.value),alpha).toArray();
   }
   function resetPose(){for(const node of manifest.nodes){const group=nodeById.get(node.gameObjectFileID),base=baseTransforms.get(node.gameObjectFileID);group.position.copy(base.position);group.quaternion.copy(base.quaternion);group.scale.copy(base.scale)}}
-  function applyTrack(track,time){if(track.property==="position"&&track.path==="Pelvis")return;const group=nodeByPath.get(track.path);if(!group)return;const value=sample(track,time);if(track.property==="rotation")group.quaternion.fromArray(value);else if(track.property==="position")group.position.fromArray(value);else if(track.property==="scale")group.scale.fromArray(value)}
+  function applyTrack(track,time){const group=nodeByPath.get(track.path);if(!group)return;const value=sample(track,time);if(track.property==="rotation")group.quaternion.fromArray(value);else if(track.property==="position")group.position.fromArray(value);else if(track.property==="scale")group.scale.fromArray(value)}
   applyAnimation=function(dt){
    const moving=Math.abs(velocity)>.15;
    const backwards=moving&&Math.sign(velocity)!==facingDirection;
@@ -136,7 +137,6 @@ async function load(){
     const walkMap=new Map(clip.tracks.map(tr=>[tr.path+"|"+tr.property,tr]));
     const sprintMap=new Map(sprint.tracks.map(tr=>[tr.path+"|"+tr.property,tr]));
     for(const [keyId,tr] of walkMap){
-     if(tr.path==="Pelvis"&&tr.property==="position")continue;
      const other=sprintMap.get(keyId);if(!other){applyTrack(tr,t);continue}
      const a=sample(tr,t),b=sample(other,sprint.duration>0?(animationTime%sprint.duration):0),group=nodeByPath.get(tr.path);if(!group)continue;
      if(tr.property==="rotation"){const q=new THREE.Quaternion(...a).slerp(new THREE.Quaternion(...b),blend);group.quaternion.copy(q)}
@@ -151,9 +151,12 @@ async function load(){
   aimQuad.name="Original Aim quad collider (layer AimQuad)";aimQuad.rotation.x=Math.PI;aimQuad.position.set(playerX+facingDirection*20,2.5,-1.5);scene.add(aimQuad);
   const box=sceneBounds;const size=box.getSize(new THREE.Vector3());viewHeight=Math.max(13,Math.min(16,size.y*.9||13));
   camera.left=-viewHeight*innerWidth/innerHeight/2;camera.right=viewHeight*innerWidth/innerHeight/2;camera.top=viewHeight/2;camera.bottom=-viewHeight/2;camera.updateProjectionMatrix();
-  groundY=1.5;await initializeOriginalRuntime();loaded=true;
-  window.__gameState=()=>({loaded,originalInputActive:!!runtimeCall,originalInput:originalInputState,playerX,facingDirection,aimPoint:character.localToWorld(localAimPoint.clone()).toArray(),limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,weaponActionsImplemented:false,weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
-  status.textContent="Original C# input and recovered character assets. Movement/animation remain a partial port; collision, weapons, damage and AI are pending.";
+  groundY=1.5;await initializeOriginalRuntime();
+  const physicsResponse=await fetch("./assets/contact-physics.json");if(!physicsResponse.ok)throw new Error("Original collision data missing");
+  contactPhysics=await createContactPhysics(await physicsResponse.json(),{x:playerX,y:playerY,z:manifest.nodes.find(n=>!n.parentGameObjectFileID).position[2]});
+  physicsState=contactPhysics.snapshot();loaded=true;
+  window.__gameState=()=>({loaded,originalInputActive:!!runtimeCall,originalInput:originalInputState,playerX,playerY,velocity,physics:physicsState,physicsTime,facingDirection,aimPoint:character.localToWorld(localAimPoint.clone()).toArray(),limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,weaponActionsImplemented:false,weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
+  status.textContent="Original C# input and recovered character assets. PhysX ground contacts enabled. Movement/animation remain partial; weapons, damage and AI are pending.";
   positionLabel.textContent="Walk 1.5 m/s · Sprint 4.2 m/s · original spawn X −3";
  }catch(e){showError(e)}
 }
@@ -176,28 +179,30 @@ async function frame(now){requestAnimationFrame(frame);if(frameBusy)return;const
  if(keys.left)dir=-1;else if(keys.right)dir=1;
  if(dir!==0)acceleration=dir;
  fixedAccumulator+=dt;
- while(fixedAccumulator>=.02){
-  const step=.02;
+ while(fixedAccumulator>=contactPhysics.data.fixedDeltaTime){
+  const step=contactPhysics.data.fixedDeltaTime;
   // Direct port of CharacterBody.FixedUpdate() for the recovered Operator prefab.
   if(acceleration!==0){
    const moveDir=Math.sign(acceleration);
    const movingAgainstFacing=moveDir!==facingDirection;
    const crippled=false; // The recovered runtime has not ported physiology/crippling.
-   let targetSpeed=1.5; // Operator.prefab walkSpeed
-   if(keys.sprint&&!movingAgainstFacing&&!crippled)targetSpeed=4.2; // Operator.prefab sprintSpeed
+   let targetSpeed=contactPhysics.data.character.movement.walkSpeed; // Original Operator.prefab
+   if(keys.sprint&&!movingAgainstFacing&&!crippled)targetSpeed=contactPhysics.data.character.movement.sprintSpeed;
    const speed=Math.abs(velocity);
    if(!(speed>targetSpeed)){
     const speedDifference=targetSpeed-speed;
     const forceX=speedDifference*moveDir*step*750; // AddForce(..., ForceMode.Acceleration)
-    velocity+=forceX*step;
+    contactPhysics.addAcceleration(forceX);
     acceleration=0; // ResetAcceleration(), exactly as the recovered source does
    }
   }
-  // CharacterBody's Rigidbody has no drag; do not add invented release deceleration.
-  playerX+=velocity*step;
+  // PhysX integrates gravity, contacts and friction even without movement input.
+  contactPhysics.setPoseState(isKneeling,facingDirection,step);
+  physicsState=contactPhysics.step(step);physicsTime+=step;
+  playerX=physicsState.x;playerY=physicsState.y;velocity=physicsState.velocity;
   fixedAccumulator-=step;
  }
- character.position.x=playerX;
+ character.position.set(playerX,playerY,0);
  // WeaponPointer.Update(): move the AimQuad from the operator, raycast the pointer against
  // that collider, retain its body-local hit point, then reconstruct WorldPoint from the body.
  if(aimQuad){

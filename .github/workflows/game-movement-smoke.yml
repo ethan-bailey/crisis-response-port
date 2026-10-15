@@ -6,7 +6,9 @@ on:
       - "game/assets/mission01.obj"
       - "game/assets/operator/operator.json"
       - "game/index.html"
-      - "game/browser-input.mjs"
+      - "game/**"
+      - "scripts/contact_physics_smoke.mjs"
+      - "scripts/vendor_physics.mjs"
       - "runtime/**"
       - "scripts/browser_input_test.mjs"
       - "scripts/iphone_input_smoke.mjs"
@@ -29,6 +31,10 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
+      - name: Prepare pinned PhysX WebAssembly backend
+        run: |
+          npm ci --prefix game --ignore-scripts --no-audit --no-fund
+          node scripts/vendor_physics.mjs
       - name: Build original C# input runtime beside the game prototype
         run: |
           cp game/browser-input.mjs runtime/Browser/wwwroot/browser-input.mjs
@@ -48,6 +54,8 @@ jobs:
         run: |
           python3 -m http.server 8000 --directory work/game-site >/tmp/crisis-game-server.log 2>&1 &
           sleep 2
+      - name: Verify original scene contacts, stopping and reversal
+        run: node scripts/contact_physics_smoke.mjs
       - name: Verify original scene, original Operator textures, and movement
         run: node scripts/game_movement_smoke.mjs
       - name: Verify landscape input in Chromium and WebKit
@@ -58,6 +66,7 @@ jobs:
         with:
           name: crisis-response-mission01-game-smoke
           path: |
+            contact-physics-smoke.json
             mission01-game-smoke.json
             mission01-game-smoke.png
             iphone-input-smoke.json

@@ -130,3 +130,34 @@ original C# InputHandler state through the runtime host. Its legacy movement and
 animation remain partial; full CharacterBody/physics is not executable. Invented
 ammo counters, reload timers, visibility-only weapon switching and shot rays were
 removed. Those controls stay disabled until their original systems are executable.
+
+### Contact physics correction
+
+`game/contact-physics.mjs` replaces free velocity integration with a real PhysX
+WebAssembly scene. `scripts/export_contact_physics.py` extracts 353 eligible
+original Mission 01 box colliders, their transforms and materials, the original
+layer collision mask, the Operator capsule/body settings, and global physics
+settings. Dynamic props, triggers and inactive objects are excluded; mesh
+colliders, joints and full original rigidbody behavior remain unsupported.
+The extracted source hashes are saved in `game/assets/contact-physics.json`.
+
+The original Character material uses static/dynamic friction 0.5. Body drag stays
+zero. The solver handles contact friction and gravity; no input-release damping
+or velocity clamp is added. Original capsule changes from
+`CharacterBody.UpdateAnimation` and pelvis position tracks are applied so that the
+physical body, animated pose and ground share coordinates. Direction changes
+rotate the asymmetric capsule offset. The original movement formula remains a
+selected source-traced slice, not execution of the entire CharacterBody class.
+
+The pinned `physx-js-webidl` 2.7.3 backend is PhysX 5.6.1, **not Unity 2017's PhysX
+build**. Legacy PGS/patch-friction settings are selected, but numerical equivalence
+and original-versus-port traces have not been established. This is an engine
+compatibility step, not a claim of 1:1 physics parity. Default-material fallback
+uses Unity's documented 0.6 friction / zero bounce / Average combine; assigned
+materials use recovered values.
+
+Prepare browser physics assets with `npm ci --prefix game --ignore-scripts` and
+`node scripts/vendor_physics.mjs`. The pinned package lock and upstream license
+notices accompany the adapter. Browser tests exercise actual original floor
+contacts, release/stability, reversal, and zero-drag airborne motion with contacts
+removed; the last check prevents a release-only stop shortcut from passing.
