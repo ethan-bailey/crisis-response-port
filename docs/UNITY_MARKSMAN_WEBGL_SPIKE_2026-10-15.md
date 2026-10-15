@@ -25,3 +25,22 @@ Attempt the recovered 2017 Unity project's **Marksman range scene only** as a mo
 **Status at workflow dispatch:** build outcome not yet measured; never interpret a green GitHub job as success unless `status.env` confirms `build_attempted=true` and `build_exit=0` together with `webgl.log` reporting success. If `build_attempted=false`, identify the exact disk/image/licensing/import blocker. If Unity builds but scene assets are incomplete, treat it as a technical WebGL feasibility milestone, not validated 1:1 gameplay.
 
 Follow-up review must verify the specific editor and IL2CPP errors, the missing audio/prefab integrity and any missing original systems before exposing a playable private preview.
+
+## First actual WebGL player build result
+
+[Run 38776778380](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38776778380), private log artifact ID `11994727494`, **did reach the Unity WebGL player build stage**, but `build_exit=1` and `MARKSMAN_WEBGL_RESULT=Failed`. GitHub workflow success here means diagnostics/cleanup succeeded, **not** that the game built.
+
+Confirmed from `status.env`: `import_exit=0`, `build_attempted=true`, `build_exit=1`, Personal activation 0, deactivation 0, seat query 0. Return log confirms `[200] REVOKE_SEAT`.
+
+The WebGL player compiler revealed **two unique CS1061 errors** absent from the editor import:
+
+```text
+Assets/Plugins/Assembly-CSharp-firstpass/UnityStandardAssets/ImageEffects/SunShafts.cs(93,60): error CS1061: 'Camera' does not contain a definition for 'hdr' and no accessible extension method 'hdr' accepting a first argument of type 'Camera' could be found
+Assets/Plugins/Assembly-CSharp-firstpass/UnityStandardAssets/ImageEffects/BloomAndFlares.cs(105,85): error CS1061: 'Camera' does not contain a definition for 'hdr' and no accessible extension method 'hdr' accepting a first argument of type 'Camera' could be found
+```
+
+WebGL log ends with `Error building Player because scripts had compiler errors` and `Exception: MARKSMAN_WEBGL_RESULT=Failed`. These are not missing original gameplay systems or networking; the legacy `Camera.hdr` property is replaced by the documented Unity 2022 `Camera.allowHDR` field: https://docs.unity.cn/2022.2/Documentation/ScriptReference/Camera-allowHDR.html .
+
+**Follow-up:** Guarded, line-specific `.hdr` → `.allowHDR` source transformations in the two Unity Standard Assets effect scripts were added to the *ephemeral compatibility patch*, bringing its recorded changes to nine types/expressions plus the two legacy UNet compile exclusions. [Rerun 38778367036](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38778367036) is the next WebGL attempt. Its result must be assessed from its own `webgl.log` and `status.env`; no success implied from dispatch alone.
+
+The original 250 audio import failures, missing prefab components and lighting-data warnings remain known fidelity concerns independent of WebGL compilation.
