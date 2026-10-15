@@ -1,12 +1,5 @@
 name: Audit original impact-effect prefab render assets
 on:
-  push:
-    branches:
-      - codex/projectile-material-impacts
-    paths:
-      - ".github/workflows/audit-original-impact-render-assets.yml"
-      - "scripts/audit_original_effect_render_assets.py"
-      - "scripts/extract_original_exit_hole_mesh.py"
   workflow_dispatch:
 permissions:
   contents: read
