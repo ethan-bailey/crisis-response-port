@@ -151,3 +151,27 @@ test('a second pointer cannot convert an active drag into a tap', () => {
   assert.deepEqual(changes, [1]);
   assert.deepEqual(taps, []);
 });
+
+test('swipe with coalesced missing pointermove never misfires on release', () => {
+  const input = new BrowserInput(), surface = new Surface(), aim = [], taps = [];
+  input.bindAim(surface, event => aim.push(event ? [event.clientX, event.clientY] : 'released'),
+                { onTap: () => taps.push('fire'), dragThreshold: 10 });
+  surface.send('pointerdown', { pointerId: 1, clientX: 100, clientY: 100 });
+  surface.send('pointerup', { pointerId: 1, clientX: 170, clientY: 110 });
+  assert.deepEqual(taps, []);
+  assert.deepEqual(aim, [[170, 110], 'released']);
+});
+
+test('last drag endpoint is captured without a duplicate final update', () => {
+  const input = new BrowserInput(), surface = new Surface(), aim = [];
+  input.bindAim(surface, event => aim.push(event ? event.clientX : 'released'));
+  surface.send('pointerdown', { pointerId: 1, clientX: 10, clientY: 20 });
+  surface.send('pointermove', { pointerId: 1, clientX: 35, clientY: 20 });
+  surface.send('pointerup', { pointerId: 1, clientX: 39, clientY: 20 });
+  assert.deepEqual(aim, [35, 39, 'released']);
+  aim.length = 0;
+  surface.send('pointerdown', { pointerId: 2, clientX: 10, clientY: 20 });
+  surface.send('pointermove', { pointerId: 2, clientX: 35, clientY: 20 });
+  surface.send('pointerup', { pointerId: 2, clientX: 35, clientY: 20 });
+  assert.deepEqual(aim, [35, 'released']);
+});
