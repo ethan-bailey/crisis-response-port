@@ -4,6 +4,7 @@ on:
     paths:
       - ".github/workflows/unity-marksman-webgl.yml"
       - "scripts/unity_scoped_legacy_gui_patch.py"
+      - "scripts/unity_webgl_template_fix.py"
   workflow_dispatch:
 permissions:
   contents: read
