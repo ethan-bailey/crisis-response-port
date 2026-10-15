@@ -1,5 +1,17 @@
 # Next agent — current state (2026-10-15, 19:17 UTC)
 
+## Persistent workspace and *complete-game* WASM finishing checklist — 2026-10-15
+
+**Start with [`WORKSPACE.md`](WORKSPACE.md) and [`docs/COMPLETE_WASM_PORT_ROADMAP.md`](docs/COMPLETE_WASM_PORT_ROADMAP.md), then the latest [`docs/WORKSPACE_STATUS.md`](docs/WORKSPACE_STATUS.md).** These document all eight remaining verification gates beyond the already successful selected-source .NET WebAssembly compile, including all six scenes, C#/Unity API coverage, gameplay/AI/missions, materials/particles, UI/save/platform, native comparison, iPhone 16 acceptance and owner-restricted reproducible release.
+
+Issue board [#10–#18](https://github.com/ethan-bailey/crisis-response-port/issues); draft branch `codex/projectile-material-impacts` PR #9 remains isolated. No merge to `main` or alteration of independent Unity feasibility branch. The most recent **full browser-tested game code** remains `ed3d80d89f5e4e797e0370d9152bcc828bd8becb` (run `38809439277`, both Chromium and WebKit passed). This workspace session **has not** changed game/runtime behavior, rebuilt the game or redeployed privately. Documentation and private audit-only actions do not constitute playable-release changes.
+
+**Original shader source blocker confirmed:** [private audited run #38812611701](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38812611701) succeeded, artifact `12008763302`. Regular Shader Forge glass export SHA256 `7d9d9f70262201d46628597adb278caefe2ab11bb43b25c9f86c2ee37783b38f`; mirror export SHA256 `f1b929eb65edb52abf46b352bc7bdd6f3aaf5684652c87b44a37a791011b17eb`. Both are explicitly AssetRipper `DummyShaderTextExporter` replacements: the regular dummy just samples a texture and the mirror dummy emits white. Original shader behavior is **not** recoverable by copying these exports. Do not silently render them as parity.
+
+**Original particle source inventory verified:** [private audit run #38812872182](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38812872182) **SUCCESS**, artifact `12008823420`: 26 ParticleSystem components and 26 ParticleSystemRenderers across 14 entry/exit effect prefabs from 12 material-property assets. Complete native serialized module fields are preserved privately; no source original particle render/simulation has yet been implemented. Next suitable code task: use that private source artifact to extract deterministic, hash-checked enabled modules/curves and renderer dependencies, then build source-driven render adapters after verifying Unity particle semantics, without fabricating smoke/sparks.
+
+**Handoff rule:** Record source hashes, separate verification levels (recovered/compiled/browser-tested/native-parity/device-tested), new artifact IDs and selective rollbacks in `docs/WORKSPACE_STATUS.md`. Preserve current owner-private published v8 unchanged unless a matching complete verified build is deployed and the private audience is confirmed. No automatic background coding is running. 
+
 ## Original-window rendering continuation — October 15, 2026
 
 On draft PR #9, source-backed original window rendering is added after the previously verified C#/WASM/browser build. Baseline commit before these window changes: `13f22b4286e7f13a30ced752b96ab4ad15ff735f`. No recovered `runtime/Original/` code, independent Unity branch, `main`, or owner-private deployment was modified.
