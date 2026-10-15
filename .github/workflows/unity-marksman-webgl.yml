@@ -1,0 +1,62 @@
+name: Unity Marksman WebGL feasibility build
+on:
+  push:
+    paths:
+      - ".github/workflows/unity-marksman-webgl.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: unity-personal-marksman-webgl
+  cancel-in-progress: false
+jobs:
+  marksman:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      UNITY_SPIKE_SCOPED_REPAIR: "1"
+      UNITY_SPIKE_ALLOW_UNET_EXCLUSION: "1"
+      UNITY_SPIKE_WEBGL: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Free runner disk for Unity WebGL editor
+        run: |
+          df -h .
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/share/swift /usr/local/share/powershell
+          docker system prune -af >/dev/null 2>&1 || true
+          df -h .
+      - name: Unity 2022.3 Personal import and Marksman-only WebGL build
+        run: bash scripts/unity_open_spike.sh
+      - name: Emergency Personal entitlement deactivation
+        if: always()
+        run: |
+          ID="crisis-unity-personal-$GITHUB_RUN_ID"
+          if docker ps --format '{{.Names}}' | grep -Fxq "$ID"; then
+            docker exec "$ID" /bin/bash -lc '
+              c="$(command -v Unity.Licensing.Client || find /opt/unity -name Unity.Licensing.Client -type f -print -quit)"
+              test -n "$c" && "$c" --deactivate-all --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD"
+            ' >/tmp/webgl-emergency-license.log 2>&1 || true
+            docker rm -f "$ID" >/dev/null 2>&1 || true
+            echo "Emergency deactivation attempted."
+          fi
+      - name: Classify captured editor and WebGL logs
+        if: always()
+        run: |
+          mkdir -p work/unity-spike
+          python3 scripts/classify_unity_spike.py --log work/unity-spike/import.log --build-log work/unity-spike/webgl.log --status-file work/unity-spike/status.env --out work/unity-spike/classification.json
+          echo "Never upload compiled original game or WebGL output."
+      - name: Preserve evidence only without third-party assets
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unity-marksman-webgl-feasibility-logs
+          path: |
+            work/unity-spike/*.log
+            work/unity-spike/*.json
+            work/unity-spike/*.env
+            work/unity-spike/*.txt
+          retention-days: 14
+          if-no-files-found: warn
