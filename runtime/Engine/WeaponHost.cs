@@ -83,7 +83,7 @@ public sealed class MissionView {public float LastWeaponFireTimestamp;}
 public sealed class WeaponHost {
  JsonElement config;readonly List<global::Projectile> projectiles=[];public RuntimeWorld queryWorld;public int ballisticMask;
  readonly RuntimeWorld world;readonly WeaponBase weapon;readonly CharacterBody body;readonly ChangeMagazine reload;readonly WorkBolt workBolt;WeaponTask task;
- readonly Dictionary<string,Transform> weaponTransforms=[];readonly Dictionary<string,Transform> operatorTransforms=[];
+ readonly Dictionary<string,Transform> weaponTransforms=[];readonly Dictionary<string,Transform> operatorTransforms=[];readonly Dictionary<string,Transform> magazineTransforms=[];
  public readonly WeaponEffects effects=new();
  public float Kick=>weapon.RecoilKick;public float Climb=>weapon.RecoilClimb;public bool Manipulating=>body.IsManipulatingEquipment;
  public static Vector3 V(JsonElement a)=>new(a[0].GetSingle(),a[1].GetSingle(),a[2].GetSingle());
@@ -150,3 +150,4 @@ public sealed class WeaponHost {
  public object Snapshot(){var mp=weapon.ComponentMagazine.transform.position;var mq=weapon.ComponentMagazine.transform.rotation;object Arm(ArmIKSolver a)=>new{target=new[]{a.ikTarget.position.x,a.ikTarget.position.y,a.ikTarget.position.z},a.OnTarget,a.OnWeapon,handMode=(int)a.hand.mode,angle=a.hand.transform.localEulerAngles.z};return new{magazinePose=new{p=new[]{mp.x,mp.y,mp.z},q=new[]{mq.x,mq.y,mq.z,mq.w},visible=weapon.ComponentMagazine.gameObject.activeSelf},shots=body.ShotsFired,magazine=weapon.Magazine?.roundCount??0,reserve=body.Equipment.PrimaryMagazines.Where(m=>!ReferenceEquals(m,weapon.Magazine)).Sum(m=>m.roundCount),chamberLive=weapon.cyclingBolt.Live,bolt=weapon.cyclingBolt.Status.ToString(),reloading=task!=null,manipulating=body.IsManipulatingEquipment,kick=Kick,climb=Climb,right=Arm(body.rightArm),left=Arm(body.leftArm),events=effects.events.ToArray()};}
 }
 }
+
