@@ -18,9 +18,25 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   const walking=await state();assert.deepEqual(walking.aimDirection,direction);assert.equal(walking.facingDirection,1);
   await page.keyboard.down('KeyA');await page.waitForFunction(x=>window.__gameState().playerX<x-.3,walking.playerX,{timeout:30000});await page.keyboard.up('KeyA');
   const back=await state();assert.deepEqual(back.aimDirection,direction);assert.equal(back.facingDirection,1);
-  // Tapping elsewhere shoots the stored direction and does not retarget it.
-  await page.touchscreen.tap(340,110);await page.waitForFunction(()=>window.__gameState().weaponState.shots===1,null,{timeout:30000});
-  await page.waitForTimeout(400);const tapped=await state();assert.equal(tapped.weaponState.shots,1);assert.deepEqual(tapped.aimDirection,direction);assert.equal(rounds(tapped.weaponState),60);
+  // A tap away from the last aimed screen location adjusts direction, not firing.
+  await page.touchscreen.tap(630,130);
+  await page.waitForFunction(previous=>window.__gameState().aimDirection.some((v,i)=>Math.abs(v-previous[i])>.015),direction,{timeout:30000});
+  const touchAimed=await state();
+  assert.equal(touchAimed.weaponState.shots,0,'New touch location must only aim');
+  assert.notDeepEqual(touchAimed.aimDirection,direction);
+  // A repeated tap near that location should fire exactly one original weapon shot.
+  await ready();
+  await page.touchscreen.tap(637,136);
+  await page.waitForFunction(()=>window.__gameState().weaponState.shots===1,null,{timeout:30000});
+  await page.waitForTimeout(400);
+  const tapped=await state();
+  assert.equal(tapped.weaponState.shots,1);
+  assert.deepEqual(tapped.aimDirection,touchAimed.aimDirection,'Shooting must retain new touch aim');
+  assert.equal(rounds(tapped.weaponState),60);
+  // A new distant tap should re-aim without firing another round.
+  await page.touchscreen.tap(780,80);
+  await page.waitForFunction(previous=>window.__gameState().aimDirection.some((v,i)=>Math.abs(v-previous[i])>.015),tapped.aimDirection,{timeout:30000});
+  assert.equal((await state()).weaponState.shots,1,'Different tap cannot fire');
   let nativeTouchDrag=false;
   if(engine==='chromium'){
    const cdp=await page.context().newCDPSession(page);
