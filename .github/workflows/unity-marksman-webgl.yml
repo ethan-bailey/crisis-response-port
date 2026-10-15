@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - ".github/workflows/unity-marksman-webgl.yml"
+      - "scripts/unity_scoped_legacy_gui_patch.py"
   workflow_dispatch:
 permissions:
   contents: read
