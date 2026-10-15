@@ -11,6 +11,13 @@ Reach the closest **verified 1:1 behavior and presentation** to the original Cri
 - **Previously hosted owner-private v8:** https://crisis-response-runtime.craftysnipe13.chatgpt.site — **does not include the latest tested source glass/impact renderer updates**.
 - **Latest verified browser build (2026-10-15):** [GitHub Actions #38809439277](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38809439277), tested code SHA `ed3d80d89f5e4e797e0370d9152bcc828bd8becb`, private artifact `12007339085`. Both Chromium and WebKit passed original firing/touch/geometry/glass stamp tests. No physical iPhone proof.
 - **Source-backed window audit:** [runs 38808368685 and 38808663563](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38808663563); 56 glass + 12 mirror-glass native window Quads. Exact shader parity and actual-device test are outstanding.
+- **Shader recovery gap:** [original shader audit run 38812611701](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38812611701) proved both Shader Forge glass/mirror source files are AssetRipper `DummyShaderTextExporter` output, not original compiled shader behavior. Full visual parity blocked pending native reference or compiled shader recovery.
+- **Original particles inventory:** [original source audit run 38812872182](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38812872182) passed, 26 ParticleSystems and 26 ParticleSystemRenderers across 14 entry/exit effect prefabs; private artifact `12008823420`. Not yet simulated/rendered.
+
+
+## Full compile-to-release checklist
+
+**Primary plan:** [docs/COMPLETE_WASM_PORT_ROADMAP.md](docs/COMPLETE_WASM_PORT_ROADMAP.md). It defines Gates 1–8, actual known-working .NET/PhysX build commands, full original game scope, native reference checks and private iPhone release criteria. **WASM compilation is already passing for the current source subset; 1:1 game completion is not.**
 
 ## Work board
 
@@ -20,6 +27,12 @@ Reach the closest **verified 1:1 behavior and presentation** to the original Cri
 | P1 | Original particles and fragments | [#11](https://github.com/ethan-bailey/crisis-response-port/issues/11) | Original source emitter data/meshes/time/lifetimes used; unsupported remain explicit |
 | P1 | Owner-private iPhone checkpoint | [#13](https://github.com/ethan-bailey/crisis-response-port/issues/13) | Matching tested artifact privately deployed with rollback metadata and real device feedback |
 | P2 | Native engine/physics/physiology fidelity | [#12](https://github.com/ethan-bailey/crisis-response-port/issues/12) | Native equivalence fixtures for original gameplay systems; no invented simulation |
+| P1 | All six original scenes and dependencies | [#14](https://github.com/ethan-bailey/crisis-response-port/issues/14) | Prefab/scene dependencies and original content integrity gated |
+| P2 | AI, teams, doors, grenades, missions | [#15](https://github.com/ethan-bailey/crisis-response-port/issues/15) | Source gameplay running; native-parity scenarios |
+| P2 | Original UI, saves and platform adapters | [#16](https://github.com/ethan-bailey/crisis-response-port/issues/16) | Source menu/persistence/input/platform behaviors verified |
+| P1 | Native Unity versus WASM comparisons | [#17](https://github.com/ethan-bailey/crisis-response-port/issues/17) | Deterministic traces; no unmeasured required gaps |
+| P1 | Reproducible private iPhone release | [#18](https://github.com/ethan-bailey/crisis-response-port/issues/18) | SHA-matched protected site plus actual-device tests |
+
 
 Existing [#6](https://github.com/ethan-bailey/crisis-response-port/issues/6), [#5](https://github.com/ethan-bailey/crisis-response-port/issues/5), and [#4](https://github.com/ethan-bailey/crisis-response-port/issues/4) retain earlier context; avoid duplicate tickets.
 
