@@ -85,14 +85,59 @@ test('right mouse button does not fire', () => {
   assert.equal(input.pressed('fire'), false);
 });
 
-test('touch tap fires once; drag and cancellation only aim',()=>{
- const input=new BrowserInput(),surface=new Surface(),moves=[],taps=[];
- input.bindAim(surface,e=>moves.push(e.clientX),()=>taps.push('fire'));
+test('first touch aims; near-repeat taps fire; changing target aims without shooting',()=>{
+ const input=new BrowserInput(),surface=new Surface(),aims=[],fires=[];
+ input.bindAim(surface,e=>aims.push([e.clientX,e.clientY]),e=>fires.push([e.clientX,e.clientY]));
+ const tap=(id,x,y)=>{surface.send('pointerdown',{pointerId:id,clientX:x,clientY:y});surface.send('pointerup',{pointerId:id,clientX:x,clientY:y});};
+ tap(1,100,100);
+ assert.deepEqual(aims,[[100,100]],'First touch must establish aim, not fire');
+ assert.equal(fires.length,0);
+ tap(2,115,112);
+ assert.equal(fires.length,1,'Finger jitter inside 24 CSS pixels fires');
+ assert.deepEqual(aims,[[100,100]],'Firing leaves last aim unchanged');
+ tap(3,200,120);
+ assert.deepEqual(aims,[[100,100],[200,120]],'New tap retargets without a shot');
+ assert.equal(fires.length,1);
+ tap(4,200,120);
+ assert.deepEqual(fires,[[115,112],[200,120]],'Second tap on new aim fires');
+ assert.equal(input.pressed('fire'),false,'Tap does not hold fire');
+});
+
+test('drag establishes new aim; subsequent tap near drag endpoint fires',()=>{
+ const input=new BrowserInput(),surface=new Surface(),aims=[],fires=[];
+ input.bindAim(surface,e=>aims.push([e.clientX,e.clientY]),()=>fires.push('fire'));
  surface.send('pointerdown',{pointerId:1,clientX:100,clientY:100});
- assert.equal(input.pressed('fire'),false);assert.equal(moves.length,0);
- surface.send('pointerup',{pointerId:1,clientX:100,clientY:100});assert.equal(taps.length,1);
- surface.send('pointerdown',{pointerId:2,clientX:100,clientY:100});
- surface.send('pointermove',{pointerId:2,clientX:140,clientY:100});
- surface.send('pointerup',{pointerId:2,clientX:140,clientY:100});assert.deepEqual(moves,[140]);assert.equal(taps.length,1);
- surface.send('pointerdown',{pointerId:3,clientX:100,clientY:100});surface.send('pointercancel',{pointerId:3});assert.equal(taps.length,1);
+ surface.send('pointermove',{pointerId:1,clientX:140,clientY:100});
+ surface.send('pointerup',{pointerId:1,clientX:145,clientY:95});
+ assert.deepEqual(aims,[[140,100],[145,95]]);
+ assert.deepEqual(fires,[]);
+ surface.send('pointerdown',{pointerId:2,clientX:151,clientY:100});
+ surface.send('pointerup',{pointerId:2,clientX:151,clientY:100});
+ assert.deepEqual(fires,['fire']);
+ surface.send('pointerdown',{pointerId:3,clientX:240,clientY:80});
+ surface.send('pointercancel',{pointerId:3,clientX:240,clientY:80});
+ assert.equal(fires.length,1,'Cancelled gestures must not fire');
+ surface.send('pointerdown',{pointerId:4,clientX:240,clientY:80});
+ surface.send('pointerup',{pointerId:4,clientX:240,clientY:80});
+ assert.deepEqual(aims.at(-1),[240,80],'Cancelled gesture does not change last aim');
+ assert.equal(fires.length,1);
+});
+
+test('resize/background reset tap target; mouse press-to-fire behavior is retained',()=>{
+ const input=new BrowserInput(),aim=new Surface(),win=new Surface(),doc=new Surface(),fires=[],aims=[];
+ input.bindAim(aim,e=>aims.push([e.clientX,e.clientY]),()=>fires.push('fire'));
+ input.bindLifecycle(win,doc);
+ const tap=(id,x,y)=>{
+  aim.send('pointerdown',{pointerId:id,clientX:x,clientY:y});
+  aim.send('pointerup',{pointerId:id,clientX:x,clientY:y});
+ };
+ tap(1,100,100);tap(2,100,100);assert.equal(fires.length,1);
+ win.send('resize');tap(3,100,100);
+ assert.equal(fires.length,1,'Resize must reset same-spot comparison');
+ assert.deepEqual(aims.at(-1),[100,100]);
+ aim.send('pointerdown',{pointerId:4,pointerType:'mouse',clientX:200,clientY:100});
+ assert.equal(input.pressed('fire'),true,'Mouse click still fires immediately');
+ aim.send('pointerup',{pointerId:4,pointerType:'mouse',clientX:200,clientY:100});
+ assert.equal(input.pressed('fire'),false);
+ assert.equal(fires.length,1,'Mouse never enters touch tap-to-fire callback');
 });
