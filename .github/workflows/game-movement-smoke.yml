@@ -22,6 +22,7 @@ on:
       - "scripts/game_movement_smoke.mjs"
       - "scripts/serve_local.py"
       - "scripts/tap_fire_queue_test.mjs"
+      - "scripts/touch_gesture_bridge_test.mjs"
   workflow_dispatch:
 
 permissions:
@@ -58,7 +59,7 @@ jobs:
           npm install --no-audit --no-fund playwright@1.55.0
           npx playwright install --with-deps chromium webkit
       - name: Verify independent touch ownership and lifecycle resets
-        run: node --test scripts/browser_input_test.mjs scripts/tap_fire_queue_test.mjs scripts/animation_pose_test.mjs scripts/game_loading_test.mjs
+        run: node --test scripts/browser_input_test.mjs scripts/tap_fire_queue_test.mjs scripts/touch_gesture_bridge_test.mjs scripts/animation_pose_test.mjs scripts/game_loading_test.mjs
       - name: Serve the separate game build
         id: serve
         run: |
