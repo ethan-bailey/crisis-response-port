@@ -11,6 +11,39 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   await page.goto('http://127.0.0.1:8000/game/',{waitUntil:'domcontentloaded',timeout:120000});
   await page.waitForFunction(()=>window.__gameState?.().weaponState||document.querySelector('#error').style.display==='block',null,{timeout:120000});
   assert.equal(await page.locator('#error').isVisible(),false,await page.locator('#error').textContent());await ready();
+  // Validate rendering only the recovered Wood exit-hole Circle.asset from its
+  // original source GUID/material, without inventing a particle or physics effect.
+  const sourceVisual=await page.evaluate(async()=>{
+   const {createOriginalImpactMeshRenderer}=await import('./original-impact-mesh.mjs');
+   const THREE=await import('three');
+   const isolated=new THREE.Scene(),renderer=createOriginalImpactMeshRenderer(isolated);
+   await renderer.loading;
+   const ready=renderer.snapshot();
+   if(!ready.loaded)return {ready};
+   renderer.update([{type:'impactMesh',value:{
+     source:'c0bb8365c7bd54b4597570f085f5a153',instance:1234567,
+     position:[1,2,3],rotation:[0,0,0,1],scale:[1,1,.2]
+   }}]);
+   const mesh=isolated.children[0];
+   const payload={ready,added:renderer.snapshot().active,
+     vertices:mesh.geometry.getAttribute('position').count,
+     triangles:mesh.geometry.index.count/3,
+     position:mesh.position.toArray(),scale:mesh.scale.toArray(),
+     source:mesh.userData.originalEffectSource};
+   renderer.update([]);
+   payload.removed=renderer.snapshot().active===0&&isolated.children.length===0;
+   renderer.dispose();
+   return payload;
+  });
+  assert.equal(sourceVisual.ready?.assetError,null,'No original impact geometry load errors');
+  assert.equal(sourceVisual.ready?.loaded,true,'Original exit-hole source mesh loads');
+  assert.equal(sourceVisual.vertices,186);
+  assert.equal(sourceVisual.triangles,100);
+  assert.deepEqual(sourceVisual.position,[1,2,-3],'Unity-to-Three world position conversion');
+  assert.deepEqual(sourceVisual.scale,[1,1,.2]);
+  assert.equal(sourceVisual.added,1);
+  assert.equal(sourceVisual.removed,true,'Source stops rendering when C# frame stops reporting its instance');
+  assert.equal(sourceVisual.source,'c0bb8365c7bd54b4597570f085f5a153');
   const initial=await state();assert.equal(initial.weaponState.ballistics.materials,386);assert.equal(initial.weaponState.ballistics.loadedMeshColliders,61);assert.equal(initial.weaponState.ballistics.unsupportedColliders,2);assert.equal(initial.weaponState.shots,0);assert.equal(rounds(initial.weaponState),61);
   await page.mouse.move(730,90);await page.waitForFunction(()=>window.__gameState().aimDirection[1]>.05,null,{timeout:30000});
   const aimed=await state(),direction=aimed.aimDirection;
