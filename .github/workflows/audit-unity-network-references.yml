@@ -1,0 +1,35 @@
+name: Audit Unity UNet task scene references
+on:
+  push:
+    paths:
+      - ".github/workflows/audit-unity-network-references.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check private project and read existing recovery release
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(gh api repos/$GITHUB_REPOSITORY --jq '.private')" = true
+          mkdir -p work/network-audit
+          gh release download recovery-preservation-2026-10-15 -p crisis-response-recovery-direct-v3-1.zip -D work/network-audit
+          printf 'cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d  work/network-audit/crisis-response-recovery-direct-v3-1.zip\n' | sha256sum -c -
+          unzip -q work/network-audit/crisis-response-recovery-direct-v3-1.zip 'export/ExportedProject/Assets/*' -d work/network-audit/recovered
+          python3 scripts/audit_unity_network_task_references.py work/network-audit/recovered/export/ExportedProject --output work/network-audit/refs.json
+          rm -rf work/network-audit/recovered work/network-audit/crisis-response-recovery-direct-v3-1.zip
+      - name: Save small private source-reference audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unity-unet-task-reference-audit
+          path: work/network-audit/refs.json
+          retention-days: 14
+          if-no-files-found: warn
