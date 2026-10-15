@@ -62,13 +62,12 @@ with tempfile.TemporaryDirectory() as tmp:
   triangles=[i for a,b,c in faces for i in (a,c,b)]
   packed=fields["m_CompressedMesh"]
   uv_data=packed.get("m_UV")
-  if not uv_data or not int(uv_data.get("m_NumItems",0)):
-   raise SystemExit("STOP original mesh lacks packed UVs; cannot bind source texture faithfully")
-  flat_uv=unpack(uv_data,True)
-  if len(flat_uv)!=len(vertices)*2:
-   raise SystemExit(f"STOP packed UV components {len(flat_uv)} != vertex pairs {len(vertices)}")
-  uvs=[[float(flat_uv[2*i]),float(flat_uv[2*i+1])] for i in range(len(vertices))]
- if not vertices or not uvs or len(uvs)!=len(vertices) or not triangles or any(i>=len(vertices) for i in triangles):
+  if uv_data and int(uv_data.get("m_NumItems",0)):
+   flat_uv=unpack(uv_data,True)
+   if len(flat_uv)!=len(vertices)*2:
+    raise SystemExit(f"STOP packed UV components {len(flat_uv)} != vertex pairs {len(vertices)}")
+   uvs=[[float(flat_uv[2*i]),float(flat_uv[2*i+1])] for i in range(len(vertices))]
+ if not vertices or (uvs and len(uvs)!=len(vertices)) or not triangles or any(i>=len(vertices) for i in triangles):
   raise SystemExit("STOP original exit-hole mesh has invalid vertices/UVs")
  if normals and len(normals)!=len(vertices):raise SystemExit("STOP inconsistent normals")
 
@@ -82,6 +81,12 @@ if isinstance(texenv,dict):
   t=texenv.get(key)
   if isinstance(t,dict):texture_guid=t.get("m_Texture",{}).get("guid")
   if texture_guid:break
+# Source Circle may have no UV channel. This is valid for an untextured
+# material but insufficient for an actual sampled texture.
+if texture_guid and not uvs:
+ raise SystemExit("STOP source material uses texture but original Circle mesh has no UV0; cannot guess UV coordinates")
+colors=mat.get("m_SavedProperties",{}).get("m_Colors",{})
+floats=mat.get("m_SavedProperties",{}).get("m_Floats",{})
 texturepath=index.get(texture_guid)
 out={
  "source":"Recovered original Wood exit hole.prefab and Circle.asset (no replacement geometry)",
@@ -89,6 +94,7 @@ out={
  "file_guids":{"prefab":"c0bb8365c7bd54b4597570f085f5a153","mesh":mg,"material":matg,"texture":texture_guid},
  "source_paths":{"prefab":rel,"mesh":meshpath.relative_to(root).as_posix(),"material":matpath.relative_to(root).as_posix(),"texture":texturepath.relative_to(root).as_posix() if texturepath else None},
  "prefab_local_transform":{"position":tr.get("m_LocalPosition"),"rotation":tr.get("m_LocalRotation"),"scale":tr.get("m_LocalScale")},
+ "source_material":{"shader":mat.get("m_Shader"),"colors":colors,"floats":floats,"renderQueue":mat.get("m_CustomRenderQueue")},
  "mesh":{"positions":vertices,"normals":normals,"uv":uvs,"indices":triangles,"source_format":source_format,"normals_from_source":bool(normals)},
  "counts":{"vertices":len(vertices),"triangles":len(triangles)//3},
  "note":"Geometry source preserved; no particle simulation, runtime renderer, or material/shader parity is claimed."
