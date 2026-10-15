@@ -14,6 +14,22 @@ public static class BallisticContracts {
   var host=new WeaponHost(Read("game/assets/weapon-runtime.json.gz"),input.handler,presentation.QueryWorld){queryWorld=presentation.QueryWorld};
   host.InitializeBallistics(Read("game/assets/ballistics.json.gz"),presentation.QueryScene);
   var world=presentation.QueryWorld;var runtime=host.Ballistics;
+  var sourceWindows=JsonSerializer.SerializeToElement(runtime.WindowVisuals());
+  Check(sourceWindows.GetProperty("sceneSha256").GetString()=="c43b36c415b4df14ef6223eaced686a8ddcead6c46f7504346aecb1a03c5743e",
+    "Recovered window render geometry does not match audited original scene");
+  Check(sourceWindows.GetProperty("meshFileID").GetString()=="10210"&&
+    sourceWindows.GetProperty("windows").GetArrayLength()==68,"Original scene window Quad source coverage changed");
+  foreach(var visual in sourceWindows.GetProperty("windows").EnumerateArray()){
+    string id=visual.GetProperty("sourceObject").GetString();
+    Check(presentation.QueryScene.objects.TryGetValue(id,out var original)&&original is GameObject,
+      "Window renderer source GameObject is missing");
+    var matrix=visual.GetProperty("matrix");
+    Check(matrix.GetArrayLength()==16,"Invalid window transform matrix");
+    var p=((GameObject)original).transform.position;
+    Check(Mathf.Abs(matrix[12].GetSingle()-p.x)<.0001f&&
+      Mathf.Abs(matrix[13].GetSingle()-p.y)<.0001f&&
+      Mathf.Abs(matrix[14].GetSingle()-p.z)<.0001f,"Window source world translation differs from Unity transform");
+  }
   Check(runtime.loadedMeshColliders==61&&runtime.unsupportedColliders==2,"Unexpected recovered mesh coverage");
   var weapon=(WeaponBase)typeof(WeaponHost).GetField("weapon",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(host);
   Projectile Bullet(Vector3 position,Vector3 forward){world.MakeCurrent();var go=new GameObject("Contract original M4 projectile",world);var p=go.AddComponent<Projectile>();p.meshTransform=new GameObject("Contract projectile mesh",world).transform;p.meshTransform.SetParent(go.transform,false);p.transform.position=position;p.transform.rotation=Quaternion.LookRotation(forward);p.InitializeXY(weapon,false);p.FlightMask=Masks.Instance.BallisticTargets;return p;}
@@ -35,9 +51,12 @@ public static class BallisticContracts {
   // browser adapter must observe the new source texture or future stamps go
   // invisible even though original glass penetration continues to work.
   int StampCount()=>JsonSerializer.Serialize(host.effects.events).Split("\"type\":\"windowStamp\"").Length-1;
+  int ResetCount()=>JsonSerializer.Serialize(host.effects.events).Split("\\"type\\":\\"windowReset\\"").Length-1;
+  int resetsBefore=ResetCount();
   int stampsBeforeReset=StampCount();
   Check(stampsBeforeReset>0,"Initial original window stamp never reached presentation");
   window.Reset();
+  Check(ResetCount()>resetsBefore,"Original window reset was not delivered to renderer");
   var afterReset=Bullet(point,window.transform.forward);
   Check(!window.PassThroughWithoutContact(point,afterReset),"Source window Reset did not restore solid alpha");
   window.HandleProjectile(afterReset,-window.transform.forward);
