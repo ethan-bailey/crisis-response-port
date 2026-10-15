@@ -114,22 +114,16 @@ activate_editor() {
   return 0
 }
 
-# Try 13f1 first. A single fallback to 62f1 is allowed, and the previous
-# container's seat is returned before switching images.
-IMAGE="unityci/editor:ubuntu-2022.3.13f1-base-3"
+# 2022.3.13f1 was tried in run 38763803865 and rejected
+# --activate-all --include-personal with CommandLine.UnknownOptionError.
+# Use the verified Personal activation capable LTS patch directly.
+IMAGE="unityci/editor:ubuntu-2022.3.62f1-base-3"
+note fallback_editor_version 2022.3.62f1
 note webgl_requested false
-activate_editor "$IMAGE"
-ACTIVATION=$?
-if [[ $ACTIVATION -ne 0 ]]; then
-  note old_editor_activation_rc "$ACTIVATION"
-  return_seat
-  note fallback_editor_version 2022.3.62f1
-  IMAGE="unityci/editor:ubuntu-2022.3.62f1-base-3"
-  activate_editor "$IMAGE" || {
-    note build_skipped_reason personal_activation_failed_both_versions
-    exit 0
-  }
-fi
+activate_editor "$IMAGE" || {
+  note build_skipped_reason personal_62_activation_failed
+  exit 0
+}
 
 touch "$WORK/import.log"
 note import_attempted true; note editor_detected true
