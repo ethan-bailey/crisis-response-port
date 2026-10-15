@@ -2,6 +2,19 @@
 
 ## Start here
 
+## WASM compiler / renderer continuation — verified 2026-10-15
+
+Current branch: `codex/projectile-material-impacts` in draft PR #9. Previous source/renderer checkpoint before this session was `4c7a855dd29c4b092dc6c4743cb0ea70bb516141`. **Do not reset or force-push this branch or touch the independent Unity foundation/WebGL branch.**
+
+The new `docs/WASM_CONTINUATION_CHECKPOINT_2026-10-15.md` is the authoritative source map and rollback guide for this continuation. Changes to the original scaled `Time.time` effect bridge, impact telemetry retention, and glass texture reset/re-stamp callbacks are *engine/rendering adapters*, not rewritten game rules. All recovered developer `runtime/Original/` code remains unmodified. Browser source mesh handedness improvements from the preceding checkpoint are retained.
+
+**Successfully compiled and tested:** native original contracts (including glass reset/re-stamp and impact bookkeeping), Node source-clock regressions, JS syntax, and Blazor WebAssembly publish on input commit `66478ac4343e156885527734db485fc46ba0f9a3`. Run [38803362416](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38803362416) **SUCCESS**. Metadata-only private artifact `12005511474` (`source-wasm-continuation-verification`), retaining source commit and logs. This proves a WASM build, not actual-device runtime parity.
+
+A full browser/PhysX integration check was launched once through an explicit milestone-scoped workflow edit `455a017cc2900bace19a3eb47cf0276aa71db8cf`, run [38803647712](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38803647712). **Check its terminal status and Chromium/WebKit evidence before asserting browser verification.** Both workflow push triggers are scoped to changes to their respective workflow files only; ordinary source commits will not generate repeat expensive runs. Both still support deliberate manual dispatch.
+
+Existing owner-private Site version 8 is still the last published build; this continuation has not deployed a new version. Do not change the Site audience or publish recovered assets publicly. The independent Unity feasibility run [38800542438](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38800542438) completed **SUCCESS**, but it belongs to the separate Unity branch and does not establish whole-game browser parity.
+
+
 ## WASM/browser source-renderer continuation (2026-10-15 20:24 UTC)
 
 On this same PR branch, commits `2a9f1805df6a0be5ddae3c6c0ba97f1e886e65fd` and `38d04afb7834466c1e7236585b318cce9f487ae6` repair the exact original Wood exit-hole Circle.asset renderer's Unity-to-Three handedness conversion: reflect local vertex/normal Z and reverse triangle winding. This preserves original source mesh data, C# ballistic calculations and engine-generated lifetime. `scripts/weapon_smoke.mjs` now checks every recovered position and triangle and verifies source normals if present. A lightweight mathematical geometry check passed for all 100 source faces, and the repository files were read back. **Browser/native CI has not yet run on these new commits; no new deployment was made.** The existing privately hosted version 8 is unchanged. Do not report these modifications as live until verified and published with matching WASM runtime and assets.
