@@ -223,5 +223,8 @@ timeout 750 docker exec "$CONTAINER" /opt/unity/Editor/Unity \
   > "$WORK/docker-webgl.log" 2>&1
 RC=$?; note build_exit "$RC"
 python3 scripts/audit_unity_webgl_output.py "$WORK/webgl" --out "$WORK/webgl-output-manifest.json" > "$WORK/output-inventory.log" 2>&1 || true
+if [[ "$RC" == 0 ]]; then
+  python3 scripts/smoke_unity_webgl_http.py "$WORK/webgl" --manifest "$WORK/webgl-output-manifest.json" --results "$WORK/webgl-http-smoke.json" > "$WORK/webgl-http-smoke.log" 2>&1 || note http_smoke_failed true
+fi
 echo "Marksman WebGL test finished with exit $RC"
 exit 0
