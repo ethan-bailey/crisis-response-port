@@ -1,3 +1,11 @@
+# Touch aiming update — 2026-10-15
+
+The user requested that tapping a *different screen location* changes aim rather than firing. On this branch, `game/browser-input.mjs` now tracks the final touch-aim position in CSS pixels. The first tap or a tap more than 24px away calls the existing `onAim` path and does not fire. A tap within 24px of that latest location triggers the existing queued tap-fire pathway, without changing the original C# weapon code. Dragging always aims and updates the final location; pointer cancellation cannot fire; mouse hold and the dedicated Fire button still work. Blur/resize/pagehide clear the comparison anchor. Instructions in `game/index.html` updated.
+
+Tests changed: `scripts/browser_input_test.mjs` covers first/new/same taps, drag, cancel, resize and mouse; `scripts/weapon_smoke.mjs` tests the aim-first repeat-to-fire behavior on Chromium and WebKit. Full game/browser CI for final patch: https://github.com/ethan-bailey/crisis-response-port/actions/runs/38790640197 . Check the actual run conclusion before claiming all browser tests passed. The older in-flight run 38790475580 failed only because it still had the previous first-tap-fires assertion. Do not conflate it with the updated test.
+
+No physical iPhone verification performed. This PR's owner-private playable Site still has not been updated with the newest hotfix; do not claim GitHub commits automatically deploy to that Site. Preserve independent Unity/WebGL branch changes and original gameplay-system fidelity.
+
 # Current hotfix — saved, publication blocked (2026-10-15)
 
 User reported an iPhone firing crash: `Cannot preserve sheared transform when reparenting` in original `BallisticHitMeshEffect.Play`.
