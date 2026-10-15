@@ -19,7 +19,7 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 <body>
 <div id="stage"></div>
 <div id="hud"><div id="title">Crisis Response · incomplete port</div><div id="status">Loading recovered scene and original Operator prefab…</div><div id="position"></div><div id="weaponStatus">Loading original weapons…</div></div>
-<div id="help">A/D · Shift · S/W · drag to aim · <a href="../runtime-web/">Runtime checks</a></div>
+<div id="help">Drag: aim · tap: trigger · hold: trigger held · <a href="../runtime-web/">Runtime checks</a></div>
 <div id="error"></div><div id="touchFeedback" data-state="idle" aria-live="off"></div><div id="rotateNotice">Rotate your phone to landscape to view the port prototype.</div>
 <div id="controls"><div class="cluster"><button id="left" data-action="left" aria-label="Move left">◀ LEFT</button><button id="right" data-action="right" aria-label="Move right">RIGHT ▶</button></div><div class="cluster"><button id="kneel" data-action="kneel" aria-label="Kneel">KNEEL</button><button id="stand" data-action="stand" aria-label="Stand">STAND</button><button id="sprint" data-action="sprint" aria-label="Sprint">SPRINT</button><button id="fire" disabled aria-label="Firing is not implemented">FIRE · PENDING</button><button id="reload" disabled aria-label="Reloading is not implemented">RELOAD · PENDING</button><button id="swap" disabled aria-label="Weapon switching is not implemented">SWAP · PENDING</button></div></div>
 <script type="module">
@@ -47,7 +47,7 @@ const rawActions={left:false,right:false,sprint:false,fire:false,kneel:false,sta
 // Tap is a raw original InputHandler action, not a simulated shot. Keep its
 // press and release in separate runtime ticks, even if Safari batches taps.
 const tapFireQueue=new TapFireQueue();
-let touchGesture="idle";
+let touchGesture="idle",touchFlashTimer=null;
 function resetFireTaps(){tapFireQueue.reset();rawActions.fire=false;}
 for(const event of ['blur','pagehide','resize'])addEventListener(event,resetFireTaps);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)resetFireTaps();});
@@ -198,12 +198,12 @@ function updateAim(e){
  pointerNdc.y=-(((e.clientY-rect.top)/rect.height)*2-1);
 }
 input.bindAim(renderer.domElement,updateAim,{dragThreshold:11,holdDelay:210,
- onGesture(state){touchGesture=state;const hint=document.querySelector("#touchFeedback");hint.dataset.state=state;hint.textContent=state==="pending"?"TOUCH":state==="held"?"TRIGGER HELD":state==="aiming"?"AIM":"";},
+ onGesture(state){touchGesture=state;const hint=document.querySelector("#touchFeedback");clearTimeout(touchFlashTimer);hint.dataset.state=state;hint.textContent=state==="pending"?"TOUCH":state==="held"?"TRIGGER HELD · WEAPON PENDING":state==="aiming"?"AIM":"";},
  onHoldChange(pressed,id){tapFireQueue.hold(`aim:${id}`,loaded&&pressed);},
  onTap(){
  // Dispatch fire to the original C# input state machine when play is active.
  // Weapon actions remain disabled until the recovered original weapon pipeline exists.
- if(loaded&&!document.hidden)tapFireQueue.tap();
+ if(loaded&&!document.hidden){tapFireQueue.tap();const hint=document.querySelector("#touchFeedback");hint.dataset.state="tap";hint.textContent="TRIGGER TAP · WEAPON PENDING";clearTimeout(touchFlashTimer);touchFlashTimer=setTimeout(()=>{if(touchGesture==="idle")hint.textContent="";},150);}
 }});
 
 let last=null,frameBusy=false;
