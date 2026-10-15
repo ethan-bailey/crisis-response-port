@@ -1,34 +1,59 @@
-# Tap-to-aim test complete; private publication blocked by Vercel quota — 2026-10-15
+# Next agent — current state (2026-10-15, 19:17 UTC)
 
-Source `game/browser-input.mjs` implements 24 CSS pixel target matching: a new-location touch taps to aim only; repeat tap near last drag/tap aim sends a single normal fire event; pointer cancellation does not fire; dedicated Fire button and mouse are unchanged. `scripts/browser_input_test.mjs` and `scripts/weapon_smoke.mjs` validate this behavior. **Final substantive branch CI [38790640197](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38790640197) completed SUCCESS**, including Chromium/WebKit browser/weapon smoke tests. Commit `cd47a520f31a8b96bd1304f6bfc2c4ecd290db04` includes input, updated game text, and tests; later documentation-only commits did not change running game code.
+## Start here
 
-**Publication limitation:** GitHub commit status for latest PR #9 head reports Vercel `failure`: **`api-deployments-free-per-day` (more than 100 deployments, retry in 24 hours)**. Connected Vercel list for scope `ethanbaileymarsh-8332` also returned 403 permission error. Neither the currently advertised PR preview URL nor owner-private `craftysnipe13.chatgpt.site` was verified to contain the new tap behavior. Do not imply the patch is live or claim a new playable link. **Do not publish private original-game assets through public GitHub Pages or public hosting**. Once a correctly authorized private deployment environment is available, publish the tested package and verify a physical iPhone tap-to-aim/playtest; the user prefers quick manual playtests over mandatory full CI on every small change.
+Browser work: branch `codex/projectile-material-impacts`, draft [PR #9](https://github.com/ethan-bailey/crisis-response-port/pull/9). Last gameplay source: `cd47a520f31a8b96bd1304f6bfc2c4ecd290db04`; subsequent commits through `2175e7e3bc61408aa59062cf9ee3516e581d1991` only changed documentation. This handoff commit is documentation only.
 
-# Touch aiming update — 2026-10-15
+**All PR #9 gameplay updates are now published privately:** https://crisis-response-runtime.craftysnipe13.chatgpt.site
 
-The user requested that tapping a *different screen location* changes aim rather than firing. On this branch, `game/browser-input.mjs` now tracks the final touch-aim position in CSS pixels. The first tap or a tap more than 24px away calls the existing `onAim` path and does not fire. A tap within 24px of that latest location triggers the existing queued tap-fire pathway, without changing the original C# weapon code. Dragging always aims and updates the final location; pointer cancellation cannot fire; mouse hold and the dedicated Fire button still work. Blur/resize/pagehide clear the comparison anchor. Instructions in `game/index.html` updated.
+- Site project: `appgprj_6acfef7174888191bc2bc2f269f60acc`.
+- Current saved version 8: `appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_6aeb63256a6c81918ca22f1d32b20c26`.
+- Successful deployment: `appgdep_6ad126a348c88191aab17f03e00c5e11`.
+- Canonical Site source commit: `a20353a9b4a917e9dd285d5e6fef63f47c0aed94`.
+- Owner-only audience was verified and preserved. Do not make original-game assets public.
+- Earlier claims that publication is blocked, version 6 is live, or hotfix/UI are unpublished are obsolete. Version 7 has the known firing crash; do not roll back to it.
 
-Tests changed: `scripts/browser_input_test.mjs` covers first/new/same taps, drag, cancel, resize and mouse; `scripts/weapon_smoke.mjs` tests the aim-first repeat-to-fire behavior on Chromium and WebKit. Full game/browser CI for final patch: https://github.com/ethan-bailey/crisis-response-port/actions/runs/38790640197 . Check the actual run conclusion before claiming all browser tests passed. The older in-flight run 38790475580 failed only because it still had the previous first-tap-fires assertion. Do not conflate it with the updated test.
+## Included and verified
 
-No physical iPhone verification performed. This PR's owner-private playable Site still has not been updated with the newest hotfix; do not claim GitHub commits automatically deploy to that Site. Preserve independent Unity/WebGL branch changes and original gameplay-system fidelity.
+- Original material/window/fragment algorithms and imported Mission 01 collision data.
+- Firing crash fixed through scoped `ReparentBeforeScaleReset` adapter: preserve position/rotation before original Play immediately resets localScale. Do not replace this with speculative global shear decomposition or suppress the exception.
+- Compact translucent edge controls, seven 44px-or-larger targets, ammo-only HUD; help and pending swap hidden.
+- New-location touch tap aims; a tap within 24 CSS pixels of the latest touch aim fires once. Drag aims and retains direction; Fire button/mouse hold unchanged. Cancellation cannot fire; lifecycle resets clear the comparison anchor.
+- Full final game/build CI [38790640197](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38790640197) succeeded on substantive commit `cd47a520f31a8b96bd1304f6bfc2c4ecd290db04`, including Chromium/WebKit tests. Artifact `11999739004`, `crisis-response-mission01-game-smoke`; SHA256 `9e15693b580ba5352eedaa8ddca6fb2fce1d6148fead39830decaf7c06f5faf2`.
+- Native/WASM hotfix regression previously passed run `38782716412`.
+- Published game/index.html and game/browser-input.mjs match PR head `2175e7e3bc61408aa59062cf9ee3516e581d1991`; runtime-web was replaced entirely with final artifact `work/game-runtime/wwwroot`, changing only base href to `/runtime-web/`.
+- ZIP integrity, JS syntax and complete deployment gzip/tar integrity passed. Hosting returned succeeded. No physical iPhone test or fresh browser inspection of the deployed version was performed.
 
-# Current hotfix — saved, publication blocked (2026-10-15)
+## File map and recovery
 
-User reported an iPhone firing crash: `Cannot preserve sheared transform when reparenting` in original `BallisticHitMeshEffect.Play`.
+- `game/`: browser renderer, touch/input, camera/animation integration and recovered assets.
+- `runtime/Original/`: recovered developer algorithms; preserve original behavior.
+- `runtime/Engine/`: explicit engine adapters and hosting services.
+- `runtime/Checks/`: native behavioral contracts, including sheared impact regression.
+- `scripts/`: extraction, source provenance, asset preparation and targeted smoke tests.
+- `docs/`: audits and native Unity feasibility records.
+- Another agent owns Unity feasibility/compilation, related branches/workflows and main. Do not reset, merge or edit that work as part of browser continuation.
 
-Hotfix code/UI: `5b4a7524f9af539a65d206b70bbf32f6b5d57c07`. Updated UI test: `fb42c7fa5e7a5461c60cf3e2b3af042d11f87f20`. Same branch and PR #9.
+Local paths are caches, not authoritative source:
+- Site checkout: `/workspace/sites/crisis-response-runtime` (canonical Site Git checkout).
+- Old partial port cache: `/workspace/scratch/0234318e821a/crisis-response-port` is stale, lacks Git metadata and does NOT contain all current source. Recover current files from GitHub.
+- Final artifact ZIP/extraction: `/workspace/scratch/0234318e821a/pr9-build/pr9-latest.zip` and `pr9-build/extracted/`.
+- Verified deployed archive: `/workspace/scratch/0234318e821a/pr9-build/pr9-publish.tar.gz`.
+- Older `crisis-response-runtime-site.tar.gz` at scratch root is truncated and must not be reused.
 
-The source Play method immediately overwrites localScale after SetParent. Its engine call now uses `ReparentBeforeScaleReset` to preserve world position/rotation without decomposing an unrepresentable shear matrix. Original scale reset, growth, layer and projectile/material arithmetic remain intact. The extractor retains this adaptation. Do not remove the effect, swallow the exception or apply a speculative global Transform fallback. Native regression exercises an oblique projectile against a thin rotated nonuniform parent and checks pose and original final local scale.
+Artifact download workaround: GitHub download_workflow_artifact returns a reusable OpenAI file_id/file_name. Raw signed-URL curl returned 502 here. prepare_materialize with that exact returned file reference and a scratch destination successfully placed the ZIP locally; it did not create/save any Library item. Retain the returned workspace_path. Do not search unrelated user files.
 
-UI: seven implemented controls remain, with 44px touch targets, translucent buttons at bottom edges, compact ammo-only HUD during play, no help banner/pending swap button, and a scrollable capped error panel. Existing action ownership and tap/drag behavior remain intact.
+For another publication, read the current Sites skill, open the same project with fresh short-lived credentials through canonical site-workflow.mjs, modify source, package/push with the helper, then publish its returned Site source SHA and unchanged archive. GitHub code SHA is NOT the Site source SHA. Credentials only in session memory/stdin, never repository or files.
 
-Native/WASM run `38782716412` SUCCESS. Firing/reload and camera checks also passed in both browsers on the same code/UI. The first UI run failed because it counted the deliberately hidden swap button; the updated test verifies seven visible controls, hidden clutter, target bounds, multi-touch and lifecycle behavior. Final full game run `38783527397` SUCCESS, including Chromium/WebKit movement, touch UI, camera, firing and reload checks. Matching game/runtime artifact: `11997445625`. No physical iPhone verification or screenshot inspection was possible in the unavailable local environment.
+## Next bounded work
 
-IMPORTANT LIVE STATE: the execution environment is unavailable, so there is no local shell, source helper or packaging capability. These hotfix/UI changes are NOT published. To keep firing playable, owner-private hosting was restored to saved version 6 (`appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_9066e047ec848191b51d240dea88d4e2`), source `c6daf0b4568f112a2c7154ed71e9f87e3f039040`. Rollback deployment `appgdep_6ad1166fc49081918442167699092d94` succeeded. URL unchanged. This temporarily omits the new material interactions; all work remains saved in GitHub. Version 7 is saved but reproduces the reported crash; do not redeploy it.
+First collect the user's iPhone feedback on this live version. User is low on tokens and prefers quick manual playtests over repeating the full CI suite for every small edit. Run only checks appropriate to actual changes.
 
-When a workspace is available: read the Sites skill, open the same Site with fresh credentials through its canonical helper, get the exact successful game artifact from run 38783527397, copy the updated game sources and matching compiled runtime (base href /runtime-web/), package and privately publish. Do not pass a GitHub code SHA as a Site source SHA. Preserve owner-only access and the other agent's Unity feasibility work.
+Remaining parity gaps: native particle/exit-hole/fragment rendering and visible glass binding, dynamic rigidbody impulses and physiology, two unresolved built-in meshes, native comparison for hull cooking and curve infinity mapping. Do not invent placeholder gameplay or claim complete 1:1 parity.
 
-The older checkpoint below describes prior work; its claim that version 7 is live is superseded by this hotfix section.
+## Historical implementation notes
+
+The material below is retained for source details only. Its deployment/checkpoint statements are historical; current state above takes precedence.
 
 # Active continuation — original material impacts
 
