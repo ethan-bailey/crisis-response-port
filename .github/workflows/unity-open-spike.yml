@@ -1,12 +1,6 @@
 name: Unity 2022.3 import go-no-go spike
 
 on:
-  push:
-    paths:
-      - ".github/workflows/unity-open-spike.yml"
-      - "scripts/unity_open_spike.sh"
-      - "scripts/classify_unity_spike.py"
-      - "scripts/report_unity_spike.py"
   workflow_dispatch:
 
 permissions:
@@ -40,12 +34,12 @@ jobs:
           df -h .
       - name: License Personal seat and diagnose recovered project (read existing private release only)
         run: bash scripts/unity_open_spike.sh
-      - name: Emergency return Personal seat if interrupted
+      - name: Emergency deactivate Personal entitlement seat if interrupted
         if: always()
         run: |
           ID="crisis-unity-personal-$GITHUB_RUN_ID"
           if docker ps --format '{{.Names}}' | grep -Fxq "$ID"; then
-            timeout 100 docker exec "$ID" /bin/bash -lc '\n              c="$(command -v Unity.Licensing.Client || find /opt/unity -name Unity.Licensing.Client -type f -print -quit)"\n              test -n "$c" && "$c" --return-ulf\n            ' > /tmp/unity-emergency-return.log 2>&1 || true
+            timeout 100 docker exec "$ID" /bin/bash -lc '\n              c="$(command -v Unity.Licensing.Client || find /opt/unity -name Unity.Licensing.Client -type f -print -quit)"\n              test -n "$c" && "$c" --deactivate-all --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD"\n            ' > /tmp/unity-emergency-return.log 2>&1 || true
             docker rm -f "$ID" >/dev/null 2>&1 || true
             echo 'Emergency license return attempted; verify Unity ID seat state if import was cancelled.'
           fi
