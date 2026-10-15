@@ -45,7 +45,7 @@ test('touch release does not clear a keyboard action; repeats do not retrigger',
 
 test('movement finger release does not stop aiming/firing', () => {
   const input = new BrowserInput(), aim = new Surface(), left = new Surface(), moves = [];
-  input.bindAim(aim, e => moves.push(e.pointerId)); input.bindButton(left, 'left');
+  input.bindAim(aim, e => { if(e) moves.push(e.pointerId); }); input.bindButton(left, 'left');
   aim.send('pointerdown', { pointerId: 7 });
   left.send('pointerdown', { pointerId: 8 });
   left.send('pointerup', { pointerId: 8 });
