@@ -7,7 +7,20 @@ def unpack(vector, floating=False):
     count=int(vector['m_NumItems']); bits=int(vector['m_BitSize'])
     if not count:return []
     if bits<=0 or bits>32:raise ValueError('Unsupported packed bit width')
-    raw=bytes.fromhex(vector['m_Data']); mask=(1<<bits)-1
+    data=vector['m_Data']
+    # AssetRipper YAML with a plain hex run of only decimal digits may be
+    # parsed as an integer. The integer zero is safely unambiguous; ANY other
+    # integer would lose the original hexadecimal lexical bytes (e.g. 12 may
+    # have represented hex 0x12), so stop instead of guessing normals.
+    if isinstance(data,int):
+        if data!=0:
+            raise ValueError('Original packed bytes were converted to a nonzero YAML integer; inspect raw source')
+        raw=bytes((count*bits+7)//8)
+    elif isinstance(data,str):
+        raw=bytes.fromhex(data)
+    else:
+        raise ValueError('Original packed bitstream has unsupported YAML representation')
+    mask=(1<<bits)-1
     if len(raw)*8<count*bits:raise ValueError('Truncated packed vector')
     values=[]
     for i in range(count):
