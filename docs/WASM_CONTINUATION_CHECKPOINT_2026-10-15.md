@@ -32,9 +32,9 @@ The single-purpose `.github/workflows/wasm-continuation-verify.yml` triggers aut
 3. `dotnet publish` of the actual C# Blazor WASM runtime; asserts produced `.wasm` files.
 4. Private artifact containing commit SHA and textual test/build evidence **only**, not recovered original binaries.
 
-First verification input SHA: `66478ac4343e156885527734db485fc46ba0f9a3`. Actions run: https://github.com/ethan-bailey/crisis-response-port/actions/runs/38803362416 . **Pending at initial writing; inspect conclusion and the failing step before declaring compile success.**
+First verification input SHA: `66478ac4343e156885527734db485fc46ba0f9a3`. Actions run: https://github.com/ethan-bailey/crisis-response-port/actions/runs/38803362416 . **VERIFIED SUCCESS (2026-10-15 20:38 UTC):** native original C# contracts, original BallisticWindow reset/stamp regression, Node effect-clock tests, JS syntax and real Blazor .NET 8 WebAssembly publish all passed at exact input SHA `66478ac4343e156885527734db485fc46ba0f9a3`. Private metadata-only artifact `12005511474` (`source-wasm-continuation-verification`) contains the SHA, generated WASM file list and textual logs. This does **not** by itself verify loaded runtime in Chromium/WebKit or on an actual iPhone.
 
-No full Chromium/WebKit browser test or new owner-private deployment was run in this checkpoint. Existing owner-only Site version 8 remains the last separately verified publication.
+A single full Chromium/WebKit browser integration run was launched with commit `455a017cc2900bace19a3eb47cf0276aa71db8cf`: https://github.com/ethan-bailey/crisis-response-port/actions/runs/38803647712 . Its result is pending at this documentation edit; do not infer browser success from native compile success. No new owner-private deployment was made. Existing owner-only Site version 8 remains the last separately verified publication.
 
 ## Exact change boundaries and rollback guidance
 
