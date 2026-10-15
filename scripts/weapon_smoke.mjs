@@ -25,9 +25,21 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
      position:[1,2,3],rotation:[0,0,0,1],scale:[1,1,.2]
    }}]);
    const mesh=isolated.children[0];
+   const raw=await (await fetch('./assets/ballistics/wood-exit-hole-source.json')).json();
+   const points=mesh.geometry.getAttribute('position'),index=mesh.geometry.index;
+   const near=(a,b)=>Math.abs(a-b)<1e-7;
+   const reflectedVertices=raw.mesh.positions.every(([x,y,z],i)=>
+     near(points.getX(i),x)&&near(points.getY(i),y)&&near(points.getZ(i),-z));
+   const reflectedWinding=raw.mesh.indices.every((v,i)=>{
+     const sourceIndex=i%3===1?i+1:i%3===2?i-1:i;
+     return index.getX(i)===raw.mesh.indices[sourceIndex];
+   });
+   const n=mesh.geometry.getAttribute('normal');
+   const reflectedNormals=!raw.mesh.normals.length||raw.mesh.normals.every(([x,y,z],i)=>
+     near(n.getX(i),x)&&near(n.getY(i),y)&&near(n.getZ(i),-z));
    const payload={ready,added:renderer.snapshot().active,
-     vertices:mesh.geometry.getAttribute('position').count,
-     triangles:mesh.geometry.index.count/3,
+     vertices:points.count,triangles:index.count/3,
+     reflectedVertices,reflectedWinding,reflectedNormals,
      position:mesh.position.toArray(),scale:mesh.scale.toArray(),
      source:mesh.userData.originalEffectSource};
    renderer.update([]);
@@ -39,6 +51,9 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   assert.equal(sourceVisual.ready?.loaded,true,'Original exit-hole source mesh loads');
   assert.equal(sourceVisual.vertices,186);
   assert.equal(sourceVisual.triangles,100);
+  assert.equal(sourceVisual.reflectedVertices,true,'Local source positions must reflect Unity Z');
+  assert.equal(sourceVisual.reflectedWinding,true,'Mirrored geometry must preserve source-facing triangles');
+  assert.equal(sourceVisual.reflectedNormals,true,'Source normals must use the same mirrored basis');
   assert.deepEqual(sourceVisual.position,[1,2,-3],'Unity-to-Three world position conversion');
   assert.deepEqual(sourceVisual.scale,[1,1,.2]);
   assert.equal(sourceVisual.added,1);
