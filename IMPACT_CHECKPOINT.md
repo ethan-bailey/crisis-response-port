@@ -6,7 +6,7 @@ This milestone imports the original Mission 01 BallisticMaterial/BallisticWindow
 
 Extraction: `python scripts/extract_ballistic_runtime.py RECOVERED_PROJECT game/assets/ballistics.json.gz runtime/Original/Ballistics`. Requires pinned dependencies in runtime-foundation.yml. Packed vertex/index decoding recovers 61 of 63 mesh colliders from original data. The two unresolved built-in mesh references are reported, not replaced. Convex hull queries use source vertices; exact Unity/PhysX cooking parity has not been verified.
 
-Local native checks cover original thin/thick/impenetrable behavior, delayed suspension/resume, glass alpha hole repeat passage, source randomized fragment mass conservation and registration. Existing input, presentation, weapon/reload contracts and 23 Node regressions pass. Browser CI evidence must be added before publishing this milestone.
+Local native checks cover original thin/thick/impenetrable behavior, delayed suspension/resume, glass alpha hole repeat passage, source randomized fragment mass conservation and registration. Existing input, presentation, weapon/reload contracts and 23 Node regressions pass. Native/WASM CI run `38780482387` and full game/browser CI run `38780482295` succeeded for code `37eac226a91ed2fa13c02d89f5666cf3f1fdbb37`. Final game artifact: `11996256322`. Chromium recorded 46 contacts/4 fragments; WebKit recorded 49 contacts/12 fragments. Existing movement, stopping, landscape input, camera, aim and reload checks all passed. Native probes also validated all 45 active imported mesh colliders; all 21 unique decoded meshes match source serialized bounds. No physical iPhone test was available.
 
 ## Remaining boundaries
 

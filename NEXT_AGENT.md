@@ -1,3 +1,17 @@
+# Active continuation — original material impacts
+
+Updated 2026-10-15. Current browser work is on `codex/projectile-material-impacts`, draft PR https://github.com/ethan-bailey/crisis-response-port/pull/9, based on the firing milestone below. Code checkpoint: `37eac226a91ed2fa13c02d89f5666cf3f1fdbb37`.
+
+The user authorized the next step. Original material penetration, deflection/ricochet, delayed exits, glass-alpha holes and randomized fragmentation are now connected to live projectile flight. Source sampled impact audio is transported to Web Audio. Imported coverage is 386 material components (including 68 glass windows) and 61 mesh colliders; two built-in mesh references remain unresolved. The full original projectile mask now includes Windows. Weapons and queries share the source scene world.
+
+Privately published and verified: https://crisis-response-runtime.craftysnipe13.chatgpt.site . Site source `e31222855f1fabb6a8758230b66f812899830f03`; successful deployment `appgdep_6ad1142f55a08191b6cc64e10061bcb7`; version `appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_b3d2f109b0f881919ab515d9b2ab5e8b`. The hosted runtime came from the exact successful game artifact below. Owner-only access was preserved. Documentation-only commits after the code checkpoint do not alter that build.
+
+Read `IMPACT_CHECKPOINT.md` first for implementation and explicit boundaries. Native original/material/input/presentation/reload contracts and 23 Node regressions pass locally. An additional native probe cast successful rays against all 45 active imported mesh colliders. Final browser artifact `11996256322` contains the matching compiled runtime, screenshots and reports. Chromium recorded 46 material contacts and 4 fragments; WebKit recorded 49 contacts and 12 fragments. Both screenshots were visually checked; there was no physical iPhone test. CI runs for this exact code: game/browser `38780482295` (SUCCESS), native/WASM `38780482387` (SUCCESS). The first browser run failed only because the host called original Start on an inactive object; deferred Start now follows active/enabled state. All 21 imported unique meshes also match the source serialized AABBs.
+
+Do not claim complete 1:1 parity. Native particles, visible hole/fragment meshes, visual glass texture bindings, rigid-body impulses and limb damage remain unfinished. Ammo curve endpoints use an explicit clamp adapter like weapon curves; native infinity mapping, PhysX hull cooking and random sequence parity still need comparison. No substitute damage or particle gameplay has been added. Preserve private hosting and the separate agent's Unity feasibility work. Do not merge/reset their branch or main.
+
+The following section retains the earlier verified firing baseline. Its “no material interactions” statements are superseded by this checkpoint; its remaining non-material limitations still apply.
+
 # Crisis Response browser port — next-agent instructions
 
 Updated 2026-10-15 after the firing/reload milestone was verified and privately published.
