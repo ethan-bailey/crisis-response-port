@@ -8,7 +8,9 @@ public sealed class BallisticRuntimeHost {
  public static BallisticRuntimeHost Current;
  readonly SceneLoadResult scene;readonly Dictionary<string,BallisticMaterialProperties> properties=[];
  readonly Dictionary<string,Texture2D> textures=[];readonly Dictionary<string,BallisticHitEffect> effectPrefabs=[];readonly Dictionary<string,BallisticHitMeshEffect> meshPrefabs=[];
- readonly HashSet<BallisticMaterial> started=[];readonly List<BallisticMaterial> materials=[];readonly List<object> interactions=[];readonly Dictionary<int,float> entryEnergy=[];
+ readonly HashSet<BallisticMaterial> started=[];readonly List<BallisticMaterial> materials=[];
+ readonly List<(string objectID,string componentID,string textureID,bool hasHole,BallisticWindow component)> windowVisuals=[];
+ readonly string sourceSceneHash;readonly List<object> interactions=[];readonly Dictionary<int,float> entryEnergy=[];
  readonly Dictionary<int,GameObject> meshes=[];readonly Action<Projectile> register;readonly Crisis.Runtime.Weapons.WeaponEffects effects;
  public readonly int particlesLifetime;int contactCount,fragmentCount;public int unsupportedColliders,loadedMeshColliders,windowCount;public RuntimeWorld World=>scene.world;
  static float F(JsonElement e,string key)=>e.GetProperty(key).GetSingle();static string Ref(JsonElement e)=>e.GetProperty("fileID").GetString();
@@ -16,6 +18,7 @@ public sealed class BallisticRuntimeHost {
  static bool Flag(JsonElement e,string key)=>e.GetProperty(key).ValueKind==JsonValueKind.True||(e.GetProperty(key).ValueKind==JsonValueKind.Number&&e.GetProperty(key).GetInt32()!=0);
  public BallisticRuntimeHost(string json,SceneLoadResult scene,Crisis.Runtime.Weapons.WeaponEffects effects,Action<Projectile> register){
   this.scene=scene;this.effects=effects;this.register=register;Current=this;scene.world.MakeCurrent();using var document=JsonDocument.Parse(json);var c=document.RootElement;
+  sourceSceneHash=c.GetProperty("sourceHashes").GetProperty("Assets/Scenes/Mission 01.unity").GetString();
   Masks.Instance.BallisticTargets=c.GetProperty("ballisticMask").GetInt32();Masks.Instance.Limbs=c.GetProperty("limbMask").GetInt32();Masks.Instance.BallisticTargetsSansLimbs=Masks.Instance.BallisticTargets&~Masks.Instance.Limbs;
   var settings=c.GetProperty("settings");particlesLifetime=settings.GetProperty("particlesLifetime").GetInt32();PerformanceManager.Instance=new(){MaxEnvironmentHitEffects=settings.GetProperty("maxEnvironmentHitEffects").GetInt32(),MaxEnvironmentHitMeshes=settings.GetProperty("maxEnvironmentHitMeshes").GetInt32()};MissionHelper.Instance.EffectsContainer=new GameObject("Original effects container",scene.world).transform;
   foreach(var pair in c.GetProperty("textures").EnumerateObject()){var t=pair.Value;textures[pair.Name]=new(t.GetProperty("width").GetInt32(),t.GetProperty("height").GetInt32(),Convert.FromBase64String(t.GetProperty("rgba").GetString()),scene.world){SourceID=pair.Name};}
@@ -42,13 +45,19 @@ public sealed class BallisticRuntimeHost {
    // Loaded graph is deliberately not globally activated. Activate only recovered
    // material methods, preserving the existing input clock and scope.
    m.Awake();if(m.isActiveAndEnabled){m.Start();started.Add(m);}materials.Add(m);scene.objects[id]=m;
+   if(m is BallisticWindow visual)windowVisuals.Add((goid,id,f.GetProperty("texture").GetProperty("guid").GetString(),f.GetProperty("holeTexture").TryGetProperty("guid",out _),visual));
    m.onInteractionBegin.AddListener(p=>{entryEnergy[p.GetInstanceID()]=p.Energy;contactCount++;});
    m.onInteractionEnd.AddListener(p=>{var info=new{sourceObject=goid,sourceComponent=id,name=go.name,material=m.properties?.name,entryEnergy=entryEnergy.GetValueOrDefault(p.GetInstanceID(),p.Energy),exitEnergy=p.Energy,status=p.Status.ToString(),p.PenetrationDistance,position=new[]{p.Position.x,p.Position.y,p.Position.z},projectile=p.Id,fragment=p.HasFragmented};if(interactions.Count>=32)interactions.RemoveAt(0);interactions.Add(info);Emit("materialInteraction",info);entryEnergy.Remove(p.GetInstanceID());});
    if(m is BallisticWindow window){
     Action<Texture2D,int,int,int,int,byte[]> onPixelsChanged=(t,x,y,w,h,pixels)=>
       Emit("windowStamp",new{sourceObject=goid,texture=t.SourceID,x,y,width=w,height=h,rgba=Convert.ToBase64String(pixels)});
     var renderer=window.GetComponent<Renderer>();
-    renderer.material.OnMainTextureAssigned=t=>{if(t!=null)t.Changed=onPixelsChanged;};
+    bool installed=false;
+    renderer.material.OnMainTextureAssigned=t=>{
+      if(t!=null)t.Changed=onPixelsChanged;
+      if(installed)Emit("windowReset",new{sourceObject=goid,texture=t?.SourceID});
+      installed=true;
+    };
     // Awake has already assigned the first original texture instance.
     renderer.material.OnMainTextureAssigned(renderer.material.mainTexture);
    }
@@ -61,6 +70,23 @@ public sealed class BallisticRuntimeHost {
  }
  Dictionary<string,Transform> Hierarchy(JsonElement records){var map=new Dictionary<string,Transform>();foreach(var r in records.EnumerateArray())if(r.GetProperty("classID").GetInt32()==4){var f=r.GetProperty("fields");var t=new GameObject("Original effect transform",scene.world).transform;map[r.GetProperty("fileID").GetString()]=t;}
   foreach(var r in records.EnumerateArray())if(r.GetProperty("classID").GetInt32()==4){var f=r.GetProperty("fields");var t=map[r.GetProperty("fileID").GetString()];if(map.TryGetValue(Ref(f.GetProperty("m_Father")),out var parent))t.SetParent(parent,false);t.localPosition=V(f.GetProperty("m_LocalPosition"));t.localScale=V(f.GetProperty("m_LocalScale"));var q=f.GetProperty("m_LocalRotation");t.localRotation=new(F(q,"x"),F(q,"y"),F(q,"z"),F(q,"w"));}return map;
+ }
+ public object WindowVisuals(){
+  scene.world.MakeCurrent();
+  return new {
+   sceneSha256=sourceSceneHash,
+   // Confirmed by the original Mission 01 MeshFilter audit, not substitute geometry.
+   meshFileID="10210",meshGuid="0000000000000000e000000000000000",
+   windows=windowVisuals.Select(w=>{
+    var t=w.component.transform;var m=t.WorldMatrix;
+    // System.Numerics uses row-vector matrices. Row-major serialization can
+    // be imported by Three as column-major, then reflected on both Z axes.
+    var matrix=new[]{m.M11,m.M12,m.M13,m.M14,m.M21,m.M22,m.M23,m.M24,
+      m.M31,m.M32,m.M33,m.M34,m.M41,m.M42,m.M43,m.M44};
+    return new {sourceObject=w.objectID,sourceComponent=w.componentID,texture=w.textureID,
+      hasHoleTexture=w.hasHole,active=w.component.isActiveAndEnabled,matrix};
+   }).ToArray()
+  };
  }
  public BallisticMaterialProperties Property(string id)=>properties[id];
  public void Emit(string type,object value)=>effects.Emit(type,value);
