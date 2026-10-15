@@ -30,6 +30,22 @@ public static class BallisticContracts {
   Check(px>=0,"No solid source glass pixel");var point=window.transform.TransformPoint(new((float)px/tex.width-.5f,(float)py/tex.height-.5f,0));var glass=Bullet(point,window.transform.forward);
   Check(!window.PassThroughWithoutContact(point,glass),"Original solid glass must contact");window.HandleProjectile(glass,-window.transform.forward);
   var repeat=Bullet(point,window.transform.forward);Check(window.PassThroughWithoutContact(point,repeat),"Original stamped glass hole must pass subsequent bullet");
+ 
+  // The original Reset() replaces Renderer.material.mainTexture. The WASM
+  // browser adapter must observe the new source texture or future stamps go
+  // invisible even though original glass penetration continues to work.
+  int StampCount()=>JsonSerializer.Serialize(host.effects.events).Split("\\"type\\":\\"windowStamp\\"").Length-1;
+  int stampsBeforeReset=StampCount();
+  Check(stampsBeforeReset>0,"Initial original window stamp never reached presentation");
+  window.Reset();
+  var afterReset=Bullet(point,window.transform.forward);
+  Check(!window.PassThroughWithoutContact(point,afterReset),"Source window Reset did not restore solid alpha");
+  window.HandleProjectile(afterReset,-window.transform.forward);
+  Check(StampCount()>stampsBeforeReset,"Window Reset lost the source texture stamp callback");
+  var entryField=typeof(BallisticRuntimeHost).GetField("entryEnergy",BindingFlags.NonPublic|BindingFlags.Instance);
+  var entryTelemetry=(Dictionary<int,float>)entryField.GetValue(runtime);
+  runtime.Step();
+  Check(entryTelemetry.Count==0,"WASM material telemetry retained obsolete prior-frame projectile entries");
   var fragmented=Bullet(new(0,2,0),Vector3.right);float mass=fragmented.Mass,total=0;int count=0;fragmented.OnFragmentation();fragmented.SpawnRandomFragments(fragmented.Position,(p,_)=>{count++;total+=p.Mass;Check(p.Status==BallisticResult.Continue&&p.Velocity>0&&p.Mass>0,"Invalid original fragment");});
   Check(count>0&&Mathf.Abs(total-mass)<.0001f,"Original randomized fragments must conserve source mass");
   Check((Masks.Instance.BallisticTargets&(1<<window.gameObject.layer))!=0,"Windows omitted from original projectile mask");
