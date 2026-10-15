@@ -97,7 +97,8 @@ export class BrowserInput {
           Number.isFinite(event.clientX) && Number.isFinite(event.clientY)) {
         const [x, y] = coords(event);
         if (isDrag(g, x, y) && g.state === 'pending') g.state = 'aiming';
-        if (g.state !== 'pending' && (x !== g.lastAimX || y !== g.lastAimY))
+        if ((g.state === 'aiming' || (g.state === 'held' && isDrag(g,x,y))) &&
+            (x !== g.lastAimX || y !== g.lastAimY))
           onAim(event);
       }
       const wasPending = g.state === 'pending';
