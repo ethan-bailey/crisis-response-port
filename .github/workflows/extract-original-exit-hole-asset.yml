@@ -1,11 +1,7 @@
 name: Preserve original Wood exit-hole mesh for private browser rendering
 on:
-  push:
-    branches:
-      - codex/projectile-material-impacts
-    paths:
-      - ".github/workflows/extract-original-exit-hole-asset.yml"
   workflow_dispatch:
+
 permissions:
   contents: write
 concurrency:
