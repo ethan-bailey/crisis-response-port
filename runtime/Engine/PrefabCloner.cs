@@ -31,7 +31,7 @@ public static class PrefabCloner {
             var type=value.GetType();
             if(type.IsPrimitive||type.IsEnum||type==typeof(string)||value is Vector2 or Vector3 or Quaternion or Keyframe)return value;
             if(values.TryGetValue(value,out var existing))return existing;
-            if(value is AnimationCurve curve)return new AnimationCurve(curve.keys){serializedPreInfinity=curve.serializedPreInfinity,serializedPostInfinity=curve.serializedPostInfinity};
+            if(value is AnimationCurve curve)return new AnimationCurve(curve.keys){clampOutside=curve.clampOutside,serializedPreInfinity=curve.serializedPreInfinity,serializedPostInfinity=curve.serializedPostInfinity};
             if(value is Array array){var output=Array.CreateInstance(type.GetElementType(),array.Length);values[value]=output;
                 for(int i=0;i<array.Length;i++)output.SetValue(CopyValue(array.GetValue(i),values),i);return output;}
             if(value is IList list){var output=(IList)Activator.CreateInstance(type);values[value]=output;foreach(var item in list)output.Add(CopyValue(item,values));return output;}

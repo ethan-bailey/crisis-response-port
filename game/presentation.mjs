@@ -3,6 +3,7 @@ import { createWeaponEffects } from './weapon-runtime.mjs';
 const radians=Math.PI/180;
 const worldPosition=node=>node.getWorldPosition(new THREE.Vector3());
 const unityVector=v=>[v.x,v.y,-v.z];
+const worldZ=node=>{const q=node.getWorldQuaternion(new THREE.Quaternion()),r=new THREE.Vector3(1,0,0).applyQuaternion(q),u=new THREE.Vector3(0,1,0).applyQuaternion(q);return Math.atan2(r.y,u.y)*180/Math.PI;};
 function worldEuler(node,yaw,z){
  const desired=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),-yaw*radians).multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1),z*radians));
  const parent=node.parent?.getWorldQuaternion(new THREE.Quaternion())||new THREE.Quaternion();node.quaternion.copy(parent.invert().multiply(desired));node.updateWorldMatrix(false,true);
@@ -52,7 +53,7 @@ export function createUpperBody(data,manifest,nodeById,character,weapon,runtimeC
    effects.update(weaponResult.events,weaponResult.magazinePose);
    const inputs=arms.map(a=>{
     const p=worldPosition(a.upper),arm=weaponResult[a.right?'right':'left'],target=new THREE.Vector3(arm.target[0],arm.target[1],-arm.target[2]);
-    return {length1:a.length1,length2:a.length2,x:(target.x-p.x)*direction,y:target.y-p.y,flip:!!a.settings.flip};
+    return {length1:a.length1,length2:a.length2,x:(target.x-p.x)*direction,y:target.y-p.y,flip:!!a.settings.flip,smoothing:arm.smoothing,smoothFactor:a.settings.smoothFactor,currentUpper:worldZ(a.upper),currentLower:worldZ(a.lower)};
    });
    solutions=JSON.parse(await runtimeCall('SolvePresentationArms',JSON.stringify(inputs)));
    arms.forEach((a,i)=>{

@@ -34,7 +34,7 @@ methods=[m.replace('Debug.DrawLine(TransitionTarget.position, TransitionTarget.p
 write('ArmTransition.cs','''public class ArmIKSolver:Component {
  public enum HandRotationMode{Local,Global,TargetLocal}
  public AnimationCurve interpolation;public Limb upperArm;public Hand hand;public Transform ikTarget,transitionTarget;
- public bool smoothing;private bool transition;private float transitionTimestamp,transitionPeriod,transitionHandAngle;
+ public bool smoothing;public bool Transitioning=>transition;private bool transition;private float transitionTimestamp,transitionPeriod,transitionHandAngle;
  private Hand.Mode transitionHandMode;private HandRotationMode transitionHandRotationMode;
  public bool OnTarget{get;private set;} public bool OnWeapon{get;private set;}
  public Transform TransitionTarget=>transitionTarget;

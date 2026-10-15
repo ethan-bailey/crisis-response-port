@@ -35,7 +35,7 @@ namespace Crisis.Runtime.Presentation {
    pose.WeaponAimer.useSights=true;ballisticMask=c.GetProperty("cameraBallisticMask").GetInt32();
   }
   public RuntimeWorld QueryWorld=>scene.world;public int BallisticMask=>ballisticMask;
-  public void SetWeaponState(float kick,float climb,bool manipulating){pose.ActiveWeapon.RecoilKick=kick;pose.ActiveWeapon.RecoilClimb=climb;pose.IsLoweringWeapon=manipulating;}
+  public void SetWeaponState(float kick,float climb){pose.ActiveWeapon.RecoilKick=kick;pose.ActiveWeapon.RecoilClimb=climb;}
   public string Step(string json){
    scene.world.MakeCurrent();using var d=JsonDocument.Parse(json);var f=d.RootElement;
    subject.transform.position=V(f.GetProperty("position"));subject.Direction=f.GetProperty("direction").GetSingle();subject.transform.rotation=Quaternion.AngleAxis(subject.Direction==1?0:180,Vector3.up);
@@ -61,7 +61,12 @@ namespace Crisis.Runtime.Presentation {
    foreach(var a in values.EnumerateArray()){
     bool ok=InverseKinematics2D.SolveTwoBoneAnalytic(out var u,out var l,!a.GetProperty("flip").GetBoolean(),a.GetProperty("length1").GetSingle(),a.GetProperty("length2").GetSingle(),a.GetProperty("x").GetSingle(),a.GetProperty("y").GetSingle());
     // ArmIKSolver.Update's original radians-to-bone-angle conversion.
-    u=(u+(float)Math.PI/2f)*57.29578f;l=u+l*57.29578f;arms.Add(new{solved=ok,upper=u,lower=l});
+    u=(u+(float)Math.PI/2f)*57.29578f;l=u+l*57.29578f;
+    if(a.TryGetProperty("smoothing",out var smooth)&&smooth.GetBoolean()){
+     u=Mathf.LerpAngle(a.GetProperty("currentUpper").GetSingle(),u,Time.deltaTime*a.GetProperty("smoothFactor").GetSingle());
+     l=Mathf.LerpAngle(a.GetProperty("currentLower").GetSingle(),l,Time.deltaTime*a.GetProperty("smoothFactor").GetSingle());
+    }
+    arms.Add(new{solved=ok,upper=u,lower=l});
    }
 return arms;}
   public static string SolveArms(string json){using var d=JsonDocument.Parse(json);return JsonSerializer.Serialize(Solve(d.RootElement));}
