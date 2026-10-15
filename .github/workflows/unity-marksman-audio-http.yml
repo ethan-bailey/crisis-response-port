@@ -83,6 +83,46 @@ jobs:
           mkdir -p work/unity-spike
           python3 scripts/classify_unity_spike.py --log work/unity-spike/import.log --build-log work/unity-spike/webgl.log --status-file work/unity-spike/status.env --out work/unity-spike/classification.json
           echo "Build success requires build_exit=0 and webgl-http-smoke.json http_localhost_smoke_ok=true"
+      - name: Verify successful private Marksman WebGL package and license return
+        if: always()
+        id: private_package
+        shell: bash
+        run: |
+          set -euo pipefail
+          STATUS="work/unity-spike/status.env"
+          MANIFEST="work/unity-spike/webgl-output-manifest.json"
+          SMOKE="work/unity-spike/webgl-http-smoke.json"
+          if [ ! -f "$STATUS" ] || [ ! -f "$MANIFEST" ] || [ ! -f "$SMOKE" ]; then
+            echo "No verified WebGL package; upload diagnostics only."
+            exit 0
+          fi
+          python3 - "$STATUS" "$MANIFEST" "$SMOKE" <<'PY'
+          import json, sys
+          from pathlib import Path
+          status=dict(line.split('=',1) for line in Path(sys.argv[1]).read_text().splitlines() if '=' in line)
+          package=json.loads(Path(sys.argv[2]).read_text())
+          smoke=json.loads(Path(sys.argv[3]).read_text())
+          required=['index_present','loader_present','wasm_present','data_present']
+          missing=[key for key in required if not package.get(key)]
+          if (status.get('build_exit')!='0' or status.get('license_deactivate_exit')!='0'
+                or status.get('license_seat_query_exit')!='0' or missing
+                or not smoke.get('http_localhost_smoke_ok')):
+              raise SystemExit('Private package gate failed: '+str({
+                'build_exit':status.get('build_exit'),
+                'license_deactivate_exit':status.get('license_deactivate_exit'),
+                'license_seat_query_exit':status.get('license_seat_query_exit'),
+                'missing_outputs':missing,'localhost_http_ok':smoke.get('http_localhost_smoke_ok')}))
+          print('Private package gate passed; recovered Unity source remains in private GitHub release.')
+          PY
+          echo "verified=true" >> "$GITHUB_OUTPUT"
+      - name: Preserve short-lived owner-private Marksman WebGL output for iPhone testing
+        if: steps.private_package.outputs.verified == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: PRIVATE-marksman-webgl-player
+          path: work/unity-spike/webgl/
+          retention-days: 2
+          if-no-files-found: error
       - name: Preserve source-free logs and manifests only
         if: always()
         uses: actions/upload-artifact@v4
