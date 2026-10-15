@@ -13,7 +13,9 @@ def main():
       "ForcedReset.cs": [(4,"GUITexture","UnityEngine.UI.RawImage")],
       "FPSCounter.cs": [(5,"GUIText","UnityEngine.UI.Text"),(18,"GUIText","UnityEngine.UI.Text"),(23,"GUIText","UnityEngine.UI.Text")],
       "SimpleActivatorMenu.cs": [(7,"GUIText","UnityEngine.UI.Text")],
-      "DepthOfField.cs": [(245,"Graphics.DrawProceduralIndirect","Graphics.DrawProceduralIndirectNow"),(299,"Graphics.DrawProceduralIndirect","Graphics.DrawProceduralIndirectNow")]
+      "DepthOfField.cs": [(245,"Graphics.DrawProceduralIndirect","Graphics.DrawProceduralIndirectNow"),(299,"Graphics.DrawProceduralIndirect","Graphics.DrawProceduralIndirectNow")],
+      "SunShafts.cs": [(93,".hdr",".allowHDR")],
+      "BloomAndFlares.cs": [(105,".hdr",".allowHDR")]
     }
     planned=[]; audit=[]
     for name,entries in specs.items():
@@ -33,7 +35,7 @@ def main():
             audit.append({"file":str(path.relative_to(args.project)),"line":number,
                           "old_type":old,"new_type":new})
         planned.append((path,"".join(lines)))
-    if len(audit)!=7 or len(planned)!=4:raise SystemExit("STOP: seven-site guard rejected")
+    if len(audit)!=9 or len(planned)!=6:raise SystemExit("STOP: nine-site guard rejected")
     # Diagnostic-only: preserve original UNet tasks verbatim but skip them
     # in 2022 where UNet is removed. Never fabricate replacement behavior.
     import os
