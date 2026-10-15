@@ -21,7 +21,6 @@ test('time scaled or paused in the source stays paused in the renderer', () => {
 
 test('invalid or mismatched WASM effect-clock messages fail visibly', () => {
   for (const bad of [NaN, Infinity, -Infinity, undefined, null]) {
-    if (bad === null) continue; // null is handled by the bridge schema
     assert.throws(() => sourceEffectAge(bad, 5), RangeError);
     assert.throws(() => sourceEffectAge(5, bad), RangeError);
   }
