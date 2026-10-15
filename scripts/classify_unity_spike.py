@@ -42,9 +42,24 @@ def main():
     csids=Counter(re.findall(r"\berror\s+(CS\d{4})\b",log,re.I))
     build_lines=[line.strip()[:500] for line in build.splitlines() if re.search(
         r"\berror\b|\bfail(?:ed|ure)?\b|buildresult|BuildPlayer|Exception",line,re.I)]
+    # Unity Bee prints [499/570 2s] phase tags even if the player later
+    # times out. Retain the last numbered step as evidence, not an ETA.
+    progress_re=re.compile(r"(?m)^\\[(\\d+)/(\\d+)\\s+[^\\]]*\\]\\s+([^\\r\\n]+)")
+    matches=list(progress_re.finditer(build))
+    build_progress=None
+    if matches:
+        item=matches[-1]
+        build_progress={
+            "last_completed_step":int(item.group(1)),
+            "total_steps_reported":int(item.group(2)),
+            "last_operation":item.group(3).strip()[:180],
+            "matched_numbered_steps":len(matches),
+            "caveat":"Step count is not a percentage of build time; linking/postprocessing may take longer."
+        }
     output={"log_exists":path.is_file(),"log_lines":len(lines),"status":status,
             "counts":counts,"compile_codes":dict(csids),"examples":samples,
             "build_log_exists":bool(buildpath and buildpath.is_file()),
+            "build_progress":build_progress,
             "build_failures":list(dict.fromkeys(build_lines))[:30],
             "caveat":"Heuristic line counts, not unique asset/script defect counts. Counts are not proof of success or failure without editor run status."}
     Path(args.out).parent.mkdir(parents=True,exist_ok=True)
