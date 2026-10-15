@@ -25,6 +25,10 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
+      - name: Verify recovered C# window transform and reset contracts
+        run: |
+          mkdir -p work
+          dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj > work/window-contracts.jsonl
       - name: Prepare pinned PhysX WebAssembly backend
         run: |
           npm ci --prefix game --ignore-scripts --no-audit --no-fund
@@ -61,13 +65,16 @@ jobs:
         run: node scripts/presentation_smoke.mjs
       - name: Verify original M4 mechanics and directional touch aim
         if: ${{ !cancelled() && steps.serve.outcome == 'success' }}
-        run: node scripts/weapon_smoke.mjs
+        run: |
+          node --check game/original-window-visuals.mjs
+          node scripts/weapon_smoke.mjs
       - name: Upload separate game build evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: crisis-response-mission01-game-smoke
           path: |
+            work/window-contracts.jsonl
             weapon-smoke.json
             weapon-chromium.png
             weapon-webkit.png
