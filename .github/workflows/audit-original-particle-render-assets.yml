@@ -1,0 +1,40 @@
+name: Audit source particle meshes/materials before WebGL rendering
+on:
+  push:
+    branches:
+      - codex/projectile-material-impacts
+    paths:
+      - .github/workflows/audit-original-particle-render-assets.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  particle-render-provenance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch verified original project privately
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run download 38582072502 --repo "$GITHUB_REPOSITORY" --name crisis-response-recovery-direct-v3-1 --dir work/recovery
+      - name: Audit three native particle meshes and original material/shader/texture references
+        run: |
+          python3 -m pip install PyYAML==6.0.2
+          python3 scripts/audit_original_particle_mesh_materials.py \
+            work/recovery/export/ExportedProject \
+            --manifest game/assets/ballistics/original-particles-source.json.gz \
+            --out work/particle-render-provenance/assets.json | tee work/particle-render-audit.log
+          git rev-parse HEAD > work/particle-render-provenance/input-commit.txt
+      - name: Keep source provenance privately
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: original-particle-mesh-material-provenance
+          path: |
+            work/particle-render-provenance/assets.json
+            work/particle-render-provenance/input-commit.txt
+            work/particle-render-audit.log
+          retention-days: 30
+          if-no-files-found: warn
