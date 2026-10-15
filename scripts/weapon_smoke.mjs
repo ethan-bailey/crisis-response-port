@@ -11,6 +11,48 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   await page.goto('http://127.0.0.1:8000/game/',{waitUntil:'domcontentloaded',timeout:120000});
   await page.waitForFunction(()=>window.__gameState?.().weaponState||document.querySelector('#error').style.display==='block',null,{timeout:120000});
   assert.equal(await page.locator('#error').isVisible(),false,await page.locator('#error').textContent());await ready();
+  // Source-checked original Unity Quad windows: 56 glass textures have a
+  // transport renderer; 12 custom mirror shaders remain deliberately unrendered.
+  const windowVisual=await page.evaluate(async()=>{
+    const [{createOriginalWindowVisuals},THREE]=await Promise.all([
+      import('./original-window-visuals.mjs'),import('three')]);
+    const response=await fetch('./assets/ballistics.json.gz');
+    const data=await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).json();
+    const wasm=document.querySelector('iframe[title="Original C# runtime"]')?.contentWindow;
+    const info=JSON.parse(await wasm.runtimeCall('OriginalWindowVisuals'));
+    const isolated=new THREE.Scene(),view=createOriginalWindowVisuals(isolated,data,info);
+    const initial=view.snapshot(),[id,glass]=[...view.registered.entries()].find(([,v])=>!v.mirror);
+    const descriptor=info.windows.find(w=>w.sourceObject===id);
+    const offset=(glass.width+1)*4+3,initialAlpha=glass.pixels[offset];
+    const patch=btoa(String.fromCharCode(30,60,90,0));
+    view.update([{type:'windowStamp',value:{sourceObject:id,texture:descriptor.texture,
+      x:1,y:1,width:1,height:1,rgba:patch}}]);
+    const stamped=Array.from(glass.pixels.subarray(offset-3,offset+1));
+    view.update([{type:'windowReset',value:{sourceObject:id,texture:descriptor.texture}}]);
+    const resetAlpha=glass.pixels[offset];
+    const result={initial,stamped,initialAlpha,resetAlpha,
+      after:view.snapshot(),
+      exactXY:Math.abs(glass.mesh.matrix.elements[12]-descriptor.matrix[12])<1e-5&&
+        Math.abs(glass.mesh.matrix.elements[13]-descriptor.matrix[13])<1e-5,
+      reflectedZ:Math.abs(glass.mesh.matrix.elements[14]+descriptor.matrix[14])<1e-5,
+      sourceRect:glass.mesh.geometry.parameters.width===1&&glass.mesh.geometry.parameters.height===1,
+      visible:isolated.children.length};
+    view.dispose();
+    result.disposed=isolated.children.length===0;
+    return result;
+  });
+  assert.equal(windowVisual.initial.sourceWindows,68);
+  assert.equal(windowVisual.initial.visibleGlass,56);
+  assert.equal(windowVisual.initial.unrenderedMirrorShaders,12);
+  assert.equal(windowVisual.visible,56);
+  assert.equal(windowVisual.exactXY,true,'Recovered Unity window matrices must preserve world X/Y');
+  assert.equal(windowVisual.reflectedZ,true,'Browser window must reflect original world Z');
+  assert.equal(windowVisual.sourceRect,true,'Original built-in Unity Quad is 1×1');
+  assert.deepEqual(windowVisual.stamped,[30,60,90,0],'C# window RGBA stamp pixel transport');
+  assert.equal(windowVisual.resetAlpha,windowVisual.initialAlpha,'Original glass texture reset restores source pixels');
+  assert.equal(windowVisual.after.stamps,1);
+  assert.equal(windowVisual.after.resets,1);
+  assert.equal(windowVisual.disposed,true);
   // Validate rendering only the recovered Wood exit-hole Circle.asset from its
   // original source GUID/material, without inventing a particle or physics effect.
   const sourceVisual=await page.evaluate(async()=>{
