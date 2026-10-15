@@ -32,7 +32,7 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 <body>
 <div id="stage"></div>
 <div id="hud"><div id="title">Crisis Response · incomplete port</div><div id="status">Loading recovered scene and original Operator prefab…</div><div id="position"></div><div id="weaponStatus">Loading original weapons…</div></div>
-<div id="help">A/D · Shift · S/W · drag to aim · tap to fire · <a href="../runtime-web/">Runtime checks</a></div>
+<div id="help">A/D · Shift · S/W · drag or tap to aim · tap same spot to fire · <a href="../runtime-web/">Runtime checks</a></div>
 <div id="error"></div><div id="rotateNotice">Rotate your phone to landscape to view the port prototype.</div>
 <div id="controls"><div class="cluster"><button id="left" data-action="left" aria-label="Move left">◀</button><button id="right" data-action="right" aria-label="Move right">▶</button></div><div class="cluster"><button id="kneel" data-action="kneel" aria-label="Kneel">KNEEL</button><button id="stand" data-action="stand" aria-label="Stand">STAND</button><button id="sprint" data-action="sprint" aria-label="Sprint">SPRINT</button><button id="fire" data-action="fire" aria-label="Hold to fire">FIRE</button><button id="reload" data-action="magazine" aria-label="Reload magazine">RELOAD</button><button id="swap" disabled aria-label="Weapon switching is not implemented">SWAP · PENDING</button></div></div>
 <script type="module">
@@ -198,7 +198,7 @@ async function load(){
   // The inactive sidearm must not delay play. Fetch it after the first playable frame.
   requestAnimationFrame(()=>setTimeout(()=>buildWeapon("Glock-18","Pelvis/Abdomen/Torso/Right upper arm/Right lower arm/Right hand/Pistol pivot").then(w=>{w.root.visible=false;weaponInstances["Glock-18"]=w;markLoaded("sidearmReady");}).catch(()=>{weaponStatus.textContent="Original active weapon loaded · sidearm preview unavailable";}),0));
   window.__gameState=()=>({loaded,originalInputActive:!!runtimeCall,originalInput:originalInputState,playerX,playerY,velocity,pelvisLocalPosition:nodeByPath.get("Pelvis").position.toArray(),physics:physicsState,physicsTime,sprintBlend,gaitPhase,loadingTimings,presentation:upperBody.snapshot(),projection:{type:camera.type,fov:camera.fov,near:camera.near,far:camera.far,position:camera.position.toArray()},facingDirection,aimPoint:[aimPoint.x,aimPoint.y,physicsState.z],limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,weaponActionsImplemented:true,weaponState,aimDirection:lockedAim.vector,weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
-  status.textContent="Original C# camera and arm IK · drag to aim. Weapons, damage and AI remain pending.";
+  status.textContent="Original C# camera and arm IK · tap or drag to aim; tap same spot to fire.";
   positionLabel.textContent="Walk 1.5 m/s · Sprint 4.2 m/s · original spawn X −3";
  }catch(e){showError(e)}
 }
