@@ -1,0 +1,79 @@
+name: Recover original particle source manifest for private WASM
+on:
+  push:
+    branches:
+      - codex/projectile-material-impacts
+    paths:
+      - .github/workflows/recover-original-particle-source.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  particle-manifest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Restore verified original project privately
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run download 38582072502 --repo "$GITHUB_REPOSITORY" --name crisis-response-recovery-direct-v3-1 --dir work/recovery
+      - name: Extract, source-hash and validate original particle emitters
+        run: |
+          set -euo pipefail
+          python3 -m pip install PyYAML==6.0.2
+          python3 scripts/audit_original_particle_sources.py work/recovery/export/ExportedProject --out work/particle-source/source-particle-components.json > work/particle-source-audit.log
+          python3 scripts/export_original_particle_manifest.py \
+            --source-audit work/particle-source/source-particle-components.json \
+            --project work/recovery/export/ExportedProject \
+            --out work/particle-source/original-particles-source.json.gz | tee work/particle-source-summary.json
+          sha256sum work/particle-source/original-particles-source.json.gz | tee work/particle-source/manifest-sha256.txt
+          python3 - <<'PY'
+          import gzip,json
+          p='work/particle-source/original-particles-source.json.gz'
+          data=json.loads(gzip.open(p,'rt').read())
+          assert len(data['effects'])==14
+          assert sum(len(x['emitters']) for x in data['effects'])==26
+          from collections import Counter
+          assert Counter(e['renderer']['m_RenderMode'] for v in data['effects'] for e in v['emitters'])=={0:14,4:12}
+          print("Native source manifest verified; no particles simulated.")
+          PY
+          git rev-parse HEAD > work/particle-source/input-commit.txt
+      - name: Commit only immutable recovered manifest to this private PR branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = "refs/heads/codex/projectile-material-impacts"
+          test "$(gh repo view "$GITHUB_REPOSITORY" --json isPrivate -q .isPrivate)" = "true"
+          remote_sha="$(git ls-remote origin refs/heads/codex/projectile-material-impacts | awk '{print $1}')"
+          if [ "$remote_sha" != "$GITHUB_SHA" ]; then
+            echo "Another worker advanced the branch: publishing evidence artifact only, not overwriting."
+            exit 0
+          fi
+          cp work/particle-source/original-particles-source.json.gz game/assets/ballistics/original-particles-source.json.gz
+          git add game/assets/ballistics/original-particles-source.json.gz
+          if git diff --cached --quiet; then
+            echo "Identical original source manifest already present."
+            exit 0
+          fi
+          git -c user.name="Crisis Port Source Recovery" -c user.email="github-actions[bot]@users.noreply.github.com" \
+            commit -m "Preserve exact original active ParticleSystem sources for WASM (no renderer substitution)"
+          git push origin HEAD:refs/heads/codex/projectile-material-impacts
+          git rev-parse HEAD | tee work/particle-source/committed-sha.txt
+      - name: Preserve original source and rollback verification privately
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-original-wasm-particle-manifest
+          path: |
+            work/particle-source/input-commit.txt
+            work/particle-source/committed-sha.txt
+            work/particle-source/manifest-sha256.txt
+            work/particle-source-summary.json
+            work/particle-source/original-particles-source.json.gz
+          retention-days: 30
+          if-no-files-found: warn
