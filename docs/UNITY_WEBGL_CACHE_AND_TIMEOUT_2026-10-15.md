@@ -30,3 +30,15 @@ A GitHub job conclusion `success` **does not** prove Unity player success: the s
 Caching **cannot guarantee** reusing a partially failed IL2CPP task graph. The build may still fail from WebGL or asset postprocessing errors, memory or disk limits, invalidated intermediate artifacts, or a second timeout. Reusing the same project and cache improves the odds of an incremental rebuild; the first cache-cold run may still be expensive. GitHub's hosted Ubuntu runners are ephemeral and cannot retain a live Unity editor or Docker image across runs.
 
 The original recovered archive remains read-only in its private GitHub release. **No gameplay source, scene, prefab, or original binaries were modified or published by this change.**
+
+## Completed cached run — Unity WebGL player built successfully
+
+[Run 38793686345](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38793686345) completed October 15, 2026 (logs artifact `unity-marksman-webgl-feasibility-logs`, ID `12003480877`). This is the **first verified successfully completed Unity 2022.3.62f1 Marksman WebGL player build** on this branch:
+
+- `status.env`: `build_attempted=true`, **`build_exit=0`**, `single_pass=true`; no `error CS####` in the log. Unity exited batchmode successfully after WebGL postprocessing and Brotli compression, reaching `[569/570]` in the emitted Bee progress (the total is not an exact wall-time progress measure).
+- The diagnostic workflow job succeeded, as did `actions/cache/save@v4`: **1,461 MiB Unity Library + 14 MiB Bee cache = 1,475 MiB cached**, key `unity-marksman-library-bee-linux-2022.3.62f1-recoveryv3-v2-2498b1cafb6a46940e98e7507f593771dfed8d19bd5b717b90854af38a92698c`.
+- Unity Personal `--deactivate-all` exited zero and private license log confirmed **`[200] REVOKE_SEAT`**, followed by successful seat query with no active seats.
+- The host-side **output inventory and localhost HTTP smoke did not complete**, because Docker's root-owned `/spike/webgl/Build/webgl.data.br` caused `PermissionError: [Errno 13]` for the host user. Without the JSON inventory, HTTP smoke failed opening `webgl-output-manifest.json`. The underlying Unity player build was not at fault. The generated WebGL binaries themselves were *not* uploaded to GitHub artifacts and are not retrievable from the expired ephemeral runner.
+- Fix for **next explicitly authorized/manual** validation: `scripts/unity_open_spike.sh` now applies `docker exec ... chmod -R a+rX /spike/webgl` **after** Unity exits, and **before** manifest/HTTP checking. This changes output file permissions only, not binary contents, gameplay, or original assets. **Not yet tested** by a new Actions run.
+
+The next useful actions are (1) restore the saved incremental cache, (2) produce and privately retain a successful WebGL output on one deliberately scheduled run, and (3) verify its loader/wasm/data files and actual browser execution before a playable claim. Do not start recurring attempts automatically or make original proprietary assets public.
