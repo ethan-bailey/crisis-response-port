@@ -40,11 +40,11 @@ public static class SceneLoader {
         return new {sourceColliderFileID=result.objects.First(p=>ReferenceEquals(p.Value,box)).Key,
             sourceObject=box.name,directDistance=direct.distance,nearestObject=nearest.collider.name,nearestDistance=nearest.distance};
     }
-    public static SceneLoadResult Load(string json,string scene) {
+    public static SceneLoadResult Load(string json,string scene,bool resetClock=true) {
         using var document=JsonDocument.Parse(json);
         var package=document.RootElement;
         var records=package.GetProperty("assets").GetProperty(scene).GetProperty("records").EnumerateArray().Select(r=>r.Clone()).ToArray();
-        var result=new SceneLoadResult{scene=scene,serializedRecords=records.Length,world=new RuntimeWorld()};
+        var result=new SceneLoadResult{scene=scene,serializedRecords=records.Length,world=new RuntimeWorld(resetClock:resetClock)};
         var transformsByGO=records.Where(r=>r.GetProperty("classID").GetInt32() is 4 or 224).ToDictionary(r=>Ref(r.GetProperty("fields").GetProperty("m_GameObject")));
         foreach(var record in records.Where(r=>r.GetProperty("classID").GetInt32()==1)) {
             var id=record.GetProperty("fileID").GetString();var f=record.GetProperty("fields");

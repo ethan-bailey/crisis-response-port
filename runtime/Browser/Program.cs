@@ -15,6 +15,10 @@ await builder.Build().RunAsync();
 public static class RuntimeBridge {
     static OriginalInputHost input;
     static SceneLoadResult scene;
+    static Crisis.Runtime.Presentation.PresentationHost presentation;
+    [JSInvokable] public static string InitializePresentation(string json){presentation=new(json);return "ready";}
+    [JSInvokable] public static string SolvePresentationArms(string json)=>Crisis.Runtime.Presentation.PresentationHost.SolveArms(json);
+    [JSInvokable] public static string StepPresentation(string json)=>presentation.Step(json);
     [JSInvokable] public static string Verify()=>RuntimeContracts.Run();
     [JSInvokable] public static string ResetInput(){input=new OriginalInputHost(new RuntimeWorld());return JsonSerializer.Serialize(input.Snapshot());}
     [JSInvokable] public static string Tick(float seconds,string states){

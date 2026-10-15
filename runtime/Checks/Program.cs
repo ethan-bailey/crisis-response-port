@@ -2,6 +2,7 @@ using Crisis.Runtime;
 using System.Text.Json;
 
 Console.WriteLine(RuntimeContracts.Run());
+if(File.Exists("game/assets/presentation.json.gz"))Console.WriteLine(PresentationContracts.Run("game/assets/presentation.json.gz"));
 if(args.Length>0){
     var package=File.ReadAllText(args[0]);
     foreach(var path in new[]{"Assets/Scenes/Marksman range.unity","Assets/Scenes/Mission 01.unity"}){

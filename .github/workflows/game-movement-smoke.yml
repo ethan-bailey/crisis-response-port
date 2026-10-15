@@ -12,6 +12,8 @@ on:
       - "scripts/animation_pose_test.mjs"
       - "scripts/game_loading_test.mjs"
       - "scripts/build_scene_binary.py"
+      - "scripts/presentation_smoke.mjs"
+      - "scripts/extract_presentation.py"
       - "scripts/export_operator_animations.py"
       - "runtime/**"
       - "scripts/browser_input_test.mjs"
@@ -65,12 +67,18 @@ jobs:
         run: node scripts/game_movement_smoke.mjs
       - name: Verify landscape input in Chromium and WebKit
         run: node scripts/iphone_input_smoke.mjs
+      - name: Verify original camera and upper-body aiming
+        run: node scripts/presentation_smoke.mjs
       - name: Upload separate game build evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: crisis-response-mission01-game-smoke
           path: |
+            presentation-smoke.json
+            presentation-chromium.png
+            presentation-webkit.png
+            work/game-runtime/wwwroot/
             contact-physics-smoke.json
             mission01-game-smoke.json
             mission01-game-smoke.png

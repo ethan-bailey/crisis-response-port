@@ -27,6 +27,7 @@ public struct Vector3 {
     public static Vector3 operator *(Vector3 a,float n) => From(a.Native*n);
     public static Vector3 operator *(float n,Vector3 a) => a*n;
     public static Vector3 operator /(Vector3 a,float n) => From(a.Native/n);
+    public static Vector3 Lerp(Vector3 a,Vector3 b,float t)=>a+(b-a)*Mathf.Clamp01(t);
     public static float Dot(Vector3 a,Vector3 b) => N.Vector3.Dot(a.Native,b.Native);
     public static Vector3 Cross(Vector3 a,Vector3 b) => From(N.Vector3.Cross(a.Native,b.Native));
     public static Vector3 Scale(Vector3 a,Vector3 b) => From(a.Native*b.Native);
@@ -54,6 +55,11 @@ public static class Mathf {
     public static float Pow(float value,float power)=>MathF.Pow(value,power);
     public static float Sqrt(float value)=>MathF.Sqrt(value);
     public static float Tan(float value)=>MathF.Tan(value);
+    public static float Cos(float value)=>MathF.Cos(value);
+    public static float LerpAngle(float a,float b,float t){float delta=(b-a)%360;if(delta<0)delta+=360;if(delta>180)delta-=360;return a+delta*Clamp01(t);}
+    public static float Sin(float value)=>MathF.Sin(value);
+    public static float Acos(float value)=>MathF.Acos(value);
+    public static float Atan2(float y,float x)=>MathF.Atan2(y,x);
     public static float Atan(float value)=>MathF.Atan(value);
 }
 [AttributeUsage(AttributeTargets.Field)] public sealed class TooltipAttribute(string text):Attribute { }

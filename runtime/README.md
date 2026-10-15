@@ -196,3 +196,33 @@ position, normal and UV is compared against the OBJ in regression tests. Generat
 the binary before local serving; it is generated automatically in browser CI.
 Existing browser/Blazor HTTP and compiled-WASM caches remain in use; no stale
 cross-deployment application cache or service worker is introduced.
+
+### Camera and upper-body presentation
+
+`extract_presentation.py` preserves the original Interior mode camera settings,
+Operator IK/hand references, M4 arm configuration and camera query hierarchy, plus
+source and method hashes. The camera is perspective: original 20° default FOV,
+position (-3, 1.2, -9.8) in Unity coordinates, near/far planes 5/20. The original
+InteriorCamera Update/target/initial-position methods execute in C# WebAssembly,
+including lead, velocity prediction, obstacle hold-off, FOV logic and smoothing.
+Door component types are mapped to read-only serialized scene snapshots; actual
+moving doors, alternate cameras, subject switching and camera post effects remain
+outside this scope. The viewport uses the real iPhone aspect ratio.
+
+The complete original InverseKinematics2D solver executes in C#. Recovered arm
+lengths, hand offsets, hand angles/modes and the original ArmIKSolver angle
+conversion drive both arms. Original upper-body/head pose and WeaponAimer head
+state methods execute against typed renderer/PhysX state views. This is the
+current uninjured, unfired, shouldered-M4 scope: recoil, respiration generation,
+injury poses and equipment/IK action sequencing are unavailable. The original
+hit-recovery term is constant-folded only for LastHitEnergy==0. No fake health,
+equipment or damage simulation is supplied. Weapon blocking uses original box
+queries; mesh-collider and dynamic-prop parity remain unfinished. The complete
+original CharacterBody update sequence has not been reconstituted.
+
+The aiming plane is now its actual 50×10 dimensions, at reflected Unity Z=-1.5;
+the previous preview used its scale as its dimensions and the wrong Z sign.
+Lower-body animation is sampled before upper-body overrides, with world/local
+rotation conversion explicit for the two coordinate systems. The renderer mirrors
+camera state and solves IK from actual hand anchors after the weapon transform.
+Camera import preserves the live original input clock.

@@ -93,12 +93,14 @@ public class Transform:Component,IEnumerable<Transform> {
     internal N.Matrix4x4 InverseMatrix {get {if(!N.Matrix4x4.Invert(WorldMatrix,out var inv)) throw new InvalidOperationException("Singular transform");return inv;}}
     public Vector3 position {get=>TransformPoint(Vector3.zero);set=>localPosition=parentValue==null?value:parentValue.InverseTransformPoint(value);}
     public Quaternion rotation {get=>parentValue==null?localRotation:parentValue.rotation*localRotation;set=>localRotation=parentValue==null?value:Quaternion.Inverse(parentValue.rotation)*value;}
+    public Vector3 eulerAngles {set=>rotation=Quaternion.AngleAxis(value.y,Vector3.up)*Quaternion.AngleAxis(value.x,Vector3.right)*Quaternion.AngleAxis(value.z,Vector3.forward);}
     public Vector3 forward => rotation*Vector3.forward;
     public Transform GetChild(int index)=>children[index];
     public Vector3 TransformPoint(Vector3 point)=>Vector3.From(N.Vector3.Transform(point.Native,WorldMatrix));
     public Vector3 InverseTransformPoint(Vector3 point)=>Vector3.From(N.Vector3.Transform(point.Native,InverseMatrix));
     public Vector3 TransformVector(Vector3 v)=>Vector3.From(N.Vector3.TransformNormal(v.Native,WorldMatrix));
     public Vector3 InverseTransformVector(Vector3 v)=>Vector3.From(N.Vector3.TransformNormal(v.Native,InverseMatrix));
+    public Vector3 TransformDirection(float x,float y,float z)=>TransformDirection(new Vector3(x,y,z));
     public Vector3 TransformDirection(Vector3 v)=>rotation*v;
     public Vector3 InverseTransformDirection(Vector3 v)=>Quaternion.Inverse(rotation)*v;
     internal Vector3 TransformNormal(Vector3 normal)=>Vector3.From(N.Vector3.TransformNormal(normal.Native,N.Matrix4x4.Transpose(InverseMatrix))).normalized;
