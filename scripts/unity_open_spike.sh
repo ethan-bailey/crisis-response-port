@@ -205,6 +205,8 @@ public static class SpikeWebGL {
       .Where(p=>Path.GetFileNameWithoutExtension(p)
         .IndexOf("Marksman",StringComparison.OrdinalIgnoreCase)>=0).ToArray();
     if(scenes.Length!=1) throw new Exception("MARKSMAN_SCENE_COUNT="+scenes.Length);
+    PlayerSettings.WebGL.memorySize=256;
+    PlayerSettings.WebGL.dataCaching=true;
     var opt=new BuildPlayerOptions {
       scenes=new []{scenes[0]},locationPathName="/spike/webgl",
       target=BuildTarget.WebGL,options=BuildOptions.None
@@ -215,6 +217,8 @@ public static class SpikeWebGL {
   }
 }
 CSHARP
+note webgl_safari_memorySize 256
+note webgl_safari_dataCaching true
 note build_attempted true
 note build_skipped_reason none
 timeout 750 docker exec "$CONTAINER" /opt/unity/Editor/Unity \
