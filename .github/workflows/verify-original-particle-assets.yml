@@ -1,0 +1,37 @@
+name: Verify recovered original particle sources without full browser rebuild
+on:
+  push:
+    branches:
+      - codex/projectile-material-impacts
+    paths:
+      - .github/workflows/verify-original-particle-assets.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-asset-verification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check source-only recovery scripts compile
+        run: |
+          python3 -m py_compile scripts/unity_packed_mesh.py scripts/extract_original_particle_meshes.py scripts/export_original_particle_manifest.py scripts/export_original_particle_materials.py
+      - name: Verify source-exact original particles, original normals, materials and four PNGs
+        run: |
+          mkdir -p work
+          node --test scripts/original_particle_source_test.mjs scripts/original_particle_mesh_source_test.mjs scripts/original_particle_material_source_test.mjs | tee work/original-particle-source-tests.txt
+          git rev-parse HEAD | tee work/input-commit.txt
+      - name: Store SHA-matched source integrity evidence privately
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: original-particle-source-integrity
+          path: |
+            work/input-commit.txt
+            work/original-particle-source-tests.txt
+          retention-days: 30
+          if-no-files-found: warn
