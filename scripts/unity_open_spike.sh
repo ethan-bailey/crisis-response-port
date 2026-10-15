@@ -127,8 +127,11 @@ activate_editor() {
 # --activate-all --include-personal with CommandLine.UnknownOptionError.
 # Use the verified Personal activation capable LTS patch directly.
 IMAGE="unityci/editor:ubuntu-2022.3.62f1-base-3"
+if [[ "${UNITY_SPIKE_WEBGL:-0}" == 1 ]]; then
+  IMAGE="unityci/editor:ubuntu-2022.3.62f1-webgl-3"
+fi
 note fallback_editor_version 2022.3.62f1
-note webgl_requested false
+note webgl_requested "${UNITY_SPIKE_WEBGL:-0}"
 activate_editor "$IMAGE" || {
   note build_skipped_reason personal_62_activation_failed
   exit 0
@@ -148,7 +151,7 @@ python3 scripts/classify_unity_spike.py --log "$WORK/import.log" \
 ERRORS="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["counts"]["compile"])' "$WORK/pre-build.json" 2>/dev/null || echo 999)"
 # Scoped compatibility measurement ends after one C# compilation attempt;
 # no WebGL build or further fixes in this run.
-if [[ "${UNITY_SPIKE_SCOPED_REPAIR:-0}" == 1 ]]; then
+if [[ "${UNITY_SPIKE_SCOPED_REPAIR:-0}" == 1 && "${UNITY_SPIKE_WEBGL:-0}" != 1 ]]; then
   note build_skipped_reason scoped_test_import_only
   exit 0
 fi
@@ -161,12 +164,14 @@ FREE_GB="$(df -Pk "$ROOT" | awk 'NR==2{printf "%.0f",$4/1048576}')"
 if (( FREE_GB < 12 )); then
   note build_skipped_reason disk_prevented_webgl_module; exit 0
 fi
-WEBGL_IMAGE="$(printf '%s' "$IMAGE" | sed 's/-base-3$/-webgl-3/')"
-return_seat
-note webgl_requested true
-activate_editor "$WEBGL_IMAGE" || {
-  note build_skipped_reason webgl_image_or_activation_failed; exit 0
-}
+if [[ "${UNITY_SPIKE_WEBGL:-0}" != 1 ]]; then
+  WEBGL_IMAGE="$(printf '%s' "$IMAGE" | sed 's/-base-3$/-webgl-3/')"
+  return_seat
+  note webgl_requested true
+  activate_editor "$WEBGL_IMAGE" || {
+    note build_skipped_reason webgl_image_or_activation_failed; exit 0
+  }
+fi
 
 # Transient editor-only test driver. NEVER save it to the source repository.
 mkdir -p "$PROJECT/Assets/Editor"
