@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { createOriginalImpactMeshRenderer } from './original-impact-mesh.mjs';
 export async function loadWeaponData(){
  const r=await fetch('./assets/weapon-runtime.json.gz');if(!r.ok)throw new Error('Original weapon settings unavailable');
  return new Response(r.body.pipeThrough(new DecompressionStream('gzip'))).json();
@@ -11,6 +12,7 @@ export function createWeaponEffects(data,scene,ballisticsData){
   buffers.set(url,null);fetch(url).then(r=>r.arrayBuffer()).then(b=>context.decodeAudioData(b)).then(b=>buffers.set(url,b)).catch(()=>{});
  }
  addEventListener('pointerdown',()=>context?.resume().catch(()=>{}),{passive:true});
+ const originalImpactMeshes=createOriginalImpactMeshRenderer(scene);
  const texturePromise=new THREE.TextureLoader().loadAsync(Object.values(data.flash.textures)[0].url).then(t=>{t.colorSpace=THREE.SRGBColorSpace;return t;});
  const flashNodes=data.flash.prefab.filter(r=>r.classID===4),clip=data.flash.animation[0].fields,curve=clip.m_PPtrCurves[0].curve;
  const magRoot=new THREE.Group();scene.add(magRoot);const magNodes=new Map();
@@ -32,6 +34,7 @@ export function createWeaponEffects(data,scene,ballisticsData){
    if(e.type==='materialEffect'&&context&&buffers.get(e.value.clip)){const src=context.createBufferSource(),gain=context.createGain();src.buffer=buffers.get(e.value.clip);gain.gain.value=e.value.volume;src.connect(gain).connect(context.destination);src.onended=()=>{src.disconnect();gain.disconnect();};src.start();}
    if(e.type==='shot')flash(e.value);
   }
+  originalImpactMeshes.update(events);
   for(let i=active.length-1;i>=0;i--){const item=active[i],time=(performance.now()-item.start)/1000;
    if(time>=duration){scene.remove(item.group);item.mesh.geometry.dispose();item.material.dispose();item.texture?.dispose();active.splice(i,1);continue;}
    if(!item.texture)continue;
@@ -41,5 +44,5 @@ export function createWeaponEffects(data,scene,ballisticsData){
    item.mesh.scale.set(rect.width/ppu,rect.height/ppu,1);item.mesh.position.set((.5-pivot.x)*rect.width/ppu,(.5-pivot.y)*rect.height/ppu,0);
   }
  }
- return {update};
+ return {update,impactMeshSnapshot:originalImpactMeshes.snapshot};
 }
