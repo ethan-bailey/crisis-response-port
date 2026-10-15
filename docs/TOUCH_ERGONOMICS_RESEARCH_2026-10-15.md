@@ -67,3 +67,19 @@ A new finger on the scene is initially `PENDING`, not firing and not steering th
 ## Decision
 
 For the user-requested no-extra-button default, try the one-surface scheme with initial **210 ms hold time and 10–12 CSS px movement slop**. Do an iPhone 16 test and tune; retain a switchable dedicated FIRE button if sustained firing onset feels slow or unintended shots remain. Avoid inventing original firing systems or claiming shot-count tests until the recovered weapon chain is present.
+
+## Execution update — same date, later commits
+
+**Completed on the active PR branch:** `game/browser-input.mjs` now has a per-pointer `pending → aiming` or `pending → held` gesture state machine, with default **210ms** stationary hold time, **11 CSS px** drag threshold, cancellation/reset and held-then-drag aiming. The hold timeout is used **only to recognize touch intent**, not to schedule shots or simulate the original firing rate. The adapter exposes `onTap`, `onHoldChange` and `onGesture`.
+
+`game/tap-fire-queue.mjs` now merges discrete tap pulses and independent held-trigger input sources into one boolean sampled by the original C# `InputHandler` each `Tick`. It guarantees a release tick between successive taps or consecutive held gestures, bounds queued taps and expires stale taps (500ms by default). Pressed/released state does not imply the original weapon emitted any bullet.
+
+`game/index.html` connects these states to the original C# input bridge and displays an immediate `TOUCH`/`AIM`/`TRIGGER HELD`/`TRIGGER TAP` hint. The UI explicitly marks all fire actions as **WEAPON PENDING**. Original weapon/projectile/ammunition/recoil systems are still absent and FIRE/RELOAD/SWAP controls remain disabled.
+
+**Validation:** Source-fetched device adapter and pulse-queue regressions **34/34 passed** in an isolated JavaScript EventTarget stand-in harness. New `scripts/touch_gesture_bridge_test.mjs` integrated raw-input test cases **5/5 passed** using the same stand-in execution. The workflow has been updated to include this third regression suite. Native Node/GitHub Actions browser CI and physical iPhone 16 Safari validation of the new commits are **not yet confirmed**.
+
+**Hosting blocker:** GitHub pushes trigger Vercel preview deployments reporting READY on the feature branch, but attempts to inspect `/game/`, `/runtime-web/`, and obtain temporary share links through the current Vercel connection all returned **403 forbidden** on deployment-protection/team-scoped endpoints. Therefore **none is verified to load the assembled game** and none should be presented as an iPhone-ready test link. The older ChatGPT Site `crisis-response-runtime.craftysnipe13.chatgpt.site` is explicitly at an earlier commit and cannot test these changes. Current tool inventory offers no first-party Sites publishing action; a new Site requires ChatGPT Work/Sites or another properly authorized deploy surface.
+
+**Next priorities:** (1) inspect/run full game + Blazor WASM browser smoke on this head, (2) deploy the actual prepared site to a reachable private host with proper permissions and test a real iPhone, (3) fix absolute-pointer aim snap by implementing and validating offset/relative movement in the browser input mapping while preserving original C# camera/IK, (4) tune thresholds using measured missed-tap/false-shot data, (5) preserve original weapon system source provenance and connect projectile/bolt/magazine mechanics before enabling real gunfire.
+
+**Supersession notice:** Early prose and the earlier `docs/TOUCH_FIRE_MODES_AND_SITES_PLAN.md` discuss a default dedicated FIRE button; the user subsequently chose **one-finger tap, hold, drag and hold-then-drag** as the primary layout. The dedicated button is now an optional accessibility fallback, not the default.
