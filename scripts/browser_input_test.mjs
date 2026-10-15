@@ -175,3 +175,117 @@ test('last drag endpoint is captured without a duplicate final update', () => {
   surface.send('pointerup', { pointerId: 2, clientX: 35, clientY: 20 });
   assert.deepEqual(aim, [35, 'released']);
 });
+
+class GestureClock {
+  now = 0;
+  next = 0;
+  tasks = new Map();
+  schedule = (fn, delay) => {
+    const id = ++this.next;
+    this.tasks.set(id, { fn, at: this.now + delay });
+    return id;
+  };
+  cancelSchedule = id => { this.tasks.delete(id); };
+  advance(ms) {
+    this.now += ms;
+    for (const [id, task] of [...this.tasks])
+      if (task.at <= this.now) { this.tasks.delete(id); task.fn(); }
+  }
+}
+const withClock = clock => ({ schedule: clock.schedule, cancelSchedule: clock.cancelSchedule,
+                            dragThreshold: 11, holdDelay: 210 });
+
+test('stationary 210ms hold emits one held trigger down and releases on up', () => {
+  const clock = new GestureClock(), surface = new Surface(), holds = [], taps = [], phases = [];
+  const input = new BrowserInput();
+  input.bindAim(surface, () => {}, { ...withClock(clock),
+    onTap: () => taps.push('tap'),
+    onHoldChange: (pressed,id) => holds.push([pressed,id]),
+    onGesture: phase => phases.push(phase) });
+  surface.send('pointerdown',{pointerId:12,clientX:200,clientY:110});
+  clock.advance(209); assert.deepEqual(holds,[]);
+  clock.advance(1); assert.deepEqual(holds,[[true,12]]);
+  surface.send('pointerup',{pointerId:12,clientX:200,clientY:110});
+  assert.deepEqual(holds,[[true,12],[false,12]]);
+  assert.deepEqual(taps,[]);
+  assert.deepEqual(phases,['pending','held','idle']);
+});
+
+test('quick repeated taps are separate and never wait for double tap', () => {
+  const clock = new GestureClock(), surface = new Surface(), taps = [], holds = [];
+  const input = new BrowserInput();
+  input.bindAim(surface, () => {}, { ...withClock(clock), onTap: e => taps.push(e.pointerId),
+    onHoldChange: value => holds.push(value) });
+  for (let i=1;i<=20;i++) {
+    surface.send('pointerdown',{pointerId:i,clientX:100,clientY:120});
+    clock.advance(60);
+    surface.send('pointerup',{pointerId:i,clientX:104,clientY:124});
+    clock.advance(40);
+  }
+  assert.equal(taps.length,20);
+  assert.deepEqual(holds,[]);
+  assert.equal(clock.tasks.size,0);
+});
+
+test('moving before hold threshold cancels firing and tracks final aim', () => {
+  const clock = new GestureClock(), surface = new Surface(), holds = [], taps = [], aiming = [];
+  const input = new BrowserInput();
+  input.bindAim(surface, e => { if(e) aiming.push(e.clientX); },
+    { ...withClock(clock), onTap:()=>taps.push('tap'),onHoldChange:v=>holds.push(v) });
+  surface.send('pointerdown',{pointerId:4,clientX:50,clientY:80});
+  clock.advance(90);
+  surface.send('pointermove',{pointerId:4,clientX:63,clientY:80});
+  clock.advance(300);
+  surface.send('pointerup',{pointerId:4,clientX:70,clientY:80});
+  assert.deepEqual(holds,[]);
+  assert.deepEqual(taps,[]);
+  assert.deepEqual(aiming,[63,70]);
+});
+
+test('hold then drag retains trigger until release without an extra tap', () => {
+  const clock = new GestureClock(), surface = new Surface(), holds = [], taps = [], aiming = [];
+  const input = new BrowserInput();
+  input.bindAim(surface,e=>{if(e)aiming.push(e.clientX);},{
+    ...withClock(clock), onTap:()=>taps.push('tap'),onHoldChange:(pressed)=>holds.push(pressed)});
+  surface.send('pointerdown',{pointerId:7,clientX:60,clientY:80});
+  clock.advance(210);
+  surface.send('pointermove',{pointerId:7,clientX:65,clientY:80}); // Jitter cannot steer.
+  surface.send('pointermove',{pointerId:7,clientX:100,clientY:80});
+  surface.send('pointerup',{pointerId:7,clientX:110,clientY:80});
+  assert.deepEqual(holds,[true,false]);
+  assert.deepEqual(taps,[]);
+  assert.deepEqual(aiming,[100,110]);
+});
+
+test('pagehide and cancellation release held trigger, cancel pending timer', () => {
+  const clock = new GestureClock(), surface = new Surface(), win = new Surface(), doc = new Surface();
+  const holds = [], taps = [], input = new BrowserInput();
+  input.bindAim(surface,()=>{},{...withClock(clock),
+    onTap:()=>taps.push('tap'),onHoldChange:pressed=>holds.push(pressed)});
+  input.bindLifecycle(win,doc);
+  surface.send('pointerdown',{pointerId:10});
+  win.send('pagehide');
+  clock.advance(300);
+  assert.deepEqual(holds,[]);
+  surface.send('pointerdown',{pointerId:11});
+  clock.advance(210);
+  surface.send('pointercancel',{pointerId:11});
+  assert.deepEqual(holds,[true,false]);
+  assert.deepEqual(taps,[]);
+  assert.equal(clock.tasks.size,0);
+});
+
+test('second pointer cannot steal active held fire or restart its timer', () => {
+  const clock = new GestureClock(), surface = new Surface(), holds = [], taps = [];
+  const input = new BrowserInput();
+  input.bindAim(surface,()=>{},{...withClock(clock),
+    onTap:e=>taps.push(e.pointerId),onHoldChange:(v,id)=>holds.push([v,id])});
+  surface.send('pointerdown',{pointerId:1});
+  surface.send('pointerdown',{pointerId:2});
+  clock.advance(210);
+  surface.send('pointerup',{pointerId:2});
+  assert.deepEqual(holds,[[true,1]]);
+  surface.send('pointerup',{pointerId:1});
+  assert.deepEqual(holds,[[true,1],[false,1]]);
+  assert.deepEqual(taps,[]);
+});
