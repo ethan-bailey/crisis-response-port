@@ -49,7 +49,7 @@ export async function createContactPhysics(data,{x=-3,y=1.5,z=1.5}={},options={}
  };
  if(capsule.m_Direction!==0)throw new Error('Unsupported original capsule axis');
  dimensions(false,1);
- P.PxRigidBodyExt.setMassAndUpdateInertia(body,original.m_Mass);
+ P.PxRigidBodyExt.prototype.setMassAndUpdateInertia(body,original.m_Mass);
  body.setLinearDamping(original.m_Drag);body.setAngularDamping(original.m_AngularDrag);
  body.setSleepThreshold(data.settings.m_SleepThreshold);
  body.setSolverIterationCounts(data.settings.m_DefaultSolverIterations,data.settings.m_DefaultSolverVelocityIterations);
@@ -70,7 +70,7 @@ export async function createContactPhysics(data,{x=-3,y=1.5,z=1.5}={},options={}
   addAcceleration(ax){force.set_x(ax);body.addForce(force,P.PxForceModeEnum.eACCELERATION,true);},
   step(dt){scene.simulate(dt);scene.fetchResults(true);return api.snapshot();},
   snapshot(){const p=body.getGlobalPose().get_p(),v=body.getLinearVelocity();return {x:p.get_x(),y:p.get_y(),z:p.get_z(),velocity:v.get_x(),verticalVelocity:v.get_y(),sleeping:body.isSleeping(),boxes:statics.length,backend:api.backend};},
-  dispose(){scene.removeActor(body);body.release();shape.release();for(const a of statics)a.release();scene.release();for(const m of materials.values())m.release();physics.release();dispatcher.release();foundation.release();P.destroy(flags);P.destroy(filter);P.destroy(force);P.destroy(allocator);P.destroy(errors);}
+  dispose(){scene.removeActor(body);body.release();shape.release();for(const a of statics)a.release();scene.release();for(const m of materials.values())m.release();physics.release();P.destroy(dispatcher);foundation.release();P.destroy(flags);P.destroy(filter);P.destroy(force);P.destroy(allocator);P.destroy(errors);}
  };
  return api;
 }

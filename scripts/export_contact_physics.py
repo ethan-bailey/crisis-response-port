@@ -26,6 +26,7 @@ def main():
         if not path: raise ValueError(f'Unresolved original material: {ref}')
         if guid not in materials: materials[guid]=read(path)[0]['fields']
         return guid
+    read('Assets/Scripts/Assembly-CSharp/CharacterBody.cs')
     r=read('Assets/Scenes/Mission 01.unity'); byid={x['fileID']:x for x in r}
     gos={x['fileID']:x['fields'] for x in r if x['classID']==1}
     ts={x['fileID']:x['fields'] for x in r if x['classID']==4}
