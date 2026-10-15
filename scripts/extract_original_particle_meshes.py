@@ -7,6 +7,7 @@ convert Unity local vertices/normals and triangle winding into Three.js basis.
 import argparse
 import hashlib
 import json
+import re
 import subprocess
 import sys
 import tempfile
@@ -30,6 +31,33 @@ for guid,(rel,sha) in sorted(sources.items()):
   raise SystemExit('STOP source original particle mesh path/hash changed: '+rel)
  raw=parse_asset(src,rel)
  mesh=next((r['fields'] for r in raw['records'] if r['classID']==43),None)
+ # Unity's YAML hex fields that consist entirely of decimal digits may be
+ # interpreted as numeric values by the generic YAML parser. Recover *exact*
+ # original compressed normal bytes from the original source .asset text,
+ # including leading zero bytes and signs; do not reconstruct from a number.
+ def raw_packed_hex(section):
+  lines=src.read_text(errors='replace').splitlines()
+  sections=[(i,len(line)-len(line.lstrip())) for i,line in enumerate(lines)
+            if line.strip()==section+':']
+  if len(sections)!=1:
+   raise SystemExit('STOP ambiguous original packed source section '+section)
+  start,indent=sections[0];found=[]
+  for line in lines[start+1:]:
+   whitespace=len(line)-len(line.lstrip())
+   if line.strip() and whitespace<=indent:break
+   if line.strip().startswith('m_Data:'):
+    value=line.split('m_Data:',1)[1].strip()
+    if not re.fullmatch(r'[a-fA-F0-9]*',value) or len(value)%2:
+     raise SystemExit('STOP invalid source packed hex bytes in '+section)
+    found.append(value)
+  if len(found)!=1:
+   raise SystemExit('STOP missing original compressed hex stream '+section)
+  return found[0]
+ if mesh is not None:
+  for section in ('m_Normals','m_NormalSigns'):
+   original=mesh.get('m_CompressedMesh',{}).get(section)
+   if original and int(original.get('m_NumItems',0))>0:
+    original['m_Data']=raw_packed_hex(section)
  if mesh is None:raise SystemExit('STOP original Mesh serialized record unavailable: '+rel)
  positions,uv,normals,indices=[],[],[],[]
  with tempfile.TemporaryDirectory() as temp:
