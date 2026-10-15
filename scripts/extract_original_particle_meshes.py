@@ -12,7 +12,7 @@ import sys
 import tempfile
 from pathlib import Path
 from extract_runtime_scene import parse_asset
-from unity_packed_mesh import compressed_mesh, unpack
+from unity_packed_mesh import compressed_mesh, compressed_normals, unpack
 
 p=argparse.ArgumentParser()
 p.add_argument('project',type=Path)
@@ -60,8 +60,10 @@ for guid,(rel,sha) in sorted(sources.items()):
      raise SystemExit('STOP compressed source UV count does not match vertices')
     uv=[[float(vals[2*i]),float(vals[2*i+1])] for i in range(len(positions))]
    if packed.get('m_Normals',{}).get('m_NumItems'):
-    # Packed normal signs/tangents require a verified original decoder.
-    print('NATIVE_NORMALS_NEED_DECODER',guid)
+    native_normals=compressed_normals(mesh)
+    if len(native_normals)!=len(positions):
+     raise SystemExit('STOP decoded source normal count differs from source vertices')
+    normals=[[x,y,-z] for x,y,z in native_normals]
  if not positions or len(indices)%3 or not indices:
   raise SystemExit('STOP original mesh has no usable triangle geometry')
  if any(i<0 or i>=len(positions) for i in indices):
