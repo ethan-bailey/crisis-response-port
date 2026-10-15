@@ -1,4 +1,4 @@
-name: Recover native packed Splinter normals from original Unity mesh
+name: Verify original raw YAML normal-sign bits for particle meshes
 on:
   push:
     branches:
