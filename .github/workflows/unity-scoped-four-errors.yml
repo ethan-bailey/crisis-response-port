@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - ".github/workflows/unity-scoped-four-errors.yml"
+      - "scripts/unity_scoped_legacy_gui_patch.py"
 
 permissions:
   contents: read
