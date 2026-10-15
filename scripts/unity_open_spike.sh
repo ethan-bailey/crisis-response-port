@@ -167,7 +167,7 @@ if [[ "${UNITY_SPIKE_WEBGL:-0}" == 1 && "${UNITY_SPIKE_SINGLE_PASS:-0}" == 1 ]];
   note build_attempted true
   note build_skipped_reason none
   touch "$WORK/webgl.log"
-  timeout 2100 docker exec "$CONTAINER" /opt/unity/Editor/Unity \
+  timeout 3000 docker exec "$CONTAINER" /opt/unity/Editor/Unity \
     -batchmode -nographics -quit \
     -projectPath /spike/recovery/export/ExportedProject \
     -executeMethod SpikeWebGL.BuildMarksman \
@@ -239,7 +239,7 @@ note webgl_safari_memorySize 256
 note webgl_safari_dataCaching true
 note build_attempted true
 note build_skipped_reason none
-timeout 2100 docker exec "$CONTAINER" /opt/unity/Editor/Unity \
+timeout 3000 docker exec "$CONTAINER" /opt/unity/Editor/Unity \
   -batchmode -nographics -quit -projectPath /spike/recovery/export/ExportedProject \
   -executeMethod SpikeWebGL.BuildMarksman -logFile /spike/webgl.log \
   > "$WORK/docker-webgl.log" 2>&1
