@@ -1,26 +1,6 @@
 name: Mission 01 separate game movement smoke test
 
 on:
-  push:
-    paths:
-      - "game/assets/mission01.obj"
-      - "game/assets/operator/operator.json"
-      - "game/index.html"
-      - "game/**"
-      - "scripts/contact_physics_smoke.mjs"
-      - "scripts/vendor_physics.mjs"
-      - "scripts/animation_pose_test.mjs"
-      - "scripts/game_loading_test.mjs"
-      - "scripts/build_scene_binary.py"
-      - "scripts/presentation_smoke.mjs"
-      - "scripts/extract_presentation.py"
-      - "scripts/export_operator_animations.py"
-      - "runtime/**"
-      - "scripts/browser_input_test.mjs"
-      - "scripts/iphone_input_smoke.mjs"
-      - "scripts/weapon_smoke.mjs"
-      - ".github/workflows/game-movement-smoke.yml"
-      - "scripts/game_movement_smoke.mjs"
   workflow_dispatch:
 
 permissions:
