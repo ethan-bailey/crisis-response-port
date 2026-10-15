@@ -59,4 +59,27 @@ NEXT_AGENT.md                                [handoff update]
 
 If this continuation must be undone, **do not reset the branch or force-push** and do not undo independent Unity work. Make a new rollback commit that restores only the listed paths from the baseline, or revert this session's commits in reverse chronological order after checking for later edits. Use `git diff <baseline>..HEAD -- <path>` to distinguish unrelated changes before reverting. Remove only newly added files if reverting all continuation functionality. Preserve `game/original-impact-mesh.mjs` and its earlier handedness regression, which predate the baseline.
 
+### Atomic change ledger (oldest first)
+
+This ledger allows selective rollback without discarding earlier source-mesh work:
+
+| Commit | Scope |
+| --- | --- |
+| `4629ce1be5a09b0f5c04b74fd012eb29592ae8df` | C# source clock in weapon snapshot |
+| `2ddb13f77cdc1db820320f15ec6bb33621f630fb` | Pure JS original-time adapter |
+| `f01076a2e0e549f00b58e15ea9a0b68b3dc80ab6` | Muzzle-flash animation clock and late texture cleanup |
+| `074df40b7559c5bb98ccdcd7726e6cc3a8dc7576` | Pass original clock from WASM presentation |
+| `1da51a02a1f616c4849644b72f09cf1aa28567fc` | Clock regression tests |
+| `5b834ceca6117d80bfd93188efc6478f0c6df5f2` | Include test in manual browser workflow |
+| `cfb48174655fc891a645b4a980d6d9fa902969d6` | Clear stale impact diagnostics |
+| `40bd47c6186a533775e5e14a9995403968c77450` | Watch original Material.mainTexture replacement |
+| `23b0fb260175481865c252985d2fda5e6685eb3f` | Rebind window stamp listener per instance |
+| `529cc7013fd3387681393ea2e15df9cb0a563e48` | C# glass Reset and bookkeeping tests |
+| `19e69eca3b37947441e00e3d536150911cf240d3` | Correct native assertion escaping |
+| `a3aef266a1192f87420242798e12c0c925afe471` | Reject null effect-clock payload |
+| `66478ac4343e156885527734db485fc46ba0f9a3` | One-shot native C#/WASM compilation workflow |
+| `455a017cc2900bace19a3eb47cf0276aa71db8cf` | Explicitly run complete browser integration once |
+
+Metadata and handoff-only commits follow these. To undo only the glass reset transport, consider reverts of `23b0fb2` and `40bd47c` together and remove its tests, not unrelated source clock work. To undo only the source clock, revert the C#, JS and presentation transport as one unit, not one file in isolation. Use `git revert` to create auditable inverse commits, verify the branch head, and rerun the scoped tests on the resulting rollback commit.
+
 Important boundaries: source window stamps still are not projected onto the combined environment mesh; original particle systems and fragment meshes are not rendered; rigid-body impulses, full physiology, and true native Unity comparison remain outstanding. Never claim 1:1 parity on the basis of these limited adapter checks.
