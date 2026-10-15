@@ -27,7 +27,7 @@ def main():
         for number,old,new in entries:
             if number>len(lines):raise SystemExit(f"STOP: {name}:{number} out of range")
             current=lines[number-1]
-            token=r"\b"+re.escape(old)+r"\b"
+            token=(re.escape(old)+r"\b") if old.startswith(".") else (r"\b"+re.escape(old)+r"\b")
             occurrences=len(list(re.finditer(token,current)))
             if occurrences!=1:
                 raise SystemExit(f"STOP: {name}:{number} {old} occurrences {occurrences} expected 1")
