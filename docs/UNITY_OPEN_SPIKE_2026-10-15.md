@@ -78,17 +78,32 @@ Scripts have compiler errors.
 - **Whole project compilation and correct 2017-to-2022 scene/game behavior:** **Days or longer, unknown**. Subsequent assembly, asset and runtime errors are hidden behind the firstpass failure. There is **no evidence supporting “effectively a rewrite”** yet, nor evidence that a complete WebGL port is only hours away.
 - **Port-path recommendation:** **NO-GO for promoting Unity WebGL as the primary track today**; **GO for considering another scoped compatibility assessment** once a repair phase is explicitly approved. Keep ongoing WASM work progressing.
 
-## Seat-return cleanup exception — requires verification
+## Personal license cleanup: seat returned successfully
 
-**Important:** Although activation succeeded, the originally scripted seat return did *not* succeed:
+Personal activation had acquired an entitlement seat (not an older ULF license), so the original `--return-ulf` and Unity editor `-returnlicense` cleanup attempts failed:
 
 ```text
 An error occured while trying to return the ULF license. Ulf license file not found (.../Unity_lic.ulf) (1404)
 [Licensing::Module] Error: Failed to return entitlement license
-[Licensing::Module] Error: Serial number unavailable for ULF return; skipping operation
 ```
 
-The editor used a **Unity entitlement XML license**, so the `--return-ulf` path was inappropriate. In response a separate [Personal entitlement deactivation run](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38766883502) was started with the correct `--deactivate-all --username / --password` command (and `--show-seats` verification). **Do not assume the Personal seat has been returned until that job's evidence is checked.** If still active, use Unity ID seat management to release it. This should be corrected in any future license-bearing workflow before execution.
+The corrective [entitlement deactivation workflow run 38766883502](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38766883502) used `Unity.Licensing.Client --deactivate-all --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD"` with GitHub Secrets, then `--show-seats`. **Deactivation and subsequent query both exited 0**, and the client explicitly reported:
+
+```text
+Trying to deactivate all seats ...
+Deactivation processed successfully.
+Status: [200] REVOKE_SEAT
+Trying to update entitlement license file ...
+No license activation found for this computer. (UnityEntitlementLicense.xml)
+PERSONAL_DEACTIVATION_EXIT=0
+PERSONAL_SEAT_QUERY_AFTER_DEACTIVATION
+Trying to get all seats ...
+PERSONAL_SEAT_QUERY_EXIT=0
+```
+
+**Seat returned (confirmed by server response).** The queried account returned no active seats on that machine. Redacted license-release evidence was saved as private Actions artifact `unity-personal-seat-release-evidence`, ID `11990382771` (expires 2026-10-22). No username/password was committed or uploaded.
+
+For any future licensed Unity spike, the scripts now use **entitlement deactivation** and an always-run emergency cleanup instead of `--return-ulf`. The import workflow has been switched to `workflow_dispatch` only to avoid unintentional repeated activation.
 
 ## Stop condition / reproducibility
 
