@@ -51,7 +51,7 @@ public static class BallisticContracts {
   // browser adapter must observe the new source texture or future stamps go
   // invisible even though original glass penetration continues to work.
   int StampCount()=>JsonSerializer.Serialize(host.effects.events).Split("\"type\":\"windowStamp\"").Length-1;
-  int ResetCount()=>JsonSerializer.Serialize(host.effects.events).Split("\\"type\\":\\"windowReset\\"").Length-1;
+  int ResetCount()=>JsonSerializer.Serialize(host.effects.events).Split("\"type\":\"windowReset\"").Length-1;
   int resetsBefore=ResetCount();
   int stampsBeforeReset=StampCount();
   Check(stampsBeforeReset>0,"Initial original window stamp never reached presentation");
