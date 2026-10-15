@@ -1,4 +1,4 @@
-name: Audit source particle meshes/materials before WebGL rendering
+name: Audit particle render assets including original Unity built-ins
 on:
   push:
     branches:
@@ -22,11 +22,12 @@ jobs:
       - name: Audit three native particle meshes and original material/shader/texture references
         run: |
           python3 -m pip install PyYAML==6.0.2
+          mkdir -p work/particle-render-provenance
+          git rev-parse HEAD > work/particle-render-provenance/input-commit.txt
           python3 scripts/audit_original_particle_mesh_materials.py \
             work/recovery/export/ExportedProject \
             --manifest game/assets/ballistics/original-particles-source.json.gz \
             --out work/particle-render-provenance/assets.json | tee work/particle-render-audit.log
-          git rev-parse HEAD > work/particle-render-provenance/input-commit.txt
       - name: Keep source provenance privately
         if: always()
         uses: actions/upload-artifact@v4
