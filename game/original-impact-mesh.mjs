@@ -21,7 +21,8 @@ export function createOriginalImpactMeshRenderer(scene) {
       if (data.file_guids?.prefab !== WOOD_EXIT_PREFAB ||
           data.source_sha256?.mesh !== SOURCE_MESH_SHA256 ||
           data.file_guids?.texture !== null ||
-          data.counts?.vertices !== 186 || data.counts?.triangles !== 100) {
+          data.counts?.vertices !== 186 || data.counts?.triangles !== 100 ||
+          !['Unity 2017 compressed mesh packed floats', 'Unity 2017 raw vertex channel buffers'].includes(data.mesh?.source_format)) {
         throw new Error('Original Wood exit-hole mesh source metadata did not match');
       }
       const { positions, normals, indices, uv } = data.mesh;
@@ -32,20 +33,16 @@ export function createOriginalImpactMeshRenderer(scene) {
           positions.some(v => v.length !== 3 || v.some(n => !Number.isFinite(n)))) {
         throw new Error('Original Wood exit-hole mesh buffers are invalid');
       }
-      // The C# runtime emits Unity coordinates. World poses already reflect Z
-      // for Three.js; mesh-local vertices and normals must use that SAME basis.
-      // Reflection reverses handedness, so flip each triangle's winding too.
-      // The recovered source buffers remain untouched.
+      // IMPORTANT: extract_original_exit_hole_mesh.py obtains its geometry
+      // from unity_mesh_to_obj.py or its compressed-mesh fallback. BOTH source
+      // paths *already* negate Unity Z and reverse triangle winding. These
+      // serialized buffers are therefore Three-ready right-handed geometry.
+      // Reflect only the LIVE C# world pose below, not the extracted vertices,
+      // normals or indices again; double conversion was a visual parity bug.
       const geometry = new THREE.BufferGeometry();
-      geometry.setAttribute('position', new THREE.Float32BufferAttribute(
-        positions.flatMap(([x, y, z]) => [x, y, -z]), 3));
-      const reflectedIndices = [];
-      for (let i = 0; i < indices.length; i += 3) {
-        reflectedIndices.push(indices[i], indices[i + 2], indices[i + 1]);
-      }
-      geometry.setIndex(reflectedIndices);
-      if (normals.length) geometry.setAttribute('normal', new THREE.Float32BufferAttribute(
-        normals.flatMap(([x, y, z]) => [x, y, -z]), 3));
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions.flat(), 3));
+      geometry.setIndex(indices);
+      if (normals.length) geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals.flat(), 3));
       else geometry.computeVertexNormals(); // renderer-only reconstruction from original faces
       if (uv.length) geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uv.flat(), 2));
       const source = data.source_material;
