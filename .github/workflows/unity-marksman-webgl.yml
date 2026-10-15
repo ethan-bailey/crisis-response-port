@@ -9,7 +9,7 @@ concurrency:
 jobs:
   marksman:
     runs-on: ubuntu-24.04
-    timeout-minutes: 55
+    timeout-minutes: 90
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
