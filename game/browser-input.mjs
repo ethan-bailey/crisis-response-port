@@ -66,34 +66,47 @@ export class BrowserInput {
     });
   }
 
-  bindAim(surface, onAim) {
-    let pointer = null;
+  // Browser gesture classification only. The original InputHandler remains the
+  // authority for interpreting a fire press; this adapter never fires weapons.
+  bindAim(surface, onAim, { onTap = () => {}, dragThreshold = 8, maxTapDuration = 350 } = {}) {
+    let gesture = null;
+    const coords = event => [event.clientX ?? 0, event.clientY ?? 0];
     const release = event => {
-      if (event.pointerId !== pointer) return;
-      this.set('fire', `aim:${pointer}`, false);
-      pointer = null;
-      onAim(null); // End active aiming; retain the last world-relative aim point.
+      if (event.pointerId !== gesture?.id) return;
+      const finished = gesture;
+      gesture = null;
+      onAim(null); // Freeze the final character-local aim direction.
       if (surface.hasPointerCapture?.(event.pointerId)) surface.releasePointerCapture(event.pointerId);
+      // Cancelled/capture-lost gestures and long holds must never shoot.
+      if (event.type === 'pointerup' && !finished.dragged &&
+          event.timeStamp - finished.startedAt <= maxTapDuration) onTap(event);
     };
     this.listen(surface, 'pointerdown', event => {
-      if (event.button !== 0 || pointer !== null) return;
+      if (event.button !== 0 || gesture !== null) return;
       event.preventDefault();
-      pointer = event.pointerId;
-      surface.setPointerCapture(pointer);
-      onAim(event);
-      this.set('fire', `aim:${pointer}`, true);
+      const [x, y] = coords(event);
+      gesture = { id: event.pointerId, x, y, startedAt: event.timeStamp, dragged: false };
+      surface.setPointerCapture(event.pointerId);
     });
     this.listen(surface, 'pointermove', event => {
-      if (pointer !== null && event.pointerId === pointer) onAim(event);
+      if (event.pointerId !== gesture?.id) return;
+      const [x, y] = coords(event);
+      if (!gesture.dragged &&
+          (x - gesture.x) ** 2 + (y - gesture.y) ** 2 >= dragThreshold ** 2) {
+        gesture.dragged = true;
+      }
+      if (gesture.dragged) onAim(event);
     });
-    for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) this.listen(surface, type, release);
+    for (const type of ['pointerup', 'pointercancel', 'lostpointercapture'])
+      this.listen(surface, type, release);
     this.listen(surface, 'contextmenu', event => event.preventDefault());
-    // Reset pointer ownership as well as held keys when Safari suspends the page.
+    // Safari can suspend or resize without dispatching pointerup.
     this.resetAim = () => {
-      const previous = pointer;
-      pointer = null;
-      if (previous !== null) onAim(null);
-      if (previous !== null && surface.hasPointerCapture?.(previous)) surface.releasePointerCapture(previous);
+      const previous = gesture;
+      gesture = null;
+      if (previous) onAim(null);
+      if (previous && surface.hasPointerCapture?.(previous.id))
+        surface.releasePointerCapture(previous.id);
     };
   }
 
