@@ -46,6 +46,9 @@ for pg in source_props:
 # the short-lived PRIVATE Actions artifact; stdout shows key maps/statistics.
 out=[]
 module_counts=collections.Counter()
+module_states=collections.defaultdict(collections.Counter)
+render_modes=collections.Counter()
+render_refs=collections.defaultdict(set)
 system_count=renderer_count=0
 for eg,roles in sorted(source_effects.items()):
     path=by_guid.get(eg)
@@ -63,19 +66,48 @@ for eg,roles in sorted(source_effects.items()):
               "sourceFieldKeys":sorted(f),
               "sourceFields":f}
         if cls==198:
-            module_counts.update(f.keys());effect["systems"].append(data);system_count+=1
+            module_counts.update(f.keys())
+            # Unity exports all modules even when their enabled switch is off.
+            # Never interpret mere presence as evidence of an active emitter.
+            data["sourceModuleEnabled"]={}
+            for mod_name, mod in f.items():
+                if not mod_name.endswith("Module") or not isinstance(mod,dict):
+                    continue
+                enable=mod.get("enabled")
+                state=("enabled" if enable in (1,True) else
+                       "disabled" if enable in (0,False) else "unspecified")
+                data["sourceModuleEnabled"][mod_name]=state
+                module_states[mod_name][state]+=1
+            effect["systems"].append(data);system_count+=1
         else:
+            # These are source renderer fields, not guessed WebGL defaults.
+            mode=f.get("m_RenderMode")
+            render_modes[str(mode)]+=1
+            data["originalRenderMode"]=mode
+            data["originalRenderReferences"]={
+              k: v for k,v in f.items()
+              if ("mesh" in k.lower() or "material" in k.lower() or
+                  "sorting" in k.lower() or "texture" in k.lower())
+            }
+            for k,v in data["originalRenderReferences"].items():
+                render_refs[k].add(json.dumps(v,sort_keys=True,default=str))
             effect["renderers"].append(data);renderer_count+=1
     out.append(effect)
 summary={"sourceProperties":len(source_props),"effectPrefabs":len(out),
          "particleSystems":system_count,"particleRenderers":renderer_count,
          "moduleKeysCount":dict(module_counts.most_common()),
+         "originalModuleEnabledCounts":{k:dict(v) for k,v in sorted(module_states.items())},
+         "originalRendererModeCounts":dict(render_modes),
+         "originalRendererReferenceFieldNames":{k:len(v) for k,v in sorted(render_refs.items())},
          "note":"Original serialized component fields stored only in private artifact; no simulation or rendering parity claim"}
 if system_count<1:raise SystemExit("STOP: no original particle systems found")
 args.out.parent.mkdir(parents=True,exist_ok=True)
 args.out.write_text(json.dumps({"summary":summary,"effects":out},sort_keys=True,separators=(",",":"))+"\n")
 print(json.dumps({k:v for k,v in summary.items() if k!="moduleKeysCount"},sort_keys=True))
 print("TOP_MODULE_KEYS",json.dumps(module_counts.most_common(60)))
+print("ENABLED_MODULES",json.dumps({k:dict(v) for k,v in sorted(module_states.items())},sort_keys=True))
+print("SOURCE_RENDER_MODES",json.dumps(dict(render_modes),sort_keys=True))
+print("SOURCE_RENDER_FIELDS",json.dumps({k:len(v) for k,v in sorted(render_refs.items())},sort_keys=True))
 print("SOURCE_SAMPLES",json.dumps([
  {"guid":v["guid"],"roles":v["roles"],"systems":len(v["systems"]),
   "renderers":len(v["renderers"]),
