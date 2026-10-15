@@ -39,6 +39,13 @@ if [[ ! -d "$PROJECT/Assets" || ! -f "$PROJECT/ProjectSettings/ProjectVersion.tx
   exit 0
 fi
 note project_detected true
+if [[ "${UNITY_SPIKE_WEBGL:-0}" == 1 ]]; then
+  python3 scripts/unity_webgl_template_fix.py "$PROJECT" --out "$WORK/webgl-template-settings.json" || {
+    note build_skipped_reason webgl_project_settings_validation_failed
+    exit 0
+  }
+  note webgl_project_template_validated true
+fi
 if [[ "${UNITY_SPIKE_SCOPED_REPAIR:-0}" == 1 ]]; then
   python3 scripts/unity_scoped_legacy_gui_patch.py "$PROJECT" --out "$WORK/scoped-patch.json" || {
     note repair_patch_failed true
