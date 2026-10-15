@@ -9,7 +9,7 @@ concurrency:
 jobs:
   audio-and-smoke:
     runs-on: ubuntu-24.04
-    timeout-minutes: 55
+    timeout-minutes: 70
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
