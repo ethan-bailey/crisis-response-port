@@ -78,10 +78,12 @@ def component(rs,n):
  return next(r['fields'] for r in rs if r['classID']==114 and r['fields'].get('m_Script',{}).get('guid')==guid)
 wpath=Path('Assets/Resources/weapons/M4A1.prefab');rs=records(wpath);w=component(rs,'WeaponBase');bolt=component(rs,'CyclingBolt');barrel=component(rs,'WeaponBarrel')
 fmode=re.search(r'fireModes: (\w+)',(root/wpath).read_text())[1];fireModes=list(struct.unpack('<'+'i'*(len(fmode)//8),bytes.fromhex(fmode)))
-slots={r['fileID']:r['fields'] for r in rs};comp=list(rs)
+slots={r['fileID']:r['fields'] for r in rs};comp=list(rs);magPath=None;magRecords=None
 for ref in w['componentSlots']:
  slot=slots[str(ref['fileID'])];c=slot.get('component',{});c=c if c.get('guid') else slot.get('defaultComponent',{});g=c.get('guid')
- if g in index:comp.extend(records(index[g]))
+ if g in index:
+  cr=records(index[g]);comp.extend(cr)
+  if any('capacity' in x['fields'] for x in cr):magPath=index[g];magRecords=cr
 mag=next(r['fields'] for r in comp if 'capacity' in r['fields'] and 'malfunctionRate' in r['fields'])
 ammoPath=index[w['defaultAmmunition']['guid']];ars=records(ammoPath);ammo=component(ars,'AmmunitionBase')
 op=records(Path('Assets/Resources/characters/Operator.prefab'));body=component(op,'CharacterBody')
@@ -117,6 +119,17 @@ def bt(key):
 armconf=component(records(index[w['armConfiguration']['guid']]),'WeaponArmConfiguration')
 prs=records(index[ammo['projectile']['guid']]);projectile=component(prs,'Projectile')
 payload={'projectile':projectile,'bodyTransforms':{key:bt(key) for key in ['chestRigIKTarget','pistolPivot','pistolIKTarget','Torso','Pelvis']},'armConfiguration':armconf,'weapon':w,'fireModes':fireModes,'bolt':bolt,'barrel':barrel,'magazine':mag,'ammunition':ammo,'ammoPath':str(ammoPath),'ammoPackage':{'assets':{str(ammoPath):{'records':[{k:v for k,v in r.items() if k!='rawYaml'} for r in ars]}},'guidPaths':{ammo['m_Script']['guid']:'Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs'}},'weaponTransforms':transforms(rs),'operatorTransforms':transforms(op),'armInterpolation':arm['interpolation'],'body':body,'audio':audio,'flash':flash,'sourceHashes':hashes,'adaptations':adapt,'scope':'M4 source mechanics, original reload/bolt tasks and arm transition math. Static scene projectile flight; damage/material interactions, casing physics and complete effects remain pending.'}
+import subprocess
+subprocess.run([sys.executable,str(Path(__file__).with_name('export_weapon_manifest.py')),str(root),str(assets),str(magPath),'M4-magazine'],check=True,capture_output=True)
+payload['magazineVisual']=json.loads((assets/'M4-magazine/weapon.json').read_text())
+payload['magazineTransforms']=transforms(magRecords)
+payload['bodyTransforms'].update({key:bt(key) for key in ['RightHand','LeftHand']})
+handGuid=re.search(r'^guid: (\w+)',(source/'Hand.cs.meta').read_text(),re.M)[1]
+payload['handGrabTransforms']={}
+for label,key in [('right','RightHand'),('left','LeftHand')]:
+ go=byid[str(body[key]['fileID'])]['m_GameObject']['fileID']
+ hand=next(r['fields'] for r in op if r['classID']==114 and r['fields'].get('m_Script',{}).get('guid')==handGuid and r['fields']['m_GameObject']['fileID']==go)
+ payload['handGrabTransforms'][label]=str(hand['grabPoint']['fileID'])
 # rawYaml is evidence, not required at runtime.
 def strip(v):
  if isinstance(v,dict):return {k:strip(x) for k,x in v.items() if k!='rawYaml'}

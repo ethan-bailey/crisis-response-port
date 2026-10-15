@@ -41,12 +41,12 @@ const camera=new THREE.PerspectiveCamera(20,innerWidth/innerHeight,5,20);
 camera.position.set(-3,1.2,9.8);
 const world=new THREE.Group();scene.add(world);
 const character=new THREE.Group();character.name="Original Operator prefab";scene.add(character);
-const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(2,0,0),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,physicsState=null,physicsTime=0,sprintBlend=0,gaitPhase=0,upperBody=null,presentationData=null,weaponData=null,hasAimPointer=false,aimDirty=false,tapPending=0,tapFrame=false,weaponState=null;const lockedAim=new AimDirection();
+const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(2,0,0),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,physicsState=null,physicsTime=0,sprintBlend=0,gaitPhase=0,upperBody=null,presentationData=null,weaponData=null,hasAimPointer=false,aimDirty=false,tapPending=0,tapFrame=false,reloadPending=false,weaponState=null;const lockedAim=new AimDirection();
 const loadStart=performance.now(),loadingTimings={};window.__loadingTimings=loadingTimings;
 const markLoaded=name=>loadingTimings[name]=performance.now()-loadStart;
 function showError(e){errorBox.style.display="block";errorBox.textContent=String(e?.stack||e);status.textContent="Build failed to load; see error details."}
 const rawActions={left:false,right:false,sprint:false,fire:false,kneel:false,stand:false,magazine:false,switchWeapons:false};
-const input = new BrowserInput({onChange(action,pressed){rawActions[action]=pressed;document.querySelector(`[data-action="${action}"]`)?.classList.toggle("active",pressed)}});
+const input = new BrowserInput({onPress(action){if(action==="magazine")reloadPending=true;},onChange(action,pressed){rawActions[action]=pressed;document.querySelector(`[data-action="${action}"]`)?.classList.toggle("active",pressed)}});
 async function initializeOriginalRuntime(){
  const frame=document.createElement("iframe");frame.hidden=true;frame.src="../runtime-web/?bridge=1";frame.title="Original C# runtime";document.body.appendChild(frame);
  const deadline=performance.now()+120000;
@@ -63,8 +63,8 @@ for (const button of document.querySelectorAll("button[data-action]")) input.bin
 input.bindKeyboard(window, {KeyA:"left", ArrowLeft:"left", KeyD:"right", ArrowRight:"right",
  ShiftLeft:"sprint", KeyR:"magazine", Tab:"switchWeapons", KeyS:"kneel", KeyW:"stand"});
 input.bindLifecycle(window, document);
-for(const type of ["blur","pagehide","resize"])addEventListener(type,()=>{tapPending=0;tapFrame=false;});
-document.addEventListener("visibilitychange",()=>{if(document.hidden){tapPending=0;tapFrame=false;}});
+for(const type of ["blur","pagehide","resize"])addEventListener(type,()=>{tapPending=0;tapFrame=false;reloadPending=false;});
+document.addEventListener("visibilitychange",()=>{if(document.hidden){tapPending=0;tapFrame=false;reloadPending=false;}});
 function setMeshMaterials(root){root.traverse(o=>{if(o.isMesh){o.material=new THREE.MeshStandardMaterial({color:0x858b91,roughness:1,metalness:0,side:THREE.DoubleSide});o.castShadow=false;o.receiveShadow=true}})}
 async function load(){
  try{
@@ -200,6 +200,7 @@ input.bindAim(renderer.domElement, updateAim,()=>{tapPending++;});
 let last=null,frameBusy=false;
 async function frame(now){requestAnimationFrame(frame);if(frameBusy)return;const elapsed=last===null?0:(now-last)/1000;const dt=Math.min(elapsed,.05);last=now;if(loaded){frameBusy=true;try{
  if(tapFrame){rawActions.fire=false;tapFrame=false;}else if(tapPending>0){tapPending--;rawActions.fire=true;tapFrame=true;}else rawActions.fire=input.pressed('fire');
+ rawActions.magazine=reloadPending||input.pressed("magazine");reloadPending=false;
  originalInputState=JSON.parse(await runtimeCall("Tick",elapsed,JSON.stringify(rawActions)));
  for(const action of Object.keys(keys))keys[action]=originalInputState[action].Pressed;
  if(originalInputState.kneel.Down)isKneeling=true;else if(originalInputState.stand.Down)isKneeling=false;

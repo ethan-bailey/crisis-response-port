@@ -49,7 +49,7 @@ export function createUpperBody(data,manifest,nodeById,character,weapon,runtimeC
    const operatorTransforms={};
    for(const [id,node] of sourceNodes){const p=worldPosition(node),q=node.getWorldQuaternion(new THREE.Quaternion());operatorTransforms[id]={p:unityVector(p),q:[-q.x,-q.y,q.z,q.w]};}
    weaponResult=JSON.parse(await runtimeCall('StepWeapons',JSON.stringify({position:unityVector(position),direction,weaponPose:weaponWorld(),operatorTransforms,fire,reload})));
-   effects.update(weaponResult.events);
+   effects.update(weaponResult.events,weaponResult.magazinePose);
    const inputs=arms.map(a=>{
     const p=worldPosition(a.upper),arm=weaponResult[a.right?'right':'left'],target=new THREE.Vector3(arm.target[0],arm.target[1],-arm.target[2]);
     return {length1:a.length1,length2:a.length2,x:(target.x-p.x)*direction,y:target.y-p.y,flip:!!a.settings.flip};

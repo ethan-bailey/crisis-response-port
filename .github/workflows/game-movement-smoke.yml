@@ -71,12 +71,18 @@ jobs:
       - name: Verify original camera and upper-body aiming
         if: ${{ !cancelled() && steps.serve.outcome == 'success' }}
         run: node scripts/presentation_smoke.mjs
+      - name: Verify original M4 mechanics and directional touch aim
+        if: ${{ !cancelled() && steps.serve.outcome == 'success' }}
+        run: node scripts/weapon_smoke.mjs
       - name: Upload separate game build evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: crisis-response-mission01-game-smoke
           path: |
+            weapon-smoke.json
+            weapon-chromium.png
+            weapon-webkit.png
             presentation-smoke.json
             presentation-chromium.png
             presentation-webkit.png

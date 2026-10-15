@@ -37,12 +37,12 @@ try {
   const poseTravelStable=walkSamples.length>0&&walkSamples.every(s=>Math.abs(s.pelvis[0])<1e-6);
   const after = await page.evaluate(() => window.__gameState?.() ?? null);
   const originalInputActive = !!after?.originalInputActive;
-  const weaponActionsPending = await page.locator("#fire").isDisabled();
+  const weaponActionsEnabled = await page.locator("#fire").isEnabled();
   await page.screenshot({ path: "mission01-game-smoke.png", fullPage: true });
-  const result = { before, afterMove, after, moved, originalInputActive, weaponActionsPending, stopped, whileHeld, poseTrace, poseTravelStable, errors };
+  const result = { before, afterMove, after, moved, originalInputActive, weaponActionsEnabled, stopped, whileHeld, poseTrace, poseTravelStable, errors };
   fs.writeFileSync("mission01-game-smoke.json", JSON.stringify(result, null, 2));
   console.log(JSON.stringify(result, null, 2));
-  if (!before.sceneMesh || !before.weaponsLoaded || before.limbCount < 10 || !moved || whileHeld.animation !== "Body walk" || Math.abs(after.playerX-stopped.playerX) > .005 || Math.abs(after.velocity) > .01 || !poseTravelStable || !originalInputActive || !weaponActionsPending || errors.length) process.exitCode = 1;
+  if (!before.sceneMesh || !before.weaponsLoaded || before.limbCount < 10 || !moved || whileHeld.animation !== "Body walk" || Math.abs(after.playerX-stopped.playerX) > .005 || Math.abs(after.velocity) > .01 || !poseTravelStable || !originalInputActive || !weaponActionsEnabled || errors.length) process.exitCode = 1;
 } finally {
   await browser.close();
 }

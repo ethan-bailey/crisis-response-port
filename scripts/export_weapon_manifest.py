@@ -15,14 +15,14 @@ def quat(body):
     m=re.search(r"^\s*m_LocalRotation: \{x: ([^,]+), y: ([^,]+), z: ([^,]+), w: ([^}]+)\}",body,re.M)
     return [float(m.group(i)) for i in range(1,5)] if m else [0,0,0,1]
 def main():
-    if len(sys.argv)!=3: raise SystemExit("usage: export_weapon_manifest.py PROJECT_ROOT OUTPUT_ROOT")
+    if len(sys.argv) not in (3,5): raise SystemExit("usage: export_weapon_manifest.py PROJECT_ROOT OUTPUT_ROOT")
     root=Path(sys.argv[1]).resolve(); assets=root/"Assets"; outroot=Path(sys.argv[2])
     guid_path={}
     for meta in assets.rglob("*.meta"):
         m=re.search(r"^guid: ([0-9a-f]{32})",meta.read_text(errors="ignore"),re.M)
         if m: guid_path[m.group(1)]=meta.with_suffix("")
-    for weapon in ("M4A1","Glock-18"):
-        prefab=assets/"Resources"/"weapons"/(weapon+".prefab")
+    jobs=[(sys.argv[4],root/sys.argv[3])] if len(sys.argv)==5 else [(n,assets/"Resources"/"weapons"/(n+".prefab")) for n in ("M4A1","Glock-18")]
+    for weapon,prefab in jobs:
         if not prefab.is_file(): print("skip missing",prefab); continue
         text=prefab.read_text(errors="ignore"); objects={}; transforms={}; renderers=[]
         for cls,fid,body in docs(text):
@@ -108,3 +108,4 @@ def main():
         print(weapon,"nodes",len(nodes),"renderers",len(exported),"textures",len(texture_map))
         for x in exported: print(" ",x["name"],x["texture"])
 if __name__=="__main__":main()
+
