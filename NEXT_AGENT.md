@@ -1,5 +1,17 @@
 # Next agent — current state (2026-10-15, 19:17 UTC)
 
+## Original-window rendering continuation — October 15, 2026
+
+On draft PR #9, source-backed original window rendering is added after the previously verified C#/WASM/browser build. Baseline commit before these window changes: `13f22b4286e7f13a30ced752b96ab4ad15ff735f`. No recovered `runtime/Original/` code, independent Unity branch, `main`, or owner-private deployment was modified.
+
+**Read `docs/WASM_ORIGINAL_WINDOW_VISUALS_2026-10-15.md` before changing these files.** Source audit runs [38808368685](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38808368685) and [38808663563](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38808663563) confirmed all 68 `BallisticWindow` components are Unity built-in Quad MeshFilters (fileID 10210), with 56 regular glass and 12 separate custom mirrored-glass materials. Original scene SHA256 `c43b36c415b4df14ef6223eaced686a8ddcead6c46f7504346aecb1a03c5743e`.
+
+The scoped WASM bridge `OriginalWindowVisuals` exports exact source object IDs, current world transforms as lossless 4×4 matrices, texture GUIDs, and active states. `game/original-window-visuals.mjs` renders only source-backed regular-glass Quads from the original RGBA pixels, applies C# `windowStamp` and `windowReset` events and explicitly omits the 12 unported mirror shaders. It uses a marked Three.js adapter to represent the original regular glass source `_Opacity=.25`. **No claim of complete shader parity, actual iPhone validation, or full glass/background occlusion equivalence** is justified. Source collisions remain C# controlled.
+
+Native original window transform/reset contracts and browser transport regressions were added. The full original-game/native/Chromium/WebKit milestone validation was triggered **once** at code/workflow SHA `ed3d80d89f5e4e797e0370d9152bcc828bd8becb`: [run 38809439277](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38809439277). Initial C# tests and WASM compilation passed; inspect terminal browser result, artifacts and screenshots before claiming the whole milestone passed. No further automatic source-commit CI is enabled.
+
+Rollback this window milestone only via selective reverse-order commit reverts/new restoring commits, never branch reset/force push. Keep the earlier verified original Wood impact-mesh, timing, and browser code. The private published Site version 8 still contains the older checked build and **does not contain these new windows**.
+
 ## Start here
 
 ## WASM compiler / renderer continuation — verified 2026-10-15
