@@ -15,15 +15,15 @@ This is a single-session import diagnosis. No proprietary asset or recovered Uni
 - Original artifact expiry: **2026-10-28 14:38:58 UTC**; expected SHA-256 \`cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d\`.
 - Verified source archive: \`true\`; privately preserved as release attachment: \`true\`.
 - Target private release: [recovery-preservation-2026-10-15](https://github.com/ethan-bailey/crisis-response-port/releases/tag/recovery-preservation-2026-10-15). **Do not change repository visibility while third-party assets are attached**.
-- Diagnostic run: [GitHub Actions run 38763743463](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38763743463).
+- Diagnostic run: [GitHub Actions run 38763803865](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38763803865).
 
 ## Environment and editor
 
-- Runner: \`Linux_6.17.0-1022-azure_x86_64\`; initial free disk: \`13690768\` KiB.
-- Unity docker image: \`not selected\`. Image pull exit: \`not attempted\`.
-- Editor executable available: \`false\`. License secret supplied: \`false\`. Import invoked: \`false\`.
+- Runner: \`Linux_6.17.0-1022-azure_x86_64\`; initial free disk: \`13690652\` KiB.
+- Unity docker image: \`unityci/editor:ubuntu-2022.3.62f1-base-3\`. Image pull exit: \`1\`.
+- Editor executable available: \`false\`. License secret supplied: \`true\`. Import invoked: \`false\`.
 - Unity import exit code: \`not run\`. Import log present: \`false\` (0 lines).
-- WebGL module selection: \`unknown\`; build attempted: \`false\`.
+- WebGL module selection: \`false\`; build attempted: \`false\`.
 
 ## Failure classification (log-line counts, overlapping categories)
 
@@ -71,7 +71,7 @@ No matching excerpt in captured import log.
 
 ## Marksman range WebGL test
 
-Not attempted. Reason: \`import_not_run\`.
+Not attempted. Reason: \`personal_activation_failed_both_versions\`.
 
 The build driver, if reached, selects exactly one scene with filename containing \`Marksman\` from Unity's AssetDatabase; no other scenes are included and no original gameplay code was altered.
 
