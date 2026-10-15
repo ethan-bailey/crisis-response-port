@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Check built Unity WebGL output over private localhost HTTP, without redistributing assets."""
-import argparse, json, mimetypes, threading, urllib.request
+import argparse, json, mimetypes, threading, urllib.parse, urllib.request
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from functools import partial
