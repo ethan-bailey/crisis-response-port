@@ -66,31 +66,33 @@ export class BrowserInput {
     });
   }
 
-  bindAim(surface, onAim) {
-    let pointer = null;
+  bindAim(surface, onAim, onTap = () => {}) {
+    let pointer = null, start = null, dragging = false;
     const release = event => {
       if (event.pointerId !== pointer) return;
-      this.set('fire', `aim:${pointer}`, false);
-      pointer = null;
-      if (surface.hasPointerCapture?.(event.pointerId)) surface.releasePointerCapture(event.pointerId);
+      const tap = event.type === 'pointerup' && !dragging && performance.now()-start.time <= 300;
+      const previous = pointer; pointer = null;
+      this.set('fire', `aim:${previous}`, false);
+      if (surface.hasPointerCapture?.(previous)) surface.releasePointerCapture(previous);
+      if (tap && start.touch) onTap(event);
     };
     this.listen(surface, 'pointerdown', event => {
       if (event.button !== 0 || pointer !== null) return;
-      event.preventDefault();
-      pointer = event.pointerId;
-      surface.setPointerCapture(pointer);
-      onAim(event);
-      this.set('fire', `aim:${pointer}`, true);
+      event.preventDefault(); pointer = event.pointerId;
+      start = {x:event.clientX, y:event.clientY, time:performance.now(), touch:event.pointerType !== 'mouse'};
+      dragging = false; surface.setPointerCapture(pointer);
+      if (!start.touch) {onAim(event); this.set('fire', `aim:${pointer}`, true);}
     });
     this.listen(surface, 'pointermove', event => {
-      if (event.pointerId === pointer || (pointer === null && event.pointerType === 'mouse')) onAim(event);
+      if(pointer===null&&event.pointerType==='mouse'){onAim(event);return;}
+      if (event.pointerId !== pointer) return;
+      if (Math.hypot(event.clientX-start.x,event.clientY-start.y)>8) dragging=true;
+      if (dragging || !start.touch) onAim(event);
     });
     for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) this.listen(surface, type, release);
     this.listen(surface, 'contextmenu', event => event.preventDefault());
-    // Reset pointer ownership as well as held keys when Safari suspends the page.
     this.resetAim = () => {
-      const previous = pointer;
-      pointer = null;
+      const previous=pointer; pointer=null; start=null; dragging=false;
       if (previous !== null && surface.hasPointerCapture?.(previous)) surface.releasePointerCapture(previous);
     };
   }

@@ -117,7 +117,7 @@ public class InputHandler : MonoBehaviour {
         'public float EnergyToPenetrate(float distance, float density, float frictionFactor, float diameterInMillimeters)',
         'public bool TestFragmentation()', 'public static float MaximumRange(float muzzleVelocity, float ballisticCoefficient, float flightDrag)']
     methods = [block(projectile, sig) for sig in signatures]
-    save('Projectile.cs', 'using UnityEngine;\npublic class Projectile : MonoBehaviour {\n' + '\n'.join(members + methods) + '\n}\n')
+    save('Projectile.cs', 'using UnityEngine;\npublic partial class Projectile : MonoBehaviour {\n' + '\n'.join(members + methods) + '\n}\n')
     report['methodSelections']['Projectile.cs'] = {sig: digest(body) for sig, body in zip(signatures, methods)}
     report['excludedFeatures'].extend(['Projectile flight/collision/damage/effect lifecycle is not selected',
         'Ammunition UI, availability, resource lookup and fragmentation spawning are not selected'])

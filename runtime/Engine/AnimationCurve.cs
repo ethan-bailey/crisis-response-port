@@ -7,6 +7,7 @@ public sealed class AnimationCurve {
     readonly Keyframe[] values;
     public Keyframe[] keys=>(Keyframe[])values.Clone();
     public int length=>values.Length;
+    public bool clampOutside {get;init;}
     public int serializedPreInfinity {get;init;}
     public int serializedPostInfinity {get;init;}
     public AnimationCurve(params Keyframe[] keys){values=keys.OrderBy(k=>k.time).ToArray();
@@ -17,6 +18,7 @@ public sealed class AnimationCurve {
         if(values.Length==1)return values[0].value;
         // Retain infinity metadata without guessing the Unity native mapping.
         // Until it is verified, extrapolation is explicitly unsupported.
+        if(clampOutside)time=Math.Clamp(time,values[0].time,values[^1].time);
         if(time<values[0].time||time>values[^1].time)throw new NotSupportedException("AnimationCurve extrapolation/wrap semantics are not parity-verified");
         if(time==values[^1].time)return values[^1].value;
         int index=0;while(index+1<values.Length&&values[index+1].time<=time)index++;

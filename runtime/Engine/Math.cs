@@ -40,6 +40,7 @@ public struct Quaternion {
     internal static Quaternion From(N.Quaternion q) => new(q.X,q.Y,q.Z,q.W);
     public static Quaternion identity => new(0,0,0,1);
     public static Quaternion AngleAxis(float degrees,Vector3 axis) => axis.sqrMagnitude<1e-10f ? identity : From(N.Quaternion.CreateFromAxisAngle(axis.normalized.Native,degrees*MathF.PI/180));
+    public static Quaternion LookRotation(Vector3 forward,Vector3 up){var z=forward.normalized;var x=Vector3.Cross(up,z).normalized;var y=Vector3.Cross(z,x);var m=new N.Matrix4x4(x.x,x.y,x.z,0,y.x,y.y,y.z,0,z.x,z.y,z.z,0,0,0,0,1);return From(N.Quaternion.CreateFromRotationMatrix(m));}
     public static Quaternion Inverse(Quaternion q) => From(N.Quaternion.Inverse(q.Native));
     public static Quaternion operator *(Quaternion a,Quaternion b) => From(a.Native*b.Native);
     public static Vector3 operator *(Quaternion q,Vector3 v) => Vector3.From(N.Vector3.Transform(v.Native,q.Native));
@@ -65,3 +66,13 @@ public static class Mathf {
 [AttributeUsage(AttributeTargets.Field)] public sealed class TooltipAttribute(string text):Attribute { }
 [AttributeUsage(AttributeTargets.Field)] public sealed class HeaderAttribute(string text):Attribute { }
 [AttributeUsage(AttributeTargets.Field)] public sealed class SerializeField:Attribute { }
+
+public static class Random {
+ static readonly System.Random source=new();
+ public static Vector2 insideUnitCircle {get{float x,y;do{x=Range(-1f,1f);y=Range(-1f,1f);}while(x*x+y*y>1);return new(x,y);}}
+ public static Vector3 onUnitSphere {get{float z=Range(-1f,1f),a=Range(0f,2*MathF.PI),r=MathF.Sqrt(1-z*z);return new(r*MathF.Cos(a),r*MathF.Sin(a),z);}}
+ public static float value=>(float)source.NextDouble();
+ public static float Range(float a,float b)=>a+(b-a)*value;
+ public static int Range(int a,int b)=>source.Next(a,b);
+}
+public static class Debug {public static void LogWarningFormat(string format,params object[] args)=>Console.Error.WriteLine(format,args);}

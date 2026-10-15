@@ -34,6 +34,8 @@ namespace Crisis.Runtime.Presentation {
    pose.ActiveWeapon=new(){type=(WeaponBrace)w.GetProperty("type").GetInt32(),weight=w.GetProperty("weight").GetSingle(),alignmentModifier=w.GetProperty("alignmentModifier").GetSingle(),armConfiguration=new(){headAngle=ac.GetProperty("headAngle").GetSingle(),torsoAngle=ac.GetProperty("torsoAngle").GetSingle()}};
    pose.WeaponAimer.useSights=true;ballisticMask=c.GetProperty("cameraBallisticMask").GetInt32();
   }
+  public RuntimeWorld QueryWorld=>scene.world;public int BallisticMask=>ballisticMask;
+  public void SetWeaponState(float kick,float climb,bool manipulating){pose.ActiveWeapon.RecoilKick=kick;pose.ActiveWeapon.RecoilClimb=climb;pose.IsLoweringWeapon=manipulating;}
   public string Step(string json){
    scene.world.MakeCurrent();using var d=JsonDocument.Parse(json);var f=d.RootElement;
    subject.transform.position=V(f.GetProperty("position"));subject.Direction=f.GetProperty("direction").GetSingle();subject.transform.rotation=Quaternion.AngleAxis(subject.Direction==1?0:180,Vector3.up);

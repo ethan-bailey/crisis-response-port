@@ -56,7 +56,7 @@ jobs:
           npm install --no-audit --no-fund playwright@1.55.0
           npx playwright install --with-deps chromium webkit
       - name: Verify independent touch ownership and lifecycle resets
-        run: node --test scripts/browser_input_test.mjs scripts/animation_pose_test.mjs scripts/game_loading_test.mjs
+        run: node --test scripts/browser_input_test.mjs scripts/animation_pose_test.mjs scripts/game_loading_test.mjs scripts/aim_direction_test.mjs
       - name: Serve the separate game build
         id: serve
         run: |

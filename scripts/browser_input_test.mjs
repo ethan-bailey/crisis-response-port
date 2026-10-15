@@ -46,7 +46,7 @@ test('touch release does not clear a keyboard action; repeats do not retrigger',
 test('movement finger release does not stop aiming/firing', () => {
   const input = new BrowserInput(), aim = new Surface(), left = new Surface(), moves = [];
   input.bindAim(aim, e => moves.push(e.pointerId)); input.bindButton(left, 'left');
-  aim.send('pointerdown', { pointerId: 7 });
+  aim.send('pointerdown', { pointerId: 7, pointerType:'mouse' });
   left.send('pointerdown', { pointerId: 8 });
   left.send('pointerup', { pointerId: 8 });
   aim.send('pointerup', { pointerId: 8 });
@@ -69,11 +69,11 @@ for (const event of ['blur', 'pagehide', 'resize', 'visibilitychange']) {
   test(`${event} releases actions and lets a new aim finger take over`, () => {
     const input = new BrowserInput(), aim = new Surface(), win = new Surface(), doc = new Surface();
     input.bindAim(aim, () => {}); input.bindLifecycle(win, doc);
-    aim.send('pointerdown', { pointerId: 1 }); input.set('sprint', 'touch:2', true);
+    aim.send('pointerdown', { pointerId: 1, pointerType:'mouse' }); input.set('sprint', 'touch:2', true);
     doc.hidden = true;
     (event === 'visibilitychange' ? doc : win).send(event);
     assert.equal(input.pressed('fire'), false); assert.equal(input.pressed('sprint'), false);
-    aim.send('pointerdown', { pointerId: 3 }); assert.equal(input.pressed('fire'), true);
+    aim.send('pointerdown', { pointerId: 3, pointerType:'mouse' }); assert.equal(input.pressed('fire'), true);
     input.dispose(); assert.equal(input.pressed('fire'), false);
     aim.send('pointerdown', { pointerId: 4 }); assert.equal(input.pressed('fire'), false);
   });
@@ -83,4 +83,16 @@ test('right mouse button does not fire', () => {
   const input = new BrowserInput(), aim = new Surface(); input.bindAim(aim, () => {});
   aim.send('pointerdown', { pointerId: 1, pointerType: 'mouse', button: 2 });
   assert.equal(input.pressed('fire'), false);
+});
+
+test('touch tap fires once; drag and cancellation only aim',()=>{
+ const input=new BrowserInput(),surface=new Surface(),moves=[],taps=[];
+ input.bindAim(surface,e=>moves.push(e.clientX),()=>taps.push('fire'));
+ surface.send('pointerdown',{pointerId:1,clientX:100,clientY:100});
+ assert.equal(input.pressed('fire'),false);assert.equal(moves.length,0);
+ surface.send('pointerup',{pointerId:1,clientX:100,clientY:100});assert.equal(taps.length,1);
+ surface.send('pointerdown',{pointerId:2,clientX:100,clientY:100});
+ surface.send('pointermove',{pointerId:2,clientX:140,clientY:100});
+ surface.send('pointerup',{pointerId:2,clientX:140,clientY:100});assert.deepEqual(moves,[140]);assert.equal(taps.length,1);
+ surface.send('pointerdown',{pointerId:3,clientX:100,clientY:100});surface.send('pointercancel',{pointerId:3});assert.equal(taps.length,1);
 });

@@ -93,7 +93,12 @@ public class Transform:Component,IEnumerable<Transform> {
     internal N.Matrix4x4 InverseMatrix {get {if(!N.Matrix4x4.Invert(WorldMatrix,out var inv)) throw new InvalidOperationException("Singular transform");return inv;}}
     public Vector3 position {get=>TransformPoint(Vector3.zero);set=>localPosition=parentValue==null?value:parentValue.InverseTransformPoint(value);}
     public Quaternion rotation {get=>parentValue==null?localRotation:parentValue.rotation*localRotation;set=>localRotation=parentValue==null?value:Quaternion.Inverse(parentValue.rotation)*value;}
-    public Vector3 eulerAngles {set=>rotation=Quaternion.AngleAxis(value.y,Vector3.up)*Quaternion.AngleAxis(value.x,Vector3.right)*Quaternion.AngleAxis(value.z,Vector3.forward);}
+    public Vector3 eulerAngles {get=>Euler(rotation);set=>rotation=Quaternion.AngleAxis(value.y,Vector3.up)*Quaternion.AngleAxis(value.x,Vector3.right)*Quaternion.AngleAxis(value.z,Vector3.forward);}
+    static Vector3 Euler(Quaternion q){var f=q*Vector3.forward;var r=q*Vector3.right;var u=q*Vector3.up;return new(MathF.Asin(Math.Clamp(-f.y,-1,1))*180/MathF.PI,MathF.Atan2(f.x,f.z)*180/MathF.PI,MathF.Atan2(r.y,u.y)*180/MathF.PI);}
+    public Vector3 localEulerAngles {get=>Euler(localRotation);set=>localRotation=Quaternion.AngleAxis(value.y,Vector3.up)*Quaternion.AngleAxis(value.x,Vector3.right)*Quaternion.AngleAxis(value.z,Vector3.forward);}
+    public void Rotate(Vector3 axis,float angle)=>localRotation=localRotation*Quaternion.AngleAxis(angle,axis);
+    public Vector3 up=>rotation*Vector3.up;
+    public Vector3 right=>rotation*Vector3.right;
     public Vector3 forward => rotation*Vector3.forward;
     public Transform GetChild(int index)=>children[index];
     public Vector3 TransformPoint(Vector3 point)=>Vector3.From(N.Vector3.Transform(point.Native,WorldMatrix));
@@ -163,9 +168,10 @@ public sealed class RuntimeWorld {
         foreach(var routine in routines.ToArray())routine.Advance();
         routines.RemoveAll(r=>r.finished);
         foreach(var m in Active())Invoke(m,"LateUpdate");
-        foreach(var obj in destroyQueue.ToArray())DestroyNow(obj);destroyQueue.Clear();
+        FlushDestroyed();
         Input.EndFrame();
     }
+    internal void FlushDestroyed(){foreach(var obj in destroyQueue.ToArray())DestroyNow(obj);destroyQueue.Clear();}
     MonoBehaviour[] Active()=>Objects.OfType<MonoBehaviour>().Where(m=>m.isActiveAndEnabled).ToArray();
     internal void DestroyNow(Object obj){if(!obj)return;
         if(obj is GameObject go){foreach(var child in go.transform.children.ToArray())DestroyNow(child.gameObject);foreach(var c in go.components.ToArray())DestroyNow(c);go.transform.parent?.children.Remove(go.transform);}

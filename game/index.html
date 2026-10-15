@@ -19,16 +19,19 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 <body>
 <div id="stage"></div>
 <div id="hud"><div id="title">Crisis Response · incomplete port</div><div id="status">Loading recovered scene and original Operator prefab…</div><div id="position"></div><div id="weaponStatus">Loading original weapons…</div></div>
-<div id="help">A/D · Shift · S/W · drag to aim · <a href="../runtime-web/">Runtime checks</a></div>
+<div id="help">A/D · Shift · S/W · drag to aim · tap to fire · <a href="../runtime-web/">Runtime checks</a></div>
 <div id="error"></div><div id="rotateNotice">Rotate your phone to landscape to view the port prototype.</div>
-<div id="controls"><div class="cluster"><button id="left" data-action="left" aria-label="Move left">◀ LEFT</button><button id="right" data-action="right" aria-label="Move right">RIGHT ▶</button></div><div class="cluster"><button id="kneel" data-action="kneel" aria-label="Kneel">KNEEL</button><button id="stand" data-action="stand" aria-label="Stand">STAND</button><button id="sprint" data-action="sprint" aria-label="Sprint">SPRINT</button><button id="fire" disabled aria-label="Firing is not implemented">FIRE · PENDING</button><button id="reload" disabled aria-label="Reloading is not implemented">RELOAD · PENDING</button><button id="swap" disabled aria-label="Weapon switching is not implemented">SWAP · PENDING</button></div></div>
+<div id="controls"><div class="cluster"><button id="left" data-action="left" aria-label="Move left">◀ LEFT</button><button id="right" data-action="right" aria-label="Move right">RIGHT ▶</button></div><div class="cluster"><button id="kneel" data-action="kneel" aria-label="Kneel">KNEEL</button><button id="stand" data-action="stand" aria-label="Stand">STAND</button><button id="sprint" data-action="sprint" aria-label="Sprint">SPRINT</button><button id="fire" data-action="fire" aria-label="Hold to fire">FIRE</button><button id="reload" data-action="magazine" aria-label="Reload magazine">RELOAD</button><button id="swap" disabled aria-label="Weapon switching is not implemented">SWAP · PENDING</button></div></div>
 <script type="module">
 import * as THREE from "three";
+import { loadWeaponData } from "./weapon-runtime.mjs";
+import { AimDirection } from "./aim-direction.mjs";
 import { promiseCache, decodeScene } from "./loading.mjs";
 import { BrowserInput } from "./browser-input.mjs";
 import { loadPresentationData, configureCamera, createUpperBody } from "./presentation.mjs";
 import { posePosition, locomotionBlend, advanceGait } from "./animation-pose.mjs";
 
+const weaponStatus=document.querySelector("#weaponStatus");
 const stage=document.querySelector("#stage"), status=document.querySelector("#status"), positionLabel=document.querySelector("#position"), errorBox=document.querySelector("#error");
 const scene=new THREE.Scene(); scene.background=new THREE.Color(0x11151b);
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false}); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(innerWidth,innerHeight); renderer.outputColorSpace=THREE.SRGBColorSpace; stage.appendChild(renderer.domElement);
@@ -38,7 +41,7 @@ const camera=new THREE.PerspectiveCamera(20,innerWidth/innerHeight,5,20);
 camera.position.set(-3,1.2,9.8);
 const world=new THREE.Group();scene.add(world);
 const character=new THREE.Group();character.name="Original Operator prefab";scene.add(character);
-const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(2,0,0),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,physicsState=null,physicsTime=0,sprintBlend=0,gaitPhase=0,upperBody=null,presentationData=null,hasAimPointer=false;
+const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(2,0,0),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,physicsState=null,physicsTime=0,sprintBlend=0,gaitPhase=0,upperBody=null,presentationData=null,weaponData=null,hasAimPointer=false,aimDirty=false,tapPending=0,tapFrame=false,weaponState=null;const lockedAim=new AimDirection();
 const loadStart=performance.now(),loadingTimings={};window.__loadingTimings=loadingTimings;
 const markLoaded=name=>loadingTimings[name]=performance.now()-loadStart;
 function showError(e){errorBox.style.display="block";errorBox.textContent=String(e?.stack||e);status.textContent="Build failed to load; see error details."}
@@ -60,6 +63,8 @@ for (const button of document.querySelectorAll("button[data-action]")) input.bin
 input.bindKeyboard(window, {KeyA:"left", ArrowLeft:"left", KeyD:"right", ArrowRight:"right",
  ShiftLeft:"sprint", KeyR:"magazine", Tab:"switchWeapons", KeyS:"kneel", KeyW:"stand"});
 input.bindLifecycle(window, document);
+for(const type of ["blur","pagehide","resize"])addEventListener(type,()=>{tapPending=0;tapFrame=false;});
+document.addEventListener("visibilitychange",()=>{if(document.hidden){tapPending=0;tapFrame=false;}});
 function setMeshMaterials(root){root.traverse(o=>{if(o.isMesh){o.material=new THREE.MeshStandardMaterial({color:0x858b91,roughness:1,metalness:0,side:THREE.DoubleSide});o.castShadow=false;o.receiveShadow=true}})}
 async function load(){
  try{
@@ -69,6 +74,8 @@ async function load(){
   const runtimeReady=initializeOriginalRuntime().then(()=>markLoaded("inputReady"));
   const presentationReady=loadPresentationData().then(data=>{presentationData=data;configureCamera(camera,data);return data;});
   const presentationRuntimeReady=Promise.all([runtimeReady,presentationReady]).then(async([_,data])=>{await runtimeCall("InitializePresentation",JSON.stringify(data));markLoaded("presentationReady");});
+  const weaponReady=loadWeaponData().then(data=>{weaponData=data;return data;});
+  const weaponRuntimeReady=Promise.all([presentationRuntimeReady,weaponReady]).then(async([_,data])=>runtimeCall("InitializeWeapons",JSON.stringify(data)));
   const manifestReady=json("./assets/operator/operator.json");
   const animationReady=json("./assets/operator/animations.json");
   const physicsReady=Promise.all([import("./contact-physics.mjs"),json("./assets/contact-physics.json"),manifestReady]).then(async([module,data,manifest])=>{
@@ -81,7 +88,7 @@ async function load(){
    sceneMesh=new THREE.Mesh(geometry);setMeshMaterials(sceneMesh);sceneMesh.name="Recovered Mission 01 combined mesh";world.add(sceneMesh);
    sceneBounds=new THREE.Box3().setFromObject(sceneMesh);markLoaded("sceneReady");
   })();
-  const startupReady=Promise.all([presentationRuntimeReady,physicsReady,geometryReady]);startupReady.catch(()=>{});
+  const startupReady=Promise.all([presentationRuntimeReady,weaponRuntimeReady,physicsReady,geometryReady]);startupReady.catch(()=>{});
   const [manifest,animationData]=await Promise.all([manifestReady,animationReady]);
   const texLoader=new THREE.TextureLoader();
   const texture=promiseCache(async url=>{const tex=await texLoader.loadAsync(url);tex.colorSpace=THREE.SRGBColorSpace;return tex;});
@@ -103,7 +110,7 @@ async function load(){
    else material=new THREE.MeshBasicMaterial({color:0x777777,side:THREE.DoubleSide,transparent:true,opacity:.8,depthWrite:false});
    const part=new THREE.Mesh(g,material);part.name="Original skin: "+limb.name;part.renderOrder=1;parent.add(part);
   })).then(()=>markLoaded("skinsReady"));
-  const weaponStatus=document.querySelector("#weaponStatus");
+
   async function buildWeapon(name,pivotPath){
    const data=await json("./assets/weapons/"+name+"/weapon.json"),byId=new Map(),byPath=new Map();
    for(const node of data.nodes){const group=new THREE.Group();group.name=node.name;group.position.fromArray(node.position);group.quaternion.fromArray(node.rotation);group.scale.fromArray(node.scale);byId.set(node.gameObjectFileID,group);byPath.set(node.path,group)}
@@ -122,7 +129,7 @@ async function load(){
   const characterReady=Promise.all([skinReady,activeWeaponReady]);characterReady.catch(()=>{});
   // Original weapon action state machines are not executable yet. Preserve the
   // recovered models without inventing ammo counters, reload timers or shot rays.
-  weaponStatus.textContent="Original weapon models · actions pending";
+  weaponStatus.textContent="Original M4 mechanics ready";
   const clips=animationData.clips;
   let activeAnimation="Body stand",animationTime=0;
   function sample(track,time){
@@ -171,11 +178,11 @@ async function load(){
   aimQuad=new THREE.Mesh(new THREE.PlaneGeometry(...presentationData.aimQuadSize),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide,colorWrite:false}));
   aimQuad.name="Original Aim quad collider (layer AimQuad)";aimQuad.rotation.x=Math.PI;aimQuad.position.set(playerX+facingDirection*20,2.5,1.5);scene.add(aimQuad);
   await Promise.all([startupReady,characterReady]);
-  upperBody=createUpperBody(presentationData,manifest,nodeById,character,weaponInstances.M4A1,runtimeCall);
+  upperBody=createUpperBody(presentationData,manifest,nodeById,character,weaponInstances.M4A1,runtimeCall,weaponData,scene);
   physicsState=contactPhysics.snapshot();loaded=true;markLoaded("playable");
   // The inactive sidearm must not delay play. Fetch it after the first playable frame.
   requestAnimationFrame(()=>setTimeout(()=>buildWeapon("Glock-18","Pelvis/Abdomen/Torso/Right upper arm/Right lower arm/Right hand/Pistol pivot").then(w=>{w.root.visible=false;weaponInstances["Glock-18"]=w;markLoaded("sidearmReady");}).catch(()=>{weaponStatus.textContent="Original active weapon loaded · sidearm preview unavailable";}),0));
-  window.__gameState=()=>({loaded,originalInputActive:!!runtimeCall,originalInput:originalInputState,playerX,playerY,velocity,pelvisLocalPosition:nodeByPath.get("Pelvis").position.toArray(),physics:physicsState,physicsTime,sprintBlend,gaitPhase,loadingTimings,presentation:upperBody.snapshot(),projection:{type:camera.type,fov:camera.fov,near:camera.near,far:camera.far,position:camera.position.toArray()},facingDirection,aimPoint:character.localToWorld(localAimPoint.clone()).toArray(),limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,weaponActionsImplemented:false,weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
+  window.__gameState=()=>({loaded,originalInputActive:!!runtimeCall,originalInput:originalInputState,playerX,playerY,velocity,pelvisLocalPosition:nodeByPath.get("Pelvis").position.toArray(),physics:physicsState,physicsTime,sprintBlend,gaitPhase,loadingTimings,presentation:upperBody.snapshot(),projection:{type:camera.type,fov:camera.fov,near:camera.near,far:camera.far,position:camera.position.toArray()},facingDirection,aimPoint:[aimPoint.x,aimPoint.y,physicsState.z],limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,weaponActionsImplemented:true,weaponState,aimDirection:lockedAim.vector,weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
   status.textContent="Original C# camera and arm IK · drag to aim. Weapons, damage and AI remain pending.";
   positionLabel.textContent="Walk 1.5 m/s · Sprint 4.2 m/s · original spawn X −3";
  }catch(e){showError(e)}
@@ -183,15 +190,16 @@ async function load(){
 function resize(){renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();document.querySelector("#rotateNotice").style.display=innerWidth<innerHeight?"flex":"none"}
 addEventListener("resize",resize);document.querySelector("#rotateNotice").style.display=innerWidth<innerHeight?"flex":"none";
 function updateAim(e){
- hasAimPointer=true;
+ hasAimPointer=true;aimDirty=true;
  const rect=renderer.domElement.getBoundingClientRect();
  pointerNdc.x=((e.clientX-rect.left)/rect.width)*2-1;
  pointerNdc.y=-(((e.clientY-rect.top)/rect.height)*2-1);
 }
-input.bindAim(renderer.domElement, updateAim);
+input.bindAim(renderer.domElement, updateAim,()=>{tapPending++;});
 
 let last=null,frameBusy=false;
 async function frame(now){requestAnimationFrame(frame);if(frameBusy)return;const elapsed=last===null?0:(now-last)/1000;const dt=Math.min(elapsed,.05);last=now;if(loaded){frameBusy=true;try{
+ if(tapFrame){rawActions.fire=false;tapFrame=false;}else if(tapPending>0){tapPending--;rawActions.fire=true;tapFrame=true;}else rawActions.fire=input.pressed('fire');
  originalInputState=JSON.parse(await runtimeCall("Tick",elapsed,JSON.stringify(rawActions)));
  for(const action of Object.keys(keys))keys[action]=originalInputState[action].Pressed;
  if(originalInputState.kneel.Down)isKneeling=true;else if(originalInputState.stand.Down)isKneeling=false;
@@ -232,21 +240,20 @@ async function frame(now){requestAnimationFrame(frame);if(frameBusy)return;const
   aimQuad.position.set(playerX+facingDirection*20,2.5,1.5);
   character.updateMatrixWorld(true);aimQuad.updateMatrixWorld(true);camera.updateMatrixWorld(true);
   aimRaycaster.setFromCamera(pointerNdc,camera);
-  const hit=aimRaycaster.intersectObject(aimQuad,false)[0];
-  if(hit&&hasAimPointer)localAimPoint.copy(character.worldToLocal(hit.point.clone()));
-  character.updateMatrixWorld(true);
-  const worldPoint=character.localToWorld(localAimPoint.clone());
-  aimPoint.set(worldPoint.x,worldPoint.y);
-  if(rightUpperArm){
-   rightUpperArm.updateWorldMatrix(true,false);
-   const shoulder=rightUpperArm.getWorldPosition(new THREE.Vector3());
-   // PlayerController.HandleChangeDirection(): WorldPoint.x compared to RightUpperArm.x.
-   if(worldPoint.x>=shoulder.x)facingDirection=1;else facingDirection=-1;
+  const shoulder=rightUpperArm.getWorldPosition(new THREE.Vector3());
+  if(aimDirty){
+   const hit=aimRaycaster.intersectObject(aimQuad,false)[0];
+   if(hit)lockedAim.set(hit.point.toArray(),shoulder.toArray());
+   aimDirty=false;
   }
+  const worldPoint=new THREE.Vector3(...lockedAim.target(shoulder.toArray()));
+  aimPoint.set(worldPoint.x,worldPoint.y);
+  facingDirection=lockedAim.vector[0]>=0?1:-1;
   character.rotation.y=facingDirection<0?Math.PI:0;
   aimQuad.position.set(playerX+facingDirection*20,2.5,1.5);
  }
- await upperBody.update({position:new THREE.Vector3(playerX,playerY,physicsState.z),velocity,direction:facingDirection,moving:Math.abs(velocity)>.1,sprinting:keys.sprint,kneeling:isKneeling,aim:new THREE.Vector3(aimPoint.x,aimPoint.y,physicsState.z),aspect:camera.aspect},camera);
+ await upperBody.update({position:new THREE.Vector3(playerX,playerY,physicsState.z),velocity,direction:facingDirection,moving:Math.abs(velocity)>.1,sprinting:keys.sprint,kneeling:isKneeling,aim:new THREE.Vector3(aimPoint.x,aimPoint.y,physicsState.z),aspect:camera.aspect,fire:keys.fire,reload:originalInputState.magazine.Down},camera);
+ weaponState=upperBody.weaponSnapshot();weaponStatus.textContent="M4A1 · "+weaponState.magazine+" + "+(weaponState.chamberLive?1:0)+" · reserve "+weaponState.reserve+(weaponState.reloading?" · reloading":"");
  positionLabel.textContent="X "+playerX.toFixed(2)+" · speed "+Math.abs(velocity).toFixed(2)+" m/s"+(keys.sprint?" · sprint input":"");
  }catch(error){loaded=false;showError(error)}finally{frameBusy=false;}}renderer.render(scene,camera)}
 requestAnimationFrame(frame);load();

@@ -14,11 +14,14 @@ await builder.Build().RunAsync();
 
 public static class RuntimeBridge {
     static OriginalInputHost input;
+    static Crisis.Runtime.Weapons.WeaponHost weapons;
+    [JSInvokable] public static string InitializeWeapons(string json){input??=new OriginalInputHost(new RuntimeWorld());weapons=new(json,input.handler){queryWorld=presentation.QueryWorld,ballisticMask=presentation.BallisticMask};return "ready";}
+    [JSInvokable] public static string StepWeapons(string json)=>JsonSerializer.Serialize(weapons.Step(json));
     static SceneLoadResult scene;
     static Crisis.Runtime.Presentation.PresentationHost presentation;
     [JSInvokable] public static string InitializePresentation(string json){presentation=new(json);return "ready";}
     [JSInvokable] public static string SolvePresentationArms(string json)=>Crisis.Runtime.Presentation.PresentationHost.SolveArms(json);
-    [JSInvokable] public static string StepPresentation(string json)=>presentation.Step(json);
+    [JSInvokable] public static string StepPresentation(string json){if(weapons!=null)presentation.SetWeaponState(weapons.Kick,weapons.Climb,weapons.Manipulating);return presentation.Step(json);}
     [JSInvokable] public static string Verify()=>RuntimeContracts.Run();
     [JSInvokable] public static string ResetInput(){input=new OriginalInputHost(new RuntimeWorld());return JsonSerializer.Serialize(input.Snapshot());}
     [JSInvokable] public static string Tick(float seconds,string states){

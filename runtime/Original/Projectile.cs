@@ -1,5 +1,5 @@
 using UnityEngine;
-public class Projectile : MonoBehaviour {
+public partial class Projectile : MonoBehaviour {
 public Transform meshTransform;
 private float diameter;
 private float freeFallTimestamp;

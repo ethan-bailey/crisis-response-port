@@ -33,6 +33,7 @@ jobs:
           python3 -m pip install PyYAML==6.0.2
           python3 scripts/extract_runtime_sources.py work/recovery/export/ExportedProject runtime/Original
           python3 scripts/extract_presentation.py work/recovery/export/ExportedProject game/assets/presentation.json runtime/Original
+          python3 scripts/extract_weapon_runtime.py work/recovery/export/ExportedProject game/assets/weapon-runtime.json.gz runtime/Original/Weapons
           python3 scripts/extract_runtime_scene.py work/recovery/export/ExportedProject work/runtime/scene-package.json
       - name: Compile and test runtime against original components and scenes
         run: dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- work/runtime/scene-package.json > work/runtime/contracts-and-scenes.jsonl
