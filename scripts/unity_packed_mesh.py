@@ -25,3 +25,43 @@ def compressed_mesh(fields):
     triangles=[indices[i:i+3] for i in range(0,len(indices),3)]
     if any(i<0 or i>=len(vertices) for i in indices):raise ValueError('Packed index outside vertex buffer')
     return vertices,triangles
+
+
+def compressed_normals(fields):
+    """Decode original Unity packed normal XY+signs (AssetStudio Mesh.cs).
+
+    Unity's m_Normals serializes XY pairs, with Z reconstructed from unit
+    length and sign bits in m_NormalSigns. This returns ORIGINAL Unity-space
+    vectors; callers must apply the established Unity-to-browser Z reflection.
+    No surface-normal estimation is performed.
+    """
+    import math
+    packed=fields['m_CompressedMesh']
+    normals=packed.get('m_Normals',{})
+    signs=packed.get('m_NormalSigns',{})
+    n=int(normals.get('m_NumItems',0))
+    if not n:return []
+    if n%2:raise ValueError('Original packed normals require XY pairs')
+    vals=unpack(normals,True)
+    sign_values=unpack(signs)
+    if len(sign_values)!=n//2:
+        raise ValueError('Original packed normal signs do not match vertices')
+    result=[]
+    for i in range(n//2):
+        x,y=vals[2*i:2*i+2]
+        if not math.isfinite(x) or not math.isfinite(y):
+            raise ValueError('Non-finite original packed normal')
+        zsqr=1-x*x-y*y
+        if zsqr>=0:
+            z=math.sqrt(zsqr)
+        else:
+            # Exact Unity/AssetStudio negative Z-square fallback normalizes XY
+            # and reconstructs Z=0, rather than inventing a face normal.
+            length=math.hypot(x,y)
+            if length<=0:raise ValueError('Degenerate original packed XY normal')
+            x,y,z=x/length,y/length,0.0
+        if sign_values[i] not in (0,1):
+            raise ValueError('Original packed normal sign must be a bit')
+        if sign_values[i]==0:z=-z
+        result.append([x,y,z])
+    return result
