@@ -30,6 +30,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: true
+      - name: Free ephemeral runner disk for Unity 2022.3.62f1
+        run: |
+          echo "Before cleanup:"
+          df -h .
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/share/swift /usr/local/share/powershell
+          docker system prune -af > /tmp/unity-docker-prune.log 2>&1 || true
+          echo "After cleanup:"
+          df -h .
       - name: License Personal seat and diagnose recovered project (read existing private release only)
         run: bash scripts/unity_open_spike.sh
       - name: Emergency return Personal seat if interrupted
