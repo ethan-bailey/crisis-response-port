@@ -7,12 +7,6 @@ on:
       - "scripts/unity_open_spike.sh"
       - "scripts/classify_unity_spike.py"
       - "scripts/report_unity_spike.py"
-  pull_request:
-    paths:
-      - ".github/workflows/unity-open-spike.yml"
-      - "scripts/unity_open_spike.sh"
-      - "scripts/classify_unity_spike.py"
-      - "scripts/report_unity_spike.py"
   workflow_dispatch:
 
 permissions:
@@ -25,19 +19,28 @@ concurrency:
 
 jobs:
   unity-open-diagnostic:
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04
     timeout-minutes: 50
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
     steps:
       - name: Checkout code only, no recovered proprietary assets
         uses: actions/checkout@v4
         with:
           persist-credentials: true
-      - name: Preserve original recovery artifact privately, then attempt 2022.3 batch import
+      - name: License Personal seat and diagnose recovered project (read existing private release only)
         run: bash scripts/unity_open_spike.sh
+      - name: Emergency return Personal seat if interrupted
+        if: always()
+        run: |
+          ID="crisis-unity-personal-$GITHUB_RUN_ID"
+          if docker ps --format '{{.Names}}' | grep -Fxq "$ID"; then
+            timeout 100 docker exec "$ID" /bin/bash -lc '\n              c="$(command -v Unity.Licensing.Client || find /opt/unity -name Unity.Licensing.Client -type f -print -quit)"\n              test -n "$c" && "$c" --return-ulf\n            ' > /tmp/unity-emergency-return.log 2>&1 || true
+            docker rm -f "$ID" >/dev/null 2>&1 || true
+            echo 'Emergency license return attempted; verify Unity ID seat state if import was cancelled.'
+          fi
       - name: Classify actual logs, preserving unknowns when Unity never started
         if: always()
         run: |
@@ -54,7 +57,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: unity-2022-open-spike-evidence
+          name: unity-2022-personal-open-spike-evidence
           path: |
             work/unity-spike/*.log
             work/unity-spike/*.json
