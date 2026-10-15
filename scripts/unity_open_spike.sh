@@ -33,6 +33,10 @@ fi
 mkdir -p "$WORK/recovery"
 if ! unzip -q "$ZIP" -d "$WORK/recovery"; then note preserve_error extract_failed; exit 0; fi
 PROJECT="$WORK/recovery/export/ExportedProject"
+# Persistent cache is restored by GitHub Actions before archive extraction.
+# Put Unity machine-wide Bee build cache on the same private host-mounted volume.
+mkdir -p "$WORK/bee-cache"
+note bee_cache_directory /spike/bee-cache
 if [[ ! -d "$PROJECT/Assets" || ! -f "$PROJECT/ProjectSettings/ProjectVersion.txt" ]]; then
   note preserve_error project_root_missing
   find "$WORK/recovery" -maxdepth 5 -name ProjectVersion.txt > "$WORK/project-candidates.txt"
@@ -124,6 +128,7 @@ activate_editor() {
   if [[ $rc -ne 0 ]]; then note activation_error docker_pull_failed; return 2; fi
   docker run -d --name "$CONTAINER" \
     -v "$WORK:/spike" -w /spike -e UNITY_EMAIL -e UNITY_PASSWORD \
+    -e BEE_CACHE_DIRECTORY=/spike/bee-cache \
     --entrypoint /bin/bash "$IMAGE" -lc 'while :; do sleep 5; done' \
     > "$WORK/container-start.log" 2>&1 || return 2
   ACTIVE=true
