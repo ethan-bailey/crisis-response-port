@@ -93,7 +93,7 @@ for r in records:
             if m:
                 material_refs[str(m["fileID"])+":"+str(m["guid"])] += 1
     tf = tr["fields"]
-    name = next((p["fields"].get("m_Name") for p in by_go[go_id] if p["classID"] == 1), None)
+    name = by_id[go_id]["fields"].get("m_Name") if go_id in by_id else None
     windows.append({
         "sourceComponent":r["fileID"],"sourceGameObject":go_id,"name":name,
         "enabled":f.get("m_Enabled"),"active":next((p["fields"].get("m_IsActive") for p in by_go[go_id] if p["classID"] == 1),None),
