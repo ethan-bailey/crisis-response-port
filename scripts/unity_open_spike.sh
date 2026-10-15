@@ -154,6 +154,47 @@ activate_editor "$IMAGE" || {
   exit 0
 }
 
+# For WebGL, run import, script compilation, scene build and IL2CPP in ONE
+# Unity process. Unity automatically imports before -executeMethod executes.
+# Avoids editor cold start and redundant import. The Personal seat is still
+# deactivated via the same-container EXIT trap.
+if [[ "${UNITY_SPIKE_WEBGL:-0}" == 1 && "${UNITY_SPIKE_SINGLE_PASS:-0}" == 1 ]]; then
+  mkdir -p "$PROJECT/Assets/Editor"
+  cp scripts/SpikeWebGL.cs "$PROJECT/Assets/Editor/SpikeWebGL.cs"
+  note single_pass true
+  note import_attempted true
+  note editor_detected true
+  note build_attempted true
+  note build_skipped_reason none
+  touch "$WORK/webgl.log"
+  timeout 1200 docker exec "$CONTAINER" /opt/unity/Editor/Unity \
+    -batchmode -nographics -quit \
+    -projectPath /spike/recovery/export/ExportedProject \
+    -executeMethod SpikeWebGL.BuildMarksman \
+    -logFile /spike/webgl.log \
+    >"$WORK/docker-webgl.log" 2>&1
+  RC=$?
+  note build_exit "$RC"
+  note import_exit combined_with_player_build
+  # The single log now covers both editor import and WebGL compilation.
+  cp "$WORK/webgl.log" "$WORK/import.log"
+  python3 scripts/classify_unity_spike.py \
+    --log "$WORK/import.log" --build-log "$WORK/webgl.log" \
+    --status-file "$STATUS" --out "$WORK/pre-build.json" \
+    >"$WORK/classify.stdout.log" 2>&1 || true
+  python3 scripts/audit_unity_webgl_output.py "$WORK/webgl" \
+    --out "$WORK/webgl-output-manifest.json" \
+    >"$WORK/output-inventory.log" 2>&1 || true
+  if [[ "$RC" == 0 ]]; then
+    python3 scripts/smoke_unity_webgl_http.py "$WORK/webgl" \
+      --manifest "$WORK/webgl-output-manifest.json" \
+      --results "$WORK/webgl-http-smoke.json" \
+      >"$WORK/webgl-http-smoke.log" 2>&1 || note http_smoke_failed true
+  fi
+  echo "Unity single-pass import and Marksman WebGL build finished with exit $RC"
+  exit 0
+fi
+
 touch "$WORK/import.log"
 note import_attempted true; note editor_detected true
 timeout 900 docker exec "$CONTAINER" /opt/unity/Editor/Unity \
@@ -192,31 +233,7 @@ fi
 
 # Transient editor-only test driver. NEVER save it to the source repository.
 mkdir -p "$PROJECT/Assets/Editor"
-cat > "$PROJECT/Assets/Editor/SpikeWebGL.cs" <<'CSHARP'
-using System;
-using System.IO;
-using System.Linq;
-using UnityEditor;
-using UnityEditor.Build.Reporting;
-public static class SpikeWebGL {
-  public static void BuildMarksman() {
-    string[] scenes=AssetDatabase.FindAssets("t:Scene")
-      .Select(AssetDatabase.GUIDToAssetPath)
-      .Where(p=>Path.GetFileNameWithoutExtension(p)
-        .IndexOf("Marksman",StringComparison.OrdinalIgnoreCase)>=0).ToArray();
-    if(scenes.Length!=1) throw new Exception("MARKSMAN_SCENE_COUNT="+scenes.Length);
-    PlayerSettings.WebGL.memorySize=256;
-    PlayerSettings.WebGL.dataCaching=true;
-    var opt=new BuildPlayerOptions {
-      scenes=new []{scenes[0]},locationPathName="/spike/webgl",
-      target=BuildTarget.WebGL,options=BuildOptions.None
-    };
-    BuildReport report=BuildPipeline.BuildPlayer(opt);
-    if(report.summary.result!=BuildResult.Succeeded)
-      throw new Exception("MARKSMAN_WEBGL_RESULT="+report.summary.result);
-  }
-}
-CSHARP
+cp scripts/SpikeWebGL.cs "$PROJECT/Assets/Editor/SpikeWebGL.cs"
 note webgl_safari_memorySize 256
 note webgl_safari_dataCaching true
 note build_attempted true
