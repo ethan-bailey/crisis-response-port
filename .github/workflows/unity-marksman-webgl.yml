@@ -1,6 +1,11 @@
 name: Unity Marksman WebGL feasibility build
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - codex/iphone-input-parity-foundation
+    paths:
+      - .github/workflows/unity-marksman-webgl.yml
 permissions:
   contents: read
 concurrency:
