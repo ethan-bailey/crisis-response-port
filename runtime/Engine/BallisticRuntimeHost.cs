@@ -44,7 +44,14 @@ public sealed class BallisticRuntimeHost {
    m.Awake();if(m.isActiveAndEnabled){m.Start();started.Add(m);}materials.Add(m);scene.objects[id]=m;
    m.onInteractionBegin.AddListener(p=>{entryEnergy[p.GetInstanceID()]=p.Energy;contactCount++;});
    m.onInteractionEnd.AddListener(p=>{var info=new{sourceObject=goid,sourceComponent=id,name=go.name,material=m.properties?.name,entryEnergy=entryEnergy.GetValueOrDefault(p.GetInstanceID(),p.Energy),exitEnergy=p.Energy,status=p.Status.ToString(),p.PenetrationDistance,position=new[]{p.Position.x,p.Position.y,p.Position.z},projectile=p.Id,fragment=p.HasFragmented};if(interactions.Count>=32)interactions.RemoveAt(0);interactions.Add(info);Emit("materialInteraction",info);entryEnergy.Remove(p.GetInstanceID());});
-   if(m is BallisticWindow window){var texture=(Texture2D)typeof(BallisticWindow).GetField("textureInstance",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(window);texture.Changed=(t,x,y,w,h,pixels)=>Emit("windowStamp",new{sourceObject=goid,texture=t.SourceID,x,y,width=w,height=h,rgba=Convert.ToBase64String(pixels)});}
+   if(m is BallisticWindow window){
+    Action<Texture2D,int,int,int,int,byte[]> onPixelsChanged=(t,x,y,w,h,pixels)=>
+      Emit("windowStamp",new{sourceObject=goid,texture=t.SourceID,x,y,width=w,height=h,rgba=Convert.ToBase64String(pixels)});
+    var renderer=window.GetComponent<Renderer>();
+    renderer.material.OnMainTextureAssigned=t=>{if(t!=null)t.Changed=onPixelsChanged;};
+    // Awake has already assigned the first original texture instance.
+    renderer.material.OnMainTextureAssigned(renderer.material.mainTexture);
+   }
   }
   var data=c.GetProperty("meshes");foreach(var record in c.GetProperty("meshColliders").EnumerateArray()){
    var f=record.GetProperty("fields");string goid=Ref(f.GetProperty("m_GameObject"));if(!scene.objects.TryGetValue(goid,out var obj)||obj is not GameObject go)continue;var source=data.GetProperty(record.GetProperty("mesh").GetString());var collider=go.AddComponent<MeshCollider>();collider.convex=Flag(f,"m_Convex");collider.enabled=Flag(f,"m_Enabled");collider.isTrigger=Flag(f,"m_IsTrigger");
