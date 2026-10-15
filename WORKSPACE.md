@@ -9,7 +9,7 @@ Reach the closest **verified 1:1 behavior and presentation** to the original Cri
 - **Browser code ownership:** draft [PR #9](https://github.com/ethan-bailey/crisis-response-port/pull/9), branch `codex/projectile-material-impacts`.
 - **Independent Unity feasibility:** branch `codex/iphone-input-parity-foundation`, PR #7; do not edit, merge, or reset it or `main`.
 - **Previously hosted owner-private v8:** https://crisis-response-runtime.craftysnipe13.chatgpt.site — **does not include the latest tested source glass/impact renderer updates**.
-- **Latest verified browser build (2026-10-15):** [GitHub Actions #38809439277](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38809439277), tested code SHA `ed3d80d89f5e4e797e0370d9152bcc828bd8becb`, private artifact `12007339085`. Both Chromium and WebKit passed original firing/touch/geometry/glass stamp tests. No physical iPhone proof.
+- **Latest verified browser build (2026-10-15):** [GitHub Actions #38814978462](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38814978462), tested code SHA `f72102ec796784b1bdf02c44856e93cc2e7002ec`, private compiled game/browser artifact `12009679203`. Chromium/WebKit passed original firing, touch, glass, recovered Wood mesh basis and native particle source integrity. No physical iPhone proof.
 - **Source-backed window audit:** [runs 38808368685 and 38808663563](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38808663563); 56 glass + 12 mirror-glass native window Quads. Exact shader parity and actual-device test are outstanding.
 - **Shader recovery gap:** [original shader audit run 38812611701](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38812611701) proved both Shader Forge glass/mirror source files are AssetRipper `DummyShaderTextExporter` output, not original compiled shader behavior. Full visual parity blocked pending native reference or compiled shader recovery.
 - **Original particles inventory:** [original source audit run 38812872182](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38812872182) passed, 26 ParticleSystems and 26 ParticleSystemRenderers across 14 entry/exit effect prefabs; private artifact `12008823420`. Not yet simulated/rendered.
@@ -18,6 +18,10 @@ Reach the closest **verified 1:1 behavior and presentation** to the original Cri
 ## Full compile-to-release checklist
 
 **Primary plan:** [docs/COMPLETE_WASM_PORT_ROADMAP.md](docs/COMPLETE_WASM_PORT_ROADMAP.md). It defines Gates 1–8, actual known-working .NET/PhysX build commands, full original game scope, native reference checks and private iPhone release criteria. **WASM compilation is already passing for the current source subset; 1:1 game completion is not.**
+
+## Newly recovered original impact particle data
+
+The browser branch now preserves the **exact original** 14 impact effect-prefab settings (26 ParticleSystems/26 renderers, 14 billboard + 12 mesh), `game/assets/ballistics/original-particles-source.json.gz` (SHA256 `75bbdbeadf3595f9c8fa32563a689fc119d6747abe0efb6c5bd0c347cd70cf92`), and all three source mesh assets under `game/assets/ballistics/particle-meshes/`. Mesh recovery [run #38815708747](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38815708747) succeeded at asset commit `8c713bf3797098a7988a3a142b33ce8d62b635e4`, evidence artifact `12009763698`. Three source-mesh fidelity tests passed locally. Splinter's native packed normals still need decoding, and original shader/material and Unity particle engine execution remain incomplete. See [the full checkpoint](docs/WORKSPACE_STATUS.md), [issue #11](https://github.com/ethan-bailey/crisis-response-port/issues/11).
 
 ## Work board
 
