@@ -1,4 +1,4 @@
-name: Recover exact original particle mesh source geometry privately
+name: Recover native packed Splinter normals from original Unity mesh
 on:
   push:
     branches:
@@ -41,6 +41,9 @@ jobs:
               assert 'already converted to right-handed' in x['sourceFormat']
           print('All three source mesh buffers/IDs passed provenance checks.')
           PY
+          mkdir -p game/assets/ballistics/particle-meshes
+          cp work/particle-geometry/meshes/particle-mesh-*.json game/assets/ballistics/particle-meshes/
+          node --test scripts/original_particle_mesh_source_test.mjs
           git rev-parse HEAD > work/particle-geometry/input-commit.txt
       - name: Safely add only original mesh JSON to the isolated private PR branch
         env:
