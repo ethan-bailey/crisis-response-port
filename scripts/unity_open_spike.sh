@@ -65,20 +65,21 @@ PY
 return_seat() {
   if [[ "$ACTIVE" == true ]]; then
     note license_return_attempted true
+    # Personal activation writes a UnityEntitlementLicense.xml, not ULF.
+    # --return-ulf and editor -returnlicense fail on this 2022.3.62f1 seat.
     timeout 110 docker exec "$CONTAINER" /bin/bash -lc '
       c="$(command -v Unity.Licensing.Client || find /opt/unity -type f -name Unity.Licensing.Client -print -quit)"
       test -n "$c" || { echo "LICENSE_CLIENT_MISSING"; exit 127; }
-      "$c" --return-ulf
+      "$c" --deactivate-all --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD"
     ' >"$WORK/return.raw" 2>&1
-    rc=$?; note license_return_exit "$rc"
+    rc=$?; note license_deactivate_exit "$rc"
     scrub "$WORK/return.raw" "$WORK/license-return.log"
-    if [[ $rc -ne 0 ]]; then
-      timeout 80 docker exec "$CONTAINER" /opt/unity/Editor/Unity \
-        -batchmode -nographics -quit -returnlicense -logFile /spike/return-editor.log \
-        >"$WORK/return-editor.raw" 2>&1
-      note license_return_legacy_exit "$?"
-      scrub "$WORK/return-editor.raw" "$WORK/return-editor-stdout.log"
-    fi
+    timeout 90 docker exec "$CONTAINER" /bin/bash -lc '
+      c="$(command -v Unity.Licensing.Client || find /opt/unity -type f -name Unity.Licensing.Client -print -quit)"
+      test -n "$c" && "$c" --show-seats --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD"
+    ' >"$WORK/seats.raw" 2>&1
+    note license_seat_query_exit "$?"
+    scrub "$WORK/seats.raw" "$WORK/license-seat-status.log"
     docker rm -f "$CONTAINER" >/dev/null 2>&1 || true
     ACTIVE=false
   fi
