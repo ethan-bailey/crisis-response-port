@@ -161,3 +161,19 @@ Prepare browser physics assets with `npm ci --prefix game --ignore-scripts` and
 notices accompany the adapter. Browser tests exercise actual original floor
 contacts, release/stability, reversal, and zero-drag airborne motion with contacts
 removed; the last check prevents a release-only stop shortcut from passing.
+
+### Animation loop snap correction
+
+The raw recovered walk/backward/limp pelvis tracks include net horizontal travel
+(Body walk: 1.7 m per loop). Applying that travel directly on top of the physics
+body made the visible skeleton move ahead and then jump back at each loop. The
+pose adapter now removes the net horizontal travel from looping locomotion root
+tracks when the recovered Animator has root motion disabled. It retains original
+vertical pose values, fixed kneeling offsets, rotations and non-travelling tracks.
+The raw exported curves are preserved; Animator/clip source hashes accompany them.
+
+Regression checks cover actual recovered keys over multiple wraps in both travel
+directions, preservation of standing/kneeling/sprint poses, and the rendered
+pelvis's offset during browser movement. This scoped loop-travel handling is not
+an implementation of the complete original Unity Animator, transitions, IK, or
+Rigidbody render interpolation.

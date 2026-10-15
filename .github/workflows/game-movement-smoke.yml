@@ -9,6 +9,8 @@ on:
       - "game/**"
       - "scripts/contact_physics_smoke.mjs"
       - "scripts/vendor_physics.mjs"
+      - "scripts/animation_pose_test.mjs"
+      - "scripts/export_operator_animations.py"
       - "runtime/**"
       - "scripts/browser_input_test.mjs"
       - "scripts/iphone_input_smoke.mjs"
@@ -49,7 +51,7 @@ jobs:
           npm install --no-audit --no-fund playwright@1.55.0
           npx playwright install --with-deps chromium webkit
       - name: Verify independent touch ownership and lifecycle resets
-        run: node --test scripts/browser_input_test.mjs
+        run: node --test scripts/browser_input_test.mjs scripts/animation_pose_test.mjs
       - name: Serve the separate game build
         run: |
           python3 -m http.server 8000 --directory work/game-site >/tmp/crisis-game-server.log 2>&1 &

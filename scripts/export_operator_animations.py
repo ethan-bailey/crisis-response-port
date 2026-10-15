@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Export original Unity transform animation curves for the Operator prefab."""
 from __future__ import annotations
-import json,re,sys
+import hashlib,json,re,sys
 from pathlib import Path
 
 def parse_section(text,name,next_names):
@@ -41,7 +41,12 @@ def main():
     if len(sys.argv)!=3:raise SystemExit("usage: export_operator_animations.py PROJECT_ROOT OUTPUT.json")
     root=Path(sys.argv[1]).resolve(); assets=root/"Assets"/"AnimationClip"
     names=["Body stand.anim","Body walk.anim","Body walk backward.anim","Body sprint.anim","Body kneel.anim","One leg limp.anim"]
-    output={"source":"Recovered Unity AnimationClip YAML","clips":{}}
+    prefab_path=root/"Assets/Resources/characters/Operator.prefab"
+    prefab=prefab_path.read_text()
+    animator=re.search(r"(?ms)^--- !u!95 &[^\n]+\n(.*?)(?=^---|\Z)",prefab).group(1)
+    apply_root_motion=bool(int(re.search(r"m_ApplyRootMotion: (\d+)",animator).group(1)))
+    output={"source":"Recovered Unity AnimationClip YAML","animator":{"applyRootMotion":apply_root_motion,
+        "sourcePrefab":"Assets/Resources/characters/Operator.prefab","sourceSha256":hashlib.sha256(prefab_path.read_bytes()).hexdigest()},"clips":{}}
     for name in names:
         p=assets/name
         if not p.is_file():continue
@@ -51,8 +56,9 @@ def main():
             tracks.extend(curves(text,sec,kind))
         duration=max((k["time"] for t in tracks for k in t["keys"]),default=0)
         loop_match=re.search(r"m_AnimationClipSettings:\s*\n(?:(?!^---).*\n)*?\s*m_LoopTime:\s*(\d+)",text,re.M)
-        output["clips"][p.stem]={"duration":duration,"loop":bool(loop_match and loop_match.group(1)=="1"),"tracks":tracks}
+        output["clips"][p.stem]={"sourceSha256":hashlib.sha256(p.read_bytes()).hexdigest(),"duration":duration,"loop":bool(loop_match and loop_match.group(1)=="1"),"tracks":tracks}
         print(f"{p.stem}: {len(tracks)} transform tracks, {duration:.3f}s, loop={output['clips'][p.stem]['loop']}")
     Path(sys.argv[2]).parent.mkdir(parents=True,exist_ok=True)
     Path(sys.argv[2]).write_text(json.dumps(output,separators=(",",":")))
 if __name__=="__main__":main()
+

@@ -25,6 +25,7 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
     await page.mouse.down();
     await page.waitForFunction(x => window.__gameState().playerX > x + 0.05, start, { timeout: 30000 });
+    assert.ok(Math.abs(await page.evaluate(() => window.__gameState().pelvisLocalPosition[0]))<1e-6,'Walk animation does not duplicate physics travel');
     await page.mouse.move(450, 160);
     await page.mouse.up();
     assert.equal(await right.evaluate(el => el.classList.contains('active')), false, 'Release outside button clears input');

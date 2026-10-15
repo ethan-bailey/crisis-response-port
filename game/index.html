@@ -26,6 +26,7 @@ import * as THREE from "three";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 import { BrowserInput } from "./browser-input.mjs";
 import { createContactPhysics } from "./contact-physics.mjs";
+import { posePosition } from "./animation-pose.mjs";
 
 const stage=document.querySelector("#stage"), status=document.querySelector("#status"), positionLabel=document.querySelector("#position"), errorBox=document.querySelector("#error");
 const scene=new THREE.Scene(); scene.background=new THREE.Color(0x11151b);
@@ -122,7 +123,8 @@ async function load(){
    return new THREE.Vector3(...a.value).lerp(new THREE.Vector3(...b.value),alpha).toArray();
   }
   function resetPose(){for(const node of manifest.nodes){const group=nodeById.get(node.gameObjectFileID),base=baseTransforms.get(node.gameObjectFileID);group.position.copy(base.position);group.quaternion.copy(base.quaternion);group.scale.copy(base.scale)}}
-  function applyTrack(track,time){const group=nodeByPath.get(track.path);if(!group)return;const value=sample(track,time);if(track.property==="rotation")group.quaternion.fromArray(value);else if(track.property==="position")group.position.fromArray(value);else if(track.property==="scale")group.scale.fromArray(value)}
+  function samplePose(track,time,clip){const value=sample(track,time);return track.property==="position"?posePosition(track,value,clip,animationData.animator.applyRootMotion):value;}
+  function applyTrack(track,time,clip){const group=nodeByPath.get(track.path);if(!group)return;const value=samplePose(track,time,clip);if(track.property==="rotation")group.quaternion.fromArray(value);else if(track.property==="position")group.position.fromArray(value);else if(track.property==="scale")group.scale.fromArray(value)}
   applyAnimation=function(dt){
    const moving=Math.abs(velocity)>.15;
    const backwards=moving&&Math.sign(velocity)!==facingDirection;
@@ -137,12 +139,12 @@ async function load(){
     const walkMap=new Map(clip.tracks.map(tr=>[tr.path+"|"+tr.property,tr]));
     const sprintMap=new Map(sprint.tracks.map(tr=>[tr.path+"|"+tr.property,tr]));
     for(const [keyId,tr] of walkMap){
-     const other=sprintMap.get(keyId);if(!other){applyTrack(tr,t);continue}
-     const a=sample(tr,t),b=sample(other,sprint.duration>0?(animationTime%sprint.duration):0),group=nodeByPath.get(tr.path);if(!group)continue;
+     const other=sprintMap.get(keyId);if(!other){applyTrack(tr,t,clip);continue}
+     const a=samplePose(tr,t,clip),b=samplePose(other,sprint.duration>0?(animationTime%sprint.duration):0,sprint),group=nodeByPath.get(tr.path);if(!group)continue;
      if(tr.property==="rotation"){const q=new THREE.Quaternion(...a).slerp(new THREE.Quaternion(...b),blend);group.quaternion.copy(q)}
      else {const v=new THREE.Vector3(...a).lerp(new THREE.Vector3(...b),blend);if(tr.property==="position")group.position.copy(v);else group.scale.copy(v)}
     }
-   }else for(const track of clip.tracks)applyTrack(track,t);
+   }else for(const track of clip.tracks)applyTrack(track,t,clip);
   };
   rightUpperArm=nodeByPath.get("Pelvis/Abdomen/Torso/Right upper arm")||null;
   // WeaponPointer raycasts only against the original AimQuad layer. Its prefab is a 25×5
@@ -155,7 +157,7 @@ async function load(){
   const physicsResponse=await fetch("./assets/contact-physics.json");if(!physicsResponse.ok)throw new Error("Original collision data missing");
   contactPhysics=await createContactPhysics(await physicsResponse.json(),{x:playerX,y:playerY,z:manifest.nodes.find(n=>!n.parentGameObjectFileID).position[2]});
   physicsState=contactPhysics.snapshot();loaded=true;
-  window.__gameState=()=>({loaded,originalInputActive:!!runtimeCall,originalInput:originalInputState,playerX,playerY,velocity,physics:physicsState,physicsTime,facingDirection,aimPoint:character.localToWorld(localAimPoint.clone()).toArray(),limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,weaponActionsImplemented:false,weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
+  window.__gameState=()=>({loaded,originalInputActive:!!runtimeCall,originalInput:originalInputState,playerX,playerY,velocity,pelvisLocalPosition:nodeByPath.get("Pelvis").position.toArray(),physics:physicsState,physicsTime,facingDirection,aimPoint:character.localToWorld(localAimPoint.clone()).toArray(),limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,weaponActionsImplemented:false,weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
   status.textContent="Original C# input and recovered character assets. PhysX ground contacts enabled. Movement/animation remain partial; weapons, damage and AI are pending.";
   positionLabel.textContent="Walk 1.5 m/s · Sprint 4.2 m/s · original spawn X −3";
  }catch(e){showError(e)}
