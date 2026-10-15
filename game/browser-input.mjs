@@ -72,6 +72,7 @@ export class BrowserInput {
       if (event.pointerId !== pointer) return;
       this.set('fire', `aim:${pointer}`, false);
       pointer = null;
+      onAim(null); // End active aiming; retain the last world-relative aim point.
       if (surface.hasPointerCapture?.(event.pointerId)) surface.releasePointerCapture(event.pointerId);
     };
     this.listen(surface, 'pointerdown', event => {
@@ -83,7 +84,7 @@ export class BrowserInput {
       this.set('fire', `aim:${pointer}`, true);
     });
     this.listen(surface, 'pointermove', event => {
-      if (event.pointerId === pointer || (pointer === null && event.pointerType === 'mouse')) onAim(event);
+      if (pointer !== null && event.pointerId === pointer) onAim(event);
     });
     for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) this.listen(surface, type, release);
     this.listen(surface, 'contextmenu', event => event.preventDefault());
@@ -91,6 +92,7 @@ export class BrowserInput {
     this.resetAim = () => {
       const previous = pointer;
       pointer = null;
+      if (previous !== null) onAim(null);
       if (previous !== null && surface.hasPointerCapture?.(previous)) surface.releasePointerCapture(previous);
     };
   }
