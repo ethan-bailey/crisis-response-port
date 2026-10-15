@@ -181,7 +181,14 @@ if [[ "${UNITY_SPIKE_WEBGL:-0}" == 1 && "${UNITY_SPIKE_SINGLE_PASS:-0}" == 1 ]];
   RC=$?
   note build_exit "$RC"
   note import_exit combined_with_player_build
-  # The single log now covers both editor import and WebGL compilation.
+  # The Unity Docker editor runs as root; generated WebGL outputs must be
+  # readable by the host runner for source-free integrity and localhost checks.
+  # Do not change content or expose the private build to public hosting.
+  if [[ -d "$WORK/webgl" ]]; then
+    docker exec "$CONTAINER" chmod -R a+rX /spike/webgl \
+      > "$WORK/webgl-permissions.log" 2>&1 || note webgl_permissions_failed true
+  fi
+    # The single log now covers both editor import and WebGL compilation.
   cp "$WORK/webgl.log" "$WORK/import.log"
   python3 scripts/classify_unity_spike.py \
     --log "$WORK/import.log" --build-log "$WORK/webgl.log" \
@@ -249,6 +256,13 @@ timeout 3000 docker exec "$CONTAINER" /opt/unity/Editor/Unity \
   -executeMethod SpikeWebGL.BuildMarksman -logFile /spike/webgl.log \
   > "$WORK/docker-webgl.log" 2>&1
 RC=$?; note build_exit "$RC"
+# The Unity Docker editor runs as root; generated WebGL outputs must be
+# readable by the host runner for source-free integrity and localhost checks.
+# Do not change content or expose the private build to public hosting.
+if [[ -d "$WORK/webgl" ]]; then
+  docker exec "$CONTAINER" chmod -R a+rX /spike/webgl \
+    > "$WORK/webgl-permissions.log" 2>&1 || note webgl_permissions_failed true
+fi
 python3 scripts/audit_unity_webgl_output.py "$WORK/webgl" --out "$WORK/webgl-output-manifest.json" > "$WORK/output-inventory.log" 2>&1 || true
 if [[ "$RC" == 0 ]]; then
   python3 scripts/smoke_unity_webgl_http.py "$WORK/webgl" --manifest "$WORK/webgl-output-manifest.json" --results "$WORK/webgl-http-smoke.json" > "$WORK/webgl-http-smoke.log" 2>&1 || note http_smoke_failed true
