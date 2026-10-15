@@ -1,3 +1,21 @@
+# Current hotfix — saved, publication blocked (2026-10-15)
+
+User reported an iPhone firing crash: `Cannot preserve sheared transform when reparenting` in original `BallisticHitMeshEffect.Play`.
+
+Hotfix code/UI: `5b4a7524f9af539a65d206b70bbf32f6b5d57c07`. Updated UI test: `fb42c7fa5e7a5461c60cf3e2b3af042d11f87f20`. Same branch and PR #9.
+
+The source Play method immediately overwrites localScale after SetParent. Its engine call now uses `ReparentBeforeScaleReset` to preserve world position/rotation without decomposing an unrepresentable shear matrix. Original scale reset, growth, layer and projectile/material arithmetic remain intact. The extractor retains this adaptation. Do not remove the effect, swallow the exception or apply a speculative global Transform fallback. Native regression exercises an oblique projectile against a thin rotated nonuniform parent and checks pose and original final local scale.
+
+UI: seven implemented controls remain, with 44px touch targets, translucent buttons at bottom edges, compact ammo-only HUD during play, no help banner/pending swap button, and a scrollable capped error panel. Existing action ownership and tap/drag behavior remain intact.
+
+Native/WASM run `38782716412` SUCCESS. Firing/reload and camera checks also passed in both browsers on the same code/UI. The first UI run failed because it counted the deliberately hidden swap button; the updated test verifies seven visible controls, hidden clutter, target bounds, multi-touch and lifecycle behavior. Final full game run `38783527397` SUCCESS, including Chromium/WebKit movement, touch UI, camera, firing and reload checks. Matching game/runtime artifact: `11997445625`. No physical iPhone verification or screenshot inspection was possible in the unavailable local environment.
+
+IMPORTANT LIVE STATE: the execution environment is unavailable, so there is no local shell, source helper or packaging capability. These hotfix/UI changes are NOT published. To keep firing playable, owner-private hosting was restored to saved version 6 (`appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_9066e047ec848191b51d240dea88d4e2`), source `c6daf0b4568f112a2c7154ed71e9f87e3f039040`. Rollback deployment `appgdep_6ad1166fc49081918442167699092d94` succeeded. URL unchanged. This temporarily omits the new material interactions; all work remains saved in GitHub. Version 7 is saved but reproduces the reported crash; do not redeploy it.
+
+When a workspace is available: read the Sites skill, open the same Site with fresh credentials through its canonical helper, get the exact successful game artifact from run 38783527397, copy the updated game sources and matching compiled runtime (base href /runtime-web/), package and privately publish. Do not pass a GitHub code SHA as a Site source SHA. Preserve owner-only access and the other agent's Unity feasibility work.
+
+The older checkpoint below describes prior work; its claim that version 7 is live is superseded by this hotfix section.
+
 # Active continuation — original material impacts
 
 Updated 2026-10-15. Current browser work is on `codex/projectile-material-impacts`, draft PR https://github.com/ethan-bailey/crisis-response-port/pull/9, based on the firing milestone below. Code checkpoint: `37eac226a91ed2fa13c02d89f5666cf3f1fdbb37`.
