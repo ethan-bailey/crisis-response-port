@@ -1,14 +1,7 @@
 name: Execute recovered original code with runtime services
 on:
-  push:
-    paths:
-      - "runtime/**"
-      - "scripts/extract_runtime_sources.py"
-      - "scripts/extract_presentation.py"
-      - "scripts/extract_runtime_scene.py"
-      - "scripts/runtime_wasm_smoke.mjs"
-      - ".github/workflows/runtime-foundation.yml"
   workflow_dispatch:
+
 permissions:
   contents: read
   actions: read
