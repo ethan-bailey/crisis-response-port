@@ -84,3 +84,27 @@ test('right mouse button does not fire', () => {
   aim.send('pointerdown', { pointerId: 1, pointerType: 'mouse', button: 2 });
   assert.equal(input.pressed('fire'), false);
 });
+
+test('aim only follows the captured pointer and remains latched after release', () => {
+  const callbacks=[],input=new BrowserInput(),surface=new Surface();
+  input.bindAim(surface,event=>callbacks.push(event ? [event.pointerId,event.clientX] : 'released'));
+  surface.send('pointermove',{pointerId:9,pointerType:'mouse',clientX:100}); // Hover must not steer the character.
+  surface.send('pointerdown',{pointerId:1,clientX:25});
+  surface.send('pointermove',{pointerId:2,clientX:400}); // A second finger cannot aim.
+  surface.send('pointermove',{pointerId:1,clientX:50});
+  surface.send('pointerup',{pointerId:1});
+  surface.send('pointermove',{pointerId:1,pointerType:'mouse',clientX:700}); // No invisible pointer.
+  assert.deepEqual(callbacks,[[1,25],[1,50],'released']);
+  assert.equal(input.pressed('fire'),false);
+});
+
+test('page suspension releases active aim and ignores subsequent hover', () => {
+  const callbacks=[],input=new BrowserInput(),aim=new Surface(),win=new Surface(),doc=new Surface();
+  input.bindAim(aim,event=>callbacks.push(event?'aim':'released'));
+  input.bindLifecycle(win,doc);
+  aim.send('pointerdown',{pointerId:11});
+  win.send('pagehide');
+  aim.send('pointermove',{pointerId:11,pointerType:'mouse'});
+  assert.deepEqual(callbacks,['aim','released']);
+  assert.equal(input.pressed('fire'),false);
+});
