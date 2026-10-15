@@ -1,0 +1,60 @@
+name: Preserve original Wood exit-hole mesh for private browser rendering
+on:
+  push:
+    branches:
+      - codex/projectile-material-impacts
+    paths:
+      - ".github/workflows/extract-original-exit-hole-asset.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: private-original-effect-extract
+  cancel-in-progress: false
+jobs:
+  source-geometry:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'PyYAML==6.0.2'
+      - name: Inspect verified private original asset, extract only original renderer mesh
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "ethan-bailey/crisis-response-port"
+          test "$(gh api repos/$GITHUB_REPOSITORY --jq '.private')" = true
+          mkdir -p work/private-extract
+          gh release download recovery-preservation-2026-10-15 -p crisis-response-recovery-direct-v3-1.zip -D work/private-extract
+          printf 'cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d  work/private-extract/crisis-response-recovery-direct-v3-1.zip\n' | sha256sum -c -
+          unzip -q work/private-extract/crisis-response-recovery-direct-v3-1.zip             'export/ExportedProject/Assets/Resources/effects/Wood exit hole.prefab'             'export/ExportedProject/Assets/Mesh/Circle.asset'             'export/ExportedProject/Assets/Material/Wood exit hole.mat'             'export/ExportedProject/Assets/Resources/effects/Wood exit hole.prefab.meta'             'export/ExportedProject/Assets/Mesh/Circle.asset.meta'             'export/ExportedProject/Assets/Material/Wood exit hole.mat.meta'             -d work/private-extract
+          python scripts/extract_original_exit_hole_mesh.py work/private-extract/export/ExportedProject --out game/assets/ballistics/wood-exit-hole-source.json
+          python - <<'PY'
+          import json
+          d=json.load(open("game/assets/ballistics/wood-exit-hole-source.json"))
+          assert d["source_sha256"]["mesh"]=="1a6a7c334014210f536eadc6e21db582bda8f4de56be1330941bbd3ce619688e"
+          assert d["source_sha256"]["prefab"]=="2065f2007654c935bff58e1a5c9f142180b4724cf49d5d37bfaebea63076393a"
+          assert d["source_sha256"]["material"]=="39740d0ad420b78436d3e0f3c282e6fc7f9e8b1846f83ae9af880a555afd2dbb"
+          assert d["counts"]=={"vertices":186,"triangles":100}
+          assert d["source_material"]["colors"]["_Color"]["a"]==1
+          assert d["file_guids"]["texture"] is None
+          print("Source mesh SHA-256, exact topology and untextured material verified")
+          PY
+          rm -rf work/private-extract
+      - name: Commit only exact extracted source geometry into existing private PR branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -- game/assets/ballistics/wood-exit-hole-source.json
+          if git diff --cached --quiet; then echo "Exact source geometry already matches"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Preserve original Wood exit-hole Circle render geometry and source material"
+          git push origin HEAD:codex/projectile-material-impacts
