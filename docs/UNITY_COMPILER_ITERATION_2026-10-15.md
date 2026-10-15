@@ -39,3 +39,32 @@ Do **not** replace `NetworkServer`/`NetworkClient` with fake `false` values, emp
 **Decision: Unity WebGL is still NO-GO for primary track on present evidence; preserve existing WASM progress.** The two errors are attributable to genuine removed networking infrastructure, not simply syntax or renamed GUI widgets. A separate evidence-backed examination of script references, networking dependency use, and an approved 2022-compatible implementation or strictly proven scene-local exclusion is required to proceed faithfully.
 
 Because the user requested iterative repairs, the repair script and reproducible CI harness have been left in the branch for further source-backed work. No claims of clean compilation, completed game or iPhone playable WebGL build are warranted.
+
+## Update — successful C# compile after diagnostic UNet exclusion (2026-10-15)
+
+**Latest run [38774237714](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38774237714)**, artifact **`unity-scoped-four-error-evidence` ID `11994570128`**, contains the full **2.8 MB Unity 2022.3.62f1 import log**, `status.env`, `classification.json`, seven-patch + two-guard `scoped-patch.json`, sanitized licensing logs and scene inventory.
+
+- **Unity batch import returned exit `0`**, and **zero `error CS####` diagnostics** appeared. All seven previously observed GUI/DepthOfField errors and both UNet symbol errors are absent.
+- This is an actual successful **C# compilation** and batch-mode completion of the temporarily adapted recovered project, not just a successful GitHub workflow shell exit.
+- Personal license **activation exit 0**, **deactivation exit 0**, seat check exit 0. Sanitized license return log states **`[200] REVOKE_SEAT`** and deletion of `UnityEntitlementLicense.xml`. Original recovery ZIP was read only and SHA-256-verified from a private GitHub release; no proprietary binaries added to Git history.
+- Temporary compilation changes: seven source-line API substitutions across four recovered utility/effects files, plus **two disabled obsolete UNet Behavior Designer task definitions** using `#if !UNITY_2022_3_OR_NEWER`. The tasks remain verbatim in the temporary source, and are omitted for Unity 2022. **This excludes their behavior; it is not full original game parity.**
+- Read-only scene audit [38773901868](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38773901868) found no plain-text GUID references to those two tasks in six scenes, including Marksman range, but **could not rule out binary/custom task serialization**.
+
+### Important non-C# errors and warnings found in full editor log
+
+A clean C# compile **does not** mean a clean asset import:
+
+| Remaining category | Observed in import log | Example / impact |
+| --- | ---: | --- |
+| AudioClip import failures | **250** | `Errors during import of AudioClip Assets/AudioClip/bolt-extract-01.wav` followed by `FSBTool ERROR: The format of the source file is invalid`. Sounds may be absent at runtime |
+| Corrupt/missing prefab components | **2** | `Interior mode.prefab` missing component index 2; `Marksman mode.prefab` missing component index 3 |
+| Lighting data missing | **6 log lines** | Three lighting data sets reported missing 150, 30 and 200 files, with repeated warnings; game visual lighting may differ |
+| C# compiler errors | **0** | No `error CS####` in the full log |
+
+These asset import errors did **not** make the Unity batch process return nonzero. They require separate source-asset integrity investigation before any complete game-parity claim. **Do not simply fabricate substitute audio, missing prefab scripts, or lighting.**
+
+### Next decision
+
+**GO for a strictly limited Marksman-range Unity WebGL build feasibility test**, conditional on Unity Personal license cleanup and sufficient WebGL module/disk. This is **not** a GO for adopting Unity WebGL as the main port without a working scene and original-system parity audit. A WebGL build may reveal IL2CPP, asset or runtime blockers not observable during editor compilation.
+
+This update supersedes the earlier section above that says the C# compiler still fails at removed UNet symbols. Those symbols were removed **only from the Unity 2022 diagnostic compilation**, not reimplemented.
