@@ -3,7 +3,7 @@ using UnityEngine;
 namespace UnityEngine {
  // Renderer/PhysX property adapters, not substitute simulation implementations.
  public sealed class Camera:Component {public float fieldOfView,aspect;}
- public sealed class Rigidbody:Component {public Vector3 velocity;}
+ public sealed class Rigidbody:Component {public Vector3 velocity;public Action<Vector3,Vector3> ForceSink;public void AddForceAtPosition(Vector3 force,Vector3 position){if(ForceSink==null)throw new NotSupportedException("Dynamic ballistic force sink not connected");ForceSink(force,position);}}
 }
 namespace Crisis.Runtime.Presentation {
  public sealed class CameraDoorSnapshot:Component {}
@@ -34,7 +34,7 @@ namespace Crisis.Runtime.Presentation {
    pose.ActiveWeapon=new(){type=(WeaponBrace)w.GetProperty("type").GetInt32(),weight=w.GetProperty("weight").GetSingle(),alignmentModifier=w.GetProperty("alignmentModifier").GetSingle(),armConfiguration=new(){headAngle=ac.GetProperty("headAngle").GetSingle(),torsoAngle=ac.GetProperty("torsoAngle").GetSingle()}};
    pose.WeaponAimer.useSights=true;ballisticMask=c.GetProperty("cameraBallisticMask").GetInt32();
   }
-  public RuntimeWorld QueryWorld=>scene.world;public int BallisticMask=>ballisticMask;
+  public SceneLoadResult QueryScene=>scene;public RuntimeWorld QueryWorld=>scene.world;public int BallisticMask=>ballisticMask;
   public void SetWeaponState(float kick,float climb){pose.ActiveWeapon.RecoilKick=kick;pose.ActiveWeapon.RecoilClimb=climb;}
   public string Step(string json){
    scene.world.MakeCurrent();using var d=JsonDocument.Parse(json);var f=d.RootElement;

@@ -11,7 +11,7 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   await page.goto('http://127.0.0.1:8000/game/',{waitUntil:'domcontentloaded',timeout:120000});
   await page.waitForFunction(()=>window.__gameState?.().weaponState||document.querySelector('#error').style.display==='block',null,{timeout:120000});
   assert.equal(await page.locator('#error').isVisible(),false,await page.locator('#error').textContent());await ready();
-  const initial=await state();assert.equal(initial.weaponState.shots,0);assert.equal(rounds(initial.weaponState),61);
+  const initial=await state();assert.equal(initial.weaponState.ballistics.materials,386);assert.equal(initial.weaponState.ballistics.loadedMeshColliders,61);assert.equal(initial.weaponState.ballistics.unsupportedColliders,2);assert.equal(initial.weaponState.shots,0);assert.equal(rounds(initial.weaponState),61);
   await page.mouse.move(730,90);await page.waitForFunction(()=>window.__gameState().aimDirection[1]>.05,null,{timeout:30000});
   const aimed=await state(),direction=aimed.aimDirection;
   await page.keyboard.down('KeyD');await page.waitForFunction(x=>window.__gameState().playerX>x+.3,aimed.playerX,{timeout:30000});await page.keyboard.up('KeyD');

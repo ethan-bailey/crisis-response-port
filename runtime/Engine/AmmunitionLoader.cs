@@ -29,12 +29,15 @@ public static class AmmunitionLoader {
             else if(field.FieldType==typeof(bool))field.SetValue(ammo,value.ValueKind==JsonValueKind.True||(value.ValueKind==JsonValueKind.Number&&value.GetInt32()!=0));
             else if(field.FieldType==typeof(string))field.SetValue(ammo,value.ValueKind==JsonValueKind.Null?null:value.GetString());
             else if(field.FieldType.IsEnum)field.SetValue(ammo,Enum.ToObject(field.FieldType,value.GetInt32()));
+            else if(field.FieldType==typeof(List<AmmunitionBase.FragmentationSpecification>)){field.SetValue(ammo,JsonSerializer.Deserialize<List<AmmunitionBase.FragmentationSpecification>>(value.GetRawText(),new JsonSerializerOptions{IncludeFields=true}));}
             else if(field.FieldType==typeof(AnimationCurve)){
                 var keys=value.GetProperty("m_Curve").EnumerateArray().Select(k=>{
                     if(k.TryGetProperty("weightedMode",out var mode)&&mode.GetInt32()!=0)throw new NotSupportedException("Weighted original animation curve");
                     return new Keyframe(k.GetProperty("time").GetSingle(),k.GetProperty("value").GetSingle(),k.GetProperty("inSlope").GetSingle(),k.GetProperty("outSlope").GetSingle());
                 }).ToArray();
-                field.SetValue(ammo,new AnimationCurve(keys){serializedPreInfinity=value.GetProperty("m_PreInfinity").GetInt32(),serializedPostInfinity=value.GetProperty("m_PostInfinity").GetInt32()});
+                // Explicit endpoint-clamp adapter, matching the existing weapon curve boundary.
+                // Native serialized-infinity mapping still requires a Unity comparison.
+                field.SetValue(ammo,new AnimationCurve(keys){clampOutside=value.GetProperty("m_PreInfinity").GetInt32()==2&&value.GetProperty("m_PostInfinity").GetInt32()==2,serializedPreInfinity=value.GetProperty("m_PreInfinity").GetInt32(),serializedPostInfinity=value.GetProperty("m_PostInfinity").GetInt32()});
             }else throw new NotSupportedException(field.FieldType.Name);
         }
         return ammo;

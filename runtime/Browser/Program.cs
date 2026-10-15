@@ -15,7 +15,8 @@ await builder.Build().RunAsync();
 public static class RuntimeBridge {
     static OriginalInputHost input;
     static Crisis.Runtime.Weapons.WeaponHost weapons;
-    [JSInvokable] public static string InitializeWeapons(string json){input??=new OriginalInputHost(new RuntimeWorld());weapons=new(json,input.handler){queryWorld=presentation.QueryWorld,ballisticMask=presentation.BallisticMask};return "ready";}
+    [JSInvokable] public static string InitializeWeapons(string json){input??=new OriginalInputHost(new RuntimeWorld());weapons=new(json,input.handler,presentation.QueryWorld){queryWorld=presentation.QueryWorld,ballisticMask=presentation.BallisticMask};return "ready";}
+    [JSInvokable] public static string InitializeBallistics(string json){weapons.InitializeBallistics(json,presentation.QueryScene);return "ready";}
     [JSInvokable] public static string StepWeapons(string json)=>JsonSerializer.Serialize(weapons.Step(json));
     static SceneLoadResult scene;
     static Crisis.Runtime.Presentation.PresentationHost presentation;

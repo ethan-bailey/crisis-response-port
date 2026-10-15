@@ -91,7 +91,7 @@ public class InputHandler : MonoBehaviour {
     methods = [block(ammunition, sig) for sig in signatures]
     getters = [member(ammunition, name) for name in ['MetricMass','DiameterInMeters','MetricLength','MuzzleEnergy',
         'MuzzleEnergyTotal','Subsonic','MuzzleBlastRange','DetonationAudioPower']]
-    save('AmmunitionBase.cs', 'using UnityEngine;\npublic class AmmunitionBase : MonoBehaviour {\n' +
+    save('AmmunitionBase.cs', 'using UnityEngine;\npublic partial class AmmunitionBase : MonoBehaviour {\n' +
         block(ammunition, 'public enum FragmentationMode') + '\n' + '\n'.join(declarations) + '\n' +
         re.search(r'public AnimationCurve expansionFunction;', ammunition).group() + '\n' +
         re.search(r'public FragmentationMode fragmentationMode;', ammunition).group() + '\n' +

@@ -152,3 +152,4 @@ if __name__ == "__main__":
     except (ValueError, OSError, struct.error) as exc:
         print(f"mesh export failed: {exc}", file=sys.stderr)
         raise SystemExit(1)
+

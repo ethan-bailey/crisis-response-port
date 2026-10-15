@@ -1,5 +1,5 @@
 using UnityEngine;
-public class AmmunitionBase : MonoBehaviour {
+public partial class AmmunitionBase : MonoBehaviour {
 public enum FragmentationMode
 	{
 		None = 0,

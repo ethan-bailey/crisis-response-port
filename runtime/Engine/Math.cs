@@ -30,6 +30,8 @@ public struct Vector3 {
     public static Vector3 Lerp(Vector3 a,Vector3 b,float t)=>a+(b-a)*Mathf.Clamp01(t);
     public static float Dot(Vector3 a,Vector3 b) => N.Vector3.Dot(a.Native,b.Native);
     public static Vector3 Cross(Vector3 a,Vector3 b) => From(N.Vector3.Cross(a.Native,b.Native));
+    public static float Angle(Vector3 a,Vector3 b){float n=a.magnitude*b.magnitude;return n<1e-15f?0:MathF.Acos(Math.Clamp(Dot(a,b)/n,-1,1))*180/MathF.PI;}
+    public static Vector3 Reflect(Vector3 direction,Vector3 normal)=>direction-2*Dot(direction,normal)*normal;
     public static Vector3 Scale(Vector3 a,Vector3 b) => From(a.Native*b.Native);
     public override string ToString() => $"({x}, {y}, {z})";
 }
@@ -40,12 +42,14 @@ public struct Quaternion {
     internal static Quaternion From(N.Quaternion q) => new(q.X,q.Y,q.Z,q.W);
     public static Quaternion identity => new(0,0,0,1);
     public static Quaternion AngleAxis(float degrees,Vector3 axis) => axis.sqrMagnitude<1e-10f ? identity : From(N.Quaternion.CreateFromAxisAngle(axis.normalized.Native,degrees*MathF.PI/180));
-    public static Quaternion LookRotation(Vector3 forward,Vector3 up){var z=forward.normalized;var x=Vector3.Cross(up,z).normalized;var y=Vector3.Cross(z,x);var m=new N.Matrix4x4(x.x,x.y,x.z,0,y.x,y.y,y.z,0,z.x,z.y,z.z,0,0,0,0,1);return From(N.Quaternion.CreateFromRotationMatrix(m));}
+    public static Quaternion LookRotation(Vector3 forward)=>LookRotation(forward,Vector3.up);
+    public static Quaternion LookRotation(Vector3 forward,Vector3 up){var z=forward.normalized;if(z.sqrMagnitude==0)return identity;var x=Vector3.Cross(up,z).normalized;if(x.sqrMagnitude<1e-12f)x=(Vector3.right-z*Vector3.Dot(Vector3.right,z)).normalized;var y=Vector3.Cross(z,x);var m=new N.Matrix4x4(x.x,x.y,x.z,0,y.x,y.y,y.z,0,z.x,z.y,z.z,0,0,0,0,1);return From(N.Quaternion.CreateFromRotationMatrix(m));}
     public static Quaternion Inverse(Quaternion q) => From(N.Quaternion.Inverse(q.Native));
     public static Quaternion operator *(Quaternion a,Quaternion b) => From(a.Native*b.Native);
     public static Vector3 operator *(Quaternion q,Vector3 v) => Vector3.From(N.Vector3.Transform(v.Native,q.Native));
 }
 public static class Mathf {
+    public static int FloorToInt(float f)=>(int)MathF.Floor(f);
     public static float Sign(float f) => f>=0?1:-1;
     public static float Abs(float f) => MathF.Abs(f);
     public static float Min(float a,float b) => MathF.Min(a,b);

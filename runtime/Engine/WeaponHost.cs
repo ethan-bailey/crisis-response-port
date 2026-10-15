@@ -2,7 +2,7 @@ using System.Text.Json;
 using UnityEngine;
 using Object=UnityEngine.Object;
 namespace UnityEngine.Events {
- public delegate void UnityAction();public delegate void UnityAction<T>(T value);
+ public delegate void UnityAction();public delegate void UnityAction<T>(T value);public delegate void UnityAction<T,U>(T arg0,U arg1);
  public class UnityEvent {event UnityAction callbacks;public void AddListener(UnityAction f)=>callbacks+=f;public void Invoke()=>callbacks?.Invoke();}
  public class UnityEventBool {event UnityAction<bool> callbacks;public void AddListener(UnityAction<bool> f)=>callbacks+=f;public void Invoke(bool value)=>callbacks?.Invoke(value);}
 }
@@ -92,8 +92,10 @@ public sealed class WeaponHost {
  Transform Make(string name)=>new GameObject(name,world).transform;
  void Hierarchy(JsonElement records,Dictionary<string,Transform> map){foreach(var p in records.EnumerateObject()){var t=Make(p.Name);map[p.Name]=t;}
  foreach(var p in records.EnumerateObject()){var f=p.Value;var t=map[p.Name];var pid=f.GetProperty("m_Father").GetProperty("fileID").GetString();if(map.TryGetValue(pid,out var parent))t.SetParent(parent,false);t.localPosition=Vec(f.GetProperty("m_LocalPosition"));t.localScale=Vec(f.GetProperty("m_LocalScale"));var q=f.GetProperty("m_LocalRotation");t.localRotation=new(q.GetProperty("x").GetSingle(),q.GetProperty("y").GetSingle(),q.GetProperty("z").GetSingle(),q.GetProperty("w").GetSingle());}}
- public WeaponHost(string json,InputHandler input){
-  world=new RuntimeWorld(true,false);using var d=JsonDocument.Parse(json);var c=d.RootElement;config=c.Clone();var w=c.GetProperty("weapon");Global.Context.InputHandler=input;
+ public BallisticRuntimeHost Ballistics {get;private set;}
+ public void InitializeBallistics(string json,SceneLoadResult scene){Ballistics=new(json,scene,effects,p=>{p.FlightMask=ballisticMask;if(!projectiles.Contains(p))projectiles.Add(p);});ballisticMask=Masks.Instance.BallisticTargets;}
+ public WeaponHost(string json,InputHandler input,RuntimeWorld sourceWorld=null){
+  world=sourceWorld??new RuntimeWorld(true,false);world.MakeCurrent();using var d=JsonDocument.Parse(json);var c=d.RootElement;config=c.Clone();var w=c.GetProperty("weapon");Global.Context.InputHandler=input;
   Hierarchy(c.GetProperty("weaponTransforms"),weaponTransforms);Hierarchy(c.GetProperty("operatorTransforms"),operatorTransforms);
   Transform WT(string key)=>weaponTransforms[w.GetProperty(key).GetProperty("fileID").GetString()];
   var wg=weaponTransforms.Values.First(t=>t.parent==null).gameObject;weapon=wg.AddComponent<WeaponBase>();weapon.Effects=effects;
@@ -142,11 +144,11 @@ public sealed class WeaponHost {
   if(task!=null&&task.OnUpdate()!=TaskStatus.Running){task.OnEnd();task=null;}
   if(task==null&&body.PendingAction==CharacterBody.CharacterAction.WorkBolt){task=workBolt;task.OnStart();}
   weapon.Step();world.Invoke(weapon.cyclingBolt,"Update");body.QueryTrigger();
-  queryWorld?.MakeCurrent();
-  foreach(var p in projectiles.ToArray()){p.StepFlight();effects.Emit("flight",new{id=p.Id,position=new[]{p.transform.position.x,p.transform.position.y,p.transform.position.z},finished=p.Finished});if(p.Finished)projectiles.Remove(p);}
+  queryWorld?.MakeCurrent();Ballistics?.Step();
+  foreach(var p in projectiles.ToArray()){if(!p.gameObject.activeInHierarchy)continue;p.StepFlight();effects.Emit("flight",new{id=p.Id,position=new[]{p.transform.position.x,p.transform.position.y,p.transform.position.z},finished=p.Finished});if(p.Finished)projectiles.Remove(p);}
   world.FlushDestroyed();var result=Snapshot();effects.events.Clear();return result;
  }
  static void SetWorld(Transform t,JsonElement p){t.position=V(p.GetProperty("p"));var q=p.GetProperty("q");t.rotation=new(q[0].GetSingle(),q[1].GetSingle(),q[2].GetSingle(),q[3].GetSingle());}
- public object Snapshot(){var mp=weapon.ComponentMagazine.transform.position;var mq=weapon.ComponentMagazine.transform.rotation;object Arm(ArmIKSolver a)=>new{target=new[]{a.ikTarget.position.x,a.ikTarget.position.y,a.ikTarget.position.z},a.OnTarget,a.OnWeapon,smoothing=a.smoothing||a.Transitioning,handMode=(int)a.hand.mode,angle=a.hand.transform.localEulerAngles.z};return new{magazinePose=new{p=new[]{mp.x,mp.y,mp.z},q=new[]{mq.x,mq.y,mq.z,mq.w},visible=weapon.ComponentMagazine.gameObject.activeSelf},shots=body.ShotsFired,magazine=weapon.Magazine?.roundCount??0,reserve=body.Equipment.PrimaryMagazines.Where(m=>!ReferenceEquals(m,weapon.Magazine)).Sum(m=>m.roundCount),chamberLive=weapon.cyclingBolt.Live,bolt=weapon.cyclingBolt.Status.ToString(),reloading=task!=null,manipulating=body.IsManipulatingEquipment,kick=Kick,climb=Climb,right=Arm(body.rightArm),left=Arm(body.leftArm),events=effects.events.ToArray()};}
+ public object Snapshot(){var mp=weapon.ComponentMagazine.transform.position;var mq=weapon.ComponentMagazine.transform.rotation;object Arm(ArmIKSolver a)=>new{target=new[]{a.ikTarget.position.x,a.ikTarget.position.y,a.ikTarget.position.z},a.OnTarget,a.OnWeapon,smoothing=a.smoothing||a.Transitioning,handMode=(int)a.hand.mode,angle=a.hand.transform.localEulerAngles.z};return new{ballistics=Ballistics?.Snapshot(),magazinePose=new{p=new[]{mp.x,mp.y,mp.z},q=new[]{mq.x,mq.y,mq.z,mq.w},visible=weapon.ComponentMagazine.gameObject.activeSelf},shots=body.ShotsFired,magazine=weapon.Magazine?.roundCount??0,reserve=body.Equipment.PrimaryMagazines.Where(m=>!ReferenceEquals(m,weapon.Magazine)).Sum(m=>m.roundCount),chamberLive=weapon.cyclingBolt.Live,bolt=weapon.cyclingBolt.Status.ToString(),reloading=task!=null,manipulating=body.IsManipulatingEquipment,kick=Kick,climb=Climb,right=Arm(body.rightArm),left=Arm(body.leftArm),events=effects.events.ToArray()};}
 }
 }

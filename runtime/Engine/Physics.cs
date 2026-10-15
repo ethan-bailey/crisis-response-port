@@ -11,6 +11,7 @@ public struct RaycastHit {
 }
 public enum QueryTriggerInteraction {UseGlobal,Ignore,Collide}
 public abstract class Collider:Behaviour {
+    public Rigidbody attachedRigidbody=>GetComponentInParent<Rigidbody>();
     public bool isTrigger {get;set;}
     public abstract bool Raycast(Ray ray,out RaycastHit hit,float maxDistance);
 }

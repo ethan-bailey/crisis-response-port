@@ -16,7 +16,7 @@ export function configureCamera(camera,data){
  const p=data.cameraTransform.m_LocalPosition;camera.position.set(p.x,p.y,-p.z);camera.rotation.set(0,0,0);
  camera.fov=data.camera['field of view'];camera.near=data.camera['near clip plane'];camera.far=data.camera['far clip plane'];camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
 }
-export function createUpperBody(data,manifest,nodeById,character,weapon,runtimeCall,weaponData,scene){
+export function createUpperBody(data,manifest,nodeById,character,weapon,runtimeCall,weaponData,scene,ballisticsData){
  const byTransform=new Map(manifest.nodes.map(n=>[n.transformFileID,nodeById.get(n.gameObjectFileID)]));
  const nodeForRef=ref=>nodeById.get(data.componentGameObjects[ref.fileID])||byTransform.get(ref.fileID);
  const torso=nodeForRef(data.body.Torso),head=nodeForRef(data.body.Head),neck=nodeForRef(data.body.Neck),abdomen=nodeForRef(data.body.Abdomen),eye=nodeForRef(data.body.Eye);
@@ -33,7 +33,7 @@ export function createUpperBody(data,manifest,nodeById,character,weapon,runtimeC
  const anchors=[weapon.nodesByPath.get('Transform/Right hand anchor'),weapon.nodesByPath.get('Transform/Left hand anchor')];
  const ac=data.armConfiguration;
  anchors[0].position.set(ac.rightHandOffset.x,ac.rightHandOffset.y,0);anchors[1].position.set(ac.leftHandOffset.x,ac.leftHandOffset.y,0);
- const effects=createWeaponEffects(weaponData,scene);
+ const effects=createWeaponEffects(weaponData,scene,ballisticsData);
  const weaponWorld=()=>{const p=worldPosition(weapon.root),q=weapon.root.getWorldQuaternion(new THREE.Quaternion());return {p:unityVector(p),q:[-q.x,-q.y,q.z,q.w]};};
  const sourceNodes=new Map(manifest.nodes.map(n=>[n.transformFileID,nodeById.get(n.gameObjectFileID)]));
  let result=null,solutions=[],weaponResult=null;

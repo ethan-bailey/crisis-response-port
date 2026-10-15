@@ -3,10 +3,13 @@ export async function loadWeaponData(){
  const r=await fetch('./assets/weapon-runtime.json.gz');if(!r.ok)throw new Error('Original weapon settings unavailable');
  return new Response(r.body.pipeThrough(new DecompressionStream('gzip'))).json();
 }
-export function createWeaponEffects(data,scene){
+export function createWeaponEffects(data,scene,ballisticsData){
  // Original sampled audio, never synthesized substitutes. Unlock Web Audio on the device gesture.
  const AudioContext=window.AudioContext||window.webkitAudioContext,context=AudioContext?new AudioContext():null,buffers=new Map();
  if(context)for(const [name,info] of Object.entries(data.audio))fetch(info.url).then(r=>r.arrayBuffer()).then(b=>context.decodeAudioData(b)).then(b=>buffers.set(name,b)).catch(()=>{});
+ if(context)for(const info of Object.values(ballisticsData?.effects||{}))for(const url of info.audio)if(!buffers.has(url)){
+  buffers.set(url,null);fetch(url).then(r=>r.arrayBuffer()).then(b=>context.decodeAudioData(b)).then(b=>buffers.set(url,b)).catch(()=>{});
+ }
  addEventListener('pointerdown',()=>context?.resume().catch(()=>{}),{passive:true});
  const texturePromise=new THREE.TextureLoader().loadAsync(Object.values(data.flash.textures)[0].url).then(t=>{t.colorSpace=THREE.SRGBColorSpace;return t;});
  const flashNodes=data.flash.prefab.filter(r=>r.classID===4),clip=data.flash.animation[0].fields,curve=clip.m_PPtrCurves[0].curve;
@@ -26,6 +29,7 @@ export function createWeaponEffects(data,scene){
   if(magazinePose){const {p,q,visible}=magazinePose;magRoot.visible=visible;magRoot.position.set(p[0],p[1],-p[2]);magRoot.quaternion.set(-q[0],-q[1],q[2],q[3]);}
   for(const e of events){
    if(e.type==='audio'&&context&&buffers.has(e.value)){const src=context.createBufferSource(),gain=context.createGain();src.buffer=buffers.get(e.value);gain.gain.value=data.audio[e.value].volume;src.connect(gain).connect(context.destination);src.onended=()=>{src.disconnect();gain.disconnect();};src.start();}
+   if(e.type==='materialEffect'&&context&&buffers.get(e.value.clip)){const src=context.createBufferSource(),gain=context.createGain();src.buffer=buffers.get(e.value.clip);gain.gain.value=e.value.volume;src.connect(gain).connect(context.destination);src.onended=()=>{src.disconnect();gain.disconnect();};src.start();}
    if(e.type==='shot')flash(e.value);
   }
   for(let i=active.length-1;i>=0;i--){const item=active[i],time=(performance.now()-item.start)/1000;
