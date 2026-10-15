@@ -8,7 +8,7 @@ public sealed class BallisticRuntimeHost {
  public static BallisticRuntimeHost Current;
  readonly SceneLoadResult scene;readonly Dictionary<string,BallisticMaterialProperties> properties=[];
  readonly Dictionary<string,Texture2D> textures=[];readonly Dictionary<string,BallisticHitEffect> effectPrefabs=[];readonly Dictionary<string,BallisticHitMeshEffect> meshPrefabs=[];
- readonly List<BallisticMaterial> materials=[];readonly List<object> interactions=[];readonly Dictionary<int,float> entryEnergy=[];
+ readonly HashSet<BallisticMaterial> started=[];readonly List<BallisticMaterial> materials=[];readonly List<object> interactions=[];readonly Dictionary<int,float> entryEnergy=[];
  readonly Dictionary<int,GameObject> meshes=[];readonly Action<Projectile> register;readonly Crisis.Runtime.Weapons.WeaponEffects effects;
  public readonly int particlesLifetime;int contactCount,fragmentCount;public int unsupportedColliders,loadedMeshColliders,windowCount;public RuntimeWorld World=>scene.world;
  static float F(JsonElement e,string key)=>e.GetProperty(key).GetSingle();static string Ref(JsonElement e)=>e.GetProperty("fileID").GetString();
@@ -41,7 +41,7 @@ public sealed class BallisticRuntimeHost {
    if(f.GetProperty("properties").TryGetProperty("guid",out var guid))m.properties=properties[guid.GetString()];m.width=F(f,"width");m.depth=F(f,"depth");m.impenetrable=Flag(f,"impenetrable");m.surfaceTestOnExit=Flag(f,"surfaceTestOnExit");m.enabled=Flag(f,"m_Enabled");
    // Loaded graph is deliberately not globally activated. Activate only recovered
    // material methods, preserving the existing input clock and scope.
-   m.Awake();m.Start();materials.Add(m);scene.objects[id]=m;
+   m.Awake();if(m.isActiveAndEnabled){m.Start();started.Add(m);}materials.Add(m);scene.objects[id]=m;
    m.onInteractionBegin.AddListener(p=>{entryEnergy[p.GetInstanceID()]=p.Energy;contactCount++;});
    m.onInteractionEnd.AddListener(p=>{var info=new{sourceObject=goid,sourceComponent=id,name=go.name,material=m.properties?.name,entryEnergy=entryEnergy.GetValueOrDefault(p.GetInstanceID(),p.Energy),exitEnergy=p.Energy,status=p.Status.ToString(),p.PenetrationDistance,position=new[]{p.Position.x,p.Position.y,p.Position.z},projectile=p.Id,fragment=p.HasFragmented};if(interactions.Count>=32)interactions.RemoveAt(0);interactions.Add(info);Emit("materialInteraction",info);});
    if(m is BallisticWindow window){var texture=(Texture2D)typeof(BallisticWindow).GetField("textureInstance",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(window);texture.Changed=(t,x,y,w,h,pixels)=>Emit("windowStamp",new{sourceObject=goid,texture=t.SourceID,x,y,width=w,height=h,rgba=Convert.ToBase64String(pixels)});}
@@ -58,6 +58,6 @@ public sealed class BallisticRuntimeHost {
  public BallisticMaterialProperties Property(string id)=>properties[id];
  public void Emit(string type,object value)=>effects.Emit(type,value);
  public void RegisterProjectile(Projectile p){fragmentCount++;register(p);Emit("fragmentSpawn",new{p.Id,p.Mass,p.BaseVelocity});}
- public void Step(){scene.world.MakeCurrent();foreach(var m in materials)if(m.isActiveAndEnabled)m.Update();foreach(var e in scene.world.Objects.OfType<BallisticHitEffect>().Where(e=>e.isActiveAndEnabled).ToArray())e.Step();foreach(var e in scene.world.Objects.OfType<BallisticHitMeshEffect>().Where(e=>e.isActiveAndEnabled).ToArray())e.StepPresentation();}
+ public void Step(){scene.world.MakeCurrent();foreach(var m in materials)if(m.isActiveAndEnabled){if(started.Add(m))m.Start();m.Update();}foreach(var e in scene.world.Objects.OfType<BallisticHitEffect>().Where(e=>e.isActiveAndEnabled).ToArray())e.Step();foreach(var e in scene.world.Objects.OfType<BallisticHitMeshEffect>().Where(e=>e.isActiveAndEnabled).ToArray())e.StepPresentation();}
  public object Snapshot()=>new{contacts=contactCount,fragments=fragmentCount,materials=materials.Count,windows=windowCount,loadedMeshColliders,unsupportedColliders,last=interactions.LastOrDefault()};
 }

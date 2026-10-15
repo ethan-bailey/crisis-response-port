@@ -40,7 +40,7 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   await page.waitForTimeout(300);assert.equal((await state()).weaponState.shots,32,'No extra shot after release/empty');
   await page.locator('#reload').tap();await page.waitForFunction(()=>window.__gameState().weaponState.reloading,null,{timeout:30000});await page.waitForFunction(()=>!window.__gameState().weaponState.reloading&&window.__gameState().weaponState.chamberLive,null,{timeout:30000});await ready();
   const final=await state();assert.equal(final.weaponState.magazine,28);assert.equal(final.weaponState.reserve,0);assert.equal(final.projection.fov,20);assert.ok(final.presentation.arms.every(a=>Number.isFinite(a.upper)&&Number.isFinite(a.lower)));
-  assert.deepEqual(errors,[]);await page.screenshot({path:`weapon-${engine}.png`});results.push({engine,passed:true,nativeTouchDrag,actualIPhoneTest:false,initial,tapped,reloaded,empty,final});
+  assert.ok(final.weaponState.ballistics.contacts>0,"Original scene material contacts must occur during live firing");assert.ok(Number.isFinite(final.weaponState.ballistics.last.exitEnergy));assert.deepEqual(errors,[]);await page.screenshot({path:`weapon-${engine}.png`});results.push({engine,passed:true,nativeTouchDrag,actualIPhoneTest:false,initial,tapped,reloaded,empty,final});
  }catch(e){results.push({engine,passed:false,error:String(e),errors,state:await page.evaluate(()=>window.__gameState?.()||null),screenError:await page.locator('#error').textContent()});await page.screenshot({path:`weapon-${engine}.png`}).catch(()=>{});process.exitCode=1;}
  finally{await browser.close();}
 }
