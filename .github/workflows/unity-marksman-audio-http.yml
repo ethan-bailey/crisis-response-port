@@ -18,6 +18,7 @@ jobs:
       UNITY_SPIKE_ALLOW_UNET_EXCLUSION: "1"
       UNITY_SPIKE_WEBGL: "1"
       UNITY_SPIKE_FIX_WAV_HEADERS: "1"
+      UNITY_SPIKE_SINGLE_PASS: "1"
     steps:
       - uses: actions/checkout@v4
       - name: Reclaim headless build space
@@ -25,6 +26,13 @@ jobs:
           sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/share/swift /usr/local/share/powershell
           docker system prune -af >/dev/null 2>&1 || true
           df -h .
+      - name: Restore private cached Unity imported project Library
+        uses: actions/cache@v4
+        with:
+          path: work/unity-spike/recovery/export/ExportedProject/Library
+          key: unity-2022-3-62f1-webgl-private-v2-${{ runner.os }}-${{ hashFiles('scripts/unity_scoped_legacy_gui_patch.py', 'scripts/unity_webgl_template_fix.py', 'scripts/repair_recovered_wav_headers.py', 'scripts/SpikeWebGL.cs') }}
+          restore-keys: |
+            unity-2022-3-62f1-webgl-private-v2-${{ runner.os }}-
       - name: Preserve original asset payload, correct metadata and build Marksman WebGL
         run: bash scripts/unity_open_spike.sh
       - name: Emergency Unity Personal deactivation
