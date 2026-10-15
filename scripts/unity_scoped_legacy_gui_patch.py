@@ -50,7 +50,7 @@ def main():
             meta=Path(str(path)+".meta")
             if token not in source or not meta.exists() or guid not in meta.read_text(errors="replace"):
                 raise SystemExit(f"STOP: unexpected source or GUID for {name}")
-            planned.append((path,"#if !UNITY_2022_3_OR_NEWER\\n"+source+"\\n#endif\\n"))
+            planned.append((path,"#if !UNITY_2022_3_OR_NEWER\n"+source+"\n#endif\n"))
             audit.append({"file":str(path.relative_to(args.project)),
                           "diagnostic_only":"Unity 2022 temporary UNet exclusion; original source retained"})
     for path,content in planned:path.write_text(content,encoding="utf-8")
