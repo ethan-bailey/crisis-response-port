@@ -43,6 +43,12 @@ const loadStart=performance.now(),loadingTimings={};window.__loadingTimings=load
 const markLoaded=name=>loadingTimings[name]=performance.now()-loadStart;
 function showError(e){errorBox.style.display="block";errorBox.textContent=String(e?.stack||e);status.textContent="Build failed to load; see error details."}
 const rawActions={left:false,right:false,sprint:false,fire:false,kneel:false,stand:false,magazine:false,switchWeapons:false};
+// Tap is a raw original InputHandler action, not a simulated shot. Keep its
+// press and release in separate runtime ticks, even if Safari batches taps.
+let queuedFireTaps=0,fireTapNeedsRelease=false,fireTapCount=0;
+function resetFireTaps(){queuedFireTaps=0;fireTapNeedsRelease=false;rawActions.fire=false;}
+for(const event of ['blur','pagehide','resize'])addEventListener(event,resetFireTaps);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)resetFireTaps();});
 const input = new BrowserInput({onChange(action,pressed){rawActions[action]=pressed;document.querySelector(`[data-action="${action}"]`)?.classList.toggle("active",pressed)}});
 async function initializeOriginalRuntime(){
  const frame=document.createElement("iframe");frame.hidden=true;frame.src="../runtime-web/?bridge=1";frame.title="Original C# runtime";document.body.appendChild(frame);
@@ -175,7 +181,7 @@ async function load(){
   physicsState=contactPhysics.snapshot();loaded=true;markLoaded("playable");
   // The inactive sidearm must not delay play. Fetch it after the first playable frame.
   requestAnimationFrame(()=>setTimeout(()=>buildWeapon("Glock-18","Pelvis/Abdomen/Torso/Right upper arm/Right lower arm/Right hand/Pistol pivot").then(w=>{w.root.visible=false;weaponInstances["Glock-18"]=w;markLoaded("sidearmReady");}).catch(()=>{weaponStatus.textContent="Original active weapon loaded · sidearm preview unavailable";}),0));
-  window.__gameState=()=>({loaded,originalInputActive:!!runtimeCall,originalInput:originalInputState,playerX,playerY,velocity,pelvisLocalPosition:nodeByPath.get("Pelvis").position.toArray(),physics:physicsState,physicsTime,sprintBlend,gaitPhase,loadingTimings,presentation:upperBody.snapshot(),projection:{type:camera.type,fov:camera.fov,near:camera.near,far:camera.far,position:camera.position.toArray()},facingDirection,aimPointerActive:hasAimPointer,aimLocalPoint:localAimPoint.toArray(),aimPoint:character.localToWorld(localAimPoint.clone()).toArray(),limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,weaponActionsImplemented:false,weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
+  window.__gameState=()=>({loaded,originalInputActive:!!runtimeCall,originalInput:originalInputState,playerX,playerY,velocity,pelvisLocalPosition:nodeByPath.get("Pelvis").position.toArray(),physics:physicsState,physicsTime,sprintBlend,gaitPhase,loadingTimings,presentation:upperBody.snapshot(),projection:{type:camera.type,fov:camera.fov,near:camera.near,far:camera.far,position:camera.position.toArray()},facingDirection,aimPointerActive:hasAimPointer,aimLocalPoint:localAimPoint.toArray(),fireTapCount,queuedFireTaps,aimPoint:character.localToWorld(localAimPoint.clone()).toArray(),limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,weaponActionsImplemented:false,weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
   status.textContent="Original C# camera and arm IK · drag to aim. Weapons, damage and AI remain pending.";
   positionLabel.textContent="Walk 1.5 m/s · Sprint 4.2 m/s · original spawn X −3";
  }catch(e){showError(e)}
@@ -189,10 +195,19 @@ function updateAim(e){
  pointerNdc.x=((e.clientX-rect.left)/rect.width)*2-1;
  pointerNdc.y=-(((e.clientY-rect.top)/rect.height)*2-1);
 }
-input.bindAim(renderer.domElement, updateAim);
+input.bindAim(renderer.domElement,updateAim,{onTap(){
+ // Dispatch fire to the original C# input state machine when play is active.
+ // Weapon actions remain disabled until the recovered original weapon pipeline exists.
+ if(loaded&&!document.hidden){queuedFireTaps=Math.min(queuedFireTaps+1,8);fireTapCount++;}
+}});
 
 let last=null,frameBusy=false;
 async function frame(now){requestAnimationFrame(frame);if(frameBusy)return;const elapsed=last===null?0:(now-last)/1000;const dt=Math.min(elapsed,.05);last=now;if(loaded){frameBusy=true;try{
+ // One C# input tick of key down, followed by one tick of key up. Never
+ // consume two taps as one continuous fire hold.
+ if(fireTapNeedsRelease){rawActions.fire=false;fireTapNeedsRelease=false;}
+ else if(queuedFireTaps>0){queuedFireTaps--;rawActions.fire=true;fireTapNeedsRelease=true;}
+ else rawActions.fire=false;
  originalInputState=JSON.parse(await runtimeCall("Tick",elapsed,JSON.stringify(rawActions)));
  for(const action of Object.keys(keys))keys[action]=originalInputState[action].Pressed;
  if(originalInputState.kneel.Down)isKneeling=true;else if(originalInputState.stand.Down)isKneeling=false;
