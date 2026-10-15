@@ -12,7 +12,8 @@ def main():
     specs={
       "ForcedReset.cs": [(4,"GUITexture","UnityEngine.UI.RawImage")],
       "FPSCounter.cs": [(5,"GUIText","UnityEngine.UI.Text"),(18,"GUIText","UnityEngine.UI.Text"),(23,"GUIText","UnityEngine.UI.Text")],
-      "SimpleActivatorMenu.cs": [(7,"GUIText","UnityEngine.UI.Text")]
+      "SimpleActivatorMenu.cs": [(7,"GUIText","UnityEngine.UI.Text")],
+      "DepthOfField.cs": [(245,"Graphics.DrawProceduralIndirect","Graphics.DrawProceduralIndirectNow"),(299,"Graphics.DrawProceduralIndirect","Graphics.DrawProceduralIndirectNow")]
     }
     planned=[]; audit=[]
     for name,entries in specs.items():
@@ -32,9 +33,9 @@ def main():
             audit.append({"file":str(path.relative_to(args.project)),"line":number,
                           "old_type":old,"new_type":new})
         planned.append((path,"".join(lines)))
-    if len(audit)!=5 or len(planned)!=3:raise SystemExit("STOP: five-site guard rejected")
+    if len(audit)!=7 or len(planned)!=4:raise SystemExit("STOP: seven-site guard rejected")
     for path,content in planned:path.write_text(content,encoding="utf-8")
     args.out.parent.mkdir(parents=True,exist_ok=True)
-    args.out.write_text(json.dumps({"patch_count":5,"modified_files":3,"changes":audit},indent=2)+"\n")
+    args.out.write_text(json.dumps({"patch_count":7,"modified_files":4,"changes":audit},indent=2)+"\n")
     for p in audit:print(f"PATCH {p['file']}:{p['line']} {p['old_type']} => {p['new_type']}")
 if __name__=="__main__":main()
