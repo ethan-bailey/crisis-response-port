@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Crisis.Runtime.Presentation;
 // Original method bodies; gameplay objects are read-only views of actual renderer/PhysX state.
 public sealed class InteriorCameraSlice:MonoBehaviour {
- public Camera interiorCamera; public CameraSubjectSnapshot Subject;
+ public Camera interiorCamera;public Transform audioListener; public CameraSubjectSnapshot Subject;
  public float smoothing,fovSmoothing,centerOffset,obstacleHoldOff,doorHoldOff,fieldOfViewOverride;
  public bool overrideFieldOfView,disableScrollPastDoors,useDynamicFov;
  public float cameraDistance,staticFov,dynamicFovMin,dynamicFovMax;
@@ -14,8 +14,6 @@ public sealed class InteriorCameraSlice:MonoBehaviour {
  public void Initialize(){targetFOV=interiorCamera.fieldOfView;cameraDistance=-1.5f-transform.position.z;SetInitialPosition();}
  public void Step()=>Update();
  public object Snapshot()=>new{position=new[]{transform.position.x,transform.position.y,transform.position.z},fov=interiorCamera.fieldOfView,FrustumWidth};
- // Audio is outside this presentation slice; the original listener algorithm is not substituted.
- void UpdateListenerPosition(){}
 private void Update()
 	{
 		UpdateTargetPosition();
@@ -110,5 +108,13 @@ public float SubjectViewDistance()
 		float num3 = base.transform.position.x + FrustumWidth * 0.5f;
 		float num4 = num3 - Subject.Eye.position.x;
 		return FrustumWidth - num4;
+	}
+private void UpdateListenerPosition()
+	{
+		if (!(Subject == null))
+		{
+			float x = Subject.Eye.position.x;
+			audioListener.position = new Vector3(x, 1.25f, -1.5f);
+		}
 	}
 }

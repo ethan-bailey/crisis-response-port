@@ -53,7 +53,7 @@ export function createUpperBody(data,manifest,nodeById,character,weapon,runtimeC
    });
    const [x,y,z]=result.camera.position;camera.position.set(x,y,-z);camera.fov=result.camera.fov;camera.updateProjectionMatrix();
   },
-  snapshot(){return {active:!!result,camera:result?.camera,pose:result?.pose,arms:solutions,worldShoulder:worldPosition(api.shoulder).toArray(),worldMuzzle:worldPosition(muzzle).toArray(),armTargets:anchors.map(a=>worldPosition(a).toArray())};}
+  snapshot(){return {active:!!result,camera:result?.camera,pose:result?.pose,arms:solutions,worldHeadDirection:new THREE.Vector3(1,0,0).applyQuaternion(head.getWorldQuaternion(new THREE.Quaternion())).toArray(),worldShoulder:worldPosition(api.shoulder).toArray(),worldMuzzle:worldPosition(muzzle).toArray(),armTargets:anchors.map(a=>worldPosition(a).toArray())};}
  };
  return api;
 }

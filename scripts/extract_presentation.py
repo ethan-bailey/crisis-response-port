@@ -47,7 +47,7 @@ layers=records('ProjectSettings/TagManager.asset')[0]['fields']['layers'];mask=s
 doorGuid=re.search(r'^guid: (\w+)',(root/'Assets/Scripts/Assembly-CSharp/DoorController.cs.meta').read_text(),re.M)[1]
 doors=[str(r['fields']['m_GameObject']['fileID']) for r in scene if r['classID']==114 and r['fields'].get('m_Script',{}).get('guid')==doorGuid]
 ik=source('InverseKinematics2D.cs');(original/'InverseKinematics2D.cs').write_text(ik)
-cam=source('InteriorCamera.cs');methods=[block(cam,sig) for sig in ['private void Update()','private void UpdateTargetPosition()','private void SetInitialPosition()','public void SetManualTargetPosition(float worldX)','public float SubjectViewDistance()']]
+cam=source('InteriorCamera.cs');methods=[block(cam,sig) for sig in ['private void Update()','private void UpdateTargetPosition()','private void SetInitialPosition()','public void SetManualTargetPosition(float worldX)','public float SubjectViewDistance()','private void UpdateListenerPosition()']]
 source('ArmIKSolver.cs');source('PlayerController.cs');bodySource=source('CharacterBody.cs');aimerSource=source('WeaponAimer.cs');weaponSource=source('WeaponBase.cs');graphics=source('SerializableGraphicsSettings.cs');source('WeaponPointer.cs')
 
 poseMethod=block(bodySource,'private void UpdateUpperBodyTransforms(WeaponBase weapon)').replace('WeaponBase','WeaponPoseSnapshot').replace('WeaponArmConfiguration','ArmConfigurationSnapshot')
@@ -62,7 +62,7 @@ using UnityEngine;
 namespace Crisis.Runtime.Presentation;
 // Original method bodies; gameplay objects are read-only views of actual renderer/PhysX state.
 public sealed class InteriorCameraSlice:MonoBehaviour {
- public Camera interiorCamera; public CameraSubjectSnapshot Subject;
+ public Camera interiorCamera;public Transform audioListener; public CameraSubjectSnapshot Subject;
  public float smoothing,fovSmoothing,centerOffset,obstacleHoldOff,doorHoldOff,fieldOfViewOverride;
  public bool overrideFieldOfView,disableScrollPastDoors,useDynamicFov;
  public float cameraDistance,staticFov,dynamicFovMin,dynamicFovMax;
@@ -73,8 +73,6 @@ public sealed class InteriorCameraSlice:MonoBehaviour {
  public void Initialize(){targetFOV=interiorCamera.fieldOfView;cameraDistance=-1.5f-transform.position.z;SetInitialPosition();}
  public void Step()=>Update();
  public object Snapshot()=>new{position=new[]{transform.position.x,transform.position.y,transform.position.z},fov=interiorCamera.fieldOfView,FrustumWidth};
- // Audio is outside this presentation slice; the original listener algorithm is not substituted.
- void UpdateListenerPosition(){}
 '''+camMethods+'\n}\n')
 # Original geometry is a 2-by-2 plane scaled 25-by-5: 50-by-10, not 25-by-5.
 quad=records('Assets/GameObject/Aim quad.prefab');qt=fields(quad,lambda r:r['classID']==4)

@@ -22,7 +22,7 @@ namespace Crisis.Runtime.Presentation {
    foreach(var id in c.GetProperty("doors").EnumerateArray())if(scene.objects.TryGetValue(id.GetString(),out var o)&&o is GameObject go)go.AddComponent<CameraDoorSnapshot>();
    var camGO=new GameObject("Recovered InteriorCamera",scene.world);camera=camGO.AddComponent<InteriorCameraSlice>();
    var tr=c.GetProperty("cameraTransform").GetProperty("m_LocalPosition");camGO.transform.position=new(tr.GetProperty("x").GetSingle(),tr.GetProperty("y").GetSingle(),tr.GetProperty("z").GetSingle());
-   camera.interiorCamera=camGO.AddComponent<Camera>();camera.interiorCamera.fieldOfView=c.GetProperty("camera").GetProperty("field of view").GetSingle();
+   camera.audioListener=new GameObject("Original listener position",scene.world).transform;camera.interiorCamera=camGO.AddComponent<Camera>();camera.interiorCamera.fieldOfView=c.GetProperty("camera").GetProperty("field of view").GetSingle();
    var s=c.GetProperty("cameraSettings");foreach(var name in new[]{"smoothing","fovSmoothing","centerOffset","obstacleHoldOff","doorHoldOff","fieldOfViewOverride"})typeof(InteriorCameraSlice).GetField(name).SetValue(camera,s.GetProperty(name).GetSingle());
    camera.overrideFieldOfView=s.GetProperty("overrideFieldOfView").GetInt32()!=0;camera.disableScrollPastDoors=s.GetProperty("disableScrollPastDoors").GetInt32()!=0;
    var g=c.GetProperty("graphics");camera.staticFov=g.GetProperty("staticFov").GetSingle();camera.dynamicFovMin=g.GetProperty("dynamicMin").GetSingle();camera.dynamicFovMax=g.GetProperty("dynamicMax").GetSingle();camera.useDynamicFov=g.GetProperty("useDynamicFov").GetBoolean();

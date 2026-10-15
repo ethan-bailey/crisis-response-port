@@ -16,6 +16,12 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   const up=await page.evaluate(()=>window.__gameState());
   await page.mouse.move(600,235);
   await page.waitForFunction(a=>window.__gameState().presentation.pose.weaponAngle<a-5,up.presentation.pose.weaponAngle,{timeout:30000});
+  await page.waitForFunction(()=>{
+   const s=window.__gameState().presentation,d=s.worldHeadDirection;
+   const angle=Math.atan2(d[1],Math.abs(d[0]))*180/Math.PI;
+   let expected=(s.pose.head%360+360)%360;if(expected>180)expected-=360;
+   return Math.abs(angle-expected)<3;
+  },null,{timeout:30000});
   const down=await page.evaluate(()=>window.__gameState());
   assert.equal(down.presentation.arms.length,2);assert.ok(down.presentation.arms.every(a=>Number.isFinite(a.upper)&&Number.isFinite(a.lower)));
   assert.ok(Math.abs(up.presentation.pose.head-down.presentation.pose.head)>.01,'Head follows original pose logic');

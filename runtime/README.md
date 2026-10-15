@@ -226,3 +226,9 @@ Lower-body animation is sampled before upper-body overrides, with world/local
 rotation conversion explicit for the two coordinate systems. The renderer mirrors
 camera state and solves IK from actual hand anchors after the weapon transform.
 Camera import preserves the live original input clock.
+
+Only properties bound by the original locomotion clips are restored/sampled by
+the animation adapter. Procedural upper-body transforms persist between frames,
+as the original code expects; resetting the entire skeleton doubled parent/head
+rotations. The original listener-position method also executes, although audio
+playback is still unavailable.

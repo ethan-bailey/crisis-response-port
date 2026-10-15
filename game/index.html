@@ -133,7 +133,12 @@ async function load(){
    if(track.property==="rotation"){const qa=new THREE.Quaternion(...a.value),qb=new THREE.Quaternion(...b.value),q=new THREE.Quaternion();q.slerpQuaternions(qa,qb,alpha);return q.toArray()}
    return new THREE.Vector3(...a.value).lerp(new THREE.Vector3(...b.value),alpha).toArray();
   }
-  function resetPose(){for(const node of manifest.nodes){const group=nodeById.get(node.gameObjectFileID),base=baseTransforms.get(node.gameObjectFileID);group.position.copy(base.position);group.quaternion.copy(base.quaternion);group.scale.copy(base.scale)}}
+  const animatedBindings=new Map(Object.values(clips).flatMap(c=>c.tracks).map(t=>[t.path+"|"+t.property,t]));
+  function resetPose(){for(const track of animatedBindings.values()){
+   const group=nodeByPath.get(track.path);if(!group)continue;
+   const node=manifest.nodes.find(n=>n.path===track.path),base=baseTransforms.get(node.gameObjectFileID);
+   if(track.property==="position")group.position.copy(base.position);else if(track.property==="rotation")group.quaternion.copy(base.quaternion);else group.scale.copy(base.scale);
+  }}
   function samplePose(track,time,clip){const value=sample(track,time);return track.property==="position"?posePosition(track,value,clip,animationData.animator.applyRootMotion):value;}
   function applyTrack(track,time,clip){const group=nodeByPath.get(track.path);if(!group)return;const value=samplePose(track,time,clip);if(track.property==="rotation")group.quaternion.fromArray(value);else if(track.property==="position")group.position.fromArray(value);else if(track.property==="scale")group.scale.fromArray(value)}
   applyAnimation=function(dt){
