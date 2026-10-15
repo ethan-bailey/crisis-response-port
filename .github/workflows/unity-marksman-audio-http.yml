@@ -1,0 +1,58 @@
+name: Unity Marksman WebGL audio fidelity and local HTTP validation
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: unity-personal-marksman-webgl
+  cancel-in-progress: false
+jobs:
+  audio-and-smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      UNITY_SPIKE_SCOPED_REPAIR: "1"
+      UNITY_SPIKE_ALLOW_UNET_EXCLUSION: "1"
+      UNITY_SPIKE_WEBGL: "1"
+      UNITY_SPIKE_FIX_WAV_HEADERS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reclaim headless build space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/share/swift /usr/local/share/powershell
+          docker system prune -af >/dev/null 2>&1 || true
+          df -h .
+      - name: Preserve original asset payload, correct metadata and build Marksman WebGL
+        run: bash scripts/unity_open_spike.sh
+      - name: Emergency Unity Personal deactivation
+        if: always()
+        run: |
+          ID="crisis-unity-personal-$GITHUB_RUN_ID"
+          if docker ps --format '{{.Names}}' | grep -Fxq "$ID"; then
+            docker exec "$ID" /bin/bash -lc '
+              c="$(command -v Unity.Licensing.Client || find /opt/unity -name Unity.Licensing.Client -type f -print -quit)"
+              test -n "$c" && "$c" --deactivate-all --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD"
+            ' > /tmp/unity-emergency-return.log 2>&1 || true
+            docker rm -f "$ID" >/dev/null 2>&1 || true
+          fi
+      - name: Classify results from log instead of workflow exit
+        if: always()
+        run: |
+          mkdir -p work/unity-spike
+          python3 scripts/classify_unity_spike.py --log work/unity-spike/import.log --build-log work/unity-spike/webgl.log --status-file work/unity-spike/status.env --out work/unity-spike/classification.json
+          echo "Build success requires build_exit=0 and webgl-http-smoke.json http_localhost_smoke_ok=true"
+      - name: Preserve source-free logs and manifests only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unity-marksman-webgl-audio-http-evidence
+          path: |
+            work/unity-spike/*.log
+            work/unity-spike/*.json
+            work/unity-spike/*.env
+            work/unity-spike/*.txt
+          retention-days: 14
+          if-no-files-found: warn
