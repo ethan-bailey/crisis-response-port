@@ -7,6 +7,7 @@ converted by the project's pinned unity_mesh_to_obj.py extractor.
 import argparse,hashlib,json,re,subprocess,sys,tempfile
 from pathlib import Path
 from extract_runtime_scene import parse_asset
+from unity_packed_mesh import compressed_mesh, unpack
 
 p=argparse.ArgumentParser()
 p.add_argument("project",type=Path)
@@ -37,22 +38,39 @@ if mg not in index or matg not in index:raise SystemExit("STOP original Circle m
 meshpath=index[mg];matpath=index[matg]
 if meshpath.name!="Circle.asset" or matpath.name!="Wood exit hole.mat":
  raise SystemExit(f"STOP unexpected source prefab mesh/material: {meshpath.name}, {matpath.name}")
+vertices=[];uvs=[];normals=[];triangles=[]
 with tempfile.TemporaryDirectory() as tmp:
  obj=Path(tmp)/"original.obj"
  run=subprocess.run([sys.executable,str(Path(__file__).with_name("unity_mesh_to_obj.py")),str(meshpath),str(obj)],capture_output=True,text=True)
- if run.returncode:raise SystemExit("STOP original mesh decode unsupported: "+run.stderr[:500])
- vertices=[];uvs=[];normals=[];triangles=[]
- for line in obj.read_text().splitlines():
-  if line.startswith("v "):vertices.append([float(x) for x in line[2:].split()])
-  elif line.startswith("vt "):uvs.append([float(x) for x in line[3:].split()])
-  elif line.startswith("vn "):normals.append([float(x) for x in line[3:].split()])
-  elif line.startswith("f "):
-   idx=[int(x.split("/")[0])-1 for x in line[2:].split()]
-   if len(idx)!=3:raise SystemExit("STOP non-triangle exit-hole source")
-   triangles.extend(idx)
+ if run.returncode==0:
+  source_format="Unity 2017 raw vertex channel buffers"
+  for line in obj.read_text().splitlines():
+   if line.startswith("v "):vertices.append([float(x) for x in line[2:].split()])
+   elif line.startswith("vt "):uvs.append([float(x) for x in line[3:].split()])
+   elif line.startswith("vn "):normals.append([float(x) for x in line[3:].split()])
+   elif line.startswith("f "):
+    idx=[int(x.split("/")[0])-1 for x in line[2:].split()]
+    if len(idx)!=3:raise SystemExit("STOP non-triangle exit-hole source")
+    triangles.extend(idx)
+ else:
+  source_format="Unity 2017 compressed mesh packed floats"
+  source_records=parse_asset(meshpath,meshpath.relative_to(root).as_posix())["records"]
+  fields=next((r["fields"] for r in source_records if r["classID"]==43),None)
+  if fields is None:raise SystemExit("STOP compressed original mesh record not found")
+  original_vertices,faces=compressed_mesh(fields)
+  vertices=[[x,y,-z] for x,y,z in original_vertices]
+  triangles=[i for a,b,c in faces for i in (a,c,b)]
+  packed=fields["m_CompressedMesh"]
+  uv_data=packed.get("m_UV")
+  if not uv_data or not int(uv_data.get("m_NumItems",0)):
+   raise SystemExit("STOP original mesh lacks packed UVs; cannot bind source texture faithfully")
+  flat_uv=unpack(uv_data,True)
+  if len(flat_uv)!=len(vertices)*2:
+   raise SystemExit(f"STOP packed UV components {len(flat_uv)} != vertex pairs {len(vertices)}")
+  uvs=[[float(flat_uv[2*i]),float(flat_uv[2*i+1])] for i in range(len(vertices))]
  if not vertices or not uvs or len(uvs)!=len(vertices) or not triangles or any(i>=len(vertices) for i in triangles):
   raise SystemExit("STOP original exit-hole mesh has invalid vertices/UVs")
- if len(normals)!=len(vertices):raise SystemExit("STOP missing source vertex normals")
+ if normals and len(normals)!=len(vertices):raise SystemExit("STOP inconsistent normals")
 
 matrecords=parse_asset(matpath,matpath.relative_to(root).as_posix())["records"]
 mat=next((rec["fields"] for rec in matrecords if rec["classID"]==21),None)
@@ -71,7 +89,7 @@ out={
  "file_guids":{"prefab":"c0bb8365c7bd54b4597570f085f5a153","mesh":mg,"material":matg,"texture":texture_guid},
  "source_paths":{"prefab":rel,"mesh":meshpath.relative_to(root).as_posix(),"material":matpath.relative_to(root).as_posix(),"texture":texturepath.relative_to(root).as_posix() if texturepath else None},
  "prefab_local_transform":{"position":tr.get("m_LocalPosition"),"rotation":tr.get("m_LocalRotation"),"scale":tr.get("m_LocalScale")},
- "mesh":{"positions":vertices,"normals":normals,"uv":uvs,"indices":triangles},
+ "mesh":{"positions":vertices,"normals":normals,"uv":uvs,"indices":triangles,"source_format":source_format,"normals_from_source":bool(normals)},
  "counts":{"vertices":len(vertices),"triangles":len(triangles)//3},
  "note":"Geometry source preserved; no particle simulation, runtime renderer, or material/shader parity is claimed."
 }
