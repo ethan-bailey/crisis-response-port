@@ -18,6 +18,7 @@ on:
       - "runtime/**"
       - "scripts/browser_input_test.mjs"
       - "scripts/iphone_input_smoke.mjs"
+      - "scripts/weapon_smoke.mjs"
       - ".github/workflows/game-movement-smoke.yml"
       - "scripts/game_movement_smoke.mjs"
   workflow_dispatch:
