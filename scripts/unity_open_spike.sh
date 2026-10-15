@@ -39,6 +39,16 @@ if [[ ! -d "$PROJECT/Assets" || ! -f "$PROJECT/ProjectSettings/ProjectVersion.tx
   exit 0
 fi
 note project_detected true
+# Optional audio-header metadata repair on temporary recovery copy only;
+# exact-count guard and PCM content verification; not enabled during template test.
+if [[ "${UNITY_SPIKE_FIX_WAV_HEADERS:-0}" == 1 ]]; then
+  python3 scripts/repair_recovered_wav_headers.py "$PROJECT" --out "$WORK/wav-header-repair.json" --apply || {
+    note build_skipped_reason wav_header_repair_guard_failed
+    exit 0
+  }
+  note wav_header_repair_applied true
+fi
+
 if [[ "${UNITY_SPIKE_WEBGL:-0}" == 1 ]]; then
   python3 scripts/unity_webgl_template_fix.py "$PROJECT" --out "$WORK/webgl-template-settings.json" || {
     note build_skipped_reason webgl_project_settings_validation_failed
@@ -212,5 +222,6 @@ timeout 750 docker exec "$CONTAINER" /opt/unity/Editor/Unity \
   -executeMethod SpikeWebGL.BuildMarksman -logFile /spike/webgl.log \
   > "$WORK/docker-webgl.log" 2>&1
 RC=$?; note build_exit "$RC"
+python3 scripts/audit_unity_webgl_output.py "$WORK/webgl" --out "$WORK/webgl-output-manifest.json" > "$WORK/output-inventory.log" 2>&1 || true
 echo "Marksman WebGL test finished with exit $RC"
 exit 0
