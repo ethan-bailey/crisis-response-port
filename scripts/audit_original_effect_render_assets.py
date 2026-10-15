@@ -74,8 +74,19 @@ for guid in sorted(effect_refs):
             particle_components.append({"classID":rec["classID"],
                                        "mesh":resolved(ref_guid(f,"m_Mesh")),
                                        "materials":[resolved(x.get("guid")) for x in f.get("m_Materials",[]) if x.get("guid")]})
+    shader_refs=[]
+    if "exitHole" in effect_refs[guid]:
+        for material in material_ref:
+            matpath=material.get("path") if material else None
+            if not matpath:continue
+            source_mat=next((r["fields"] for r in parse(matpath) if r["classID"]==21),None)
+            if source_mat is None:raise SystemExit("STOP original exit-hole material lacks Unity material record")
+            shader=source_mat.get("m_Shader",{})
+            shader_refs.append({"material":matpath,"shader":resolved(shader.get("guid")),
+                                "source_render_queue":source_mat.get("m_CustomRenderQueue"),
+                                "color":source_mat.get("m_SavedProperties",{}).get("m_Colors",{}).get("_Color")})
     events.append({"guid":guid,"roles":sorted(effect_refs[guid]),"prefab":rel,
-                   "classCounts":dict(counted),"meshes":mesh_ref,"materials":material_ref,
+                   "classCounts":dict(counted),"meshes":mesh_ref,"materials":material_ref,"sourceShaders":shader_refs,
                    "particleComponents":particle_components,
                    "has_render_geometry":bool(mesh_ref or particle_components)})
 summary={"original_scene":"Assets/Scenes/Mission 01.unity",
