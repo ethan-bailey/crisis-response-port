@@ -2,14 +2,6 @@ name: Audit original Mission 01 player dependencies
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "scripts/audit_original_player.py"
-      - "scripts/export_operator_manifest.py"
-      - "scripts/export_operator_animations.py"
-      - "scripts/export_weapon_manifest.py"
-      - "scripts/unity_mesh_to_obj.py"
-      - ".github/workflows/original-player-audit.yml"
 
 permissions:
   contents: write
