@@ -1,10 +1,5 @@
 name: Unity Marksman WebGL feasibility build
 on:
-  push:
-    paths:
-      - ".github/workflows/unity-marksman-webgl.yml"
-      - "scripts/unity_scoped_legacy_gui_patch.py"
-      - "scripts/unity_webgl_template_fix.py"
   workflow_dispatch:
 permissions:
   contents: read
@@ -31,6 +26,16 @@ jobs:
           sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/share/swift /usr/local/share/powershell
           docker system prune -af >/dev/null 2>&1 || true
           df -h .
+      # Private branch cache: generated Unity import data, never Git history.
+      # This does not cache the huge Unity Docker image on ephemeral GitHub runners.
+      - name: Restore Unity imported Library cache
+        id: library_restore
+        uses: actions/cache/restore@v4
+        with:
+          path: work/unity-spike/recovery/export/ExportedProject/Library
+          key: unity-marksman-library-linux-2022.3.62f1-recoveryv3-${{ hashFiles('scripts/unity_scoped_legacy_gui_patch.py', 'scripts/unity_webgl_template_fix.py', 'scripts/SpikeWebGL.cs', 'scripts/repair_recovered_wav_headers.py') }}
+          restore-keys: |
+            unity-marksman-library-linux-2022.3.62f1-recoveryv3-
       - name: Unity 2022.3 Personal import and Marksman-only WebGL build
         run: bash scripts/unity_open_spike.sh
       - name: Emergency Personal entitlement deactivation
@@ -45,6 +50,26 @@ jobs:
             docker rm -f "$ID" >/dev/null 2>&1 || true
             echo "Emergency deactivation attempted."
           fi
+      - name: Check Library cache size and disk capacity
+        id: library_size
+        if: always()
+        shell: bash
+        run: |
+          DIR="work/unity-spike/recovery/export/ExportedProject/Library"
+          if [ -d "$DIR" ]; then
+            MB=$(du -sm "$DIR" | awk '{print $1}')
+            echo "Library cache directory: ${MB} MiB"
+            # Avoid unbounded GitHub cache uploads and inadvertent disk exhaustion.
+            if [ "$MB" -gt 0 ] && [ "$MB" -le 4096 ]; then
+              echo "can_save=true" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+      - name: Save private Unity imported Library cache
+        if: ${{ always() && steps.library_size.outputs.can_save == 'true' && steps.library_restore.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v4
+        with:
+          path: work/unity-spike/recovery/export/ExportedProject/Library
+          key: ${{ steps.library_restore.outputs.cache-primary-key }}
       - name: Classify captured editor and WebGL logs
         if: always()
         run: |
