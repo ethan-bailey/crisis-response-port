@@ -1,0 +1,67 @@
+name: Unity Personal entitlement seat release
+
+on:
+  push:
+    paths:
+      - ".github/workflows/unity-personal-seat-release.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-seat:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - name: Free disk for Unity 2022.3.62f1 licensing client
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/share/swift /usr/local/share/powershell
+          docker system prune -af >/dev/null 2>&1 || true
+      - name: Attempt to deactivate Personal entitlements, then check remaining seats
+        shell: bash
+        run: |
+          set -uo pipefail
+          IMAGE="unityci/editor:ubuntu-2022.3.62f1-base-3"
+          docker pull "$IMAGE" >/dev/null
+          echo "Running Unity Licensing Client entitlement deactivation, not ULF return"
+          docker run --rm -e UNITY_EMAIL -e UNITY_PASSWORD --entrypoint /bin/bash "$IMAGE" -lc '
+            set +x
+            c="$(command -v Unity.Licensing.Client || find /opt/unity -type f -name Unity.Licensing.Client -print -quit)"
+            test -n "$c" || { echo "LICENSE_CLIENT_MISSING"; exit 127; }
+            echo "PERSONAL_DEACTIVATION_ATTEMPT"
+            "$c" --deactivate-all --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD"
+            rc=$?
+            echo "PERSONAL_DEACTIVATION_EXIT=$rc"
+            echo "PERSONAL_SEAT_QUERY_AFTER_DEACTIVATION"
+            "$c" --show-seats --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD"
+            query=$?
+            echo "PERSONAL_SEAT_QUERY_EXIT=$query"
+            exit "$rc"
+          ' > /tmp/unity-seat-release.raw 2>&1
+          result=$?
+          python3 - <<'PY'
+          import os,re
+          x=open('/tmp/unity-seat-release.raw',errors='replace').read()
+          for k in ('UNITY_EMAIL','UNITY_PASSWORD'):
+              val=os.getenv(k,'')
+              if val:x=x.replace(val,'[REDACTED]')
+          x=re.sub(r'(?im)^.*(?:access.?token|refresh.?token|bearer ).*$','[REDACTED TOKEN]',x)
+          x=re.sub(r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}','[EMAIL]',x)
+          open('/tmp/unity-seat-release-redacted.txt','w').write(x[:140000])
+          print(x[-3500:])
+          PY
+          rm -f /tmp/unity-seat-release.raw
+          echo "Seat cleanup exit: $result"
+          exit 0
+      - name: Upload redacted entitlement-release evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unity-personal-seat-release-evidence
+          path: /tmp/unity-seat-release-redacted.txt
+          if-no-files-found: warn
+          retention-days: 7
