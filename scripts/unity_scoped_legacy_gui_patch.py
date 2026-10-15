@@ -34,6 +34,25 @@ def main():
                           "old_type":old,"new_type":new})
         planned.append((path,"".join(lines)))
     if len(audit)!=7 or len(planned)!=4:raise SystemExit("STOP: seven-site guard rejected")
+    # Diagnostic-only: preserve original UNet tasks verbatim but skip them
+    # in 2022 where UNet is removed. Never fabricate replacement behavior.
+    import os
+    if os.environ.get("UNITY_SPIKE_ALLOW_UNET_EXCLUSION") == "1":
+        unet={
+          "IsServer.cs":("NetworkServer.active","adaab1508848919f83c42310c9c52abe"),
+          "IsClient.cs":("NetworkClient.active","86e5e79a41eca15ee7c3223d03b2a5d5")
+        }
+        for name,(token,guid) in unet.items():
+            matches=list((args.project/"Assets").rglob(name))
+            if len(matches)!=1:raise SystemExit(f"STOP: {name} matches {len(matches)}")
+            path=matches[0]
+            source=path.read_text(encoding="utf-8-sig")
+            meta=Path(str(path)+".meta")
+            if token not in source or not meta.exists() or guid not in meta.read_text(errors="replace"):
+                raise SystemExit(f"STOP: unexpected source or GUID for {name}")
+            planned.append((path,"#if !UNITY_2022_3_OR_NEWER\\n"+source+"\\n#endif\\n"))
+            audit.append({"file":str(path.relative_to(args.project)),
+                          "diagnostic_only":"Unity 2022 temporary UNet exclusion; original source retained"})
     for path,content in planned:path.write_text(content,encoding="utf-8")
     args.out.parent.mkdir(parents=True,exist_ok=True)
     args.out.write_text(json.dumps({"patch_count":7,"modified_files":4,"changes":audit},indent=2)+"\n")
