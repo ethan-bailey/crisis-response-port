@@ -42,3 +42,11 @@ The original recovered archive remains read-only in its private GitHub release. 
 - Fix for **next explicitly authorized/manual** validation: `scripts/unity_open_spike.sh` now applies `docker exec ... chmod -R a+rX /spike/webgl` **after** Unity exits, and **before** manifest/HTTP checking. This changes output file permissions only, not binary contents, gameplay, or original assets. **Not yet tested** by a new Actions run.
 
 The next useful actions are (1) restore the saved incremental cache, (2) produce and privately retain a successful WebGL output on one deliberately scheduled run, and (3) verify its loader/wasm/data files and actual browser execution before a playable claim. Do not start recurring attempts automatically or make original proprietary assets public.
+
+## Next single-run private playtest package — prepared, not dispatched
+
+- `.github/workflows/unity-marksman-audio-http.yml` remains **manual-only** with the same cached `Library` and Bee inputs; it additionally corrects the 250 recovered WAV metadata headers **only in the ephemeral project** and builds the Marksman-only WebGL player.
+- The workflow now **fails closed** before producing a private WebGL archive: the generated file manifest must confirm `index.html`, loader, WASM, and data files; its localhost HTTP smoke check must pass; `build_exit` must be zero; and Unity Personal deactivation and seat query must both exit zero.
+- On all gates passing, it uploads a **two-day-retention artifact** named `PRIVATE-marksman-webgl-player` to the existing private GitHub Actions run for owner review. This does **not** publish an internet-accessible game or establish iPhone Safari runtime correctness. Private evidence-only logs remain independent.
+- The `chmod -R a+rX /spike/webgl` host-output read-permission fix in `scripts/unity_open_spike.sh` is already committed. This is the only build artifact access change and does not rewrite recovered assets.
+- **No new licensed Unity compilation was launched** for this packaging-only workflow edit, at the user's request to minimize unnecessary Actions runs. The next WebGL attempt should be one deliberate, cached, consolidated package+audio+smoke run rather than several exploratory jobs.
