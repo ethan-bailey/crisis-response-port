@@ -39,6 +39,8 @@ A source-specific input regression was identified:
 
 Commits (feature branch, in order): `a0c6e07`, `04d00fc`, `e9ce7d3`, `7a167b3`, `e797fa5`, `7e76389`. **The new browser regression changes must be independently run and evaluated; do not report passing without fresh CI evidence.**
 
+Verification after those edits: all **11 input unit tests** from the committed `scripts/browser_input_test.mjs` passed in an isolated JavaScript execution of the exact committed module and test source, using Event/EventTarget stand-ins. This is not a native Node.js, GitHub Actions, Chromium, WebKit or actual iPhone test. Vercel reported a READY Git preview at commit `c7e445fa8f33653629783d8bd86ffdc42dd209c2`, but this does not establish a playable page; deployment-log inspection returned HTTP 403 for the connected Vercel scope. The PR's earlier browser test results belong to commit `0a676c5`, not these edits.
+
 ## Immediate verification gate — before more behavior changes
 
 1. Confirm PR #7's current head and branch. Inspect changed files; do not overwrite concurrent agent work.
