@@ -22,7 +22,8 @@ match = re.search(r"(?m)^guid: ([0-9a-f]{32})$", script_meta.read_text())
 if not match:
     raise SystemExit("Original BallisticWindow GUID missing")
 window_guid = match.group(1)
-records = parse_asset(root / scene, scene)["records"]
+scene_asset = parse_asset(root / scene, scene)
+records = scene_asset["records"]
 by_id = {r["fileID"]: r for r in records}
 by_go = collections.defaultdict(list)
 for r in records:
@@ -103,11 +104,36 @@ for r in records:
     })
 if not windows:
     raise SystemExit("No original BallisticWindow components recovered")
+material_paths = {}
+for meta in (root / "Assets").rglob("*.meta"):
+    match = re.search(r"(?m)^guid: ([0-9a-f]{32})$", meta.read_text(errors="replace"))
+    if match:
+        material_paths[match.group(1)] = meta.with_suffix("")
+original_materials = {}
+for key in sorted(material_refs):
+    file_id, guid = key.split(":", 1)
+    path = material_paths.get(guid)
+    if not path or not path.is_file():
+        raise SystemExit("Window material asset unresolved: "+key)
+    records_in_asset = parse_asset(path, path.relative_to(root).as_posix())["records"]
+    material = next((r["fields"] for r in records_in_asset if r["classID"] == 21), None)
+    if material is None:
+        raise SystemExit("Source window material record missing: "+str(path))
+    saved = material.get("m_SavedProperties", {})
+    original_materials[key] = {
+        "sourcePath":path.relative_to(root).as_posix(),
+        "shader":ref(material, "m_Shader"),
+        "renderQueue":material.get("m_CustomRenderQueue"),
+        "colors":saved.get("m_Colors", {}),
+        "floats":saved.get("m_Floats", {}),
+        "mainTexture":saved.get("m_TexEnvs", {}).get("_MainTex")
+    }
 summary = {
-    "scene":scene,"originalScriptGUID":window_guid,"windowCount":len(windows),
+    "scene":scene,"sceneSha256":scene_asset["sha256"],"originalScriptGUID":window_guid,"windowCount":len(windows),
     "componentClassCounts":dict(sorted(component_counts.items())),
     "uniqueMeshReferences":dict(mesh_refs),
     "uniqueMaterialReferences":dict(material_refs),
+    "sourceWindowMaterials":original_materials,
     "windowsWithDirectRenderer":sum(any(c["classID"] in (23,137,199,212) for c in w["direct"]) for w in windows),
     "windowsWithDirectMeshFilter":sum(any(c["classID"] == 33 for c in w["direct"]) for w in windows),
     "windowsWithImmediateChildRenderer":sum(any(c["classID"] in (23,137,199,212)
