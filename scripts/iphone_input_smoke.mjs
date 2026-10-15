@@ -21,7 +21,10 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
     assert.equal(await page.evaluate(()=>window.__gameState().weaponsLoaded),false,'Playable while inactive weapon is blocked');
     assert.ok([...textureRequests.values()].every(count=>count===1),'One request per shared character texture');
     releaseSidearm();
-    const buttons = page.locator('#controls button');
+    assert.equal(await page.locator('#swap').isVisible(), false, 'Unimplemented swap stays out of the play area');
+    assert.equal(await page.locator('#help').isVisible(), false, 'Help banner stays out of the play area');
+    const buttons = page.locator('#controls button:visible');
+    assert.equal(await buttons.count(), 7, 'All implemented controls remain available');
     for (const button of await buttons.all()) {
       const box = await button.boundingBox();
       assert.ok(box && box.width >= 44 && box.height >= 44 && box.x >= 0 && box.y >= 0 && box.x + box.width <= 852 && box.y + box.height <= 393, 'Touch target is usable in landscape');
