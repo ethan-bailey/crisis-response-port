@@ -75,6 +75,16 @@ export class BrowserInput {
       if (event.pointerId !== gesture?.id) return;
       const finished = gesture;
       gesture = null;
+      // The final pointerup can have a different coordinate even if the
+      // browser omitted the last pointermove. Never misclassify a swipe as a tap.
+      if (event.type === 'pointerup' &&
+          Number.isFinite(event.clientX) && Number.isFinite(event.clientY)) {
+        const [x, y] = coords(event);
+        if ((x - finished.x) ** 2 + (y - finished.y) ** 2 >= dragThreshold ** 2)
+          finished.dragged = true;
+        if (finished.dragged && (x !== finished.lastAimX || y !== finished.lastAimY))
+          onAim(event); // Preserve the actual final target, not a stale move.
+      }
       onAim(null); // Freeze the final character-local aim direction.
       if (surface.hasPointerCapture?.(event.pointerId)) surface.releasePointerCapture(event.pointerId);
       // Cancelled/capture-lost gestures and long holds must never shoot.
@@ -95,7 +105,10 @@ export class BrowserInput {
           (x - gesture.x) ** 2 + (y - gesture.y) ** 2 >= dragThreshold ** 2) {
         gesture.dragged = true;
       }
-      if (gesture.dragged) onAim(event);
+      if (gesture.dragged) {
+        gesture.lastAimX = x; gesture.lastAimY = y;
+        onAim(event);
+      }
     });
     for (const type of ['pointerup', 'pointercancel', 'lostpointercapture'])
       this.listen(surface, type, release);
