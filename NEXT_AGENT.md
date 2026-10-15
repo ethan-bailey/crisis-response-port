@@ -1,82 +1,87 @@
-# Crisis Response browser port — next-agent handoff
+# Crisis Response browser port — next-agent instructions
 
-Checkpoint: 2026-10-15. Branch: `codex/weapon-actions-checkpoint`.
+Updated 2026-10-15 after the firing/reload milestone was verified and privately published.
 
-## Read this first
+## Current result
 
-The user asked us to wrap up and leave this instruction set. **This checkpoint is work in progress and has NOT been deployed or browser-verified.** Do not describe firing/reloading or the latest aim fix as delivered to the live site.
+- Browser branch: `codex/weapon-actions-checkpoint`.
+- Draft PR: https://github.com/ethan-bailey/crisis-response-port/pull/8
+- Verified game code: `6b94297cb07c3b0684933cb055419aea9c185da5`. Subsequent documentation-only commits do not change this build.
+- Private playable preview: https://crisis-response-runtime.craftysnipe13.chatgpt.site
+- Published Site source: `c6daf0b4568f112a2c7154ed71e9f87e3f039040`.
+- Site project: `appgprj_6acfef7174888191bc2bc2f269f60acc`.
+- Successful deployment: `appgdep_6ad1076460888191b8f5f5658942364d`.
+- Version: `appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_9066e047ec848191b51d240dea88d4e2`.
 
-Last fully verified game commit: `0a676c5d02085ee47509bff84744aebb0132c86e` on `codex/iphone-input-parity-foundation`, draft PR [#7](https://github.com/ethan-bailey/crisis-response-port/pull/7). Main remains unchanged. Preserve this known-good baseline until the checkpoint passes the checks below.
+The preview now supports drag-to-aim, tap-to-fire, held FIRE, source M4 ammunition/bolt mechanics, recoil and the source reload sequence. Released aim stays in its last world direction relative to the moving character. Native and Chromium/WebKit tests passed; this is NOT complete 1:1 game parity or an actual iPhone device test.
 
-Last verified private preview: https://crisis-response-runtime.craftysnipe13.chatgpt.site
+A separate agent owns Unity feasibility/utility repairs. **Do not edit their Unity files/workflows or reset main/the foundation branch to this branch.** This browser branch intentionally starts before their Unity commits. Integrate later through reviewed changes; preserve both lines of work. PR #7 on `codex/iphone-input-parity-foundation` contains the prior camera milestone and subsequent Unity work.
 
-It contains the original camera/upper-body aiming milestone, **not this checkpoint**. Its published Site source is `0f9b4a41b569247f835274b5102245ce484c36a4`. Site identity is `appgprj_6acfef7174888191bc2bc2f269f60acc`; preserve its owner-private audience. No new Site is needed.
+## User constraints
 
-## User requirements and authorization
+- Target: play the original Crisis Response in a browser on iPhone 16, eventually 1:1 behavior.
+- ONLY port recovered developer systems. Do not invent substitute gameplay. Mark engine/device/rendering adapters and unavailable systems explicitly.
+- The user wants proposed new milestones verified with them before execution. The firing/ammunition/reload and touch-aim milestone was authorized and is now complete within the documented scope. Ask before beginning another milestone.
+- Touch controls: dragging aims and never fires; a short tap fires the last direction without retargeting; FIRE hold requests automatic fire. Releasing a drag must not leave a fixed invisible screen/world point to track.
+- The user has no computer and depends on hosted results. Keep updates concise and avoid unnecessary token use.
+- Preserve private hosting; do not merge main without authorization.
 
-- Target: Crisis Response in a browser on iPhone 16, eventually 1:1 behavior.
-- ONLY use recovered original developer systems. Do not replace unported systems with invented gameplay. Engine/device/renderer adapters are necessary but must be explicit and scoped.
-- Current authorized milestone: original firing, ammunition and reload logic connected to the existing weapon/touch controls, verified, then another private build.
-- Touch: **drag to aim; a short tap fires the last aimed direction. Dragging alone must not fire.** A dedicated hold-to-fire button can retain automatic fire.
-- Latest correction: after a drag ends, preserve its **world direction relative to the character**. Do not keep raycasting the last screen coordinate every frame; that creates an invisible fixed pointer and makes the character turn when walking past it.
-- Ask the user to verify the plan before starting a new milestone outside this scope. They authorized this milestone already.
-- Keep updates short and avoid unnecessary token use. They have no computer and rely on repository/hosted results.
+## Verified evidence
 
-## What this checkpoint contains
+These runs test the exact code commit above:
 
-- `scripts/extract_weapon_runtime.py`: recovers source M4 settings, original selected weapon methods, full magazine and equipment logic, bolt cycle, reload/bolt tasks, arm transition methods, sampled audio and muzzle-flash sprite animation. Source hashes and adaptations are in `game/assets/weapon-runtime.json.gz`.
-- `runtime/Original/Weapons/`: generated original methods/classes in a scoped namespace. Includes `ChangeMagazine`, `WorkBolt`, `CyclingBolt`, `Magazine`, `Equipment`, `WeaponBarrel`, source trigger/recoil methods, original projectile spawning and selected flight methods.
-- `runtime/Engine/WeaponHost.cs`: explicit transport host and task scheduler; invokes original task lifecycle and source mechanics. Test loadout is a full 30-round magazine + chambered round and ONE reserve magazine. This is a scoped test loadout, not recovered saved-player equipment.
-- `runtime/Engine/ProjectileFlightHost.cs`: non-explosive projectile setup, bridge and explicit unavailable material/limb boundary. Source flight runs, but damage/penetration/fragmentation is NOT integrated.
-- Browser bridge adds `InitializeWeapons` and `StepWeapons`. Presentation takes the weapon's original recoil values; rendering takes original transition targets before the existing original analytic IK solve.
-- `game/weapon-runtime.mjs`: original audio clips and source sprite atlas/animation for muzzle flash. No synthesized weapon audio or invented tracer. The source M4 projectile has no trace prefab.
-- `game/aim-direction.mjs`: device adapter retaining a character-relative world vector. `game/index.html` consumes pointer coordinates only when a new aim event arrives, then reconstructs a moving target from the shoulder plus that vector.
-- `game/browser-input.mjs`: touch tap/drag distinction (8 CSS pixel threshold, 300 ms maximum tap). Touch down alone does not aim or fire. Mouse hover still updates aim when actual mouse events arrive; mouse hold and FIRE hold use original trigger input. Tap presses are queued through original InputKey frames and cleared on page lifecycle loss.
-- `runtime/Checks/WeaponContracts.cs` and `scripts/aim_direction_test.mjs` added. Existing shared-input tests updated for the new touch semantics.
-- `scripts/extract_runtime_sources.py` now emits a partial Projectile class so the selected original flight methods can share its original ballistics math.
-- Runtime workflow regenerates weapon selections from original recovery and runs the native contracts. Game workflow adds aim-direction unit tests. **No end-to-end weapon browser test exists yet.**
+- Native/runtime plus WebAssembly: https://github.com/ethan-bailey/crisis-response-port/actions/runs/38772950394
+- Complete game/browser checks: https://github.com/ethan-bailey/crisis-response-port/actions/runs/38772950366
+- Game artifact: `11991399536`, `crisis-response-mission01-game-smoke`. Contains compiled `work/game-runtime/wwwroot/`, JSON reports and screenshots.
 
-## Verification actually completed
+Coverage:
 
-- All Engine + Original C# sources compile with .NET 8 Roslyn locally.
-- The native `WeaponContracts` passes: initialization preserves clock; 30+1 shots exhaust the weapon; bolt locks open; original reload and bolt/arm tasks finish; reload produces 29 magazine rounds + one chambered round; reserve is depleted; no firing without trigger input.
-- 23 Node regressions pass across input ownership/lifecycle, touch tap vs drag, direction retention, locomotion poses, loading/binary geometry.
-- New JS modules pass `node --check`.
-- **Not verified:** actual WebAssembly publish, Chromium/WebKit rendering and audio, actual iPhone touch behavior, magazine visual motion, muzzle flash orientation/pivot, runtime update ordering, camera/upper-body regressions with the added weapon host. Do not publish based only on the native result.
+- 23 Node regressions: independent input ownership, cancellation/lifecycle, touch tap vs drag, retained direction, locomotion poses, loading/binary geometry.
+- Native WeaponContracts: clock preservation; 30 magazine rounds plus chamber; 31 shots then empty-bolt lock; source reload/bolt tasks complete; reserve consumed; no infinite ammunition/no idle firing; serialized infinite tangents parse under localized infinity symbols.
+- Chromium and WebKit: scene contacts, movement/stopping, landscape controls/sprint/deferred sidearm, perspective camera and original head/torso aiming.
+- `scripts/weapon_smoke.mjs` in both engines: no startup shots, aim retained while walking in both directions, screen tap fires once without retargeting, tactical reload conserves ammo, held FIRE empties the original 30+1 mechanism, empty lock and empty reload work, finite IK and preserved camera settings. Native touch drag without firing is tested in Chromium; WebKit touch tap is native, while drag separation is additionally covered by the shared input unit test. No physical iPhone was available.
 
-## Immediate next steps, in order
+Inspect `weapon-smoke.json`, `weapon-chromium.png`, `weapon-webkit.png`, presentation and input reports in the artifact. Both final screenshots were visually checked.
 
-1. Check out this checkpoint branch and read any CI results associated with its head. Fix compilation/runtime failures before considering publication. The checkpoint push may start existing workflows automatically; reuse those runs rather than dispatching duplicates.
-2. Add a meaningful browser weapon smoke test in Chromium and WebKit at 852×393, and wire it into `.github/workflows/game-movement-smoke.yml`. Verify:
-   - No startup/idle shots.
-   - Touch drag changes aim and never fires.
-   - A short screen tap fires exactly once without changing the last aim direction.
-   - Move left/right after releasing an upward or leftward drag; direction vector remains unchanged and facing does not flip toward an old screen point.
-   - FIRE hold cycles the original M4; release stops requesting shots; magazine/chamber accounting and empty-bolt lock are correct.
-   - Reload visibly advances source arm transitions, blocks inappropriate fire, finishes, consumes reserve, and works after empty lock as well as tactical reload.
-   - Cancellation, blur, visibility loss, and simultaneous movement touch do not leave firing stuck or deliver queued shots later.
-   - No page errors, finite IK, original camera/FOV preserved.
-3. Review these known incomplete adapters before claiming parity:
-   - `CharacterBody.MoveMagazineToHand` is now an original source method, but its transport hand/grab-point transforms are constructed separately from actual rendered hands. Bind them to the exact serialized hand/grab-point references; current reload magazine visual pose is not verified.
-   - `WeaponComponentMagazine.Drop` emits a removal event and hides a transport object. This is NOT original dropped-magazine physics. The JS weapon model is not yet synchronized with this transport magazine, so appearance may remain attached during reload. Implement the actual source presentation/physics bridge or disclose and leave unsupported; do not fake it.
-   - Projectile generic hits explicitly terminate with Error because material/limb components are not yet imported. This checkpoint does not do damage or verified penetration. Do not turn this into an invented hitscan system.
-   - Casing ejection emits a transport event; physical casing rendering/rigid-body simulation remains pending.
-   - Bullet time, smoke, muzzle blast forces, and action-music calls are recorded as explicit events, not implemented. Muzzle audio propagation/mixer parity is also absent; sampled clip playback is only a presentation bridge.
-   - `AnimationCurve.clampOutside` was added for selected weapon curves; verify Unity's actual clamp/wrap interpretation for these serialized curves before calling it parity. Existing strict behavior remains default for other curves.
-   - Euler getters were added to the engine for source arm/weapon transforms. The current adapter is intended for this planar yaw/Z pose; validate its conventions with left/right aim and hand transitions.
-   - Original `WeaponBase.direction` stays at its initial spawn direction, as original CharacterBody.Turn does not call weapon.Turn afterward. Do not assign it every frame; that would double-flip projectile X while aiming left.
-   - Native source steps and rendering use a scoped scheduler, not the complete original CharacterBody/behavior tree/update ordering. Verify the actual ordering rather than claiming full runtime parity.
-4. Run native runtime checks, existing movement/contact/input/presentation browser tests, and the new weapon browser test. Collect artifacts; visually inspect the weapon/aim screenshots. Fix observed regressions, and make a final tested commit.
-5. Publish only that verified build. Replace BOTH changed game files/assets and the compiled `runtime-web` output from the SAME final workflow artifact. New JS calls methods absent from the old live runtime. Fix the artifact runtime index base path from `/` to `/runtime-web/`.
-6. Update a draft PR or PR #7 with exact scope, passing workflow links, limitations and live preview. Do not merge main without authorization. Report the playable result concisely; do not claim complete 1:1 parity.
+## Implementation map
 
-## Recovery, build and repository details
+- `scripts/extract_weapon_runtime.py` extracts settings, source hashes, selected original methods/classes and assets from the original recovery. `game/assets/weapon-runtime.json.gz` carries configuration/provenance. Audio, muzzle-flash atlas and magazine assets are in `game/assets/weapon-runtime/`.
+- `runtime/Original/Weapons/`: source trigger/recoil/spawn methods, full source Magazine/Equipment and bolt mechanics, ChangeMagazine/WorkBolt tasks, selected ArmIKSolver transitions and projectile flight methods. Namespace/import/transport adaptations are explicit; this is not the entire WeaponBase/CharacterBody lifecycle.
+- `runtime/Engine/WeaponHost.cs`: live transport views, configuration, task lifecycle scheduler and browser effect events. Original mechanical algorithms remain in Original/Weapons. Uses an explicit test loadout: full 30-round magazine + chambered round and one reserve magazine, NOT recovered saved-player equipment.
+- `runtime/Engine/ProjectileFlightHost.cs`: selected non-explosive projectile setup; source flight calls the scene query adapter. Material/limb interactions are unavailable and currently terminate with Error. Do not describe this as working damage or penetration.
+- Browser bridge: `InitializeWeapons` after `InitializePresentation`, then `StepWeapons`. The old live runtime cannot service these calls; always deploy matching compiled runtime and game sources.
+- `game/presentation.mjs`: original pose/recoil outputs, source arm transition targets and original analytic IK; source smoothing is applied only when its transition/smoothing flag requests it. Hand/grab-point transforms and magazine prefab hierarchy bind through exact serialized references to rendered world poses.
+- `game/weapon-runtime.mjs`: source sampled audio, source muzzle-flash sprites/animation and original magazine model. No invented tracer: this source M4 projectile has no trace prefab.
+- `game/aim-direction.mjs` and `game/browser-input.mjs`: device adapters. Touch tap threshold is 8 CSS pixels/300 ms. Canvas down alone neither aims nor fires; movement initiates a drag. Real mouse movement can aim; mouse hold/FIRE hold request the original trigger. Tap pulses pass through original InputKey frames; lifecycle loss clears queued taps/reloads.
+- `game/index.html` consumes pointer coordinates only when a new aim event arrives, then moves the target with the shoulder using the stored world vector. Do not return to per-frame raycasting of stale pointer coordinates.
+- `scripts/extract_runtime_sources.py` emits a partial global Projectile class for the selected original flight methods.
+- `scripts/export_weapon_manifest.py` accepts an optional original component prefab and output name for the recovered magazine.
 
-Repository: https://github.com/ethan-bailey/crisis-response-port (private).
+## Known limits and next milestone
 
-The workspace is a partial checkout, not a usable local Git clone. Repo writes in this session use GitHub blob/tree/commit/ref tools. Use a base tree and branch lease to avoid overwriting unrelated work. Binary assets need base64 blobs. Keep code and recovery in GitHub; no duplicate Library repository is necessary.
+Before new work, propose the scope to the user. A reasonable next milestone is original projectile/material interactions and impact effects, before adding damage/AI; confirm rather than executing this suggestion automatically.
 
-Original recovery is downloadable by existing Actions using:
+Preserve these boundaries:
+
+1. No material impacts, verified penetration/fragmentation or limb damage yet. Import actual serialized BallisticMaterial dependencies and source methods. Do not replace them with invented hitscan/damage logic.
+2. Casing ejection and dropped-magazine physics are explicit transport events, not physical source simulation. The original magazine model follows reload poses, but discarded copies/rigid bodies remain unported.
+3. Smoke, muzzle blast forces, bullet time and action music are recorded event boundaries. Audio uses original samples but not full source propagation/mixer behavior.
+4. Complete original behavior tree/CharacterBody update ordering, physiology/respiration/injury, interactive doors, alternate cameras and post effects remain unfinished. Original camera/upper-body normal methods run, but full visual parity is not proven.
+5. Selected weapon AnimationCurves clamp outside their key ranges. Verify the native serialized wrap mapping in Unity before certifying this as exact parity. Other curves retain strict default behavior. PrefabCloner preserves the selected clamp setting.
+6. Euler getters support the planar yaw/Z presentation used here; validate before using them for arbitrary 3D gameplay.
+7. WeaponBase.direction stays at its spawn direction: original CharacterBody.Turn does NOT call weapon.Turn afterward. Assigning it every frame double-flips projectile X when aiming left.
+8. Reload manipulation must not be treated as IsLoweringWeapon; source has separate flags. Do not invent that coupling.
+9. Full default component/equipment selection and complete weight/alignment parity are not recovered by this scoped loadout. Base weapon and magazine behavior must not be presented as all loadout combinations.
+
+Regression lesson: WebKit's locale rejected `float.Parse("Infinity")`. The asset reader now explicitly recognizes `Infinity`/`-Infinity` and uses invariant parsing for other strings. Keep the localized-symbol native regression. Browser error UI includes the actual .NET exception message plus stack, rather than stack alone.
+
+## Recovery and commands
+
+Private repo: https://github.com/ethan-bailey/crisis-response-port
+
+Some sessions have only a partial checkout, not a usable local Git clone. Use the GitHub connector's blob/tree/commit/ref tools with a base tree and expected branch SHA when necessary. Binary assets use base64 blobs. Never overwrite concurrent branch changes.
+
+Existing Actions recover the original project using:
 
 ```bash
 gh run download 38582072502 --repo "$GITHUB_REPOSITORY" --name crisis-response-recovery-direct-v3-1 --dir work/recovery
@@ -88,26 +93,29 @@ python3 scripts/extract_runtime_scene.py work/recovery/export/ExportedProject wo
 dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- work/runtime/scene-package.json
 ```
 
-Use `.github/workflows/game-movement-smoke.yml` for the complete browser build and tests. It vendors pinned PhysX, generates `mission01.crg`, builds .NET WebAssembly, and uploads the compiled runtime plus evidence. No Unity license/key is needed for this selected .NET/Three/PhysX runtime.
+`.github/workflows/game-movement-smoke.yml` builds .NET WebAssembly and pinned PhysX and runs browser tests. `.github/workflows/runtime-foundation.yml` regenerates original selections and runs runtime/native/WebAssembly checks. Reuse automatic runs for the current commit instead of dispatching duplicates. No Unity key/license is needed for this selected browser runtime; Unity feasibility is a separate effort owned by the other agent.
 
-Last verified previous milestone workflows (NOT validation of this checkpoint):
-
-- Browser: https://github.com/ethan-bailey/crisis-response-port/actions/runs/38738153273
-- Runtime: https://github.com/ethan-bailey/crisis-response-port/actions/runs/38738153275
-
-## Workspace paths if this environment survives
+Paths if the workspace survives:
 
 - Repo: `/workspace/scratch/0234318e821a/crisis-response-port`
-- Recovery: `/workspace/scratch/0234318e821a/recovery/export/ExportedProject`
+- Recovered Unity data/source: `/workspace/scratch/0234318e821a/recovery/export/ExportedProject`
 - Decompiled reference: `/workspace/scratch/0234318e821a/recovery/decompiled`
 - Site: `/workspace/sites/crisis-response-runtime`
-- Local SDK: `/tmp/crisis-dotnet` (.NET 8.0.415). Full MSBuild has sandbox process limitations here; direct Roslyn works. Prefer the existing Actions for ordinary build/QA.
-- Local direct native contract compile response: `/tmp/weapon-check.rsp`, runner `/tmp/weapon-contract-runner.cs`; executable `/tmp/weapon-check.dll`. These temporary files are not required by the repo.
+- Latest extracted browser artifact: `/tmp/weapon-browser-final` (temporary).
 
-If these paths disappear, restore from GitHub and the recovery artifact. Do not rely on transient files or conversational memory as the only copy of a change.
+Do not assume `/tmp` SDKs or artifacts persist. Restore from GitHub/Actions when needed. Repository-backed code should remain in GitHub rather than being duplicated in Library.
 
-## Private hosting workflow
+## Publishing another verified browser build
 
-Use the current Sites skill. Open the existing Site through its canonical source helper before editing, preserve `.openai/hosting.json`, and refresh the short-lived credential through native Sites tools. Never persist or print the credential. Package and push the exact final source with the helper, then use `save_version_and_deploy_private`. Do not ask for a separate publishing confirmation within the authorized task.
+Read the current Sites skill. Reuse the project ID and owner-private audience above; get_site confirmed only the owner is allowed, with no groups/external visitors. Open the existing Site through the canonical source helper before editing. Do not create a new Site or change its audience.
 
-The managed environment has no supported local browser plugin; previous browser QA runs in GitHub Actions. Do not improvise a local browser/server against the managed Sites policy. If a packaging helper reports success but the archive fails `gzip -t`, rebuild the same source archive with the supported non-TTY `package-site.mjs`, then validate it before upload. Retain deployment/version IDs on retries; preserve privacy.
+1. Finish source and checks on the isolated browser branch.
+2. Use the compiled runtime artifact from the SAME verified game commit. Replace `dist/runtime-web/` with `work/game-runtime/wwwroot/`; change its index base from `/` to `/runtime-web/`.
+3. Copy changed game files/assets into `dist/game/`. Keep the original .openai/hosting.json identity and static.directory=dist.
+4. Refresh the short-lived source credential; keep it only in memory and pass through helper stdin, never files/arguments/logs.
+5. Run the canonical site-workflow helper to commit, push and package the exact source. Pass its complete opening result and ordered commands; no duplicate build is necessary for already compiled static assets.
+6. Validate the archive with `gzip -t`. The TTY helper has sometimes produced a truncated archive despite a successful result. Rebuild the SAME source using the supported non-TTY package-site helper when that happens, then validate before upload.
+7. Publish with save_version_and_deploy_private; retain saved-version/deployment IDs on retries and poll only non-terminal deployments. Successful native deployment status/URL verifies publication.
+8. Update this handoff and draft PR with exact code SHA, evidence, Site source and limits. Do not merge main automatically.
+
+Managed Linux lacks the supported local browser plugin in this session, so QA runs in Actions. Do not improvise an unsupported local browser/server. Keep the private preview on its last verified build if checks fail.
