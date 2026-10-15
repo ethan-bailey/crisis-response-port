@@ -66,61 +66,87 @@ export class BrowserInput {
     });
   }
 
-  // Browser gesture classification only. The original InputHandler remains the
-  // authority for interpreting a fire press; this adapter never fires weapons.
-  bindAim(surface, onAim, { onTap = () => {}, dragThreshold = 8, maxTapDuration = 350 } = {}) {
+  // Touch interaction only. Original C# InputHandler and weapon logic decide
+  // shots, fire modes and recoil. A gesture may hold the raw trigger, but this
+  // adapter never computes a fire rate or simulates a projectile.
+  bindAim(surface, onAim, {
+    onTap = () => {}, onHoldChange = () => {}, onGesture = () => {},
+    dragThreshold = 11, holdDelay = 210, maxTapDuration = 350,
+    schedule = (fn, delay) => setTimeout(fn, delay),
+    cancelSchedule = token => clearTimeout(token)
+  } = {}) {
     let gesture = null;
     const coords = event => [event.clientX ?? 0, event.clientY ?? 0];
-    const release = event => {
-      if (event.pointerId !== gesture?.id) return;
-      const finished = gesture;
+    const isDrag = (g, x, y) =>
+      (x - g.x) ** 2 + (y - g.y) ** 2 >= dragThreshold ** 2;
+    const stopTimer = g => {
+      if (g?.timer !== null && g?.timer !== undefined) {
+        cancelSchedule(g.timer);
+        g.timer = null;
+      }
+    };
+    const stopHold = g => {
+      if (g.state === 'held') onHoldChange(false, g.id);
+    };
+    const endGesture = (event, cancelled = false) => {
+      const g = gesture;
+      if (!g || (event && event.pointerId !== g.id)) return;
       gesture = null;
-      // The final pointerup can have a different coordinate even if the
-      // browser omitted the last pointermove. Never misclassify a swipe as a tap.
-      if (event.type === 'pointerup' &&
+      stopTimer(g);
+      if (!cancelled && event?.type === 'pointerup' &&
           Number.isFinite(event.clientX) && Number.isFinite(event.clientY)) {
         const [x, y] = coords(event);
-        if ((x - finished.x) ** 2 + (y - finished.y) ** 2 >= dragThreshold ** 2)
-          finished.dragged = true;
-        if (finished.dragged && (x !== finished.lastAimX || y !== finished.lastAimY))
-          onAim(event); // Preserve the actual final target, not a stale move.
+        if (isDrag(g, x, y) && g.state === 'pending') g.state = 'aiming';
+        if (g.state !== 'pending' && (x !== g.lastAimX || y !== g.lastAimY))
+          onAim(event);
       }
-      onAim(null); // Freeze the final character-local aim direction.
-      if (surface.hasPointerCapture?.(event.pointerId)) surface.releasePointerCapture(event.pointerId);
-      // Cancelled/capture-lost gestures and long holds must never shoot.
-      if (event.type === 'pointerup' && !finished.dragged &&
-          event.timeStamp - finished.startedAt <= maxTapDuration) onTap(event);
+      const wasPending = g.state === 'pending';
+      stopHold(g); // Release a held original trigger on every exit path.
+      onAim(null); // Retain final character-local aim.
+      onGesture('idle', g.id);
+      if (surface.hasPointerCapture?.(g.id)) surface.releasePointerCapture(g.id);
+      // No browser click/double-click delay and no fake weapon timing.
+      if (!cancelled && event?.type === 'pointerup' && wasPending &&
+          event.timeStamp - g.startedAt <= maxTapDuration) onTap(event);
     };
     this.listen(surface, 'pointerdown', event => {
       if (event.button !== 0 || gesture !== null) return;
       event.preventDefault();
       const [x, y] = coords(event);
-      gesture = { id: event.pointerId, x, y, startedAt: event.timeStamp, dragged: false };
-      surface.setPointerCapture(event.pointerId);
+      const g = {id:event.pointerId,x,y,startedAt:event.timeStamp,
+        state:'pending',timer:null,lastAimX:x,lastAimY:y};
+      gesture = g;
+      surface.setPointerCapture(g.id);
+      onGesture('pending',g.id);
+      g.timer = schedule(() => {
+        if (gesture !== g || g.state !== 'pending') return;
+        g.timer = null;
+        g.state = 'held';
+        onGesture('held',g.id);
+        onHoldChange(true,g.id);
+      }, holdDelay);
     });
     this.listen(surface, 'pointermove', event => {
-      if (event.pointerId !== gesture?.id) return;
+      const g = gesture;
+      if (!g || event.pointerId !== g.id) return;
       const [x, y] = coords(event);
-      if (!gesture.dragged &&
-          (x - gesture.x) ** 2 + (y - gesture.y) ** 2 >= dragThreshold ** 2) {
-        gesture.dragged = true;
+      if (g.state === 'pending' && isDrag(g, x, y)) {
+        g.state = 'aiming';
+        stopTimer(g);
+        onGesture('aiming',g.id);
       }
-      if (gesture.dragged) {
-        gesture.lastAimX = x; gesture.lastAimY = y;
+      if (g.state === 'aiming' ||
+          (g.state === 'held' && isDrag(g,x,y))) {
+        g.lastAimX = x;g.lastAimY = y;
         onAim(event);
       }
     });
-    for (const type of ['pointerup', 'pointercancel', 'lostpointercapture'])
-      this.listen(surface, type, release);
+    this.listen(surface, 'pointerup', event => endGesture(event));
+    this.listen(surface, 'pointercancel', event => endGesture(event,true));
+    this.listen(surface, 'lostpointercapture', event => endGesture(event,true));
     this.listen(surface, 'contextmenu', event => event.preventDefault());
-    // Safari can suspend or resize without dispatching pointerup.
-    this.resetAim = () => {
-      const previous = gesture;
-      gesture = null;
-      if (previous) onAim(null);
-      if (previous && surface.hasPointerCapture?.(previous.id))
-        surface.releasePointerCapture(previous.id);
-    };
+    // Safari may suspend, rotate or abandon an active captured touch.
+    this.resetAim = () => endGesture(null,true);
   }
 
   bindLifecycle(windowTarget, documentTarget) {
