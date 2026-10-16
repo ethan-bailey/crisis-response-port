@@ -32,7 +32,7 @@ public class Hand:global::Hand {
  public Mode mode=>CurrentMode;
  public readonly Dictionary<string,GameObject> SourceVisuals=[];
 }
-public class Limb:Component {public CharacterBody Body;}
+public partial class Limb:Component {public CharacterBody Body;}
 public class WeaponArmConfiguration {public Hand.Mode rightHandMode,leftHandMode;public float rightHandAngle,leftHandAngle;}
 public class Blackboard {public float weaponSkill;}
 public partial class CharacterBody:Component {
@@ -41,7 +41,7 @@ public partial class CharacterBody:Component {
  public ArmIKSolver leftArm,rightArm;public Limb Torso,Pelvis;
  public Transform chestRigIKTarget,pistolPivot,pistolIKTarget;
  public bool IsPlayer=true,IsManipulatingEquipment;public float Direction=1,LastFiredTimestamp;public bool IsUsingPrecision;public float RotationY=>Direction==1?0:180;public int ShotsFired;
- public float Position=>transform.position.x;public object AudioInstigator=>null;
+ public float Position=>transform.position.x;public bool FacingRight=>Direction==1f;public object AudioInstigator=>null;
  public CharacterAction PendingAction;bool triggerPulled;
  // Source arm state: default Operator rigidbodies are authored kinematic.
  // CharacterBody/physiology ragdoll transitions must supply future changes.
