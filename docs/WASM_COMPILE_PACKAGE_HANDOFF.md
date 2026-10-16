@@ -30,13 +30,17 @@ Files:
   runtime mount path. Rejects changed tracked game/runtime inputs, existing
   output directories, overlapping output/input, symlinks, missing/extra or
   damaged package files, duplicate/traversing manifest paths and stale assemblies.
-- `scripts/package_wasm_site_test.py`: ten failure-oriented tests using **test
+- `scripts/package_wasm_site_test.py`: twelve failure-oriented tests using **test
   fixtures**, not a substitute game/runtime or evidence of actual compilation.
 - `.github/workflows/wasm-package-checkpoint.yml`: one intentional private
   compile/package milestone; no browser engine installation or deployment.
   Normal source pushes do not run the workflow. It runs native source contracts,
   existing input/source tests, actual .NET WASM publish, archive/unpack verification
   and saves the complete site plus separate evidence privately.
+- `tools/wasm-compile/global.json`: exact stable SDK `8.0.426`, roll-forward
+  disabled. Only the new checkpoint workflow copies it to an untracked root
+  `global.json` before invoking dotnet. Existing gameplay/Unity workflows are
+  unchanged. SDK selection and pin SHA are recorded and cross-checked.
 
 Manifest (`build-manifest.json`) records exact checkout SHA; SHA256/size for
 tracked game/runtime/scripts/workflows inputs and every package file; measured
@@ -57,8 +61,8 @@ python3 -m unittest discover -s scripts -p package_wasm_site_test.py -v
 python3 -m py_compile scripts/package_wasm_site.py scripts/package_wasm_site_test.py
 ```
 
-Result: **10/10 targeted tests passed**, syntax compiled. Actual cloud compile
-evidence will be appended below after the workflow finishes. Never call local
+Result after SDK-pin correction: **12/12 targeted tests passed**. Actual cloud compile
+evidence is recorded below. Never call local
 fixture tests proof that the actual original C# game compiled.
 
 Reverify a previously downloaded site without compiling or installing packages:
@@ -89,7 +93,31 @@ offline package. No new CDN, shader substitute or rendering algorithm is added.
 
 ## Rollback
 
-This continuation adds only the four files above including this document.
+This continuation adds only the five files above including this document.
 Remove them in a new selective revert after reviewing later dependencies. Do
 not reset/force-push shared branches, revert existing original source/assets or
 delete prior evidence. No hosting rollback is needed because nothing is deployed.
+
+## First actual cloud compile — successful, SDK selection corrected afterward
+
+- Code/workflow SHA `4811f86e29892b9b9bd010ef9055a524c5485c3c`.
+- [Run 38848858817](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38848858817)
+  **SUCCESS**: native original C# contracts; **38/38** existing input/source/mesh
+  tests; initial **10/10** package tests; actual .NET WASM publish; full package
+  boot/hash validation and tar/unpack/revalidation.
+- Private complete site artifact `12024397634` (34,720,699-byte GitHub ZIP);
+  separate evidence artifact `12024546760`.
+- Inner tar.gz SHA256
+  `8c9919fa4d8fddf0a76694185977c7e9038e80a0972ad0248e31206fb3ecc50d`.
+- **722** package files; **199** boot-resource hashes; **195** WASM binaries;
+  **245** source inventory files including **35** selected recovered original
+  C# files. This is a subset of the original game, not full-source coverage.
+- Downloaded artifact independently extracted and reverified locally with the
+  committed checker: identical source SHA/file/resource/binary counts.
+- Actual first toolchain: **SDK 10.0.401**, Node v22.23.3, npm 10.9.9,
+  Python 3.12.3. Target remains `net8.0`. The runner installed SDK 8.0.426 but,
+  without global.json, selected its higher preinstalled SDK. The first archive
+  is internally valid, but must not be described as SDK-8-compiled.
+- Follow-up adds workflow-local exact SDK selection plus tests rejecting SDK
+  drift. One necessary corrected build replaces the first as the recommended
+  package; no repeated full browser test or deployment is requested.

@@ -25,7 +25,11 @@ jobs:
         run: test "$(gh api repos/$GITHUB_REPOSITORY --jq '.private')" = true
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          global-json-file: tools/wasm-compile/global.json
+      - name: Select pinned SDK for this workflow only
+        run: |
+          test ! -e global.json
+          cp tools/wasm-compile/global.json global.json
       - uses: actions/setup-node@v4
         with:
           node-version: 22

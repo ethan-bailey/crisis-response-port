@@ -27,6 +27,7 @@ class PackageTests(unittest.TestCase):
             "game/vendor/physx-js-webidl.wasm": WASM_HEADER + b"physx-fixture",
             "game/package-lock.json": "{}",
             "runtime/Original/Example.cs": "// recovered source fixture",
+            "tools/wasm-compile/global.json": '{"sdk":{"version":"8.0.426","rollForward":"disable","allowPrerelease":false}}',
         }.items():
             self.write(self.repo / path, value)
         for path, value in {
@@ -49,6 +50,7 @@ class PackageTests(unittest.TestCase):
         self.git("init", "-q")
         self.git("add", ".")
         self.git("-c", "user.name=Fixture", "-c", "user.email=fixture@example.test", "commit", "-qm", "Fixture")
+        self.write(self.repo / "global.json", (self.repo / "tools/wasm-compile/global.json").read_bytes())
 
     def write(self, path, value):
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -58,7 +60,7 @@ class PackageTests(unittest.TestCase):
         return subprocess.check_output(["git", "-C", str(self.repo), *args], text=True)
 
     def build(self):
-        return package(self.repo, self.pub, self.site, {"dotnet": "fixture"}, "")
+        return package(self.repo, self.pub, self.site, {"dotnet": "8.0.426"}, "")
 
     def test_complete_package_is_verifiable_and_records_scope(self):
         result = self.build()
@@ -130,6 +132,15 @@ class PackageTests(unittest.TestCase):
     def test_output_cannot_overwrite_existing_files(self):
         self.site.mkdir()
         with self.assertRaisesRegex(ValueError, "refusing to overwrite"):
+            self.build()
+
+    def test_newer_preinstalled_sdk_cannot_silently_compile(self):
+        with self.assertRaisesRegex(ValueError, "Selected .NET SDK differs"):
+            package(self.repo, self.pub, self.site, {"dotnet": "10.0.401"}, "")
+
+    def test_untracked_sdk_selection_must_match_pin(self):
+        (self.repo / "global.json").write_text('{"sdk":{"version":"10.0.401"}}')
+        with self.assertRaisesRegex(ValueError, "SDK selection differs"):
             self.build()
 
 

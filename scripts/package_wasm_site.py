@@ -42,8 +42,9 @@ def record(path, root):
 
 
 def safe_path(root, name):
+    require(isinstance(name, str) and name, f"Unsafe manifest path: {name!r}")
     relative = PurePosixPath(name)
-    require(isinstance(name, str) and name and not relative.is_absolute()
+    require(not relative.is_absolute()
             and ".." not in relative.parts and "\\" not in name,
             f"Unsafe manifest path: {name!r}")
     return root.joinpath(*relative.parts)
@@ -136,10 +137,18 @@ def package(repo, published, output, toolchain, run_url):
             "Tracked game/runtime source differs from input commit")
     commit = git(repo, "rev-parse", "HEAD")
     require(re.fullmatch(r"[0-9a-f]{40}", commit), "Invalid checkout commit")
+    pin = repo / "tools/wasm-compile/global.json"
+    require(pin.is_file() and (repo / "global.json").is_file(), "Explicit compiler SDK selection missing")
+    require(digest(pin) == digest(repo / "global.json"), "SDK selection differs from tracked compiler pin")
+    sdk = json.loads(pin.read_text())["sdk"]
+    require(sdk.get("rollForward") == "disable" and sdk.get("allowPrerelease") is False,
+            "Compiler SDK must be exact and stable")
+    require(toolchain.get("dotnet") == sdk["version"],
+            "Selected .NET SDK differs from tracked compiler pin")
     files(repo / "game")
     files(published)
     inventory = []
-    tracked = git(repo, "ls-files", "-z", "--", "game", "runtime", "scripts", ".github/workflows")
+    tracked = git(repo, "ls-files", "-z", "--", "game", "runtime", "scripts", ".github/workflows", "tools/wasm-compile")
     for name in sorted(filter(None, tracked.split("\0"))):
         path = repo / name
         require(path.is_file() and not path.is_symlink(), f"Invalid source input: {name}")
@@ -169,6 +178,8 @@ def package(repo, published, output, toolchain, run_url):
     manifest = {
         "schemaVersion": 1, "sourceCommit": commit,
         "buildRun": run_url, "toolchain": toolchain,
+        "compilerPolicy": sdk,
+        "generatedSdkSelection": record(repo / "global.json", repo),
         "sourceInventory": inventory,
         "files": [record(p, output) for p in files(output)],
         "binaryValidation": validation, "externalImports": external,
