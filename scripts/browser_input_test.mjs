@@ -141,3 +141,89 @@ test('resize/background reset tap target; mouse press-to-fire behavior is retain
  assert.equal(input.pressed('fire'),false);
  assert.equal(fires.length,1,'Mouse never enters touch tap-to-fire callback');
 });
+
+
+function analogStickFixture() {
+  const input = new BrowserInput(), stick = new Surface(), keyboard = new Surface();
+  const thumb = { style: { transform: '' }, offsetWidth: 44 };
+  const classes = new Set();
+  stick.classList = { add: x => classes.add(x), remove: x => classes.delete(x) };
+  stick.getBoundingClientRect = () => ({ left: 40, width: 200 });
+  input.bindMovementStick(stick, thumb);
+  input.bindKeyboard(keyboard, { KeyA: 'left', KeyD: 'right' });
+  const move = (type, x, pointerId = 9) => stick.send(type, { pointerId, clientX: x });
+  return { input, stick, keyboard, thumb, classes, move };
+}
+
+test('analog joystick scales from dead zone to full speed in both directions', () => {
+  const { input, stick, thumb, move } = analogStickFixture();
+  move('pointerdown', 140); // center of 200px surface
+  assert.equal(input.movementMagnitude(1), 0);
+  move('pointermove', 158); // 18px: inside 22% dead zone
+  assert.equal(input.pressed('left'), false);
+  assert.equal(input.pressed('right'), false);
+  move('pointermove', 190); // 50% right
+  assert.equal(input.pressed('right'), true);
+  assert.equal(input.pressed('left'), false);
+  assert.ok(Math.abs(input.movementMagnitude(1) - (0.5 - 0.22) / 0.78) < 1e-10);
+  assert.equal(input.movementMagnitude(-1), 0);
+  assert.match(thumb.style.transform, /translateX\(/);
+  move('pointermove', 240); // full right
+  assert.equal(input.movementMagnitude(1), 1);
+  move('pointermove', 90); // half left, reverse without a new gesture
+  assert.equal(input.pressed('right'), false);
+  assert.equal(input.pressed('left'), true);
+  assert.ok(Math.abs(input.movementMagnitude(-1) - (0.5 - 0.22) / 0.78) < 1e-10);
+  move('pointermove', 40); // full left
+  assert.equal(input.movementMagnitude(-1), 1);
+  move('pointerup', 40);
+  assert.equal(input.pressed('left'), false);
+  assert.equal(input.movementMagnitude(-1), 0);
+  assert.equal(thumb.style.transform, '');
+  assert.equal(stick.hasPointerCapture(9), false);
+  input.dispose();
+});
+
+test('keyboard retains full original speed while touch movement is analog', () => {
+  const { input, keyboard, move } = analogStickFixture();
+  move('pointerdown', 190); // partial right
+  assert.ok(input.movementMagnitude(1) < 1);
+  keyboard.send('keydown', { code: 'KeyD' });
+  assert.equal(input.movementMagnitude(1), 1, 'digital right input must override half-stick magnitude');
+  keyboard.send('keyup', { code: 'KeyD' });
+  assert.ok(input.movementMagnitude(1) < 1, 'return to analog magnitude');
+  keyboard.send('keydown', { code: 'KeyA' });
+  assert.equal(input.movementMagnitude(-1), 1, 'opposite digital direction still works');
+  move('pointerup', 190);
+  assert.equal(input.pressed('left'), true, 'touch release never clears keyboard');
+  keyboard.send('keyup', { code: 'KeyA' });
+  assert.equal(input.movementMagnitude(-1), 0);
+  input.dispose();
+});
+
+test('analog movement cannot stick after second fingers, cancel, blur or disposal', () => {
+  const { input, stick, thumb, classes, move } = analogStickFixture();
+  const win = new Surface(), doc = new Surface();
+  input.bindLifecycle(win, doc);
+  move('pointerdown', 240, 9);
+  move('pointerdown', 40, 10); // unrelated finger must not steal joystick
+  assert.equal(input.movementMagnitude(1), 1);
+  move('pointerup', 40, 10); // releasing unrelated finger does nothing
+  assert.equal(input.movementMagnitude(1), 1);
+  move('pointercancel', 240, 9);
+  assert.equal(input.movementMagnitude(1), 0);
+  assert.equal(input.pressed('right'), false);
+  move('pointerdown', 40, 11);
+  assert.equal(input.movementMagnitude(-1), 1);
+  win.send('blur');
+  assert.equal(input.movementMagnitude(-1), 0);
+  assert.equal(input.pressed('left'), false);
+  assert.equal(stick.hasPointerCapture(11), false);
+  assert.equal(thumb.style.transform, '');
+  assert.equal(classes.has('active'), false);
+  move('pointerdown', 240, 12);
+  input.dispose();
+  assert.equal(input.movementMagnitude(1), 0);
+  move('pointermove', 40, 12);
+  assert.equal(input.pressed('left'), false);
+});
