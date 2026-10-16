@@ -16,6 +16,7 @@
 | `scripts/serve_native_webgl.py` | Localhost-only HTTP server. Outputs exact `Content-Encoding: br` for `*.wasm.br`, `*.data.br`, `*.framework.js.br` with their correct underlying content MIME; no owner-public hosting. |
 | `scripts/native_unity_webgl_browser_smoke.mjs` | Runs **actual** generated original Unity HTML/loader in Chromium and WebKit. Observes native `createUnityInstance` Promise resolution, nonzero canvas, browser errors and requests; dispatches genuine browser mouse/keyboard input and retains screenshots. Merely dispatching input does **not** prove in-game movement. It does not modify source Unity game files. |
 | `.github/workflows/native-unity-marksman-player-verify.yml` | One workflow-only push trigger, preserving original isolated licensing/cache/status/source hash checks. Requires original compiled output integrity and license deactivation, stores built player privately for 14 days and browser screenshots/logs privately. Does not run on source/document changes. |
+| `.github/workflows/native-unity-browser-only-recheck.yml` | Manual-only fallback that downloads the exact retained build artifact from run #38895140830, checks every compiled file against the original manifest's SHA256 and reruns the real browser smoke **without** Unity, an editor image or a second license activation. Only useful if the private original player artifact was successfully uploaded. |
 | `docs/NATIVE_MARKSMAN_RUNTIME_VALIDATION_2026-10-16.md` | This checkpoint, test boundaries, and rollback/continuation. |
 
 ## Execution and verdict gate
@@ -33,6 +34,6 @@
 
 ## Rollback and continuation
 
-Experiment changes are four **new** files on the isolated branch, not edits to original Unity files. Reverse with new selective commits, or simply leave this unmerged feasibility branch. Do not force-push, reset, change repo visibility, rebase or alter PR #7/main. Preserve the SHA-tested game/browser branch #9 and distinct packaged SDK8 PR #19. If this native experiment fails, document the first real failing step (licensing/image/build vs MIME/decompression vs browser startup) and continue independent verified WASM development. Successful startup alone is not an instruction to switch engines.
+Experiment changes are five **new** files on the isolated branch, not edits to original Unity files. Reverse with new selective commits, or simply leave this unmerged feasibility branch. Do not force-push, reset, change repo visibility, rebase or alter PR #7/main. Preserve the SHA-tested game/browser branch #9 and distinct packaged SDK8 PR #19. If this native experiment fails, document the first real failing step (licensing/image/build vs MIME/decompression vs browser startup) and continue independent verified WASM development. Successful startup alone is not an instruction to switch engines.
 
 Retained player artifacts automatically expire after 14 days; save private evidence before expiration if required. No owner-private live site replacement or physical iPhone test is part of this workflow.
