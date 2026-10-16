@@ -103,6 +103,14 @@ export async function createOriginalArmRig(source,nodeById,character,{moduleOpti
            const body=bodies.get(command.body);
            if(!body)throw Error('Original arm kinematic command references unknown body');
            kernel.setKinematic(body.actor,command.value);
+         } else if(command.type==='gravity'){
+           const body=bodies.get(command.body);
+           if(!body)throw Error('Original limb gravity command references unknown actor');
+           kernel.setGravity(body.actor,command.value);
+         } else if(command.type==='drag'){
+           const body=bodies.get(command.body);
+           if(!body)throw Error('Original limb drag command references unknown actor');
+           kernel.setLinearDamping(body.actor,command.value);
          } else if(command.type==='force'){
            const body=bodies.get(command.body);
            if(!body)throw Error('Original arm force references unknown body');

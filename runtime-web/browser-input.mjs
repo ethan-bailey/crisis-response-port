@@ -6,6 +6,7 @@ export class BrowserInput {
     this.onChange = onChange;
     this.onPress = onPress;
     this.cleanup = [];
+    this.movementStickAxis = 0;
   }
 
   pressed(action) { return (this.sources.get(action)?.size || 0) > 0; }
@@ -23,6 +24,7 @@ export class BrowserInput {
   }
 
   clear() {
+    this.resetMovementStick?.();
     const held = [...this.sources.keys()];
     this.sources.clear();
     for (const action of held) this.onChange(action, false);
@@ -50,13 +52,27 @@ export class BrowserInput {
     this.listen(button, 'contextmenu', event => event.preventDefault());
   }
 
-  // Touch-only movement surface. Produces the EXISTING left/right source input
-  // actions; it adds no player movement or animation implementation.
+  // Owner-approved iPhone enhancement: preserve proportional joystick magnitude.
+  // The existing digital left/right actions still feed original InputHandler.
+  // Only the adapter's target walking/sprinting speed is scaled by this value.
+  movementMagnitude(direction) {
+    const action = direction < 0 ? 'left' : direction > 0 ? 'right' : null;
+    const sources = action && this.sources.get(action);
+    if (!sources?.size) return 0;
+    // Keyboard, external buttons and accessibility actions retain full speed.
+    if ([...sources].some(source => source !== 'stick:movement')) return 1;
+    return Math.abs(this.movementStickAxis);
+  }
+
+  // Analog iPhone movement surface: existing left/right source actions plus
+  // proportional speed in [0, 1] outside the original joystick dead zone.
   bindMovementStick(surface, thumb, {deadZone = 0.22} = {}) {
     let pointer = null;
     const source = 'stick:movement';
     const reset = () => {
+      if (pointer !== null && surface.hasPointerCapture?.(pointer)) surface.releasePointerCapture(pointer);
       pointer = null;
+      this.movementStickAxis = 0;
       this.set('left', source, false);
       this.set('right', source, false);
       if (thumb) thumb.style.transform = '';
@@ -68,8 +84,11 @@ export class BrowserInput {
       const radius = Math.max(1, rect.width / 2);
       const dx = (event.clientX - (rect.left + rect.width / 2)) / radius;
       const clamped = Math.max(-1, Math.min(1, dx));
-      this.set('left', source, clamped < -deadZone);
-      this.set('right', source, clamped > deadZone);
+      // Renormalize outside the dead zone so full travel is still full speed.
+      const magnitude = Math.max(0, (Math.abs(clamped) - deadZone) / (1 - deadZone));
+      this.movementStickAxis = Math.sign(clamped) * magnitude;
+      this.set('left', source, this.movementStickAxis < 0);
+      this.set('right', source, this.movementStickAxis > 0);
       if (thumb) {
         const travel = Math.max(0, (rect.width - thumb.offsetWidth) / 2 - 2);
         thumb.style.transform = `translateX(${clamped * travel}px)`;
@@ -90,6 +109,7 @@ export class BrowserInput {
         reset();
       });
     }
+    this.resetMovementStick = reset;
     this.cleanup.push(reset);
     this.listen(surface, 'contextmenu', event => event.preventDefault());
   }

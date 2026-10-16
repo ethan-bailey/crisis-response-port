@@ -55,6 +55,8 @@ export async function createArmPhysicsKernel({moduleOptions={},gravity=[0,0,0]}=
    return createBody({...options,shapeRotation},new P.PxCapsuleGeometry(radius,Math.max(0,height/2-radius)));
   },
   setKinematic(body,state){bodyCheck(body);body.actor.setRigidBodyFlag(P.PxRigidBodyFlagEnum.eKINEMATIC,!!state);body.isKinematic=!!state;},
+  setGravity(body,state){bodyCheck(body);body.actor.setActorFlag(P.PxActorFlagEnum.eDISABLE_GRAVITY,!state);},
+  setLinearDamping(body,value){bodyCheck(body);if(!Number.isFinite(value)||value<0)throw Error('Invalid source Rigidbody drag');body.actor.setLinearDamping(value);},
   // Original Unity arm joints begin kinematic. During normal source IK, the
   // authored limb world pose must be transported to the actual PhysX actor;
   // toggling eKINEMATIC alone leaves its collision/joint frame at the old pose.
