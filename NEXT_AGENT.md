@@ -1,5 +1,14 @@
 # Next agent — current state (2026-10-15, 19:17 UTC)
 
+## Latest: original UI IDs identified; native Unity build result verified — 2026-10-16
+
+[PR #20](https://github.com/ethan-bailey/crisis-response-port/pull/20) now identifies all **24 original UI component fileIDs** from the preserved original DLL's 187 metadata types. [UI identity handoff](https://github.com/ethan-bailey/crisis-response-port/blob/codex/full-source-closure-audit/docs/ORIGINAL_UI_BINDINGS_HANDOFF_2026-10-16.md). [Run 38892941728](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38892941728) **SUCCESS**, tested SHA `f50b00110ba29f9fffa28046cf78405b1acd66ec`, private metadata artifact `12041579699`: **18/18** tests, five reference vectors, 24 unique type bindings, all 160 original source hashes. Cloud/local graph and identity JSON match byte for byte. Only the .308 mesh GUID remains unidentified; UI/native built-in behavior and 35 dummy shaders remain unfinished. No game runtime/UI behavior was added.
+
+**The separate native Unity WebGL test DID finish:** [run 38800542438](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38800542438), source `4ed43897973d9fac607b4e57baf2cbe4102acf3d`, compiled Marksman-only WebGL successfully on October 15 at 20:27 UTC. Original log says `Build Finished, Result: Success.`; output manifest records WASM/data/loader, 18 files / 36,117,455 bytes; static HTTP 18/18 passed. **Only evidence was retained**, artifact `12004975378`; no playable native binary/browser gameplay/device proof is retained. [Exact native result review and next bounded experiment](https://github.com/ethan-bailey/crisis-response-port/blob/codex/full-source-closure-audit/docs/NATIVE_WEBGL_RESULT_REVIEW_2026-10-16.md). Do not call that test still running or assume its green job proves full gameplay. This session read the native branch/evidence only and did not change it.
+
+**Full game remains incomplete:** full animations, all maps, AI, mission objectives/progression, original UI and native/device parity are not finished. SDK-8 package PR #19 remains the current selected-source compile checkpoint. No new game build or deployment occurred in this identity/evidence session.
+
+
 ## All-scene/source inventory — verified 2026-10-16
 
 [Draft PR #20](https://github.com/ethan-bailey/crisis-response-port/pull/20), branch `codex/full-source-closure-audit`, adds a read-only source/dependency audit. [Handoff and exact next blockers](https://github.com/ethan-bailey/crisis-response-port/blob/codex/full-source-closure-audit/docs/FULL_SOURCE_CLOSURE_HANDOFF_2026-10-16.md).
