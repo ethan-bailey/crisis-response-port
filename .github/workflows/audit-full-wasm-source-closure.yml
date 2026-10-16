@@ -1,0 +1,56 @@
+name: Inventory all original scenes and WASM source dependencies
+on:
+  push:
+    branches: [codex/full-source-closure-audit]
+    paths: [.github/workflows/audit-full-wasm-source-closure.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+concurrency:
+  group: original-source-closure-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  source-inventory:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require private repository before accessing original assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: test "$(gh api repos/$GITHUB_REPOSITORY --jq '.private')" = true
+      - name: Verify graph corruption and provenance failure cases
+        run: |
+          mkdir -p work/source-closure
+          python3 -m unittest discover -s scripts -p audit_wasm_source_closure_test.py -v 2>&1 | tee work/source-closure/tests.txt
+      - name: Restore exact immutable original archive read-only
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p work/original-recovery
+          gh release download recovery-preservation-2026-10-15 --repo "$GITHUB_REPOSITORY" --pattern crisis-response-recovery-direct-v3-1.zip --dir work/original-recovery
+          printf 'cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d  work/original-recovery/crisis-response-recovery-direct-v3-1.zip\n' | sha256sum -c - | tee work/source-closure/archive-verification.txt
+          unzip -q work/original-recovery/crisis-response-recovery-direct-v3-1.zip 'export/ExportedProject/Assets/*' 'export/ExportedProject/ProjectSettings/*' -d work/original-recovery
+          git rev-parse HEAD > work/source-closure/input-commit.txt
+      - name: Inventory all recovered scenes and verify existing source hash claims
+        run: |
+          python3 scripts/audit_wasm_source_closure.py work/original-recovery/export/ExportedProject --output work/source-closure | tee work/source-closure/summary.json
+          python3 - <<'PY'
+          import json
+          data=json.load(open('work/source-closure/source-closure.json'))
+          assert data['summary']['scenes']==6, data['summary']
+          assert data['summary']['sourceHashClaims']>0
+          assert data['summary']['sourceHashFailures']==0
+          assert data['scope']['fullGameClosureEstablished'] is False
+          print('Six-scene source inventory verified; unresolved engine/content dependencies remain explicit.')
+          PY
+      - name: Preserve private metadata and provenance only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: original-six-scene-source-closure
+          path: work/source-closure/
+          retention-days: 30
+          if-no-files-found: error
