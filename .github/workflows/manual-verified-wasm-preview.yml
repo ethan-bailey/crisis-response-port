@@ -39,7 +39,7 @@ jobs:
           test "$(gh api repos/$GITHUB_REPOSITORY --jq .private)" = true
           [[ "$RUN_ID" =~ ^[0-9]+$ ]]
           [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
-          gh run view "$RUN_ID" --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq             'select(.conclusion=="success" and .headSha==env.SOURCE_SHA) | .headSha' | grep -Fx "$SOURCE_SHA"
+          gh run view "$RUN_ID" --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.conclusion + " " + .headSha' | grep -Fx "success $SOURCE_SHA"
       - name: Download the existing proven compiled package, not a new WASM build
         env:
           GH_TOKEN: ${{ github.token }}
