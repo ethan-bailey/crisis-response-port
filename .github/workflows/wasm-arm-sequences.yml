@@ -1,4 +1,4 @@
-name: Verify configured hand grips, reload contact and chamber display
+name: Verify source grip contact, wrist occlusion and chamber display
 
 # Explicit full milestone: a feature/fix workflow YAML change triggers ONE test.
 # Merging reviewed code into develop/wasm must not duplicate the expensive build.
