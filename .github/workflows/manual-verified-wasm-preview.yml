@@ -1,0 +1,127 @@
+name: Manual verified WASM preview snapshot
+on:
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: "Successful original WASM/browser test run ID containing complete site and evidence artifacts"
+        required: true
+        type: string
+      source_sha:
+        description: "Exact 40-character original gameplay SHA verified by that run"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: manually-stage-tested-private-wasm-preview
+  cancel-in-progress: false
+
+jobs:
+  stage-verified-site:
+    name: Verify and stage one complete tested site for explicit protected deployment
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop/wasm
+          persist-credentials: true
+      - name: Require owner-private repository and previously successful WASM run
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ inputs.source_run_id }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+        run: |
+          set -euo pipefail
+          test "$(gh api repos/$GITHUB_REPOSITORY --jq .private)" = true
+          [[ "$RUN_ID" =~ ^[0-9]+$ ]]
+          [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          gh run view "$RUN_ID" --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq             'select(.conclusion=="success" and .headSha==env.SOURCE_SHA) | .headSha' | grep -Fx "$SOURCE_SHA"
+      - name: Download the existing proven compiled package, not a new WASM build
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ inputs.source_run_id }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/wasm-package" "$RUNNER_TEMP/wasm-evidence" "$RUNNER_TEMP/wasm-site"
+          gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY"             --name crisis-response-arm-sequences-private-wasm-site --dir "$RUNNER_TEMP/wasm-package"
+          gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY"             --name wasm-original-arm-sequences-evidence --dir "$RUNNER_TEMP/wasm-evidence"
+          python3 - <<'PY'
+          import hashlib,os,pathlib
+          p=pathlib.Path(os.environ["RUNNER_TEMP"])
+          archive=p/"wasm-package/crisis-response-private-wasm-site.tar.gz"
+          expected=(p/"wasm-evidence/site-archive.sha256").read_text().split()[0]
+          actual=hashlib.sha256(archive.read_bytes()).hexdigest()
+          if actual!=expected or len(actual)!=64:
+              raise SystemExit("Original verified archive SHA256 mismatch")
+          print("Verified original package SHA256:",actual)
+          PY
+          tar -xzf "$RUNNER_TEMP/wasm-package/crisis-response-private-wasm-site.tar.gz" -C "$RUNNER_TEMP/wasm-site"
+          python3 scripts/package_wasm_site.py verify "$RUNNER_TEMP/wasm-site"
+          python3 - <<'PY'
+          import json,os,pathlib
+          site=pathlib.Path(os.environ["RUNNER_TEMP"])/"wasm-site"
+          manifest=json.loads((site/"build-manifest.json").read_text())
+          assert manifest["sourceCommit"]==os.environ["SOURCE_SHA"],"Compiled source SHA mismatch"
+          assert not manifest["scope"]["originalGameComplete"],"Misleading original game parity status"
+          print("Site from exact verified original game code:",manifest["sourceCommit"])
+          PY
+      - name: Stage a single reusable protected preview snapshot with all ignored binaries
+        env:
+          RUN_ID: ${{ inputs.source_run_id }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+        run: |
+          set -euo pipefail
+          branch="preview/wasm-current-iphone"
+          if git ls-remote --exit-code origin "refs/heads/$branch" >/dev/null; then
+            git fetch origin "refs/heads/$branch:refs/remotes/origin/$branch"
+            git switch -C "$branch" "refs/remotes/origin/$branch"
+          else
+            git switch --orphan "$branch"
+          fi
+          git rm -rf --cached . >/dev/null || true
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf -- '{}' +
+          cp -a "$RUNNER_TEMP/wasm-site"/. .
+          printf '%s\n' '{"git":{"deploymentEnabled":false}}' > vercel.json
+          printf 'Verified original-game WASM source: %s\nGitHub Actions evidence: https://github.com/%s/actions/runs/%s\nPrivate owner-authenticated site. Original game incomplete.\n'             "$SOURCE_SHA" "$GITHUB_REPOSITORY" "$RUN_ID" > PRIVATE_BUILD_IDENTITY.txt
+          # Crucial: scene .crg and vendor PhysX .wasm/.mjs are gitignored in
+          # the development repository. Force-add generated release binaries.
+          git add --all --force -- .
+          python3 - <<'PY'
+          import hashlib,json,pathlib,subprocess
+          root=pathlib.Path.cwd()
+          manifest=json.loads((root/"build-manifest.json").read_text())
+          expected={row["path"] for row in manifest["files"]}
+          indexed=set(filter(None,subprocess.check_output(["git","ls-files","-z"]).decode().split("\0")))
+          extras={"build-manifest.json","vercel.json","PRIVATE_BUILD_IDENTITY.txt"}
+          if indexed!=expected|extras:
+              raise SystemExit(f"Snapshot tracked files differ from tested package; missing={sorted(expected-indexed)} unexpected={sorted(indexed-expected-extras)}")
+          for row in manifest["files"]:
+              data=(root/row["path"]).read_bytes()
+              if len(data)!=row["bytes"] or hashlib.sha256(data).hexdigest()!=row["sha256"]:
+                  raise SystemExit("Snapshot file changed: "+row["path"])
+          for key in ("game/assets/mission01.crg","game/vendor/physx-js-webidl.wasm",
+                      "game/vendor/physx-js-webidl.mjs","runtime-web/index.html"):
+              if key not in indexed:raise SystemExit("Missing mandatory runtime asset: "+key)
+          assert json.loads((root/"vercel.json").read_text())["git"]["deploymentEnabled"] is False
+          print("Pre-deploy Git index PASSED, all",len(expected),"SHA-verified package files present")
+          PY
+          if git diff --cached --quiet; then
+            echo "No change to snapshot contents; no new deployment needed"
+          else
+            git -c user.name='Private WASM Preview Stager'                 -c user.email='github-actions[bot]@users.noreply.github.com'                 commit -m "Stage source-verified private WASM Safari build at $SOURCE_SHA"
+            git push origin HEAD:"refs/heads/$branch"
+          fi
+          git rev-parse HEAD | tee "$RUNNER_TEMP/preview-snapshot-commit.txt"
+      - name: Preserve source proof for one intentional Vercel preview deploy
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: private-manual-preview-snapshot-evidence
+          path: ${{ runner.temp }}/preview-snapshot-commit.txt
+          retention-days: 14
+          if-no-files-found: warn
