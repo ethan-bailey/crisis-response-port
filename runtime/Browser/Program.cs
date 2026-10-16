@@ -17,7 +17,26 @@ public static class RuntimeBridge {
     [JSInvokable] public static string VerifyOriginalHandModes()=>OriginalHandModes.Run();
     static OriginalInputHost input;
     static Crisis.Runtime.Weapons.WeaponHost weapons;
-    [JSInvokable] public static string InitializeWeapons(string json){input??=new OriginalInputHost(new RuntimeWorld());weapons=new(json,input.handler,presentation.QueryWorld){queryWorld=presentation.QueryWorld,ballisticMask=presentation.BallisticMask};return "ready";}
+    [JSInvokable] public static string InitializeWeapons(string json){
+        input??=new OriginalInputHost(new RuntimeWorld());
+        weapons=new(json,input.handler,presentation.QueryWorld){queryWorld=presentation.QueryWorld,ballisticMask=presentation.BallisticMask};
+        var character=weapons.Character;
+        var animator=character.GetComponent<Animator>()??character.gameObject.AddComponent<Animator>();
+        var capsule=character.GetComponent<CapsuleCollider>()??character.gameObject.AddComponent<CapsuleCollider>();
+        character.InitializeSourceAnimation(animator,capsule);
+        return "ready";
+    }
+    [JSInvokable] public static string StepCharacterAnimation(string json){
+        if(weapons==null)throw new InvalidOperationException("Original character weapon host not initialized");
+        using var doc=JsonDocument.Parse(json);
+        var p=doc.RootElement;
+        float F(string n)=>p.GetProperty(n).GetSingle();
+        bool B(string n)=>p.GetProperty(n).GetBoolean();
+        return JsonSerializer.Serialize(weapons.Character.ExecuteSourceUpdateAnimation(
+          B("kneeling"),B("moving"),B("backwards"),F("velocity"),
+          F("walkSpeed"),F("sprintSpeed"),F("crippledRatio"),B("operator"),
+          F("deltaTime"),F("colliderVerticalOffset")));
+    }
     [JSInvokable] public static string InitializeBallistics(string json){weapons.InitializeBallistics(json,presentation.QueryScene);return "ready";}
     [JSInvokable] public static string StepWeapons(string json)=>JsonSerializer.Serialize(weapons.Step(json));
     [JSInvokable] public static string OriginalWindowVisuals()=>JsonSerializer.Serialize(weapons?.Ballistics?.WindowVisuals()??throw new InvalidOperationException("Original windows not initialized"));
