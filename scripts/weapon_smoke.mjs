@@ -39,9 +39,11 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
    assert.ok(Math.hypot(...source.grip.p.map((v,k)=>v-expected[k]))<1e-4,'C# IK and rendered weapon must share the configured grip');
    assert.ok(Math.hypot(...source.target.map((v,k)=>v-source.grip.p[k]))<1e-4,'Settled original IK targets the configured weapon grip');
   }
-  const chamber=page.locator('#magazineTouch [data-mag-chamber]');
-  assert.equal(await chamber.locator('.mag-cartridge').count(),1);
-  assert.equal(await chamber.evaluate(e=>e.parentElement.id),'magazineTouch','Chamber stays with the weapon when magazine is removed');
+  assert.equal(await page.locator('#magazineTouch [data-mag-chamber]').count(),0,
+    'Chamber cartridge UI is removed; numeric magazine total includes chambered round');
+  assert.equal(handState.weaponState.magazine + (handState.weaponState.chamberLive ? 1 : 0),
+    await page.locator('#magazineTouch [data-mag-count]').evaluate(e=>Number(e.textContent)),
+    'Magazine numeric counter reports rounds ready, while x-ray shows magazine-only rounds');
   await page.screenshot({path:`original-hands-${engine}.png`});
   const particles=await page.evaluate(()=>window.__gameState()?.presentation?.originalParticleSource);
   assert.equal(particles?.sourcePrefabs,14,'Recovered original impact prefab manifest must load');
