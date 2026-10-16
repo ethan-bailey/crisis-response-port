@@ -70,6 +70,7 @@ export class BrowserInput {
     let pointer = null;
     const source = 'stick:movement';
     const reset = () => {
+      if (pointer !== null && surface.hasPointerCapture?.(pointer)) surface.releasePointerCapture(pointer);
       pointer = null;
       this.movementStickAxis = 0;
       this.set('left', source, false);
