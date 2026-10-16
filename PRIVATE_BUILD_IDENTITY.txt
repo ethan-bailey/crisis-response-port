@@ -1,0 +1,4 @@
+Source-preserving Crisis Response compiled site snapshot.
+Exact verified input SHA: 252337d96b845f5b2eb6dd406c32a52a423d3e37
+Verified run: https://github.com/ethan-bailey/crisis-response-port/actions/runs/38909327063
+Incomplete original game. Private authentication only; no Git-triggered deployment.

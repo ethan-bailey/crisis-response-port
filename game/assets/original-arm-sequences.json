@@ -1,0 +1,346 @@
+{
+  "archiveSha256": "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
+  "playbackImplemented": false,
+  "schema": 1,
+  "scriptGuid": "c7d54f5ebb1ade51a48c2fef96bf390f",
+  "sequences": [
+    {
+      "guid": "0b10c0f14d5ea4b41ae81ab8b177805f",
+      "left": [
+        {
+          "action": 1,
+          "callback": 0,
+          "name": "Wait",
+          "offset": {
+            "x": 0.1,
+            "y": -0.1,
+            "z": 0
+          },
+          "time": 0.35,
+          "transform": 6,
+          "waitForSiblingFrame": 0
+        },
+        {
+          "action": 1,
+          "callback": 0,
+          "name": "Unwrap",
+          "offset": {
+            "x": 0.2,
+            "y": 0,
+            "z": 0
+          },
+          "time": 0.2,
+          "transform": 6,
+          "waitForSiblingFrame": 0
+        },
+        {
+          "action": 0,
+          "callback": 0,
+          "name": "Wait",
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "time": 0.5,
+          "transform": 7,
+          "waitForSiblingFrame": 0
+        },
+        {
+          "action": 1,
+          "callback": 0,
+          "name": "On wound",
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "time": 0.5,
+          "transform": 7,
+          "waitForSiblingFrame": 0
+        },
+        {
+          "action": 0,
+          "callback": 0,
+          "name": "Wait",
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "time": 3,
+          "transform": 7,
+          "waitForSiblingFrame": 0
+        }
+      ],
+      "name": "Apply gauze",
+      "path": "Assets/GameObject/Apply gauze.prefab",
+      "right": [
+        {
+          "action": 1,
+          "callback": 8,
+          "name": "Pick up gauze",
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "time": 0.3,
+          "transform": 8,
+          "waitForSiblingFrame": 0
+        },
+        {
+          "action": 1,
+          "callback": 0,
+          "name": "Unwrap",
+          "offset": {
+            "x": 0.2,
+            "y": 0,
+            "z": 0
+          },
+          "time": 0.2,
+          "transform": 6,
+          "waitForSiblingFrame": 0
+        },
+        {
+          "action": 1,
+          "callback": 9,
+          "name": "On wound",
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "time": 0.5,
+          "transform": 7,
+          "waitForSiblingFrame": 0
+        },
+        {
+          "action": 0,
+          "callback": 10,
+          "name": "Apply",
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "time": 3,
+          "transform": 7,
+          "waitForSiblingFrame": 0
+        }
+      ],
+      "sourceSha256": "7262845b5531f5e770b5cab1e7072f1299bc4faee8d84a1cd1b01cb37de87bfb"
+    },
+    {
+      "guid": "def346a0b435e414f91d1f240c7d016e",
+      "left": [],
+      "name": "Holster pistol",
+      "path": "Assets/GameObject/Holster pistol.prefab",
+      "right": [
+        {
+          "action": 1,
+          "callback": 0,
+          "name": "Above holster",
+          "offset": {
+            "x": -0.25,
+            "y": 0,
+            "z": 0
+          },
+          "time": 0.25,
+          "transform": 4,
+          "waitForSiblingFrame": 0
+        },
+        {
+          "action": 1,
+          "callback": 2,
+          "name": "In holster",
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "time": 0.15,
+          "transform": 4,
+          "waitForSiblingFrame": 0
+        }
+      ],
+      "sourceSha256": "2f4aa20255d361a2725879c2d6df2cd4f15ab6c7d6c2306efba40f24909c2ee3"
+    },
+    {
+      "guid": "77a7fc0e3d201394cb8d8ddd031df902",
+      "left": [],
+      "name": "Lower weapon",
+      "path": "Assets/GameObject/Lower weapon.prefab",
+      "right": [
+        {
+          "action": 0,
+          "callback": 1,
+          "name": "Lower weapon",
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "time": 0,
+          "transform": 0,
+          "waitForSiblingFrame": 0
+        },
+        {
+          "action": 2,
+          "callback": 2,
+          "name": "Deactivate",
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "time": 0.25,
+          "transform": 0,
+          "waitForSiblingFrame": 0
+        }
+      ],
+      "sourceSha256": "741bad97110ccea44742705dee120bf970e6efe6cb60d93a31547edf185c6567"
+    },
+    {
+      "guid": "572f009943cda614aa21d5dbd0dbbbea",
+      "left": [
+        {
+          "action": 1,
+          "callback": 5,
+          "name": "On grenade anchor",
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "time": 0.2,
+          "transform": 3,
+          "waitForSiblingFrame": 0
+        },
+        {
+          "action": 1,
+          "callback": 0,
+          "name": "Hold at ready",
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "time": 0.3,
+          "transform": 5,
+          "waitForSiblingFrame": 0
+        }
+      ],
+      "name": "Pickup grenade",
+      "path": "Assets/GameObject/Pickup grenade.prefab",
+      "right": [
+        {
+          "action": 0,
+          "callback": 0,
+          "name": "Wait",
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "time": 0.1,
+          "transform": 0,
+          "waitForSiblingFrame": 0
+        },
+        {
+          "action": 1,
+          "callback": 0,
+          "name": "On grenade",
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "time": 0.3,
+          "transform": 5,
+          "waitForSiblingFrame": 0
+        }
+      ],
+      "sourceSha256": "c87b99b28d24aa2ab4af89f02a5420ef2f8374c824368010c35a3c2b9237d4e7"
+    },
+    {
+      "guid": "95f92e749f4341449a76c5052f911111",
+      "left": [],
+      "name": "Raise shoulder weapon",
+      "path": "Assets/GameObject/Raise shoulder weapon.prefab",
+      "right": [
+        {
+          "action": 1,
+          "callback": 4,
+          "name": "On weapon",
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "time": 0.05,
+          "transform": 2,
+          "waitForSiblingFrame": 0
+        }
+      ],
+      "sourceSha256": "6e9525f3b896c162d8290de64335a8b63056cad499d25d0701da2d8119e0645e"
+    },
+    {
+      "guid": "67a7d386af05bf346b569e4f4dfaa594",
+      "left": [
+        {
+          "action": 1,
+          "callback": 6,
+          "name": "Return grenade",
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "time": 0.3,
+          "transform": 3,
+          "waitForSiblingFrame": 0
+        }
+      ],
+      "name": "Return grenade",
+      "path": "Assets/GameObject/Return grenade.prefab",
+      "right": [],
+      "sourceSha256": "fd9e0565ce4f977670dfef0421e5a18aa9c7271a652d45ad2d5fd8a69ecaeb89"
+    },
+    {
+      "guid": "afe828104b427ef47b9ac7ce4e2e1b70",
+      "left": [],
+      "name": "Unholster pistol",
+      "path": "Assets/GameObject/Unholster pistol.prefab",
+      "right": [
+        {
+          "action": 1,
+          "callback": 7,
+          "name": "Pick up",
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "time": 0.25,
+          "transform": 4,
+          "waitForSiblingFrame": 0
+        },
+        {
+          "action": 1,
+          "callback": 4,
+          "name": "Draw",
+          "offset": {
+            "x": -0.2,
+            "y": 0,
+            "z": 0
+          },
+          "time": 0.15,
+          "transform": 4,
+          "waitForSiblingFrame": 0
+        }
+      ],
+      "sourceSha256": "c0356970e9828e981b4d0d4b23bfbc9499d6544a4994b748a31012489e7c06de"
+    }
+  ]
+}
