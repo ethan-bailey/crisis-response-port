@@ -9,6 +9,7 @@ on:
     branches:
       - codex/projectile-material-impacts
       - feature/original-m4-magazine-touch-hud
+      - fix/original-m4-muzzle-flash-frame
     paths:
       - ".github/workflows/game-movement-smoke.yml"
   workflow_dispatch:
@@ -82,6 +83,8 @@ jobs:
             weapon-smoke.json
             weapon-chromium.png
             weapon-webkit.png
+            muzzle-flash-chromium.png
+            muzzle-flash-webkit.png
             presentation-smoke.json
             presentation-chromium.png
             presentation-webkit.png
