@@ -17,4 +17,4 @@ jobs:
       - name: Select pinned .NET SDK
         run: cp tools/wasm-compile/global.json global.json
       - name: Execute original runtime including CharacterBody facing checks
-        run: dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj
+        run: dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --character-facing
