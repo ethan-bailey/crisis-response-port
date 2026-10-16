@@ -34,7 +34,8 @@ namespace Crisis.Runtime.Weapons {
     .ToDictionary(r=>r.GetProperty("fields").GetProperty("m_GameObject").GetProperty("fileID").GetString(),
                   r=>r.GetProperty("fileID").GetString());
    Transform NodeForBody(string id){
-    var record=records[id],go=record.GetProperty("fields").GetProperty("m_GameObject").GetProperty("fileID").GetString();
+    var record=records[id];
+    var go=record.GetProperty("fields").GetProperty("m_GameObject").GetProperty("fileID").GetString();
     return nodes[transformByGo[go]];
    }
    // Original serialized torso and twelve limb rigidbodies, not test-box actors.
@@ -55,13 +56,13 @@ namespace Crisis.Runtime.Weapons {
      }
      var jointId=limb.GetProperty("joint").GetString();
      if(joints.ContainsKey(jointId))continue;
-     var f=records[jointId].GetProperty("fields");
-     var node=nodes[limb.GetProperty("transform").GetString()];
-     var hinge=node.GetComponent<HingeJoint>()??node.gameObject.AddComponent<HingeJoint>();
-     var spring=f.GetProperty("m_Spring");
+     var jointFields=records[jointId].GetProperty("fields");
+     var jointNode=nodes[limb.GetProperty("transform").GetString()];
+     var hinge=jointNode.GetComponent<HingeJoint>()??jointNode.gameObject.AddComponent<HingeJoint>();
+     var spring=jointFields.GetProperty("m_Spring");
      hinge.spring=new JointSpring{spring=spring.GetProperty("spring").GetSingle(),
        damper=spring.GetProperty("damper").GetSingle(),targetPosition=spring.GetProperty("targetPosition").GetSingle()};
-     hinge.useSpring=f.GetProperty("m_UseSpring").GetInt32()!=0;
+     hinge.useSpring=jointFields.GetProperty("m_UseSpring").GetInt32()!=0;
      string sourceJoint=jointId;
      hinge.SpringChanged=(state,enabled)=>commands.Add(new {
        type="spring",joint=sourceJoint,enabled,
