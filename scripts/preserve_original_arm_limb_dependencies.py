@@ -12,7 +12,7 @@ import zipfile
 
 ARCHIVE_SHA="cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d"
 PREFIX="export/ExportedProject/Assets/Scripts/Assembly-CSharp/"
-NAMES=("Hand","Limb","Joint","WeaponBase","TeamOperator","ArmsControl")
+NAMES=("Hand","Limb","WeaponBase","TeamOperator","ArmsControl")
 
 def sha(data): return hashlib.sha256(data).hexdigest()
 
@@ -50,6 +50,7 @@ def preserve(archive: Path, root: Path):
         "originalSourceUnmodified":True,"compiledOriginalCount":0,
         "controllerPlaybackImplemented":False,
         "classes":files,
+        "engineTypesNotDeveloperScripts":["UnityEngine.Joint"],
         "scope":"Preserved true original source dependencies, not fake gameplay runtime or executed animation"
     }
     dest=out/"source-provenance.json"
