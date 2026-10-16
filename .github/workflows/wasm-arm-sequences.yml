@@ -1,6 +1,6 @@
 name: Audit milestone original WASM baseline verification
 
-# Explicit milestone: original CharacterBody movement source executes inside C# WASM PhysX input loop.
+# One full source injury, PhysX-ragdoll, recovered AnimatorController and IK frame execution milestone.
 # Merging reviewed code into develop/wasm must not duplicate the expensive build.
 # No automatic builds on source/doc edits, and workflow_dispatch remains available.
 on:
