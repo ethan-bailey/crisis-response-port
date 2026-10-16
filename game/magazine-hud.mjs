@@ -118,8 +118,7 @@ export function createEquippedMagazineHud(element,{onReload}){
   const image=element.querySelector("[data-mag-image]");
   const rack=element.querySelector("[data-mag-rounds]");
   const counter=element.querySelector("[data-mag-count]");
-  const chamberIcon = element.querySelector("[data-mag-chamber]");
-  if(!image || !rack || !counter || !chamberIcon)throw new TypeError("Equipped magazine HUD elements missing");
+  if(!image || !rack || !counter)throw new TypeError("Equipped magazine HUD elements missing");
   const rounds=[];
   for(let i=0;i<X_RAY_SLOTS;i++){
     const round=rack.ownerDocument.createElement("span");
@@ -151,9 +150,8 @@ export function createEquippedMagazineHud(element,{onReload}){
     if(switched)gesture.reset();
     element.setAttribute("aria-label", v.label + (reloading ? ". Reloading" : ". Drag down to reload"));
     // This number means rounds READY TO FIRE (chamber + inserted magazine).
-    // The separate lit chamber mark makes the +1 explicit on the M4.
+    // No separate chamber icon: the number includes the chambered round.
     counter.textContent=v.known?String(v.ready):"–";
-    chamberIcon.hidden=!v.known||v.chamber===0;
     for(let i=0;i<rounds.length;i++)rounds[i].hidden=i>=v.visible;
     const fired=state?.events?.some(e=>e.type==="shot")===true ||
       (!switched && lastReady!==null && v.ready!==null && v.ready<lastReady && !reloading);
