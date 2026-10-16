@@ -2,6 +2,14 @@
 
 **Workspace entry point.** This file and GitHub Issues are the project workspace for the source-preserving iPhone 16 Safari port. This repository is private; do not change visibility or publicly share original game assets. A ChatGPT conversation is not a persistent build runner. Resume work from this file and `NEXT_AGENT.md` instead of attempting to recover a past chat.
 
+## Active branches and collaboration
+
+**Start at [CONTRIBUTING.md](CONTRIBUTING.md) and [branch policy](docs/BRANCHING_AND_COLLABORATION.md).** Since October 16, 2026: `main` is the stable repository baseline, **`develop/wasm` is the only integrated C#/.NET WASM game branch**, and new source-backed features come in short-lived `feature/*` PRs targeting `develop/wasm`. Historic PRs #8/#9 seeded this branch; they are not active development targets. Historical tooling PRs #19/#20 target `develop/wasm` for selective review. The **current** work assignment is [NEXT_AGENT.md](NEXT_AGENT.md), with [issue #22](https://github.com/ethan-bailey/crisis-response-port/issues/22) as the next original animation playback dependency. Existing shaders, particle, AI, mission, UI and device parity are unfinished.
+
+Latest proven integrated executable build: [Actions #38901664939](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38901664939), source `1264c0b4579076b82e1b6b21955469313779fe39`, private site artifact `12046137813`, private evidence `12046012744`. Organizational/doc changes on this branch were **not** recompiled. Root `vercel.json` disables automatic deployments; only protected manual iPhone test releases.
+
+## Historical plan (prior to branch reorganization)
+
 ## Current execution order — reviewed 2026-10-16
 
 [NEXT_AGENT.md](NEXT_AGENT.md) is the authoritative current status and ordered next actions. Dated reports and the work board below describe evidence and scope, not competing “next” instructions. The user confirmed the original C#/.NET WASM route is the priority. Review existing package/source-audit work, compile bounded original animation/gameplay dependencies, then verify the matching WASM in the browser. Native Unity validation is separate and does not gate this work. The selected-source .NET/PhysX checkpoint remains preserved. Full animations, all maps, AI, missions and original UI are unfinished.
@@ -14,8 +22,8 @@ Latest **integrated and verified** WASM expansion: original C# arm-sequence clas
 
 Reach the closest **verified 1:1 behavior and presentation** to the original Crisis Response game in an iPhone Safari browser. Preserve the game's recovered developer systems, original source assets and original numerical behavior; keep any C#/WASM and Rust compatibility work confined to required engine adapters. **Never create stand-in gameplay, speculative visuals, fabricated effects, or imply parity from a compile alone.** Native Unity results inform route validation and reference evidence; a compile alone does not establish parity.
 
-- **Browser code ownership:** draft [PR #9](https://github.com/ethan-bailey/crisis-response-port/pull/9), branch `codex/projectile-material-impacts`.
-- **Independent Unity feasibility:** branch `codex/iphone-input-parity-foundation`, PR #7; do not edit, merge, or reset it or `main`.
+- **Browser code ownership (current):** `develop/wasm` is the executable integration branch; PR #9 and `codex/projectile-material-impacts` are preserved historical source/code references.
+- **Independent Unity feasibility:** branch `codex/iphone-input-parity-foundation`, PR #7; keep separate from WASM. `main` accepts deliberately reviewed release promotions/governance, not normal gameplay commits.
 - **Previously hosted owner-private v8:** https://crisis-response-runtime.craftysnipe13.chatgpt.site — **does not include the latest tested source glass/impact renderer updates**.
 - **Latest verified browser build (2026-10-15 local):** [GitHub Actions #38846445335](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38846445335), code/workflow SHA `0933f2d4f5c5047f4e4a7f7c701fb13fd0f47e8c`, private compiled game/screenshots artifact **`12024020540`**. Native C#, .NET WASM, PhysX, Chromium and WebKit original movement/touch/camera/weapons/glass checks passed, including original particle source-manifest startup and explicit no-substitute renderer assertion. Separately, [native impact event contract #38847238826](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38847238826) **SUCCESS** at SHA `12f292657267d0c0521f00140c4ddec1976b7cd2`, artifact `12023701591`, verifies original `BallisticMaterial.SpawnEntryEffect` transport GUID/phase/time. Neither run is proof of original Unity particle visuals, live iPhone validation, or full-game parity.
 - **Source-backed window audit:** [runs 38808368685 and 38808663563](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38808663563); 56 glass + 12 mirror-glass native window Quads. Exact shader parity and actual-device test are outstanding.
