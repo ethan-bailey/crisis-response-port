@@ -13,7 +13,7 @@ import re
 import zipfile
 
 ARCHIVE_SHA = "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d"
-NAMES = ("IKArmSequencer", "IKArmController", "ArmIKSolver", "CharacterBody")
+NAMES = ("IKArmType", "IKArmSequencer", "IKArmController", "ArmIKSolver", "CharacterBody")
 PREFIX = "export/ExportedProject/Assets/Scripts/Assembly-CSharp/"
 IMPORTANT = re.compile(r"\b(class|struct|enum|interface|void|IEnumerator|IKArm|ArmIK|CharacterBody|Update|FixedUpdate|Start|Awake|callback|event|delegate|Sequence|Coroutine|YieldInstruction)\b", re.I)
 
@@ -51,7 +51,7 @@ def report(zip_path: Path, out: Path) -> None:
         print(f"ORIGINAL_CLASS {item['name']} BYTES {item['bytes']} LINES {item['lines']} SHA256 {item['sha256']}")
         print("SOURCE_BEGIN "+item["name"])
         data=(out/(item['name']+".cs")).read_text("utf-8-sig")
-        cap=210 if item['name'] in ("IKArmSequencer","IKArmController") else 110
+        cap=250 if item['name'] == "IKArmSequencer" else (110 if item['name'] == "CharacterBody" else 85)
         for i,line in enumerate(data.splitlines()[:cap]):
             print(f"{i+1:04d} {line}")
         print("SOURCE_END "+item["name"])
