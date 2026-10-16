@@ -6,6 +6,32 @@ namespace Crisis.Runtime.Character;
 // Full Physiology.Update, trauma propagation and limb injury dependencies
 // must be integrated before claiming complete physiology.
 public sealed class OriginalPhysiologyConditions {
+ public float StartingBloodVolume {get;private set;}
+ public float BloodVolume {get;private set;}
+ public float BloodOxygen {get;private set;}=1f;
+ public float LungsOxygen {get;private set;}=.75f;
+ float bloodDropOxygen;
+ // Exact source Awake() blood state, with original Random.Range sample supplied
+ // by source initialization rather than introducing a new random generator.
+ public void InitializeBloodVolume(float startingVolume) {
+  if(startingVolume<4000f||startingVolume>5000f||!float.IsFinite(startingVolume))
+   throw new ArgumentOutOfRangeException(nameof(startingVolume));
+  StartingBloodVolume=BloodVolume=startingVolume;
+  bloodDropOxygen=1f/StartingBloodVolume;
+  BloodOxygen=1f;
+  LungsOxygen=.75f;
+ }
+ public float BloodVolumeNormalized=>BloodVolume/StartingBloodVolume;
+ // Unchanged developer-authored Physiology.RemoveBlood() lines 501-505.
+ public void RemoveBlood(float milliliters) {
+  if(StartingBloodVolume==0f)throw new InvalidOperationException("Initialize physiology from original blood volume first");
+  BloodVolume -= milliliters;
+  BloodOxygen -= bloodDropOxygen * milliliters;
+ }
+ // Unchanged developer-authored Physiology.RemoveLungsOxygen lines 507-510.
+ public void RemoveLungsOxygen(float normalizedPercent) {
+  LungsOxygen=Mathf.Clamp(LungsOxygen-LungsOxygen*normalizedPercent,0f,1f);
+ }
  public float Shock {get;set;}
  public float Concussion {get;set;}
  public float BloodOxygen {get;set;}=1f;
