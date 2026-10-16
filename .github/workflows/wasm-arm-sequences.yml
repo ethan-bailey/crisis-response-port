@@ -65,6 +65,7 @@ jobs:
           node --test scripts/browser_input_test.mjs scripts/animation_pose_test.mjs scripts/game_loading_test.mjs scripts/aim_direction_test.mjs scripts/source_effect_clock_test.mjs scripts/original_particle_source_test.mjs scripts/original_particle_mesh_source_test.mjs scripts/original_particle_event_binding_test.mjs scripts/magazine_hud_test.mjs | tee work/evidence/source-tests.txt
       - name: Compile original-code .NET WebAssembly
         run: |
+          set -o pipefail
           cp game/browser-input.mjs runtime/Browser/wwwroot/browser-input.mjs
           dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release -o work/published | tee work/evidence/publish-log.txt
       - name: Package both game and compiled runtime with source and output hashes
