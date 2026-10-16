@@ -68,6 +68,8 @@ jobs:
             test -f game/assets/mission01.obj
             python3 scripts/build_scene_binary.py game/assets/mission01.obj game/assets/mission01.crg
           fi
+      - name: Test original M4 magazine sprite, source ammo state and touch drag
+        run: node --test scripts/magazine_hud_test.mjs
       - name: Test source gameplay/input adapters
         run: |
           set -euo pipefail
