@@ -1,0 +1,68 @@
+name: Recheck preserved private Unity player in browsers without Unity rebuild
+
+# Manual-only fallback if the real browser instrumentation needs another pass.
+# Download the exact retained native WebGL player from the first run; never
+# start Unity or request a second Personal license activation here.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  browser-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require original private repository and fetch retained exact Unity player
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(gh api repos/$GITHUB_REPOSITORY --jq '.private')" = true
+          mkdir -p work/unity-spike/webgl work/native-provenance
+          gh run download 38895140830 --repo "$GITHUB_REPOSITORY" --name PRIVATE-original-marksman-webgl-player-with-browser-check --dir work/unity-spike/webgl
+          gh run download 38895140830 --repo "$GITHUB_REPOSITORY" --name unity-marksman-webgl-audio-http-evidence --dir work/native-provenance
+      - name: Verify SHA256 of every preserved original Unity output against source build manifest
+        run: |
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          manifest=json.loads(Path('work/native-provenance/webgl-output-manifest.json').read_text())
+          output=Path('work/unity-spike/webgl')
+          assert manifest['index_present'] and manifest['wasm_present'] and manifest['loader_present'] and manifest['data_present']
+          for item in manifest['files']:
+              p=(output/item['relative_path']).resolve()
+              assert p.is_relative_to(output.resolve()), 'Unsafe original Unity output path'
+              assert p.is_file() and p.stat().st_size==item['size_bytes'], str(p)
+              assert hashlib.sha256(p.read_bytes()).hexdigest()==item['sha256'], str(p)
+          status=dict(line.split('=',1) for line in Path('work/native-provenance/status.env').read_text().splitlines() if '=' in line)
+          assert status.get('source_verified')=='true' and status.get('build_exit')=='0'
+          assert status.get('license_deactivate_exit')=='0'
+          print('Verified',len(manifest['files']),'original compiled player files against SHA-tested build')
+          PY
+      - name: Recheck Brotli response metadata without public deployment
+        run: |
+          python3 scripts/serve_native_webgl.py work/unity-spike/webgl --port 8000 >/tmp/private-native-http.log 2>&1 &
+          sleep 2
+          curl --fail --silent --show-error --head http://127.0.0.1:8000/Build/webgl.wasm.br | tee work/unity-spike/native-wasm-headers.txt
+          grep -qi '^Content-Type: application/wasm' work/unity-spike/native-wasm-headers.txt
+          grep -qi '^Content-Encoding: br' work/unity-spike/native-wasm-headers.txt
+      - name: Observe real original Unity instance in Chromium and WebKit
+        run: |
+          npm init -y >/dev/null
+          npm install --no-audit --no-fund playwright@1.55.0
+          npx playwright install --with-deps chromium webkit
+          node scripts/native_unity_webgl_browser_smoke.mjs
+      - name: Retain private actual browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: private-native-player-browser-recheck
+          path: |
+            work/unity-spike/native-browser/
+            work/unity-spike/native-wasm-headers.txt
+          retention-days: 14
+          if-no-files-found: warn
