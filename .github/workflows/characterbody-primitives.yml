@@ -1,4 +1,4 @@
-name: Validate original character physics animation physiology primitives
+name: Validate original character limb physiology animation primitives
 on:
   push:
     branches: [feature/characterbody-dependency-primitives]
