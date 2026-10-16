@@ -9,6 +9,14 @@ const xyz=v=>v.toArray();
 const xyzw=q=>q.toArray();
 const LOCAL_X_TO_UNITY_HINGE_Z=new THREE.Quaternion().setFromUnitVectors(
   new THREE.Vector3(1,0,0),new THREE.Vector3(0,0,1));
+const unityPosition=node=>{
+ const p=node.getWorldPosition(new THREE.Vector3());
+ return new THREE.Vector3(p.x,p.y,-p.z);
+};
+const unityRotation=node=>{
+ const q=node.getWorldQuaternion(new THREE.Quaternion());
+ return new THREE.Quaternion(-q.x,-q.y,q.z,q.w);
+};
 export async function createOriginalArmRig(source,nodeById,character,{moduleOptions={}}={}){
  if(source?.format!==originalArmRigFormat)throw Error('Original arm source required');
  const prefab=source.prefabs.find(p=>p.name==='Operator');
@@ -26,8 +34,7 @@ export async function createOriginalArmRig(source,nodeById,character,{moduleOpti
    const node=sourceNode(transform);
    if(!node)throw Error('Source physics Transform missing from character: '+transform);
    node.updateWorldMatrix(true,false);
-   return {position:xyz(node.getWorldPosition(new THREE.Vector3())),
-     rotation:xyzw(node.getWorldQuaternion(new THREE.Quaternion()))};
+   return {position:xyz(unityPosition(node)),rotation:xyzw(unityRotation(node))};
  };
  function bodyFromId(rigidbodyId){
    if(bodies.has(rigidbodyId))return bodies.get(rigidbodyId);
@@ -61,15 +68,17 @@ export async function createOriginalArmRig(source,nodeById,character,{moduleOpti
        throw Error('Original joint attachment mismatch');
      const connected=bodyFromId(limb.connectedBody);
      const movingNode=sourceNode(entry.transform),parentNode=sourceNode(connected.transform);
-     const worldQ=movingNode.getWorldQuaternion(new THREE.Quaternion())
-       .multiply(LOCAL_X_TO_UNITY_HINGE_Z);
+     // Derive joint frames in Unity source coordinates, not in Three's
+     // reflected Z basis. PhysX kernel handles the reflection exactly once.
+     const movingQ=unityRotation(movingNode),connectedQ=unityRotation(parentNode);
+     const worldQ=movingQ.clone().multiply(LOCAL_X_TO_UNITY_HINGE_Z);
      const localMoving=LOCAL_X_TO_UNITY_HINGE_Z.clone();
-     const localParent=parentNode.getWorldQuaternion(new THREE.Quaternion())
-       .invert().multiply(worldQ);
+     const localParent=connectedQ.clone().invert().multiply(worldQ);
      const anchor=V(j.m_Anchor);
-     const pivot=movingNode.localToWorld(anchor.clone());
+     const pivot=unityPosition(movingNode).add(anchor.clone().applyQuaternion(movingQ));
      const connectedAnchor=j.m_AutoConfigureConnectedAnchor
-       ?parentNode.worldToLocal(pivot.clone()):V(j.m_ConnectedAnchor);
+       ?pivot.sub(unityPosition(parentNode)).applyQuaternion(connectedQ.invert())
+       :V(j.m_ConnectedAnchor);
      const hinge=kernel.createHinge(entry.actor,connected.actor,{
        anchor:xyz(anchor),connectedAnchor:xyz(connectedAnchor),
        rotation:xyzw(localMoving),connectedRotation:xyzw(localParent),
