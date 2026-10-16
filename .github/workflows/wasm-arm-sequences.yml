@@ -1,9 +1,9 @@
-name: Verify original arm source Hand.SetMode in C# WASM browsers
+name: Verify original M4 chamber ammo and weapon-matched HUD in WASM browsers
 
 # One bounded original-source compile milestone; no automatic build on source/doc edits.
 on:
   push:
-    branches: [feature/22-limb-hand-source, develop/wasm]
+    branches: [feature/22-limb-hand-source, develop/wasm, fix/m4-magazine-last-rounds-chamber]
     paths: [.github/workflows/wasm-arm-sequences.yml]
   workflow_dispatch:
 
@@ -85,7 +85,7 @@ jobs:
         run: |
           python3 -m http.server 8000 --bind 127.0.0.1 --directory work/site > work/evidence/http-server.log 2>&1 &
           node scripts/original_arm_sequences_smoke.mjs
-      - name: Boot exact packaged M4 magazine game in Chromium and WebKit and capture screenshots
+      - name: Boot original C# weapon snapshot and verify correct M4 chamber and equipped-gun art in Chromium/WebKit
         run: |
           node scripts/weapon_smoke.mjs
           cp weapon-smoke.json work/evidence/m4-magazine-browser-smoke.json
