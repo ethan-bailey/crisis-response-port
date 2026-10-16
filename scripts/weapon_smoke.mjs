@@ -115,6 +115,11 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   assert.equal(sourceVisual.added,1);
   assert.equal(sourceVisual.removed,true,'Source stops rendering when C# frame stops reporting its instance');
   assert.equal(sourceVisual.source,'c0bb8365c7bd54b4597570f085f5a153');
+  // Assert a real recovered muzzle texture is ready before the first shot.
+  await page.waitForFunction(()=>window.__gameState()?.presentation?.originalMuzzleFlash?.textureLoaded===true,null,{timeout:30000});
+  const flashInitial=(await state()).presentation.originalMuzzleFlash;
+  assert.ok(flashInitial.sourceAnimationDuration>0,'Recovered original muzzle flash clip must have a positive duration');
+  assert.equal(flashInitial.shotsReceived,0,'No muzzle flash without an original C# shot');
   const initial=await state();
   const sourceMagazine=await page.locator('#magazineTouch').evaluate(el=>{
    const img=el.querySelector('[data-mag-image]');
@@ -161,6 +166,12 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   await page.waitForTimeout(400);
   const tapped=await state();
   assert.equal(tapped.weaponState.shots,1);
+  const firstFlash=tapped.presentation.originalMuzzleFlash;
+  assert.equal(firstFlash.textureLoaded,true,'Original source muzzle atlas texture must load');
+  assert.equal(firstFlash.textureError,null,'Original flash source texture may not silently fail');
+  assert.equal(firstFlash.shotsReceived,1,'One real original shot must trigger exactly one source flash');
+  assert.ok(firstFlash.firstFramesApplied>=1,'At least one original sprite frame must be ready for rendering, not expire first');
+  assert.ok(firstFlash.maxDrawable>=1,'A flash needs an actual textured drawable frame while alive');
   assert.deepEqual(tapped.aimDirection,touchAimed.aimDirection,'Shooting must retain new touch aim');
   assert.equal(rounds(tapped.weaponState),60);
   // A new distant tap should re-aim without firing another round.
@@ -181,8 +192,17 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   await page.waitForFunction(()=>!window.__gameState().weaponState.reloading,null,{timeout:30000});await ready();
   const reloaded=await state();assert.equal(rounds(reloaded.weaponState),rounds(preReload.weaponState));assert.equal(reloaded.weaponState.magazine,30);assert.equal(reloaded.weaponState.reserve,29);
   const fireBox=await page.locator('#fire').boundingBox();await page.mouse.move(fireBox.x+fireBox.width/2,fireBox.y+fireBox.height/2);await page.mouse.down();
+  // Capture the actual live muzzle flash in the original game's render loop.
+  // The sprite is short-lived, so trigger a screenshot as soon as its source
+  // C# event has produced a textured frame, rather than after fire is released.
+  await page.waitForFunction(()=>window.__gameState()?.presentation?.originalMuzzleFlash?.activeDrawable>0,null,{timeout:30000});
+  await page.screenshot({path:`muzzle-flash-${engine}.png`});
   await page.waitForFunction(()=>window.__gameState().weaponState.bolt==='Open'&&window.__gameState().weaponState.magazine===0,null,{timeout:30000});await page.mouse.up();
-  const empty=await state();assert.equal(empty.weaponState.shots,32);assert.equal(empty.weaponState.chamberLive,false);
+  const empty=await state();assert.equal(empty.weaponState.shots,32);
+  assert.equal(empty.presentation.originalMuzzleFlash.shotsReceived,32,
+    'Every original fired projectile produces a recovered muzzle effect');
+  assert.ok(empty.presentation.originalMuzzleFlash.firstFramesApplied>=32,
+    'Every shot must apply its own original sprite frame on its firing update');assert.equal(empty.weaponState.chamberLive,false);
   await page.waitForTimeout(300);assert.equal((await state()).weaponState.shots,32,'No extra shot after release/empty');
   await page.waitForFunction(()=>document.querySelector('#magazineTouch [data-mag-count]')?.textContent==='0',null,{timeout:30000});
   assert.equal(await page.locator('#magazineTouch .mag-round:not([hidden])').count(),0,'Empty original magazine must show no x-ray rounds');
@@ -190,7 +210,7 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   const final=await state();assert.equal(await page.locator('#magazineTouch [data-mag-count]').textContent(),String(final.weaponState.magazine+(final.weaponState.chamberLive?1:0)));
   assert.equal(await page.locator('#magazineTouch [data-mag-chamber]').isVisible(),true,'The live chamber cartridge gets a separate on-screen marker');
   assert.equal(final.weaponState.magazine,28);assert.equal(final.weaponState.reserve,0);assert.equal(final.projection.fov,20);assert.ok(final.presentation.arms.every(a=>Number.isFinite(a.upper)&&Number.isFinite(a.lower)));
-  assert.ok(final.weaponState.ballistics.contacts>0,"Original scene material contacts must occur during live firing");assert.ok(Number.isFinite(final.weaponState.ballistics.last.exitEnergy));assert.deepEqual(errors,[]);await page.screenshot({path:`weapon-${engine}.png`});results.push({engine,passed:true,nativeTouchDrag,actualIPhoneTest:false,initial,tapped,reloaded,empty,final});
+  assert.ok(final.weaponState.ballistics.contacts>0,"Original scene material contacts must occur during live firing");assert.ok(Number.isFinite(final.weaponState.ballistics.last.exitEnergy));assert.deepEqual(errors,[]);await page.screenshot({path:`weapon-${engine}.png`});results.push({engine,passed:true,nativeTouchDrag,actualIPhoneTest:false,sourceMuzzleFlash:final.presentation.originalMuzzleFlash,initial,tapped,reloaded,empty,final});
  }catch(e){results.push({engine,passed:false,error:String(e),errors,state:await page.evaluate(()=>window.__gameState?.()||null),screenError:await page.locator('#error').textContent()});await page.screenshot({path:`weapon-${engine}.png`}).catch(()=>{});process.exitCode=1;}
  finally{await browser.close();}
 }
