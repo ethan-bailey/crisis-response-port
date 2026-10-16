@@ -38,6 +38,7 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 <script type="module">
 import * as THREE from "three";
 import { loadWeaponData } from "./weapon-runtime.mjs";
+import { loadOriginalParticleSources } from "./original-particle-event-binding.mjs";
 import { AimDirection } from "./aim-direction.mjs";
 import { promiseCache, decodeScene } from "./loading.mjs";
 import { BrowserInput } from "./browser-input.mjs";
@@ -88,6 +89,9 @@ async function load(){
   const presentationReady=loadPresentationData().then(data=>{presentationData=data;configureCamera(camera,data);return data;});
   const presentationRuntimeReady=Promise.all([runtimeReady,presentationReady]).then(async([_,data])=>{await runtimeCall("InitializePresentation",JSON.stringify(data));markLoaded("presentationReady");});
   const weaponReady=loadWeaponData().then(data=>{weaponData=data;return data;});
+  // Original 14 entry/exit effect prefab records, 26 ParticleSystem modules and
+  // original renderer materials. These remain unrendered until source parity.
+  const particleSourceReady=loadOriginalParticleSources();
   const ballisticsReady=fetch("./assets/ballistics.json.gz").then(r=>{if(!r.ok)throw new Error("Original material settings unavailable");return new Response(r.body.pipeThrough(new DecompressionStream("gzip"))).json();}).then(data=>{ballisticsData=data;return JSON.stringify(data);});
   const weaponRuntimeReady=Promise.all([presentationRuntimeReady,weaponReady]).then(async([_,data])=>runtimeCall("InitializeWeapons",JSON.stringify(data)));
   const manifestReady=json("./assets/operator/operator.json");
@@ -103,7 +107,7 @@ async function load(){
    sceneBounds=new THREE.Box3().setFromObject(sceneMesh);markLoaded("sceneReady");
   })();
   const materialRuntimeReady=Promise.all([weaponRuntimeReady,ballisticsReady]).then(([_,data])=>runtimeCall("InitializeBallistics",data));
-  const startupReady=Promise.all([presentationRuntimeReady,materialRuntimeReady,physicsReady,geometryReady]);startupReady.catch(()=>{});
+  const startupReady=Promise.all([presentationRuntimeReady,materialRuntimeReady,physicsReady,geometryReady,particleSourceReady]);startupReady.catch(()=>{});
   const [manifest,animationData]=await Promise.all([manifestReady,animationReady]);
   const texLoader=new THREE.TextureLoader();
   const texture=promiseCache(async url=>{const tex=await texLoader.loadAsync(url);tex.colorSpace=THREE.SRGBColorSpace;return tex;});
@@ -194,7 +198,8 @@ async function load(){
   aimQuad.name="Original Aim quad collider (layer AimQuad)";aimQuad.rotation.x=Math.PI;aimQuad.position.set(playerX+facingDirection*20,2.5,1.5);scene.add(aimQuad);
   await Promise.all([startupReady,characterReady]);
   const originalWindows=JSON.parse(await runtimeCall('OriginalWindowVisuals'));
-  upperBody=createUpperBody(presentationData,manifest,nodeById,character,weaponInstances.M4A1,runtimeCall,weaponData,scene,ballisticsData,originalWindows);
+  const originalParticleSources=await particleSourceReady;
+  upperBody=createUpperBody(presentationData,manifest,nodeById,character,weaponInstances.M4A1,runtimeCall,weaponData,scene,ballisticsData,originalWindows,originalParticleSources);
   physicsState=contactPhysics.snapshot();document.body.classList.add('playing');loaded=true;markLoaded("playable");
   // The inactive sidearm must not delay play. Fetch it after the first playable frame.
   requestAnimationFrame(()=>setTimeout(()=>buildWeapon("Glock-18","Pelvis/Abdomen/Torso/Right upper arm/Right lower arm/Right hand/Pistol pivot").then(w=>{w.root.visible=false;weaponInstances["Glock-18"]=w;markLoaded("sidearmReady");}).catch(()=>{weaponStatus.textContent="Original active weapon loaded · sidearm preview unavailable";}),0));
