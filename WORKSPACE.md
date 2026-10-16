@@ -8,7 +8,7 @@
 
 Native Marksman Unity compilation **succeeded** in run 38800542438, but only logs were retained and actual browser gameplay is unverified. SDK 8 package run 38849201407 is compiled/package-verified, not freshly browser-tested or deployed. UI audit run 38892941728 identifies all 24 original UI types, not UI execution. Follow the exact commits, artifacts and limits in NEXT_AGENT.md.
 
-Latest scoped WASM expansion: [PR #21](https://github.com/ethan-bailey/crisis-response-port/pull/21), [run 38896212172](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38896212172) passed at `256b574eca62a902e23e9ba45d2b2542d64fe445`. Six unchanged original arm-sequence classes increase selected original C# files from 35 to 41. Seven prefabs / 21 frames load and compose in Chromium/WebKit; full animation playback remains unfinished. Private site artifact `12043404117`, evidence `12043827958`. Unmerged branch: `codex/wasm-original-arm-sequences`.
+Latest **integrated and verified** WASM expansion: original C# arm-sequence classes and 7 source prefabs from PR #21 integrated to the PR #9 branch in `c110c738646f48f793a1e35822639676b0b21975`; the combined actual SDK 8 WASM, native C# and Chromium/WebKit browser test [#38901664939](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38901664939) **PASSED** (test input SHA `1264c0b4579076b82e1b6b21955469313779fe39`). Private complete site `12046137813`, evidence `12046012744`. No original animation controller playback yet. **Keep a single executable integration branch and short-lived source feature batches.** See [integration workflow](docs/INTEGRATION_WORKFLOW.md).
 
 ## Objective and nonnegotiable rules
 
