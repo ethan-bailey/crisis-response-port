@@ -1,6 +1,28 @@
 using Crisis.Runtime;
 using System.Text.Json;
 
+if (args.Contains("--character-facing")) {
+{
+    var w = new UnityEngine.RuntimeWorld();
+    var a = new UnityEngine.GameObject("source facing A", w).AddComponent<Crisis.Runtime.Weapons.CharacterBody>();
+    var b = new UnityEngine.GameObject("source facing B", w).AddComponent<Crisis.Runtime.Weapons.CharacterBody>();
+    a.Direction=1f;
+    b.Direction=-1f;
+    a.transform.position=new UnityEngine.Vector3(0f,0f,0f);
+    b.transform.position=new UnityEngine.Vector3(3f,0f,0f);
+    a.Torso=new UnityEngine.GameObject("source torso A",w).AddComponent<Crisis.Runtime.Weapons.Limb>();
+    a.Torso.transform.position=new UnityEngine.Vector3(1f,0f,0f);
+    if (!a.Facing(3f) || !a.Facing(b) || !a.BodyFacingMe(b) || !a.FacingDirection(1f))
+        throw new Exception("Recovered CharacterBody facing methods differ from source");
+    if (a.Facing(-3f) || a.FacingDirection(-1f) || a.Facing((Crisis.Runtime.Weapons.CharacterBody)null))
+        throw new Exception("Recovered CharacterBody facing rejection failed");
+    if (Math.Abs(a.KinematicDistanceToPosition(4f)-3f)>1e-6f)
+        throw new Exception("Recovered CharacterBody kinematic distance failed");
+    Console.WriteLine("{\"CharacterBodyFacingSource\":\"pass\"}");
+}
+
+return;
+}
 Console.WriteLine(RuntimeContracts.Run());
 Console.WriteLine(ArmSequenceContracts.Run("game/assets/original-arm-sequences.json"));
 if(File.Exists("game/assets/presentation.json.gz"))Console.WriteLine(PresentationContracts.Run("game/assets/presentation.json.gz"));
@@ -40,23 +62,4 @@ if(args.Length>0){
     if(overSpeed.GetProperty("forceX").GetSingle()!=0f || overSpeed.GetProperty("reset").GetBoolean())
         throw new Exception("Original overspeed no-force behavior regression");
     Console.WriteLine("{\"CharacterBodySourceMovement\":\"pass\",\"AnalogEnhancement\":true}");
-}
-
-{
-    var w = new UnityEngine.RuntimeWorld();
-    var a = new UnityEngine.GameObject("source facing A", w).AddComponent<Crisis.Runtime.Weapons.CharacterBody>();
-    var b = new UnityEngine.GameObject("source facing B", w).AddComponent<Crisis.Runtime.Weapons.CharacterBody>();
-    a.Direction=1f;
-    b.Direction=-1f;
-    a.transform.position=new UnityEngine.Vector3(0f,0f,0f);
-    b.transform.position=new UnityEngine.Vector3(3f,0f,0f);
-    a.Torso=new UnityEngine.GameObject("source torso A",w).AddComponent<Crisis.Runtime.Weapons.Limb>();
-    a.Torso.transform.position=new UnityEngine.Vector3(1f,0f,0f);
-    if (!a.Facing(3f) || !a.Facing(b) || !a.BodyFacingMe(b) || !a.FacingDirection(1f))
-        throw new Exception("Recovered CharacterBody facing methods differ from source");
-    if (a.Facing(-3f) || a.FacingDirection(-1f) || a.Facing((Crisis.Runtime.Weapons.CharacterBody)null))
-        throw new Exception("Recovered CharacterBody facing rejection failed");
-    if (Math.Abs(a.KinematicDistanceToPosition(4f)-3f)>1e-6f)
-        throw new Exception("Recovered CharacterBody kinematic distance failed");
-    Console.WriteLine("{\"CharacterBodyFacingSource\":\"pass\"}");
 }
