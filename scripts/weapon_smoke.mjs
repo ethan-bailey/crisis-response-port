@@ -123,8 +123,24 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   });
   assert.equal(sourceMagazine.url,'./assets/weapon-runtime/M4-magazine/textures/material_00.png');
   assert.equal(sourceMagazine.loaded,true,'Existing original M4 magazine texture must load in the game browser');
-  assert.equal(Number(sourceMagazine.shown),initial.weaponState.magazine,'HUD must display actual original loaded magazine state');
-  assert.equal(sourceMagazine.rounds,10,'Visual indicator follows source loaded ammunition, not a separate counter');
+  assert.equal(initial.weaponState.weaponId,'M4A1','The actually executable original weapon host is M4A1');
+  assert.equal(initial.weaponState.magazineCapacity,30,'HUD capacity comes from original magazine source');
+  assert.equal(Number(sourceMagazine.shown),initial.weaponState.magazine+(initial.weaponState.chamberLive?1:0),
+    'HUD must display actual available-to-fire rounds including the source chamber state');
+  assert.equal(sourceMagazine.rounds,10,'The magazine window is full while the original magazine has at least ten rounds');
+  const lastRoundsProjection=await page.evaluate(async()=>{
+    const {magazinePresentation}=await import('./magazine-hud.mjs');
+    return {
+      three:magazinePresentation({weaponId:'M4A1',magazine:3,magazineCapacity:30,chamberLive:false}),
+      last:magazinePresentation({weaponId:'M4A1',magazine:0,magazineCapacity:30,chamberLive:true}),
+      glock:magazinePresentation({weaponId:'Glock-18',magazine:5,magazineCapacity:17,chamberLive:true})
+    };
+  });
+  assert.equal(lastRoundsProjection.three.visible,3,'Exactly three last M4 magazine cartridges should be visible');
+  assert.equal(lastRoundsProjection.last.ready,1,'The M4 chamber round must not disappear from the ammo number');
+  assert.equal(lastRoundsProjection.last.visible,0,'A live chamber round is NOT inside the empty magazine');
+  assert.equal(lastRoundsProjection.glock.art.magazineSprite,false,'Glock must not use the M4 cutaway sprite');
+  assert.match(lastRoundsProjection.glock.art.texture,/Glock-18/,'Other equipped guns select their own recovered source art');
   assert.equal(initial.weaponState.ballistics.materials,386);assert.equal(initial.weaponState.ballistics.loadedMeshColliders,61);assert.equal(initial.weaponState.ballistics.unsupportedColliders,2);assert.equal(initial.weaponState.shots,0);assert.equal(rounds(initial.weaponState),61);
   await page.mouse.move(730,90);await page.waitForFunction(()=>window.__gameState().aimDirection[1]>.05,null,{timeout:30000});
   const aimed=await state(),direction=aimed.aimDirection;
@@ -171,7 +187,9 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   await page.waitForFunction(()=>document.querySelector('#magazineTouch [data-mag-count]')?.textContent==='0',null,{timeout:30000});
   assert.equal(await page.locator('#magazineTouch .mag-round:not([hidden])').count(),0,'Empty original magazine must show no x-ray rounds');
   await pullOriginalMagazine();await page.waitForFunction(()=>window.__gameState().weaponState.reloading,null,{timeout:30000});await page.waitForFunction(()=>!window.__gameState().weaponState.reloading&&window.__gameState().weaponState.chamberLive,null,{timeout:30000});await ready();
-  const final=await state();assert.equal(await page.locator('#magazineTouch [data-mag-count]').textContent(),'28');assert.equal(final.weaponState.magazine,28);assert.equal(final.weaponState.reserve,0);assert.equal(final.projection.fov,20);assert.ok(final.presentation.arms.every(a=>Number.isFinite(a.upper)&&Number.isFinite(a.lower)));
+  const final=await state();assert.equal(await page.locator('#magazineTouch [data-mag-count]').textContent(),String(final.weaponState.magazine+(final.weaponState.chamberLive?1:0)));
+  assert.equal(await page.locator('#magazineTouch [data-mag-chamber]').isVisible(),true,'The live chamber cartridge gets a separate on-screen marker');
+  assert.equal(final.weaponState.magazine,28);assert.equal(final.weaponState.reserve,0);assert.equal(final.projection.fov,20);assert.ok(final.presentation.arms.every(a=>Number.isFinite(a.upper)&&Number.isFinite(a.lower)));
   assert.ok(final.weaponState.ballistics.contacts>0,"Original scene material contacts must occur during live firing");assert.ok(Number.isFinite(final.weaponState.ballistics.last.exitEnergy));assert.deepEqual(errors,[]);await page.screenshot({path:`weapon-${engine}.png`});results.push({engine,passed:true,nativeTouchDrag,actualIPhoneTest:false,initial,tapped,reloaded,empty,final});
  }catch(e){results.push({engine,passed:false,error:String(e),errors,state:await page.evaluate(()=>window.__gameState?.()||null),screenError:await page.locator('#error').textContent()});await page.screenshot({path:`weapon-${engine}.png`}).catch(()=>{});process.exitCode=1;}
  finally{await browser.close();}
