@@ -71,7 +71,10 @@ export class BrowserInput {
       const clamped = Math.max(-1, Math.min(1, dx));
       this.set('left', source, clamped < -deadZone);
       this.set('right', source, clamped > deadZone);
-      if (thumb) thumb.style.transform = `translateX(${clamped * radius * .48}px)`;
+      if (thumb) {
+        const travel = Math.max(0, (rect.width - thumb.offsetWidth) / 2 - 2);
+        thumb.style.transform = `translateX(${clamped * travel}px)`;
+      }
       event.preventDefault();
     };
     this.listen(surface, 'pointerdown', event => {
