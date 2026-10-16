@@ -53,6 +53,23 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 .playing #hud #title,.playing #hud #status,.playing #hud #position{display:none}
 #weaponStatus{font-size:10px!important;margin:0!important}
 #error{top:auto;bottom:108px;max-height:30vh;overflow:auto;padding:7px;font-size:11px;line-height:1.3}
+/* Thumb joystick: center spring, walk ring and sprint rim. Landscape safe area. */
+#movementStick{position:relative;display:block;width:112px;height:112px;min-width:112px;flex:none;border-radius:50%;border:2px solid #90a5b89c;background:radial-gradient(circle at center,#263a4a75 0 23%,#14212bc9 25% 64%,#233448dc 65% 100%);box-shadow:inset 0 0 0 2px #b8d4ea18,0 6px 18px #03080ca8;touch-action:none;user-select:none;-webkit-user-select:none;pointer-events:auto;--stick-power:0}
+#movementStick:before{content:"";position:absolute;inset:18%;height:auto;left:18%;right:18%;top:18%;border:1px dashed #98b1c65e;border-radius:50%;transform:none;background:none}
+#movementStick:after{content:"";position:absolute;inset:5px;height:auto;top:5px;left:5px;bottom:5px;right:5px;border:2px solid #a4ceec5a;border-radius:50%;pointer-events:none}
+#movementStick .stick-thumb{position:absolute;left:calc(50% - 24px);top:calc(50% - 24px);width:48px;height:48px;border-radius:50%;border:2px solid #d6e9f2e8;background:radial-gradient(circle at 35% 30%,#5385a6,#25445f);box-shadow:0 3px 7px #0309119c,inset 0 0 0 6px #c9e7fc12;pointer-events:none;z-index:2;transition:transform .12s cubic-bezier(.2,.9,.2,1)}
+#movementStick.active .stick-thumb{transition:none;background:radial-gradient(circle at 35% 30%,#62a3cc,#275374)}
+#movementStick.sprinting{border-color:#e6c48c;box-shadow:inset 0 0 0 2px #e9d4aa30,0 0 16px #e6c48c24}
+#movementStick .stick-label{position:absolute;left:0;right:0;bottom:-16px;text-align:center;font:700 9px/1 system-ui;color:#b3c6d8;letter-spacing:.08em;pointer-events:none}
+#controls .cluster:last-child{grid-template-columns:repeat(3,52px);grid-template-rows:repeat(2,46px)}
+#kneel{grid-area:1 / 2}#stand{grid-area:1 / 3}#fire{grid-area:2 / 2 / 3 / 4}
+#controls button.action-icon{display:flex;align-items:center;justify-content:center;padding:7px}
+#controls button.action-icon svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+#controls #fire svg{width:30px;height:30px}
+#controls button.action-icon:focus-visible,#movementStick:focus-visible{outline:2px solid #b3dbf5;outline-offset:3px}
+@media(max-height:430px){#movementStick{width:94px;height:94px;min-width:94px}#movementStick .stick-thumb{width:42px;height:42px;left:calc(50% - 21px);top:calc(50% - 21px)}}
+@media(prefers-reduced-motion:reduce){#movementStick .stick-thumb{transition:none}}
+
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
 </head>
@@ -61,7 +78,7 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 <div id="hud"><div id="title">Crisis Response · incomplete port</div><div id="status">Loading recovered scene and original Operator prefab…</div><div id="position"></div><div id="weaponStatus">Loading original weapons…</div></div>
 <div id="help">A/D · Shift · S/W · drag or tap to aim · tap same spot to fire · <a href="../runtime-web/">Runtime checks</a></div>
 <div id="error"></div><div id="rotateNotice">Rotate your phone to landscape to view the port prototype.</div>
-<div id="controls"><div class="cluster"><div id="movementStick" role="group" aria-label="Slide left or right to move; farther from center moves faster; release to stop"><span class="stick-thumb" aria-hidden="true"></span></div></div><div class="cluster"><button id="magazineTouch" type="button" aria-label="M4 magazine ammunition unavailable"><span class="mag-body"><img class="mag-image" data-mag-image alt="" draggable="false"><span class="mag-window" data-mag-rounds aria-hidden="true"></span><span class="mag-count" data-mag-count aria-hidden="true">–</span></span></button><button id="kneel" data-action="kneel" aria-label="Kneel">KNEEL</button><button id="stand" data-action="stand" aria-label="Stand">STAND</button><button id="sprint" data-action="sprint" aria-label="Sprint">SPRINT</button><button id="fire" data-action="fire" aria-label="Hold to fire">FIRE</button><button id="swap" disabled aria-label="Weapon switching is not implemented">SWAP · PENDING</button></div></div>
+<div id="controls"><div class="cluster"><div id="movementStick" role="group" tabindex="0" aria-label="Movement joystick. Pull left or right: small movements walk slowly, farther runs, full pull sprints. Release to stop."><span class="stick-thumb" aria-hidden="true"></span><span class="stick-label" aria-hidden="true">MOVE</span></div></div><div class="cluster"><button id="magazineTouch" type="button" aria-label="M4 magazine ammunition unavailable"><span class="mag-body"><img class="mag-image" data-mag-image alt="" draggable="false"><span class="mag-window" data-mag-rounds aria-hidden="true"></span><span class="mag-count" data-mag-count aria-hidden="true">–</span></span></button><button id="kneel" class="action-icon" data-action="kneel" aria-label="Kneel" title="Kneel"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="18" cy="5" r="3"/><path d="M17 9l-6 7 8 3 5 8M11 16l-6 9h9M19 19h9"/></svg></button><button id="stand" class="action-icon" data-action="stand" aria-label="Stand up" title="Stand"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="5" r="3"/><path d="M16 9v10m0-7-7 6m7-6 7 6m-7 1-6 10m6-10 6 10"/></svg></button><button id="fire" class="action-icon" data-action="fire" aria-label="Hold to fire" title="Fire"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="9"/><circle cx="16" cy="16" r="3"/><path d="M16 1v7m0 16v7M1 16h7m16 0h7"/></svg></button></div></div>
 <script type="module">
 import * as THREE from "three";
 import { loadSourceCutoutMaterials, sourceCutoutMaterial } from "./source-cutout-materials.mjs";
@@ -318,12 +335,13 @@ async function frame(now){
   if(acceleration!==0){
    // Execute recovered CharacterBody.Move / FixedUpdate source logic in C#.
    // This adapter transports the resulting force to the real PhysX actor.
+   const walkSpeed=contactPhysics.data.character.movement.walkSpeed;
+   const sprintSpeed=contactPhysics.data.character.movement.sprintSpeed;
+   const motion=input.movementProfile(Math.sign(acceleration),walkSpeed,sprintSpeed,keys.sprint);
    const movement=JSON.parse(await runtimeCall("StepBodyMovement",JSON.stringify({
     direction:acceleration,velocity,step,facing:facingDirection,
-    walkSpeed:contactPhysics.data.character.movement.walkSpeed,
-    sprintSpeed:contactPhysics.data.character.movement.sprintSpeed,
-    analogMagnitude:input.movementMagnitude(Math.sign(acceleration)),
-    sprint:keys.sprint,crippled:false,operator:true,noPlayerLimp:true,precision:false
+    walkSpeed,sprintSpeed,analogMagnitude:motion.magnitude,
+    sprint:motion.sprint,crippled:false,operator:true,noPlayerLimp:true,precision:false
    })));
    if(movement.forceX!==0)contactPhysics.addAcceleration(movement.forceX);
    if(movement.reset)acceleration=0;
