@@ -1,0 +1,92 @@
+{
+  "archiveSha256": "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
+  "blocker": "Actual IKArmSequencer depends on source CharacterBody, original controller callbacks, and original ArmIKSolver/Limb/Hand physics; no placeholder classes may be invented.",
+  "classes": {
+    "ArmIKSolver": {
+      "bytes": 7585,
+      "directDependencies": [
+        "IKArmController",
+        "CharacterBody",
+        "Limb",
+        "Hand",
+        "Joint",
+        "InverseKinematics2D",
+        "UnityEngine"
+      ],
+      "originalPath": "Assets/Scripts/Assembly-CSharp/ArmIKSolver.cs",
+      "repositoryPath": "source-reference/Original/Animation/ArmIKSolver.cs",
+      "sha256": "ddc4291b1ab5f73e74ddb65b8df67232bff2afddd1a591403e8aceed13a9c5dc",
+      "status": "preserved_not_compiled"
+    },
+    "CharacterBody": {
+      "bytes": 62958,
+      "directDependencies": [
+        "BehaviorDesigner.Runtime",
+        "UnityEngine.Events",
+        "ArmsControl",
+        "WeaponBase",
+        "Limb",
+        "Hand",
+        "medical/AI/team/weapons/animation classes"
+      ],
+      "originalPath": "Assets/Scripts/Assembly-CSharp/CharacterBody.cs",
+      "repositoryPath": "source-reference/Original/Animation/CharacterBody.cs",
+      "sha256": "76301d45e6e94556d1a902f0d37f5f97111bc2efb89f36de7ed9acd935b55742",
+      "status": "preserved_not_compiled"
+    },
+    "IKArmController": {
+      "bytes": 12158,
+      "directDependencies": [
+        "IKArmSequencer",
+        "IKArmType",
+        "CharacterBody",
+        "ArmIKSolver",
+        "WeaponBase",
+        "Grenade",
+        "WeaponBrace",
+        "UnityEngine"
+      ],
+      "originalPath": "Assets/Scripts/Assembly-CSharp/IKArmController.cs",
+      "repositoryPath": "source-reference/Original/Animation/IKArmController.cs",
+      "sha256": "848283e9b0a3e25ce1650529b1ac57a0bebb8f5b600cada1ad33d56a3fa2ec6e",
+      "status": "preserved_not_compiled"
+    },
+    "IKArmSequencer": {
+      "bytes": 5452,
+      "directDependencies": [
+        "IKArmController",
+        "ArmIKSolver",
+        "IKArmType",
+        "CharacterBody",
+        "WeaponBase",
+        "TeamOperator",
+        "UnityEngine.Transform/Time"
+      ],
+      "originalPath": "Assets/Scripts/Assembly-CSharp/IKArmSequencer.cs",
+      "repositoryPath": "source-reference/Original/Animation/IKArmSequencer.cs",
+      "sha256": "29f48bdb6446fd560dae5a05f235af5701b8a484401392fb5528ec696ac59610",
+      "status": "preserved_not_compiled"
+    },
+    "IKArmType": {
+      "bytes": 48,
+      "directDependencies": [],
+      "originalPath": "Assets/Scripts/Assembly-CSharp/IKArmType.cs",
+      "repositoryPath": "runtime/Original/Animation/IKArmType.cs",
+      "sha256": "bc0801f3b205f09da8a2fb1f108d34f23e25f29090c77b28fa1e86731bcb589d",
+      "status": "compiled_by_runtime"
+    }
+  },
+  "compiledOriginalClassNames": [
+    "IKArmType"
+  ],
+  "originalControllerPlaybackImplemented": false,
+  "originalSourceUnmodified": true,
+  "purpose": "unchanged original C# reference source, not a playable controller implementation",
+  "schema": 1,
+  "sourceOnlyOriginalClassNames": [
+    "ArmIKSolver",
+    "CharacterBody",
+    "IKArmController",
+    "IKArmSequencer"
+  ]
+}
