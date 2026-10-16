@@ -55,6 +55,17 @@ export async function createArmPhysicsKernel({moduleOptions={},gravity=[0,0,0]}=
    return createBody({...options,shapeRotation},new P.PxCapsuleGeometry(radius,Math.max(0,height/2-radius)));
   },
   setKinematic(body,state){bodyCheck(body);body.actor.setRigidBodyFlag(P.PxRigidBodyFlagEnum.eKINEMATIC,!!state);body.isKinematic=!!state;},
+  // Original Unity arm joints begin kinematic. During normal source IK, the
+  // authored limb world pose must be transported to the actual PhysX actor;
+  // toggling eKINEMATIC alone leaves its collision/joint frame at the old pose.
+  // This is an engine pose adapter, not a replacement IK solver or controller.
+  syncKinematicPose(body,position,rotation){
+   bodyCheck(body);
+   if(!body.isKinematic)throw new Error('Cannot apply IK pose to dynamic source limb');
+   const target=pose(position,rotation);
+   try{body.actor.setKinematicTarget(target);}
+   finally{P.destroy(target);}
+  },
   addForceAtPosition(body,force,point,mode='Force') {
    bodyCheck(body);if(!finite(force)||!finite(point))throw new Error('Invalid force/point');
    if(!['Force','Acceleration','Impulse','VelocityChange'].includes(mode))throw new Error('Unsupported ForceMode: '+mode);
