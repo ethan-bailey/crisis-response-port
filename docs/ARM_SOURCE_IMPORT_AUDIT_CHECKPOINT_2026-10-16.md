@@ -17,3 +17,7 @@ Independent read-only structural assertions against the original JSON completed 
 Rollback this checkpoint by reverting only `scripts/audit_original_arm_rig.py` and this document on the feature branch; the user-confirmed working preview and live gameplay are unaffected.
 
 Known separate work: PR #33 addresses grip/wrist/chamber presentation. Avoid modifying those files in this physics lane.
+
+## C# compile dependency gate
+
+`python3 scripts/check_armcontroller_compile_dependencies.py` pins original `ArmController.cs` SHA256 `5b98da4624c609f57fe1ec59adbe49b5daecf8d6380a7617711aa764bb641b3c`, checks eleven concrete original-source API dependency groups, and rejects any differing runtime copy. This script is a **static prerequisite check**, not a compilation or evidence of controller execution. It deliberately does not add the original source to the broad `runtime/Crisis.Runtime.csproj` glob until real dependent types/Unity physics services compile. CI execution remains pending. The latest user request prioritizes completion of the original C# → WASM compile, with no fabricated types.
