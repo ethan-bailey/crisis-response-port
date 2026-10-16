@@ -47,6 +47,10 @@ Choose one type, at least one area, and priority when useful. Status may be abse
 
 Labels represent observable status, not aspirational completeness. Historical integrations can have `status:integrated` without native shader/gameplay parity. Existing GitHub default labels may coexist.
 
+## Server-side branch protections
+
+**Not yet enforced:** GitHub currently reports `protected=false` for `main` and `develop/wasm`. These collaboration rules are documented and followed by agents, but they are **not a server-enforced required-review policy** yet. A repository administrator may additionally configure **Settings → Rules → Rulesets / Branch protection** (subject to the account plan) to target `main` and `develop/wasm`, prohibit deletion/force pushes, require pull requests and reviews, and require the exact fast source-check job when its status is available. Do not turn on an unavailable/mismatched required check and inadvertently block emergency rollback/release operations. Admin-only policy changes have **not** been made in this session.
+
 ## Required documentation
 
 - **Start here:** `README.md` and `CONTRIBUTING.md`.
