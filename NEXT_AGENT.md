@@ -1,5 +1,14 @@
 # Next agent — authoritative handoff, reviewed 2026-10-16
 
+## Follow-up execution started — retained native Marksman WebGL validation
+
+The handoff execution order was reviewed against the latest known successful native build and the separate #19/#20 PRs. **The bounded native test in step 2 is appropriate**, but native compilation is NOT a decision to abandon the still-working C#/WASM path. It tests a new uncertainty: the 2026-10-15 Unity Marksman player binaries were discarded and no live browser instance was established.
+
+One single private native run is now [Actions #38895140830](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38895140830), original known-working Unity-build source baseline `4ed43897973d9fac607b4e57baf2cbe4102acf3d`, new isolated branch `codex/native-marksman-webgl-runtime-validation`, workflow input SHA `7f4f688cba700fe96b5c68c57d71f4d3428fad0c`. Private output retention, proper `.wasm.br` and `.data.br` MIME/encoding, actual Chromium/WebKit `createUnityInstance` resolution, canvas/input observation, screenshots and failure evidence are the explicit gates. See [native experiment checkpoint](https://github.com/ethan-bailey/crisis-response-port/blob/codex/native-marksman-webgl-runtime-validation/docs/NATIVE_MARKSMAN_RUNTIME_VALIDATION_2026-10-16.md).
+
+**Status at this documentation update: running**; no runtime browser/Unity result should be claimed until the CI job ends. Avoid duplicate Unity CI. This isolated branch is based on the earlier exact tested native commit, and is NOT an edit to independent Unity PR #7, WASM PR #9 gameplay code, or `main`. It is not a full Mission 01 native build and is not physical iPhone Safari acceptance. SDK8 compiler packaging PR #19 and source/UI audit PR #20 remain distinct, unmerged, verified metadata checkpoints. Reconsider any route change only with actual native runtime evidence.
+
+
 Read this file first, then [WORKSPACE.md](WORKSPACE.md). This replaces the competing “latest” and “next” sections in the [archived handoff](docs/history/NEXT_AGENT_BEFORE_2026-10-16_REVIEW.md). The archive and dated ledger are historical evidence, not instructions to repeat completed work.
 
 **The full game is unfinished.** Preserve the original developer's code, assets and behavior for iPhone Safari. Compilation, recovered data, browser execution, native parity, deployment and physical-device acceptance are separate milestones. Do not report a completion percentage.
