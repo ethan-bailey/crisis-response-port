@@ -1,4 +1,4 @@
-name: Verify final combined hand grip and chamber HUD WASM release
+name: Verify combined arm and magazine HUD final device-test release
 
 # Explicit full milestone: a feature/fix workflow YAML change triggers ONE test.
 # Merging reviewed code into develop/wasm must not duplicate the expensive build.
