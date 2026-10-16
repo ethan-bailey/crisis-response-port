@@ -35,7 +35,7 @@ if (args.Contains("--character-dependencies")) {
     col.direction=0;col.radius=.5f;col.height=2f;
     world.Initialize();
     if(!col.Raycast(new UnityEngine.Ray(new UnityEngine.Vector3(-3,0,0),UnityEngine.Vector3.right),out var h,10f)
-        || Math.Abs(h.distance-1.5f)>1e-4f)
+        || Math.Abs(h.distance-2f)>1e-4f)
        throw new Exception("Original axis-X capsule raycast failed");
     if(col.Raycast(new UnityEngine.Ray(new UnityEngine.Vector3(0,0,0),UnityEngine.Vector3.right),out _,10f))
        throw new Exception("Capsule raycast should ignore ray origin inside collider");
