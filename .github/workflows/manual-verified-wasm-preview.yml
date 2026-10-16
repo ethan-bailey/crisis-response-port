@@ -35,8 +35,8 @@ jobs:
       - name: Require owner-private repository and previously successful WASM run
         env:
           GH_TOKEN: ${{ github.token }}
-          RUN_ID: 38963544872
-          SOURCE_SHA: a026cf9645e8d144ece0aeebe0f274ced8447c08
+          RUN_ID: 38964199982
+          SOURCE_SHA: 2525e0f9163bb8a387ab91d4f4b813f8636dc40a
         run: |
           set -euo pipefail
           test "$(gh api repos/$GITHUB_REPOSITORY --jq .private)" = true
@@ -47,8 +47,8 @@ jobs:
       - name: Download the existing proven compiled package, not a new WASM build
         env:
           GH_TOKEN: ${{ github.token }}
-          RUN_ID: 38963544872
-          SOURCE_SHA: a026cf9645e8d144ece0aeebe0f274ced8447c08
+          RUN_ID: 38964199982
+          SOURCE_SHA: 2525e0f9163bb8a387ab91d4f4b813f8636dc40a
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/wasm-package" "$RUNNER_TEMP/wasm-evidence" "$RUNNER_TEMP/wasm-site"
@@ -76,8 +76,8 @@ jobs:
           PY
       - name: Stage a single reusable protected preview snapshot with all ignored binaries
         env:
-          RUN_ID: 38963544872
-          SOURCE_SHA: a026cf9645e8d144ece0aeebe0f274ced8447c08
+          RUN_ID: 38964199982
+          SOURCE_SHA: 2525e0f9163bb8a387ab91d4f4b813f8636dc40a
         run: |
           set -euo pipefail
           branch="preview/wasm-current-iphone"
