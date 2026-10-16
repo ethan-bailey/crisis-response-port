@@ -27,6 +27,14 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   assert.equal(handState.originalHands.sourceShaderParity,false,'Dummy exported shader is not native visual parity');
   assert.equal(handState.presentation.originalIKUpdate,true);
   assert.equal(handState.presentation.originalHandSetMode,true);
+  assert.equal(await page.locator('#magazineTouch [data-mag-chamber]').count(),0);
+  assert.equal(Number(await page.locator('#magazineTouch [data-mag-count]').textContent()),
+   handState.weaponState.magazine+(handState.weaponState.chamberLive?1:0));
+  assert.equal(handState.sourceCutouts?.depthWriting,19);
+  for(const [i,side] of ['right','left'].entries()){
+   const pose=handState.weaponState[side],v=handState.presentation.armTargets[i];
+   assert.ok(Math.hypot(...pose.grip.p.map((x,k)=>x-(k===2?-v[k]:v[k])))<1e-4);
+  }
   // Real recovered C# ArmController.Update and Unity component bridge are live.
   // The initial Operator authored arms are kinematic, so source IK still owns
   // their visible poses until an original physical-state transition occurs.
