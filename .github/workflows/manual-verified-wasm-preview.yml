@@ -1,9 +1,5 @@
 name: Manual verified WASM preview snapshot
 on:
-  # One explicit owner-requested snapshot staging; no Vercel auto-deploy.
-  push:
-    branches: [maintenance/request-original-hand-preview]
-    paths: [.github/workflows/manual-verified-wasm-preview.yml]
   workflow_dispatch:
     inputs:
       source_run_id:
@@ -36,8 +32,8 @@ jobs:
       - name: Require owner-private repository and previously successful WASM run
         env:
           GH_TOKEN: ${{ github.token }}
-          RUN_ID: ${{ inputs.source_run_id || '38938472804' }}
-          SOURCE_SHA: ${{ inputs.source_sha || 'c6c5dab6af0a3e80bb83e682a86aa373a640d2c0' }}
+          RUN_ID: ${{ inputs.source_run_id }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
         run: |
           set -euo pipefail
           test "$(gh api repos/$GITHUB_REPOSITORY --jq .private)" = true
@@ -47,8 +43,8 @@ jobs:
       - name: Download the existing proven compiled package, not a new WASM build
         env:
           GH_TOKEN: ${{ github.token }}
-          RUN_ID: ${{ inputs.source_run_id || '38938472804' }}
-          SOURCE_SHA: ${{ inputs.source_sha || 'c6c5dab6af0a3e80bb83e682a86aa373a640d2c0' }}
+          RUN_ID: ${{ inputs.source_run_id }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/wasm-package" "$RUNNER_TEMP/wasm-evidence" "$RUNNER_TEMP/wasm-site"
@@ -76,8 +72,8 @@ jobs:
           PY
       - name: Stage a single reusable protected preview snapshot with all ignored binaries
         env:
-          RUN_ID: ${{ inputs.source_run_id || '38938472804' }}
-          SOURCE_SHA: ${{ inputs.source_sha || 'c6c5dab6af0a3e80bb83e682a86aa373a640d2c0' }}
+          RUN_ID: ${{ inputs.source_run_id }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
         run: |
           set -euo pipefail
           branch="preview/wasm-current-iphone"
