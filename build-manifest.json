@@ -3,7 +3,7 @@
     "blazorResources": 199,
     "wasmFiles": 195
   },
-  "buildRun": "https://github.com/ethan-bailey/crisis-response-port/actions/runs/38950125370",
+  "buildRun": "https://github.com/ethan-bailey/crisis-response-port/actions/runs/38955475013",
   "compilerPolicy": {
     "allowPrerelease": false,
     "rollForward": "disable",
@@ -430,6 +430,11 @@
       "sha256": "d500f8ce08751a2b1b20ec32b6c5ed20f5f0ffcb4b6434427357b1a51ef297cf"
     },
     {
+      "bytes": 6116,
+      "path": "game/assets/source-cutout-materials.json",
+      "sha256": "a8f1d7fd0b2ade76cb348e550429703c7ba71281dd3713bcbfa374169b96d197"
+    },
+    {
       "bytes": 78188,
       "path": "game/assets/weapon-runtime/M4-magazine/textures/material_00.png",
       "sha256": "214e2e4b26831789565d78831edf1746e3da054a5388002747c5a1e1d27fe3f4"
@@ -555,9 +560,9 @@
       "sha256": "0c331574c56dde74abdfd9cd6cb41ab931c42a78afc0b5d76f2bd6a63bb21f6f"
     },
     {
-      "bytes": 32017,
+      "bytes": 31843,
       "path": "game/index.html",
-      "sha256": "94ccc524f3d2aafba958e76aa8838379daba6f053b1df9d937f736a6d3d3a473"
+      "sha256": "34e3df49e0b9dc64c9fb0f85c0e424737cf62272dbc8ca71dff38c436ce9aa75"
     },
     {
       "bytes": 700,
@@ -565,9 +570,9 @@
       "sha256": "14471b3de4e3b0ed0c56442dcf6cfc4ef9e05617c32a5c368fdc9e92c3ded896"
     },
     {
-      "bytes": 8558,
+      "bytes": 8431,
       "path": "game/magazine-hud.mjs",
-      "sha256": "0b1e21b703cf451bc502834f6f9c0a0e1822b79bcacf23bb589b41344b377df3"
+      "sha256": "38cd83acf03dc53b5eeb9148e6fd9e57a0c69e8503367a91c63f708a3e4fb17e"
     },
     {
       "bytes": 7987,
@@ -595,9 +600,14 @@
       "sha256": "08b79ee61a50fa91fcde060ecb4cab493f5f6e217e985192713826b78783f127"
     },
     {
-      "bytes": 7089,
+      "bytes": 7167,
       "path": "game/presentation.mjs",
-      "sha256": "40e87307ef88f25152d73f57a7a28e7850d35b76ecfeeebb45ec655771f3000c"
+      "sha256": "21a6d2f97e7123f2060546ffb13ef9f675ba09776cf44135b295f891b493012b"
+    },
+    {
+      "bytes": 1153,
+      "path": "game/source-cutout-materials.mjs",
+      "sha256": "ae60d6dc88c16e648341ae7433a1996e806a98b40eaa91bd0da71403f1dcc067"
     },
     {
       "bytes": 733,
@@ -625,9 +635,9 @@
       "sha256": "7d4696e6273166308ce1f0db5dd5aee96c843b6e3722d96db7e4422aa1fbee1f"
     },
     {
-      "bytes": 7775,
+      "bytes": 7896,
       "path": "game/weapon-runtime.mjs",
-      "sha256": "23cb535de1a8a6a225687a29cf83d348c6a1da2efcbb710164f7e99db1519dc0"
+      "sha256": "59415160745e89f894dcf727e16fcae0af4bbcc2467b4026f0e35cf100110038"
     },
     {
       "bytes": 236,
@@ -635,44 +645,44 @@
       "sha256": "055b6f534d3069ff3c22511f290027d035a0bcca97b63dd6eb8abe5d94e17188"
     },
     {
-      "bytes": 9001,
+      "bytes": 9002,
       "path": "runtime-web/_framework/Crisis.Runtime.Browser.pdb.gz",
-      "sha256": "444da4310e6acd9dab0df39d9663d081e1eaa6f68d0c60fa2c2e061d3dcdc0f4"
+      "sha256": "daf68144affb1135d378b4704c6710eb11cfe933c2b41b4e06726ebf22de1e54"
     },
     {
       "bytes": 15125,
       "path": "runtime-web/_framework/Crisis.Runtime.Browser.wasm",
-      "sha256": "34b06588f77cb28d68f696a0e8a1e538132f8e61c51c63c63f7d7c4bcd68efb6"
+      "sha256": "2f092ea9de720ad058e58f7bf1b5b3ae7cbb88bda633b0de5a1cf7d8676c4954"
     },
     {
-      "bytes": 6232,
+      "bytes": 6216,
       "path": "runtime-web/_framework/Crisis.Runtime.Browser.wasm.br",
-      "sha256": "9e07d1df5fa959436c99d3b41b75237bf262008fc71d9fcb62376c91d13b1040"
+      "sha256": "f00a96a0385a4662871fbf3da01ad6d17219ccefc7f106c3f8dafc67bd9f303a"
     },
     {
-      "bytes": 6909,
+      "bytes": 6910,
       "path": "runtime-web/_framework/Crisis.Runtime.Browser.wasm.gz",
-      "sha256": "58d343678b5ec874638a32e41ca23f73872c75c34405663428a9dffc9f5ec786"
+      "sha256": "1e48b93d9fc014f4286fc3007f3aa7bd98d5f8eb846126742e7ec382232b1f66"
     },
     {
-      "bytes": 37238,
+      "bytes": 37276,
       "path": "runtime-web/_framework/Crisis.Runtime.pdb.gz",
-      "sha256": "0ef004cb3cf61329274b265f7bb3e97f51b1831e1ae58e684147532b6015967b"
+      "sha256": "08df02fe6572cec5186565fa9445e4fc1fba9a7f669a2a5f43ed069abd58b986"
     },
     {
-      "bytes": 255765,
+      "bytes": 257301,
       "path": "runtime-web/_framework/Crisis.Runtime.wasm",
-      "sha256": "32fe7437bf68d94ef96e0ba3ad2901e3cce25e111184eca553d15fb6788fd65d"
+      "sha256": "a4c12976a280bce1986ab279d357849bc67d999969cbaf90e4784067e7570cc9"
     },
     {
-      "bytes": 84826,
+      "bytes": 84973,
       "path": "runtime-web/_framework/Crisis.Runtime.wasm.br",
-      "sha256": "0c8c6e670d428f96efa2040c99f41aa3899977e58289f68a1c2bf0b74410dd90"
+      "sha256": "298f32d413dc9512d418ff92d6e23c3c0c0944a23cfae112421bd6034e6175cc"
     },
     {
-      "bytes": 103402,
+      "bytes": 103959,
       "path": "runtime-web/_framework/Crisis.Runtime.wasm.gz",
-      "sha256": "b3570cb6f2a07df2733e2770614c607227ae7d09fd1ff63e87b1365010e24893"
+      "sha256": "2072380dcabea418e18fa12473fa8599db19b7dedb8c7a2aa9f7fd4de5b917cd"
     },
     {
       "bytes": 40725,
@@ -3512,17 +3522,17 @@
     {
       "bytes": 19433,
       "path": "runtime-web/_framework/blazor.boot.json",
-      "sha256": "3a07c3ded82465c9de6d243625507e485f6fd45d226610798f9c3b5c667f1cbc"
+      "sha256": "4d55a7eafb9124b832908d52fd8194431f4b1574f8e99df928172a2f15d608b4"
     },
     {
-      "bytes": 8219,
+      "bytes": 8217,
       "path": "runtime-web/_framework/blazor.boot.json.br",
-      "sha256": "b7f3fbb2567bb9112ba347fe187157baa42072a69eeaac4cc41852877deef2c4"
+      "sha256": "1f897e162ec9f7b7a7d751231758c1924011f4a6cb373dd0e5fce891586e1078"
     },
     {
-      "bytes": 8848,
+      "bytes": 8850,
       "path": "runtime-web/_framework/blazor.boot.json.gz",
-      "sha256": "5c5b6e3fc50635fda57fefbcddb3cdd1b6622320c75849dcbc5afb2d23ea807b"
+      "sha256": "d58bde24d89776e969ad862e8b0c17625d91c6c5fbf1e7c0c6da90ec7f54ac5d"
     },
     {
       "bytes": 60300,
@@ -3701,7 +3711,7 @@
     "originalGameComplete": false,
     "physicalIPhoneTested": false
   },
-  "sourceCommit": "a745d1faf6580b6a532957572840541d2122830b",
+  "sourceCommit": "b9bf419c0e28970d9a1ababa43dfcac5009a87c9",
   "sourceInventory": [
     {
       "bytes": 1829,
@@ -3789,9 +3799,9 @@
       "sha256": "e2be85e119379bbebdd4a9f78521568f1591827d74f996453ec902672e84b706"
     },
     {
-      "bytes": 6328,
+      "bytes": 6345,
       "path": ".github/workflows/wasm-arm-sequences.yml",
-      "sha256": "c6525d7af151d2dc1b57a915190767dc89bad469a8aa2e7fd55d1d8b8ce6769a"
+      "sha256": "e2f35243af74a7f78cf91e2b7a44d3c91eba2754f393c65efec965d2e4175fe8"
     },
     {
       "bytes": 2603,
@@ -4204,6 +4214,11 @@
       "sha256": "d500f8ce08751a2b1b20ec32b6c5ed20f5f0ffcb4b6434427357b1a51ef297cf"
     },
     {
+      "bytes": 6116,
+      "path": "game/assets/source-cutout-materials.json",
+      "sha256": "a8f1d7fd0b2ade76cb348e550429703c7ba71281dd3713bcbfa374169b96d197"
+    },
+    {
       "bytes": 23224,
       "path": "game/assets/weapon-runtime.json.gz",
       "sha256": "786e7ad6764058e59138d12e2631618da807596b510515317a1a544c35de2211"
@@ -4329,9 +4344,9 @@
       "sha256": "0c331574c56dde74abdfd9cd6cb41ab931c42a78afc0b5d76f2bd6a63bb21f6f"
     },
     {
-      "bytes": 32017,
+      "bytes": 31843,
       "path": "game/index.html",
-      "sha256": "94ccc524f3d2aafba958e76aa8838379daba6f053b1df9d937f736a6d3d3a473"
+      "sha256": "34e3df49e0b9dc64c9fb0f85c0e424737cf62272dbc8ca71dff38c436ce9aa75"
     },
     {
       "bytes": 700,
@@ -4339,9 +4354,9 @@
       "sha256": "14471b3de4e3b0ed0c56442dcf6cfc4ef9e05617c32a5c368fdc9e92c3ded896"
     },
     {
-      "bytes": 8558,
+      "bytes": 8431,
       "path": "game/magazine-hud.mjs",
-      "sha256": "0b1e21b703cf451bc502834f6f9c0a0e1822b79bcacf23bb589b41344b377df3"
+      "sha256": "38cd83acf03dc53b5eeb9148e6fd9e57a0c69e8503367a91c63f708a3e4fb17e"
     },
     {
       "bytes": 7987,
@@ -4379,9 +4394,14 @@
       "sha256": "d47cc79389f27f3f23fed9ffbbc474fba76b91747bde771f65f54bbc3528f719"
     },
     {
-      "bytes": 7089,
+      "bytes": 7167,
       "path": "game/presentation.mjs",
-      "sha256": "40e87307ef88f25152d73f57a7a28e7850d35b76ecfeeebb45ec655771f3000c"
+      "sha256": "21a6d2f97e7123f2060546ffb13ef9f675ba09776cf44135b295f891b493012b"
+    },
+    {
+      "bytes": 1153,
+      "path": "game/source-cutout-materials.mjs",
+      "sha256": "ae60d6dc88c16e648341ae7433a1996e806a98b40eaa91bd0da71403f1dcc067"
     },
     {
       "bytes": 733,
@@ -4399,9 +4419,9 @@
       "sha256": "8b2c1bf8cb9153e08095ee44955c2a77eb0ec1e0ac52d7b2c77ad5aca56fc87e"
     },
     {
-      "bytes": 7775,
+      "bytes": 7896,
       "path": "game/weapon-runtime.mjs",
-      "sha256": "23cb535de1a8a6a225687a29cf83d348c6a1da2efcbb710164f7e99db1519dc0"
+      "sha256": "59415160745e89f894dcf727e16fcae0af4bbcc2467b4026f0e35cf100110038"
     },
     {
       "bytes": 935,
@@ -4569,9 +4589,9 @@
       "sha256": "a03dfc8e7725e88f73d7cb22f21d5fb5b94f91d7a52087f91722a2cf95dacb5a"
     },
     {
-      "bytes": 22457,
+      "bytes": 23224,
       "path": "runtime/Engine/WeaponHost.cs",
-      "sha256": "68c2257de18c2862979740a6e20b88a7af9ed98bd56e96dcb43335d3aecb1e54"
+      "sha256": "7682ea482ca9f028543924d1155c370734968f387427bf89d2dd56aa7297a949"
     },
     {
       "bytes": 3373,
@@ -5054,6 +5074,11 @@
       "sha256": "f1bed063ee3495b63352f2093d8eb411c96a072f0e2cc90fc5b70cc72fe18681"
     },
     {
+      "bytes": 2011,
+      "path": "scripts/recover_source_cutout_materials.py",
+      "sha256": "702eb975e444f5c8b6b29e5bbe9affb9332c0928b3cb24d41bc646dc0214f382"
+    },
+    {
       "bytes": 3435,
       "path": "scripts/replace_missing_308_casing_mesh.py",
       "sha256": "8931782753eb54612588f22090eaa7e2444ee3364c5d17e0f370ce519ffda8a8"
@@ -5154,9 +5179,9 @@
       "sha256": "3ac1c7732167923c87cbb3f81ff1c223554b0ebb1698514bfcd13baddc4840b1"
     },
     {
-      "bytes": 20185,
+      "bytes": 20807,
       "path": "scripts/weapon_smoke.mjs",
-      "sha256": "253a58f085eaf8ccf47b6f8413ba6d4b7a73d7c505a5bf6763e03588a6e9b37c"
+      "sha256": "31669f09a41ee9ce3baae85bcb41b4ea73710295cd4bca67fe7a7ddb228eccb9"
     },
     {
       "bytes": 4254,
