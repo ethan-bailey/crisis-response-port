@@ -4,6 +4,7 @@ name: Mission 01 separate game movement smoke test
 # itself is explicitly changed on the isolated WASM branch.
 # One verified native/browser checkpoint for the original-M4-magazine HUD with
 # screenshot/gesture evidence; never auto-trigger from ordinary source pushes.
+# One visual follow-up: ensure the recovered flash persists during asynchronous C# updates.
 on:
   push:
     branches:
@@ -83,8 +84,7 @@ jobs:
             weapon-smoke.json
             weapon-chromium.png
             weapon-webkit.png
-            muzzle-flash-chromium.png
-            muzzle-flash-webkit.png
+            muzzle-flash-*.png
             presentation-smoke.json
             presentation-chromium.png
             presentation-webkit.png
