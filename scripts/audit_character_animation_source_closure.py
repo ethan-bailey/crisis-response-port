@@ -34,7 +34,18 @@ for filename, methods in required.items():
     source_methods = [m for m in methods if has_method(original, m)]
     if len(source_methods) != len(methods):
         raise SystemExit(f"Expected recovered source method missing in {filename}: {set(methods)-set(source_methods)}")
+    declaration = re.compile(
+        r"^\s*(?:(?:public|private|protected|internal|static|virtual|override|sealed|new)\s+)*"
+        r"(?:void|bool|float|int|Vector3|Transform|WeaponBase|GameObject|"
+        r"CharacterBody|IEnumerator|IKArmSequenceRuntime|IKArmSequencer)\s+"
+        r"([A-Za-z_][A-Za-z0-9_]*)\s*\(",
+        re.MULTILINE
+    )
+    all_source = sorted(set(declaration.findall(original)))
+    all_compiled = sorted(set(declaration.findall(compiled)))
     audit[filename] = {
+        "all_source_method_names": all_source,
+        "uncompiled_source_method_names": sorted(set(all_source) - set(all_compiled)),
         "source_methods": source_methods,
         "compiled_source_file_present": compiled_path.exists(),
         "compiled_methods_in_matching_file": [m for m in methods if has_method(compiled, m)],
