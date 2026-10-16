@@ -18,19 +18,55 @@ export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,part
  const originalImpactMeshes=createOriginalImpactMeshRenderer(scene);
  const originalWindows=createOriginalWindowVisuals(scene,ballisticsData,sourceWindows);
  const originalParticleEvents=createOriginalParticleEventBinding(particleSources.particles,particleSources.materials);
- const texturePromise=new THREE.TextureLoader().loadAsync(Object.values(data.flash.textures)[0].url).then(t=>{t.colorSpace=THREE.SRGBColorSpace;return t;});
+ // Preload and retain the exact original SpriteAtlas texture. The old code
+ // deferred assigning a clone using Promise.then for EVERY shot. Because its
+ // short original animation is timed by C# Time.time, the new flash could age
+ // out before the next WASM/browser frame applied its very first sprite.
+ let loadedFlashTexture=null,flashTextureError=null;
+ const texturePromise=new THREE.TextureLoader().loadAsync(Object.values(data.flash.textures)[0].url)
+  .then(t=>{t.colorSpace=THREE.SRGBColorSpace;loadedFlashTexture=t;return t;})
+  .catch(error=>{flashTextureError=String(error?.message||error);return null;});
  const flashNodes=data.flash.prefab.filter(r=>r.classID===4),clip=data.flash.animation[0].fields,curve=clip.m_PPtrCurves[0].curve;
  const magRoot=new THREE.Group();scene.add(magRoot);const magNodes=new Map();
  for(const n of data.magazineVisual.nodes){const g=new THREE.Group();g.position.fromArray(n.position);g.quaternion.fromArray(n.rotation);g.scale.fromArray(n.scale);magNodes.set(n.gameObjectFileID,g);}
  for(const n of data.magazineVisual.nodes){const g=magNodes.get(n.gameObjectFileID);(magNodes.get(n.parentGameObjectFileID)||magRoot).add(g);}
  for(const r of data.magazineVisual.renderers)new THREE.TextureLoader().loadAsync('./assets/weapon-runtime/M4-magazine/'+r.texture).then(t=>{t.colorSpace=THREE.SRGBColorSpace;const m=new THREE.MeshBasicMaterial({map:t,transparent:true,alphaTest:.015,side:THREE.DoubleSide,depthWrite:false});const mesh=new THREE.Mesh(new THREE.PlaneGeometry(1,1),m);mesh.renderOrder=3;magNodes.get(r.gameObjectFileID).add(mesh);});
  const duration=clip.m_AnimationClipSettings.m_StopTime,active=[];
+ let shotsReceived=0,sourceFramesApplied=0,firstFramesApplied=0,maxDrawable=0;
+ function attachOriginalTexture(item,t) {
+  if(item.disposed||!t)return;
+  item.texture=t.clone();
+  item.texture.needsUpdate=true;
+  item.material.map=item.texture;
+  item.material.needsUpdate=true;
+ }
+ function applyOriginalSpriteFrame(item,time) {
+  if(!item.texture)return;
+  let frame=curve[0];for(const key of curve)if(key.time<=time)frame=key;
+  const sprite=data.flash.sprites[frame.value.guid][0].fields,
+        rect=sprite.m_RD.textureRect,ppu=sprite.m_PixelsToUnits,
+        pivot=sprite.m_Pivot,tex=item.texture;
+  tex.repeat.set(rect.width/tex.image.width,rect.height/tex.image.height);
+  tex.offset.set(rect.x/tex.image.width,rect.y/tex.image.height);
+  item.mesh.scale.set(rect.width/ppu,rect.height/ppu,1);
+  item.mesh.position.set((.5-pivot.x)*rect.width/ppu,(.5-pivot.y)*rect.height/ppu,0);
+  if(!item.firstFrameApplied){item.firstFrameApplied=true;firstFramesApplied++;}
+  item.originalSpriteGuid=frame.value.guid;
+  sourceFramesApplied++;
+ }
  function flash(event,sourceTime){
   const group=new THREE.Group(),root=flashNodes.find(n=>n.fields.m_Father.fileID==='0'),child=flashNodes.find(n=>n!==root),f=child.fields;
   const holder=new THREE.Group(),q=f.m_LocalRotation;holder.quaternion.set(-q.x,-q.y,q.z,q.w);holder.scale.set(f.m_LocalScale.x,f.m_LocalScale.y,f.m_LocalScale.z).multiplyScalar(data.weapon.muzzleFlashScale);group.add(holder);
   const m=new THREE.MeshBasicMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,alphaTest:.001});const mesh=new THREE.Mesh(new THREE.PlaneGeometry(1,1),m);holder.add(mesh);
   const p=event.muzzle,r=event.rotation;group.position.set(p[0],p[1],-p[2]);group.quaternion.set(-r[0],-r[1],r[2],r[3]);scene.add(group);
-  const item={group,mesh,material:m,start:sourceTime,texture:null,disposed:false};active.push(item);texturePromise.then(t=>{if(item.disposed)return;item.texture=t.clone();item.texture.needsUpdate=true;m.map=item.texture;m.needsUpdate=true;});
+  group.name='Original M4 source muzzle-flash animation';
+  mesh.name='Original muzzle-flash atlas sprite';
+  const item={group,mesh,material:m,start:sourceTime,texture:null,disposed:false,firstFrameApplied:false,originalSpriteGuid:null};
+  active.push(item);shotsReceived++;
+  // Texture preloaded already: apply the first original sprite synchronously
+  // THIS frame, before THREE renders. No invented duration or replacement art.
+  if(loadedFlashTexture)attachOriginalTexture(item,loadedFlashTexture);
+  else texturePromise.then(t=>{if(!item.disposed)attachOriginalTexture(item,t);});
  }
  function update(events,magazinePose,sourceTime){
   if(magazinePose){const {p,q,visible}=magazinePose;magRoot.visible=visible;magRoot.position.set(p[0],p[1],-p[2]);magRoot.quaternion.set(-q[0],-q[1],q[2],q[3]);}
@@ -44,12 +80,16 @@ export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,part
   originalParticleEvents.observe(events,sourceTime);
   for(let i=active.length-1;i>=0;i--){const item=active[i],time=sourceEffectAge(sourceTime,item.start);
    if(time>=duration){item.disposed=true;scene.remove(item.group);item.mesh.geometry.dispose();item.material.dispose();item.texture?.dispose();active.splice(i,1);continue;}
-   if(!item.texture)continue;
-   let frame=curve[0];for(const key of curve)if(key.time<=time)frame=key;
-   const sprite=data.flash.sprites[frame.value.guid][0].fields,rect=sprite.m_RD.textureRect,ppu=sprite.m_PixelsToUnits,pivot=sprite.m_Pivot,tex=item.texture;
-   tex.repeat.set(rect.width/tex.image.width,rect.height/tex.image.height);tex.offset.set(rect.x/tex.image.width,rect.y/tex.image.height);
-   item.mesh.scale.set(rect.width/ppu,rect.height/ppu,1);item.mesh.position.set((.5-pivot.x)*rect.width/ppu,(.5-pivot.y)*rect.height/ppu,0);
+   applyOriginalSpriteFrame(item,time);
   }
+  maxDrawable=Math.max(maxDrawable,active.filter(item=>item.firstFrameApplied).length);
  }
- return {update,impactMeshSnapshot:originalImpactMeshes.snapshot,windowSnapshot:originalWindows.snapshot,particleSourceSnapshot:originalParticleEvents.snapshot};
+ function flashSnapshot(){
+  return {textureLoaded:!!loadedFlashTexture,textureError:flashTextureError,
+    sourceAnimationDuration:duration,shotsReceived,sourceFramesApplied,
+    firstFramesApplied,maxDrawable,active:active.length,
+    activeDrawable:active.filter(item=>item.firstFrameApplied).length,
+    currentSourceSpriteGuid:active.find(item=>item.firstFrameApplied)?.originalSpriteGuid||null};
+ }
+ return {update,flashSnapshot,impactMeshSnapshot:originalImpactMeshes.snapshot,windowSnapshot:originalWindows.snapshot,particleSourceSnapshot:originalParticleEvents.snapshot};
 }
