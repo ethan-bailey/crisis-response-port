@@ -1,0 +1,77 @@
+name: Stage one verified WASM site snapshot privately for a manual iPhone preview
+on:
+  push:
+    branches: [release/iphone-wasm-preview-2026-10-16]
+    paths: ['.github/workflows/stage-private-iphone-wasm-preview.yml']
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: source-verified-wasm-mobile-site-snapshot
+  cancel-in-progress: false
+jobs:
+  stage-site-snapshot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Require private repo, verified original source SHA and new preview branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(gh api repos/$GITHUB_REPOSITORY --jq .private)" = true
+          test "$GITHUB_REF" = "refs/heads/release/iphone-wasm-preview-2026-10-16"
+          test -z "$(git ls-remote --heads origin 'refs/heads/preview/wasm-hand-modes-20261016')"
+          gh run view 38909327063 --repo "$GITHUB_REPOSITORY" --json conclusion,headSha --jq 'select(.conclusion=="success" and .headSha=="252337d96b845f5b2eb6dd406c32a52a423d3e37") | .headSha' | grep -Fx '252337d96b845f5b2eb6dd406c32a52a423d3e37'
+      - name: Fetch only proven private game package and matching integrity evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p work/package work/evidence work/site
+          gh run download 38909327063 --repo "$GITHUB_REPOSITORY" --name crisis-response-arm-sequences-private-wasm-site --dir work/package
+          gh run download 38909327063 --repo "$GITHUB_REPOSITORY" --name wasm-original-arm-sequences-evidence --dir work/evidence
+          test -f work/package/crisis-response-private-wasm-site.tar.gz
+          test -f work/evidence/site-archive.sha256
+          python3 - <<'PY'
+          import pathlib,hashlib
+          tar=pathlib.Path('work/package/crisis-response-private-wasm-site.tar.gz')
+          line=pathlib.Path('work/evidence/site-archive.sha256').read_text().strip()
+          digest=line.split()[0]
+          assert len(digest)==64 and hashlib.sha256(tar.read_bytes()).hexdigest()==digest, "Previously tested archive SHA mismatch"
+          print("Original packaged game artifact SHA256 matches previous verified CI")
+          PY
+          tar -xzf work/package/crisis-response-private-wasm-site.tar.gz -C work/site
+          python3 scripts/package_wasm_site.py verify work/site | tee work/evidence/site-deployment-reverify.json
+          python3 - <<'PY'
+          import json,pathlib
+          b=json.loads(pathlib.Path('work/site/build-manifest.json').read_text())
+          assert b['sourceCommit']=='252337d96b845f5b2eb6dd406c32a52a423d3e37'
+          assert not b['scope']['originalGameComplete'] and not b['scope']['physicalIPhoneTested']
+          assert (pathlib.Path('work/site')/'runtime-web/_framework/blazor.webassembly.js').is_file()
+          print('Verified original C# source commit, incomplete-game scope, compiled runtime')
+          PY
+      - name: Stage packaged output to new separate private preview branch, never overwrite code
+        run: |
+          set -euo pipefail
+          dest="$RUNNER_TEMP/verified-crisis-source-game-site"
+          mkdir -p "$dest"
+          cp -a work/site/. "$dest/"
+          test -f "$dest/game/index.html"
+          test -f "$dest/runtime-web/index.html"
+          # The orphan preview branch stores ONLY previously verified binary output
+          # and a no-auto-deploy policy. No private source archive or runner secrets.
+          git switch --orphan preview/wasm-hand-modes-20261016
+          git rm -rf --cached . >/dev/null || true
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf -- '{}' +
+          cp -a "$dest"/. .
+          printf '%s\n' '{"git":{"deploymentEnabled":false}}' > vercel.json
+          printf '%s\n' 'Source-preserving Crisis Response compiled site snapshot.' 'Exact verified input SHA: 252337d96b845f5b2eb6dd406c32a52a423d3e37' 'Verified run: https://github.com/ethan-bailey/crisis-response-port/actions/runs/38909327063' 'Incomplete original game. Private authentication only; no Git-triggered deployment.' > PRIVATE_BUILD_IDENTITY.txt
+          git add -A
+          git -c user.name='Crisis Response Build Stager' -c user.email='github-actions[bot]@users.noreply.github.com' commit -m 'Stage SHA-matched private C# WASM gameplay site for one manual iPhone preview'
+          git push origin HEAD:refs/heads/preview/wasm-hand-modes-20261016
+          git rev-parse HEAD
+          du -sh .
