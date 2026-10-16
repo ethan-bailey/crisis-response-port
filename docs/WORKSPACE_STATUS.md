@@ -88,3 +88,30 @@ Recover **actual** Shader Forge runtime behavior from compiled/native original U
 
 ## End-of-session requirements
 Append commits, source provenance, targeted test conclusions, artifact IDs and explicit untested gaps here. Update `NEXT_AGENT.md` to point at `WORKSPACE.md`. Never describe scheduled future work as active background execution; a later Work session or new user turn must execute it.
+
+
+## C# native impact event-to-source particle binder — 2026-10-15 (current session)
+
+**New audited input contract:** `game/original-particle-event-binding.mjs` binds the *existing* C# `materialEffect` emission events to their exact source Unity impact effect GUIDs, 14 source prefabs and 26 emitter/renderer component IDs; validates material cross-references (8 original material GUIDs / 4 source texture assets), mandatory enabled modules, original renderer modes (14 billboard, 12 mesh), disabled module invariants, source phase, world pose and original scaled `UnityEngine.Time.time`. It exposes a bounded `recent` source-event journal (max 32) and counts of unsupported emitter requests.
+
+**Important parity boundary:** No browser particle simulation, shader, synthesized shapes or placeholder visuals have been introduced; `renderedParticles=0` and `sourceVisualParity=false` are exposed explicitly. Source 3D meshes, original normals, material and emitter payloads are preserved for a later real Unity 2017 ParticleSystem compatibility engine, not used to fake one. Browser game startup now loads `original-particles-source.json.gz` and `original-particle-materials-source.json.gz`, and attaches provenance-checked bindings alongside the original `WeaponEffects` transport. Runtime `runtime/Original/` is unchanged.
+
+### Exact commits / files (selective rollback)
+
+| Commit | File and action |
+| --- | --- |
+| `3cc019ca7ab70a908b8e909232f9d1f3ca7d0d7f` | **Added** `game/original-particle-event-binding.mjs` |
+| `b1bd9f55d9b9a4d63d8661263da4f78034d0d64c` | Updated `game/weapon-runtime.mjs` to validate original material-effect events |
+| `918817a3c21e1177facb02b7509eedc9b6deb06d` | Updated `game/presentation.mjs` diagnostics |
+| `61609054b78f167e593b93570288de746275a735` | Updated `game/index.html` to preload original particle assets and pass the source binder |
+| `d28e7cc03c3b8eb0d8710f1acda78aae667e17b8` | **Added** `scripts/original_particle_event_binding_test.mjs` |
+| `f44f4f607ef5dbd006438b760bf1f8f57ca520d0` | Updated `scripts/weapon_smoke.mjs` for Chromium/WebKit startup/diagnostic assertions |
+| `06f7c8b643a77f53a5ad26ec8086cf1f6aa0e2cb` | Updated workflow `.github/workflows/verify-original-particle-assets.yml` with targeted Node unit tests |
+| `0933f2d4f5c5047f4e4a7f7c701fb13fd0f47e8c` | Updated `.github/workflows/game-movement-smoke.yml` with one complete WASM/browser milestone test |
+
+**Targeted tests VERIFIED SUCCESS:** source emitter/native normals/source material integrity + new binder Node tests, [Actions #38846393711](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38846393711), exact code SHA `06f7c8b643a77f53a5ad26ec8086cf1f6aa0e2cb`, private metadata artifact `12022284968`. Browser full milestone [#38846445335](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38846445335), exact code/workflow SHA `0933f2d4f5c5047f4e4a7f7c701fb13fd0f47e8c`, **pending at initial documentation**. Do not claim browser pass until status verified.
+
+**Rollback:** Check current HEAD and later agents' commits. Revert new binder and its tests together with the three browser integration files, in reverse change order; do not reset/rebase/force-push the branch. The source gzip manifests, original normals, earlier glass/exit hole rendering, `runtime/Original/`, independent Unity PR #7 and owner-private live v8 are not affected. Re-run the targeted Node source verification at the reverted HEAD.
+
+**Next exact task (#11):** capture native ParticleSystem execution reference for the source `InitialModule`, `EmissionModule`, `ShapeModule`, collision and renderer material shader of each of the 26 recovered effect systems. Then implement only verified original native module behaviors and renderer states; match native Unity 2017 event/position/seed traces, not guessed particle visuals. Do not close #11 or claim full-game parity based on the event binder.
+
