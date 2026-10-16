@@ -18,7 +18,7 @@ jobs:
       - name: Compile all source lines and preserve missing dependencies
         run: |
           cp tools/wasm-compile/global.json global.json
-          dotnet build runtime/Crisis.Runtime.csproj --no-restore -v:q -p:GenerateDocumentationFile=false > characterbody-compile.log 2>&1 || {
+          dotnet build runtime/Crisis.Runtime.csproj -v:q -p:GenerateDocumentationFile=false > characterbody-compile.log 2>&1 || {
             cat characterbody-compile.log | tail -250
             exit 1
           }
