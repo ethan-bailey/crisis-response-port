@@ -1,0 +1,76 @@
+import assert from 'node:assert/strict';
+import {test} from 'node:test';
+import {readFileSync} from 'node:fs';
+import {gunzipSync} from 'node:zlib';
+import {createOriginalParticleEventBinding} from '../game/original-particle-event-binding.mjs';
+
+const read=path=>JSON.parse(gunzipSync(readFileSync(new URL(path,import.meta.url))).toString('utf8'));
+const particles=read('../game/assets/ballistics/original-particles-source.json.gz');
+const materials=read('../game/assets/ballistics/original-particle-materials-source.json.gz');
+const nativeEvent=(source,phase,time=5)=>({
+  type:'materialEffect',time,
+  value:{source,phase,position:[1,2,-3],direction:[0,0,1],energy:123,Velocity:15}
+});
+
+test('native source map resolves all 14 original effect prefabs and 26 component identities',()=>{
+  const binder=createOriginalParticleEventBinding(particles,materials);
+  const initial=binder.snapshot();
+  assert.equal(initial.sourcePrefabs,14);
+  assert.equal(initial.sourceEmitters,26);
+  assert.equal(initial.billboardEmitters,14);
+  assert.equal(initial.meshEmitters,12);
+  assert.equal(initial.renderedParticles,0,'No fabricated emission/rendering');
+  assert.equal(initial.sourceVisualParity,false);
+  for(const effect of particles.effects){
+    const event=nativeEvent(effect.guid,effect.roles[0]==='entryEffect'?'entry':'exit');
+    const emitters=binder.resolveEmitters(event);
+    assert.equal(emitters.length,effect.emitters.length);
+    assert.deepEqual(emitters.map(x=>x.sourceEmitterFileID),effect.emitters.map(x=>x.sourceEmitterFileID));
+    assert.deepEqual(emitters.map(x=>x.renderer.m_RenderMode),effect.emitters.map(x=>x.renderer.m_RenderMode));
+  }
+});
+
+test('real C# event timing and original prefab role are preserved, nothing is drawn',()=>{
+  const binder=createOriginalParticleEventBinding(particles,materials);
+  const e=particles.effects[0];
+  const event=nativeEvent(e.guid,e.roles[0]==='entryEffect'?'entry':'exit',11.75);
+  binder.observe([event,{type:'flight',time:11.75,value:{}}],11.75);
+  const state=binder.snapshot();
+  assert.equal(state.receivedEvents,1);
+  assert.equal(state.unrenderedEmitterRequests,e.emitters.length);
+  assert.equal(state.renderedParticles,0);
+  assert.deepEqual(state.recent,[{source:e.guid,phase:event.value.phase,
+    sourceTime:11.75,emitterCount:e.emitters.length}]);
+  assert.equal(binder.resolveEmitters({type:'shot'}),null);
+});
+
+test('unknown native GUID, mismatched phase and invalid clock fail visibly',()=>{
+  const source=particles.effects[0];
+  const phase=source.roles[0]==='entryEffect'?'entry':'exit';
+  const binder=createOriginalParticleEventBinding(particles,materials);
+  assert.throws(()=>binder.observe([nativeEvent('0'.repeat(32),phase)],5),/unknown recovered prefab/);
+  assert.throws(()=>binder.observe([nativeEvent(source.guid,'unknown')],5),/phase/);
+  assert.throws(()=>binder.observe([nativeEvent(source.guid,phase,6)],5),/after simulation-clock/);
+  assert.throws(()=>binder.observe([nativeEvent(source.guid,phase,Number.NaN)],5),/Time.time/);
+  assert.throws(()=>binder.observe([nativeEvent(source.guid,phase)],Number.NaN),/simulation-clock/);
+});
+
+test('source observer bounds diagnostics across repeated native impact events',()=>{
+  const source=particles.effects[0],phase=source.roles[0]==='entryEffect'?'entry':'exit';
+  const binder=createOriginalParticleEventBinding(particles,materials);
+  const events=Array.from({length:35},(_,n)=>nativeEvent(source.guid,phase,n/10));
+  binder.observe(events,3.5);
+  const state=binder.snapshot();
+  assert.equal(state.receivedEvents,35);
+  assert.equal(state.unrenderedEmitterRequests,35*source.emitters.length);
+  assert.equal(state.recent.length,32);
+  assert.equal(state.recent[0].sourceTime,.3);
+});
+
+test('missing or corrupted native material/particle manifest cannot fall back to invented assets',()=>{
+  assert.throws(()=>createOriginalParticleEventBinding({...particles,effects:particles.effects.slice(1)},materials),
+    /expected 14/);
+  const invalid={...materials,effectsByMaterial:{...materials.effectsByMaterial}};
+  invalid.effectsByMaterial[Object.keys(invalid.effectsByMaterial)[0]]=['unverified'];
+  assert.throws(()=>createOriginalParticleEventBinding(particles,invalid),/linkage mismatch/);
+});
