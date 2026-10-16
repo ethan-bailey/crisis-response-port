@@ -1,0 +1,32 @@
+name: Compile recovered full CharacterBody dependency closure
+on:
+  push:
+    branches: [feature/full-source-characterbody-integration]
+    paths: [.github/workflows/characterbody-full-compile.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compile-closure:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: tools/wasm-compile/global.json
+      - name: Compile all source lines and preserve missing dependencies
+        run: |
+          cp tools/wasm-compile/global.json global.json
+          dotnet build runtime/Crisis.Runtime.csproj --no-restore -v:q -p:GenerateDocumentationFile=false > characterbody-compile.log 2>&1 || {
+            cat characterbody-compile.log | tail -250
+            exit 1
+          }
+      - name: Record exact compiler diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: characterbody-full-compiler-diagnostics
+          path: characterbody-compile.log
+          retention-days: 14
+          if-no-files-found: warn
