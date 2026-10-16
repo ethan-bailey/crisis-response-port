@@ -1,0 +1,607 @@
+{
+  "format": "crisis-original-hand-renderers-v1",
+  "limitations": [
+    "Original texture/quad/activation recovered; exported shader is a dummy, native shading parity unverified"
+  ],
+  "renderers": [
+    {
+      "gameObjectFileID": "1470112387431263",
+      "material": {
+        "disabledShaderPasses": [],
+        "m_CustomRenderQueue": -1,
+        "m_DoubleSidedGI": 0,
+        "m_EnableInstancingVariants": 0,
+        "m_LightmapFlags": 1,
+        "m_Name": "hand trigger",
+        "m_ObjectHideFlags": 0,
+        "m_PrefabInternal": {
+          "fileID": "0"
+        },
+        "m_PrefabParentObject": {
+          "fileID": "0"
+        },
+        "m_SavedProperties": {
+          "m_Colors": {
+            "_Color": {
+              "a": 1,
+              "b": 1,
+              "g": 1,
+              "r": 1
+            },
+            "_EmissionColor": {
+              "a": 1,
+              "b": 0,
+              "g": 0,
+              "r": 0
+            }
+          },
+          "m_Floats": {
+            "_BumpScale": 1,
+            "_Cutoff": 0.5,
+            "_DetailNormalMapScale": 1,
+            "_DstBlend": 0,
+            "_GlossMapScale": 1,
+            "_Glossiness": 0,
+            "_GlossyReflections": 1,
+            "_Metallic": 0,
+            "_Mode": 1,
+            "_OcclusionStrength": 1,
+            "_Parallax": 0.02,
+            "_SmoothnessTextureChannel": 0,
+            "_SpecularHighlights": 1,
+            "_SrcBlend": 1,
+            "_UVSec": 0,
+            "_ZWrite": 1
+          },
+          "m_TexEnvs": {
+            "_MainTex": {
+              "m_Offset": {
+                "x": 0,
+                "y": 0
+              },
+              "m_Scale": {
+                "x": 1,
+                "y": 1
+              },
+              "m_Texture": {
+                "fileID": "2800000",
+                "guid": "11f7830e26adadc4885604fc8289af4b",
+                "type": 3
+              }
+            }
+          },
+          "serializedVersion": 3
+        },
+        "m_Shader": {
+          "fileID": "4800000",
+          "guid": "dfda7bb4fc1132e4b8c3293964087ef2",
+          "type": 3
+        },
+        "m_ShaderKeywords": "_ALPHATEST_ON _EMISSION",
+        "serializedVersion": 6,
+        "stringTagMap": {}
+      },
+      "materialPath": "Assets/Material/hand trigger.mat",
+      "mesh": {
+        "fileID": "10210",
+        "guid": "0000000000000000e000000000000000",
+        "type": 0
+      },
+      "name": "Trigger finger",
+      "renderer": {
+        "m_AutoUVMaxAngle": 89,
+        "m_AutoUVMaxDistance": 0.5,
+        "m_CastShadows": 2,
+        "m_DynamicOccludee": 1,
+        "m_Enabled": 1,
+        "m_GameObject": {
+          "fileID": "1470112387431263"
+        },
+        "m_IgnoreNormalsForChartDetection": 0,
+        "m_ImportantGI": 0,
+        "m_LightProbeUsage": 1,
+        "m_LightProbeVolumeOverride": {
+          "fileID": "0"
+        },
+        "m_LightmapParameters": {
+          "fileID": "0"
+        },
+        "m_Materials": [
+          {
+            "fileID": "2100000",
+            "guid": "48b48d500877bdd4ea3a3a7d39552757",
+            "type": 2
+          }
+        ],
+        "m_MinimumChartSize": 4,
+        "m_MotionVectors": 1,
+        "m_ObjectHideFlags": 0,
+        "m_PrefabInternal": {
+          "fileID": "100100000"
+        },
+        "m_PrefabParentObject": {
+          "fileID": "0"
+        },
+        "m_PreserveUVs": 0,
+        "m_ProbeAnchor": {
+          "fileID": "0"
+        },
+        "m_ReceiveShadows": 1,
+        "m_ReflectionProbeUsage": 1,
+        "m_ScaleInLightmap": 1,
+        "m_SelectedEditorRenderState": 3,
+        "m_SortingLayer": 0,
+        "m_SortingLayerID": 0,
+        "m_SortingOrder": 0,
+        "m_StaticBatchInfo": {
+          "firstSubMesh": 0,
+          "subMeshCount": 0
+        },
+        "m_StaticBatchRoot": {
+          "fileID": "0"
+        },
+        "m_StitchLightmapSeams": 0
+      },
+      "rendererFileID": "23016852445014956",
+      "sourceShaderIsDummy": true,
+      "texture": "hands/11f7830e26adadc4885604fc8289af4b.png",
+      "textureSha256": "acdd1e94f9dbb63d6b392ea9ac8882a25fd2401026de39f431af4eb52f90bf65"
+    },
+    {
+      "gameObjectFileID": "1587397909062814",
+      "material": {
+        "disabledShaderPasses": [],
+        "m_CustomRenderQueue": -1,
+        "m_DoubleSidedGI": 0,
+        "m_EnableInstancingVariants": 0,
+        "m_LightmapFlags": 1,
+        "m_Name": "hand",
+        "m_ObjectHideFlags": 0,
+        "m_PrefabInternal": {
+          "fileID": "0"
+        },
+        "m_PrefabParentObject": {
+          "fileID": "0"
+        },
+        "m_SavedProperties": {
+          "m_Colors": {
+            "_Color": {
+              "a": 1,
+              "b": 1,
+              "g": 1,
+              "r": 1
+            },
+            "_EmissionColor": {
+              "a": 1,
+              "b": 0,
+              "g": 0,
+              "r": 0
+            }
+          },
+          "m_Floats": {
+            "_BumpScale": 1,
+            "_Cutoff": 0.5,
+            "_DetailNormalMapScale": 1,
+            "_DstBlend": 0,
+            "_GlossMapScale": 1,
+            "_Glossiness": 0,
+            "_GlossyReflections": 1,
+            "_Metallic": 0,
+            "_Mode": 1,
+            "_OcclusionStrength": 1,
+            "_Parallax": 0.02,
+            "_SmoothnessTextureChannel": 0,
+            "_SpecularHighlights": 1,
+            "_SrcBlend": 1,
+            "_UVSec": 0,
+            "_ZWrite": 1
+          },
+          "m_TexEnvs": {
+            "_MainTex": {
+              "m_Offset": {
+                "x": 0,
+                "y": 0
+              },
+              "m_Scale": {
+                "x": 1,
+                "y": 1
+              },
+              "m_Texture": {
+                "fileID": "2800000",
+                "guid": "8f49c909ee7bb634ab01ca3f32884840",
+                "type": 3
+              }
+            }
+          },
+          "serializedVersion": 3
+        },
+        "m_Shader": {
+          "fileID": "4800000",
+          "guid": "dfda7bb4fc1132e4b8c3293964087ef2",
+          "type": 3
+        },
+        "m_ShaderKeywords": "_ALPHATEST_ON _EMISSION",
+        "serializedVersion": 6,
+        "stringTagMap": {}
+      },
+      "materialPath": "Assets/Material/hand.mat",
+      "mesh": {
+        "fileID": "10210",
+        "guid": "0000000000000000e000000000000000",
+        "type": 0
+      },
+      "name": "Fist",
+      "renderer": {
+        "m_AutoUVMaxAngle": 89,
+        "m_AutoUVMaxDistance": 0.5,
+        "m_CastShadows": 2,
+        "m_DynamicOccludee": 1,
+        "m_Enabled": 1,
+        "m_GameObject": {
+          "fileID": "1587397909062814"
+        },
+        "m_IgnoreNormalsForChartDetection": 0,
+        "m_ImportantGI": 0,
+        "m_LightProbeUsage": 1,
+        "m_LightProbeVolumeOverride": {
+          "fileID": "0"
+        },
+        "m_LightmapParameters": {
+          "fileID": "0"
+        },
+        "m_Materials": [
+          {
+            "fileID": "2100000",
+            "guid": "bbc52ad48f0143d4e88096bcabf8af9e",
+            "type": 2
+          }
+        ],
+        "m_MinimumChartSize": 4,
+        "m_MotionVectors": 1,
+        "m_ObjectHideFlags": 0,
+        "m_PrefabInternal": {
+          "fileID": "100100000"
+        },
+        "m_PrefabParentObject": {
+          "fileID": "0"
+        },
+        "m_PreserveUVs": 0,
+        "m_ProbeAnchor": {
+          "fileID": "0"
+        },
+        "m_ReceiveShadows": 1,
+        "m_ReflectionProbeUsage": 1,
+        "m_ScaleInLightmap": 1,
+        "m_SelectedEditorRenderState": 3,
+        "m_SortingLayer": 0,
+        "m_SortingLayerID": 0,
+        "m_SortingOrder": 0,
+        "m_StaticBatchInfo": {
+          "firstSubMesh": 0,
+          "subMeshCount": 0
+        },
+        "m_StaticBatchRoot": {
+          "fileID": "0"
+        },
+        "m_StitchLightmapSeams": 0
+      },
+      "rendererFileID": "23055535033279528",
+      "sourceShaderIsDummy": true,
+      "texture": "hands/8f49c909ee7bb634ab01ca3f32884840.png",
+      "textureSha256": "2dd2516b085584c6ee78afbe8fffa32e0a55ef954d431512d131540c7c783785"
+    },
+    {
+      "gameObjectFileID": "1621510681728303",
+      "material": {
+        "disabledShaderPasses": [],
+        "m_CustomRenderQueue": -1,
+        "m_DoubleSidedGI": 0,
+        "m_EnableInstancingVariants": 0,
+        "m_LightmapFlags": 1,
+        "m_Name": "hand",
+        "m_ObjectHideFlags": 0,
+        "m_PrefabInternal": {
+          "fileID": "0"
+        },
+        "m_PrefabParentObject": {
+          "fileID": "0"
+        },
+        "m_SavedProperties": {
+          "m_Colors": {
+            "_Color": {
+              "a": 1,
+              "b": 1,
+              "g": 1,
+              "r": 1
+            },
+            "_EmissionColor": {
+              "a": 1,
+              "b": 0,
+              "g": 0,
+              "r": 0
+            }
+          },
+          "m_Floats": {
+            "_BumpScale": 1,
+            "_Cutoff": 0.5,
+            "_DetailNormalMapScale": 1,
+            "_DstBlend": 0,
+            "_GlossMapScale": 1,
+            "_Glossiness": 0,
+            "_GlossyReflections": 1,
+            "_Metallic": 0,
+            "_Mode": 1,
+            "_OcclusionStrength": 1,
+            "_Parallax": 0.02,
+            "_SmoothnessTextureChannel": 0,
+            "_SpecularHighlights": 1,
+            "_SrcBlend": 1,
+            "_UVSec": 0,
+            "_ZWrite": 1
+          },
+          "m_TexEnvs": {
+            "_MainTex": {
+              "m_Offset": {
+                "x": 0,
+                "y": 0
+              },
+              "m_Scale": {
+                "x": 1,
+                "y": 1
+              },
+              "m_Texture": {
+                "fileID": "2800000",
+                "guid": "8f49c909ee7bb634ab01ca3f32884840",
+                "type": 3
+              }
+            }
+          },
+          "serializedVersion": 3
+        },
+        "m_Shader": {
+          "fileID": "4800000",
+          "guid": "dfda7bb4fc1132e4b8c3293964087ef2",
+          "type": 3
+        },
+        "m_ShaderKeywords": "_ALPHATEST_ON _EMISSION",
+        "serializedVersion": 6,
+        "stringTagMap": {}
+      },
+      "materialPath": "Assets/Material/hand.mat",
+      "mesh": {
+        "fileID": "10210",
+        "guid": "0000000000000000e000000000000000",
+        "type": 0
+      },
+      "name": "Fist",
+      "renderer": {
+        "m_AutoUVMaxAngle": 89,
+        "m_AutoUVMaxDistance": 0.5,
+        "m_CastShadows": 2,
+        "m_DynamicOccludee": 1,
+        "m_Enabled": 1,
+        "m_GameObject": {
+          "fileID": "1621510681728303"
+        },
+        "m_IgnoreNormalsForChartDetection": 0,
+        "m_ImportantGI": 0,
+        "m_LightProbeUsage": 1,
+        "m_LightProbeVolumeOverride": {
+          "fileID": "0"
+        },
+        "m_LightmapParameters": {
+          "fileID": "0"
+        },
+        "m_Materials": [
+          {
+            "fileID": "2100000",
+            "guid": "bbc52ad48f0143d4e88096bcabf8af9e",
+            "type": 2
+          }
+        ],
+        "m_MinimumChartSize": 4,
+        "m_MotionVectors": 1,
+        "m_ObjectHideFlags": 0,
+        "m_PrefabInternal": {
+          "fileID": "100100000"
+        },
+        "m_PrefabParentObject": {
+          "fileID": "0"
+        },
+        "m_PreserveUVs": 0,
+        "m_ProbeAnchor": {
+          "fileID": "0"
+        },
+        "m_ReceiveShadows": 1,
+        "m_ReflectionProbeUsage": 1,
+        "m_ScaleInLightmap": 1,
+        "m_SelectedEditorRenderState": 3,
+        "m_SortingLayer": 0,
+        "m_SortingLayerID": 0,
+        "m_SortingOrder": 0,
+        "m_StaticBatchInfo": {
+          "firstSubMesh": 0,
+          "subMeshCount": 0
+        },
+        "m_StaticBatchRoot": {
+          "fileID": "0"
+        },
+        "m_StitchLightmapSeams": 0
+      },
+      "rendererFileID": "23201141531394087",
+      "sourceShaderIsDummy": true,
+      "texture": "hands/8f49c909ee7bb634ab01ca3f32884840.png",
+      "textureSha256": "2dd2516b085584c6ee78afbe8fffa32e0a55ef954d431512d131540c7c783785"
+    },
+    {
+      "gameObjectFileID": "1875609422105747",
+      "material": {
+        "disabledShaderPasses": [],
+        "m_CustomRenderQueue": -1,
+        "m_DoubleSidedGI": 0,
+        "m_EnableInstancingVariants": 0,
+        "m_LightmapFlags": 1,
+        "m_Name": "hand front rifle",
+        "m_ObjectHideFlags": 0,
+        "m_PrefabInternal": {
+          "fileID": "0"
+        },
+        "m_PrefabParentObject": {
+          "fileID": "0"
+        },
+        "m_SavedProperties": {
+          "m_Colors": {
+            "_Color": {
+              "a": 1,
+              "b": 1,
+              "g": 1,
+              "r": 1
+            },
+            "_EmissionColor": {
+              "a": 1,
+              "b": 0,
+              "g": 0,
+              "r": 0
+            }
+          },
+          "m_Floats": {
+            "_BumpScale": 1,
+            "_Cutoff": 0.5,
+            "_DetailNormalMapScale": 1,
+            "_DstBlend": 0,
+            "_GlossMapScale": 1,
+            "_Glossiness": 0,
+            "_GlossyReflections": 1,
+            "_Metallic": 0,
+            "_Mode": 1,
+            "_OcclusionStrength": 1,
+            "_Parallax": 0.02,
+            "_SmoothnessTextureChannel": 0,
+            "_SpecularHighlights": 1,
+            "_SrcBlend": 1,
+            "_UVSec": 0,
+            "_ZWrite": 1
+          },
+          "m_TexEnvs": {
+            "_MainTex": {
+              "m_Offset": {
+                "x": 0,
+                "y": 0
+              },
+              "m_Scale": {
+                "x": 1,
+                "y": 1
+              },
+              "m_Texture": {
+                "fileID": "2800000",
+                "guid": "56e4f773afbb1c348aa901429c6fca83",
+                "type": 3
+              }
+            }
+          },
+          "serializedVersion": 3
+        },
+        "m_Shader": {
+          "fileID": "4800000",
+          "guid": "dfda7bb4fc1132e4b8c3293964087ef2",
+          "type": 3
+        },
+        "m_ShaderKeywords": "_ALPHATEST_ON _EMISSION",
+        "serializedVersion": 6,
+        "stringTagMap": {}
+      },
+      "materialPath": "Assets/Material/hand front rifle.mat",
+      "mesh": {
+        "fileID": "10210",
+        "guid": "0000000000000000e000000000000000",
+        "type": 0
+      },
+      "name": "Forward assist",
+      "renderer": {
+        "m_AutoUVMaxAngle": 89,
+        "m_AutoUVMaxDistance": 0.5,
+        "m_CastShadows": 2,
+        "m_DynamicOccludee": 1,
+        "m_Enabled": 1,
+        "m_GameObject": {
+          "fileID": "1875609422105747"
+        },
+        "m_IgnoreNormalsForChartDetection": 0,
+        "m_ImportantGI": 0,
+        "m_LightProbeUsage": 1,
+        "m_LightProbeVolumeOverride": {
+          "fileID": "0"
+        },
+        "m_LightmapParameters": {
+          "fileID": "0"
+        },
+        "m_Materials": [
+          {
+            "fileID": "2100000",
+            "guid": "62d7d4b700d186b458ee7c2955b9a0f0",
+            "type": 2
+          }
+        ],
+        "m_MinimumChartSize": 4,
+        "m_MotionVectors": 1,
+        "m_ObjectHideFlags": 0,
+        "m_PrefabInternal": {
+          "fileID": "100100000"
+        },
+        "m_PrefabParentObject": {
+          "fileID": "0"
+        },
+        "m_PreserveUVs": 0,
+        "m_ProbeAnchor": {
+          "fileID": "0"
+        },
+        "m_ReceiveShadows": 1,
+        "m_ReflectionProbeUsage": 1,
+        "m_ScaleInLightmap": 1,
+        "m_SelectedEditorRenderState": 3,
+        "m_SortingLayer": 0,
+        "m_SortingLayerID": 0,
+        "m_SortingOrder": 0,
+        "m_StaticBatchInfo": {
+          "firstSubMesh": 0,
+          "subMeshCount": 0
+        },
+        "m_StaticBatchRoot": {
+          "fileID": "0"
+        },
+        "m_StitchLightmapSeams": 0
+      },
+      "rendererFileID": "23433881075115309",
+      "sourceShaderIsDummy": true,
+      "texture": "hands/56e4f773afbb1c348aa901429c6fca83.png",
+      "textureSha256": "8e821ef089bc6fb3cc7c610661e6f939ba8655d518eb5350b780efee8f13cdb2"
+    }
+  ],
+  "sources": {
+    "Assets/Material/hand front rifle.mat": "7614e3c91847a0cf68cb95244ea0b20a9d427d026c1295e918fb0414d41f64a4",
+    "Assets/Material/hand trigger.mat": "bea647c9f5eef5ca67fd64d8afbfbf97f2c00a4aea39c839537c79c4ec66d14d",
+    "Assets/Material/hand.mat": "a686e78864886b3319c0cfbd1218d08dcc6987a5f11e552ef5734ed8299a3ae2",
+    "Assets/Resources/characters/Operator.prefab": "94bcda5de74f45d83f4bbf88e80874b8f77bf0339d307294187b085c03170536",
+    "Assets/Shader/Bodies_Simple limb (double sided).shader": "6b874f5fbef4bafc561fdc6c7635dad5ab8045495086e48fcb064c1e95285e27",
+    "Assets/Texture2D/hand front rifle.png": "8e821ef089bc6fb3cc7c610661e6f939ba8655d518eb5350b780efee8f13cdb2",
+    "Assets/Texture2D/hand trigger.png": "acdd1e94f9dbb63d6b392ea9ac8882a25fd2401026de39f431af4eb52f90bf65",
+    "Assets/Texture2D/hand.png": "2dd2516b085584c6ee78afbe8fffa32e0a55ef954d431512d131540c7c783785"
+  },
+  "textures": {
+    "11f7830e26adadc4885604fc8289af4b": {
+      "path": "Assets/Texture2D/hand trigger.png",
+      "sha256": "acdd1e94f9dbb63d6b392ea9ac8882a25fd2401026de39f431af4eb52f90bf65",
+      "url": "hands/11f7830e26adadc4885604fc8289af4b.png"
+    },
+    "56e4f773afbb1c348aa901429c6fca83": {
+      "path": "Assets/Texture2D/hand front rifle.png",
+      "sha256": "8e821ef089bc6fb3cc7c610661e6f939ba8655d518eb5350b780efee8f13cdb2",
+      "url": "hands/56e4f773afbb1c348aa901429c6fca83.png"
+    },
+    "8f49c909ee7bb634ab01ca3f32884840": {
+      "path": "Assets/Texture2D/hand.png",
+      "sha256": "2dd2516b085584c6ee78afbe8fffa32e0a55ef954d431512d131540c7c783785",
+      "url": "hands/8f49c909ee7bb634ab01ca3f32884840.png"
+    }
+  }
+}

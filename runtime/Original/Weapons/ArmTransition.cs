@@ -4,14 +4,64 @@ using System.Collections.Generic;
 using Object=UnityEngine.Object;
 using Random=UnityEngine.Random;
 namespace Crisis.Runtime.Weapons;
+// Original selected method bodies. Explicit host scheduling, not full controller playback.
 public class ArmIKSolver:Component {
- public enum HandRotationMode{Local,Global,TargetLocal}
- public AnimationCurve interpolation;public Limb upperArm;public Hand hand;public Transform ikTarget,transitionTarget;
- public bool smoothing;public bool Transitioning=>transition;private bool transition;private float transitionTimestamp,transitionPeriod,transitionHandAngle;
+ public enum HandRotationMode{Local=0,Global=1,TargetLocal=2}
+ public AnimationCurve interpolation;public bool flip;
+ public Limb upperArm,lowerArm;public Hand hand;public bool smoothing;public float smoothFactor=10f;
+ public Transform ikTarget,transitionTarget;private Limb handLimb;
  private Hand.Mode transitionHandMode;private HandRotationMode transitionHandRotationMode;
- public bool OnTarget{get;private set;} public bool OnWeapon{get;private set;}
- public Transform TransitionTarget=>transitionTarget;
- public void Step(){if(transition)UpdateTransition();}
+ private float upperArmLength,lowerArmLength,upperArmAngle,lowerArmAngle;
+ private float transitionTimestamp,transitionPeriod,transitionHandAngle;
+ private bool transition;private static float HalfPi=(float)Math.PI/2f;
+ public bool HasSolution{get;private set;}public bool OnTarget{get;private set;}public bool OnWeapon{get;private set;}
+ public bool Transitioning=>transition;
+public Transform TransitionTarget
+	{
+		get
+		{
+			if (transitionTarget == null)
+			{
+				GameObject gameObject = new GameObject("IK transition");
+				gameObject.transform.SetParent(base.transform);
+				transitionTarget = gameObject.transform;
+			}
+			return transitionTarget;
+		}
+	}
+ public void InitializeSourcePose()=>Awake();
+ public void Step()=>Update();
+private void Awake()
+	{
+		GameObject gameObject = new GameObject("IK target");
+		gameObject.transform.SetParent(base.transform.parent);
+		ikTarget = gameObject.transform;
+		handLimb = hand.GetComponent<Limb>();
+		upperArmLength = (lowerArm.transform.position - upperArm.transform.position).magnitude;
+		lowerArmLength = (hand.transform.position - lowerArm.transform.position).magnitude + 0.08f;
+		TargetTransition(base.transform.parent, new Vector3(UnityEngine.Random.Range(0.15f, 0.3f) * upperArm.Body.Direction, UnityEngine.Random.Range(-0.05f, -0.075f), 0f), 0.5f);
+	}
+private void Update()
+	{
+		if (transition)
+		{
+			UpdateTransition();
+		}
+		CharacterBody body = upperArm.Body;
+		float x = ((body.Direction != 1f) ? (base.transform.position.x - ikTarget.position.x) : (ikTarget.position.x - base.transform.position.x));
+		Vector3 vector = new Vector3(x, ikTarget.position.y - base.transform.position.y, 0f);
+		HasSolution = InverseKinematics2D.SolveTwoBoneAnalytic(out upperArmAngle, out lowerArmAngle, !flip, upperArmLength, lowerArmLength, vector.x, vector.y);
+		upperArmAngle = (upperArmAngle + HalfPi) * 57.29578f;
+		lowerArmAngle = upperArmAngle + lowerArmAngle * 57.29578f;
+		if (smoothing || transition)
+		{
+			upperArmAngle = Mathf.LerpAngle(upperArm.transform.eulerAngles.z, upperArmAngle, Time.deltaTime * smoothFactor);
+			lowerArmAngle = Mathf.LerpAngle(lowerArm.transform.eulerAngles.z, lowerArmAngle, Time.deltaTime * smoothFactor);
+		}
+		float rotationY = body.RotationY;
+		upperArm.transform.eulerAngles = new Vector3(0f, rotationY, upperArmAngle);
+		lowerArm.transform.eulerAngles = new Vector3(0f, rotationY, lowerArmAngle);
+	}
 private void UpdateTransition()
 	{
 		if (ikTarget == null)
@@ -65,6 +115,12 @@ public void TargetTransition(Transform target, Vector3 worldSpaceOffset, float s
 public void StartWait()
 	{
 		OnTarget = false;
+	}
+public void ReturnTransforms()
+	{
+		ikTarget.SetParent(upperArm.transform);
+		ikTarget.position = TransitionTarget.position;
+		ikTarget.eulerAngles = TransitionTarget.eulerAngles;
 	}
 public void SetHandAngle(float angle, HandRotationMode mode = HandRotationMode.Local)
 	{

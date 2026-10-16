@@ -18,6 +18,17 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   await page.goto('http://127.0.0.1:8000/game/',{waitUntil:'domcontentloaded',timeout:120000});
   await page.waitForFunction(()=>window.__gameState?.().weaponState||document.querySelector('#error').style.display==='block',null,{timeout:120000});
   assert.equal(await page.locator('#error').isVisible(),false,await page.locator('#error').textContent());await ready();
+  await page.waitForFunction(()=>window.__gameState()?.originalHands?.drawnRenderers>=2,null,{timeout:30000});
+  const handState=await state();
+  assert.equal(handState.originalHands.sourceRenderers,4,'All four original Quad hand MeshRenderers must load');
+  assert.equal(handState.originalHands.uniqueSourceTextures,3,'Only the three recovered original hand textures');
+  assert.equal(handState.originalHands.visibleRenderers,2,'Original M4 hand modes select one source visual per hand');
+  assert.ok(handState.originalHands.drawCalls>0,'Source hand geometry must actually reach WebGL rendering');
+  assert.equal(handState.originalHands.sourceShaderParity,false,'Dummy exported shader is not native visual parity');
+  assert.equal(handState.presentation.originalIKUpdate,true);
+  assert.equal(handState.presentation.originalHandSetMode,true);
+  for(const side of ['right','left'])assert.equal(handState.weaponState[side].handObjects.filter(v=>v.active).length,1,'Original Hand.SetMode activation must reach renderer');
+  await page.screenshot({path:`original-hands-${engine}.png`});
   const particles=await page.evaluate(()=>window.__gameState()?.presentation?.originalParticleSource);
   assert.equal(particles?.sourcePrefabs,14,'Recovered original impact prefab manifest must load');
   assert.equal(particles?.sourceEmitters,26,'26 original native ParticleSystems must be bound');
@@ -220,3 +231,4 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
  finally{await browser.close();}
 }
 fs.writeFileSync('weapon-smoke.json',JSON.stringify(results,null,2));console.log(JSON.stringify(results.map(({engine,passed,error})=>({engine,passed,error}))));
+

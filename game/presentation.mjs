@@ -25,8 +25,6 @@ export function createUpperBody(data,manifest,nodeById,character,weapon,runtimeC
   const upper=nodeById.get(a.bones.upperArm),lower=nodeById.get(a.bones.lowerArm),hand=nodeById.get(a.bones.hand);
   const length1=worldPosition(lower).distanceTo(worldPosition(upper)),length2=worldPosition(hand).distanceTo(worldPosition(lower))+.08;
   const right=a.bones.upperArm===data.componentGameObjects[data.body.RightUpperArm.fileID],mode=right?data.armConfiguration.rightHandMode:data.armConfiguration.leftHandMode;
-  const states=mode===0?[['forwardAssist',false],['fist',false],['trigger',true]]:mode===1?[['forwardAssist',false],['trigger',false],['fist',true]]:[['fist',false],['trigger',false],['forwardAssist',true]];
-  for(const [key,enabled] of states)nodeById.get(a.handModes[key]).visible=enabled;
   return {...a,upper,lower,hand,length1,length2,right};
  });
  const muzzle=weapon.nodesByPath.get('Transform/Slots/Muzzle');
@@ -51,21 +49,24 @@ export function createUpperBody(data,manifest,nodeById,character,weapon,runtimeC
    for(const [id,node] of sourceNodes){const p=worldPosition(node),q=node.getWorldQuaternion(new THREE.Quaternion());operatorTransforms[id]={p:unityVector(p),q:[-q.x,-q.y,q.z,q.w]};}
    weaponResult=JSON.parse(await runtimeCall('StepWeapons',JSON.stringify({position:unityVector(position),direction,weaponPose:weaponWorld(),operatorTransforms,fire,reload})));
    effects.update(weaponResult.events,weaponResult.magazinePose,weaponResult.sourceTime);
-   const inputs=arms.map(a=>{
-    const p=worldPosition(a.upper),arm=weaponResult[a.right?'right':'left'],target=new THREE.Vector3(arm.target[0],arm.target[1],-arm.target[2]);
-    return {length1:a.length1,length2:a.length2,x:(target.x-p.x)*direction,y:target.y-p.y,flip:!!a.settings.flip,smoothing:arm.smoothing,smoothFactor:a.settings.smoothFactor,currentUpper:worldZ(a.upper),currentLower:worldZ(a.lower)};
-   });
-   solutions=JSON.parse(await runtimeCall('SolvePresentationArms',JSON.stringify(inputs)));
-   arms.forEach((a,i)=>{
-    worldEuler(a.upper,yaw,solutions[i].upper);worldEuler(a.lower,yaw,solutions[i].lower);
-    const state=weaponResult[a.right?'right':'left'];a.hand.quaternion.setFromAxisAngle(new THREE.Vector3(0,0,1),state.angle*radians);
-    const modes=state.handMode===0?[['forwardAssist',false],['fist',false],['trigger',true]]:state.handMode===1?[['forwardAssist',false],['trigger',false],['fist',true]]:[['fist',false],['trigger',false],['forwardAssist',true]];
-    for(const [key,visible] of modes)nodeById.get(a.handModes[key]).visible=visible;
+   // Original ArmIKSolver.Update now runs against the source C# bone hierarchy.
+   // Apply its actual world rotations and original Hand.SetMode object states.
+   const applySourceRotation=(node,pose)=>{
+    const q=new THREE.Quaternion(-pose.q[0],-pose.q[1],pose.q[2],pose.q[3]);
+    const parent=node.parent?.getWorldQuaternion(new THREE.Quaternion())||new THREE.Quaternion();
+    node.quaternion.copy(parent.invert().multiply(q));node.updateWorldMatrix(false,true);
+   };
+   solutions=arms.map(a=>{const state=weaponResult[a.right?'right':'left'];return {solved:state.HasSolution,upper:state.upper,lower:state.lower};});
+   arms.forEach(a=>{
+    const state=weaponResult[a.right?'right':'left'];
+    applySourceRotation(a.upper,state.bones.upper);applySourceRotation(a.lower,state.bones.lower);applySourceRotation(a.hand,state.bones.hand);
+    for(const visual of state.handObjects){const node=nodeById.get(visual.id);if(!node)throw new Error('Original hand visual missing: '+visual.id);node.visible=visual.active;}
    });
    const [x,y,z]=result.camera.position;camera.position.set(x,y,-z);camera.fov=result.camera.fov;camera.updateProjectionMatrix();
   },
   weaponSnapshot(){return weaponResult;},
-  snapshot(){return {active:!!result,camera:result?.camera,pose:result?.pose,arms:solutions,worldHeadDirection:new THREE.Vector3(1,0,0).applyQuaternion(head.getWorldQuaternion(new THREE.Quaternion())).toArray(),worldShoulder:worldPosition(api.shoulder).toArray(),worldMuzzle:worldPosition(muzzle).toArray(),armTargets:anchors.map(a=>worldPosition(a).toArray()),originalMuzzleFlash:effects.flashSnapshot(),originalImpactMeshes:effects.impactMeshSnapshot(),originalWindows:effects.windowSnapshot(),originalParticleSource:effects.particleSourceSnapshot()};}
+  snapshot(){return {active:!!result,camera:result?.camera,pose:result?.pose,arms:solutions,originalIKUpdate:true,originalHandSetMode:true,worldHeadDirection:new THREE.Vector3(1,0,0).applyQuaternion(head.getWorldQuaternion(new THREE.Quaternion())).toArray(),worldShoulder:worldPosition(api.shoulder).toArray(),worldMuzzle:worldPosition(muzzle).toArray(),armTargets:anchors.map(a=>worldPosition(a).toArray()),originalMuzzleFlash:effects.flashSnapshot(),originalImpactMeshes:effects.impactMeshSnapshot(),originalWindows:effects.windowSnapshot(),originalParticleSource:effects.particleSourceSnapshot()};}
  };
  return api;
 }
+
