@@ -34,20 +34,28 @@ def preserve(archive: Path, root: Path):
                 raise ValueError("Original source type declaration not verified: "+name)
             if source_text.count("{")!=source_text.count("}"):
                 raise ValueError("Unexpected source braces: "+name)
-            path=out/(name+".cs")
-            if path.exists() and path.read_bytes()!=data:
-                raise ValueError("Refusing to overwrite altered original source "+name)
-            path.write_bytes(data)
+            compiled_target = root/"runtime/Original/Animation/Hand.cs" if name=="Hand" else None
+            if compiled_target is not None and compiled_target.exists():
+                if compiled_target.read_bytes() != data:
+                    raise ValueError("Actual compiled original Hand source has been modified")
+                path=compiled_target
+                status="selected_original_runtime_source"
+            else:
+                path=out/(name+".cs")
+                if path.exists() and path.read_bytes()!=data:
+                    raise ValueError("Refusing to overwrite altered original source "+name)
+                path.write_bytes(data)
+                status="original_recovered_not_compiled"
             files[name]={
                 "sourcePath": source.removeprefix("export/ExportedProject/"),
                 "repositoryPath": path.relative_to(root).as_posix(),
                 "sha256": sha(data), "bytes":len(data),
                 "lines":len(source_text.splitlines()),
-                "status":"original_recovered_not_compiled"
+                "status":status
             }
     manifest={
         "schema":1,"archiveSha256":ARCHIVE_SHA,
-        "originalSourceUnmodified":True,"compiledOriginalCount":0,
+        "originalSourceUnmodified":True,"compiledOriginalCount":sum(v["status"]=="selected_original_runtime_source" for v in files.values()),
         "controllerPlaybackImplemented":False,
         "classes":files,
         "engineTypesNotDeveloperScripts":["UnityEngine.Joint"],
