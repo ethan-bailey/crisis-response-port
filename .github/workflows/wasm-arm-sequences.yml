@@ -1,4 +1,4 @@
-name: Audit milestone original WASM baseline verification
+name: Compile original IKArmSequencer and CharacterBody source integration
 
 # Explicit full milestone: a feature/fix workflow YAML change triggers ONE test.
 # Merging reviewed code into develop/wasm must not duplicate the expensive build.
