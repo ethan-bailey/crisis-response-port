@@ -22,10 +22,10 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p /tmp/verified-site-artifact /tmp/verified-site
-          gh run download 38978041703 --repo "$GITHUB_REPOSITORY" --name crisis-response-arm-sequences-private-wasm-site --dir /tmp/verified-site-artifact
+          gh run download 38981248060 --repo "$GITHUB_REPOSITORY" --name crisis-response-arm-sequences-private-wasm-site --dir /tmp/verified-site-artifact
           test -s /tmp/verified-site-artifact/crisis-response-private-wasm-site.tar.gz
           tar -xzf /tmp/verified-site-artifact/crisis-response-private-wasm-site.tar.gz -C /tmp/verified-site
-          test "$(python3 -c "import json;print(json.load(open('/tmp/verified-site/build-manifest.json'))['sourceCommit'])")" = d5672a00041258bb1b2e8c81c655672105197202
+          test "$(python3 -c "import json;print(json.load(open('/tmp/verified-site/build-manifest.json'))['sourceCommit'])")" = b9454d65f1d2ef164890fe770eff55dcd666cb2e
           git fetch --no-tags origin develop/wasm
           git show origin/develop/wasm:scripts/package_wasm_site.py > /tmp/verify-site.py
           python3 /tmp/verify-site.py verify /tmp/verified-site
@@ -43,5 +43,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git diff --cached --quiet && exit 0
-          git commit -m 'Stage verified source d5672a0 compiled WASM and original game assets for iPhone'
+          git commit -m 'Stage verified source b9454d6 joystick icons compiled WASM for iPhone'
           git push origin HEAD:preview/wasm-current-iphone
