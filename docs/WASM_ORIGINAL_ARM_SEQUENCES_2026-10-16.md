@@ -53,8 +53,30 @@ introduced. Node 22, Playwright 1.55.0; existing source/input tests are retained
 Only this workflow's own change triggers the bounded build on this branch;
 documentation/source edits alone do not automatically rebuild it.
 
-Cloud result: pending at this initial implementation checkpoint. Do not call
-the source batch compiled or browser-tested until the actual run passes.
+Cloud result: **SUCCESS**, [run 38896212172](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38896212172),
+exact tested code `256b574eca62a902e23e9ba45d2b2542d64fe445`.
+
+- SDK **8.0.426**; actual net8.0 native contracts and WASM publish passed.
+- Selected original C# inputs increased **35 → 41**; engine files **19 → 20**.
+- Existing input/source tests **38/38**, package tests **12/12**, new original
+  composition/serialization/clock-isolation contracts all passed.
+- Chromium and WebKit each checked **28 frame instances across three original
+  compositions**, covering all seven original prefabs; no page errors.
+- Package integrity: **725 files, 199 Blazor resources, 195 WASM binaries**;
+  independent archive/unpack validation in CI passed.
+- Private compiled site artifact **12043404117**, evidence **12043827958**;
+  both expire **2026-11-15**. Inner site tar SHA256:
+  `593ae3ebffbddc61ab146b34a65e4ee72a18e845ab8c0e6e8ef220b32f7fe2d8`.
+- Downloaded evidence ZIP matched GitHub's SHA256 digest
+  `953a5bd323b4c617850d5adfc610b4d3419358333a2e6b2c6fd3b45251bee16e`.
+  Inspected the actual compiler, source commit, native/browser results and
+  package manifest. The site archive was not downloaded a second time locally.
+- Only one workflow run was needed. Later documentation commits need no rebuild.
+
+Verification boundary: this browser check executes original sequence composition,
+not full animation playback or a fresh entire-game movement/weapon browser suite.
+Existing native presentation/weapon/ballistic regressions passed. No deployment,
+original-game native parity or physical iPhone acceptance is claimed.
 
 Reproduction from repository root:
 
