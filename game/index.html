@@ -47,6 +47,13 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 .playing #hud #title,.playing #hud #status,.playing #hud #position{display:none}
 #weaponStatus{font-size:10px!important;margin:0!important}
 #error{top:auto;bottom:108px;max-height:30vh;overflow:auto;padding:7px;font-size:11px;line-height:1.3}
+
+/* A single thumb-operated directional surface feeds existing C# movement actions. */
+#movementStick{position:relative;display:block;width:104px;height:104px;border-radius:50%;border:2px solid #c4d3df80;background:#10182072;touch-action:none;pointer-events:auto;flex:none}
+#movementStick .stick-thumb{position:absolute;width:45px;height:45px;left:calc(50% - 22.5px);top:calc(50% - 22.5px);border-radius:50%;border:2px solid #d9e8f1a8;background:#315a79c9;pointer-events:none}
+#movementStick.active .stick-thumb{background:#4786b5}
+#controls .cluster:first-child button[data-action=left],#controls .cluster:first-child button[data-action=right]{display:none}
+@media(max-height:380px){#movementStick{width:84px;height:84px}}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
 </head>
@@ -55,7 +62,7 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 <div id="hud"><div id="title">Crisis Response · incomplete port</div><div id="status">Loading recovered scene and original Operator prefab…</div><div id="position"></div><div id="weaponStatus">Loading original weapons…</div></div>
 <div id="help">A/D · Shift · S/W · drag or tap to aim · tap same spot to fire · <a href="../runtime-web/">Runtime checks</a></div>
 <div id="error"></div><div id="rotateNotice">Rotate your phone to landscape to view the port prototype.</div>
-<div id="controls"><div class="cluster"><button id="left" data-action="left" aria-label="Move left">◀</button><button id="right" data-action="right" aria-label="Move right">▶</button></div><div class="cluster"><button id="magazineTouch" type="button" aria-label="M4 magazine ammunition unavailable"><span class="mag-body"><img class="mag-image" data-mag-image alt="" draggable="false"><span class="mag-window" data-mag-rounds aria-hidden="true"></span><span class="mag-chamber" data-mag-chamber aria-hidden="true" hidden></span><span class="mag-count" data-mag-count aria-hidden="true">–</span></span></button><button id="kneel" data-action="kneel" aria-label="Kneel">KNEEL</button><button id="stand" data-action="stand" aria-label="Stand">STAND</button><button id="sprint" data-action="sprint" aria-label="Sprint">SPRINT</button><button id="fire" data-action="fire" aria-label="Hold to fire">FIRE</button><button id="swap" disabled aria-label="Weapon switching is not implemented">SWAP · PENDING</button></div></div>
+<div id="controls"><div class="cluster"><div id="movementStick" role="group" aria-label="Move left or right"><span class="stick-thumb" aria-hidden="true"></span></div><button id="left" data-action="left" aria-label="Move left">◀</button><button id="right" data-action="right" aria-label="Move right">▶</button></div><div class="cluster"><button id="magazineTouch" type="button" aria-label="M4 magazine ammunition unavailable"><span class="mag-body"><img class="mag-image" data-mag-image alt="" draggable="false"><span class="mag-window" data-mag-rounds aria-hidden="true"></span><span class="mag-chamber" data-mag-chamber aria-hidden="true" hidden></span><span class="mag-count" data-mag-count aria-hidden="true">–</span></span></button><button id="kneel" data-action="kneel" aria-label="Kneel">KNEEL</button><button id="stand" data-action="stand" aria-label="Stand">STAND</button><button id="sprint" data-action="sprint" aria-label="Sprint">SPRINT</button><button id="fire" data-action="fire" aria-label="Hold to fire">FIRE</button><button id="swap" disabled aria-label="Weapon switching is not implemented">SWAP · PENDING</button></div></div>
 <script type="module">
 import * as THREE from "three";
 import { loadWeaponData } from "./weapon-runtime.mjs";
@@ -100,6 +107,7 @@ for (const button of document.querySelectorAll("button[data-action]")) input.bin
 // Original InputMapping.cs bindings, plus arrow-key movement aliases.
 input.bindKeyboard(window, {KeyA:"left", ArrowLeft:"left", KeyD:"right", ArrowRight:"right",
  ShiftLeft:"sprint", KeyR:"magazine", Tab:"switchWeapons", KeyS:"kneel", KeyW:"stand"});
+input.bindMovementStick(document.querySelector("#movementStick"),document.querySelector("#movementStick .stick-thumb"));
 input.bindLifecycle(window, document);
 for(const type of ["blur","pagehide","resize"])addEventListener(type,()=>{tapPending=0;tapFrame=false;reloadPending=false;magazineHud.resetGesture();});
 document.addEventListener("visibilitychange",()=>{if(document.hidden){tapPending=0;tapFrame=false;reloadPending=false;magazineHud.resetGesture();}});
