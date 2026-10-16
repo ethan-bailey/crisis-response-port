@@ -1,0 +1,43 @@
+name: Original-source feature or parity fix
+description: One executable gameplay dependency or verifiable original-game discrepancy
+title: "[WASM] "
+labels: ["type:feature", "area:wasm"]
+body:
+  - type: markdown
+    attributes:
+      value: "This is a private, source-preserving port. Do not attach redistributable original game assets or credentials. All gameplay feature PRs target develop/wasm."
+  - type: textarea
+    id: source
+    attributes:
+      label: Original developer code and asset provenance
+      description: Original source files, SHA256, GUID/fileID and recovery archive.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Executable original-game behavior and expected result
+      description: Explain what source method needs to run and how its actual state/output will be checked.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependency and engine-adapter boundaries
+      description: Unity API, source calls, shader/asset/scene blockers and parallel workstream files.
+    validations:
+      required: true
+  - type: textarea
+    id: tests
+    attributes:
+      label: Verification plan and acceptance criteria
+      description: State source hash/contract tests, actual WASM/Chromium/WebKit, native reference and real iPhone scope.
+    validations:
+      required: true
+  - type: textarea
+    id: rollback
+    attributes:
+      label: Selective rollback and unsupported features
+      description: List files and dependencies, including original functionality not implemented yet.
+    validations:
+      required: true
