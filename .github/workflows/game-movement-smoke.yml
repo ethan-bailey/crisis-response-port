@@ -48,7 +48,7 @@ jobs:
           npm install --no-audit --no-fund playwright@1.55.0
           npx playwright install --with-deps chromium webkit
       - name: Verify independent touch ownership and lifecycle resets
-        run: node --test scripts/browser_input_test.mjs scripts/animation_pose_test.mjs scripts/game_loading_test.mjs scripts/aim_direction_test.mjs scripts/source_effect_clock_test.mjs scripts/original_particle_source_test.mjs
+        run: node --test scripts/browser_input_test.mjs scripts/animation_pose_test.mjs scripts/game_loading_test.mjs scripts/aim_direction_test.mjs scripts/source_effect_clock_test.mjs scripts/original_particle_source_test.mjs scripts/original_particle_event_binding_test.mjs
       - name: Serve the separate game build
         id: serve
         run: |
@@ -67,6 +67,7 @@ jobs:
         if: ${{ !cancelled() && steps.serve.outcome == 'success' }}
         run: |
           node --check game/original-window-visuals.mjs
+          node --check game/original-particle-event-binding.mjs
           node scripts/weapon_smoke.mjs
       - name: Upload separate game build evidence
         if: always()
