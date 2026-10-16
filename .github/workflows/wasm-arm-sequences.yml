@@ -1,4 +1,4 @@
-name: Compile original physical ArmController with PhysX and source IK in WASM browsers
+name: Verify combined arm controller, grip and chamber-inclusive magazine iPhone build
 
 # Explicit full milestone: a feature/fix workflow YAML change triggers ONE test.
 # Merging reviewed code into develop/wasm must not duplicate the expensive build.
