@@ -136,6 +136,10 @@ public sealed class WeaponHost {
   Transform OT(string key)=>operatorTransforms[c.GetProperty("bodyTransforms").GetProperty(key).GetString()];
   body.chestRigIKTarget=OT("chestRigIKTarget");body.pistolPivot=OT("pistolPivot");body.pistolIKTarget=OT("pistolIKTarget");body.Torso=OT("Torso").gameObject.AddComponent<Limb>();body.Pelvis=OT("Pelvis").gameObject.AddComponent<Limb>();
   var ac=c.GetProperty("armConfiguration");weapon.armConfiguration=new(){rightHandMode=(Hand.Mode)ac.GetProperty("rightHandMode").GetInt32(),leftHandMode=(Hand.Mode)ac.GetProperty("leftHandMode").GetInt32(),rightHandAngle=ac.GetProperty("rightHandAngle").GetSingle(),leftHandAngle=ac.GetProperty("leftHandAngle").GetSingle()};
+  // Source WeaponBase.Initialize configures grips before the IK solvers target the weapon.
+  Vector3 GripOffset(string key){var offset=ac.GetProperty(key);return new(offset.GetProperty("x").GetSingle(),offset.GetProperty("y").GetSingle(),0);}
+  weapon.rightHandAnchor.localPosition=GripOffset("rightHandOffset");
+  weapon.leftHandAnchor.localPosition=GripOffset("leftHandOffset");
   ArmIKSolver Arm(bool right){
    var rig=c.GetProperty("armRigBindings").GetProperty(right?"right":"left");
    Transform Node(string key)=>operatorTransforms[rig.GetProperty(key).GetString()];
