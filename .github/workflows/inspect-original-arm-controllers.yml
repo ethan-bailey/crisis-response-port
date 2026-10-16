@@ -1,0 +1,38 @@
+name: Recover original arm controller dependency evidence (private)
+on:
+  push:
+    branches: [feature/22-arm-controller]
+    paths: ['.github/workflows/inspect-original-arm-controllers.yml']
+permissions:
+  contents: read
+jobs:
+  source-review:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Require private repository and download immutable original recovery
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(gh api repos/$GITHUB_REPOSITORY --jq '.private')" = 'true'
+          mkdir -p work/recovery
+          gh release download recovery-preservation-2026-10-15 --repo "$GITHUB_REPOSITORY" --pattern crisis-response-recovery-direct-v3-1.zip --dir work/recovery
+          echo 'cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d  work/recovery/crisis-response-recovery-direct-v3-1.zip' | sha256sum -c -
+      - name: Inspect original IK/character C# and prove source hashes
+        run: |
+          set -euo pipefail
+          python3 scripts/inspect_original_arm_controllers.py work/recovery/crisis-response-recovery-direct-v3-1.zip --out work/arm-controller-source
+          git rev-parse HEAD | tee work/arm-controller-source/input-sha.txt
+      - name: Store original sources and dependency report PRIVATELY (no website)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: private-original-arm-controller-source-review
+          path: |
+            work/arm-controller-source/
+          retention-days: 14
+          if-no-files-found: warn
