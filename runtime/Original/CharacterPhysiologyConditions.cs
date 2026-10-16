@@ -5,7 +5,7 @@ namespace Crisis.Runtime.Character;
 // 367-385. These are original thresholds, not invented health behavior.
 // Full Physiology.Update, trauma propagation and limb injury dependencies
 // must be integrated before claiming complete physiology.
-public sealed class OriginalPhysiologyConditions {
+public sealed partial class OriginalPhysiologyConditions {
  public float StartingBloodVolume {get;private set;}
  public float BloodVolume {get;private set;}
  public float LungsOxygen {get;private set;}=.75f;
@@ -21,6 +21,15 @@ public sealed class OriginalPhysiologyConditions {
   LungsOxygen=.75f;
  }
  public float BloodVolumeNormalized=>BloodVolume/StartingBloodVolume;
+ public bool Exsanguinated=>BloodVolume<=0f;
+ public float BloodPressure {get;private set;}
+ public float DiastolicPressure {get;private set;}
+ public void SetBloodPressure(float heartRate,float heartRateMax,float heartEffectiveness,float heartBeatCycle){
+  float num=heartRate/heartRateMax*heartEffectiveness*0.3f;
+  float num2=BloodVolumeNormalized*0.3f;
+  DiastolicPressure=num+num2;
+  BloodPressure=DiastolicPressure+heartBeatCycle*0.4f;
+ }
  // Unchanged developer-authored Physiology.RemoveBlood() lines 501-505.
  public void RemoveBlood(float milliliters) {
   if(StartingBloodVolume==0f)throw new InvalidOperationException("Initialize physiology from original blood volume first");
