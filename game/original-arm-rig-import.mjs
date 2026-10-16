@@ -55,21 +55,38 @@ export async function createOriginalArmRig(source,nodeById,character,{moduleOpti
    return value;
  }
  try{
-   // Real original body hierarchy: each limb connects to its prior body, with
-   // upper arms attached to the shared original Torso Rigidbody.
+   // Every original prefab Rigidbody is present in the source, not just the
+   // six hand/arm bones. The Operator ROOT Rigidbody is already simulated by
+   // the live contact-physics actor, so it is not duplicated in this PhysX
+   // sub-scene. All 19 limb actors plus source helmet enter this rig.
+   const sourceBodyRecords=prefab.records.filter(r=>r.classID===54);
+   const sourceRoot=sourceBodyRecords.find(r=>{
+     const go=prefab.records.find(x=>x.classID===1&&x.fileID===r.fields.m_GameObject.fileID);
+     return go?.fields.m_Name===prefab.name;
+   });
+   if(!sourceRoot)throw Error('Original Operator root contact body is missing');
+   const sourceRootId=sourceRoot.fileID;
+   for(const rb of sourceBodyRecords)if(rb.fileID!==sourceRootId)bodyFromId(rb.fileID);
+   const sourceHinges=prefab.records.filter(r=>r.classID===59);
+   if(bodies.size!==20||sourceHinges.length!==18)
+     throw Error('Incomplete original Operator limb/helmet PhysX actor graph');
+   // Preserve the two original ArmController chains as interface views over
+   // the same full original body/joint graph.
    for(const [side,arm] of Object.entries(prefab.arms)){
-     const chain=[];
-     for(const limb of arm.limbs)chain.push({limb,...bodyFromId(limb.rigidbody)});
+     const chain=arm.limbs.map(limb=>({limb,...bodyFromId(limb.rigidbody)}));
      arms.push({side,chain,mode:arm.controller.mode});
    }
-   for(const arm of arms)for(const entry of arm.chain){
-     const limb=entry.limb,j=records.get(limb.joint)?.fields;
-     if(!j||j.m_ConnectedBody.fileID!==limb.connectedBody)
-       throw Error('Original joint attachment mismatch');
-     const connected=bodyFromId(limb.connectedBody);
-     const movingNode=sourceNode(entry.transform),parentNode=sourceNode(connected.transform);
-     // Derive joint frames in Unity source coordinates, not in Three's
-     // reflected Z basis. PhysX kernel handles the reflection exactly once.
+   for(const record of sourceHinges){
+     const j=record.fields,go=j.m_GameObject.fileID;
+     const transform=transformByGo.get(go);
+     if(!transform)throw Error('Original hinge GameObject has no Transform');
+     const connectedId=j.m_ConnectedBody?.fileID;
+     const movingRb=sourceBodyRecords.find(x=>x.fields.m_GameObject.fileID===go);
+     if(!movingRb||!connectedId)
+       throw Error('Original hinge body connection is missing');
+     const moving=bodyFromId(movingRb.fileID),connected=bodyFromId(connectedId);
+     const movingNode=sourceNode(transform),parentNode=sourceNode(connected.transform);
+     // Derive authored Unity hinge frames before the PhysX coordinate reflection.
      const movingQ=unityRotation(movingNode),connectedQ=unityRotation(parentNode);
      const worldQ=movingQ.clone().multiply(LOCAL_X_TO_UNITY_HINGE_Z);
      const localMoving=LOCAL_X_TO_UNITY_HINGE_Z.clone();
@@ -79,13 +96,16 @@ export async function createOriginalArmRig(source,nodeById,character,{moduleOpti
      const connectedAnchor=j.m_AutoConfigureConnectedAnchor
        ?pivot.sub(unityPosition(parentNode)).applyQuaternion(connectedQ.invert())
        :V(j.m_ConnectedAnchor);
-     const hinge=kernel.createHinge(entry.actor,connected.actor,{
+     const hinge=kernel.createHinge(moving.actor,connected.actor,{
        anchor:xyz(anchor),connectedAnchor:xyz(connectedAnchor),
        rotation:xyzw(localMoving),connectedRotation:xyzw(localParent),
        limits:j.m_UseLimits?j.m_Limits:null,enableCollision:!!j.m_EnableCollision});
      hinge.setSpring(j.m_Spring,!!j.m_UseSpring);
-     joints.set(limb.joint,hinge);
-     entry.joint=hinge;
+     joints.set(record.fileID,hinge);
+   }
+   for(const arm of arms)for(const entry of arm.chain){
+     entry.joint=joints.get(entry.limb.joint);
+     if(!entry.joint)throw Error('Original source arm joint absent in complete graph');
    }
    return {
      kernel,arms,bodies,joints,
@@ -152,6 +172,9 @@ export async function createOriginalArmRig(source,nodeById,character,{moduleOpti
          node.updateWorldMatrix(false,true);
        }
      },
+     sourceGraph(){return {sourceBodyCount:sourceBodyRecords.length,
+        actorCount:bodies.size,hingeCount:joints.size,rootActorAuthority:'contact-physics',
+        boneIds:[...bodies.keys()]};},
      snapshot(){
        return arms.map(arm=>({side:arm.side,chain:arm.chain.map(item=>({
          transform:item.transform,body:item.rigidbodyId,
