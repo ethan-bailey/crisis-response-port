@@ -1,0 +1,26 @@
+{
+  "adaptations": [
+    "Namespace and explicit existing host state views",
+    "Remove two unread Joint query locals from Awake; no Joint stand-in",
+    "Omit debug DrawLine; no visual gameplay effect",
+    "Explicit InitializeSourcePose/Step entry points; unselected Start/controller callbacks excluded"
+  ],
+  "fullIKArmControllerPlayback": false,
+  "outputSha256": "a293077cdb559d89178c09c3affa411464d9fe1211bc1e72d715648fb05cc69b",
+  "ragdollArmControllerExecuted": false,
+  "selectedMethods": {
+    "private void Awake()": "9e8f3d039482ca9a5a7cd6018708009ed64bcb0c42480d78716b3c0e31bd648e",
+    "private void Update()": "77d4e63012382bcbce884d5802e581a43a4e5724e343722b596c9db46dc51c12",
+    "private void UpdateTransition()": "0510f6343983e164a03927e9f9b50b0cbc7772a2da1bfbae810ddf756cfacd23",
+    "public float GetHandAngle(": "7c8256de5fb5b2795c0407928544fb62d115519a301c78cf3737de257007079f",
+    "public void ReturnTransforms()": "fb330f5dc271ee2a01cb3be66ba70eac445f01ccdfde362e3e2762edf056564d",
+    "public void SetHandAngle(": "cbe4ca64f8ad1a70ffcd3e3e817c3a9eeb1b4eb96e39514e4030891ee9be5368",
+    "public void SetOnWeapon(": "e5c35959a93ef20f162ff11a465523b34eefc96ff1b3561cc0a4cc32267de94d",
+    "public void SetTargetImmediate(": "bb98697e1270b22563ce048bad17964346185d4d0525079e555ba27199592836",
+    "public void SetUnarmed()": "cea8071f300442708e4ebd73926bbae27e7af839194e03c2076c1ee2d4b23118",
+    "public void StartWait()": "e3ea60eb6b7f52e02e8ddaf39b33a9bb273a44a9348c7467b627f558a425e13b",
+    "public void TargetTransition(Transform target, Vector3 worldSpaceOffset": "6d8772986f3a6660583b89a38a51e3f9951359ea806a94728a1318312305bcbd",
+    "public void TargetTransition(Transform target, float seconds": "942e15eaa9a466611abbf3ae9a30d158a92b59da4a7d8b024e47d1c2f01b4799"
+  },
+  "sourceSha256": "ddc4291b1ab5f73e74ddb65b8df67232bff2afddd1a591403e8aceed13a9c5dc"
+}

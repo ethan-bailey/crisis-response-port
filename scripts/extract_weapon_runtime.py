@@ -28,18 +28,9 @@ s=s.replace(eject,'''public void EjectCasing(float forceScale = 1f, int index = 
 s='using UnityEngine.Events;\n'+s
 write('CyclingBolt.cs',s)
 adapt.append('CyclingBolt.EjectCasing emits an explicit effect event; casing physics is not yet supported.')
-# Original transition methods. Analytic solve remains shared with original presentation host.
-s=read('ArmIKSolver.cs');methods=[block(s,x) for x in ['private void UpdateTransition()','public void SetTargetImmediate(','public void TargetTransition(Transform target, float seconds','public void TargetTransition(Transform target, Vector3 worldSpaceOffset','public void StartWait()','public void SetHandAngle(','public float GetHandAngle(','public void SetOnWeapon(','public void SetUnarmed()']]
-methods=[m.replace('Debug.DrawLine(TransitionTarget.position, TransitionTarget.position + worldSpaceOffset, Color.yellow);','') for m in methods]
-write('ArmTransition.cs','''public class ArmIKSolver:Component {
- public enum HandRotationMode{Local,Global,TargetLocal}
- public AnimationCurve interpolation;public Limb upperArm;public Hand hand;public Transform ikTarget,transitionTarget;
- public bool smoothing;public bool Transitioning=>transition;private bool transition;private float transitionTimestamp,transitionPeriod,transitionHandAngle;
- private Hand.Mode transitionHandMode;private HandRotationMode transitionHandRotationMode;
- public bool OnTarget{get;private set;} public bool OnWeapon{get;private set;}
- public Transform TransitionTarget=>transitionTarget;
- public void Step(){if(transition)UpdateTransition();}
-'''+ '\n'.join(methods)+'\n}')
+# Source-selected original Awake, Update and transition/hand methods.
+from source_arm_runtime import build_arm_transition, arm_bindings
+s=read('ArmIKSolver.cs');(original/'ArmTransition.cs').write_text(build_arm_transition(s))
 for name in ['ChangeMagazine.cs','WorkBolt.cs']:
  # Exported sources keep these at the root, unlike decompiler's display tree.
  s=clean(read(name));s=s.replace('namespace CharacterBehavior;','').replace('class '+name[:-3]+' : Action','class '+name[:-3]+' : WeaponTask')
@@ -130,9 +121,11 @@ for label,key in [('right','RightHand'),('left','LeftHand')]:
  go=byid[str(body[key]['fileID'])]['m_GameObject']['fileID']
  hand=next(r['fields'] for r in op if r['classID']==114 and r['fields'].get('m_Script',{}).get('guid')==handGuid and r['fields']['m_GameObject']['fileID']==go)
  payload['handGrabTransforms'][label]=str(hand['grabPoint']['fileID'])
+payload['armRigBindings']=arm_bindings(op)
 # rawYaml is evidence, not required at runtime.
 def strip(v):
  if isinstance(v,dict):return {k:strip(x) for k,x in v.items() if k!='rawYaml'}
  if isinstance(v,list):return [strip(x) for x in v]
  return v
 out.write_bytes(gzip.compress(json.dumps(strip(payload),separators=(',',':')).encode(),mtime=0));print({'bytes':out.stat().st_size,'fireModes':fireModes,'magCapacity':mag['capacity'],'audio':list(audio)})
+

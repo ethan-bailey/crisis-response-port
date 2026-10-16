@@ -59,6 +59,7 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 <script type="module">
 import * as THREE from "three";
 import { loadWeaponData } from "./weapon-runtime.mjs";
+import { createOriginalHandRenderers } from "./original-hand-renderers.mjs";
 import { loadOriginalParticleSources } from "./original-particle-event-binding.mjs";
 import { AimDirection } from "./aim-direction.mjs";
 import { promiseCache, decodeScene } from "./loading.mjs";
@@ -77,7 +78,7 @@ const camera=new THREE.PerspectiveCamera(20,innerWidth/innerHeight,5,20);
 camera.position.set(-3,1.2,9.8);
 const world=new THREE.Group();scene.add(world);
 const character=new THREE.Group();character.name="Original Operator prefab";scene.add(character);
-const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(2,0,0),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,physicsState=null,physicsTime=0,sprintBlend=0,gaitPhase=0,upperBody=null,presentationData=null,weaponData=null,ballisticsData=null,hasAimPointer=false,aimDirty=false,tapPending=0,tapFrame=false,reloadPending=false,weaponState=null;const lockedAim=new AimDirection();
+const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(2,0,0),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,physicsState=null,physicsTime=0,sprintBlend=0,gaitPhase=0,upperBody=null,presentationData=null,weaponData=null,ballisticsData=null,hasAimPointer=false,aimDirty=false,tapPending=0,tapFrame=false,reloadPending=false,weaponState=null,handRenderers=null;const lockedAim=new AimDirection();
 const loadStart=performance.now(),loadingTimings={};window.__loadingTimings=loadingTimings;
 const markLoaded=name=>loadingTimings[name]=performance.now()-loadStart;
 function showError(e){errorBox.style.display="block";errorBox.textContent=String(e?.message||e)+"\n"+String(e?.stack||"");status.textContent="Build failed to load; see error details."}
@@ -118,6 +119,7 @@ async function load(){
   const ballisticsReady=fetch("./assets/ballistics.json.gz").then(r=>{if(!r.ok)throw new Error("Original material settings unavailable");return new Response(r.body.pipeThrough(new DecompressionStream("gzip"))).json();}).then(data=>{ballisticsData=data;return JSON.stringify(data);});
   const weaponRuntimeReady=Promise.all([presentationRuntimeReady,weaponReady]).then(async([_,data])=>runtimeCall("InitializeWeapons",JSON.stringify(data)));
   const manifestReady=json("./assets/operator/operator.json");
+  const handRenderDataReady=json("./assets/operator/original-hand-renderers.json");
   const animationReady=json("./assets/operator/animations.json");
   const physicsReady=Promise.all([import("./contact-physics.mjs"),json("./assets/contact-physics.json"),manifestReady]).then(async([module,data,manifest])=>{
    contactPhysics=await module.createContactPhysics(data,{x:playerX,y:playerY,z:manifest.nodes.find(n=>!n.parentGameObjectFileID).position[2]});markLoaded("physicsReady");
@@ -153,6 +155,8 @@ async function load(){
    const part=new THREE.Mesh(g,material);part.name="Original skin: "+limb.name;part.renderOrder=1;parent.add(part);
   })).then(()=>markLoaded("skinsReady"));
 
+  const handsReady=handRenderDataReady.then(data=>createOriginalHandRenderers(data,nodeById,texture)).then(view=>{handRenderers=view;markLoaded("handsReady");});
+
   async function buildWeapon(name,pivotPath){
    const data=await json("./assets/weapons/"+name+"/weapon.json"),byId=new Map(),byPath=new Map();
    for(const node of data.nodes){const group=new THREE.Group();group.name=node.name;group.position.fromArray(node.position);group.quaternion.fromArray(node.rotation);group.scale.fromArray(node.scale);byId.set(node.gameObjectFileID,group);byPath.set(node.path,group)}
@@ -168,7 +172,7 @@ async function load(){
    return {name,root,nodesByPath:byPath,stats:data.stats};
   }
   const activeWeaponReady=buildWeapon("M4A1","Pelvis/Abdomen/Torso/Rifle pivot").then(w=>{weaponInstances.M4A1=w;markLoaded("activeWeaponReady");});
-  const characterReady=Promise.all([skinReady,activeWeaponReady]);characterReady.catch(()=>{});
+  const characterReady=Promise.all([skinReady,activeWeaponReady,handsReady]);characterReady.catch(()=>{});
   // Original weapon action state machines are not executable yet. Preserve the
   // recovered models without inventing ammo counters, reload timers or shot rays.
   weaponStatus.textContent="Original M4 mechanics ready";
@@ -226,7 +230,7 @@ async function load(){
   physicsState=contactPhysics.snapshot();document.body.classList.add('playing');loaded=true;markLoaded("playable");
   // The inactive sidearm must not delay play. Fetch it after the first playable frame.
   requestAnimationFrame(()=>setTimeout(()=>buildWeapon("Glock-18","Pelvis/Abdomen/Torso/Right upper arm/Right lower arm/Right hand/Pistol pivot").then(w=>{w.root.visible=false;weaponInstances["Glock-18"]=w;markLoaded("sidearmReady");}).catch(()=>{weaponStatus.textContent="Original active weapon loaded · sidearm preview unavailable";}),0));
-  window.__gameState=()=>({loaded,originalInputActive:!!runtimeCall,originalInput:originalInputState,playerX,playerY,velocity,pelvisLocalPosition:nodeByPath.get("Pelvis").position.toArray(),physics:physicsState,physicsTime,sprintBlend,gaitPhase,loadingTimings,presentation:upperBody.snapshot(),projection:{type:camera.type,fov:camera.fov,near:camera.near,far:camera.far,position:camera.position.toArray()},facingDirection,aimPoint:[aimPoint.x,aimPoint.y,physicsState.z],limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,weaponActionsImplemented:true,weaponState,aimDirection:lockedAim.vector,weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
+  window.__gameState=()=>({loaded,originalInputActive:!!runtimeCall,originalInput:originalInputState,playerX,playerY,velocity,pelvisLocalPosition:nodeByPath.get("Pelvis").position.toArray(),physics:physicsState,physicsTime,sprintBlend,gaitPhase,loadingTimings,presentation:upperBody.snapshot(),originalHands:handRenderers?.snapshot(),projection:{type:camera.type,fov:camera.fov,near:camera.near,far:camera.far,position:camera.position.toArray()},facingDirection,aimPoint:[aimPoint.x,aimPoint.y,physicsState.z],limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,weaponActionsImplemented:true,weaponState,aimDirection:lockedAim.vector,weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
   status.textContent="Original C# camera and arm IK · tap or drag to aim; tap same spot to fire.";
   positionLabel.textContent="Walk 1.5 m/s · Sprint 4.2 m/s · original spawn X −3";
  }catch(e){showError(e)}
@@ -318,4 +322,5 @@ requestAnimationFrame(frame);load();
 </script>
 </body>
 </html>
+
 

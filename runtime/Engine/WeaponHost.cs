@@ -27,9 +27,10 @@ public class WeaponComponentMagazine:Component {
  public int capacity;public float malfunctionRate,weight;public WeaponEffects Effects;public Transform ikTarget;
  public void Drop(){gameObject.SetActive(false);Effects.Emit("magazineRemoved",null);}
 }
-public class Hand:Component {
- public enum Mode{Trigger,Fist,ForwardAssist}
- public Mode mode;public Transform grabPoint;public void SetMode(Mode value)=>mode=value;
+// Transport binding inherits the unchanged compiled original Hand.SetMode.
+public class Hand:global::Hand {
+ public Mode mode=>CurrentMode;
+ public readonly Dictionary<string,GameObject> SourceVisuals=[];
 }
 public class Limb:Component {public CharacterBody Body;}
 public class WeaponArmConfiguration {public Hand.Mode rightHandMode,leftHandMode;public float rightHandAngle,leftHandAngle;}
@@ -129,7 +130,23 @@ public sealed class WeaponHost {
   Transform OT(string key)=>operatorTransforms[c.GetProperty("bodyTransforms").GetProperty(key).GetString()];
   body.chestRigIKTarget=OT("chestRigIKTarget");body.pistolPivot=OT("pistolPivot");body.pistolIKTarget=OT("pistolIKTarget");body.Torso=OT("Torso").gameObject.AddComponent<Limb>();body.Pelvis=OT("Pelvis").gameObject.AddComponent<Limb>();
   var ac=c.GetProperty("armConfiguration");weapon.armConfiguration=new(){rightHandMode=(Hand.Mode)ac.GetProperty("rightHandMode").GetInt32(),leftHandMode=(Hand.Mode)ac.GetProperty("leftHandMode").GetInt32(),rightHandAngle=ac.GetProperty("rightHandAngle").GetSingle(),leftHandAngle=ac.GetProperty("leftHandAngle").GetSingle()};
-  ArmIKSolver Arm(bool right){var a=Make(right?"Right source transition":"Left source transition").gameObject.AddComponent<ArmIKSolver>();a.interpolation=Curve(c.GetProperty("armInterpolation"));a.upperArm=Make("Upper snapshot").gameObject.AddComponent<Limb>();a.upperArm.Body=body;a.hand=OT(right?"RightHand":"LeftHand").gameObject.AddComponent<Hand>();a.hand.grabPoint=operatorTransforms[c.GetProperty("handGrabTransforms").GetProperty(right?"right":"left").GetString()];a.ikTarget=Make("IK snapshot");a.transitionTarget=Make("Transition snapshot");a.SetOnWeapon(weapon,0,right);a.ikTarget.localPosition=Vector3.zero;a.SetOnWeapon(weapon,.1f,right);return a;}
+  ArmIKSolver Arm(bool right){
+   var rig=c.GetProperty("armRigBindings").GetProperty(right?"right":"left");
+   Transform Node(string key)=>operatorTransforms[rig.GetProperty(key).GetString()];
+   Limb Bone(string key){var node=Node(key);var limb=node.GetComponent<Limb>()??node.gameObject.AddComponent<Limb>();limb.Body=body;return limb;}
+   var a=Node("solverTransform").gameObject.AddComponent<ArmIKSolver>();
+   var settings=rig.GetProperty("settings");a.interpolation=Curve(settings.GetProperty("interpolation"));
+   a.flip=settings.GetProperty("flip").GetInt32()!=0;a.smoothing=settings.GetProperty("smoothing").GetInt32()!=0;a.smoothFactor=settings.GetProperty("smoothFactor").GetSingle();
+   a.upperArm=Bone("upperTransform");a.lowerArm=Bone("lowerTransform");Bone("handTransform");
+   a.hand=Node("handTransform").gameObject.AddComponent<Hand>();
+   a.hand.grabPoint=operatorTransforms[rig.GetProperty("handComponent").GetProperty("grabPoint").GetProperty("fileID").GetString()];
+   foreach(var variant in rig.GetProperty("variants").EnumerateObject()){
+    var value=variant.Value;var go=operatorTransforms[value.GetProperty("transform").GetString()].gameObject;
+    go.SetActive(value.GetProperty("active").GetBoolean());a.hand.SourceVisuals[value.GetProperty("gameObject").GetString()]=go;
+    switch(variant.Name){case "fist":a.hand.fist=go;break;case "trigger":a.hand.trigger=go;break;case "forwardAssist":a.hand.forwardAssist=go;break;}
+   }
+   a.InitializeSourcePose();a.SetOnWeapon(weapon,.1f,right);return a;
+  }
   body.rightArm=Arm(true);body.leftArm=Arm(false);
   reload=bg.AddComponent<ChangeMagazine>();reload.isPlayer=true;reload.OnAwake();workBolt=bg.AddComponent<WorkBolt>();workBolt.OnAwake();effects.events.Clear();
  }
@@ -149,7 +166,11 @@ public sealed class WeaponHost {
   world.FlushDestroyed();var result=Snapshot();effects.events.Clear();return result;
  }
  static void SetWorld(Transform t,JsonElement p){t.position=V(p.GetProperty("p"));var q=p.GetProperty("q");t.rotation=new(q[0].GetSingle(),q[1].GetSingle(),q[2].GetSingle(),q[3].GetSingle());}
- public object Snapshot(){var mp=weapon.ComponentMagazine.transform.position;var mq=weapon.ComponentMagazine.transform.rotation;object Arm(ArmIKSolver a)=>new{target=new[]{a.ikTarget.position.x,a.ikTarget.position.y,a.ikTarget.position.z},a.OnTarget,a.OnWeapon,smoothing=a.smoothing||a.Transitioning,handMode=(int)a.hand.mode,angle=a.hand.transform.localEulerAngles.z};// Presentation timing must use the same scaled Unity Time.time as the recovered weapon/effect events.
+ public object Snapshot(){var mp=weapon.ComponentMagazine.transform.position;var mq=weapon.ComponentMagazine.transform.rotation;object Pose(Transform t)=>new{p=new[]{t.position.x,t.position.y,t.position.z},q=new[]{t.rotation.x,t.rotation.y,t.rotation.z,t.rotation.w}};
+  object Arm(ArmIKSolver a)=>new{target=new[]{a.ikTarget.position.x,a.ikTarget.position.y,a.ikTarget.position.z},a.OnTarget,a.OnWeapon,a.HasSolution,smoothing=a.smoothing||a.Transitioning,handMode=(int)a.hand.CurrentMode,angle=a.hand.transform.localEulerAngles.z,
+   upper=a.upperArm.transform.eulerAngles.z,lower=a.lowerArm.transform.eulerAngles.z,
+   bones=new{upper=Pose(a.upperArm.transform),lower=Pose(a.lowerArm.transform),hand=Pose(a.hand.transform)},
+   handObjects=a.hand.SourceVisuals.Select(pair=>new{id=pair.Key,active=pair.Value.activeSelf}).ToArray()};// Presentation timing must use the same scaled Unity Time.time as the recovered weapon/effect events.
   return new{sourceTime=Time.time,ballistics=Ballistics?.Snapshot(),magazinePose=new{p=new[]{mp.x,mp.y,mp.z},q=new[]{mq.x,mq.y,mq.z,mq.w},visible=weapon.ComponentMagazine.gameObject.activeSelf},shots=body.ShotsFired,
    // The only currently executable original weapon host is the recovered M4A1.
    // Send source-owned magazine capacity and chamber state to the browser.
@@ -159,3 +180,4 @@ public sealed class WeaponHost {
    magazine=weapon.Magazine?.roundCount??0,reserve=body.Equipment.PrimaryMagazines.Where(m=>!ReferenceEquals(m,weapon.Magazine)).Sum(m=>m.roundCount),chamberLive=weapon.cyclingBolt.Live,bolt=weapon.cyclingBolt.Status.ToString(),reloading=task!=null,manipulating=body.IsManipulatingEquipment,kick=Kick,climb=Climb,right=Arm(body.rightArm),left=Arm(body.leftArm),events=effects.events.ToArray()};}
 }
 }
+
