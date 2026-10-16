@@ -6,7 +6,9 @@ import { createOriginalWindowVisuals } from './original-window-visuals.mjs';
 import { createOriginalParticleEventBinding } from './original-particle-event-binding.mjs';
 export async function loadWeaponData(){
  const r=await fetch('./assets/weapon-runtime.json.gz');if(!r.ok)throw new Error('Original weapon settings unavailable');
- return new Response(r.body.pipeThrough(new DecompressionStream('gzip'))).json();
+ const data=await new Response(r.body.pipeThrough(new DecompressionStream('gzip'))).json();
+ data.renderMaterials=await loadSourceCutoutMaterials();
+ return data;
 }
 export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,particleSources){
  // Original sampled audio, never synthesized substitutes. Unlock Web Audio on the device gesture.
