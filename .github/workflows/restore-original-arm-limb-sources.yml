@@ -1,4 +1,5 @@
 name: Recover original arm limb and weapon dependency sources (private)
+# Retest: Joint is UnityEngine.Joint, not a developer Assembly-CSharp script.
 on:
   push:
     branches: [feature/22-limb-hand-source]
@@ -23,7 +24,7 @@ jobs:
           mkdir -p work/recovery
           gh release download recovery-preservation-2026-10-15 --repo "$GITHUB_REPOSITORY" --pattern crisis-response-recovery-direct-v3-1.zip --dir work/recovery
           echo 'cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d  work/recovery/crisis-response-recovery-direct-v3-1.zip' | sha256sum -c -
-      - name: Preserve source-exact six original developer dependency classes
+      - name: Preserve source-exact five original developer dependency classes
         run: |
           set -euo pipefail
           python3 scripts/preserve_original_arm_limb_dependencies.py work/recovery/crisis-response-recovery-direct-v3-1.zip --repo . | tee work/original-arm-dependency-manifest.json
@@ -31,11 +32,12 @@ jobs:
           import json,hashlib,pathlib
           m=json.loads(pathlib.Path("source-reference/Original/ArmDependencies/source-provenance.json").read_text())
           assert not m["controllerPlaybackImplemented"]
-          assert m["compiledOriginalCount"]==0 and len(m["classes"])==6
+          assert m["compiledOriginalCount"]==0 and len(m["classes"])==5
+          assert m["engineTypesNotDeveloperScripts"] == ["UnityEngine.Joint"]
           for name,v in m["classes"].items():
               data=pathlib.Path(v["repositoryPath"]).read_bytes()
               assert hashlib.sha256(data).hexdigest()==v["sha256"],name
-          print("Six true original developer classes preserved, zero source classes selected for compilation")
+          print("Five original developer classes preserved, UnityEngine.Joint recognized, zero classes selected for compilation")
           PY
           git diff --check
       - name: Commit exact private original blobs if branch head is unchanged
@@ -51,7 +53,7 @@ jobs:
             echo 'Exact source already committed'
             exit 0
           fi
-          git -c user.name="Crisis Port Source Recovery" -c user.email="github-actions[bot]@users.noreply.github.com" commit -m "Preserve immutable original Hand/Limb/Joint/Weapon/TeamOperator/ArmsControl references"
+          git -c user.name="Crisis Port Source Recovery" -c user.email="github-actions[bot]@users.noreply.github.com" commit -m "Preserve immutable original Hand/Limb/Weapon/TeamOperator/ArmsControl references"
           git push origin HEAD:refs/heads/feature/22-limb-hand-source
           git rev-parse HEAD | tee work/original-limb-commit.txt
       - name: Preserve source hashes privately without exposing game assets publicly
