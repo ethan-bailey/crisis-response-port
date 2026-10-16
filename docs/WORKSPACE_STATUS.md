@@ -1,4 +1,8 @@
-# Workspace status — 2026-10-15
+# Workspace status — chronological evidence ledger
+
+**Current instructions:** [NEXT_AGENT.md](../NEXT_AGENT.md), reviewed 2026-10-16. Entries below are dated history. Old “latest” and “current track” statements are not the present work queue.
+
+## Initial workspace baseline — 2026-10-15
 
 ## Verified baseline and workspace start
 - Workspace index: `WORKSPACE.md`; backlog [#10](https://github.com/ethan-bailey/crisis-response-port/issues/10), [#11](https://github.com/ethan-bailey/crisis-response-port/issues/11), [#12](https://github.com/ethan-bailey/crisis-response-port/issues/12), [#13](https://github.com/ethan-bailey/crisis-response-port/issues/13).
@@ -144,3 +148,15 @@ The prior browser smoke passed manifest initialization and all original gameplay
 - Full annotated graph SHA256 `5cde6f38797f1cfc5b87449833abf77b27d9ce540987874a007a7b4473a2c2a7`; identity JSON SHA256 `3aaf99ed782413cc0295e525dd7c7c4e1047247f97bb4b32f426ca7ce9701c55`. Downloaded cloud outputs and independently generated local reports match byte for byte. Later doc commits need no rebuild.
 - Independently reviewed existing native Unity evidence: [run 38800542438](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38800542438), source `4ed43897973d9fac607b4e57baf2cbe4102acf3d`, artifact `12004975378`. **Marksman-only WebGL compile actually succeeded** October 15, 20:27 UTC (real build log + 18-file/36,117,455-byte output manifest + static HTTP smoke). Binary output was intentionally not retained and no native browser gameplay/iPhone proof exists in that artifact. Read-only review; independent Unity branch and main untouched. [Full native evidence and limitations](https://github.com/ethan-bailey/crisis-response-port/blob/codex/full-source-closure-audit/docs/NATIVE_WEBGL_RESULT_REVIEW_2026-10-16.md).
 - Full animations, all maps, AI, missions/progression and original UI remain incomplete. No new game build or deployment this session. Rollback only the new identity helper/tests and optional audit/workflow/doc annotations in selective commits after inspecting dependencies; preserve originals, raw graph, compiled SDK-8 package and all prior runtime fixes.
+
+
+## Handoff correctness and execution-order review — 2026-10-16
+
+- Documentation-only review requested before further implementation; starting browser HEAD `fdce2e51b54b9da08dd6cd3db2828289c16fe11d`.
+- Replaced the 43,622-character chronological NEXT_AGENT pile with one authoritative checkpoint and ordered queue. Preserved its complete prior text under `docs/history/NEXT_AGENT_BEFORE_2026-10-16_REVIEW.md`, explicitly superseded.
+- Corrected stale native compile status, completed UI type identification, Splinter-normal recovery, latest browser/package evidence, unmerged branch availability, broader dummy-shader scope and physical-device/deployment limits. Distinguished original data from runtime execution throughout.
+- Order: inspect/review existing work; bounded native player retention and real browser validation on an isolated branch; evidence-based route decision; source/engine prerequisites; original gameplay/UI/presentation flows; matching regression/package checks; protected deployment and physical iPhone acceptance.
+- Updated WORKSPACE and roadmap navigation to remove competing queue/route instructions. Historical ledger remains intact below its new navigation notice.
+- Validation: checked current browser ref, #19 mergeability recheck, no in-progress or queued Actions runs at review time; read the compiler/UI/native linked branch handoffs. Inspected changed document links and checkpoint IDs; no game code or workflow changed, so no compiler/Unity/browser build dispatched.
+- Rollback: selectively revert this documentation commit after checking newer edits. Archive preserves all earlier details; do not reset branches or revert original code/assets.
+- Next bounded action remains the isolated retained native-player/browser check described in NEXT_AGENT.md, after baseline/PR review. No implementation or deployment occurred during this review.

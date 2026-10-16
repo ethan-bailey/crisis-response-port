@@ -1,0 +1,299 @@
+# Historical handoff — superseded 2026-10-16
+
+Do not execute this document as the current plan. Its competing latest/next sections have been replaced by [the authoritative handoff](../../NEXT_AGENT.md). The complete prior text follows unchanged for provenance and rollback.
+
+---
+
+# Next agent — current state (2026-10-15, 19:17 UTC)
+
+## Latest: original UI IDs identified; native Unity build result verified — 2026-10-16
+
+[PR #20](https://github.com/ethan-bailey/crisis-response-port/pull/20) now identifies all **24 original UI component fileIDs** from the preserved original DLL's 187 metadata types. [UI identity handoff](https://github.com/ethan-bailey/crisis-response-port/blob/codex/full-source-closure-audit/docs/ORIGINAL_UI_BINDINGS_HANDOFF_2026-10-16.md). [Run 38892941728](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38892941728) **SUCCESS**, tested SHA `f50b00110ba29f9fffa28046cf78405b1acd66ec`, private metadata artifact `12041579699`: **18/18** tests, five reference vectors, 24 unique type bindings, all 160 original source hashes. Cloud/local graph and identity JSON match byte for byte. Only the .308 mesh GUID remains unidentified; UI/native built-in behavior and 35 dummy shaders remain unfinished. No game runtime/UI behavior was added.
+
+**The separate native Unity WebGL test DID finish:** [run 38800542438](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38800542438), source `4ed43897973d9fac607b4e57baf2cbe4102acf3d`, compiled Marksman-only WebGL successfully on October 15 at 20:27 UTC. Original log says `Build Finished, Result: Success.`; output manifest records WASM/data/loader, 18 files / 36,117,455 bytes; static HTTP 18/18 passed. **Only evidence was retained**, artifact `12004975378`; no playable native binary/browser gameplay/device proof is retained. [Exact native result review and next bounded experiment](https://github.com/ethan-bailey/crisis-response-port/blob/codex/full-source-closure-audit/docs/NATIVE_WEBGL_RESULT_REVIEW_2026-10-16.md). Do not call that test still running or assume its green job proves full gameplay. This session read the native branch/evidence only and did not change it.
+
+**Full game remains incomplete:** full animations, all maps, AI, mission objectives/progression, original UI and native/device parity are not finished. SDK-8 package PR #19 remains the current selected-source compile checkpoint. No new game build or deployment occurred in this identity/evidence session.
+
+
+## All-scene/source inventory — verified 2026-10-16
+
+[Draft PR #20](https://github.com/ethan-bailey/crisis-response-port/pull/20), branch `codex/full-source-closure-audit`, adds a read-only source/dependency audit. [Handoff and exact next blockers](https://github.com/ethan-bailey/crisis-response-port/blob/codex/full-source-closure-audit/docs/FULL_SOURCE_CLOSURE_HANDOFF_2026-10-16.md).
+
+[Run 38889549595](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38889549595) **SUCCESS**, tested SHA `3ceeb1ea99a258453fb7212b106e67e510266b6d`, private graph/provenance artifact `12040833766`. All six scenes inventoried; **160/160** raw source hash claims verified; **10/10** targeted tests passed. Independent local report matched cloud bytes exactly. Inventory: 1,333 main game C# files + 86 first-pass files + one exporter patch; runtime currently selects 35 original files, not the entire game.
+
+Remaining external GUIDs: missing .308 mesh and Unity UI's 24 component IDs. **35** reachable shaders are marked dummy exports. Built-in engine, local fileID, C# symbol and dynamic-resource dependencies remain separate unfinished gates. No game/runtime changes, new compile, deployment or Unity/main changes; the SDK-8 package in PR #19 below remains the latest actual compile checkpoint. Review the new audit before using its graph to expand source compilation.
+
+
+## Isolated compiler/package checkpoint — verified 2026-10-16
+
+Review [draft PR #19](https://github.com/ethan-bailey/crisis-response-port/pull/19), branch `codex/wasm-compile-package`, and its [compile handoff](https://github.com/ethan-bailey/crisis-response-port/blob/codex/wasm-compile-package/docs/WASM_COMPILE_PACKAGE_HANDOFF.md). It packages **both game and WASM runtime** with source/output hashes; no gameplay/original C# changes or merge.
+
+**Actual SDK 8.0.426 compile SUCCESS:** [run 38849201407](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38849201407), tested SHA `bb60e3adf1368c7156b45ac9d5a6385de5841301`; native contracts, 12 package tests and 38 source/input tests passed. Private complete site artifact `12024269115`, evidence `12024274148`; 724 files / 199 boot resources / 195 WASM binaries validated and downloaded archive independently rechecked. Inner tar SHA256 `935253d36d861cd357f6ac03c4fe551cf5be7c4796749906899087770d6567e9`. Exact SDK pin is workflow-local; existing gameplay/Unity workflows are unchanged. Earlier run 38848858817 passed using SDK 10 and is superseded as the recommended package. Later documentation commits need no rebuild.
+
+**Not a new live/device/browser-parity build.** Site v8 remains older; no new deployment or browser/iPhone run. Review this small PR before integrating into this browser branch; do not merge main or republish assets publicly. Resume the original-game parity roadmap below after review.
+
+
+## Most recent WASM checkpoint — original impact particle event binding (2026-10-15 local)
+
+**Start with `WORKSPACE.md`, `docs/COMPLETE_WASM_PORT_ROADMAP.md`, `docs/WORKSPACE_STATUS.md` and [issue #11](https://github.com/ethan-bailey/crisis-response-port/issues/11).** The full-game eight-gate completion checklist is still open: compiling the selected original C# source is not 100% game parity.
+
+- **Full game/native/Chromium/WebKit SUCCESS**, [Actions #38846445335](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38846445335), exact tested game SHA `0933f2d4f5c5047f4e4a7f7c701fb13fd0f47e8c`, private compiled WASM/site/screenshots artifact `12024020540`. 20/20 workflow steps passed, including 26-original-particle-emitter manifest startup, original scene physics, weapons, touch and 56 source glass windows.
+- **Original source particle bridge:** `game/original-particle-event-binding.mjs` loads the recovered 14 effect prefabs / 26 ParticleSystems and the eight original materials, cross-checks C# `materialEffect` GUID, native phase and scaled `Time.time`, records capped unsupported requests, and explicitly reports `renderedParticles=0` and `sourceVisualParity=false`. Integrated in `game/index.html`, `game/weapon-runtime.mjs`, `game/presentation.mjs`. No invented smoke, sparks, replacement particles, shader or physiology. Original `runtime/Original/` unmodified.
+- **Targeted source-only Node tests SUCCESS**, [Actions #38846393711](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38846393711), commit `06f7c8b643a77f53a5ad26ec8086cf1f6aa0e2cb`, private artifact `12022284968`.
+- **Original native C# source SpawnEntryEffect event transport SUCCESS**, [Actions #38847238826](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38847238826), exact source/test SHA `12f292657267d0c0521f00140c4ddec1976b7cd2`, private artifact `12023701591`. The fixture invokes the recovered original `BallisticMaterial.SpawnEntryEffect` method under isolated temporarily enabled performance settings; its result explicitly says `originalEntryEffectDelivered=true`, with source GUID, phase, time. This does *not* imply active visual emitter simulation in the real game.
+- **Important boundary**: Browser log snapshots showed `receivedEvents=0` in visible intermediate scenarios; do not claim the live firing scenario has produced particle effects solely based on source manifest startup. Need capture and verify original `materialEffect` emissions end-to-end before implementing/claiming visuals.
+- The owner-private live Site **v8 is still older**; no new private deployment or actual iPhone Safari test. Unity PR #7/main untouched. **Do not merge, reset, force-push or make recovered assets publicly accessible.**
+- **Rollback:** the full exact per-commit ledger is under `docs/WORKSPACE_STATUS.md`, "C# native impact event-to-source particle binder" and "Direct native source impact-emission contract." Revert only new JS integration and native fixture/workflows in new commits after inspecting concurrent edits. Leave original asset manifests, particle mesh normals, old gameplay/physics fixes and Unity branch intact.
+- **Next concrete objective:** Source-backed native 2017 ParticleSystem adapter, with original enabled module simulation, source RNG/emission/timing and actual renderer/material behavior validated against native Unity captures. Keep 14 billboard / 12 mesh effect modes and eight source material GUIDs exact. Native built-in shader and dummy AssetRipper ShaderForge exports remain blockers. Only run costly browser CI at a meaningful milestone.
+
+
+## Latest verified continuation — 2026-10-15: full browser build and original particle source assets
+
+**Start with `WORKSPACE.md`, `docs/COMPLETE_WASM_PORT_ROADMAP.md`, `docs/WORKSPACE_STATUS.md`, then the relevant [GitHub issue](https://github.com/ethan-bailey/crisis-response-port/issues/11).** The full checklist includes all six scenes, Unity engine/behavior, original shaders/particles, AI/mission, UI, native-vs-WASM comparisons, iPhone Safari and private release. Do not claim full game completion because a selected-source runtime compiles.
+
+**Latest fully verified gameplay/browser build:** [Actions run 38814978462](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38814978462) **SUCCESS** at exact code/workflow SHA `f72102ec796784b1bdf02c44856e93cc2e7002ec`. Native original C#, .NET WASM publish, PhysX, source input, geometry/movement, glass, weapon and Chromium/WebKit tests all passed. Artifact `12009679203` stores the matching private compiled runtime and browser evidence. It includes a vital double-handedness correction to the original Wood exit-hole mesh (`70c2c4e` + `dd44bea`) and the source particle manifest test. **No physical iPhone test or new owner-only live deployment** has occurred; v8 remains older.
+
+**Private original impact particle input is recovered:** `game/assets/ballistics/original-particles-source.json.gz` (14 prefabs, 26 native ParticleSystems/renderers; compressed SHA256 `75bbdbeadf3595f9c8fa32563a689fc119d6747abe0efb6c5bd0c347cd70cf92`), committed `10c8fab81511a707a0b34408d11a80d487a77e7c`, private provenance [run 38814360107](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38814360107). Node integrity tests 2/2 passed locally and in full CI. Original emitter active modules, curves, original local transforms and exact renderer source fields are preserved, *not simulated*.
+
+**Original three mesh particle geometries now recovered:** source-sha-verified `Particle shard.asset`, `Tetraedron.asset` and `Splinter.asset` under `game/assets/ballistics/particle-meshes/`, source asset commit `8c713bf3797098a7988a3a142b33ce8d62b635e4`, [run 38815708747](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38815708747) SUCCESS, artifact `12009763698`. The source geometry tests `scripts/original_particle_mesh_source_test.mjs` passed locally **3/3**. The first two meshes preserve original normals. **Splinter packed native normals are not yet decoded** and cannot be guessed. The materials include a Unity built-in shader with missing exported source (GUID `0000000000000000f000000000000000`); [asset provenance run 38815413956](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38815413956) SUCCESS. Two separate Shader Forge glass exports are also dummy exporters, not true shader parity.
+
+**Next bounded engineering step:** source-verified decoding of packed Splinter normals and original material/shader dependencies, then source-driven Unity particle emission/renderer compatibility with original C# event clocks and native Unity reference. Do not write fake particles or change recovered gameplay. Only a subsequent meaningful renderer milestone needs full Chromium/WebKit CI; prefer local tests/metadata audits in between. Never rewrite `runtime/Original/`, force-push, touch Unity PR #7/main, or change private hosting audience.
+
+### Rollback
+
+Full SHA/file ledger is in `docs/WORKSPACE_STATUS.md`; the Wood mesh basis fix and smoke test must be reverted together if necessary. The particle asset addition commits `10c8fab` and `8c713bf` can be reverted *selectively*, preserving original data recovery evidence and unrelated game work. The owner-private live build has not been updated.
+
+## Persistent workspace and *complete-game* WASM finishing checklist — 2026-10-15
+
+**Start with [`WORKSPACE.md`](WORKSPACE.md) and [`docs/COMPLETE_WASM_PORT_ROADMAP.md`](docs/COMPLETE_WASM_PORT_ROADMAP.md), then the latest [`docs/WORKSPACE_STATUS.md`](docs/WORKSPACE_STATUS.md).** These document all eight remaining verification gates beyond the already successful selected-source .NET WebAssembly compile, including all six scenes, C#/Unity API coverage, gameplay/AI/missions, materials/particles, UI/save/platform, native comparison, iPhone 16 acceptance and owner-restricted reproducible release.
+
+Issue board [#10–#18](https://github.com/ethan-bailey/crisis-response-port/issues); draft branch `codex/projectile-material-impacts` PR #9 remains isolated. No merge to `main` or alteration of independent Unity feasibility branch. The most recent **full browser-tested game code** remains `ed3d80d89f5e4e797e0370d9152bcc828bd8becb` (run `38809439277`, both Chromium and WebKit passed). This workspace session **has not** changed game/runtime behavior, rebuilt the game or redeployed privately. Documentation and private audit-only actions do not constitute playable-release changes.
+
+**Original shader source blocker confirmed:** [private audited run #38812611701](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38812611701) succeeded, artifact `12008763302`. Regular Shader Forge glass export SHA256 `7d9d9f70262201d46628597adb278caefe2ab11bb43b25c9f86c2ee37783b38f`; mirror export SHA256 `f1b929eb65edb52abf46b352bc7bdd6f3aaf5684652c87b44a37a791011b17eb`. Both are explicitly AssetRipper `DummyShaderTextExporter` replacements: the regular dummy just samples a texture and the mirror dummy emits white. Original shader behavior is **not** recoverable by copying these exports. Do not silently render them as parity.
+
+**Original particle source inventory verified:** [private audit run #38812872182](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38812872182) **SUCCESS**, artifact `12008823420`: 26 ParticleSystem components and 26 ParticleSystemRenderers across 14 entry/exit effect prefabs from 12 material-property assets. Complete native serialized module fields are preserved privately; no source original particle render/simulation has yet been implemented. Next suitable code task: use that private source artifact to extract deterministic, hash-checked enabled modules/curves and renderer dependencies, then build source-driven render adapters after verifying Unity particle semantics, without fabricating smoke/sparks.
+
+**Handoff rule:** Record source hashes, separate verification levels (recovered/compiled/browser-tested/native-parity/device-tested), new artifact IDs and selective rollbacks in `docs/WORKSPACE_STATUS.md`. Preserve current owner-private published v8 unchanged unless a matching complete verified build is deployed and the private audience is confirmed. No automatic background coding is running. 
+
+## Original-window rendering continuation — October 15, 2026
+
+On draft PR #9, source-backed original window rendering is added after the previously verified C#/WASM/browser build. Baseline commit before these window changes: `13f22b4286e7f13a30ced752b96ab4ad15ff735f`. No recovered `runtime/Original/` code, independent Unity branch, `main`, or owner-private deployment was modified.
+
+**Read `docs/WASM_ORIGINAL_WINDOW_VISUALS_2026-10-15.md` before changing these files.** Source audit runs [38808368685](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38808368685) and [38808663563](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38808663563) confirmed all 68 `BallisticWindow` components are Unity built-in Quad MeshFilters (fileID 10210), with 56 regular glass and 12 separate custom mirrored-glass materials. Original scene SHA256 `c43b36c415b4df14ef6223eaced686a8ddcead6c46f7504346aecb1a03c5743e`.
+
+The scoped WASM bridge `OriginalWindowVisuals` exports exact source object IDs, current world transforms as lossless 4×4 matrices, texture GUIDs, and active states. `game/original-window-visuals.mjs` renders only source-backed regular-glass Quads from the original RGBA pixels, applies C# `windowStamp` and `windowReset` events and explicitly omits the 12 unported mirror shaders. It uses a marked Three.js adapter to represent the original regular glass source `_Opacity=.25`. **No claim of complete shader parity, actual iPhone validation, or full glass/background occlusion equivalence** is justified. Source collisions remain C# controlled.
+
+Native original window transform/reset contracts and browser transport regressions were added. The full original-game/native/Chromium/WebKit milestone validation was triggered **once** at code/workflow SHA `ed3d80d89f5e4e797e0370d9152bcc828bd8becb`: [run 38809439277](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38809439277). **VERIFIED SUCCESS** at exactly `ed3d80d89f5e4e797e0370d9152bcc828bd8becb` (2026-10-15 21:30 UTC): native contracts; .NET WASM + PhysX build; Chromium/WebKit movement, landscape touch, camera/IK, M4 and exact source window Quad/pixel stamp/reset tests. Private game artifact `12007339085` (`crisis-response-mission01-game-smoke`) contains matching WASM assets and browser screenshots. Later documentation-only commits do not change tested code. No physical iPhone test. No new owner-private deployment. No further automatic source-commit CI is enabled.
+
+Rollback this window milestone only via selective reverse-order commit reverts/new restoring commits, never branch reset/force push. Keep the earlier verified original Wood impact-mesh, timing, and browser code. The private published Site version 8 still contains the older checked build and **does not contain these new windows**.
+
+## Start here
+
+## WASM compiler / renderer continuation — verified 2026-10-15
+
+Current branch: `codex/projectile-material-impacts` in draft PR #9. Previous source/renderer checkpoint before this session was `4c7a855dd29c4b092dc6c4743cb0ea70bb516141`. **Do not reset or force-push this branch or touch the independent Unity foundation/WebGL branch.**
+
+The new `docs/WASM_CONTINUATION_CHECKPOINT_2026-10-15.md` is the authoritative source map and rollback guide for this continuation. Changes to the original scaled `Time.time` effect bridge, impact telemetry retention, and glass texture reset/re-stamp callbacks are *engine/rendering adapters*, not rewritten game rules. All recovered developer `runtime/Original/` code remains unmodified. Browser source mesh handedness improvements from the preceding checkpoint are retained.
+
+**Successfully compiled and tested:** native original contracts (including glass reset/re-stamp and impact bookkeeping), Node source-clock regressions, JS syntax, and Blazor WebAssembly publish on input commit `66478ac4343e156885527734db485fc46ba0f9a3`. Run [38803362416](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38803362416) **SUCCESS**. Metadata-only private artifact `12005511474` (`source-wasm-continuation-verification`), retaining source commit and logs. This proves a WASM build, not actual-device runtime parity.
+
+A full browser/PhysX integration check was launched once through an explicit milestone-scoped workflow edit `455a017cc2900bace19a3eb47cf0276aa71db8cf`, run [38803647712](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38803647712). **VERIFIED SUCCESS (2026-10-15 20:46 UTC)**: PhysX original-scene contacts, movement and stopping, landscape input, camera/arm IK, original M4 reload and touch aiming, and recovered exit-hole mesh tests passed in Chromium and WebKit. Browser artifact `12005437510` (`crisis-response-mission01-game-smoke`) includes compiled runtime and screenshots; no physical iPhone test was performed. Both workflow push triggers are scoped to changes to their respective workflow files only; ordinary source commits will not generate repeat expensive runs. Both still support deliberate manual dispatch.
+
+Existing owner-private Site version 8 is still the last published build; this continuation has not deployed a new version. Do not change the Site audience or publish recovered assets publicly. The independent Unity feasibility run [38800542438](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38800542438) completed **SUCCESS**, but it belongs to the separate Unity branch and does not establish whole-game browser parity.
+
+
+## WASM/browser source-renderer continuation (2026-10-15 20:24 UTC)
+
+On this same PR branch, commits `2a9f1805df6a0be5ddae3c6c0ba97f1e886e65fd` and `38d04afb7834466c1e7236585b318cce9f487ae6` repair the exact original Wood exit-hole Circle.asset renderer's Unity-to-Three handedness conversion: reflect local vertex/normal Z and reverse triangle winding. This preserves original source mesh data, C# ballistic calculations and engine-generated lifetime. `scripts/weapon_smoke.mjs` now checks every recovered position and triangle and verifies source normals if present. A lightweight mathematical geometry check passed for all 100 source faces, and the repository files were read back. **Browser/native CI has not yet run on these new commits; no new deployment was made.** The existing privately hosted version 8 is unchanged. Do not report these modifications as live until verified and published with matching WASM runtime and assets.
+
+Separate Unity Marksman WebGL run `38800542438` (foundation branch) was still executing its actual WebGL build step when checked. An hourly conditional notification was scheduled to report the outcome. Do not edit the separate Unity branch or launch duplicate expensive Actions runs.
+
+
+Browser work: branch `codex/projectile-material-impacts`, draft [PR #9](https://github.com/ethan-bailey/crisis-response-port/pull/9). Last gameplay source: `cd47a520f31a8b96bd1304f6bfc2c4ecd290db04`; subsequent commits through `2175e7e3bc61408aa59062cf9ee3516e581d1991` only changed documentation. This handoff commit is documentation only.
+
+**All PR #9 gameplay updates are now published privately:** https://crisis-response-runtime.craftysnipe13.chatgpt.site
+
+- Site project: `appgprj_6acfef7174888191bc2bc2f269f60acc`.
+- Current saved version 8: `appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_6aeb63256a6c81918ca22f1d32b20c26`.
+- Successful deployment: `appgdep_6ad126a348c88191aab17f03e00c5e11`.
+- Canonical Site source commit: `a20353a9b4a917e9dd285d5e6fef63f47c0aed94`.
+- Owner-only audience was verified and preserved. Do not make original-game assets public.
+- Earlier claims that publication is blocked, version 6 is live, or hotfix/UI are unpublished are obsolete. Version 7 has the known firing crash; do not roll back to it.
+
+## Included and verified
+
+- Original material/window/fragment algorithms and imported Mission 01 collision data.
+- Firing crash fixed through scoped `ReparentBeforeScaleReset` adapter: preserve position/rotation before original Play immediately resets localScale. Do not replace this with speculative global shear decomposition or suppress the exception.
+- Compact translucent edge controls, seven 44px-or-larger targets, ammo-only HUD; help and pending swap hidden.
+- New-location touch tap aims; a tap within 24 CSS pixels of the latest touch aim fires once. Drag aims and retains direction; Fire button/mouse hold unchanged. Cancellation cannot fire; lifecycle resets clear the comparison anchor.
+- Full final game/build CI [38790640197](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38790640197) succeeded on substantive commit `cd47a520f31a8b96bd1304f6bfc2c4ecd290db04`, including Chromium/WebKit tests. Artifact `11999739004`, `crisis-response-mission01-game-smoke`; SHA256 `9e15693b580ba5352eedaa8ddca6fb2fce1d6148fead39830decaf7c06f5faf2`.
+- Native/WASM hotfix regression previously passed run `38782716412`.
+- Published game/index.html and game/browser-input.mjs match PR head `2175e7e3bc61408aa59062cf9ee3516e581d1991`; runtime-web was replaced entirely with final artifact `work/game-runtime/wwwroot`, changing only base href to `/runtime-web/`.
+- ZIP integrity, JS syntax and complete deployment gzip/tar integrity passed. Hosting returned succeeded. No physical iPhone test or fresh browser inspection of the deployed version was performed.
+
+## File map and recovery
+
+- `game/`: browser renderer, touch/input, camera/animation integration and recovered assets.
+- `runtime/Original/`: recovered developer algorithms; preserve original behavior.
+- `runtime/Engine/`: explicit engine adapters and hosting services.
+- `runtime/Checks/`: native behavioral contracts, including sheared impact regression.
+- `scripts/`: extraction, source provenance, asset preparation and targeted smoke tests.
+- `docs/`: audits and native Unity feasibility records.
+- Another agent owns Unity feasibility/compilation, related branches/workflows and main. Do not reset, merge or edit that work as part of browser continuation.
+
+Local paths are caches, not authoritative source:
+- Site checkout: `/workspace/sites/crisis-response-runtime` (canonical Site Git checkout).
+- Old partial port cache: `/workspace/scratch/0234318e821a/crisis-response-port` is stale, lacks Git metadata and does NOT contain all current source. Recover current files from GitHub.
+- Final artifact ZIP/extraction: `/workspace/scratch/0234318e821a/pr9-build/pr9-latest.zip` and `pr9-build/extracted/`.
+- Verified deployed archive: `/workspace/scratch/0234318e821a/pr9-build/pr9-publish.tar.gz`.
+- Older `crisis-response-runtime-site.tar.gz` at scratch root is truncated and must not be reused.
+
+Artifact download workaround: GitHub download_workflow_artifact returns a reusable OpenAI file_id/file_name. Raw signed-URL curl returned 502 here. prepare_materialize with that exact returned file reference and a scratch destination successfully placed the ZIP locally; it did not create/save any Library item. Retain the returned workspace_path. Do not search unrelated user files.
+
+For another publication, read the current Sites skill, open the same project with fresh short-lived credentials through canonical site-workflow.mjs, modify source, package/push with the helper, then publish its returned Site source SHA and unchanged archive. GitHub code SHA is NOT the Site source SHA. Credentials only in session memory/stdin, never repository or files.
+
+## Next bounded work
+
+First collect the user's iPhone feedback on this live version. User is low on tokens and prefers quick manual playtests over repeating the full CI suite for every small edit. Run only checks appropriate to actual changes.
+
+Remaining parity gaps: native particle/exit-hole/fragment rendering and visible glass binding, dynamic rigidbody impulses and physiology, two unresolved built-in meshes, native comparison for hull cooking and curve infinity mapping. Do not invent placeholder gameplay or claim complete 1:1 parity.
+
+## Historical implementation notes
+
+The material below is retained for source details only. Its deployment/checkpoint statements are historical; current state above takes precedence.
+
+# Active continuation — original material impacts
+
+Updated 2026-10-15. Current browser work is on `codex/projectile-material-impacts`, draft PR https://github.com/ethan-bailey/crisis-response-port/pull/9, based on the firing milestone below. Code checkpoint: `37eac226a91ed2fa13c02d89f5666cf3f1fdbb37`.
+
+The user authorized the next step. Original material penetration, deflection/ricochet, delayed exits, glass-alpha holes and randomized fragmentation are now connected to live projectile flight. Source sampled impact audio is transported to Web Audio. Imported coverage is 386 material components (including 68 glass windows) and 61 mesh colliders; two built-in mesh references remain unresolved. The full original projectile mask now includes Windows. Weapons and queries share the source scene world.
+
+Privately published and verified: https://crisis-response-runtime.craftysnipe13.chatgpt.site . Site source `e31222855f1fabb6a8758230b66f812899830f03`; successful deployment `appgdep_6ad1142f55a08191b6cc64e10061bcb7`; version `appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_b3d2f109b0f881919ab515d9b2ab5e8b`. The hosted runtime came from the exact successful game artifact below. Owner-only access was preserved. Documentation-only commits after the code checkpoint do not alter that build.
+
+Read `IMPACT_CHECKPOINT.md` first for implementation and explicit boundaries. Native original/material/input/presentation/reload contracts and 23 Node regressions pass locally. An additional native probe cast successful rays against all 45 active imported mesh colliders. Final browser artifact `11996256322` contains the matching compiled runtime, screenshots and reports. Chromium recorded 46 material contacts and 4 fragments; WebKit recorded 49 contacts and 12 fragments. Both screenshots were visually checked; there was no physical iPhone test. CI runs for this exact code: game/browser `38780482295` (SUCCESS), native/WASM `38780482387` (SUCCESS). The first browser run failed only because the host called original Start on an inactive object; deferred Start now follows active/enabled state. All 21 imported unique meshes also match the source serialized AABBs.
+
+Do not claim complete 1:1 parity. Native particles, visible hole/fragment meshes, visual glass texture bindings, rigid-body impulses and limb damage remain unfinished. Ammo curve endpoints use an explicit clamp adapter like weapon curves; native infinity mapping, PhysX hull cooking and random sequence parity still need comparison. No substitute damage or particle gameplay has been added. Preserve private hosting and the separate agent's Unity feasibility work. Do not merge/reset their branch or main.
+
+The following section retains the earlier verified firing baseline. Its “no material interactions” statements are superseded by this checkpoint; its remaining non-material limitations still apply.
+
+# Crisis Response browser port — next-agent instructions
+
+Updated 2026-10-15 after the firing/reload milestone was verified and privately published.
+
+## Current result
+
+- Browser branch: `codex/weapon-actions-checkpoint`.
+- Draft PR: https://github.com/ethan-bailey/crisis-response-port/pull/8
+- Verified game code: `6b94297cb07c3b0684933cb055419aea9c185da5`. Subsequent documentation-only commits do not change this build.
+- Private playable preview: https://crisis-response-runtime.craftysnipe13.chatgpt.site
+- Published Site source: `c6daf0b4568f112a2c7154ed71e9f87e3f039040`.
+- Site project: `appgprj_6acfef7174888191bc2bc2f269f60acc`.
+- Successful deployment: `appgdep_6ad1076460888191b8f5f5658942364d`.
+- Version: `appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_9066e047ec848191b51d240dea88d4e2`.
+
+The preview now supports drag-to-aim, tap-to-fire, held FIRE, source M4 ammunition/bolt mechanics, recoil and the source reload sequence. Released aim stays in its last world direction relative to the moving character. Native and Chromium/WebKit tests passed; this is NOT complete 1:1 game parity or an actual iPhone device test.
+
+A separate agent owns Unity feasibility/utility repairs. **Do not edit their Unity files/workflows or reset main/the foundation branch to this branch.** This browser branch intentionally starts before their Unity commits. Integrate later through reviewed changes; preserve both lines of work. PR #7 on `codex/iphone-input-parity-foundation` contains the prior camera milestone and subsequent Unity work.
+
+## User constraints
+
+- Target: play the original Crisis Response in a browser on iPhone 16, eventually 1:1 behavior.
+- ONLY port recovered developer systems. Do not invent substitute gameplay. Mark engine/device/rendering adapters and unavailable systems explicitly.
+- The user wants proposed new milestones verified with them before execution. The firing/ammunition/reload and touch-aim milestone was authorized and is now complete within the documented scope. Ask before beginning another milestone.
+- Touch controls: dragging aims and never fires; a short tap fires the last direction without retargeting; FIRE hold requests automatic fire. Releasing a drag must not leave a fixed invisible screen/world point to track.
+- The user has no computer and depends on hosted results. Keep updates concise and avoid unnecessary token use.
+- Preserve private hosting; do not merge main without authorization.
+
+## Verified evidence
+
+These runs test the exact code commit above:
+
+- Native/runtime plus WebAssembly: https://github.com/ethan-bailey/crisis-response-port/actions/runs/38772950394
+- Complete game/browser checks: https://github.com/ethan-bailey/crisis-response-port/actions/runs/38772950366
+- Game artifact: `11991399536`, `crisis-response-mission01-game-smoke`. Contains compiled `work/game-runtime/wwwroot/`, JSON reports and screenshots.
+
+Coverage:
+
+- 23 Node regressions: independent input ownership, cancellation/lifecycle, touch tap vs drag, retained direction, locomotion poses, loading/binary geometry.
+- Native WeaponContracts: clock preservation; 30 magazine rounds plus chamber; 31 shots then empty-bolt lock; source reload/bolt tasks complete; reserve consumed; no infinite ammunition/no idle firing; serialized infinite tangents parse under localized infinity symbols.
+- Chromium and WebKit: scene contacts, movement/stopping, landscape controls/sprint/deferred sidearm, perspective camera and original head/torso aiming.
+- `scripts/weapon_smoke.mjs` in both engines: no startup shots, aim retained while walking in both directions, screen tap fires once without retargeting, tactical reload conserves ammo, held FIRE empties the original 30+1 mechanism, empty lock and empty reload work, finite IK and preserved camera settings. Native touch drag without firing is tested in Chromium; WebKit touch tap is native, while drag separation is additionally covered by the shared input unit test. No physical iPhone was available.
+
+Inspect `weapon-smoke.json`, `weapon-chromium.png`, `weapon-webkit.png`, presentation and input reports in the artifact. Both final screenshots were visually checked.
+
+## Implementation map
+
+- `scripts/extract_weapon_runtime.py` extracts settings, source hashes, selected original methods/classes and assets from the original recovery. `game/assets/weapon-runtime.json.gz` carries configuration/provenance. Audio, muzzle-flash atlas and magazine assets are in `game/assets/weapon-runtime/`.
+- `runtime/Original/Weapons/`: source trigger/recoil/spawn methods, full source Magazine/Equipment and bolt mechanics, ChangeMagazine/WorkBolt tasks, selected ArmIKSolver transitions and projectile flight methods. Namespace/import/transport adaptations are explicit; this is not the entire WeaponBase/CharacterBody lifecycle.
+- `runtime/Engine/WeaponHost.cs`: live transport views, configuration, task lifecycle scheduler and browser effect events. Original mechanical algorithms remain in Original/Weapons. Uses an explicit test loadout: full 30-round magazine + chambered round and one reserve magazine, NOT recovered saved-player equipment.
+- `runtime/Engine/ProjectileFlightHost.cs`: selected non-explosive projectile setup; source flight calls the scene query adapter. Material/limb interactions are unavailable and currently terminate with Error. Do not describe this as working damage or penetration.
+- Browser bridge: `InitializeWeapons` after `InitializePresentation`, then `StepWeapons`. The old live runtime cannot service these calls; always deploy matching compiled runtime and game sources.
+- `game/presentation.mjs`: original pose/recoil outputs, source arm transition targets and original analytic IK; source smoothing is applied only when its transition/smoothing flag requests it. Hand/grab-point transforms and magazine prefab hierarchy bind through exact serialized references to rendered world poses.
+- `game/weapon-runtime.mjs`: source sampled audio, source muzzle-flash sprites/animation and original magazine model. No invented tracer: this source M4 projectile has no trace prefab.
+- `game/aim-direction.mjs` and `game/browser-input.mjs`: device adapters. Touch tap threshold is 8 CSS pixels/300 ms. Canvas down alone neither aims nor fires; movement initiates a drag. Real mouse movement can aim; mouse hold/FIRE hold request the original trigger. Tap pulses pass through original InputKey frames; lifecycle loss clears queued taps/reloads.
+- `game/index.html` consumes pointer coordinates only when a new aim event arrives, then moves the target with the shoulder using the stored world vector. Do not return to per-frame raycasting of stale pointer coordinates.
+- `scripts/extract_runtime_sources.py` emits a partial global Projectile class for the selected original flight methods.
+- `scripts/export_weapon_manifest.py` accepts an optional original component prefab and output name for the recovered magazine.
+
+## Known limits and next milestone
+
+Before new work, propose the scope to the user. A reasonable next milestone is original projectile/material interactions and impact effects, before adding damage/AI; confirm rather than executing this suggestion automatically.
+
+Preserve these boundaries:
+
+1. No material impacts, verified penetration/fragmentation or limb damage yet. Import actual serialized BallisticMaterial dependencies and source methods. Do not replace them with invented hitscan/damage logic.
+2. Casing ejection and dropped-magazine physics are explicit transport events, not physical source simulation. The original magazine model follows reload poses, but discarded copies/rigid bodies remain unported.
+3. Smoke, muzzle blast forces, bullet time and action music are recorded event boundaries. Audio uses original samples but not full source propagation/mixer behavior.
+4. Complete original behavior tree/CharacterBody update ordering, physiology/respiration/injury, interactive doors, alternate cameras and post effects remain unfinished. Original camera/upper-body normal methods run, but full visual parity is not proven.
+5. Selected weapon AnimationCurves clamp outside their key ranges. Verify the native serialized wrap mapping in Unity before certifying this as exact parity. Other curves retain strict default behavior. PrefabCloner preserves the selected clamp setting.
+6. Euler getters support the planar yaw/Z presentation used here; validate before using them for arbitrary 3D gameplay.
+7. WeaponBase.direction stays at its spawn direction: original CharacterBody.Turn does NOT call weapon.Turn afterward. Assigning it every frame double-flips projectile X when aiming left.
+8. Reload manipulation must not be treated as IsLoweringWeapon; source has separate flags. Do not invent that coupling.
+9. Full default component/equipment selection and complete weight/alignment parity are not recovered by this scoped loadout. Base weapon and magazine behavior must not be presented as all loadout combinations.
+
+Regression lesson: WebKit's locale rejected `float.Parse("Infinity")`. The asset reader now explicitly recognizes `Infinity`/`-Infinity` and uses invariant parsing for other strings. Keep the localized-symbol native regression. Browser error UI includes the actual .NET exception message plus stack, rather than stack alone.
+
+## Recovery and commands
+
+Private repo: https://github.com/ethan-bailey/crisis-response-port
+
+Some sessions have only a partial checkout, not a usable local Git clone. Use the GitHub connector's blob/tree/commit/ref tools with a base tree and expected branch SHA when necessary. Binary assets use base64 blobs. Never overwrite concurrent branch changes.
+
+Existing Actions recover the original project using:
+
+```bash
+gh run download 38582072502 --repo "$GITHUB_REPOSITORY" --name crisis-response-recovery-direct-v3-1 --dir work/recovery
+python3 -m pip install PyYAML==6.0.2
+python3 scripts/extract_runtime_sources.py work/recovery/export/ExportedProject runtime/Original
+python3 scripts/extract_presentation.py work/recovery/export/ExportedProject game/assets/presentation.json runtime/Original
+python3 scripts/extract_weapon_runtime.py work/recovery/export/ExportedProject game/assets/weapon-runtime.json.gz runtime/Original/Weapons
+python3 scripts/extract_runtime_scene.py work/recovery/export/ExportedProject work/runtime/scene-package.json
+dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- work/runtime/scene-package.json
+```
+
+`.github/workflows/game-movement-smoke.yml` builds .NET WebAssembly and pinned PhysX and runs browser tests. `.github/workflows/runtime-foundation.yml` regenerates original selections and runs runtime/native/WebAssembly checks. Reuse automatic runs for the current commit instead of dispatching duplicates. No Unity key/license is needed for this selected browser runtime; Unity feasibility is a separate effort owned by the other agent.
+
+Paths if the workspace survives:
+
+- Repo: `/workspace/scratch/0234318e821a/crisis-response-port`
+- Recovered Unity data/source: `/workspace/scratch/0234318e821a/recovery/export/ExportedProject`
+- Decompiled reference: `/workspace/scratch/0234318e821a/recovery/decompiled`
+- Site: `/workspace/sites/crisis-response-runtime`
+- Latest extracted browser artifact: `/tmp/weapon-browser-final` (temporary).
+
+Do not assume `/tmp` SDKs or artifacts persist. Restore from GitHub/Actions when needed. Repository-backed code should remain in GitHub rather than being duplicated in Library.
+
+## Publishing another verified browser build
+
+Read the current Sites skill. Reuse the project ID and owner-private audience above; get_site confirmed only the owner is allowed, with no groups/external visitors. Open the existing Site through the canonical source helper before editing. Do not create a new Site or change its audience.
+
+1. Finish source and checks on the isolated browser branch.
+2. Use the compiled runtime artifact from the SAME verified game commit. Replace `dist/runtime-web/` with `work/game-runtime/wwwroot/`; change its index base from `/` to `/runtime-web/`.
+3. Copy changed game files/assets into `dist/game/`. Keep the original .openai/hosting.json identity and static.directory=dist.
+4. Refresh the short-lived source credential; keep it only in memory and pass through helper stdin, never files/arguments/logs.
+5. Run the canonical site-workflow helper to commit, push and package the exact source. Pass its complete opening result and ordered commands; no duplicate build is necessary for already compiled static assets.
+6. Validate the archive with `gzip -t`. The TTY helper has sometimes produced a truncated archive despite a successful result. Rebuild the SAME source using the supported non-TTY package-site helper when that happens, then validate before upload.
+7. Publish with save_version_and_deploy_private; retain saved-version/deployment IDs on retries and poll only non-terminal deployments. Successful native deployment status/URL verifies publication.
+8. Update this handoff and draft PR with exact code SHA, evidence, Site source and limits. Do not merge main automatically.
+
+Managed Linux lacks the supported local browser plugin in this session, so QA runs in Actions. Do not improvise an unsupported local browser/server. Keep the private preview on its last verified build if checks fail.

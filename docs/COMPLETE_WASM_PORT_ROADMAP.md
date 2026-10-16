@@ -1,8 +1,12 @@
 # Crisis Response — full original-game WebAssembly completion plan
 
-**Living engineering checklist · 2026-10-15 · primary route: recovered C# on .NET 8 WebAssembly + Unity API compatibility adapter + source-backed WebGL/PhysX renderer.**
+**Complete-game acceptance checklist · execution-order review 2026-10-16.** The verified selected-source route is recovered C# on .NET 8 WebAssembly with Unity adapters and WebGL/PhysX. The separate native Unity Marksman compile also succeeded; actual browser execution is still unverified.
 
-This is the step-by-step plan to deliver the **entire original game**, not merely a compiled Marksman/Mission 01 vertical slice. "100%" means every required original system and asset works to validated behavioral parity; it **cannot** be claimed from a successful compiler run. No projected completion date or guaranteed 1:1 parity is assumed.
+**Follow [NEXT_AGENT.md](../NEXT_AGENT.md) for current evidence and the dependency-ordered work queue.** First review the existing package/source-audit branches, then retain and browser-test a native feasibility player on a new isolated branch before choosing further engine work. Sections 1–8 below are acceptance gates, not a requirement to finish every source/visual task before testing a bounded scenario. Earlier run links remain historical evidence; latest scoped browser proof is run 38846445335, SDK-8 package proof 38849201407 and UI identity proof 38892941728. None establishes a finished game.
+
+This is the step-by-step plan to deliver the **entire original game**, not merely a compiled Marksman/Mission 01 vertical slice. "100%" means every required original system and asset works to validated behavioral parity; it **cannot** be claimed from a successful compiler run. UI type identity is recovered (24/24 original types, PR #20), but layout/events/runtime behavior remain unfinished. The all-scene audit found 35 reachable dummy shader exports; the shader gap is not limited to windows.
+
+No projected completion date or guaranteed 1:1 parity is assumed.
 
 ## 0. Evidence and immutable baseline — DONE for current slice, extend to the entire game
 
@@ -11,13 +15,14 @@ This is the step-by-step plan to deliver the **entire original game**, not merel
 - [x] Pass scoped native-contract and WASM publish tests [#38803362416](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38803362416).
 - [x] Pass scoped Mission 01 C#/WASM + Chromium/WebKit tests [#38809439277](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38809439277), tested game SHA `ed3d80d89f5e4e797e0370d9152bcc828bd8becb`, private artifact `12007339085`.
 - [ ] Build a **single complete source/asset manifest**, with SHA256, GUID/fileID dependency edges, original implementation path, adapter path, test fixture and current verification level for every game subsystem and scene.
-- [ ] Establish original native Unity baseline runs or captures for each important gameplay sequence, where possible. Partial Unity WebGL feasibility on PR #7 is not whole-game parity.
+- [ ] Establish original native Unity baseline runs or captures for each important gameplay sequence, where possible. Marksman-only Unity WebGL compile succeeded in run 38800542438; retained evidence contains logs/manifests only, with no actual browser gameplay proof. PR #7 remains read-only.
 
 **Rollback:** Keep the currently passing browser SHA and owner-private live v8 as separate labeled baselines. Do not reset branches. Previous Site v8 lacks the newer glass renderer.
 
 ## 1. Recover every required original source and content dependency — [#14](https://github.com/ethan-bailey/crisis-response-port/issues/14)
 
-- [ ] Enumerate all six source Unity scenes, hierarchy, prefab instances/overrides, serialized components, transform parents, GUID refs, built-in Unity asset IDs and scene-transition references.
+- [x] Inventory all six scenes and static asset/GUID dependencies in the private source-audit report (PR #20).
+- [ ] Extend that inventory to complete hierarchy/prefab override, local-fileID, built-in, dynamic Resources and scene-transition resolution; inventory alone is not closure.
 - [ ] Recover original mesh topology/UVs/normals/material assignments/skin weights, textures, shaders, animations/curves/state machines, audio samples, UI assets, colliders, particle settings and resource references. Record lossy extraction and unresolved GUIDs.
 - [ ] Resolve the known .308 casing mesh GUID `b4b69dc6c74eeb54cbd22d28e37f9a19` and two unsupported built-in mesh collider references, or fail loudly rather than substitute geometry.
 - [ ] Inventory native library, network, file/registry, threading and Unity engine API call sites from **all** recovered gameplay files. Categorize mandatory, optional and unsupported dependencies.
@@ -119,7 +124,8 @@ Do not run these steps on the user's iPhone; use the private GitHub Actions clou
 
 - [x] Current scoped pipeline produces .NET WASM and browser assets and passes headless smoke tests.
 - [ ] Expand build inputs for *all* original scenes and systems, pinned compiler/tool versions, deterministic source/asset hashes, JS package integrity and PhysX backend.
-- [ ] Add immutable build manifest with Git SHA, original archive/source asset SHA, generated WASM and JS/asset checksums. Ensure no artifact is from a different source commit.
+- [x] Add source/output SHA inventories and strict boot/WASM integrity checks for the selected-source package (PR #19, run 38849201407).
+- [ ] Extend verified provenance to the complete-game release, including original archive/assets and all selected route inputs; never mix tested commits.
 - [ ] In CI, run native C# contracts, test suites, browser input/camera/physics/weapons/AI/UI/mission/particles/shaders against matching source.
 - [ ] Package one self-contained protected release with working base path, caching, CSP/CORS, offline considerations and correct MIME types; assert no missing assets at HTTP runtime.
 - [ ] Deploy to verified **owner-restricted** host only after checks; retain old deployment ID, independent verification, and rollback procedure; do not automatically merge PR or publish original-game files publicly.
