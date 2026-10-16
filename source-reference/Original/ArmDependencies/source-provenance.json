@@ -1,0 +1,53 @@
+{
+  "archiveSha256": "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
+  "classes": {
+    "ArmsControl": {
+      "bytes": 903,
+      "lines": 55,
+      "repositoryPath": "source-reference/Original/ArmDependencies/ArmsControl.cs",
+      "sha256": "3e623b5568950ff4efe6ad280df84e41566af31e4a03dba08c30d6a7ce34162c",
+      "sourcePath": "Assets/Scripts/Assembly-CSharp/ArmsControl.cs",
+      "status": "original_recovered_not_compiled"
+    },
+    "Hand": {
+      "bytes": 799,
+      "lines": 47,
+      "repositoryPath": "runtime/Original/Animation/Hand.cs",
+      "sha256": "d5e6b25be76a184dc6b117ae35127018b0cb65eccaa69db9f6d8922434e76537",
+      "sourcePath": "Assets/Scripts/Assembly-CSharp/Hand.cs",
+      "status": "selected_original_runtime_source"
+    },
+    "Limb": {
+      "bytes": 25867,
+      "lines": 788,
+      "repositoryPath": "source-reference/Original/ArmDependencies/Limb.cs",
+      "sha256": "4057e0b5dbb0fd4c7cab847f6168d655dc09fdabf0564587b403274210e6b8de",
+      "sourcePath": "Assets/Scripts/Assembly-CSharp/Limb.cs",
+      "status": "original_recovered_not_compiled"
+    },
+    "TeamOperator": {
+      "bytes": 9212,
+      "lines": 377,
+      "repositoryPath": "source-reference/Original/ArmDependencies/TeamOperator.cs",
+      "sha256": "cbc91bfe42d2d5c5c3562e20e16fbf60348af13309697016c3f3d2c9476e7ba7",
+      "sourcePath": "Assets/Scripts/Assembly-CSharp/TeamOperator.cs",
+      "status": "original_recovered_not_compiled"
+    },
+    "WeaponBase": {
+      "bytes": 41257,
+      "lines": 1588,
+      "repositoryPath": "source-reference/Original/ArmDependencies/WeaponBase.cs",
+      "sha256": "cc60b54d30225be4d0f770d4bdaaab1ebd32e805be98ba5704745c48ed1be979",
+      "sourcePath": "Assets/Scripts/Assembly-CSharp/WeaponBase.cs",
+      "status": "original_recovered_not_compiled"
+    }
+  },
+  "compiledOriginalCount": 1,
+  "controllerPlaybackImplemented": false,
+  "engineTypesNotDeveloperScripts": [
+    "UnityEngine.Joint"
+  ],
+  "originalSourceUnmodified": true,
+  "schema": 1,
+  "scope": "Preserved true original source dependencies, not fake gameplay runtime or executed animation"
+}

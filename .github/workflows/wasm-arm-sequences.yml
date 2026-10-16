@@ -1,9 +1,9 @@
-name: Compile original arm sequence dependencies to WASM and verify browser execution
+name: Verify original arm source Hand.SetMode in C# WASM browsers
 
 # One bounded original-source compile milestone; no automatic build on source/doc edits.
 on:
   push:
-    branches: [codex/wasm-original-arm-sequences, codex/projectile-material-impacts]
+    branches: [feature/22-limb-hand-source, develop/wasm]
     paths: [.github/workflows/wasm-arm-sequences.yml]
   workflow_dispatch:
 
@@ -44,8 +44,11 @@ jobs:
           versions['python'] = platform.python_version()
           open('work/evidence/toolchain.json','w').write(json.dumps(versions, sort_keys=True, indent=2)+'\n')
           PY
-      - name: Verify unchanged original sequence sources and prefab provenance
-        run: python3 scripts/verify_original_arm_sequences.py | tee work/evidence/arm-source-check.json
+      - name: Verify unchanged original sequence, hand, limb, and controller source provenance
+        run: |
+          python3 scripts/verify_original_arm_sequences.py | tee work/evidence/arm-source-check.json
+          python3 scripts/verify_original_arm_controller_references.py | tee work/evidence/controller-source-check.json
+          python3 scripts/verify_original_arm_limb_sources.py | tee work/evidence/hand-limb-source-check.json
       - name: Test package corruption and mixed-build rejection
         run: python3 -m unittest discover -s scripts -p package_wasm_site_test.py -v 2>&1 | tee work/evidence/package-tests.txt
       - name: Execute recovered original native contracts
@@ -78,7 +81,7 @@ jobs:
           npm init -y
           npm install --no-audit --no-fund playwright@1.55.0
           npx playwright install --with-deps chromium webkit
-      - name: Execute original sequence composition in both WASM browsers
+      - name: Execute original sequence composition and actual Hand.SetMode in both WASM browsers
         run: |
           python3 -m http.server 8000 --bind 127.0.0.1 --directory work/site > work/evidence/http-server.log 2>&1 &
           node scripts/original_arm_sequences_smoke.mjs
