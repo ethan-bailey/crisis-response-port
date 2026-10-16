@@ -1,0 +1,34 @@
+{
+  "archiveSha256": "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
+  "bytes": 6037,
+  "compiled": false,
+  "controllerPlaybackImplemented": false,
+  "lines": 275,
+  "methods": [
+    "EnableSpring",
+    "Initialize",
+    "Relax",
+    "SetHandMode",
+    "SetKinematic",
+    "SetOnRelativePosition",
+    "SetOnTarget",
+    "SetOnWeapon",
+    "SetTargetPosition",
+    "StretchTowardRelativePosition",
+    "StretchTowardTransform",
+    "Update"
+  ],
+  "originalPath": "Assets/Scripts/Assembly-CSharp/ArmController.cs",
+  "originalSourceUnchanged": true,
+  "repositoryPath": "source-reference/Original/Animation/ArmController.cs",
+  "sha256": "5b98da4624c609f57fe1ec59adbe49b5daecf8d6380a7617711aa764bb641b3c",
+  "typeReferences": [
+    "ArmController",
+    "ArmsControl",
+    "CharacterBody",
+    "Hand",
+    "HingeJoint",
+    "Rigidbody",
+    "Transform"
+  ]
+}
