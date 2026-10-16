@@ -1,5 +1,10 @@
 # Next agent — authoritative handoff, WASM priority confirmed 2026-10-16
 
+## Vercel release policy — manual deploys only (2026-10-16)
+
+**Automatic Git-triggered Vercel deployments are disabled** on `main` and every existing `codex/*` branch with root `vercel.json` → `git.deploymentEnabled=false`. Do not delete or override that setting merely to get a preview URL. New branches must inherit the root configuration. GitHub Actions CI is the normal per-commit validation path. Only create an explicit protected Vercel deployment when a specific verified WASM/browser package is ready for physical iPhone testing. Record tested SHA, artifact, deployment URL/ID, current protection, and rollback. Branch aliases retain their **last deployed** build and will not follow later commits automatically. See `docs/VERCEL_MANUAL_DEPLOYMENTS.md` for the exact branch commit ledger, manual deployment procedure, and rollback. No Vercel deploy has been initiated for this configuration change.
+
+
 **User direction, 07:43 Eastern:** continue the original C# → .NET WebAssembly compile. Native Unity validation is a separate experiment, not a prerequisite, route decision or current work assignment. Prioritize source dependencies for actual missing gameplay/animation features; do not expand packaging/audits or write replacement gameplay merely to show activity.
 
 Current bounded WASM batch: [PR #21](https://github.com/ethan-bailey/crisis-response-port/pull/21), branch `codex/wasm-original-arm-sequences`, code `256b574eca62a902e23e9ba45d2b2542d64fe445`, [run 38896212172](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38896212172). Six unchanged original arm-sequence classes, seven source prefabs / 21 frames; actual SDK-8 publish and Chromium/WebKit composition checks **passed**. Private site artifact `12043404117`, evidence `12043827958`, expire 2026-11-15; 41 selected original C# inputs (previously 35). No animation playback/full-game claim. [Batch handoff](https://github.com/ethan-bailey/crisis-response-port/blob/codex/wasm-original-arm-sequences/docs/WASM_ORIGINAL_ARM_SEQUENCES_2026-10-16.md).
