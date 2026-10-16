@@ -15,7 +15,13 @@ public sealed class OriginalLimbMuscle {
  public float contractAngle,extendAngle,strength=100f,boneIntegrity=500f;
  public float BoneIntegrityNormalized=>boneIntegrity/startBoneIntegrity;
  public float JointIntegrityNormalized=>jointIntegrity/startBoneIntegrity;
- public OriginalLimbMuscle(HingeJoint joint,Rigidbody rigidBody,OriginalPhysiologyConditions physiology,Action onJointBroken){
+ public OriginalLimbMuscle(HingeJoint joint,Rigidbody rigidBody,OriginalPhysiologyConditions physiology,Action onJointBroken,
+     float? authoredBoneIntegrity=null,float? authoredStrength=null,
+     float? authoredExtendAngle=null,float? authoredContractAngle=null){
+  if(authoredBoneIntegrity is float boneIntegritySource)boneIntegrity=boneIntegritySource;
+  if(authoredStrength is float strengthSource)strength=strengthSource;
+  if(authoredExtendAngle is float extendSource)extendAngle=extendSource;
+  if(authoredContractAngle is float contractSource)contractAngle=contractSource;
   this.joint=joint??throw new ArgumentNullException(nameof(joint));
   this.rigidBody=rigidBody??throw new ArgumentNullException(nameof(rigidBody));
   this.physiology=physiology??throw new ArgumentNullException(nameof(physiology));
