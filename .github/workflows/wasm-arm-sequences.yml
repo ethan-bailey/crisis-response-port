@@ -1,4 +1,4 @@
-name: Verify original hand quads and source IK update in WASM browsers
+name: Compile original physical ArmController with PhysX and source IK in WASM browsers
 
 # Explicit full milestone: a feature/fix workflow YAML change triggers ONE test.
 # Merging reviewed code into develop/wasm must not duplicate the expensive build.
