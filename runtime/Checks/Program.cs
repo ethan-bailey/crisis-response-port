@@ -53,6 +53,25 @@ if (args.Contains("--character-dependencies")) {
     if(!physiology.ShouldLoseConsciousness())throw new Exception("Original blood oxygen threshold failed");
     physiology.BloodOxygen=.9f;physiology.BrainTrauma=3f;
     if(!physiology.ShouldLoseConsciousness())throw new Exception("Original brain trauma threshold failed");
+    var body=obj.AddComponent<Crisis.Runtime.Weapons.CharacterBody>();
+    body.Direction=1f;
+    var limb=obj.AddComponent<Crisis.Runtime.Weapons.Limb>();
+    limb.Body=body;
+    limb.visual=new UnityEngine.GameObject("limb visual",world).transform;
+    limb.visual.localPosition=new UnityEngine.Vector3(0,0,.4f);
+    limb.zLeft=-.25f;
+    var attach=new UnityEngine.GameObject("attachment",world).AddComponent<Crisis.Runtime.Weapons.LimbAttachment>();
+    attach.zLeft=-.15f;attach.zRight=.2f;
+    limb.attachments.Add(attach);
+    limb.CaptureSourceVisualDepth();
+    body.Direction=-1f;
+    limb.Flip();
+    if(Math.Abs(limb.visual.localPosition.z+.25f)>1e-6f || Math.Abs(attach.transform.localPosition.z+.15f)>1e-6f)
+       throw new Exception("Recovered original Limb.Flip left-depth source behavior failed");
+    body.Direction=1f;
+    limb.Flip();
+    if(Math.Abs(limb.visual.localPosition.z-.4f)>1e-6f || Math.Abs(attach.transform.localPosition.z-.2f)>1e-6f)
+       throw new Exception("Recovered original Limb.Flip right-depth source behavior failed");
     Console.WriteLine("{\"CharacterBodyDependencyPrimitives\":\"pass\"}");
     return;
 }
