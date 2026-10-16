@@ -11,6 +11,9 @@ const SOURCE_MESH_SHA256 = '1a6a7c334014210f536eadc6e21db582bda8f4de56be1330941b
 export function createOriginalImpactMeshRenderer(scene) {
   let resource = null, error = null;
   const visible = new Map();
+  // Keep only the newest authoritative C# instance snapshot while the
+  // recovered source mesh is still loading; never replay historical impacts.
+  let pendingFrame = null;
 
   const loading = fetch(SOURCE_ASSET)
     .then(response => {
@@ -54,13 +57,22 @@ export function createOriginalImpactMeshRenderer(scene) {
         side: THREE.DoubleSide
       });
       resource = { geometry, material };
+      if (pendingFrame !== null) {
+        const frame = pendingFrame;
+        pendingFrame = null;
+        update(frame);
+      }
     }).catch(e => {
       error = String(e?.message || e);
       console.warn('Original exit-hole render asset unavailable:', error);
     });
 
   function update(events) {
-    if (!resource) return; // do not substitute approximate geometry while loading
+    if (!resource) {
+      pendingFrame = events.filter(event => event.type === 'impactMesh' &&
+        event.value?.source === WOOD_EXIT_PREFAB);
+      return; // wait for original geometry; no substitute or stale replay
+    }
     const seen = new Set();
     for (const event of events) {
       if (event.type !== 'impactMesh' || event.value?.source !== WOOD_EXIT_PREFAB) continue;
@@ -96,6 +108,7 @@ export function createOriginalImpactMeshRenderer(scene) {
   function dispose() {
     for (const mesh of visible.values()) scene.remove(mesh);
     visible.clear();
+    pendingFrame = null;
     resource?.geometry.dispose();
     resource?.material.dispose();
   }
