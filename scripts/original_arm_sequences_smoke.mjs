@@ -21,7 +21,8 @@ for (const [name, engine] of [['chromium', chromium], ['webkit', webkit]]) {
       for (const names of [source.sequences.map(s => s.name), ['Holster pistol', 'Unholster pistol'], ['Lower weapon', 'Raise shoulder weapon']]) {
         compositions.push({ names, output: JSON.parse(await window.runtimeCall('ComposeOriginalArmSequences', bundle, JSON.stringify(names))) });
       }
-      return { source, compositions };
+      const handResult = JSON.parse(await window.runtimeCall('VerifyOriginalHandModes'));
+      return { source, compositions, handResult };
     });
     let checked = 0;
     for (const { names, output } of result.compositions) {
@@ -38,8 +39,16 @@ for (const [name, engine] of [['chromium', chromium], ['webkit', webkit]]) {
         });
       }
     }
+    assert.equal(result.handResult.originalHandMethodExecuted, true);
+    assert.equal(result.handResult.ikControllerPlaybackImplemented, false);
+    assert.equal(result.handResult.preservedGameWorldAndClock, true);
+    assert.deepEqual(result.handResult.states, [
+      {mode: 1, fist: true, trigger: false, forwardAssist: false},
+      {mode: 2, fist: false, trigger: false, forwardAssist: true},
+      {mode: 0, fist: false, trigger: true, forwardAssist: false}
+    ]);
     assert.deepEqual(errors, []);
-    results.push({ browser: name, status: 'pass', originalPrefabs: result.source.sequences.length, checkedFramesAcrossCompositions: checked, playbackImplemented: false });
+    results.push({ browser: name, status: 'pass', originalPrefabs: result.source.sequences.length, checkedFramesAcrossCompositions: checked, playbackImplemented: false, originalHandMethodExecuted: true });
     await page.screenshot({ path: `work/evidence/arm-sequences-${name}.png` });
   } finally { await browser.close(); }
 }
