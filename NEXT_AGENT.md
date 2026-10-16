@@ -1,5 +1,14 @@
 # Next agent — current state (2026-10-15, 19:17 UTC)
 
+## Isolated compiler/package checkpoint — verified 2026-10-16
+
+Review [draft PR #19](https://github.com/ethan-bailey/crisis-response-port/pull/19), branch `codex/wasm-compile-package`, and its [compile handoff](https://github.com/ethan-bailey/crisis-response-port/blob/codex/wasm-compile-package/docs/WASM_COMPILE_PACKAGE_HANDOFF.md). It packages **both game and WASM runtime** with source/output hashes; no gameplay/original C# changes or merge.
+
+**Actual SDK 8.0.426 compile SUCCESS:** [run 38849201407](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38849201407), tested SHA `bb60e3adf1368c7156b45ac9d5a6385de5841301`; native contracts, 12 package tests and 38 source/input tests passed. Private complete site artifact `12024269115`, evidence `12024274148`; 724 files / 199 boot resources / 195 WASM binaries validated and downloaded archive independently rechecked. Inner tar SHA256 `935253d36d861cd357f6ac03c4fe551cf5be7c4796749906899087770d6567e9`. Exact SDK pin is workflow-local; existing gameplay/Unity workflows are unchanged. Earlier run 38848858817 passed using SDK 10 and is superseded as the recommended package. Later documentation commits need no rebuild.
+
+**Not a new live/device/browser-parity build.** Site v8 remains older; no new deployment or browser/iPhone run. Review this small PR before integrating into this browser branch; do not merge main or republish assets publicly. Resume the original-game parity roadmap below after review.
+
+
 ## Most recent WASM checkpoint — original impact particle event binding (2026-10-15 local)
 
 **Start with `WORKSPACE.md`, `docs/COMPLETE_WASM_PORT_ROADMAP.md`, `docs/WORKSPACE_STATUS.md` and [issue #11](https://github.com/ethan-bailey/crisis-response-port/issues/11).** The full-game eight-gate completion checklist is still open: compiling the selected original C# source is not 100% game parity.
