@@ -63,7 +63,7 @@ def generate(archive:Path):
                     if candidates:
                         entry['componentIds'][kind]=candidates[0]['fileID']
                         entry['sourceFields'][kind]=candidates[0]['fields']
-                for required in ('Limb','LimbPhysiology'):
+                for required in ('Limb',):
                     if required not in entry['componentIds']:
                         raise ValueError('Original '+required+' absent on '+name)
                 entries.append(entry)
@@ -81,4 +81,5 @@ if __name__=='__main__':
     a=p.parse_args();out=generate(a.archive);a.output.parent.mkdir(parents=True,exist_ok=True)
     a.output.write_text(json.dumps(out,sort_keys=True,separators=(',',':'))+'\n')
     print(json.dumps({'limbs':[len(c['limbs']) for c in out['characters']],
+       'physiologyComponents':[sum('LimbPhysiology' in v['componentIds'] for v in c['limbs']) for c in out['characters']],
        'sha256':hashlib.sha256(a.output.read_bytes()).hexdigest(),'guidTypes':out['scriptGuids']},sort_keys=True))
