@@ -136,6 +136,11 @@ public sealed class WeaponHost {
   Transform OT(string key)=>operatorTransforms[c.GetProperty("bodyTransforms").GetProperty(key).GetString()];
   body.chestRigIKTarget=OT("chestRigIKTarget");body.pistolPivot=OT("pistolPivot");body.pistolIKTarget=OT("pistolIKTarget");body.Torso=OT("Torso").gameObject.AddComponent<Limb>();body.Pelvis=OT("Pelvis").gameObject.AddComponent<Limb>();
   var ac=c.GetProperty("armConfiguration");weapon.armConfiguration=new(){rightHandMode=(Hand.Mode)ac.GetProperty("rightHandMode").GetInt32(),leftHandMode=(Hand.Mode)ac.GetProperty("leftHandMode").GetInt32(),rightHandAngle=ac.GetProperty("rightHandAngle").GetSingle(),leftHandAngle=ac.GetProperty("leftHandAngle").GetSingle()};
+  // WeaponBase.Initialize applies the equipped configuration before targeting
+  // either hand. Serialized prefab anchors are not the configured grip points.
+  Vector3 GripOffset(string key){var offset=ac.GetProperty(key);return new(offset.GetProperty("x").GetSingle(),offset.GetProperty("y").GetSingle(),0);}
+  weapon.rightHandAnchor.localPosition=GripOffset("rightHandOffset");
+  weapon.leftHandAnchor.localPosition=GripOffset("leftHandOffset");
   ArmIKSolver Arm(bool right){
    var rig=c.GetProperty("armRigBindings").GetProperty(right?"right":"left");
    Transform Node(string key)=>operatorTransforms[rig.GetProperty(key).GetString()];
@@ -179,7 +184,7 @@ public sealed class WeaponHost {
    upper=a.upperArm.transform.eulerAngles.z,lower=a.lowerArm.transform.eulerAngles.z,
    bones=new{upper=Pose(a.upperArm.transform),lower=Pose(a.lowerArm.transform),hand=Pose(a.hand.transform)},
    handObjects=a.hand.SourceVisuals.Select(pair=>new{id=pair.Key,active=pair.Value.activeSelf}).ToArray()};// Presentation timing must use the same scaled Unity Time.time as the recovered weapon/effect events.
-  return new{sourceTime=Time.time,ballistics=Ballistics?.Snapshot(),magazinePose=new{p=new[]{mp.x,mp.y,mp.z},q=new[]{mq.x,mq.y,mq.z,mq.w},visible=weapon.ComponentMagazine.gameObject.activeSelf},shots=body.ShotsFired,
+  return new{sourceTime=Time.time,ballistics=Ballistics?.Snapshot(),magazinePose=new{p=new[]{mp.x,mp.y,mp.z},q=new[]{mq.x,mq.y,mq.z,mq.w},visible=weapon.ComponentMagazine.gameObject.activeSelf,ik=Pose(weapon.ComponentMagazine.ikTarget),heldBy=weapon.ComponentMagazine.transform.parent==body.rightArm.hand.grabPoint?"right":weapon.ComponentMagazine.transform.parent==body.leftArm.hand.grabPoint?"left":null},shots=body.ShotsFired,
    // The only currently executable original weapon host is the recovered M4A1.
    // Send source-owned magazine capacity and chamber state to the browser.
    // Future weapon hosts must supply their own actual equipped weapon identity;
