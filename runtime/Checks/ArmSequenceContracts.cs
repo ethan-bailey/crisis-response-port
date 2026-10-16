@@ -11,6 +11,8 @@ public static class ArmSequenceContracts {
         float before = Time.time;
         var sequences = OriginalArmSequences.Load(json);
         Check(ReferenceEquals(RuntimeWorld.Current, world) && Time.time == before, "Loading diagnostic sequences must not reset game clock/world");
+        Check((int)IKArmType.Right == 0 && (int)IKArmType.Left == 1 && Enum.GetValues<IKArmType>().Length == 2,
+            "Exact recovered original IKArmType arm-side ordering changed");
         Check(sequences.Count == 7, "All seven original prefabs loaded");
         Check(sequences.Values.Sum(s => s.right.Count + s.left.Count) == 21, "All 21 original frames loaded");
         var holster = sequences["Holster pistol"];
