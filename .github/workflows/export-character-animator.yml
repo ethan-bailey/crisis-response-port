@@ -1,4 +1,5 @@
 name: Export recovered original AnimatorController state graph
+# Verify all original transitions have parsed, nonempty conditions.
 on:
   push:
     branches: [feature/source-character-physiology-ragdoll-animation-sequencer]
