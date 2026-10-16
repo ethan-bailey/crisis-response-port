@@ -4,7 +4,7 @@
 
 ## Current execution order — reviewed 2026-10-16
 
-[NEXT_AGENT.md](NEXT_AGENT.md) is the authoritative current status and ordered next actions. Dated reports and the work board below describe evidence and scope, not competing “next” instructions. Review existing package/source-audit PRs, validate an actual retained native WebGL player on an isolated branch, then choose the continuation route from runtime evidence before broad manual engine work. The selected-source .NET/PhysX checkpoint remains preserved. Full animations, all maps, AI, missions and original UI are unfinished.
+[NEXT_AGENT.md](NEXT_AGENT.md) is the authoritative current status and ordered next actions. Dated reports and the work board below describe evidence and scope, not competing “next” instructions. The user confirmed the original C#/.NET WASM route is the priority. Review existing package/source-audit work, compile bounded original animation/gameplay dependencies, then verify the matching WASM in the browser. Native Unity validation is separate and does not gate this work. The selected-source .NET/PhysX checkpoint remains preserved. Full animations, all maps, AI, missions and original UI are unfinished.
 
 Native Marksman Unity compilation **succeeded** in run 38800542438, but only logs were retained and actual browser gameplay is unverified. SDK 8 package run 38849201407 is compiled/package-verified, not freshly browser-tested or deployed. UI audit run 38892941728 identifies all 24 original UI types, not UI execution. Follow the exact commits, artifacts and limits in NEXT_AGENT.md.
 

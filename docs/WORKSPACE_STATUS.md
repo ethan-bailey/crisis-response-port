@@ -160,3 +160,13 @@ The prior browser smoke passed manifest initialization and all original gameplay
 - Validation: checked current browser ref, #19 mergeability recheck, no in-progress or queued Actions runs at review time; read the compiler/UI/native linked branch handoffs. Inspected changed document links and checkpoint IDs; no game code or workflow changed, so no compiler/Unity/browser build dispatched.
 - Rollback: selectively revert this documentation commit after checking newer edits. Archive preserves all earlier details; do not reset branches or revert original code/assets.
 - Next bounded action remains the isolated retained native-player/browser check described in NEXT_AGENT.md, after baseline/PR review. No implementation or deployment occurred during this review.
+
+
+## User-directed WASM continuation — 2026-10-16, 07:43 Eastern
+
+- The user explicitly prioritizes the existing original C#/.NET WASM compile over the Unity port. This supersedes the earlier native-first queue; no Unity wait or automatic route change is required.
+- Isolated WASM branch `codex/wasm-original-arm-sequences`, PR #21, begins at browser baseline `8ba76d2b4f8a349918b75863c07cfbe2914a3a6d`. Main and independent Unity branches unchanged.
+- Code `256b574eca62a902e23e9ba45d2b2542d64fe445`: six byte-for-byte original arm-sequence classes; seven source-prefab records / 21 frames; serialization bridge, native checks and browser composition checks. Reuses unchanged package helper/tests/SDK pin from #19. Original controller playback and callbacks remain unimplemented, with no new gameplay stand-ins.
+- Local archive/source/bundle provenance checks, JS syntax and 12 package tests passed. One actual SDK-8/WASM/browser milestone is running: [38896212172](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38896212172). Pending result is not compile/browser proof.
+- Batch handoff on #21: `docs/WASM_ORIGINAL_ARM_SEQUENCES_2026-10-16.md`; original source hashes, exact scope, reproduction and selective rollback recorded there.
+- Next: inspect this run, document the actual outcome, then inspect original sequencer/controller/CharacterBody callback dependencies for the next executable original-code batch. No deployment or physical iPhone test occurred.
