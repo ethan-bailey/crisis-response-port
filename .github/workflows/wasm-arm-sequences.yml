@@ -1,6 +1,6 @@
 name: Audit milestone original WASM baseline verification
 
-# Full verified checkpoint for live CharacterBody physiological tick plus original LimbMuscle source joints.
+# Verify owner-approved two-axis iPhone joystick walk-to-sprint curve and icon-only touch controls.
 # Merging reviewed code into develop/wasm must not duplicate the expensive build.
 # No automatic builds on source/doc edits, and workflow_dispatch remains available.
 on:
