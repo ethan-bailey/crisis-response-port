@@ -1,0 +1,137 @@
+"""Failure-oriented packaging tests. Fixture bytes are not game build evidence."""
+import base64
+import hashlib
+import json
+import subprocess
+import tempfile
+import unittest
+from pathlib import Path
+
+from package_wasm_site import MANIFEST, WASM_HEADER, package, verify
+
+
+class PackageTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.repo = self.root / "repo"
+        self.pub = self.root / "publish"
+        self.site = self.root / "site"
+        self.repo.mkdir()
+        for path, value in {
+            "game/index.html": '<script type="importmap">{"imports":{"three":"https://example.test/pinned.js"}}</script>',
+            "game/browser-input.mjs": "// input adapter\n",
+            "game/assets/mission01.crg": "source scene fixture",
+            "game/vendor/physx-js-webidl.mjs": "// pinned PhysX loader",
+            "game/vendor/physx-js-webidl.wasm": WASM_HEADER + b"physx-fixture",
+            "game/package-lock.json": "{}",
+            "runtime/Original/Example.cs": "// recovered source fixture",
+        }.items():
+            self.write(self.repo / path, value)
+        for path, value in {
+            "index.html": '<base href="/">',
+            "index.html.br": b"stale root index compression",
+            "index.html.gz": b"stale root index compression",
+            "browser-input.mjs": "// input adapter\n",
+            "_framework/blazor.webassembly.js": "// compiled loader fixture",
+            "_framework/dotnet.native.wasm": WASM_HEADER + b"native-fixture",
+            "_framework/Crisis.Runtime.Browser.wasm": WASM_HEADER + b"browser-fixture",
+            "_framework/Crisis.Runtime.wasm": WASM_HEADER + b"runtime-fixture",
+        }.items():
+            self.write(self.pub / path, value)
+        boot = {"resources": {"hash": "sha256-aggregate-is-not-a-file",
+                              "assembly": {}, "runtime": {}}}
+        for name in ("Crisis.Runtime.Browser.wasm", "Crisis.Runtime.wasm", "dotnet.native.wasm"):
+            value = (self.pub / "_framework" / name).read_bytes()
+            boot["resources"]["assembly"][name] = "sha256-" + base64.b64encode(hashlib.sha256(value).digest()).decode()
+        self.write(self.pub / "_framework/blazor.boot.json", json.dumps(boot))
+        self.git("init", "-q")
+        self.git("add", ".")
+        self.git("-c", "user.name=Fixture", "-c", "user.email=fixture@example.test", "commit", "-qm", "Fixture")
+
+    def write(self, path, value):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(value.encode() if isinstance(value, str) else value)
+
+    def git(self, *args):
+        return subprocess.check_output(["git", "-C", str(self.repo), *args], text=True)
+
+    def build(self):
+        return package(self.repo, self.pub, self.site, {"dotnet": "fixture"}, "")
+
+    def test_complete_package_is_verifiable_and_records_scope(self):
+        result = self.build()
+        self.assertEqual(result["wasmFiles"], 4)
+        self.assertEqual(result["blazorResources"], 3)
+        self.assertFalse((self.site / "runtime-web/index.html.br").exists())
+        self.assertFalse((self.site / "runtime-web/index.html.gz").exists())
+        self.assertFalse((self.site / "game/package-lock.json").exists())
+        manifest = json.loads((self.site / MANIFEST).read_text())
+        self.assertFalse(manifest["scope"]["physicalIPhoneTested"])
+        self.assertFalse(manifest["scope"]["browserTestedThisBuild"])
+        self.assertEqual(manifest["externalImports"]["three"], "https://example.test/pinned.js")
+        self.assertIn("runtime/Original/Example.cs", [r["path"] for r in manifest["sourceInventory"]])
+        self.assertEqual(verify(self.site), result)
+
+    def test_modified_binary_fails(self):
+        self.build()
+        (self.site / "game/vendor/physx-js-webidl.wasm").write_bytes(b"corrupt")
+        with self.assertRaisesRegex(ValueError, "checksum mismatch"):
+            verify(self.site)
+
+    def test_unlisted_and_missing_assets_fail(self):
+        self.build()
+        extra = self.site / "game/old-build.mjs"
+        extra.write_text("mixed build")
+        with self.assertRaisesRegex(ValueError, "Unlisted"):
+            verify(self.site)
+        extra.unlink()
+        (self.site / "game/assets/mission01.crg").unlink()
+        with self.assertRaisesRegex(ValueError, "Missing package"):
+            verify(self.site)
+
+    def test_stale_boot_hash_fails_build(self):
+        (self.pub / "_framework/Crisis.Runtime.wasm").write_bytes(WASM_HEADER + b"wrong-assembly")
+        with self.assertRaisesRegex(ValueError, "Blazor resource hash mismatch"):
+            self.build()
+
+    def test_wrong_input_adapter_fails_build(self):
+        (self.pub / "browser-input.mjs").write_text("stale adapter")
+        with self.assertRaisesRegex(ValueError, "different input adapters"):
+            self.build()
+
+    def test_missing_and_fake_wasm_fail(self):
+        wasm = self.pub / "_framework/dotnet.native.wasm"
+        wasm.write_text("an HTML error is not WASM")
+        with self.assertRaisesRegex(ValueError, "Invalid WebAssembly"):
+            self.build()
+
+    def test_dirty_gameplay_source_fails(self):
+        (self.repo / "runtime/Original/Example.cs").write_text("unexpected change")
+        with self.assertRaisesRegex(ValueError, "differs from input commit"):
+            self.build()
+
+    def test_symlink_cannot_escape_manifest(self):
+        self.build()
+        (self.site / "game/escape").symlink_to(self.repo)
+        with self.assertRaisesRegex(ValueError, "Symlink"):
+            verify(self.site)
+
+    def test_manifest_path_escape_fails(self):
+        self.build()
+        path = self.site / MANIFEST
+        manifest = json.loads(path.read_text())
+        manifest["files"][0]["path"] = "../repo/game/index.html"
+        path.write_text(json.dumps(manifest))
+        with self.assertRaisesRegex(ValueError, "Unsafe manifest path"):
+            verify(self.site)
+
+    def test_output_cannot_overwrite_existing_files(self):
+        self.site.mkdir()
+        with self.assertRaisesRegex(ValueError, "refusing to overwrite"):
+            self.build()
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -1,0 +1,85 @@
+name: Compile and checksum private WASM site checkpoint
+
+# One build for an intentional packaging milestone, no build on gameplay edits.
+on:
+  push:
+    branches: [codex/wasm-compile-package]
+    paths: [.github/workflows/wasm-package-checkpoint.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+concurrency:
+  group: private-wasm-package-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  compile-package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require private repository
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: test "$(gh api repos/$GITHUB_REPOSITORY --jq '.private')" = true
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Record exact source and toolchain
+        run: |
+          mkdir -p work/evidence
+          git rev-parse HEAD > work/evidence/source-commit.txt
+          python3 - <<'PY'
+          import json, platform, subprocess
+          versions = {name: subprocess.check_output(command, text=True).strip()
+                      for name, command in {'dotnet':['dotnet','--version'], 'node':['node','--version'], 'npm':['npm','--version']}.items()}
+          versions['python'] = platform.python_version()
+          open('work/evidence/toolchain.json','w').write(json.dumps(versions, sort_keys=True, indent=2)+'\n')
+          PY
+      - name: Test package corruption and mixed-build rejection
+        run: python3 -m unittest discover -s scripts -p package_wasm_site_test.py -v 2>&1 | tee work/evidence/package-tests.txt
+      - name: Execute recovered original native contracts
+        run: dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj | tee work/evidence/native-contracts.jsonl
+      - name: Prepare original scene and pinned PhysX
+        run: |
+          npm ci --prefix game --ignore-scripts --no-audit --no-fund
+          node scripts/vendor_physics.mjs
+          python3 scripts/build_scene_binary.py game/assets/mission01.obj game/assets/mission01.crg
+      - name: Verify recovered source and input regressions
+        run: |
+          node --test scripts/browser_input_test.mjs scripts/animation_pose_test.mjs scripts/game_loading_test.mjs scripts/aim_direction_test.mjs scripts/source_effect_clock_test.mjs scripts/original_particle_source_test.mjs scripts/original_particle_mesh_source_test.mjs scripts/original_particle_event_binding_test.mjs | tee work/evidence/source-tests.txt
+      - name: Compile original-code .NET WebAssembly
+        run: |
+          cp game/browser-input.mjs runtime/Browser/wwwroot/browser-input.mjs
+          dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release -o work/published | tee work/evidence/publish-log.txt
+      - name: Package both game and compiled runtime with source and output hashes
+        run: |
+          python3 scripts/package_wasm_site.py build --published work/published/wwwroot --output work/site --toolchain work/evidence/toolchain.json --run-url "https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" | tee work/evidence/package-validation.json
+          cp work/site/build-manifest.json work/evidence/build-manifest.json
+          tar --sort=name --mtime=@0 --owner=0 --group=0 --numeric-owner -cf - -C work/site . | gzip -n > work/crisis-response-private-wasm-site.tar.gz
+          sha256sum work/crisis-response-private-wasm-site.tar.gz > work/evidence/site-archive.sha256
+      - name: Verify unpacked package without rebuilding
+        run: |
+          mkdir -p work/unpacked
+          tar -xzf work/crisis-response-private-wasm-site.tar.gz -C work/unpacked
+          python3 scripts/package_wasm_site.py verify work/unpacked | tee work/evidence/unpacked-validation.json
+      - name: Store build evidence privately
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wasm-compile-package-evidence
+          path: work/evidence/
+          retention-days: 30
+          if-no-files-found: error
+      - name: Store complete private site only after verification succeeds
+        uses: actions/upload-artifact@v4
+        with:
+          name: crisis-response-private-wasm-site
+          path: work/crisis-response-private-wasm-site.tar.gz
+          retention-days: 30
+          compression-level: 0
+          if-no-files-found: error
