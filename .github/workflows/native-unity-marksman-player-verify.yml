@@ -1,0 +1,174 @@
+name: Retain private original Unity Marksman WebGL and test real browsers
+on:
+  push:
+    branches:
+      - codex/native-marksman-webgl-runtime-validation
+    paths:
+      - '.github/workflows/native-unity-marksman-player-verify.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: unity-personal-marksman-webgl
+  cancel-in-progress: false
+jobs:
+  audio-and-smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      UNITY_SPIKE_SCOPED_REPAIR: "1"
+      UNITY_SPIKE_ALLOW_UNET_EXCLUSION: "1"
+      UNITY_SPIKE_WEBGL: "1"
+      UNITY_SPIKE_FIX_WAV_HEADERS: "1"
+      UNITY_SPIKE_SINGLE_PASS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reclaim headless build space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/share/swift /usr/local/share/powershell
+          docker system prune -af >/dev/null 2>&1 || true
+          df -h .
+      - name: Restore private Unity Library and Bee build cache
+        id: library_restore
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            work/unity-spike/recovery/export/ExportedProject/Library
+            work/unity-spike/bee-cache
+          key: unity-marksman-library-bee-linux-2022.3.62f1-recoveryv3-v2-${{ hashFiles('scripts/unity_scoped_legacy_gui_patch.py', 'scripts/unity_webgl_template_fix.py', 'scripts/SpikeWebGL.cs', 'scripts/repair_recovered_wav_headers.py') }}
+          restore-keys: |
+            unity-marksman-library-bee-linux-2022.3.62f1-recoveryv3-v2-
+      - name: Preserve original asset payload, correct metadata and build Marksman WebGL
+        run: bash scripts/unity_open_spike.sh
+      - name: Emergency Unity Personal deactivation
+        if: always()
+        run: |
+          ID="crisis-unity-personal-$GITHUB_RUN_ID"
+          if docker ps --format '{{.Names}}' | grep -Fxq "$ID"; then
+            docker exec "$ID" /bin/bash -lc '
+              c="$(command -v Unity.Licensing.Client || find /opt/unity -name Unity.Licensing.Client -type f -print -quit)"
+              test -n "$c" && "$c" --deactivate-all --username "$UNITY_EMAIL" --password "$UNITY_PASSWORD"
+            ' > /tmp/unity-emergency-return.log 2>&1 || true
+            docker rm -f "$ID" >/dev/null 2>&1 || true
+          fi
+      - name: Determine safe private build-cache upload size
+        id: library_size
+        if: always()
+        shell: bash
+        run: |
+          LIB="work/unity-spike/recovery/export/ExportedProject/Library"
+          BEE="work/unity-spike/bee-cache"
+          library_mb=0
+          bee_mb=0
+          if [ -d "$LIB" ]; then library_mb=$(du -sm "$LIB" | awk '{print $1}'); fi
+          if [ -d "$BEE" ]; then bee_mb=$(du -sm "$BEE" | awk '{print $1}'); fi
+          total_mb=$((library_mb + bee_mb))
+          echo "Unity Library: ${library_mb} MiB; Bee cache: ${bee_mb} MiB; total: ${total_mb} MiB"
+          if [ "$total_mb" -gt 0 ] && [ "$total_mb" -le 8192 ]; then
+            echo "can_save=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::No Unity cache saved: total outside safe 1..8192 MiB."
+            echo "can_save=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Save private Unity Library and Bee build cache
+        if: ${{ always() && steps.library_size.outputs.can_save == 'true' && steps.library_restore.outputs.cache-hit != 'true' }}
+        timeout-minutes: 15
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            work/unity-spike/recovery/export/ExportedProject/Library
+            work/unity-spike/bee-cache
+          key: ${{ steps.library_restore.outputs.cache-primary-key }}
+      - name: Classify results from log instead of workflow exit
+        if: always()
+        run: |
+          mkdir -p work/unity-spike
+          python3 scripts/classify_unity_spike.py --log work/unity-spike/import.log --build-log work/unity-spike/webgl.log --status-file work/unity-spike/status.env --out work/unity-spike/classification.json
+          echo "Build success requires build_exit=0 and webgl-http-smoke.json http_localhost_smoke_ok=true"
+      - name: Verify successful private Marksman WebGL package and license return
+        if: always()
+        id: private_package
+        shell: bash
+        run: |
+          set -euo pipefail
+          STATUS="work/unity-spike/status.env"
+          MANIFEST="work/unity-spike/webgl-output-manifest.json"
+          SMOKE="work/unity-spike/webgl-http-smoke.json"
+          if [ ! -f "$STATUS" ] || [ ! -f "$MANIFEST" ] || [ ! -f "$SMOKE" ]; then
+            echo "No verified WebGL package; upload diagnostics only."
+            exit 0
+          fi
+          python3 - "$STATUS" "$MANIFEST" "$SMOKE" <<'PY'
+          import json, sys
+          from pathlib import Path
+          status=dict(line.split('=',1) for line in Path(sys.argv[1]).read_text().splitlines() if '=' in line)
+          package=json.loads(Path(sys.argv[2]).read_text())
+          smoke=json.loads(Path(sys.argv[3]).read_text())
+          required=['index_present','loader_present','wasm_present','data_present']
+          missing=[key for key in required if not package.get(key)]
+          if (status.get('build_exit')!='0' or status.get('license_deactivate_exit')!='0'
+                or status.get('license_seat_query_exit')!='0' or missing
+                or not smoke.get('http_localhost_smoke_ok')):
+              raise SystemExit('Private package gate failed: '+str({
+                'build_exit':status.get('build_exit'),
+                'license_deactivate_exit':status.get('license_deactivate_exit'),
+                'license_seat_query_exit':status.get('license_seat_query_exit'),
+                'missing_outputs':missing,'localhost_http_ok':smoke.get('http_localhost_smoke_ok')}))
+          print('Private package gate passed; recovered Unity source remains in private GitHub release.')
+          PY
+          echo "verified=true" >> "$GITHUB_OUTPUT"
+      - name: Preserve short-lived owner-private Marksman WebGL output for iPhone testing
+        if: steps.private_package.outputs.verified == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: PRIVATE-original-marksman-webgl-player-with-browser-check
+          path: work/unity-spike/webgl/
+          retention-days: 14
+          if-no-files-found: error
+      - name: Validate original generated Brotli WASM HTTP response headers
+        if: steps.private_package.outputs.verified == 'true'
+        run: |
+          python3 -m py_compile scripts/serve_native_webgl.py
+          python3 scripts/serve_native_webgl.py work/unity-spike/webgl --port 8000 >/tmp/native-unity-webgl-http.log 2>&1 &
+          echo $! > /tmp/native-unity-webgl-http.pid
+          sleep 2
+          curl --fail --silent --show-error --head http://127.0.0.1:8000/Build/webgl.wasm.br | tee work/unity-spike/native-wasm-headers.txt
+          grep -qi '^Content-Type: application/wasm' work/unity-spike/native-wasm-headers.txt
+          grep -qi '^Content-Encoding: br' work/unity-spike/native-wasm-headers.txt
+          curl --fail --silent --show-error --head http://127.0.0.1:8000/Build/webgl.data.br | tee work/unity-spike/native-data-headers.txt
+          grep -qi '^Content-Encoding: br' work/unity-spike/native-data-headers.txt
+      - name: Launch actual recovered original Unity browser player and capture input/errors
+        if: steps.private_package.outputs.verified == 'true'
+        timeout-minutes: 13
+        run: |
+          npm init -y >/dev/null
+          npm install --no-audit --no-fund playwright@1.55.0
+          npx playwright install --with-deps chromium webkit
+          node scripts/native_unity_webgl_browser_smoke.mjs
+      - name: Preserve real Unity browser runtime evidence privately (even on failure)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: private-native-marksman-browser-runtime-evidence
+          path: |
+            work/unity-spike/native-browser/
+            work/unity-spike/native-wasm-headers.txt
+            work/unity-spike/native-data-headers.txt
+          retention-days: 14
+          if-no-files-found: warn
+      - name: Preserve source-free logs and manifests only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unity-marksman-webgl-audio-http-evidence
+          path: |
+            work/unity-spike/*.log
+            work/unity-spike/*.json
+            work/unity-spike/*.env
+            work/unity-spike/*.txt
+          retention-days: 14
+          if-no-files-found: warn
