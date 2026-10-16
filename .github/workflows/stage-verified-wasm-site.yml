@@ -1,0 +1,47 @@
+name: Stage verified original WASM site for iPhone preview
+on:
+  push:
+    branches: [preview/wasm-current-iphone]
+    paths: [.github/workflows/stage-verified-wasm-site.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  stage:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Obtain previously tested site artifact (do not rebuild)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/verified-site-artifact /tmp/verified-site
+          gh run download 38978041703 --repo "$GITHUB_REPOSITORY" --name crisis-response-arm-sequences-private-wasm-site --dir /tmp/verified-site-artifact
+          test -s /tmp/verified-site-artifact/crisis-response-private-wasm-site.tar.gz
+          tar -xzf /tmp/verified-site-artifact/crisis-response-private-wasm-site.tar.gz -C /tmp/verified-site
+          test "$(python3 -c "import json;print(json.load(open('/tmp/verified-site/build-manifest.json'))['sourceCommit'])")" = d5672a00041258bb1b2e8c81c655672105197202
+          git fetch --no-tags origin develop/wasm
+          git show origin/develop/wasm:scripts/package_wasm_site.py > /tmp/verify-site.py
+          python3 /tmp/verify-site.py verify /tmp/verified-site
+          test -s /tmp/verified-site/runtime-web/_framework/blazor.boot.json
+          test -s /tmp/verified-site/game/vendor/physx-js-webidl.wasm
+      - name: Replace only site payload, keep branch workflows and deployment settings
+        run: |
+          set -euo pipefail
+          # Clear earlier site files, retaining .git, .github, and the deployment configuration.
+          git ls-files -z | python3 -c 'import sys,pathlib; names=sys.stdin.buffer.read().split(b"\0"); [pathlib.Path(x.decode()).unlink(missing_ok=True) for x in names if x and not x.startswith((b".github/",b"vercel.json"))]'
+          cp -a /tmp/verified-site/. .
+          echo '{"git":{"deploymentEnabled":false}}' > vercel.json
+          git add -A
+          git diff --cached --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git diff --cached --quiet && exit 0
+          git commit -m 'Stage verified source d5672a0 compiled WASM and original game assets for iPhone'
+          git push origin HEAD:preview/wasm-current-iphone
