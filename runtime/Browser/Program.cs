@@ -24,6 +24,7 @@ public static class RuntimeBridge {
         var animator=character.GetComponent<Animator>()??character.gameObject.AddComponent<Animator>();
         var capsule=character.GetComponent<CapsuleCollider>()??character.gameObject.AddComponent<CapsuleCollider>();
         character.InitializeSourceAnimation(animator,capsule);
+        character.InitializeOriginalPhysiology(Time.time);
         return "ready";
     }
     [JSInvokable] public static string StepCharacterAnimation(string json){
@@ -32,6 +33,10 @@ public static class RuntimeBridge {
         var p=doc.RootElement;
         float F(string n)=>p.GetProperty(n).GetSingle();
         bool B(string n)=>p.GetProperty(n).GetBoolean();
+        // Advance actual original CharacterBody physiology alongside animator data.
+        // Source operator has no limb wounds until the original injury graph is bound.
+        weapons.Character.StepOriginalPhysiology(F("deltaTime"),Time.time,F("velocity"),
+          F("sprintSpeed"),heartRandom:UnityEngine.Random.value);
         return JsonSerializer.Serialize(weapons.Character.ExecuteSourceUpdateAnimation(
           B("kneeling"),B("moving"),B("backwards"),F("velocity"),
           F("walkSpeed"),F("sprintSpeed"),F("crippledRatio"),B("operator"),
