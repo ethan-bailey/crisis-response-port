@@ -111,7 +111,7 @@ test("game HUD uses original magazine texture, original StepWeapons state and ma
  assert.match(src,/onReload:\(\)=>\{reloadPending=true;/);
  assert.match(src,/data-mag-image/);
  assert.match(src,/data-mag-rounds/);
- assert.match(src,/data-mag-chamber/);
+ assert.doesNotMatch(src,/data-mag-chamber/,"Chambered round is included in the count; no separate icon (approved #33 UI)");
  assert.match(src,/magazineHud\.render\(weaponState\)/);
  assert.match(src,/weaponState\.weaponId/);
  const host=fs.readFileSync("runtime/Engine/WeaponHost.cs","utf8");
