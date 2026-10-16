@@ -23,7 +23,8 @@ jobs:
       - name: Verify source-exact original particles, original normals, materials and four PNGs
         run: |
           mkdir -p work
-          node --test scripts/original_particle_source_test.mjs scripts/original_particle_mesh_source_test.mjs scripts/original_particle_material_source_test.mjs | tee work/original-particle-source-tests.txt
+          node --check game/original-particle-event-binding.mjs
+          node --test scripts/original_particle_source_test.mjs scripts/original_particle_mesh_source_test.mjs scripts/original_particle_material_source_test.mjs scripts/original_particle_event_binding_test.mjs | tee work/original-particle-source-tests.txt
           git rev-parse HEAD | tee work/input-commit.txt
       - name: Store SHA-matched source integrity evidence privately
         if: always()
