@@ -10,6 +10,12 @@
 
 Latest proven integrated executable build: [Actions #38901664939](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38901664939), source `1264c0b4579076b82e1b6b21955469313779fe39`, private site artifact `12046137813`, private evidence `12046012744`. Organizational/doc changes on this branch were **not** recompiled. Root `vercel.json` disables automatic deployments; only protected manual iPhone test releases.
 
+## Current protected device-test snapshot
+
+**Manually published preview:** [Open partial Crisis Response WASM game](https://crisis-response-port-bpbgx2jdn-ethanbaileymarsh-8332.vercel.app/game/). The deployment is **READY with Vercel SSO protection**, built from the last proven gameplay commit `252337d96b845f5b2eb6dd406c32a52a423d3e37` and verified WASM/Chromium/WebKit [Actions #38909327063](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38909327063). Site staged as the verified static package in private `preview/wasm-hand-modes-20261016`, no automatic Vercel deploy. **No actual physical iPhone Safari acceptance yet**, and the agent connection could not access the protected page without a Vercel sign-in; see [preview identity, access and limitations](docs/PRIVATE_IPHONE_PREVIEW_2026-10-16.md).
+
+**New source-only dependency checkpoint:** [PR #25](https://github.com/ethan-bailey/crisis-response-port/pull/25) merged original `ArmController.cs` developer source unchanged with SHA/physics provenance; does not change the above compiled game or create fake arm playback. Next: [issue #26](https://github.com/ethan-bailey/crisis-response-port/issues/26), proper original arm `Rigidbody`/`HingeJoint`/PhysX adapter, then original source controller callbacks in [issue #22](https://github.com/ethan-bailey/crisis-response-port/issues/22). No 1:1 game-parity claim.
+
 ## Historical plan (prior to branch reorganization)
 
 ## Current execution order — reviewed 2026-10-16
