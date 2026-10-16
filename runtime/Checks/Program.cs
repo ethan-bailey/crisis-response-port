@@ -18,3 +18,26 @@ if(args.Length>0){
         Console.WriteLine(JsonSerializer.Serialize(AmmunitionLoader.VerifyOriginalPrefab(package,path)));
     Console.WriteLine(JsonSerializer.Serialize(AmmunitionLoader.VerifyOriginalResource(package,"5.56-JHP")));
 }
+
+{
+    var body = new Crisis.Runtime.Weapons.CharacterBody { Direction=1f };
+    // Original CharacterBody.Move sets acceleration and reset behavior;
+    // our browser boundary returns the source ForceMode.Acceleration value.
+    body.Move(1f);
+    var first=JsonSerializer.SerializeToElement(body.ExecuteSourceMovement(0f,.02f,1.5f,4.2f,1f,true,false,true,true,false));
+    if(Math.Abs(first.GetProperty("forceX").GetSingle()-63f)>0.001f || !first.GetProperty("reset").GetBoolean())
+        throw new Exception("Original full-pull sprint force regression");
+    body.Move(1f);
+    var partial=JsonSerializer.SerializeToElement(body.ExecuteSourceMovement(0f,.02f,1.5f,4.2f,.5f,true,false,true,true,false));
+    if(Math.Abs(partial.GetProperty("forceX").GetSingle()-31.5f)>0.001f)
+        throw new Exception("Owner-approved proportional source sprint force regression");
+    body.Move(-1f);
+    var opposite=JsonSerializer.SerializeToElement(body.ExecuteSourceMovement(0f,.02f,1.5f,4.2f,1f,true,false,true,true,false));
+    if(Math.Abs(opposite.GetProperty("forceX").GetSingle()+22.5f)>0.001f)
+        throw new Exception("Original backwards sprint restriction regression");
+    body.Move(1f);
+    var overSpeed=JsonSerializer.SerializeToElement(body.ExecuteSourceMovement(5f,.02f,1.5f,4.2f,1f,false,false,true,true,false));
+    if(overSpeed.GetProperty("forceX").GetSingle()!=0f || overSpeed.GetProperty("reset").GetBoolean())
+        throw new Exception("Original overspeed no-force behavior regression");
+    Console.WriteLine("{\"CharacterBodySourceMovement\":\"pass\",\"AnalogEnhancement\":true}");
+}
