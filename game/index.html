@@ -29,7 +29,12 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 #magazineTouch .mag-window{position:absolute;left:51%;top:17%;width:34%;height:64%;border:1px solid #747b7470;background:#111914ab;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:2px;padding:3px 1px 4px;pointer-events:none;overflow:hidden}
 #magazineTouch .mag-round{flex:none;display:block;width:90%;height:4px;max-height:4px;border-radius:2px 4px 4px 2px;background:linear-gradient(90deg,#8c7450 0%,#c6a46b 62%,#988267 63%,#a17855 78%,#855e43 100%);box-shadow:0 0 1px #121510}
 #magazineTouch .mag-round:nth-child(even){margin-left:3px}
-#magazineTouch .mag-round[hidden]{display:none}
+#magazineTouch .mag-round[hidden],#magazineTouch .mag-chamber[hidden],#magazineTouch .mag-image[hidden],#magazineTouch .mag-window[hidden]{display:none}
+#magazineTouch .mag-chamber{position:absolute;top:5%;right:9%;height:11px;width:5px;border-radius:3px 3px 2px 2px;background:linear-gradient(90deg,#a68857,#dfc397,#8f6944);box-shadow:0 0 0 1px #181a15;pointer-events:none}
+#magazineTouch.mag-weapon-only .mag-body{background:#232a3080;border-radius:3px}
+#magazineTouch.mag-weapon-only .mag-image{object-fit:contain;filter:grayscale(.35)}
+#magazineTouch.mag-weapon-only .mag-window{display:none}
+
 #magazineTouch .mag-count{position:absolute;bottom:7%;left:26%;min-width:50%;font:700 11px/1 system-ui,-apple-system,sans-serif;color:#ebede3;background:#131917c9;border-radius:2px;padding:2px;letter-spacing:0;text-align:center;text-shadow:0 1px 1px #151515;pointer-events:none}
 #magazineTouch.mag-unavailable .mag-window{opacity:.35}
 #magazineTouch.mag-reloading .mag-body{opacity:.5;transform:translate3d(0,27px,0)}
@@ -50,7 +55,7 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 <div id="hud"><div id="title">Crisis Response · incomplete port</div><div id="status">Loading recovered scene and original Operator prefab…</div><div id="position"></div><div id="weaponStatus">Loading original weapons…</div></div>
 <div id="help">A/D · Shift · S/W · drag or tap to aim · tap same spot to fire · <a href="../runtime-web/">Runtime checks</a></div>
 <div id="error"></div><div id="rotateNotice">Rotate your phone to landscape to view the port prototype.</div>
-<div id="controls"><div class="cluster"><button id="left" data-action="left" aria-label="Move left">◀</button><button id="right" data-action="right" aria-label="Move right">▶</button></div><div class="cluster"><button id="magazineTouch" type="button" aria-label="M4 magazine ammunition unavailable"><span class="mag-body"><img class="mag-image" data-mag-image alt="" draggable="false"><span class="mag-window" data-mag-rounds aria-hidden="true"></span><span class="mag-count" data-mag-count aria-hidden="true">–</span></span></button><button id="kneel" data-action="kneel" aria-label="Kneel">KNEEL</button><button id="stand" data-action="stand" aria-label="Stand">STAND</button><button id="sprint" data-action="sprint" aria-label="Sprint">SPRINT</button><button id="fire" data-action="fire" aria-label="Hold to fire">FIRE</button><button id="swap" disabled aria-label="Weapon switching is not implemented">SWAP · PENDING</button></div></div>
+<div id="controls"><div class="cluster"><button id="left" data-action="left" aria-label="Move left">◀</button><button id="right" data-action="right" aria-label="Move right">▶</button></div><div class="cluster"><button id="magazineTouch" type="button" aria-label="M4 magazine ammunition unavailable"><span class="mag-body"><img class="mag-image" data-mag-image alt="" draggable="false"><span class="mag-window" data-mag-rounds aria-hidden="true"></span><span class="mag-chamber" data-mag-chamber aria-hidden="true" hidden></span><span class="mag-count" data-mag-count aria-hidden="true">–</span></span></button><button id="kneel" data-action="kneel" aria-label="Kneel">KNEEL</button><button id="stand" data-action="stand" aria-label="Stand">STAND</button><button id="sprint" data-action="sprint" aria-label="Sprint">SPRINT</button><button id="fire" data-action="fire" aria-label="Hold to fire">FIRE</button><button id="swap" disabled aria-label="Weapon switching is not implemented">SWAP · PENDING</button></div></div>
 <script type="module">
 import * as THREE from "three";
 import { loadWeaponData } from "./weapon-runtime.mjs";
@@ -293,7 +298,7 @@ async function frame(now){requestAnimationFrame(frame);if(frameBusy)return;const
   aimQuad.position.set(playerX+facingDirection*20,2.5,1.5);
  }
  await upperBody.update({position:new THREE.Vector3(playerX,playerY,physicsState.z),velocity,direction:facingDirection,moving:Math.abs(velocity)>.1,sprinting:keys.sprint,kneeling:isKneeling,aim:new THREE.Vector3(aimPoint.x,aimPoint.y,physicsState.z),aspect:camera.aspect,fire:keys.fire,reload:originalInputState.magazine.Down},camera);
- weaponState=upperBody.weaponSnapshot();magazineHud.render(weaponState);weaponStatus.textContent="M4A1 · "+weaponState.magazine+" + "+(weaponState.chamberLive?1:0)+" · reserve "+weaponState.reserve+(weaponState.reloading?" · reloading":"");
+ weaponState=upperBody.weaponSnapshot();magazineHud.render(weaponState);weaponStatus.textContent=(weaponState.weaponId??"Equipped weapon")+" · "+weaponState.magazine+" + "+(weaponState.chamberLive?1:0)+" · reserve "+weaponState.reserve+(weaponState.reloading?" · reloading":"");
  positionLabel.textContent="X "+playerX.toFixed(2)+" · speed "+Math.abs(velocity).toFixed(2)+" m/s"+(keys.sprint?" · sprint input":"");
  }catch(error){loaded=false;showError(error)}finally{frameBusy=false;}}renderer.render(scene,camera)}
 requestAnimationFrame(frame);load();
