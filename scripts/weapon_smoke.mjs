@@ -27,6 +27,18 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   assert.equal(handState.originalHands.sourceShaderParity,false,'Dummy exported shader is not native visual parity');
   assert.equal(handState.presentation.originalIKUpdate,true);
   assert.equal(handState.presentation.originalHandSetMode,true);
+  // Real recovered C# ArmController.Update and Unity component bridge are live.
+  // The initial Operator authored arms are kinematic, so source IK still owns
+  // their visible poses until an original physical-state transition occurs.
+  assert.equal(handState.presentation.originalPhysicalArmController,true);
+  assert.equal(handState.presentation.physicalArmState?.length,2);
+  for(const arm of handState.presentation.physicalArmState){
+   assert.equal(arm.chain.length,3,'Original three limb rigidbodies per arm');
+   assert.deepEqual(arm.chain.map(limb=>limb.mass),[4,4,1]);
+   assert.ok(arm.chain.every(limb=>limb.isKinematic),
+    'Original Operator limb rigidity state, no invented ragdoll');
+  }
+
   for(const side of ['right','left'])assert.equal(handState.weaponState[side].handObjects.filter(v=>v.active).length,1,'Original Hand.SetMode activation must reach renderer');
   await page.screenshot({path:`original-hands-${engine}.png`});
   const particles=await page.evaluate(()=>window.__gameState()?.presentation?.originalParticleSource);
