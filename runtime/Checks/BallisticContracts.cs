@@ -82,6 +82,37 @@ public static class BallisticContracts {
   Check((exitMesh.transform.position-exitPosition).magnitude<.0001f,"Exit mesh lost world position under nonuniform scale");
   Check(Vector3.Dot(exitMesh.transform.forward,exitForward)>.9999f,"Exit mesh lost world rotation under nonuniform scale");
   Check(exitMesh.transform.parent==shearParent&&Mathf.Abs(exitMesh.transform.localScale.z-.01f)<.000001f,"Source exit mesh scale reset changed");
-  return JsonSerializer.Serialize(new{ballistics="PASS",sourceMaterials=386,meshColliders=runtime.loadedMeshColliders,unresolvedBuiltins=runtime.unsupportedColliders,shearedExitMeshReparent=true,liveSceneContact=true,thinPenetration=true,thickStop=true,impenetrable=true,delayedExitResumes=true,glassHolePassThrough=true,fragmentCount=count,fragmentMassConserved=true,fullUnityParity=false});
+  // An original BallisticMaterial.SpawnEntryEffect must reach the original
+  // source-prefab transport. Explicitly exercise the recovered method in this
+  // isolated native contract even when the game's serialized performance
+  // setting disables environment effects for normal gameplay.
+  var sourceEntry=world.Objects.OfType<BallisticMaterial>().FirstOrDefault(m=>
+    m.isActiveAndEnabled&&m.properties?.entryEffect!=null);
+  Check(sourceEntry!=null,"No original scene material has an entry impact prefab");
+  var originalEffectLimit=PerformanceManager.Instance.MaxEnvironmentHitEffects;
+  int OriginalMaterialEvents()=>JsonSerializer.SerializeToElement(host.effects.events)
+    .EnumerateArray().Count(e=>e.GetProperty("type").GetString()=="materialEffect");
+  int beforeNativeEntry=OriginalMaterialEvents();
+  bool originalEntryEffectDelivered=false;
+  try {
+    PerformanceManager.Instance.MaxEnvironmentHitEffects=Math.Max(1,originalEffectLimit);
+    var sourceProjectile=Bullet(sourceEntry.transform.position,Vector3.right);
+    var spawn=typeof(BallisticMaterial).GetMethod("SpawnEntryEffect",
+      BindingFlags.Instance|BindingFlags.NonPublic);
+    Check(spawn!=null,"Original BallisticMaterial.SpawnEntryEffect method unavailable");
+    world.MakeCurrent();
+    spawn.Invoke(sourceEntry,new object[]{sourceProjectile,-Vector3.right});
+    var emitted=JsonSerializer.SerializeToElement(host.effects.events).EnumerateArray()
+      .Where(e=>e.GetProperty("type").GetString()=="materialEffect").ToArray();
+    Check(emitted.Length>beforeNativeEntry,"Original impact material spawned no C# effect transport");
+    originalEntryEffectDelivered=emitted.Any(e=>
+      e.GetProperty("value").GetProperty("source").GetString()==sourceEntry.properties.entryEffect.SourceID&&
+      e.GetProperty("value").GetProperty("phase").GetString()=="entry"&&
+      float.IsFinite(e.GetProperty("time").GetSingle()));
+    Check(originalEntryEffectDelivered,"Original impact prefab GUID/phase/time lost in source event bridge");
+  } finally {
+    PerformanceManager.Instance.MaxEnvironmentHitEffects=originalEffectLimit;
+  }
+  return JsonSerializer.Serialize(new{ballistics="PASS",sourceMaterials=386,meshColliders=runtime.loadedMeshColliders,unresolvedBuiltins=runtime.unsupportedColliders,shearedExitMeshReparent=true,liveSceneContact=true,thinPenetration=true,thickStop=true,impenetrable=true,delayedExitResumes=true,glassHolePassThrough=true,originalEntryEffectDelivered,fragmentCount=count,fragmentMassConserved=true,fullUnityParity=false});
  }
 }
