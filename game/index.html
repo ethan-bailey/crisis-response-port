@@ -287,22 +287,17 @@ async function frame(now){
   const step=contactPhysics.data.fixedDeltaTime;
   // Direct port of CharacterBody.FixedUpdate() for the recovered Operator prefab.
   if(acceleration!==0){
-   const moveDir=Math.sign(acceleration);
-   const movingAgainstFacing=moveDir!==facingDirection;
-   const crippled=false; // The recovered runtime has not ported physiology/crippling.
-   let targetSpeed=contactPhysics.data.character.movement.walkSpeed; // Original Operator.prefab
-   if(keys.sprint&&!movingAgainstFacing&&!crippled)targetSpeed=contactPhysics.data.character.movement.sprintSpeed;
-   // Owner-approved analog enhancement: scale only the target speed by thumb travel.
-   // Keep the original acceleration law, PhysX forces, friction and sprint limit.
-   // Digital keyboard and non-stick actions continue at full speed.
-   targetSpeed*=input.movementMagnitude(moveDir);
-   const speed=Math.abs(velocity);
-   if(!(speed>targetSpeed)){
-    const speedDifference=targetSpeed-speed;
-    const forceX=speedDifference*moveDir*step*750; // AddForce(..., ForceMode.Acceleration)
-    contactPhysics.addAcceleration(forceX);
-    acceleration=0; // ResetAcceleration(), exactly as the recovered source does
-   }
+   // Execute recovered CharacterBody.Move / FixedUpdate source logic in C#.
+   // This adapter transports the resulting force to the real PhysX actor.
+   const movement=JSON.parse(await runtimeCall("StepBodyMovement",JSON.stringify({
+    direction:acceleration,velocity,step,facing:facingDirection,
+    walkSpeed:contactPhysics.data.character.movement.walkSpeed,
+    sprintSpeed:contactPhysics.data.character.movement.sprintSpeed,
+    analogMagnitude:input.movementMagnitude(Math.sign(acceleration)),
+    sprint:keys.sprint,crippled:false,operator:true,noPlayerLimp:true,precision:false
+   })));
+   if(movement.forceX!==0)contactPhysics.addAcceleration(movement.forceX);
+   if(movement.reset)acceleration=0;
   }
   // PhysX integrates gravity, contacts and friction even without movement input.
   contactPhysics.setPoseState(isKneeling,facingDirection,step);
