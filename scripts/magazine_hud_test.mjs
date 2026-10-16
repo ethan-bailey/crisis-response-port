@@ -66,3 +66,14 @@ test("magazine gesture cannot start when reload state is active",()=>{
  assert.equal(calls,1);
  binding.dispose();
 });
+
+test("game HUD uses original magazine texture, original StepWeapons state and magazine input",()=>{
+ const src=fs.readFileSync("game/index.html","utf8");
+ assert.match(src,/createOriginalM4MagazineHud\(document.querySelector\("#magazineTouch"\)/);
+ assert.match(src,/magazineHud\.render\(weaponState\)/);
+ assert.match(src,/onReload:\(\)=>\{reloadPending=true;/);
+ assert.match(src,/data-mag-image/);
+ assert.match(src,/data-mag-rounds/);
+ assert.doesNotMatch(src, /id="reload"\s+data-action="magazine"/,"Avoid duplicate reload trigger over the magazine");
+ assert.match(src, /KeyR:"magazine"/,"Original keyboard reload retained");
+});
