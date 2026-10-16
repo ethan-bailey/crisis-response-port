@@ -78,6 +78,15 @@ if(args.Contains("--character-systems")){
   throw new Exception("Original LimbMuscle fracture propagated no joint-break callback");
  muscle.Relax();
  if(hinge.useSpring)throw new Exception("Recovered LimbMuscle.Relax did not release source hinge");
+ // Live CharacterBody owns and advances its original physiology, not a test-only kernel.
+ body.InitializeOriginalPhysiology(0f,4500f,0f,0f);
+ var initialVitals=body.SourcePhysiology.BloodOxygen;
+ var vitalSnapshot=body.StepOriginalPhysiology(.02f,.5f,1.4f,3.2f,heartRandom:0f);
+ if(body.SourcePhysiology.WorkIntensity<=0f||
+    body.SourcePhysiology.BloodOxygen>initialVitals||
+    body.SourcePhysiology.BloodVolume!=4500f||
+    body.SourcePhysiology.RespirationRate<=0f)
+  throw new Exception("Live CharacterBody original physiological work, blood and breathing did not advance");
  var target=new UnityEngine.GameObject("Original arm sequence target",world).transform;
  var binding=new SourceArmTestBindings(target);
  var arm=new Crisis.Runtime.Character.OriginalIKArmControllerPlayback(binding);
