@@ -78,6 +78,7 @@ export class BrowserInput {
       this.movementStickAxis = 0;
       this.set('left', source, false);
       this.set('right', source, false);
+      this.set('sprint', source, false);
       if (thumb) thumb.style.transform = '';
       surface.style?.setProperty?.('--stick-power', '0');
       surface.classList.remove('active', 'sprinting');
@@ -101,6 +102,7 @@ export class BrowserInput {
       this.set('left', source, this.movementStickAxis < 0);
       this.set('right', source, this.movementStickAxis > 0);
       const sprinting = magnitude >= sprintZone;
+      this.set('sprint', source, sprinting);
       surface.classList.toggle('sprinting', sprinting);
       surface.style?.setProperty?.('--stick-power', String(magnitude));
       if (thumb) {
