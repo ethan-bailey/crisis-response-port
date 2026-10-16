@@ -34,6 +34,10 @@ Initial application commit log:
 | `codex/wasm-original-arm-sequences` | `097f1dfed194c670e736d7a4234c56a79766d16d` |
 | `codex/weapon-actions-checkpoint` | `a824915c08b2d945a77de7c33297453680ef8034` |
 
+## Standard branch layout (2026-10-16)
+
+The repository now uses **`main`** for stable repository baselines and **`develop/wasm`** for the integrated game. `develop/wasm` was created from the latest validated original-code PR #9 tree and **inherits** root `vercel.json` with `git.deploymentEnabled=false`. New feature branches should be cut from `develop/wasm` so they inherit this rule; research/experiment branches must do the same or explicitly add the policy before creating Git-triggered deploys. Existing branch-alias URLs still point to the last **actual deployed build**. Manual device-test releases require a matching verified package and access protection. Contributor rules: [branch policy](BRANCHING_AND_COLLABORATION.md).
+
 ## Explicit device-test deployment protocol
 
 1. First run the original C#/WASM CI tests and verify the exact intended code SHA, private built artifact, original asset hashes, scene/weapon input, browser tests and WebKit smoke evidence. A green documentation/source audit does not establish a playable build.
