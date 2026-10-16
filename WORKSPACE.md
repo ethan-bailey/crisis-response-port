@@ -10,7 +10,13 @@
 
 Latest proven integrated executable build: [Actions #38901664939](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38901664939), source `1264c0b4579076b82e1b6b21955469313779fe39`, private site artifact `12046137813`, private evidence `12046012744`. Organizational/doc changes on this branch were **not** recompiled. Root `vercel.json` disables automatic deployments; only protected manual iPhone test releases.
 
-## Current protected device-test snapshot
+## Corrected private iPhone preview and efficient release gate
+
+**Test this repaired version, not the previous 404 version:** https://crisis-response-port-fb7x1neld-ethanbaileymarsh-8332.vercel.app/game/. Vercel preview `dpl_7T1JZtAUjQLRZw2mys7i5xyh8tvH` READY, private snapshot SHA `4c1b0d27014b1aa9776fd7da46b7f46630b50be2`. [Repair #38913180609](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38913180609) verified all 725 original compiled package files from previously successful WASM source SHA `252337d96b845f5b2eb6dd406c32a52a423d3e37`. Old preview had a 404 because ignored scene and PhysX files were not committed. Real protected website and iPhone Safari execution have not yet been independently confirmed.
+
+Subsequent release process is on-demand and reusable: [manual-verified-wasm-preview.yml](https://github.com/ethan-bailey/crisis-response-port/blob/main/.github/workflows/manual-verified-wasm-preview.yml) downloads a prior tested package, checks all hashes and Git-index entries, stages reusable private snapshot `preview/wasm-current-iphone`; then one explicit protected Vercel deploy when user asks. No game recompilation for release packaging, no one-off Actions workflow, no auto Vercel deployments.
+
+## Historical first protected device-test snapshot (broken; superseded)
 
 **Manually published preview:** [Open partial Crisis Response WASM game](https://crisis-response-port-bpbgx2jdn-ethanbaileymarsh-8332.vercel.app/game/). The deployment is **READY with Vercel SSO protection**, built from the last proven gameplay commit `252337d96b845f5b2eb6dd406c32a52a423d3e37` and verified WASM/Chromium/WebKit [Actions #38909327063](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38909327063). Site staged as the verified static package in private `preview/wasm-hand-modes-20261016`, no automatic Vercel deploy. **No actual physical iPhone Safari acceptance yet**, and the agent connection could not access the protected page without a Vercel sign-in; see [preview identity, access and limitations](docs/PRIVATE_IPHONE_PREVIEW_2026-10-16.md).
 
