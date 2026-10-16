@@ -1,0 +1,88 @@
+name: Repair immutable WASM preview asset snapshot (single run)
+on:
+  push:
+    branches: [release/iphone-wasm-preview-2026-10-16]
+    paths: ['.github/workflows/repair-private-iphone-wasm-preview.yml']
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: repair-source-verified-private-preview
+  cancel-in-progress: false
+jobs:
+  restore-four-generated-game-assets:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: true}
+      - name: Require pinned private source, preview branch, successful original CI run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(gh api repos/$GITHUB_REPOSITORY --jq '.private')" = true
+          test "$GITHUB_REF" = 'refs/heads/release/iphone-wasm-preview-2026-10-16'
+          gh run view 38909327063 --repo "$GITHUB_REPOSITORY" --json conclusion,headSha --jq 'select(.conclusion=="success" and .headSha=="252337d96b845f5b2eb6dd406c32a52a423d3e37") | .headSha' | grep -Fx '252337d96b845f5b2eb6dd406c32a52a423d3e37'
+          git fetch origin refs/heads/preview/wasm-hand-modes-20261016:refs/remotes/origin/preview/wasm-hand-modes-20261016
+          test "$(git rev-parse refs/remotes/origin/preview/wasm-hand-modes-20261016)" = 'bca1f5b151a6abf7f12ae901ba9e9c27b745eda1'
+      - name: Redownload previously tested complete original .NET WASM and PhysX archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/original-tested-site" "$RUNNER_TEMP/original-build-evidence" 
+          gh run download 38909327063 --repo "$GITHUB_REPOSITORY" --name crisis-response-arm-sequences-private-wasm-site --dir "$RUNNER_TEMP"
+          gh run download 38909327063 --repo "$GITHUB_REPOSITORY" --name wasm-original-arm-sequences-evidence --dir "$RUNNER_TEMP/original-build-evidence"
+          test -f "$RUNNER_TEMP/crisis-response-private-wasm-site.tar.gz"
+          python3 - <<'PY'
+          import hashlib,os,pathlib
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])
+          archive=root/'crisis-response-private-wasm-site.tar.gz'
+          actual=hashlib.sha256(archive.read_bytes()).hexdigest()
+          expected=(root/'original-build-evidence/site-archive.sha256').read_text().split()[0]
+          assert actual==expected, (actual,expected)
+          print('Downloaded exact prior tested site archive: SHA256',actual)
+          PY
+          tar -xzf "$RUNNER_TEMP/crisis-response-private-wasm-site.tar.gz" -C "$RUNNER_TEMP/original-tested-site"
+          python3 scripts/package_wasm_site.py verify "$RUNNER_TEMP/original-tested-site"
+      - name: Restore all 4 omitted, ignored generated original-site files without modifying others
+        run: |
+          set -euo pipefail
+          git switch -C preview/wasm-hand-modes-20261016 refs/remotes/origin/preview/wasm-hand-modes-20261016
+          test "$(git rev-parse HEAD)" = 'bca1f5b151a6abf7f12ae901ba9e9c27b745eda1'
+          python3 - <<'PY'
+          import hashlib,json,os,pathlib,subprocess
+          original=pathlib.Path(os.environ['RUNNER_TEMP'])/'original-tested-site'
+          manifest=json.loads((original/'build-manifest.json').read_text())
+          assert manifest['sourceCommit']=='252337d96b845f5b2eb6dd406c32a52a423d3e37'
+          assert pathlib.Path('build-manifest.json').read_bytes()==(original/'build-manifest.json').read_bytes()
+          entries={p['path']:p for p in manifest['files']}
+          # Determine missing entries from the Git index, not the filesystem:
+          # checkout may still have ignored/untracked generated files.
+          before=set(filter(None,subprocess.check_output(['git','ls-files','-z']).decode().split('\0')))
+          missing=sorted(set(entries)-before)
+          expected=['game/assets/mission01.crg','game/assets/mission01.report.json',
+                    'game/vendor/physx-js-webidl.mjs','game/vendor/physx-js-webidl.wasm']
+          assert missing==sorted(expected), ('Unexpected missing exact-site paths',missing)
+          for name in missing:
+              data=(original/name).read_bytes()
+              target=pathlib.Path(name)
+              target.parent.mkdir(parents=True,exist_ok=True)
+              target.write_bytes(data)
+              meta=entries[name]
+              assert len(data)==meta['bytes'] and hashlib.sha256(data).hexdigest()==meta['sha256']
+          subprocess.check_call(['git','add','-f','--',*missing])
+          staged=set(filter(None,subprocess.check_output(['git','ls-files','-z']).decode().split('\0')))
+          assert staged==set(entries)|{'build-manifest.json','PRIVATE_BUILD_IDENTITY.txt','vercel.json'}, (
+              'Git index still omits build-manifest paths',sorted(set(entries)-staged))
+          for name,meta in entries.items():
+              data=pathlib.Path(name).read_bytes()
+              assert len(data)==meta['bytes'] and hashlib.sha256(data).hexdigest()==meta['sha256'], name
+          print('All 725 original tested package files are present and SHA256 matched in the Git index')
+          print('Restored files:',missing)
+          PY
+          test "$(git diff --cached --name-only | wc -l)" -eq 4
+          git -c user.name="Crisis Response Verified Snapshot Repair" -c user.email="github-actions[bot]@users.noreply.github.com" commit -m "Restore four SHA-verified generated Mission01 and PhysX binary assets for protected iPhone preview"
+          git push origin HEAD:refs/heads/preview/wasm-hand-modes-20261016
+          git rev-parse HEAD
