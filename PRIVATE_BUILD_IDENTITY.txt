@@ -1,3 +1,3 @@
-Verified original-game WASM source: c6c5dab6af0a3e80bb83e682a86aa373a640d2c0
-GitHub Actions evidence: https://github.com/ethan-bailey/crisis-response-port/actions/runs/38938472804
+Verified original-game WASM source: 7a6b8804e2212b20422f23b2343a96601bded3f0
+GitHub Actions evidence: https://github.com/ethan-bailey/crisis-response-port/actions/runs/38941678900
 Private owner-authenticated site. Original game incomplete.
