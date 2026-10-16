@@ -121,3 +121,64 @@ delete prior evidence. No hosting rollback is needed because nothing is deployed
 - Follow-up adds workflow-local exact SDK selection plus tests rejecting SDK
   drift. One necessary corrected build replaces the first as the recommended
   package; no repeated full browser test or deployment is requested.
+
+## Read-only gameplay observation for the next agent
+
+The downloaded source-hashed `game/assets/ballistics.json.gz` has
+`maxEnvironmentHitEffects=20`, `maxEnvironmentHitMeshes=40` and
+`particlesLifetime=20`. `BallisticRuntimeHost` loads those values before calling
+the recovered materials' `Awake()`. Therefore the earlier browser diagnostic
+`receivedEvents=0` is **not evidence that the source effect limit is zero**.
+The existing isolated native SpawnEntryEffect fixture verifies the transport,
+but does not establish a real browser shot/material request. No setting was
+changed during this continuation. Next investigate a deterministic real shot
+against a source material with an actual entry-effect reference and capture the
+C# event and JS receipt in the same frame before attributing this observation
+to a settings bug or claiming particle execution.
+
+## Recommended checkpoint — exact SDK 8 compile VERIFIED
+
+- [Draft PR #19](https://github.com/ethan-bailey/crisis-response-port/pull/19)
+  targets `codex/projectile-material-impacts`; review the five added files there.
+- **Actual tested code/workflow SHA:**
+  `bb60e3adf1368c7156b45ac9d5a6385de5841301`.
+- [Run 38849201407](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38849201407)
+  **SUCCESS**: exact selected **SDK 8.0.426**, net8.0 native contracts and
+  actual WASM publish, **12/12** package tests, **38/38** existing source/input
+  tests, package integrity and independent archive/unpack validation.
+- **Complete private site artifact:**
+  [12024269115](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38849201407/artifacts/12024269115),
+  `crisis-response-private-wasm-site` (34,528,647-byte GitHub ZIP, containing
+  `crisis-response-private-wasm-site.tar.gz`).
+- **Private evidence artifact:**
+  [12024274148](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38849201407/artifacts/12024274148),
+  `wasm-compile-package-evidence`, includes native contract output, publish log,
+  exact compiler/toolchain, source SHA, full manifest and archive hash. Artifacts
+  currently expire November 15, 2026; source/workflow remain in git for rebuilding.
+- **Inner archive SHA256:**
+  `935253d36d861cd357f6ac03c4fe551cf5be7c4796749906899087770d6567e9`.
+  GitHub's outer ZIP has its own different digest, which is not this tar hash.
+- **724** exact site files, **199** validated Blazor boot resources, **195**
+  actual WASM files, **246** tracked source inventory inputs. Includes **35**
+  selected recovered original C# files, not all 1,333 recovered scripts.
+- Final recorded tools: SDK **8.0.426**, Node **v22.23.3**, npm **10.9.9**,
+  Python **3.12.3**; roll-forward disabled and prereleases disallowed.
+- The final artifact was downloaded separately, its inner tar SHA compared to
+  CI evidence, extracted with safe paths and checked again locally. **PASS**
+  with exact source SHA and all file/binary/boot-resource counts above.
+- Later handoff-only commits do not change the tested code. Do not rebuild
+  merely because the PR head includes a later documentation commit.
+
+**Verification boundary:** native contracts and package/compile validation only
+for this new checkpoint. Prior Chromium/WebKit proof remains the earlier run
+listed above; **no fresh browser execution, native Unity comparison, physical
+iPhone Safari test or deployment** occurred here. All original C# gameplay files
+and existing runtime/renderer code remain unchanged. No merge was performed.
+
+To reproduce this exact SDK checkpoint later, use this workflow's manual Run
+workflow action on the compile branch, or select the tested SHA in a clean
+checkout, install SDK 8.0.426, copy `tools/wasm-compile/global.json` to root and
+follow the recorded workflow commands. Do not add that temporary root file to
+other workflows or remove SDK pin checks to get a green build. Later original
+game work should begin from the current browser branch after reviewing this PR,
+not from a stale copied archive.
