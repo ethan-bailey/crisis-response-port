@@ -11,6 +11,13 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   await page.goto('http://127.0.0.1:8000/game/',{waitUntil:'domcontentloaded',timeout:120000});
   await page.waitForFunction(()=>window.__gameState?.().weaponState||document.querySelector('#error').style.display==='block',null,{timeout:120000});
   assert.equal(await page.locator('#error').isVisible(),false,await page.locator('#error').textContent());await ready();
+  const particles=await page.evaluate(()=>window.__gameState()?.presentation?.originalParticleSource);
+  assert.equal(particles?.sourcePrefabs,14,'Recovered original impact prefab manifest must load');
+  assert.equal(particles?.sourceEmitters,26,'26 original native ParticleSystems must be bound');
+  assert.equal(particles?.billboardEmitters,14,'Keep original source billboard mode mapping');
+  assert.equal(particles?.meshEmitters,12,'Keep original source mesh emitter mapping');
+  assert.equal(particles?.renderedParticles,0,'Do not synthesize visually unverified particles');
+  assert.equal(particles?.sourceVisualParity,false,'No native Unity particle visual parity proven');
   // Source-checked original Unity Quad windows: 56 glass textures have a
   // transport renderer; 12 custom mirror shaders remain deliberately unrendered.
   const windowVisual=await page.evaluate(async()=>{
