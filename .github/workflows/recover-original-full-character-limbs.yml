@@ -1,4 +1,5 @@
 name: Recover original full limb physiology muscle prefab
+# Hand limbs may not carry Physiology; preserve their original absence.
 on:
   push:
     branches: [feature/characterbody-live-physiology-full-rig]
