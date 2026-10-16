@@ -1,4 +1,5 @@
 name: Verify original character source injury physics animation and IK
+# Corrected Unity Vector3 comparison after native compiler feedback.
 on:
   push:
     branches: [feature/source-character-physiology-ragdoll-animation-sequencer]
