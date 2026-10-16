@@ -22,3 +22,14 @@ Integration target: `develop/wasm`. Preserve the existing executable ArmControll
 Start at `source-reference/Original/Animation/IKArmSequencer.cs` and `source-reference/Original/Animation/IKArmController.cs`, and locate the real recovered CharacterBody and equipment dependencies in the pinned private recovery artifact. The in-repo `runtime/Original/Weapons/ArmTransition.cs` is **selected original ArmIKSolver behavior only**; do not mistake it for the original controller/sequencer. Source method hashes and exact adapter changes belong next to the executable code.
 
 **Implementation status of this document:** planning only; no compile, new browser behavior, or iPhone release claimed.
+
+## Source-confirmed step 1/2 boundary (2026-10-16)
+
+Direct inspection of `source-reference/Original/Animation/IKArmSequencer.cs` confirms these **mandatory executable dependencies** before integration:
+
+- `CharacterBody.WeaponAimAlignment()`, `ActiveWeapon`, `holster`, `stunGrenadeAnchor`, `chestRigIKTarget`, `pistolIKTarget`, `ApplyGauzePosition(out Vector3)`, `Head`, `Pelvis`, plus `GetComponent<TeamOperator>()` for medic targets.
+- `WeaponBase.leftHandAnchor/rightHandAnchor` and controller `PreviousWeapon/PendingWeapon`.
+- Original `IKArmAnimationFrame`, `IKArmAction`, `IKArmType`, `IKArmTarget`, `IKControllerInvoke` definitions and the real source `ArmIKSolver` transition methods.
+- Its **source timing contract**: `Play()` enters frame 0 immediately; the first `Update()` detecting completion sets `frameDone`; the following `Update()` invokes the callback before `NewFrame(++CurrentFrame)`. Sibling waits use `HasFinishedFrame()` and not an independent timer. `Transition` waits for `solver.OnTarget` and `WaitUntilLowered` waits for alignment <= 10 degrees.
+
+The file `runtime/Original/Weapons/ArmTransition.cs` currently contains a selected `ArmIKSolver` source slice, not a real original global `CharacterBody` substitute. The original sequencer source is **recovered but not compiled in the integrated game**; adding it before resolving these original dependencies would falsely report step 2 as complete. The full recovered CharacterBody file was not located among the known checked-in source-reference paths during this session. The actual private recovery artifact is required for faithful step 1 implementation. No executable source or adapter changes have been made in this checkpoint.
