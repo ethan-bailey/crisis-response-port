@@ -1,5 +1,14 @@
 # Next agent — current state (2026-10-15, 19:17 UTC)
 
+## All-scene/source inventory — verified 2026-10-16
+
+[Draft PR #20](https://github.com/ethan-bailey/crisis-response-port/pull/20), branch `codex/full-source-closure-audit`, adds a read-only source/dependency audit. [Handoff and exact next blockers](https://github.com/ethan-bailey/crisis-response-port/blob/codex/full-source-closure-audit/docs/FULL_SOURCE_CLOSURE_HANDOFF_2026-10-16.md).
+
+[Run 38889549595](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38889549595) **SUCCESS**, tested SHA `3ceeb1ea99a258453fb7212b106e67e510266b6d`, private graph/provenance artifact `12040833766`. All six scenes inventoried; **160/160** raw source hash claims verified; **10/10** targeted tests passed. Independent local report matched cloud bytes exactly. Inventory: 1,333 main game C# files + 86 first-pass files + one exporter patch; runtime currently selects 35 original files, not the entire game.
+
+Remaining external GUIDs: missing .308 mesh and Unity UI's 24 component IDs. **35** reachable shaders are marked dummy exports. Built-in engine, local fileID, C# symbol and dynamic-resource dependencies remain separate unfinished gates. No game/runtime changes, new compile, deployment or Unity/main changes; the SDK-8 package in PR #19 below remains the latest actual compile checkpoint. Review the new audit before using its graph to expand source compilation.
+
+
 ## Isolated compiler/package checkpoint — verified 2026-10-16
 
 Review [draft PR #19](https://github.com/ethan-bailey/crisis-response-port/pull/19), branch `codex/wasm-compile-package`, and its [compile handoff](https://github.com/ethan-bailey/crisis-response-port/blob/codex/wasm-compile-package/docs/WASM_COMPILE_PACKAGE_HANDOFF.md). It packages **both game and WASM runtime** with source/output hashes; no gameplay/original C# changes or merge.
