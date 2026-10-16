@@ -50,8 +50,25 @@ public sealed partial class OriginalPhysiologyConditions {
   lungsLeakage+=volume*.001f;
   LungsEffectiveness=Mathf.Clamp(LungsEffectiveness-volume*.001f,0f,1f);
  }
+ // Source Physiology.AddConcussion/AddBrainTrauma decision and tissue laws.
+ public void AddConcussion(float value){
+  Concussion+=value;
+  if(Concussion>1.25f)AddBrainTrauma((Concussion-1f)*10f);
+  if(value>1.5f)AddBrainTrauma(value*10f);
+ }
+ public void AddBrainTrauma(float volume){
+  BrainTrauma+=volume;
+  BrainTissue=Mathf.Max(0f,BrainTissue-volume*.5f);
+  // Original neurologic muscle responses require the genuine MuscleControl
+  // event graph; they are not invented in this physiology-only component.
+ }
  public void SetUnconscious(float time){
   if(Conscious){Conscious=false;UnconsciousTimestamp=time;}
+ }
+ public void SetDead(float time){
+  if(!Alive)return;
+  SetUnconscious(time);
+  Alive=false;RespirationDisabled=true;
  }
  public float UnconsciousTimestamp{get;private set;}
  public void UpdateVitalDynamics(float dt,float now,float workIntensity,bool respirationBlocked,float heartRandom){
@@ -137,5 +154,8 @@ public sealed partial class OriginalPhysiologyConditions {
   BloodOxygen=Mathf.Clamp(BloodOxygen-WorkIntensity*workOxygenFactor*dt,0f,1f);
   if(Conscious&&ShouldLoseConsciousness())SetUnconscious(now);
   else if(!Conscious&&ShouldRegainConsciousness())Conscious=true;
+  // Original Physiology.SetCharacterState: hypoxic brain death after 30s
+  // continuously without blood oxygen, not an invented hit-point threshold.
+  if(Alive&&now-lastBrainOxygenTimestamp>30f)SetDead(now);
  }
 }
