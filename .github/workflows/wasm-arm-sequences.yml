@@ -5,7 +5,7 @@ name: Verify combined arm controller, grip and chamber-inclusive magazine iPhone
 # No automatic builds on source/doc edits, and workflow_dispatch remains available.
 on:
   push:
-    branches: ["feature/**", "fix/**"]
+    branches: ["feature/**", "fix/**", "release/combined-iphone-20261016"]
     paths: [.github/workflows/wasm-arm-sequences.yml]
   workflow_dispatch:
 
