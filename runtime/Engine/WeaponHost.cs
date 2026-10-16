@@ -150,6 +150,12 @@ public sealed class WeaponHost {
  }
  static void SetWorld(Transform t,JsonElement p){t.position=V(p.GetProperty("p"));var q=p.GetProperty("q");t.rotation=new(q[0].GetSingle(),q[1].GetSingle(),q[2].GetSingle(),q[3].GetSingle());}
  public object Snapshot(){var mp=weapon.ComponentMagazine.transform.position;var mq=weapon.ComponentMagazine.transform.rotation;object Arm(ArmIKSolver a)=>new{target=new[]{a.ikTarget.position.x,a.ikTarget.position.y,a.ikTarget.position.z},a.OnTarget,a.OnWeapon,smoothing=a.smoothing||a.Transitioning,handMode=(int)a.hand.mode,angle=a.hand.transform.localEulerAngles.z};// Presentation timing must use the same scaled Unity Time.time as the recovered weapon/effect events.
-  return new{sourceTime=Time.time,ballistics=Ballistics?.Snapshot(),magazinePose=new{p=new[]{mp.x,mp.y,mp.z},q=new[]{mq.x,mq.y,mq.z,mq.w},visible=weapon.ComponentMagazine.gameObject.activeSelf},shots=body.ShotsFired,magazine=weapon.Magazine?.roundCount??0,reserve=body.Equipment.PrimaryMagazines.Where(m=>!ReferenceEquals(m,weapon.Magazine)).Sum(m=>m.roundCount),chamberLive=weapon.cyclingBolt.Live,bolt=weapon.cyclingBolt.Status.ToString(),reloading=task!=null,manipulating=body.IsManipulatingEquipment,kick=Kick,climb=Climb,right=Arm(body.rightArm),left=Arm(body.leftArm),events=effects.events.ToArray()};}
+  return new{sourceTime=Time.time,ballistics=Ballistics?.Snapshot(),magazinePose=new{p=new[]{mp.x,mp.y,mp.z},q=new[]{mq.x,mq.y,mq.z,mq.w},visible=weapon.ComponentMagazine.gameObject.activeSelf},shots=body.ShotsFired,
+   // The only currently executable original weapon host is the recovered M4A1.
+   // Send source-owned magazine capacity and chamber state to the browser.
+   // Future weapon hosts must supply their own actual equipped weapon identity;
+   // a merely loaded Glock visual is NOT a playable equipped Glock.
+   weaponId="M4A1",magazineCapacity=weapon.Magazine?.capacity??weapon.ComponentMagazine.capacity,
+   magazine=weapon.Magazine?.roundCount??0,reserve=body.Equipment.PrimaryMagazines.Where(m=>!ReferenceEquals(m,weapon.Magazine)).Sum(m=>m.roundCount),chamberLive=weapon.cyclingBolt.Live,bolt=weapon.cyclingBolt.Status.ToString(),reloading=task!=null,manipulating=body.IsManipulatingEquipment,kick=Kick,climb=Climb,right=Arm(body.rightArm),left=Arm(body.leftArm),events=effects.events.ToArray()};}
 }
 }
