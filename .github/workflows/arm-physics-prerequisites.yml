@@ -1,7 +1,7 @@
-name: Arm physics prerequisites (not original controller playback)
+name: PhysX implicit hinge springs and source capsule prerequisites
 on:
   push:
-    branches: [feature/26-arm-physics-closure-gate]
+    branches: [feature/26-hinge-spring-capsules]
     paths: [.github/workflows/arm-physics-prerequisites.yml]
   workflow_dispatch:
 permissions:
