@@ -15,6 +15,7 @@ public partial class Limb {
  public LimbId id;
  public Transform kinematicParent;
  public OriginalLimbPhysiology LimbPhysiology;
+ public OriginalLimbMuscle SourceMuscle;
  public Rigidbody Rigidbody => GetComponent<Rigidbody>();
  Vector3 potentialForce,potentialPosition;
  float potentialTime,rigidBodyDefaultDrag;
@@ -72,6 +73,29 @@ public partial class CharacterBody {
  public bool FloatingBodies;
  public UnityEvent EventHit=new();
  public UnityEvent EventRagdoll=new();
+ public UnityEvent EventUnconscious=new();
+ public UnityEvent EventDeath=new();
+ public bool RagdollEntered=>!Kinematic;
+ public void OnOriginalJointBroken(Limb limb){
+  if(limb==null||!limbs.Contains(limb))throw new InvalidOperationException("Original joint not owned by character");
+  // Original Physiology.OnJointBroken loses consciousness if conscious/kinematic.
+  if(Kinematic&&SourcePhysiology?.Conscious==true){
+   SourcePhysiology.SetUnconscious(Time.time);
+   EnterSourceRagdoll();
+   EventUnconscious.Invoke();
+  }
+ }
+ public void EnterSourceRagdoll(){
+  if(!Kinematic)return;
+  // Original CharacterBody.SetRagdoll: relax the real authored ArmsControl,
+  // release ALL source limb actors, and stop clip-driven bone transforms.
+  rightArm.enabled=false;
+  leftArm.enabled=false;
+  GetComponent<ArmsControl>()?.Relax();
+  SetKinematic(false);
+  foreach(var limb in limbs)limb.SourceMuscle?.Relax();
+  EventRagdoll.Invoke();
+ }
  public void SetKinematic(bool state){
   if(Kinematic==state)return;
   Kinematic=state;
