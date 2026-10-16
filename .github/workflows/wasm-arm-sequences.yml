@@ -1,9 +1,11 @@
 name: Verify original M4 chamber ammo and weapon-matched HUD in WASM browsers
 
-# One bounded original-source compile milestone; no automatic build on source/doc edits.
+# Explicit full milestone: a feature/fix workflow YAML change triggers ONE test.
+# Merging reviewed code into develop/wasm must not duplicate the expensive build.
+# No automatic builds on source/doc edits, and workflow_dispatch remains available.
 on:
   push:
-    branches: [feature/22-limb-hand-source, develop/wasm, fix/m4-magazine-last-rounds-chamber]
+    branches: ["feature/**", "fix/**"]
     paths: [.github/workflows/wasm-arm-sequences.yml]
   workflow_dispatch:
 
