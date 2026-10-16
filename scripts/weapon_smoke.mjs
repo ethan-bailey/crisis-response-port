@@ -6,6 +6,13 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
  const page=await browser.newPage({viewport:{width:852,height:393},hasTouch:true});const errors=[];page.on('pageerror',e=>errors.push(e.message));
  const state=()=>page.evaluate(()=>window.__gameState());
  const ready=()=>page.waitForFunction(()=>{const w=window.__gameState?.().weaponState;return w&&!w.reloading&&w.right.OnTarget&&w.left.OnTarget;},null,{timeout:30000});
+ const pullOriginalMagazine=async()=>{
+  const box=await page.locator('#magazineTouch').boundingBox();
+  assert.ok(box,'Original magazine touch element must exist');
+  const x=box.x+box.width/2,y=box.y+13;
+  await page.mouse.move(x,y);await page.mouse.down();
+  await page.mouse.move(x,y+60,{steps:5});await page.mouse.up();
+ };
  const rounds=w=>w.magazine+w.reserve+(w.chamberLive?1:0);
  try{
   await page.goto('http://127.0.0.1:8000/game/',{waitUntil:'domcontentloaded',timeout:120000});
@@ -108,7 +115,17 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   assert.equal(sourceVisual.added,1);
   assert.equal(sourceVisual.removed,true,'Source stops rendering when C# frame stops reporting its instance');
   assert.equal(sourceVisual.source,'c0bb8365c7bd54b4597570f085f5a153');
-  const initial=await state();assert.equal(initial.weaponState.ballistics.materials,386);assert.equal(initial.weaponState.ballistics.loadedMeshColliders,61);assert.equal(initial.weaponState.ballistics.unsupportedColliders,2);assert.equal(initial.weaponState.shots,0);assert.equal(rounds(initial.weaponState),61);
+  const initial=await state();
+  const sourceMagazine=await page.locator('#magazineTouch').evaluate(el=>{
+   const img=el.querySelector('[data-mag-image]');
+   return {url:img?.getAttribute('src'),loaded:img?.complete&&img.naturalWidth>0,
+     shown:el.querySelector('[data-mag-count]')?.textContent,rounds:el.querySelectorAll('.mag-round:not([hidden])').length};
+  });
+  assert.equal(sourceMagazine.url,'./assets/weapon-runtime/M4-magazine/textures/material_00.png');
+  assert.equal(sourceMagazine.loaded,true,'Existing original M4 magazine texture must load in the game browser');
+  assert.equal(Number(sourceMagazine.shown),initial.weaponState.magazine,'HUD must display actual original loaded magazine state');
+  assert.equal(sourceMagazine.rounds,10,'Visual indicator follows source loaded ammunition, not a separate counter');
+  assert.equal(initial.weaponState.ballistics.materials,386);assert.equal(initial.weaponState.ballistics.loadedMeshColliders,61);assert.equal(initial.weaponState.ballistics.unsupportedColliders,2);assert.equal(initial.weaponState.shots,0);assert.equal(rounds(initial.weaponState),61);
   await page.mouse.move(730,90);await page.waitForFunction(()=>window.__gameState().aimDirection[1]>.05,null,{timeout:30000});
   const aimed=await state(),direction=aimed.aimDirection;
   await page.keyboard.down('KeyD');await page.waitForFunction(x=>window.__gameState().playerX>x+.3,aimed.playerX,{timeout:30000});await page.keyboard.up('KeyD');
@@ -143,7 +160,7 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
    await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
    await page.waitForTimeout(300);const dragged=await state();assert.equal(dragged.weaponState.shots,1,'Dragging must never fire');assert.notDeepEqual(dragged.aimDirection,direction);nativeTouchDrag=true;
   }
-  const preReload=await state();await page.locator('#reload').tap();
+  const preReload=await state();await pullOriginalMagazine();
   await page.waitForFunction(()=>window.__gameState().weaponState.reloading,null,{timeout:30000});
   await page.waitForFunction(()=>!window.__gameState().weaponState.reloading,null,{timeout:30000});await ready();
   const reloaded=await state();assert.equal(rounds(reloaded.weaponState),rounds(preReload.weaponState));assert.equal(reloaded.weaponState.magazine,30);assert.equal(reloaded.weaponState.reserve,29);
@@ -151,8 +168,10 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   await page.waitForFunction(()=>window.__gameState().weaponState.bolt==='Open'&&window.__gameState().weaponState.magazine===0,null,{timeout:30000});await page.mouse.up();
   const empty=await state();assert.equal(empty.weaponState.shots,32);assert.equal(empty.weaponState.chamberLive,false);
   await page.waitForTimeout(300);assert.equal((await state()).weaponState.shots,32,'No extra shot after release/empty');
-  await page.locator('#reload').tap();await page.waitForFunction(()=>window.__gameState().weaponState.reloading,null,{timeout:30000});await page.waitForFunction(()=>!window.__gameState().weaponState.reloading&&window.__gameState().weaponState.chamberLive,null,{timeout:30000});await ready();
-  const final=await state();assert.equal(final.weaponState.magazine,28);assert.equal(final.weaponState.reserve,0);assert.equal(final.projection.fov,20);assert.ok(final.presentation.arms.every(a=>Number.isFinite(a.upper)&&Number.isFinite(a.lower)));
+  await page.waitForFunction(()=>document.querySelector('#magazineTouch [data-mag-count]')?.textContent==='0',null,{timeout:30000});
+  assert.equal(await page.locator('#magazineTouch .mag-round:not([hidden])').count(),0,'Empty original magazine must show no x-ray rounds');
+  await pullOriginalMagazine();await page.waitForFunction(()=>window.__gameState().weaponState.reloading,null,{timeout:30000});await page.waitForFunction(()=>!window.__gameState().weaponState.reloading&&window.__gameState().weaponState.chamberLive,null,{timeout:30000});await ready();
+  const final=await state();assert.equal(await page.locator('#magazineTouch [data-mag-count]').textContent(),'28');assert.equal(final.weaponState.magazine,28);assert.equal(final.weaponState.reserve,0);assert.equal(final.projection.fov,20);assert.ok(final.presentation.arms.every(a=>Number.isFinite(a.upper)&&Number.isFinite(a.lower)));
   assert.ok(final.weaponState.ballistics.contacts>0,"Original scene material contacts must occur during live firing");assert.ok(Number.isFinite(final.weaponState.ballistics.last.exitEnergy));assert.deepEqual(errors,[]);await page.screenshot({path:`weapon-${engine}.png`});results.push({engine,passed:true,nativeTouchDrag,actualIPhoneTest:false,initial,tapped,reloaded,empty,final});
  }catch(e){results.push({engine,passed:false,error:String(e),errors,state:await page.evaluate(()=>window.__gameState?.()||null),screenError:await page.locator('#error').textContent()});await page.screenshot({path:`weapon-${engine}.png`}).catch(()=>{});process.exitCode=1;}
  finally{await browser.close();}
