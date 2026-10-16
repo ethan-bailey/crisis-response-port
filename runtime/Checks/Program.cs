@@ -85,6 +85,28 @@ if (args.Contains("--character-dependencies")) {
     Console.WriteLine("{\"CharacterBodyDependencyPrimitives\":\"pass\"}");
     return;
 }
+if(args.Contains("--character-animation")) {
+ var world=new UnityEngine.RuntimeWorld();
+ var go=new UnityEngine.GameObject("Original CharacterBody animation",world);
+ var body=go.AddComponent<Crisis.Runtime.Weapons.CharacterBody>();
+ var animator=go.AddComponent<UnityEngine.Animator>();
+ var capsule=go.AddComponent<UnityEngine.CapsuleCollider>();
+ body.InitializeSourceAnimation(animator,capsule);
+ for(int i=0;i<10;i++)body.ExecuteSourceUpdateAnimation(true,true,false,2.55f,1.5f,4.2f,.6f,true,.02f,-.725f);
+ if(body.KneelRatio<=.5f || Math.Abs(capsule.height-1.25f)>1e-5f
+   || Math.Abs(capsule.center.x+.15f)>1e-5f || Math.Abs(capsule.center.y+.725f)>1e-5f)
+   throw new Exception("Original CharacterBody kneeling collider interpolation failed");
+ if(!animator.GetBool("Moving") || animator.GetBool("Backwards")
+   || Math.Abs(animator.GetFloat("MoveSpeed")-.19444445f)>1e-4f
+   || animator.GetFloat("CrippledRatio")!=0f)
+   throw new Exception("Original CharacterBody animation parameters failed");
+ body.ExecuteSourceUpdateAnimation(false,true,true,0f,1.5f,4.2f,.6f,false,.02f,-.725f);
+ if(!animator.GetBool("Backwards") || Math.Abs(animator.GetFloat("CrippledRatio")-.6f)>1e-5f
+    || body.KneelRatio>=1f)
+   throw new Exception("Original CharacterBody backwards and civilian cripple state failed");
+ Console.WriteLine("{\"CharacterBodyUpdateAnimationSource\":\"pass\"}");
+ return;
+}
 Console.WriteLine(RuntimeContracts.Run());
 Console.WriteLine(ArmSequenceContracts.Run("game/assets/original-arm-sequences.json"));
 if(File.Exists("game/assets/presentation.json.gz"))Console.WriteLine(PresentationContracts.Run("game/assets/presentation.json.gz"));
