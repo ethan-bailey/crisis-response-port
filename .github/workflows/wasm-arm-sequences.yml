@@ -3,7 +3,7 @@ name: Compile original arm sequence dependencies to WASM and verify browser exec
 # One bounded original-source compile milestone; no automatic build on source/doc edits.
 on:
   push:
-    branches: [codex/wasm-original-arm-sequences]
+    branches: [codex/wasm-original-arm-sequences, codex/projectile-material-impacts]
     paths: [.github/workflows/wasm-arm-sequences.yml]
   workflow_dispatch:
 
