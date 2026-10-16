@@ -3,7 +3,7 @@
     "blazorResources": 199,
     "wasmFiles": 195
   },
-  "buildRun": "https://github.com/ethan-bailey/crisis-response-port/actions/runs/38919612434",
+  "buildRun": "https://github.com/ethan-bailey/crisis-response-port/actions/runs/38923442079",
   "compilerPolicy": {
     "allowPrerelease": false,
     "rollForward": "disable",
@@ -525,9 +525,9 @@
       "sha256": "0c331574c56dde74abdfd9cd6cb41ab931c42a78afc0b5d76f2bd6a63bb21f6f"
     },
     {
-      "bytes": 30064,
+      "bytes": 30728,
       "path": "game/index.html",
-      "sha256": "dc4dd893ec6bcd9b3ea47c4c060166034d51eb2012cdd9c93c1eb37af272e19a"
+      "sha256": "854526c31f08556968df407c3ff0956f0c0585d8ed9315aeee46ddb4d3a4965d"
     },
     {
       "bytes": 700,
@@ -535,9 +535,9 @@
       "sha256": "14471b3de4e3b0ed0c56442dcf6cfc4ef9e05617c32a5c368fdc9e92c3ded896"
     },
     {
-      "bytes": 5527,
+      "bytes": 8558,
       "path": "game/magazine-hud.mjs",
-      "sha256": "225272e8831c3eac1becf0f3d5b0334d4eddd0d866955fd286c5c55baf3b0f7d"
+      "sha256": "0b1e21b703cf451bc502834f6f9c0a0e1822b79bcacf23bb589b41344b377df3"
     },
     {
       "bytes": 5013,
@@ -595,44 +595,44 @@
       "sha256": "055b6f534d3069ff3c22511f290027d035a0bcca97b63dd6eb8abe5d94e17188"
     },
     {
-      "bytes": 9004,
+      "bytes": 9002,
       "path": "runtime-web/_framework/Crisis.Runtime.Browser.pdb.gz",
-      "sha256": "e5da11c3733d5563639dba386263e43c3c5272400724951d74ab114a6051b959"
+      "sha256": "945e69a1573ef7688660a60d9dd5d74c2dc48b3cd1df6c58752ef7cb670f66ea"
     },
     {
       "bytes": 15125,
       "path": "runtime-web/_framework/Crisis.Runtime.Browser.wasm",
-      "sha256": "64b19cdc7a6e489d02fe28cb489683b5e7c88a6d9fab776da8892373bd4d82fb"
+      "sha256": "edfb7e935c208743bd452ad31c8660eaea8cdea497adbefa224c13b69e8175a0"
     },
     {
-      "bytes": 6185,
+      "bytes": 6205,
       "path": "runtime-web/_framework/Crisis.Runtime.Browser.wasm.br",
-      "sha256": "f39f2cac51c3ed615db5c49be2b25752b45e77a49fe91131e2f91a4fa0ee0058"
+      "sha256": "02ce14d28f7246171b50f32a1ab91c60c91cfd3707ddddc9360c70541aaef26d"
     },
     {
-      "bytes": 6907,
+      "bytes": 6914,
       "path": "runtime-web/_framework/Crisis.Runtime.Browser.wasm.gz",
-      "sha256": "c1e8b6d47c436f3a018a5cb1f784937dca41672568b72703b0d9384799c0699b"
+      "sha256": "5882000243bdce3985268c5bf609008f1ef93b9db4d5971893d645f92c78730c"
     },
     {
-      "bytes": 35076,
+      "bytes": 35078,
       "path": "runtime-web/_framework/Crisis.Runtime.pdb.gz",
-      "sha256": "2b67a8138dcc508c8970b7d59a74e9e5adad1817ede9720049fe3e92e90ead81"
+      "sha256": "cf505dad1e1ae31bc46ecc9d02e08d015659bf52580f4a08f38665c7eb122f2e"
     },
     {
-      "bytes": 233749,
+      "bytes": 234261,
       "path": "runtime-web/_framework/Crisis.Runtime.wasm",
-      "sha256": "c716ecd2889102fdc73eefc11570288ff78e5674a01d09b70d8be5af700b7285"
+      "sha256": "a4a8333d9ed05c8916a149098c673ae3fddca3ba59e5fe16a9e48fec3fe1e9a1"
     },
     {
-      "bytes": 78377,
+      "bytes": 78830,
       "path": "runtime-web/_framework/Crisis.Runtime.wasm.br",
-      "sha256": "ec8b499da82a3e2e0ea9d7df319be9c2a3752c2c32102e300732fa33ff2ef2a9"
+      "sha256": "5d73affc6df0cf106c904fee6d38f819fb951718ecad4909ca50686de341fd95"
     },
     {
-      "bytes": 94833,
+      "bytes": 95125,
       "path": "runtime-web/_framework/Crisis.Runtime.wasm.gz",
-      "sha256": "bb89e6114e94acb24713cb692331aaaed4bcc4e3225bc6d60f47e7fe3cd67e97"
+      "sha256": "efa5bf8c89f43ce30ef462871eb2edc6ba83cb7b301c12f429efc0d256bee0d3"
     },
     {
       "bytes": 40725,
@@ -3472,17 +3472,17 @@
     {
       "bytes": 19433,
       "path": "runtime-web/_framework/blazor.boot.json",
-      "sha256": "40d4ef075af38673548e1875c259c2344f30fefa6ee2460ce4fba3e965740e75"
+      "sha256": "8b92bfcd1e0b0d5a88145e0e8a324e7eff92de40fa98d94815b800f7ea698ceb"
     },
     {
-      "bytes": 8217,
+      "bytes": 8219,
       "path": "runtime-web/_framework/blazor.boot.json.br",
-      "sha256": "320e24795249b1206a647f7e801012ac322302833a2fde7ad11f520bd12098c2"
+      "sha256": "b5618657daa57352d11ea7cead3aafe0e1d362445724c4232f2db9e601245065"
     },
     {
-      "bytes": 8850,
+      "bytes": 8849,
       "path": "runtime-web/_framework/blazor.boot.json.gz",
-      "sha256": "d50a0120db4b71fe774acf043a3c9d057e0790eedb9c24b31298d678e0d3ab77"
+      "sha256": "fba83fad46065509578161a40e0466a1cd0739af22868615b03f74f4e3c6f256"
     },
     {
       "bytes": 60300,
@@ -3661,7 +3661,7 @@
     "originalGameComplete": false,
     "physicalIPhoneTested": false
   },
-  "sourceCommit": "1e501e252379113c79722c00ed17860280964f34",
+  "sourceCommit": "a2d51c2679f849b3e15cd24ea39c5294b6987b33",
   "sourceInventory": [
     {
       "bytes": 2051,
@@ -3744,9 +3744,9 @@
       "sha256": "e2be85e119379bbebdd4a9f78521568f1591827d74f996453ec902672e84b706"
     },
     {
-      "bytes": 5968,
+      "bytes": 6036,
       "path": ".github/workflows/wasm-arm-sequences.yml",
-      "sha256": "f7c1af79d8874f2b3cb10f4e9c3bddf508e4881e2c93c6b913508774b630dd11"
+      "sha256": "6a8e7154d8a4f31b46cc2339fdfffd8ade2a1c29358b65bf736db8896bfbc814"
     },
     {
       "bytes": 2603,
@@ -4254,9 +4254,9 @@
       "sha256": "0c331574c56dde74abdfd9cd6cb41ab931c42a78afc0b5d76f2bd6a63bb21f6f"
     },
     {
-      "bytes": 30064,
+      "bytes": 30728,
       "path": "game/index.html",
-      "sha256": "dc4dd893ec6bcd9b3ea47c4c060166034d51eb2012cdd9c93c1eb37af272e19a"
+      "sha256": "854526c31f08556968df407c3ff0956f0c0585d8ed9315aeee46ddb4d3a4965d"
     },
     {
       "bytes": 700,
@@ -4264,9 +4264,9 @@
       "sha256": "14471b3de4e3b0ed0c56442dcf6cfc4ef9e05617c32a5c368fdc9e92c3ded896"
     },
     {
-      "bytes": 5527,
+      "bytes": 8558,
       "path": "game/magazine-hud.mjs",
-      "sha256": "225272e8831c3eac1becf0f3d5b0334d4eddd0d866955fd286c5c55baf3b0f7d"
+      "sha256": "0b1e21b703cf451bc502834f6f9c0a0e1822b79bcacf23bb589b41344b377df3"
     },
     {
       "bytes": 5013,
@@ -4474,9 +4474,9 @@
       "sha256": "a03dfc8e7725e88f73d7cb22f21d5fb5b94f91d7a52087f91722a2cf95dacb5a"
     },
     {
-      "bytes": 20179,
+      "bytes": 20587,
       "path": "runtime/Engine/WeaponHost.cs",
-      "sha256": "b8b72d7f389d0bbc51942f01c65464d57aa3230c3bc6d0dfd52f4bdc476772e6"
+      "sha256": "da43ef06ae28f4a65d9bb4660f4015bbfda7abe6f2635432d38b85957f9867e4"
     },
     {
       "bytes": 3373,
@@ -4859,9 +4859,9 @@
       "sha256": "2fbc061ffeced9212d619f57e6f617fc0a8ef808866b1453c03aeeeac39dfbd3"
     },
     {
-      "bytes": 4065,
+      "bytes": 6397,
       "path": "scripts/magazine_hud_test.mjs",
-      "sha256": "f40656acad5b54761fe97c2be595ef16b50ad931154b564abb827392e6aff667"
+      "sha256": "c9abc9a8e075a1e4eefcef6fd50043489ddb22c990a773bae86150011cdabf83"
     },
     {
       "bytes": 3217,
@@ -5009,9 +5009,9 @@
       "sha256": "3ac1c7732167923c87cbb3f81ff1c223554b0ebb1698514bfcd13baddc4840b1"
     },
     {
-      "bytes": 14693,
+      "bytes": 16247,
       "path": "scripts/weapon_smoke.mjs",
-      "sha256": "f5559c090c6d00c660f7e68c5b5c3a1fce59c19bd686f6749f533a20ffea9cc8"
+      "sha256": "0426b1d1b918603e28d9a578cb2175c1c4ccf456f9b36472b3de3e315a946c89"
     },
     {
       "bytes": 4254,
