@@ -1,4 +1,4 @@
-name: Verify recovered LimbMuscle joint trauma
+name: Verify original LimbMuscle and live operator physiology
 on:
   push:
     branches: [feature/source-limb-muscle-joint-trauma]
