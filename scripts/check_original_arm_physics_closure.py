@@ -33,22 +33,24 @@ def audit():
     original_bytes = ARM.read_bytes()
     original = original_bytes.decode("utf-8")
     engine = ENGINE.read_text(encoding="utf-8")
+    other_engine_sources = [p for p in (ROOT / "runtime/Engine").rglob("*.cs") if p != ENGINE]
+    engine_all = engine + "\\n" + "\\n".join(p.read_text(encoding="utf-8") for p in other_engine_sources)
     checks = {key: bool(re.search(pattern, original, re.S)) for key, pattern in REQUIRED_SOURCE.items()}
     source_sha = hashlib.sha256(original_bytes).hexdigest()
     checks["immutable_original_sha256"] = source_sha == EXPECTED_ARM_SHA256
     # Deliberately scan only engine classes, not source references.
     # Presence of an API signature would not prove correct PhysX dynamics.
     runtime_api = {
-        "Rigidbody": bool(re.search(r"\bclass\s+Rigidbody\b", engine)),
-        "HingeJoint": bool(re.search(r"\bclass\s+HingeJoint\b", engine)),
-        "JointSpring": bool(re.search(r"\bstruct\s+JointSpring\b", engine)),
-        "AddForceAtPosition": "AddForceAtPosition" in engine,
+        "Rigidbody": bool(re.search(r"\bclass\s+Rigidbody\b", engine_all)),
+        "HingeJoint": bool(re.search(r"\bclass\s+HingeJoint\b", engine_all)),
+        "JointSpring": bool(re.search(r"\bstruct\s+JointSpring\b", engine_all)),
+        "AddForceAtPosition": "AddForceAtPosition" in engine_all,
     }
     return {
         "original_script": str(ARM.relative_to(ROOT)),
         "original_sha256": source_sha,
         "original_source_checks": checks,
-        "runtime_physics_api_in_Physics_cs": runtime_api,
+        "runtime_physics_api_in_Engine_sources": runtime_api,
         "source_integrity_pass": all(checks.values()),
         "arm_controller_compiled_by_this_check": False,
         "physics_playback_verified": False,
