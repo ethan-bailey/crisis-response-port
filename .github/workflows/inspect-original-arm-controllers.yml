@@ -1,4 +1,5 @@
 name: Recover original arm controller dependency evidence (private)
+# Source-review rerun: include the actual IKArmType developer enum for the next compiler dependency.
 on:
   push:
     branches: [feature/22-arm-controller]
