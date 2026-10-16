@@ -8,6 +8,8 @@
 
 Native Marksman Unity compilation **succeeded** in run 38800542438, but only logs were retained and actual browser gameplay is unverified. SDK 8 package run 38849201407 is compiled/package-verified, not freshly browser-tested or deployed. UI audit run 38892941728 identifies all 24 original UI types, not UI execution. Follow the exact commits, artifacts and limits in NEXT_AGENT.md.
 
+Latest scoped WASM expansion: [PR #21](https://github.com/ethan-bailey/crisis-response-port/pull/21), [run 38896212172](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38896212172) passed at `256b574eca62a902e23e9ba45d2b2542d64fe445`. Six unchanged original arm-sequence classes increase selected original C# files from 35 to 41. Seven prefabs / 21 frames load and compose in Chromium/WebKit; full animation playback remains unfinished. Private site artifact `12043404117`, evidence `12043827958`. Unmerged branch: `codex/wasm-original-arm-sequences`.
+
 ## Objective and nonnegotiable rules
 
 Reach the closest **verified 1:1 behavior and presentation** to the original Crisis Response game in an iPhone Safari browser. Preserve the game's recovered developer systems, original source assets and original numerical behavior; keep any C#/WASM and Rust compatibility work confined to required engine adapters. **Never create stand-in gameplay, speculative visuals, fabricated effects, or imply parity from a compile alone.** Native Unity results inform route validation and reference evidence; a compile alone does not establish parity.
