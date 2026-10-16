@@ -19,6 +19,7 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   await page.waitForFunction(()=>window.__gameState?.().weaponState||document.querySelector('#error').style.display==='block',null,{timeout:120000});
   assert.equal(await page.locator('#error').isVisible(),false,await page.locator('#error').textContent());await ready();
   await page.waitForFunction(()=>window.__gameState()?.originalHands?.drawnRenderers>=2,null,{timeout:30000});
+  await page.waitForFunction(()=>window.__gameState()?.sourceCutouts?.bound===19,null,{timeout:30000});
   const handState=await state();
   assert.equal(handState.originalHands.sourceRenderers,4,'All four original Quad hand MeshRenderers must load');
   assert.equal(handState.originalHands.uniqueSourceTextures,3,'Only the three recovered original hand textures');
