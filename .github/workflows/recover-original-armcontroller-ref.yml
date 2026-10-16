@@ -1,0 +1,43 @@
+name: Preserve original ArmController dependency source exactly once
+on:
+  push:
+    branches: [feature/22-armcontroller-source-closure]
+    paths: ['.github/workflows/recover-original-armcontroller-ref.yml']
+permissions:
+  contents: write
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: true}
+      - name: Verify private source archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(gh api repos/$GITHUB_REPOSITORY --jq .private)" = true
+          mkdir -p work/recovery
+          gh release download recovery-preservation-2026-10-15 --repo "$GITHUB_REPOSITORY" --pattern crisis-response-recovery-direct-v3-1.zip --dir work/recovery
+          echo 'cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d  work/recovery/crisis-response-recovery-direct-v3-1.zip' | sha256sum -c -
+      - name: Preserve untouched developer source and inspect required dependencies
+        run: |
+          set -euo pipefail
+          python3 scripts/recover_original_armcontroller_source.py work/recovery/crisis-response-recovery-direct-v3-1.zip | tee work/armcontroller-review.log
+      - name: Commit unchanged developer source to isolated branch only
+        run: |
+          set -euo pipefail
+          test "$(git ls-remote origin refs/heads/feature/22-armcontroller-source-closure | cut -f1)" = "$GITHUB_SHA"
+          git add source-reference/Original/Animation/ArmController.cs source-reference/Original/Animation/armcontroller-provenance.json
+          git -c user.name="Original Source Recovery" -c user.email="github-actions[bot]@users.noreply.github.com" commit -m "Preserve original ArmController code for real source closure without compiling placeholders"
+          git push origin HEAD:refs/heads/feature/22-armcontroller-source-closure
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: private-armcontroller-source-reference
+          path: |
+            work/armcontroller-review.log
+            source-reference/Original/Animation/armcontroller-provenance.json
+          retention-days: 14
+          if-no-files-found: warn
