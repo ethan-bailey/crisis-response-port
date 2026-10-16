@@ -1,0 +1,52 @@
+name: Source and package checks (fast)
+on:
+  pull_request:
+    branches: [develop/wasm, main]
+    paths:
+      - 'runtime/**'
+      - 'game/**'
+      - 'scripts/**'
+      - 'tools/**'
+      - '.github/workflows/pr-source-check.yml'
+permissions:
+  contents: read
+concurrency:
+  group: source-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  source-check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify original arm sequence provenance when selected
+        run: |
+          set -euo pipefail
+          if [ -f scripts/verify_original_arm_sequences.py ]; then
+            python3 scripts/verify_original_arm_sequences.py
+          fi
+      - name: Verify WASM package integrity regressions
+        run: |
+          set -euo pipefail
+          if [ -f scripts/package_wasm_site_test.py ]; then
+            python3 -m unittest discover -s scripts -p package_wasm_site_test.py -v
+          fi
+      - name: Install pinned browser source test dependencies
+        run: |
+          set -euo pipefail
+          if [ -f game/package-lock.json ]; then
+            npm ci --prefix game --ignore-scripts --no-audit --no-fund
+          fi
+      - name: Test source gameplay/input adapters
+        run: |
+          set -euo pipefail
+          if [ -f scripts/original_particle_event_binding_test.mjs ]; then
+            node --test scripts/browser_input_test.mjs scripts/animation_pose_test.mjs scripts/game_loading_test.mjs scripts/aim_direction_test.mjs scripts/source_effect_clock_test.mjs scripts/original_particle_source_test.mjs scripts/original_particle_mesh_source_test.mjs scripts/original_particle_event_binding_test.mjs
+          elif [ -f scripts/browser_input_test.mjs ]; then
+            node --test scripts/browser_input_test.mjs
+          fi
