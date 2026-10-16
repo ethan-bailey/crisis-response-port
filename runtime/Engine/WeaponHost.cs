@@ -182,6 +182,7 @@ public sealed class WeaponHost {
  public object Snapshot(){var mp=weapon.ComponentMagazine.transform.position;var mq=weapon.ComponentMagazine.transform.rotation;object Pose(Transform t)=>new{p=new[]{t.position.x,t.position.y,t.position.z},q=new[]{t.rotation.x,t.rotation.y,t.rotation.z,t.rotation.w}};
   object Arm(ArmIKSolver a)=>new{target=new[]{a.ikTarget.position.x,a.ikTarget.position.y,a.ikTarget.position.z},a.OnTarget,a.OnWeapon,a.HasSolution,smoothing=a.smoothing||a.Transitioning,handMode=(int)a.hand.CurrentMode,angle=a.hand.transform.localEulerAngles.z,
    upper=a.upperArm.transform.eulerAngles.z,lower=a.lowerArm.transform.eulerAngles.z,
+   grip=Pose(a==body.rightArm?weapon.rightHandAnchor:weapon.leftHandAnchor),grab=Pose(a.hand.grabPoint),
    bones=new{upper=Pose(a.upperArm.transform),lower=Pose(a.lowerArm.transform),hand=Pose(a.hand.transform)},
    handObjects=a.hand.SourceVisuals.Select(pair=>new{id=pair.Key,active=pair.Value.activeSelf}).ToArray()};// Presentation timing must use the same scaled Unity Time.time as the recovered weapon/effect events.
   return new{sourceTime=Time.time,ballistics=Ballistics?.Snapshot(),magazinePose=new{p=new[]{mp.x,mp.y,mp.z},q=new[]{mq.x,mq.y,mq.z,mq.w},visible=weapon.ComponentMagazine.gameObject.activeSelf,ik=Pose(weapon.ComponentMagazine.ikTarget),heldBy=weapon.ComponentMagazine.transform.parent==body.rightArm.hand.grabPoint?"right":weapon.ComponentMagazine.transform.parent==body.leftArm.hand.grabPoint?"left":null},shots=body.ShotsFired,
