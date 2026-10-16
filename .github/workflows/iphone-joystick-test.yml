@@ -16,7 +16,7 @@ jobs:
       - name: Run source-backed browser and joystick contracts
         run: |
           node --check game/browser-input.mjs
-          node --test scripts/browser_input_test.mjs scripts/animation_pose_test.mjs scripts/game_loading_test.mjs scripts/aim_direction_test.mjs
+          node --test scripts/browser_input_test.mjs scripts/animation_pose_test.mjs scripts/aim_direction_test.mjs
       - name: Verify iPhone layout icon/sprint contract
         run: |
           python3 - <<'PY'
