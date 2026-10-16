@@ -200,7 +200,9 @@ test('walk-to-sprint profile is continuous at transition and full pull reaches o
  move('pointermove',240,120);
  assert.deepEqual(input.movementProfile(1,walk,sprint),{magnitude:1,sprint:true});
  assert.equal(classes.has('sprinting'),true);
+ assert.equal(input.pressed('sprint'),true,'full-pull sprint must reach original InputHandler');
  move('pointerup',240,120);
+ assert.equal(input.pressed('sprint'),false,'spring release must reset source sprint action');
  assert.equal(classes.has('sprinting'),false);
 });
 
