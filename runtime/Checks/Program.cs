@@ -1,6 +1,88 @@
 using Crisis.Runtime;
 using System.Text.Json;
 
+if(args.Contains("--character-systems")){
+ var physiology=new Crisis.Runtime.Character.OriginalPhysiologyConditions();
+ physiology.InitializeBloodVolume(4500f);
+ physiology.InitializeVitalClock(0f,0f,0f);
+ physiology.SetBloodPressure(100f,190f,1f,0f);
+ var limbPhysiology=new Crisis.Runtime.Character.OriginalLimbPhysiology(physiology);
+ limbPhysiology.AddTrauma(40f);
+ limbPhysiology.CreateWound(new Crisis.Runtime.Character.OriginalWound(
+  5f,UnityEngine.Vector3.zero,UnityEngine.Vector3.forward,.01f,.25f));
+ var before=physiology.BloodVolume;
+ limbPhysiology.UpdateHemorrhaging(.02f);
+ if(limbPhysiology.WoundCavityVolume!=40f ||
+     !(limbPhysiology.InternalHemorrhaging>0f) ||
+     !(physiology.BloodVolume<before) ||
+     !(limbPhysiology.InternalBloodVolume>=0f))
+  throw new Exception("Original injury internal hemorrhage/circulation not advancing");
+ limbPhysiology.AddShock(200f);
+ if(Math.Abs(physiology.Shock-200f)>1e-5f)throw new Exception("Original limb shock propagation mismatch");
+ limbPhysiology.StopHemorrhage();
+ if(limbPhysiology.WoundCavityVolume!=0f||limbPhysiology.InternalBloodVolume!=0f)
+  throw new Exception("Original limb StopHemorrhage mismatch");
+ physiology.AddLungsTrauma(20f,300f);
+ if(physiology.LungsEffectiveness>=1f||physiology.LungsOxygen>=.75f)
+  throw new Exception("Original lungs trauma oxygen leakage mismatch");
+ physiology.UpdateVitalDynamics(.02f,1f,.3f,false,0f);
+ if(physiology.HeartRate<=0f||physiology.BloodPressure<=0f||physiology.RespirationRate<=0f)
+  throw new Exception("Original heart/breathing pressures did not advance");
+ var world=new UnityEngine.RuntimeWorld();
+ var host=new UnityEngine.GameObject("Source ragdoll operator",world);
+ var body=host.AddComponent<Crisis.Runtime.Weapons.CharacterBody>();
+ host.AddComponent<UnityEngine.Animator>();
+ host.AddComponent<UnityEngine.Rigidbody>().velocity=new UnityEngine.Vector3(1,0,0);
+ var bone=new UnityEngine.GameObject("Source upper arm",world);
+ var rb=bone.AddComponent<UnityEngine.Rigidbody>();
+ rb.drag=.7f;
+ var events=new List<(string kind,object value)>();
+ rb.KinematicChanged=state=>events.Add(("kinematic",state));
+ rb.GravityChanged=state=>events.Add(("gravity",state));
+ rb.DragChanged=value=>events.Add(("drag",value));
+ rb.PhysicsForceSink=(force,point,mode)=>events.Add(("force",mode));
+ var limb=bone.AddComponent<Crisis.Runtime.Weapons.Limb>();
+ limb.id=Crisis.Runtime.Weapons.LimbId.RightUpperArm;
+ limb.Body=body;body.limbs.Add(limb);
+ var injury=new Crisis.Runtime.Character.OriginalLimbPhysiology(physiology);
+ limb.LimbPhysiology=injury;
+ var hits=0;body.EventHit.AddListener(()=>hits++);
+ limb.AddTrauma(6f,UnityEngine.Vector3.zero,UnityEngine.Vector3.zero);
+ if(hits!=1||injury.WoundCavityVolume!=6f)
+  throw new Exception("Original limb injury event propagation mismatch");
+ body.SetKinematic(false);
+ if(rb.isKinematic||!events.Any(e=>e.kind=="force"&&Equals(e.value,UnityEngine.ForceMode.VelocityChange)))
+  throw new Exception("Original ragdoll kinematic release or source velocity transfer failed");
+ body.SetFloating(true);
+ if(rb.useGravity||rb.drag!=0f)throw new Exception("Source floating limb force flags failed");
+ body.SetFloating(false);
+ if(!rb.useGravity||Math.Abs(rb.drag-.7f)>1e-5f)
+  throw new Exception("Source gravity/drag restoration mismatch");
+ body.SetKinematic(true);
+ if(!rb.isKinematic)throw new Exception("Original character re-kinematic limb transition failed");
+ var target=new UnityEngine.GameObject("Original arm sequence target",world).transform;
+ var binding=new SourceArmTestBindings(target);
+ var arm=new Crisis.Runtime.Character.OriginalIKArmControllerPlayback(binding);
+ var seq=new IKArmSequenceRuntime();
+ seq.right.Add(new IKArmAnimationFrame{action=IKArmAction.Wait,time=.1f,callback=IKControllerInvoke.LowerWeapon});
+ seq.right.Add(new IKArmAnimationFrame{action=IKArmAction.Transition,time=.2f,transform=IKArmTarget.MagazinePocket,
+                                       callback=IKControllerInvoke.HolsterWeapon});
+ seq.left.Add(new IKArmAnimationFrame{action=IKArmAction.WaitForSiblingFrame,waitForSiblingFrame=0,
+                                      callback=IKControllerInvoke.ActivatePendingWeapon});
+ arm.Play(seq,0f);
+ arm.Update(.05f);
+ if(binding.Calls.Count!=0)throw new Exception("Original sequencer callback fired before timed wait");
+ arm.Update(.11f);arm.Update(.12f);arm.Update(.13f);arm.Update(.14f);
+ if(binding.Calls.Count==0||binding.Calls[0]!=IKControllerInvoke.LowerWeapon||
+     binding.Transitions!=1)
+  throw new Exception("Original IK sequencer timed callback/target transition mismatch");
+ arm.Update(.15f);arm.Update(.16f);
+ if(!binding.Calls.Contains(IKControllerInvoke.ActivatePendingWeapon))
+  throw new Exception("Original IK sibling-frame synchronization failed");
+ Console.WriteLine("{\"OriginalCharacterSystems\":\"pass\",\"RagdollPhysics\":true,\"SourceIKFrames\":true,\"Injury\":true}");
+ return;
+}
+
 if (args.Contains("--character-facing")) {
 {
     var w = new UnityEngine.RuntimeWorld();
@@ -146,4 +228,21 @@ if(args.Length>0){
     if(overSpeed.GetProperty("forceX").GetSingle()!=0f || overSpeed.GetProperty("reset").GetBoolean())
         throw new Exception("Original overspeed no-force behavior regression");
     Console.WriteLine("{\"CharacterBodySourceMovement\":\"pass\",\"AnalogEnhancement\":true}");
+}
+
+sealed class SourceArmTestBindings : Crisis.Runtime.Character.IOriginalIKArmBindings {
+ readonly UnityEngine.Transform target;
+ public readonly List<IKControllerInvoke> Calls=new();
+ public int Transitions;
+ public SourceArmTestBindings(UnityEngine.Transform target){this.target=target;}
+ public bool OnTarget(IKArmType type)=>true;
+ public float WeaponAimAlignment()=>0f;
+ public UnityEngine.Transform TargetTransform(IKArmTarget value,IKArmType type,out UnityEngine.Vector3 offset){
+  offset=UnityEngine.Vector3.zero;return target;
+ }
+ public void TargetTransition(IKArmType type,UnityEngine.Transform t,UnityEngine.Vector3 offset,float seconds) {
+  if(t!=target||seconds<=0)throw new Exception("Source IK target transform invalid");Transitions++;
+ }
+ public void StartWait(IKArmType type){}
+ public void Invoke(IKControllerInvoke method)=>Calls.Add(method);
 }
