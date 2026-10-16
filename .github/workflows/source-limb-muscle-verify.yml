@@ -1,0 +1,17 @@
+name: Verify recovered LimbMuscle joint trauma
+on:
+  push:
+    branches: [feature/source-limb-muscle-joint-trauma]
+    paths: [.github/workflows/source-limb-muscle-verify.yml]
+permissions: {contents: read}
+jobs:
+  source-muscle:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: tools/wasm-compile/global.json
+      - run: cp tools/wasm-compile/global.json global.json
+      - run: dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --character-systems
