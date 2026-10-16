@@ -105,6 +105,38 @@ Counts are source-asset/GUID/fileID tuples, not individual repeated fields.
 An empty unidentified-link column does not mean the scene is implemented.
 Cloud evidence will be appended after the original-data check completes.
 
+## Verified checkpoint
+
+- [Original-archive check 38892941728](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38892941728)
+  **SUCCESS**, exact tested code/workflow SHA
+  `f50b00110ba29f9fffa28046cf78405b1acd66ec`.
+- Private metadata artifact
+  [12041579699](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38892941728/artifacts/12041579699),
+  `original-six-scene-source-closure`. Contains full annotated graph,
+  `original-ui-bindings.json`, 18-test output, original archive verification
+  and input commit. Current expiry November 15, 2026.
+- **18/18** targeted tests, five independent file-ID reference vectors,
+  **24/24** original type bindings and **160/160** source hash claims passed.
+- Complete annotated graph SHA256:
+  `5cde6f38797f1cfc5b87449833abf77b27d9ce540987874a007a7b4473a2c2a7`.
+- Binding manifest SHA256:
+  `3aaf99ed782413cc0295e525dd7c7c4e1047247f97bb4b32f426ca7ce9701c55`.
+- Downloaded both reports and compared them with the independently generated
+  local outputs: **byte-for-byte match**. Later documentation commits need no
+  repeated audit or game compile.
+
+The old raw report remains preserved at artifact `12040833766`. The optional
+identity pass reclassifies UI references as identified assembly dependencies;
+it does not alter missing mesh references, invent `.meta` files or change
+original assets. Both raw/annotated scopes keep full closure and UI runtime
+execution explicitly false.
+
+A separate read-only review also confirmed the native Unity Marksman WebGL
+build finished successfully earlier; see
+[the exact native-build evidence and limits](NATIVE_WEBGL_RESULT_REVIEW_2026-10-16.md).
+That result is not evidence that full animations/maps/missions have been
+completed or that its browser runtime works.
+
 ## Reproduction
 
 ```sh
