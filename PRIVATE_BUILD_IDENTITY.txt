@@ -1,4 +1,1 @@
-Source-preserving Crisis Response compiled site snapshot.
-Exact verified input SHA: 252337d96b845f5b2eb6dd406c32a52a423d3e37
-Verified run: https://github.com/ethan-bailey/crisis-response-port/actions/runs/38909327063
-Incomplete original game. Private authentication only; no Git-triggered deployment.
+Private original C# WASM preview. Verified base game package: 252337d96b845f5b2eb6dd406c32a52a423d3e37 (Actions 38909327063). Recovered M4 magazine UI overlay: 337cee572d7047d5facacd8474a333860577e4a9 (Chromium/WebKit game smoke 38917878034, fast CI 38917888777). Exactly two game frontend files overlaid onto previously complete 725-file package; unchanged PhysX, scene and .NET runtime. Private original game; no automatic deployments. Not tested on physical iPhone.
