@@ -1,3 +1,9 @@
+## Owner-approved analog joystick enhancement — 2026-10-16 (feature in progress)
+
+The owner explicitly approved proportional horizontal iPhone joystick movement and beneficial, documented quality-of-life improvements even when they differ from strict original behavior. **Do not overwrite this with digital-only movement during original CharacterBody/PlayerController integration.** See `AGENTS.md` §8 and `docs/APPROVED_IPHONE_ANALOG_MOVEMENT.md`. `BrowserInput.bindMovementStick` now retains normalized thumb magnitude; `game/index.html` scales only the original PhysX movement speed target while preserving source acceleration, sprint cap and keyboard full-speed input. Focused tests are in `scripts/browser_input_test.mjs`. This change is not in the currently deployed iPhone preview and no full WASM device milestone has been claimed.
+
+---
+
 ## Latest verified integrated #33 + joystick + Wood impact iPhone preview — 2026-10-16
 
 **Stable owner-protected iPhone URL:** https://crisis-response-port-git-preview-w-6bd30d-ethanbaileymarsh-8332.vercel.app/game/
