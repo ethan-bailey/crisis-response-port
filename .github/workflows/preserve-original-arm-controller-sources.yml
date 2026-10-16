@@ -1,0 +1,69 @@
+name: Preserve original IK controller developer sources privately
+on:
+  push:
+    branches: [feature/22-arm-controller]
+    paths: ['.github/workflows/preserve-original-arm-controller-sources.yml']
+permissions:
+  contents: write
+jobs:
+  recover-original-source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Validate private immutable recovered original game
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = "refs/heads/feature/22-arm-controller"
+          test "$(gh api repos/$GITHUB_REPOSITORY --jq '.private')" = true
+          mkdir -p work/recovery
+          gh release download recovery-preservation-2026-10-15 --repo "$GITHUB_REPOSITORY" --pattern crisis-response-recovery-direct-v3-1.zip --dir work/recovery
+          echo 'cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d  work/recovery/crisis-response-recovery-direct-v3-1.zip' | sha256sum -c -
+      - name: Recover four original unmodified controller reference classes
+        run: |
+          set -euo pipefail
+          python3 scripts/preserve_original_arm_controller_sources.py work/recovery/crisis-response-recovery-direct-v3-1.zip --repo . | tee work/original-controller-preserve.json
+          git diff --check
+          python3 - <<'PY'
+          import hashlib,json,pathlib
+          p=pathlib.Path("source-reference/Original/Animation/source-provenance.json")
+          m=json.loads(p.read_text())
+          assert not m["originalControllerPlaybackImplemented"]
+          assert m["compiledOriginalClassNames"] == ["IKArmType"]
+          for name,c in m["classes"].items():
+              data=pathlib.Path(c["repositoryPath"]).read_bytes()
+              assert hashlib.sha256(data).hexdigest()==c["sha256"], name
+          print("SHA-verified 5 original classes; only IKArmType added to compiler glob")
+          PY
+      - name: Commit exact source blobs on isolated feature branch, never reset shared refs
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = "refs/heads/feature/22-arm-controller"
+          actual="$(git ls-remote origin refs/heads/feature/22-arm-controller | awk '{print $1}')"
+          if [ "$actual" != "$GITHUB_SHA" ]; then
+            echo 'Feature branch advanced since inspection; preserving private artifact but refusing stale write.'
+            exit 0
+          fi
+          git add source-reference/Original/Animation/
+          if git diff --cached --quiet; then
+            echo "Exact original source already committed"
+            exit 0
+          fi
+          git -c user.name="Crisis Port Source Recovery" -c user.email="github-actions[bot]@users.noreply.github.com" commit -m "Preserve four original unmodified IK/controller/character source files without compiling unresolved dependency graph"
+          git push origin HEAD:refs/heads/feature/22-arm-controller
+          git rev-parse HEAD | tee work/original-controller-source-commit.txt
+      - name: Preserve private recovery report and exact SHA for rollback
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: original-ik-controller-preservation-check
+          path: |
+            work/original-controller-preserve.json
+            work/original-controller-source-commit.txt
+            source-reference/Original/Animation/source-provenance.json
+          retention-days: 14
+          if-no-files-found: warn
