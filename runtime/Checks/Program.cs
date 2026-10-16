@@ -39,6 +39,20 @@ if (args.Contains("--character-dependencies")) {
        throw new Exception("Original axis-X capsule raycast failed");
     if(col.Raycast(new UnityEngine.Ray(new UnityEngine.Vector3(0,0,0),UnityEngine.Vector3.right),out _,10f))
        throw new Exception("Capsule raycast should ignore ray origin inside collider");
+    var physiology=new Crisis.Runtime.Character.OriginalPhysiologyConditions();
+    if(physiology.ShouldLoseFooting()||physiology.ShouldLoseConsciousness()||!physiology.ShouldRegainConsciousness())
+       throw new Exception("Original healthy physiology thresholds failed");
+    physiology.ShockResistance=.5f;
+    physiology.AddShock(5000f);
+    if(!physiology.ShouldLoseFooting()||Math.Abs(physiology.Shock-2500f)>1e-6f)
+       throw new Exception("Original shock resistance or footing threshold failed");
+    physiology.Concussion=.775f;
+    if(!physiology.ShouldLoseConsciousness()||physiology.ShouldRegainConsciousness())
+       throw new Exception("Original concussion unconsciousness threshold failed");
+    physiology.Concussion=.0f;physiology.BloodOxygen=.5f;
+    if(!physiology.ShouldLoseConsciousness())throw new Exception("Original blood oxygen threshold failed");
+    physiology.BloodOxygen=.9f;physiology.BrainTrauma=3f;
+    if(!physiology.ShouldLoseConsciousness())throw new Exception("Original brain trauma threshold failed");
     Console.WriteLine("{\"CharacterBodyDependencyPrimitives\":\"pass\"}");
     return;
 }
