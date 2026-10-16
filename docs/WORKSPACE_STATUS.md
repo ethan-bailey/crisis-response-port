@@ -115,3 +115,15 @@ Append commits, source provenance, targeted test conclusions, artifact IDs and e
 
 **Next exact task (#11):** capture native ParticleSystem execution reference for the source `InitialModule`, `EmissionModule`, `ShapeModule`, collision and renderer material shader of each of the 26 recovered effect systems. Then implement only verified original native module behaviors and renderer states; match native Unity 2017 event/position/seed traces, not guessed particle visuals. Do not close #11 or claim full-game parity based on the event binder.
 
+
+
+### Direct native source impact-emission contract — tested 2026-10-15 local
+
+The prior browser smoke passed manifest initialization and all original gameplay checks, but did not itself prove that an original C# `materialEffect` request was emitted during that particular live firing scenario. A separate fixture now **calls the actual recovered** `BallisticMaterial.SpawnEntryEffect` method with a source-backed scene material and an original projectile. The fixture temporarily enables the source performance setting only **within the isolated native test** (restoring it after), checks that the original pool instantiates the original hit-effect transport, then asserts the effect event has the recovered prefab GUID, `phase=entry`, and a finite original `UnityEngine.Time.time`. No engine/gameplay source or runtime scene setting is altered by this test.
+
+- Native C# fixture added at `d23cba466e5d846d3f5a98c483252def892592cf`, `runtime/Checks/BallisticContracts.cs`.
+- One targeted original particle + native C# workflow at `12f292657267d0c0521f00140c4ddec1976b7cd2`, `.github/workflows/verify-original-particle-assets.yml`.
+- **SUCCESS:** [Actions #38847238826](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38847238826), exact tested source SHA `12f292657267d0c0521f00140c4ddec1976b7cd2`. Native contract JSON specifically reports `"originalEntryEffectDelivered":true`; original material source/mesh normals/texture and particle bridge Node tests also passed. Private metadata artifact **`12023701591`**.
+- This is **native C# method-to-transport fidelity**, not a claim that the particular browser firing sequence generated particle events, that Unity ParticleSystem simulation exists, or that rendered effects match native Unity.
+- **Selective rollback:** revert `12f2926572` (workflow-only) and `d23cba466e` (native check only) after inspecting newer commits, not the original gameplay, particle source binder, Unity branch, or full browser runtime.
+
