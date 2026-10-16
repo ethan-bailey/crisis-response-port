@@ -54,7 +54,7 @@ def generate(path):
   dest=re.search(r"m_DstState: \{fileID: (\d+)\}",b)
   if not dest:raise ValueError("Missing transition destination "+ident)
   conditions=[{"mode":int(m.group(1)),"parameter":m.group(2),"threshold":float(m.group(3))}
-              for m in re.finditer(r"m_ConditionMode: (\d+)\s+\n\s*m_ConditionEvent: ([^\n]+)\s+\n\s*m_EventTreshold: ([-+0-9.eE]+)",b)]
+              for m in re.finditer(r"m_ConditionMode:[ \t]*(\d+)\r?\n[ \t]*m_ConditionEvent:[ \t]*([^\n]+)\r?\n[ \t]*m_EventTreshold:[ \t]*([-+0-9.eE]+)",b)]
   transitions[ident]={"destination":dest.group(1),"duration":float(prop(b,"m_TransitionDuration","0")),
     "hasExitTime":prop(b,"m_HasExitTime","0")=="1","fixedDuration":prop(b,"m_HasFixedDuration","0")=="1",
     "interruptionSource":int(prop(b,"m_InterruptionSource","0")),"conditions":conditions}
@@ -76,7 +76,7 @@ def generate(path):
   "sourceSha256":hashlib.sha256(raw).hexdigest(),"defaultState":default.group(1),
   "parameters":["Moving","Backwards","KneelRatio","CrippledRatio","MoveSpeed"],
   "states":states}
- if len(states)!=4 or sum(len(s["transitions"]) for s in states.values())!=11:
+ if len(states)!=4 or sum(len(s["transitions"]) for s in states.values())!=11 or any(not t["conditions"] for s in states.values() for t in s["transitions"]):
   raise ValueError("Original controller state/transition count mismatch")
  return obj
 if __name__=="__main__":
