@@ -33,6 +33,32 @@ public partial class Limb {
    }
   }
  }
+ // Called AFTER original Projectile/BallisticMaterial determines displaced
+ // tissue, impulse and shock. Never guess these from a screen tap or raw hit.
+ public void ApplyResolvedSourceImpact(float cavityVolume,float impactShock,
+      float boneVolume,float normalizedLocalY,Vector3 impulse,Vector3 worldPosition,
+      OriginalWound wound=null){
+  if(LimbPhysiology==null)throw new InvalidOperationException("Original limb has no Physiology component: "+id);
+  if(cavityVolume<0f||impactShock<0f||boneVolume<0f||
+    !float.IsFinite(cavityVolume)||!float.IsFinite(impactShock)||!float.IsFinite(boneVolume))
+    throw new ArgumentOutOfRangeException(nameof(cavityVolume));
+  AddTrauma(cavityVolume,impulse,worldPosition);
+  LimbPhysiology.AddShock(impactShock);
+  if(id==LimbId.Head||id==LimbId.Neck){
+   float value=impactShock*UnityEngine.Random.Range(.0005f,.002f)
+       * (id==LimbId.Head?1f:.25f);
+   Body.SourcePhysiology?.AddConcussion(value);
+  }
+  if(boneVolume>0f){
+   Body.SourcePhysiology?.AddShock(impactShock);
+   SourceMuscle?.AddJointTrauma(boneVolume,normalizedLocalY);
+   if((!Body.NoPlayerLimp||!Body.IsPlayer)&&
+      (id==LimbId.RightUpperLeg||id==LimbId.RightLowerLeg||
+       id==LimbId.RightFoot||id==LimbId.LeftUpperLeg||
+       id==LimbId.LeftLowerLeg||id==LimbId.LeftFoot))Body.CrippledRatio=1f;
+  }
+  if(wound!=null)LimbPhysiology.CreateWound(wound);
+ }
  public void SetFloating(bool enable){
   if(Rigidbody.useGravity != !enable){
    Rigidbody.useGravity=!enable;
@@ -71,6 +97,8 @@ public partial class CharacterBody {
  public readonly List<Limb> limbs=new();
  public bool PinnedBodies;
  public bool FloatingBodies;
+ public bool NoPlayerLimp;
+ public float CrippledRatio;
  public UnityEvent EventHit=new();
  public UnityEvent EventRagdoll=new();
  public UnityEvent EventUnconscious=new();
