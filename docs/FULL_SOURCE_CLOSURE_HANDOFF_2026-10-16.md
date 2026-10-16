@@ -89,3 +89,82 @@ weapon source claims were independently matched locally to unique original
 files and verified. Recovered source count is **1,333 Assembly-CSharp files**,
 **86 Assembly-CSharp-firstpass files** and **one AssetRipper patch**, not a
 claim that all 1,420 are the game's own code or are compiled into WASM.
+
+## Verified original-data checkpoint
+
+- [Corrected source audit run 38889549595](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38889549595)
+  **SUCCESS** at code/workflow SHA `3ceeb1ea99a258453fb7212b106e67e510266b6d`.
+- [Private metadata artifact 12040833766](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38889549595/artifacts/12040833766),
+  `original-six-scene-source-closure`, contains the complete JSON graph, compact
+  report, archive verification, input commit and **10/10** passing targeted tests.
+  Current expiry: November 15, 2026. Scripts remain in git to reproduce it.
+- **160/160 raw source hash claims verified**, covering 152 distinct original
+  source/assets/settings paths; **zero** original hash mismatches and zero
+  ambiguous GUIDs among **3,512** indexed GUIDs.
+- **1,194** unique scene-reachable assets; full inventory contains **2,412**
+  hashed asset/script records, including 1,333 main game C# source files,
+  86 first-pass files and one exporter patch. The current runtime includes
+  35 selected original C# files and 19 engine adapter files. These are file
+  inventories, not a completion percentage or proof of whole-class execution.
+- Exact complete `source-closure.json` SHA256:
+  `0790ea1312ae7d88cebb377dcd155cf83dd0bd78f0783ded78d366b5ecd3ca6a`.
+- Independent local reproduction used the SHA-verified original archive, all
+  54 current C# source inputs fetched at the baseline SHA and all four identical
+  provenance manifests. Every input hash was checked first. The complete local
+  report matched the downloaded cloud report **byte for byte**, including the
+  SHA above. No additional cloud audit/build is needed for documentation updates.
+
+| Scene | Reached assets | Unresolved links | Built-in links | Dummy shader exports |
+| --- | ---: | ---: | ---: | ---: |
+| Benchmark | 432 | 128 | 81 | 19 |
+| Disclaimer | 5 | 6 | 1 | 0 |
+| Marksman range | 417 | 123 | 79 | 14 |
+| Mission 01 | 960 | 158 | 169 | 34 |
+| Title | 262 | 164 | 52 | 2 |
+| Transition | 5 | 7 | 1 | 0 |
+
+Each link is a source-asset/GUID/fileID tuple, not an individual repeated field
+occurrence. Assets are shared between scenes, so do not sum columns as unique
+asset totals. No opaque serialized YAML graphs were encountered in this scan;
+that does not resolve binary assets' own hidden dependencies.
+
+## Concrete blockers and next bounded steps
+
+1. **Unity UI script identity:** GUID `f5f67c52d1564df4a8936ccd202a3bd8` appears
+   with **24 distinct component fileIDs** and has no exported `.meta` asset.
+   The original archive *does* preserve
+   `export/AuxiliaryFiles/GameAssemblies/UnityEngine.UI.dll` (241,152 bytes,
+   SHA256 `30cf854b3db333ba8a3ce47c2091ea11387509861654d8209c1879f7bcb27eeb`).
+   Next derive the exact native MonoScript/assembly type bindings from the
+   original assembly/exporter rules before importing UI component behavior.
+   Do not suppress those IDs or create replacement menu/UI behavior.
+2. **Missing .308 casing mesh:** GUID `b4b69dc6c74eeb54cbd22d28e37f9a19`,
+   fileID `4300000`, is the only other unresolved external GUID. It is referenced
+   by `Assets/Resources/weapons/ammunition/casings/Casing .308.prefab` and the
+   two `ammunition/marksman/Marksman round .308 Winchester FMJ.prefab` and
+   `Marksman round .308 Winchester SP.prefab` assets. There is no matching
+   recovered `.meta`; preserve this missing-source flag until original geometry
+   is found or an explicitly approved substitution is documented separately.
+3. **Real shader behavior:** **35 unique reachable shader exports** carry the
+   `DummyShaderTextExporter` marker, including 34 in Mission 01's graph. The
+   blocker extends beyond the two previously audited window shaders to original
+   materials and post effects. Copying these dummy sources cannot prove parity.
+4. **Full C# and dynamic resource closure:** lexical candidates include 40
+   Resources calls, 64 navigation references, 208 particle references, nine
+   scene-transition calls, 22 filesystem namespace sites, two registry sites,
+   two threading sites and two legacy-networking sites. Full paths/lines are
+   in the JSON. Resolve mandatory source symbol/lifecycle dependencies before
+   adding original classes to the current compile; do not use fake stubs to
+   turn an incomplete game into a green compile.
+
+The two missing external GUIDs comprise **25 distinct GUID/fileID pairs**.
+Built-in engine links remain separate, explicitly unimplemented dependencies.
+The native game assembly is also preserved as
+`export/AuxiliaryFiles/GameAssemblies/Assembly-CSharp.dll` (1,482,240 bytes,
+SHA256 `f5b73879f976e082ce91c238fd3443675ecc18dda00e51e6046b75303656a0cd`).
+Use original metadata/reference behavior, not guessed source rewrites.
+
+This is a verified **inventory milestone**, not a new playable build or full
+six-scene source closure. Package PR #19 and its SDK-8 game archive remain the
+latest actual compile checkpoint. No .NET/Unity/browser rebuild, private-site
+deployment, main merge or edit to recovered gameplay occurred in this session.
