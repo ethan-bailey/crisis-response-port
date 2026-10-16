@@ -1,5 +1,8 @@
 name: Manual verified WASM preview snapshot
 on:
+  push:
+    branches: [feature/stage-verified-33-iphone]
+    paths: [.github/workflows/manual-verified-wasm-preview.yml]
   workflow_dispatch:
     inputs:
       source_run_id:
@@ -23,7 +26,7 @@ jobs:
   stage-verified-site:
     name: Verify and stage one complete tested site for explicit protected deployment
     runs-on: ubuntu-24.04
-    timeout-minutes: 12
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,19 +35,20 @@ jobs:
       - name: Require owner-private repository and previously successful WASM run
         env:
           GH_TOKEN: ${{ github.token }}
-          RUN_ID: ${{ inputs.source_run_id }}
-          SOURCE_SHA: ${{ inputs.source_sha }}
+          RUN_ID: 38963544872
+          SOURCE_SHA: a026cf9645e8d144ece0aeebe0f274ced8447c08
         run: |
           set -euo pipefail
           test "$(gh api repos/$GITHUB_REPOSITORY --jq .private)" = true
           [[ "$RUN_ID" =~ ^[0-9]+$ ]]
           [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          gh run watch "$RUN_ID" --repo "$GITHUB_REPOSITORY" --exit-status
           gh run view "$RUN_ID" --repo "$GITHUB_REPOSITORY" --json headSha,conclusion --jq '.conclusion + " " + .headSha' | grep -Fx "success $SOURCE_SHA"
       - name: Download the existing proven compiled package, not a new WASM build
         env:
           GH_TOKEN: ${{ github.token }}
-          RUN_ID: ${{ inputs.source_run_id }}
-          SOURCE_SHA: ${{ inputs.source_sha }}
+          RUN_ID: 38963544872
+          SOURCE_SHA: a026cf9645e8d144ece0aeebe0f274ced8447c08
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/wasm-package" "$RUNNER_TEMP/wasm-evidence" "$RUNNER_TEMP/wasm-site"
@@ -72,8 +76,8 @@ jobs:
           PY
       - name: Stage a single reusable protected preview snapshot with all ignored binaries
         env:
-          RUN_ID: ${{ inputs.source_run_id }}
-          SOURCE_SHA: ${{ inputs.source_sha }}
+          RUN_ID: 38963544872
+          SOURCE_SHA: a026cf9645e8d144ece0aeebe0f274ced8447c08
         run: |
           set -euo pipefail
           branch="preview/wasm-current-iphone"
