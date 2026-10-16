@@ -1,0 +1,28 @@
+{
+  "archiveSha256": "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
+  "bundleSha256": "4fd3940e554f406ceee8cfc210a82a09f57cb9dc2f5f0211c74b8cedacb4fa25",
+  "originalFiles": {
+    "Assets/GameObject/Apply gauze.prefab": "7262845b5531f5e770b5cab1e7072f1299bc4faee8d84a1cd1b01cb37de87bfb",
+    "Assets/GameObject/Apply gauze.prefab.meta": "cfedc465d3a14e3a89ed7521cfdec2579ee2ab35b6cfa4a42886ba39dbb6f692",
+    "Assets/GameObject/Holster pistol.prefab": "2f4aa20255d361a2725879c2d6df2cd4f15ab6c7d6c2306efba40f24909c2ee3",
+    "Assets/GameObject/Holster pistol.prefab.meta": "5fb86b5f0b12f49cf668b0175391d5d24738d05d91a60b9e1fe08b95c45e51a9",
+    "Assets/GameObject/Lower weapon.prefab": "741bad97110ccea44742705dee120bf970e6efe6cb60d93a31547edf185c6567",
+    "Assets/GameObject/Lower weapon.prefab.meta": "915c504eca86d0525b7abf836f1f5c97d892a0ad8a3d054555ee05cda13b4b8b",
+    "Assets/GameObject/Pickup grenade.prefab": "c87b99b28d24aa2ab4af89f02a5420ef2f8374c824368010c35a3c2b9237d4e7",
+    "Assets/GameObject/Pickup grenade.prefab.meta": "8ac990ae52872be44d12bbfb9fd627277e49f3a3e0bb3a61296971c277e96e0c",
+    "Assets/GameObject/Raise shoulder weapon.prefab": "6e9525f3b896c162d8290de64335a8b63056cad499d25d0701da2d8119e0645e",
+    "Assets/GameObject/Raise shoulder weapon.prefab.meta": "9a2d276ffae43dca6e86e33e361122185819603726db268455f8c7589f7fc109",
+    "Assets/GameObject/Return grenade.prefab": "fd9e0565ce4f977670dfef0421e5a18aa9c7271a652d45ad2d5fd8a69ecaeb89",
+    "Assets/GameObject/Return grenade.prefab.meta": "905389a8b008e7460e9de08d89eff8458287f9e675d4ce307c3cb491e84f812d",
+    "Assets/GameObject/Unholster pistol.prefab": "c0356970e9828e981b4d0d4b23bfbc9499d6544a4994b748a31012489e7c06de",
+    "Assets/GameObject/Unholster pistol.prefab.meta": "129583d4b2aba4db5e8edfb7dde6b22fd2a802ca4e0509de95299da0a0aa8092",
+    "Assets/Scripts/Assembly-CSharp/IKArmAction.cs": "a0f55abc4b7a4e24287ace9f27ba9042260c5f57d16c1cf79bf7b5837d603a53",
+    "Assets/Scripts/Assembly-CSharp/IKArmAnimationFrame.cs": "2c86f77d12425c4684ba4662319e53ba598b98f42dbdad43d0e00c65109769bd",
+    "Assets/Scripts/Assembly-CSharp/IKArmSequence.cs": "4eb0cc20d41d443dc24458c75b00d20a3199f60b4eee47125be82572fab417dd",
+    "Assets/Scripts/Assembly-CSharp/IKArmSequenceRuntime.cs": "68094854bb942efd098758eb7f01af933dd7d4171588527e1fa0d7fc54c7e924",
+    "Assets/Scripts/Assembly-CSharp/IKArmTarget.cs": "41f5e8658bd9b157a5462ddbec9c83245f48851741f51386468a9c23f0107892",
+    "Assets/Scripts/Assembly-CSharp/IKControllerInvoke.cs": "a72a4dd99c730a855882d373b6def838a9812a6dc1141985bde5b721d928e37f"
+  },
+  "originalSourcesUnmodified": true,
+  "playbackImplemented": false
+}

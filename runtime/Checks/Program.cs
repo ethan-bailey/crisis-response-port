@@ -2,6 +2,7 @@ using Crisis.Runtime;
 using System.Text.Json;
 
 Console.WriteLine(RuntimeContracts.Run());
+Console.WriteLine(ArmSequenceContracts.Run("game/assets/original-arm-sequences.json"));
 if(File.Exists("game/assets/presentation.json.gz"))Console.WriteLine(PresentationContracts.Run("game/assets/presentation.json.gz"));
 if(File.Exists("game/assets/weapon-runtime.json.gz"))Console.WriteLine(WeaponContracts.Run("game/assets/weapon-runtime.json.gz"));
 if(File.Exists("game/assets/ballistics.json.gz"))Console.WriteLine(BallisticContracts.Run());

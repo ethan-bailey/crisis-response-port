@@ -13,6 +13,7 @@ builder.Services.AddScoped(_=>new HttpClient{BaseAddress=new Uri(builder.HostEnv
 await builder.Build().RunAsync();
 
 public static class RuntimeBridge {
+    [JSInvokable] public static string ComposeOriginalArmSequences(string bundle,string namesJson)=>OriginalArmSequences.Compose(bundle,namesJson);
     static OriginalInputHost input;
     static Crisis.Runtime.Weapons.WeaponHost weapons;
     [JSInvokable] public static string InitializeWeapons(string json){input??=new OriginalInputHost(new RuntimeWorld());weapons=new(json,input.handler,presentation.QueryWorld){queryWorld=presentation.QueryWorld,ballisticMask=presentation.BallisticMask};return "ready";}
