@@ -1,6 +1,14 @@
 # Protected manual iPhone WASM preview — October 16, 2026
 
-## Corrected link and exact repair — 2026-10-16
+## Latest M4 HUD device preview (supersedes earlier previews)
+
+**Use this stable preview alias:** https://crisis-response-port-git-preview-w-6bd30d-ethanbaileymarsh-8332.vercel.app/game/
+
+Vercel deployment `dpl_DnejUSMqWQmymF41oHNG13BkumWR`, ready, commit `369cdc2c059c0030407e1496962ffe74894c478a` from private `preview/wasm-current-iphone`, source gameplay SHA `1e501e252379113c79722c00ed17860280964f34`. Actual merged original C#/WASM/PhysX/Chromium+WebKit run [#38919612434](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38919612434) SUCCESS (24 steps) captured original M4 magazine screenshots, verified ammunition and drag reload. Static snapshot staging [#38920314476](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38920314476) SUCCESS, **726/726** declared package files in Git index and hash-checked; required original mission scene and PhysX generated assets present. This supersedes earlier older preview IDs. The short-lived trigger used for staging was removed; reusable manual staging workflow on `main` is dispatch-only, and Vercel Git auto deployments remain off.
+
+**Limits:** Hosting reports READY and stable alias mapping is confirmed, but accessing protected preview URLs requires owner authentication; remote browser fetching was rejected 403, so physical iPhone loading and touch behavior are still unverified. This is a partial port, not 1:1 game parity. The x-ray cutaway uses CSS cartridge marks over the developer's recovered original M4 magazine texture, not generated art.
+
+## Historical corrected earlier preview — 2026-10-16
 
 **Current protected game link:** https://crisis-response-port-fb7x1neld-ethanbaileymarsh-8332.vercel.app/game/
 

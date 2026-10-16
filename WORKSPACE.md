@@ -10,7 +10,11 @@
 
 Latest proven integrated executable build: [Actions #38901664939](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38901664939), source `1264c0b4579076b82e1b6b21955469313779fe39`, private site artifact `12046137813`, private evidence `12046012744`. Organizational/doc changes on this branch were **not** recompiled. Root `vercel.json` disables automatic deployments; only protected manual iPhone test releases.
 
-## Corrected private iPhone preview and efficient release gate
+## Current source-backed M4 magazine touch HUD on iPhone preview
+
+**[Open latest original M4 magazine HUD preview](https://crisis-response-port-git-preview-w-6bd30d-ethanbaileymarsh-8332.vercel.app/game/)**. Verified `develop/wasm` gameplay source SHA `1e501e252379113c79722c00ed17860280964f34`, [24-step C#/WASM+browser run #38919612434](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38919612434) PASS, 726-file snapshot SHA `369cdc2c059c0030407e1496962ffe74894c478a`, deployment `dpl_DnejUSMqWQmymF41oHNG13BkumWR` READY. Original `Magazine AR 30 round` developer texture, precise live ammo count, shot feedback and drag-to-reload were validated in both Chromium and WebKit, with screenshots. The page is still owner-authenticated and actual device Safari testing is pending; physical magazine/weapon/character parity incomplete. Older previous preview URLs below are historical.
+
+## Historical previous device preview and efficient release gate
 
 **Test this repaired version, not the previous 404 version:** https://crisis-response-port-fb7x1neld-ethanbaileymarsh-8332.vercel.app/game/. Vercel preview `dpl_7T1JZtAUjQLRZw2mys7i5xyh8tvH` READY, private snapshot SHA `4c1b0d27014b1aa9776fd7da46b7f46630b50be2`. [Repair #38913180609](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38913180609) verified all 725 original compiled package files from previously successful WASM source SHA `252337d96b845f5b2eb6dd406c32a52a423d3e37`. Old preview had a 404 because ignored scene and PhysX files were not committed. Real protected website and iPhone Safari execution have not yet been independently confirmed.
 
