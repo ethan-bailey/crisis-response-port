@@ -43,6 +43,11 @@ public partial class CharacterBody:Component {
  public bool IsPlayer=true,IsManipulatingEquipment;public float Direction=1,LastFiredTimestamp;public bool IsUsingPrecision;public float RotationY=>Direction==1?0:180;public int ShotsFired;
  public float Position=>transform.position.x;public object AudioInstigator=>null;
  public CharacterAction PendingAction;bool triggerPulled;
+ // Source arm state: default Operator rigidbodies are authored kinematic.
+ // CharacterBody/physiology ragdoll transitions must supply future changes.
+ public bool Kinematic=true;
+ public GrenadeReference.Type PendingGrenadeType;
+ public Transform stunGrenadeAnchor,fragGrenadeAnchor;
  public bool InsertSingleRound()=>throw new NotSupportedException("Only original detachable-magazine M4 reload is active");
 }
 public class AmmunitionStack {public int count;public string caliber;}
@@ -84,6 +89,7 @@ public sealed class MissionView {public float LastWeaponFireTimestamp;}
 public sealed class WeaponHost {
  JsonElement config;readonly List<global::Projectile> projectiles=[];public RuntimeWorld queryWorld;public int ballisticMask;
  readonly RuntimeWorld world;readonly WeaponBase weapon;readonly CharacterBody body;readonly ChangeMagazine reload;readonly WorkBolt workBolt;WeaponTask task;
+ readonly OriginalArmPhysicsHost armPhysics;
  readonly Dictionary<string,Transform> weaponTransforms=[];readonly Dictionary<string,Transform> operatorTransforms=[];readonly Dictionary<string,Transform> magazineTransforms=[];
  public readonly WeaponEffects effects=new();
  public float Kick=>weapon.RecoilKick;public float Climb=>weapon.RecoilClimb;public bool Manipulating=>body.IsManipulatingEquipment;
@@ -148,6 +154,7 @@ public sealed class WeaponHost {
    a.InitializeSourcePose();a.SetOnWeapon(weapon,.1f,right);return a;
   }
   body.rightArm=Arm(true);body.leftArm=Arm(false);
+  armPhysics=new OriginalArmPhysicsHost(c.GetProperty("armPhysics"),operatorTransforms,body,world);
   reload=bg.AddComponent<ChangeMagazine>();reload.isPlayer=true;reload.OnAwake();workBolt=bg.AddComponent<WorkBolt>();workBolt.OnAwake();effects.events.Clear();
  }
  public object Step(string json){world.MakeCurrent();using var d=JsonDocument.Parse(json);var f=d.RootElement;
@@ -155,6 +162,7 @@ public sealed class WeaponHost {
   foreach(var pair in f.GetProperty("operatorTransforms").EnumerateObject())if(operatorTransforms.TryGetValue(pair.Name,out var target))SetWorld(target,pair.Value);
   SetWorld(weapon.transform,f.GetProperty("weaponPose"));
   body.rightArm.Step();body.leftArm.Step();
+  armPhysics.Step(f,world);
   // Original CharacterBody.QueryTrigger clears one-frame requests; manipulation blocks new pulls.
   if(f.GetProperty("fire").GetBoolean()&&!body.IsManipulatingEquipment)body.PullTrigger();
   if(task==null&&f.GetProperty("reload").GetBoolean()){body.PendingAction=CharacterBody.CharacterAction.SwitchMagazine;task=reload;task.OnStart();}
@@ -176,7 +184,7 @@ public sealed class WeaponHost {
    // Send source-owned magazine capacity and chamber state to the browser.
    // Future weapon hosts must supply their own actual equipped weapon identity;
    // a merely loaded Glock visual is NOT a playable equipped Glock.
-   weaponId="M4A1",magazineCapacity=weapon.Magazine?.capacity??weapon.ComponentMagazine.capacity,
+   physicalArms=armPhysics.Snapshot(),weaponId="M4A1",magazineCapacity=weapon.Magazine?.capacity??weapon.ComponentMagazine.capacity,
    magazine=weapon.Magazine?.roundCount??0,reserve=body.Equipment.PrimaryMagazines.Where(m=>!ReferenceEquals(m,weapon.Magazine)).Sum(m=>m.roundCount),chamberLive=weapon.cyclingBolt.Live,bolt=weapon.cyclingBolt.Status.ToString(),reloading=task!=null,manipulating=body.IsManipulatingEquipment,kick=Kick,climb=Climb,right=Arm(body.rightArm),left=Arm(body.leftArm),events=effects.events.ToArray()};}
 }
 }
