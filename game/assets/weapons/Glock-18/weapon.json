@@ -1,0 +1,580 @@
+{
+  "sourcePrefab": "Assets/Resources/weapons/Glock-18.prefab",
+  "nodes": [
+    {
+      "transformFileID": "4313026266067498",
+      "gameObjectFileID": "1709254077376921",
+      "name": "Glock-18",
+      "parentGameObjectFileID": null,
+      "path": "",
+      "position": [
+        0.0,
+        0.0,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4642988549198181",
+      "gameObjectFileID": "1730242686860875",
+      "name": "Transform",
+      "parentGameObjectFileID": "1709254077376921",
+      "path": "Transform",
+      "position": [
+        0.015,
+        0.01,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4946936116752871",
+      "gameObjectFileID": "1724804207875695",
+      "name": "Slots",
+      "parentGameObjectFileID": "1730242686860875",
+      "path": "Transform/Slots",
+      "position": [
+        0.014999967,
+        0.0049999813,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4711914853252429",
+      "gameObjectFileID": "1618682377417806",
+      "name": "Magazine",
+      "parentGameObjectFileID": "1724804207875695",
+      "path": "Transform/Slots/Magazine",
+      "position": [
+        -0.0176,
+        0.0372,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4587397909062814",
+      "gameObjectFileID": "1703437598541787",
+      "name": "Muzzle",
+      "parentGameObjectFileID": "1724804207875695",
+      "path": "Transform/Slots/Muzzle",
+      "position": [
+        0.1283,
+        0.0477,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.7071068,
+        0.0,
+        0.7071068
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4694121525821480",
+      "gameObjectFileID": "1884547391421755",
+      "name": "Rail",
+      "parentGameObjectFileID": "1724804207875695",
+      "path": "Transform/Slots/Rail",
+      "position": [
+        0.0677,
+        0.0238,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4017697238300914",
+      "gameObjectFileID": "1099118695303065",
+      "name": "Collider",
+      "parentGameObjectFileID": "1730242686860875",
+      "path": "Transform/Collider",
+      "position": [
+        0.0,
+        0.0,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4733206282342372",
+      "gameObjectFileID": "1243736805655561",
+      "name": "Collider 1",
+      "parentGameObjectFileID": "1099118695303065",
+      "path": "Transform/Collider/Collider 1",
+      "position": [
+        0.0,
+        0.0,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4089843903986396",
+      "gameObjectFileID": "1061268324235159",
+      "name": "Collider 2",
+      "parentGameObjectFileID": "1099118695303065",
+      "path": "Transform/Collider/Collider 2",
+      "position": [
+        0.0,
+        0.0,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4808113985169905",
+      "gameObjectFileID": "1587765826080250",
+      "name": "Collider 3",
+      "parentGameObjectFileID": "1099118695303065",
+      "path": "Transform/Collider/Collider 3",
+      "position": [
+        0.0,
+        0.0,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        -0.17077798,
+        0.98530954
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4900271049623953",
+      "gameObjectFileID": "1709867586078768",
+      "name": "Frame",
+      "parentGameObjectFileID": "1730242686860875",
+      "path": "Transform/Frame",
+      "position": [
+        0.0493,
+        -0.0084,
+        0.0035
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.1851154,
+        0.12138464,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4220653531496868",
+      "gameObjectFileID": "1044625135789424",
+      "name": "Back",
+      "parentGameObjectFileID": "1709867586078768",
+      "path": "Transform/Frame/Back",
+      "position": [
+        0.0,
+        0.0,
+        -0.0125
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        -1.0
+      ]
+    },
+    {
+      "transformFileID": "4291844617409189",
+      "gameObjectFileID": "1589667821646929",
+      "name": "Slide",
+      "parentGameObjectFileID": "1730242686860875",
+      "path": "Transform/Slide",
+      "position": [
+        0.057500005,
+        0.054999948,
+        0.005
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.16851911,
+        0.026166527,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4833703512093738",
+      "gameObjectFileID": "1372920208702427",
+      "name": "Back",
+      "parentGameObjectFileID": "1589667821646929",
+      "path": "Transform/Slide/Back",
+      "position": [
+        0.0,
+        -0.0,
+        -0.015
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        -1.0
+      ]
+    },
+    {
+      "transformFileID": "4726790013014859",
+      "gameObjectFileID": "1025901758691103",
+      "name": "Slide grip",
+      "parentGameObjectFileID": "1589667821646929",
+      "path": "Transform/Slide/Slide grip",
+      "position": [
+        -0.497,
+        -0.09,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4436073260064126",
+      "gameObjectFileID": "1985305603660343",
+      "name": "Barrel",
+      "parentGameObjectFileID": "1730242686860875",
+      "path": "Transform/Barrel",
+      "position": [
+        0.0446,
+        0.0527,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4801075752484240",
+      "gameObjectFileID": "1705390221481576",
+      "name": "Transform",
+      "parentGameObjectFileID": "1985305603660343",
+      "path": "Transform/Barrel/Transform",
+      "position": [
+        0.0577,
+        -0.0008,
+        -0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        0.124553755,
+        0.028041681,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4000955326284023",
+      "gameObjectFileID": "1977153420339851",
+      "name": "Right",
+      "parentGameObjectFileID": "1705390221481576",
+      "path": "Transform/Barrel/Transform/Right",
+      "position": [
+        -0.051,
+        -0.04,
+        0.002
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        0.9416378,
+        0.91359067,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4581786255902400",
+      "gameObjectFileID": "1336590748365959",
+      "name": "Left",
+      "parentGameObjectFileID": "1705390221481576",
+      "path": "Transform/Barrel/Transform/Left",
+      "position": [
+        -0.051,
+        -0.04,
+        -0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        0.9416378,
+        0.91359067,
+        -1.0
+      ]
+    },
+    {
+      "transformFileID": "4722951815217645",
+      "gameObjectFileID": "1256069497284392",
+      "name": "Chamber",
+      "parentGameObjectFileID": "1985305603660343",
+      "path": "Transform/Barrel/Chamber",
+      "position": [
+        0.0,
+        0.0,
+        -0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        0.4
+      ]
+    },
+    {
+      "transformFileID": "4924050743934937",
+      "gameObjectFileID": "1161607090078389",
+      "name": "Runtime muzzle",
+      "parentGameObjectFileID": "1985305603660343",
+      "path": "Transform/Barrel/Runtime muzzle",
+      "position": [
+        0.09869997,
+        0.0,
+        -0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4043919389829319",
+      "gameObjectFileID": "1002669891404536",
+      "name": "Right hand anchor",
+      "parentGameObjectFileID": "1730242686860875",
+      "path": "Transform/Right hand anchor",
+      "position": [
+        0.0,
+        0.0,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4743393880019028",
+      "gameObjectFileID": "1470112387431263",
+      "name": "Left hand anchor",
+      "parentGameObjectFileID": "1730242686860875",
+      "path": "Transform/Left hand anchor",
+      "position": [
+        -0.01999998,
+        -0.04000002,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  ],
+  "renderers": [
+    {
+      "gameObjectFileID": "1709867586078768",
+      "name": "Frame",
+      "texture": "textures/material_00.png",
+      "material": "Assets/Material/frame.mat"
+    },
+    {
+      "gameObjectFileID": "1044625135789424",
+      "name": "Back",
+      "texture": "textures/material_00.png",
+      "material": "Assets/Material/frame.mat"
+    },
+    {
+      "gameObjectFileID": "1589667821646929",
+      "name": "Slide",
+      "texture": "textures/material_01.png",
+      "material": "Assets/Material/slide right.mat"
+    },
+    {
+      "gameObjectFileID": "1372920208702427",
+      "name": "Back",
+      "texture": "textures/material_02.png",
+      "material": "Assets/Material/slide left.mat"
+    },
+    {
+      "gameObjectFileID": "1977153420339851",
+      "name": "Right",
+      "texture": "textures/material_03.png",
+      "material": "Assets/Material/barrel.mat"
+    },
+    {
+      "gameObjectFileID": "1336590748365959",
+      "name": "Left",
+      "texture": "textures/material_04.png",
+      "material": "Assets/Material/barrel_0.mat"
+    }
+  ],
+  "stats": {
+    "roundsPerMinute": 1200.0,
+    "reloadTime": 1.0,
+    "defaultAmmunition": "Assets/Resources/weapons/ammunition/9-FMJ.prefab"
+  },
+  "nodeCount": 23,
+  "rendererCount": 6,
+  "textureCount": 5
+}

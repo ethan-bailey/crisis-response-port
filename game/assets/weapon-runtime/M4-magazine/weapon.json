@@ -1,0 +1,211 @@
+{
+  "sourcePrefab": "Assets/Resources/weapons/components/Magazine AR 30 round.prefab",
+  "nodes": [
+    {
+      "transformFileID": "4061268324235159",
+      "gameObjectFileID": "1709254077376921",
+      "name": "Magazine AR 30 round",
+      "parentGameObjectFileID": null,
+      "path": "",
+      "position": [
+        0.0,
+        0.0,
+        -0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4709867586078768",
+      "gameObjectFileID": "1730242686860875",
+      "name": "Transform",
+      "parentGameObjectFileID": "1709254077376921",
+      "path": "Transform",
+      "position": [
+        0.045,
+        -0.0777,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.08,
+        0.18,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4044625135789424",
+      "gameObjectFileID": "1724804207875695",
+      "name": "Front",
+      "parentGameObjectFileID": "1730242686860875",
+      "path": "Transform/Front",
+      "position": [
+        0.0,
+        0.0,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4025901758691103",
+      "gameObjectFileID": "1618682377417806",
+      "name": "Back",
+      "parentGameObjectFileID": "1730242686860875",
+      "path": "Transform/Back",
+      "position": [
+        0.0,
+        0.0,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        -1.0
+      ]
+    },
+    {
+      "transformFileID": "4977153420339851",
+      "gameObjectFileID": "1703437598541787",
+      "name": "Collider",
+      "parentGameObjectFileID": "1730242686860875",
+      "path": "Transform/Collider",
+      "position": [
+        0.0,
+        0.0,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4336590748365959",
+      "gameObjectFileID": "1884547391421755",
+      "name": "Collider 1",
+      "parentGameObjectFileID": "1703437598541787",
+      "path": "Transform/Collider/Collider 1",
+      "position": [
+        0.0,
+        0.0,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.13231155,
+        0.99120826
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4161607090078389",
+      "gameObjectFileID": "1099118695303065",
+      "name": "Collider 2",
+      "parentGameObjectFileID": "1703437598541787",
+      "path": "Transform/Collider/Collider 2",
+      "position": [
+        0.0,
+        0.0,
+        -0.0
+      ],
+      "rotation": [
+        -0.0,
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0558702,
+        1.0558702,
+        1.0
+      ]
+    },
+    {
+      "transformFileID": "4470112387431263",
+      "gameObjectFileID": "1243736805655561",
+      "name": "IK target",
+      "parentGameObjectFileID": "1730242686860875",
+      "path": "Transform/IK target",
+      "position": [
+        -0.074,
+        -0.164,
+        -0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "scale": [
+        0.81801164,
+        0.65516764,
+        1.0
+      ]
+    }
+  ],
+  "renderers": [
+    {
+      "gameObjectFileID": "1724804207875695",
+      "name": "Front",
+      "texture": "textures/material_00.png",
+      "material": "Assets/Material/magazine.mat"
+    },
+    {
+      "gameObjectFileID": "1618682377417806",
+      "name": "Back",
+      "texture": "textures/material_00.png",
+      "material": "Assets/Material/magazine.mat"
+    }
+  ],
+  "stats": {
+    "roundsPerMinute": 600,
+    "reloadTime": 1,
+    "defaultAmmunition": null
+  },
+  "nodeCount": 8,
+  "rendererCount": 2,
+  "textureCount": 1
+}

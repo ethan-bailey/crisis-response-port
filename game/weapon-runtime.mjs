@@ -1,0 +1,55 @@
+import * as THREE from 'three';
+import { createOriginalImpactMeshRenderer } from './original-impact-mesh.mjs';
+import { sourceEffectAge } from './source-effect-clock.mjs';
+import { createOriginalWindowVisuals } from './original-window-visuals.mjs';
+import { createOriginalParticleEventBinding } from './original-particle-event-binding.mjs';
+export async function loadWeaponData(){
+ const r=await fetch('./assets/weapon-runtime.json.gz');if(!r.ok)throw new Error('Original weapon settings unavailable');
+ return new Response(r.body.pipeThrough(new DecompressionStream('gzip'))).json();
+}
+export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,particleSources){
+ // Original sampled audio, never synthesized substitutes. Unlock Web Audio on the device gesture.
+ const AudioContext=window.AudioContext||window.webkitAudioContext,context=AudioContext?new AudioContext():null,buffers=new Map();
+ if(context)for(const [name,info] of Object.entries(data.audio))fetch(info.url).then(r=>r.arrayBuffer()).then(b=>context.decodeAudioData(b)).then(b=>buffers.set(name,b)).catch(()=>{});
+ if(context)for(const info of Object.values(ballisticsData?.effects||{}))for(const url of info.audio)if(!buffers.has(url)){
+  buffers.set(url,null);fetch(url).then(r=>r.arrayBuffer()).then(b=>context.decodeAudioData(b)).then(b=>buffers.set(url,b)).catch(()=>{});
+ }
+ addEventListener('pointerdown',()=>context?.resume().catch(()=>{}),{passive:true});
+ const originalImpactMeshes=createOriginalImpactMeshRenderer(scene);
+ const originalWindows=createOriginalWindowVisuals(scene,ballisticsData,sourceWindows);
+ const originalParticleEvents=createOriginalParticleEventBinding(particleSources.particles,particleSources.materials);
+ const texturePromise=new THREE.TextureLoader().loadAsync(Object.values(data.flash.textures)[0].url).then(t=>{t.colorSpace=THREE.SRGBColorSpace;return t;});
+ const flashNodes=data.flash.prefab.filter(r=>r.classID===4),clip=data.flash.animation[0].fields,curve=clip.m_PPtrCurves[0].curve;
+ const magRoot=new THREE.Group();scene.add(magRoot);const magNodes=new Map();
+ for(const n of data.magazineVisual.nodes){const g=new THREE.Group();g.position.fromArray(n.position);g.quaternion.fromArray(n.rotation);g.scale.fromArray(n.scale);magNodes.set(n.gameObjectFileID,g);}
+ for(const n of data.magazineVisual.nodes){const g=magNodes.get(n.gameObjectFileID);(magNodes.get(n.parentGameObjectFileID)||magRoot).add(g);}
+ for(const r of data.magazineVisual.renderers)new THREE.TextureLoader().loadAsync('./assets/weapon-runtime/M4-magazine/'+r.texture).then(t=>{t.colorSpace=THREE.SRGBColorSpace;const m=new THREE.MeshBasicMaterial({map:t,transparent:true,alphaTest:.015,side:THREE.DoubleSide,depthWrite:false});const mesh=new THREE.Mesh(new THREE.PlaneGeometry(1,1),m);mesh.renderOrder=3;magNodes.get(r.gameObjectFileID).add(mesh);});
+ const duration=clip.m_AnimationClipSettings.m_StopTime,active=[];
+ function flash(event,sourceTime){
+  const group=new THREE.Group(),root=flashNodes.find(n=>n.fields.m_Father.fileID==='0'),child=flashNodes.find(n=>n!==root),f=child.fields;
+  const holder=new THREE.Group(),q=f.m_LocalRotation;holder.quaternion.set(-q.x,-q.y,q.z,q.w);holder.scale.set(f.m_LocalScale.x,f.m_LocalScale.y,f.m_LocalScale.z).multiplyScalar(data.weapon.muzzleFlashScale);group.add(holder);
+  const m=new THREE.MeshBasicMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,alphaTest:.001});const mesh=new THREE.Mesh(new THREE.PlaneGeometry(1,1),m);holder.add(mesh);
+  const p=event.muzzle,r=event.rotation;group.position.set(p[0],p[1],-p[2]);group.quaternion.set(-r[0],-r[1],r[2],r[3]);scene.add(group);
+  const item={group,mesh,material:m,start:sourceTime,texture:null,disposed:false};active.push(item);texturePromise.then(t=>{if(item.disposed)return;item.texture=t.clone();item.texture.needsUpdate=true;m.map=item.texture;m.needsUpdate=true;});
+ }
+ function update(events,magazinePose,sourceTime){
+  if(magazinePose){const {p,q,visible}=magazinePose;magRoot.visible=visible;magRoot.position.set(p[0],p[1],-p[2]);magRoot.quaternion.set(-q[0],-q[1],q[2],q[3]);}
+  for(const e of events){
+   if(e.type==='audio'&&context&&buffers.has(e.value)){const src=context.createBufferSource(),gain=context.createGain();src.buffer=buffers.get(e.value);gain.gain.value=data.audio[e.value].volume;src.connect(gain).connect(context.destination);src.onended=()=>{src.disconnect();gain.disconnect();};src.start();}
+   if(e.type==='materialEffect'&&context&&buffers.get(e.value.clip)){const src=context.createBufferSource(),gain=context.createGain();src.buffer=buffers.get(e.value.clip);gain.gain.value=e.value.volume;src.connect(gain).connect(context.destination);src.onended=()=>{src.disconnect();gain.disconnect();};src.start();}
+   if(e.type==='shot')flash(e.value,e.time);
+  }
+  originalImpactMeshes.update(events);
+  originalWindows.update(events);
+  originalParticleEvents.observe(events,sourceTime);
+  for(let i=active.length-1;i>=0;i--){const item=active[i],time=sourceEffectAge(sourceTime,item.start);
+   if(time>=duration){item.disposed=true;scene.remove(item.group);item.mesh.geometry.dispose();item.material.dispose();item.texture?.dispose();active.splice(i,1);continue;}
+   if(!item.texture)continue;
+   let frame=curve[0];for(const key of curve)if(key.time<=time)frame=key;
+   const sprite=data.flash.sprites[frame.value.guid][0].fields,rect=sprite.m_RD.textureRect,ppu=sprite.m_PixelsToUnits,pivot=sprite.m_Pivot,tex=item.texture;
+   tex.repeat.set(rect.width/tex.image.width,rect.height/tex.image.height);tex.offset.set(rect.x/tex.image.width,rect.y/tex.image.height);
+   item.mesh.scale.set(rect.width/ppu,rect.height/ppu,1);item.mesh.position.set((.5-pivot.x)*rect.width/ppu,(.5-pivot.y)*rect.height/ppu,0);
+  }
+ }
+ return {update,impactMeshSnapshot:originalImpactMeshes.snapshot,windowSnapshot:originalWindows.snapshot,particleSourceSnapshot:originalParticleEvents.snapshot};
+}

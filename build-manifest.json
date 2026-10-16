@@ -1,0 +1,5033 @@
+{
+  "binaryValidation": {
+    "blazorResources": 199,
+    "wasmFiles": 195
+  },
+  "buildRun": "https://github.com/ethan-bailey/crisis-response-port/actions/runs/38919612434",
+  "compilerPolicy": {
+    "allowPrerelease": false,
+    "rollForward": "disable",
+    "version": "8.0.426"
+  },
+  "externalImports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+  },
+  "files": [
+    {
+      "bytes": 144,
+      "path": "game/.gitignore",
+      "sha256": "4d092d2dff0f64f29a8c6f2595d548e134d125bf115f0d43bea73d7f452645e3"
+    },
+    {
+      "bytes": 322,
+      "path": "game/aim-direction.mjs",
+      "sha256": "5547b27df5a6dfbdfe0a8f600c60f727358239840af957f2d23df6b89755221d"
+    },
+    {
+      "bytes": 1286,
+      "path": "game/animation-pose.mjs",
+      "sha256": "0ed4294669e21e18976bd15584e372b0dead97adaca8d9bf571829e014b043d5"
+    },
+    {
+      "bytes": 56876,
+      "path": "game/assets/ballistics/audio-013a97cc3afe6244195fb6a68c9cd277.wav",
+      "sha256": "b79a95b10568f83af0d1037c83c09f80fa5a361410cdb0adda8ac549c227bec0"
+    },
+    {
+      "bytes": 32594,
+      "path": "game/assets/ballistics/audio-16005d63fc9214e4eb60fac28ef84c07.wav",
+      "sha256": "b6a873bf8fed9f4ec89b5bcf21658172c41c859223aa60ca9b258b901b147ee8"
+    },
+    {
+      "bytes": 88620,
+      "path": "game/assets/ballistics/audio-195f3015de49def4eaa86634a2928be2.wav",
+      "sha256": "07ee6b56f602b04ac309e30d9e1d111d7b3d7457815e1ec4f20a42a8a26a9b8a"
+    },
+    {
+      "bytes": 22394,
+      "path": "game/assets/ballistics/audio-1a69aaf9a16d0d949bea352be2e50da3.wav",
+      "sha256": "22631b8cc7cefdf05f94fa465dedbbc2134ef162c310815c7e452064710ed505"
+    },
+    {
+      "bytes": 43948,
+      "path": "game/assets/ballistics/audio-25548bcfd844fbb439525169b2c3eb7b.wav",
+      "sha256": "c80b9dcadb8b4569da88ba0eff21dfe99cb5678fc6b594b361354b79fc400879"
+    },
+    {
+      "bytes": 24364,
+      "path": "game/assets/ballistics/audio-26b86861ee35f814eb5ddbd90b36606e.wav",
+      "sha256": "1ae7dd2dbf7150684c30670b755c4343cf32966baa0248d0521ebdebb92f76e2"
+    },
+    {
+      "bytes": 72236,
+      "path": "game/assets/ballistics/audio-2b2e3452ded67f44f8be79458365dd67.wav",
+      "sha256": "76d8a6650a123a2488ab4e454a188596779b3733ccbe6a30f38554ca719889fb"
+    },
+    {
+      "bytes": 33462,
+      "path": "game/assets/ballistics/audio-3909a84bf4a2ed1418b6a11c30f45ffe.wav",
+      "sha256": "f193fc27771d639b8218b7dbc07c1b045314e52630063bd358a38d616f57a5fc"
+    },
+    {
+      "bytes": 18476,
+      "path": "game/assets/ballistics/audio-3be85d7681b0d194e8fc539cdf3288bd.wav",
+      "sha256": "43e5e588565e3f6ca3081405b6fbccbe5ae3016e31c197ea60c81c33587e4fcd"
+    },
+    {
+      "bytes": 12844,
+      "path": "game/assets/ballistics/audio-3ead4e93efe1bcb4c909301a9a81b94a.wav",
+      "sha256": "f7a77c0d3a8f9b5896caa407c6e71fc23d2b49f72cd7209961038d17ba3916fe"
+    },
+    {
+      "bytes": 34114,
+      "path": "game/assets/ballistics/audio-436331f9e230d1547bd1f21ae97954ce.wav",
+      "sha256": "1e59343a644c2cb729266a862b180e7cd61ed94b081704e834b7f076621cae3f"
+    },
+    {
+      "bytes": 18092,
+      "path": "game/assets/ballistics/audio-4368378c351febb4b8d0a9462f971bdd.wav",
+      "sha256": "ae24bdc964ce8d6dbd62c7118afac8fb591226ba9f6e3241e5d11da674557bf1"
+    },
+    {
+      "bytes": 31510,
+      "path": "game/assets/ballistics/audio-4b15d34a2ec950e41a7b2e179ecb9784.wav",
+      "sha256": "f47cbbb46ddc657c7ef34af405c91d80b272ef0f21e7f5cc4323ed2bd14eca3f"
+    },
+    {
+      "bytes": 69164,
+      "path": "game/assets/ballistics/audio-58bdb46305c121349a294141c78635e0.wav",
+      "sha256": "b723db41eff31a4fb951b226488445e6239ad4cca2967fde9432ced2d1f5f5c0"
+    },
+    {
+      "bytes": 29988,
+      "path": "game/assets/ballistics/audio-5d96622f0e7d6784ba244be3df4d3ec4.wav",
+      "sha256": "813921caf127135662b26be3db819950e5d635e9e0f9ba91ed2cbb5313cf9674"
+    },
+    {
+      "bytes": 17452,
+      "path": "game/assets/ballistics/audio-620008f68af0b4445a143d0acb023985.wav",
+      "sha256": "bbafa84b322e2e5102caede0c8882e73fa0dac50e09c94d6418e5c1466acddee"
+    },
+    {
+      "bytes": 29556,
+      "path": "game/assets/ballistics/audio-7389300dffb8116469369ca87efaf8e1.wav",
+      "sha256": "d9cb4e0983e413524f027bc9bf0ba2d9b9a1ade01dadb38ee9a01b2a1f026299"
+    },
+    {
+      "bytes": 28254,
+      "path": "game/assets/ballistics/audio-75c96c5e6ae502941b81351ee9231c91.wav",
+      "sha256": "0ec87120ed76146a44a299246cecce325390b7b9ad2a067c9f0c52bb7575acd8"
+    },
+    {
+      "bytes": 22608,
+      "path": "game/assets/ballistics/audio-80315f20a68ecd145911f6d431eaf031.wav",
+      "sha256": "9103d1f09ed1505f16f6fc8d48b24d1d6c6a618e46da154555952fea6904ba7e"
+    },
+    {
+      "bytes": 28688,
+      "path": "game/assets/ballistics/audio-822fc37fe99a09f43be4d2efc0487b92.wav",
+      "sha256": "685984f9ec07a761d76c24931142706023c5ef2cd569d4dcc7957521fc7aedf1"
+    },
+    {
+      "bytes": 25040,
+      "path": "game/assets/ballistics/audio-885967ed4cfa2564f852133c77c0b813.wav",
+      "sha256": "601eae7d008306e50e6bd86e7bb0d08af74737ea471de4b3cd8de5d970a73020"
+    },
+    {
+      "bytes": 54316,
+      "path": "game/assets/ballistics/audio-92ae34454635d804abeec6498b07d435.wav",
+      "sha256": "ae0d040a6aed0ab5f59dd7a873d13a730192a0210b213df9afc758a211b2cbc0"
+    },
+    {
+      "bytes": 52524,
+      "path": "game/assets/ballistics/audio-9320fcdb738fcf8418ca1fe1fc564fbf.wav",
+      "sha256": "7b266ac472871bdbbb4456f88b2140c2b0f45570c8ecba9ac39c3b4e4e634689"
+    },
+    {
+      "bytes": 56876,
+      "path": "game/assets/ballistics/audio-94ef907788eaa5249b236342e3497d42.wav",
+      "sha256": "362c53b37e0b4feb3cebded300db02f070b1ab6a241eb5af834547d341219863"
+    },
+    {
+      "bytes": 16812,
+      "path": "game/assets/ballistics/audio-95fc3e9255dd4b740b0bf0c0b470304c.wav",
+      "sha256": "5ba0e87f54fd60524baf8d486bfacf4728805c0b90a1728f18f3a9283214bafc"
+    },
+    {
+      "bytes": 25868,
+      "path": "game/assets/ballistics/audio-98a1090b113964443bde0f3892fa2f64.wav",
+      "sha256": "92d40fb50bbbb5f29a2858da152e59dc5844413386b60ea7643fcd4a01b2a48d"
+    },
+    {
+      "bytes": 14508,
+      "path": "game/assets/ballistics/audio-a33a14565c03a024e95b49ebbcb9b460.wav",
+      "sha256": "d9249dff320c7fe5b4277b7a2fe26c3de0030c1c406f7871c1caae41edd75f28"
+    },
+    {
+      "bytes": 46508,
+      "path": "game/assets/ballistics/audio-a3ae27369babb2e43b793941caf870b0.wav",
+      "sha256": "d4c7de2957775cbe8c49bf61a77e18e093df6fbe1382b5aefb0d1b408c4ec70c"
+    },
+    {
+      "bytes": 54316,
+      "path": "game/assets/ballistics/audio-b2796ef7a776614488deb11788d29fc1.wav",
+      "sha256": "e02e55cda6a6063c058c910add7333882cef0beb374de2e545cd7fb43551a2d4"
+    },
+    {
+      "bytes": 38454,
+      "path": "game/assets/ballistics/audio-b3b92b24fce0f7648826a58def06dc36.wav",
+      "sha256": "d8f2a0528cba5bb6199f5c017bb7b2d8a2d1d5e3e3a0f46ae6a8ac3af4c8c3e4"
+    },
+    {
+      "bytes": 19884,
+      "path": "game/assets/ballistics/audio-b4d9580d3d9ea294db5ad4a19e1138ff.wav",
+      "sha256": "a403c2489fcd07c6a29f6035050a44380f65eaf5cf1efc571e61411ce4519641"
+    },
+    {
+      "bytes": 16428,
+      "path": "game/assets/ballistics/audio-b95eefb582c70cb42b6023b6a97404fd.wav",
+      "sha256": "50759b363aaa7a6bc5b66ebb29de52c843208454a9c49cfc8c67021919381dd0"
+    },
+    {
+      "bytes": 12076,
+      "path": "game/assets/ballistics/audio-ba13ae879c7f28844a5ab793dad44e46.wav",
+      "sha256": "b4bce231688598e2694999d5b114524903980b063261ccf671480628952f2ef2"
+    },
+    {
+      "bytes": 23960,
+      "path": "game/assets/ballistics/audio-c06e9baa6e5fd7e44be13b296884c329.wav",
+      "sha256": "5fc15e69f136ccdb4a94a3139e1ef64edac3152e5c7e7ce07d4e385ef2dfd1dc"
+    },
+    {
+      "bytes": 19116,
+      "path": "game/assets/ballistics/audio-c23c816e93ca0994cada0add9be49d38.wav",
+      "sha256": "89fb9221072ace55b8374b285ecbb0bb697b7a9605771dfc181ce7bc2ae7b62c"
+    },
+    {
+      "bytes": 18604,
+      "path": "game/assets/ballistics/audio-d3ec638f53a7f3c4bacd8339fe5abb7a.wav",
+      "sha256": "a4ce6e68f480c8febba291366d3c4c7e5ada2a57f8482c9c8af79bf12db65f96"
+    },
+    {
+      "bytes": 24364,
+      "path": "game/assets/ballistics/audio-d80ebc4170419cc48bbb931b2aa6b893.wav",
+      "sha256": "e314b9acc2a501482c614e4cffcf8d7d8a12589c98cdfe1c15f833a1605c7520"
+    },
+    {
+      "bytes": 13228,
+      "path": "game/assets/ballistics/audio-e1b3c31ea1ed1ab4e8a4387aa9f954dc.wav",
+      "sha256": "f92cad96dd844e0c7b653838477abea466f05b109b2c89bbd2a9d2f137f79d04"
+    },
+    {
+      "bytes": 13740,
+      "path": "game/assets/ballistics/audio-e526160e408224540a4a6f1532e8a4fe.wav",
+      "sha256": "450875accf90d04d3f485d7331f3186bae5009d79189fbfc3ed09872d3e9a838"
+    },
+    {
+      "bytes": 19770,
+      "path": "game/assets/ballistics/audio-e73c91ecad564094a8d28a0f22e8b434.wav",
+      "sha256": "136b6a78b64342a60d25ec0362af2f0714ce9f65ab38c61f8c92e61381e73271"
+    },
+    {
+      "bytes": 11528,
+      "path": "game/assets/ballistics/audio-f5680c819f7f12d488337001530cfd7c.wav",
+      "sha256": "d9577ee523894fc7a7a925ef1659cfd005eb3a74ef677bb0e327a1f709636328"
+    },
+    {
+      "bytes": 17580,
+      "path": "game/assets/ballistics/audio-fb4a7784dc722b84098efc0106ee3a78.wav",
+      "sha256": "a965eaba9729f013dff1faa866d48bf5256ecf8aa04abcc2333612b84a1a9b4c"
+    },
+    {
+      "bytes": 2784,
+      "path": "game/assets/ballistics/original-particle-materials-source.json.gz",
+      "sha256": "bce1860f49f8ab6887deb825bad56118261b4949477653b88c88f94f77d04aa0"
+    },
+    {
+      "bytes": 10199,
+      "path": "game/assets/ballistics/original-particles-source.json.gz",
+      "sha256": "75bbdbeadf3595f9c8fa32563a689fc119d6747abe0efb6c5bd0c347cd70cf92"
+    },
+    {
+      "bytes": 1323,
+      "path": "game/assets/ballistics/particle-meshes/particle-mesh-8ed663818ef63e741bd160cb133722fe.json",
+      "sha256": "1800fecf7709307b513395be81c0bf5d9c6f5631d968adbe0963c4239d914777"
+    },
+    {
+      "bytes": 1242,
+      "path": "game/assets/ballistics/particle-meshes/particle-mesh-eedec0cf1e8d71a49b3949fbbc2cf3b4.json",
+      "sha256": "8eded9db4e3fa6d51b341585ddc097b3d53141ea54290432dadd2fe45f877df4"
+    },
+    {
+      "bytes": 1844,
+      "path": "game/assets/ballistics/particle-meshes/particle-mesh-f6fe08f20af97e149b26c77ded5823d7.json",
+      "sha256": "85df63eee0bf2a52da7fb7d7a67041e06f2e4e12cfc77e2458bbbd6d4c94ed49"
+    },
+    {
+      "bytes": 657,
+      "path": "game/assets/ballistics/texture-3446da7d139ac354abffd5bbbc5a7c47.png",
+      "sha256": "f1c46205c1da33e17af5d1180260984852fea44308ebbbed6f2933b00bff2606"
+    },
+    {
+      "bytes": 618500,
+      "path": "game/assets/ballistics/texture-584aeddb56b04f44fa12fcbade83a72d.png",
+      "sha256": "49176af3168bdc593cca36c880476a94ad9dda9fea978a528c16dc6fc8a65ee3"
+    },
+    {
+      "bytes": 107991,
+      "path": "game/assets/ballistics/texture-963f0135df8b0de489aa4fa9c68b9aae.png",
+      "sha256": "8dfd528d886d956b6f38ae9b230fefaeba8345edb1da0dc1fedf96b933fc1bff"
+    },
+    {
+      "bytes": 64647,
+      "path": "game/assets/ballistics/texture-bb3d703bd542afc47a1423a6c37397aa.png",
+      "sha256": "ba810cf6d18d29ac28aebfc07340188c0cd3d00f0c4fd4071f8e2a7b98d1d4b5"
+    },
+    {
+      "bytes": 22440,
+      "path": "game/assets/ballistics/texture-c47dd46995adae54495534dc170fbbc6.png",
+      "sha256": "a89371d1d5581a657caea57d97822240064f8936a1a9f46cc7d08b85a1672a02"
+    },
+    {
+      "bytes": 410925,
+      "path": "game/assets/ballistics/texture-e1eb655617e61e3488157be43fa6388a.png",
+      "sha256": "922f07ec2f1653ed75e029ef676b40944191632806dc234ac1518902e3b11fb6"
+    },
+    {
+      "bytes": 14851,
+      "path": "game/assets/ballistics/wood-exit-hole-source.json",
+      "sha256": "bc74f0f7f7c2d7cfc0436fa1dd56d40f726fbc8e49a18cb4e75c6d2d7eaf6ca6"
+    },
+    {
+      "bytes": 1159509,
+      "path": "game/assets/ballistics.json.gz",
+      "sha256": "752a199a9d7ebd9caae8fd405466fc4ca04874d1524a9bb6f6d9298381a8b128"
+    },
+    {
+      "bytes": 70247,
+      "path": "game/assets/contact-physics.json",
+      "sha256": "b5ef95c8cd37a1f61654e2d1b7decc3cf16d9f2e2465c124bdc6f055a134884d"
+    },
+    {
+      "bytes": 1855400,
+      "path": "game/assets/mission01.crg",
+      "sha256": "d16fc80fbbc0e20823ceef7dcfe0e0ae5d693d66810c3bb701654c36a266d948"
+    },
+    {
+      "bytes": 5627421,
+      "path": "game/assets/mission01.obj",
+      "sha256": "1c6aaa01cf2aee9671323b0ece5956f62c235122161e90cb6d7506e398e73e48"
+    },
+    {
+      "bytes": 360,
+      "path": "game/assets/mission01.report.json",
+      "sha256": "5595ea2010d708e69cd31b2b5dc8a5e543a3f78c919ed4271c6302a9c111fa00"
+    },
+    {
+      "bytes": 218908,
+      "path": "game/assets/operator/animations.json",
+      "sha256": "f5277147d4090c66ec023b00db81142d16936e92431128796dc6071546732d91"
+    },
+    {
+      "bytes": 46645,
+      "path": "game/assets/operator/operator.json",
+      "sha256": "c93d90610a6db65edf4304bf82b590bc35dc56e5d7580899a511c10ef4c416f6"
+    },
+    {
+      "bytes": 12602,
+      "path": "game/assets/operator/skins/skin_000.png",
+      "sha256": "80a395d3a90e9566e438ac9a09b98be29e38be27274dd36677b023efd6b2a19c"
+    },
+    {
+      "bytes": 7399,
+      "path": "game/assets/operator/skins/skin_001.png",
+      "sha256": "2395929f5607c1fb40affd6d34013484166d3529fe1db175ed1c13183dcb3078"
+    },
+    {
+      "bytes": 36224,
+      "path": "game/assets/operator/skins/skin_002.png",
+      "sha256": "b361dfbd06cc0d25ef057ca7b30d8367abb47f3f4acd78bbdf5c93ab1d590a5f"
+    },
+    {
+      "bytes": 3786,
+      "path": "game/assets/operator/skins/skin_003.png",
+      "sha256": "d01ecdb83405e089b37ccbb9b66581f0a45dd07c8531958b7640b0cb122a0837"
+    },
+    {
+      "bytes": 24831,
+      "path": "game/assets/operator/skins/skin_004.png",
+      "sha256": "697287c9f935c44f26f7cf371e450190dff30ad7130f1215aed08bf77d504e4a"
+    },
+    {
+      "bytes": 5688,
+      "path": "game/assets/operator/skins/skin_005.png",
+      "sha256": "70f4afd59b6c87b096ccc33cd042a6caaaf535084f643db4361592782a9af9af"
+    },
+    {
+      "bytes": 3925,
+      "path": "game/assets/operator/skins/skin_006.png",
+      "sha256": "521b820c0840b88c157084da49bfa2ea3b515679b94c006e0f52201caabe3d91"
+    },
+    {
+      "bytes": 13457,
+      "path": "game/assets/operator/skins/skin_007.png",
+      "sha256": "56faccc73a7ba9b66fc6b2a9b1c130221db31730d1661416c17c5c986a926a9d"
+    },
+    {
+      "bytes": 12373,
+      "path": "game/assets/operator/skins/skin_008.png",
+      "sha256": "01976ef0e553605a31049f956ce827eb516d16369f3829ad76e4cedb8027a18c"
+    },
+    {
+      "bytes": 4441,
+      "path": "game/assets/operator/skins/skin_009.png",
+      "sha256": "1c3f18bd94e0d4c8fd1bfbbf89b0128aaef266e89525c9f00eaf0b0dde793672"
+    },
+    {
+      "bytes": 2499,
+      "path": "game/assets/operator/skins/skin_010.png",
+      "sha256": "0184b1ab372b65c12545c6ac54760265b18bd42addca48ac04ea372096f718a0"
+    },
+    {
+      "bytes": 8066,
+      "path": "game/assets/original-arm-sequences.json",
+      "sha256": "4fd3940e554f406ceee8cfc210a82a09f57cb9dc2f5f0211c74b8cedacb4fa25"
+    },
+    {
+      "bytes": 95660,
+      "path": "game/assets/presentation.json.gz",
+      "sha256": "d500f8ce08751a2b1b20ec32b6c5ed20f5f0ffcb4b6434427357b1a51ef297cf"
+    },
+    {
+      "bytes": 78188,
+      "path": "game/assets/weapon-runtime/M4-magazine/textures/material_00.png",
+      "sha256": "214e2e4b26831789565d78831edf1746e3da054a5388002747c5a1e1d27fe3f4"
+    },
+    {
+      "bytes": 4121,
+      "path": "game/assets/weapon-runtime/M4-magazine/weapon.json",
+      "sha256": "d0fe4263d3b51ef526d31ff8225673e0d9c6e4448b34c46a16006811dd30832d"
+    },
+    {
+      "bytes": 13100,
+      "path": "game/assets/weapon-runtime/audioBoltExtract.wav",
+      "sha256": "ca9f72582c068ad2ce9b4e1852db96daaa8e83301590af49f899cca2c02101fa"
+    },
+    {
+      "bytes": 17324,
+      "path": "game/assets/weapon-runtime/audioBoltReturn.wav",
+      "sha256": "9e1bd4e5ecfc24142b2bf813a620e7a875dfda99bf2b5808dccfdcb12a2ef102"
+    },
+    {
+      "bytes": 25644,
+      "path": "game/assets/weapon-runtime/audioExtractMagazine.wav",
+      "sha256": "5076af4b582ae25505f0a330ca30624174619fc478b6dc170ab5526fc505660e"
+    },
+    {
+      "bytes": 61556,
+      "path": "game/assets/weapon-runtime/audioFire.wav",
+      "sha256": "663bbba66b6a19147b8734c7f2d83781a9c130d2cd6b399d35b604df375449df"
+    },
+    {
+      "bytes": 5676,
+      "path": "game/assets/weapon-runtime/audioFiringPin.wav",
+      "sha256": "dfecb781cc6ee12022dfe5026e068a4194de7b1918616c9bbbdacd1e7eb67379"
+    },
+    {
+      "bytes": 25260,
+      "path": "game/assets/weapon-runtime/audioInsertMagazine.wav",
+      "sha256": "46edbf035b4a3d0a0541b2edc96beaa5fa017514a982e6df42c21e507a399bd6"
+    },
+    {
+      "bytes": 46710,
+      "path": "game/assets/weapon-runtime/audioSupersonic.wav",
+      "sha256": "94291b6b4616ad8e2cc13e8e32a7a480f0275833e3e15e89ab9eaa8cbc1f03cd"
+    },
+    {
+      "bytes": 184397,
+      "path": "game/assets/weapon-runtime/flash.png",
+      "sha256": "664d730f0380939e5a376a4b4b54f9596f07c26336bed06e2950b44b2420eea6"
+    },
+    {
+      "bytes": 22521,
+      "path": "game/assets/weapon-runtime.json.gz",
+      "sha256": "bb59ee9fdc0fc10fe110cbd5b072ae6f52cbff1faaa3c58c42dac0f062799962"
+    },
+    {
+      "bytes": 62916,
+      "path": "game/assets/weapons/Glock-18/textures/material_00.png",
+      "sha256": "c9c32ae963eaca00ed239f54d0046d4566da9f9139a6cdd9cb6c08aa5daa0614"
+    },
+    {
+      "bytes": 21774,
+      "path": "game/assets/weapons/Glock-18/textures/material_01.png",
+      "sha256": "ad8f492460ef239668e61d3493371a4889cfb80a6d0131902e7e061cb1d4efb4"
+    },
+    {
+      "bytes": 5671,
+      "path": "game/assets/weapons/Glock-18/textures/material_02.png",
+      "sha256": "42d01788c08ffb9996fe9a205e89d313acd7c9593ca70ad3b9aabbe50c7f6946"
+    },
+    {
+      "bytes": 7743,
+      "path": "game/assets/weapons/Glock-18/textures/material_03.png",
+      "sha256": "ca04b5af48b93edad4f1eb96a5d92893903775ed61ad4cb088b10bf3026cb784"
+    },
+    {
+      "bytes": 10886,
+      "path": "game/assets/weapons/Glock-18/textures/material_04.png",
+      "sha256": "f85a6f66ef664158f119e8c73bf336bb2cf47fff97d077b52d4bd9d246a5a757"
+    },
+    {
+      "bytes": 11569,
+      "path": "game/assets/weapons/Glock-18/weapon.json",
+      "sha256": "a2c0cd66949d0545d0de4c84b1af9d3ebb51206ac3f9c950bc26202fcc03d221"
+    },
+    {
+      "bytes": 75136,
+      "path": "game/assets/weapons/M4A1/textures/material_00.png",
+      "sha256": "4f6113f2988fc55faf62896325eb3f37e68fe2042b42640ffc28bfaea62b1468"
+    },
+    {
+      "bytes": 103464,
+      "path": "game/assets/weapons/M4A1/textures/material_01.png",
+      "sha256": "103e2afbe5c29d3a485528044b1a39d805ba3b19e8c47cc2bc48c883cdf7d818"
+    },
+    {
+      "bytes": 3580,
+      "path": "game/assets/weapons/M4A1/textures/material_02.png",
+      "sha256": "9bc6844dcd362481422ac2be2bec1fd2913c01ad55abe0bf15238b78e575e253"
+    },
+    {
+      "bytes": 344,
+      "path": "game/assets/weapons/M4A1/textures/material_03.png",
+      "sha256": "af159441840bec024d19e48fbd199f307965ca889341fa5a15fa1eb26204922e"
+    },
+    {
+      "bytes": 1718,
+      "path": "game/assets/weapons/M4A1/textures/material_04.png",
+      "sha256": "3a83319823f7975f4fce997fd94a2a2d63a06c7eb62b928b0eb1985fda68380f"
+    },
+    {
+      "bytes": 13323,
+      "path": "game/assets/weapons/M4A1/weapon.json",
+      "sha256": "81e18bbdbf1adae25201df1499a01e58b5149c4f06c7b3bba0d0f588647b7a26"
+    },
+    {
+      "bytes": 5742,
+      "path": "game/browser-input.mjs",
+      "sha256": "dcc6fe1cf0f50cf27a793a442b7a77e8928f6ee2f4b7578cf4182f17fafe12d4"
+    },
+    {
+      "bytes": 5559,
+      "path": "game/contact-physics.mjs",
+      "sha256": "0c331574c56dde74abdfd9cd6cb41ab931c42a78afc0b5d76f2bd6a63bb21f6f"
+    },
+    {
+      "bytes": 30064,
+      "path": "game/index.html",
+      "sha256": "dc4dd893ec6bcd9b3ea47c4c060166034d51eb2012cdd9c93c1eb37af272e19a"
+    },
+    {
+      "bytes": 700,
+      "path": "game/loading.mjs",
+      "sha256": "14471b3de4e3b0ed0c56442dcf6cfc4ef9e05617c32a5c368fdc9e92c3ded896"
+    },
+    {
+      "bytes": 5527,
+      "path": "game/magazine-hud.mjs",
+      "sha256": "225272e8831c3eac1becf0f3d5b0334d4eddd0d866955fd286c5c55baf3b0f7d"
+    },
+    {
+      "bytes": 5013,
+      "path": "game/original-impact-mesh.mjs",
+      "sha256": "bd2597ebdd993386ecbe855fbd642de8bdf5850318bf691b51133c8807e939d6"
+    },
+    {
+      "bytes": 6664,
+      "path": "game/original-particle-event-binding.mjs",
+      "sha256": "5d1a8cfb0fe2182757afcdcf157731f7ed98a4aed8827ded15863fee205e2b18"
+    },
+    {
+      "bytes": 5903,
+      "path": "game/original-window-visuals.mjs",
+      "sha256": "08b79ee61a50fa91fcde060ecb4cab493f5f6e217e985192713826b78783f127"
+    },
+    {
+      "bytes": 6967,
+      "path": "game/presentation.mjs",
+      "sha256": "3f73ff9519da316da434bf07b043064391306c8bcd3baded4a9b13d4bc4a96f5"
+    },
+    {
+      "bytes": 733,
+      "path": "game/source-effect-clock.mjs",
+      "sha256": "34b398d971b35e2b5aab07ddfa0938222b48e470cf0deba36692cc4753dbe2a9"
+    },
+    {
+      "bytes": 1067,
+      "path": "game/vendor/LICENSE.physx-js-webidl",
+      "sha256": "0879a16adc700c9956ca0b60fbcac1fcb52310219feee827c03d7a0ab9886fbd"
+    },
+    {
+      "bytes": 1959,
+      "path": "game/vendor/NOTICE.physx.md",
+      "sha256": "8b2c1bf8cb9153e08095ee44955c2a77eb0ec1e0ac52d7b2c77ad5aca56fc87e"
+    },
+    {
+      "bytes": 4815678,
+      "path": "game/vendor/physx-js-webidl.mjs",
+      "sha256": "bf0dfa86e0ed5ce1fa9f39f4c5a86eeb980c945638d63edf474c7653d257f9e4"
+    },
+    {
+      "bytes": 5347727,
+      "path": "game/vendor/physx-js-webidl.wasm",
+      "sha256": "7d4696e6273166308ce1f0db5dd5aee96c843b6e3722d96db7e4422aa1fbee1f"
+    },
+    {
+      "bytes": 5918,
+      "path": "game/weapon-runtime.mjs",
+      "sha256": "228c9d38993fde2593d79c2e84ad47ab1d541c47c49252240e2e280aea548bc0"
+    },
+    {
+      "bytes": 236,
+      "path": "index.html",
+      "sha256": "055b6f534d3069ff3c22511f290027d035a0bcca97b63dd6eb8abe5d94e17188"
+    },
+    {
+      "bytes": 9004,
+      "path": "runtime-web/_framework/Crisis.Runtime.Browser.pdb.gz",
+      "sha256": "e5da11c3733d5563639dba386263e43c3c5272400724951d74ab114a6051b959"
+    },
+    {
+      "bytes": 15125,
+      "path": "runtime-web/_framework/Crisis.Runtime.Browser.wasm",
+      "sha256": "64b19cdc7a6e489d02fe28cb489683b5e7c88a6d9fab776da8892373bd4d82fb"
+    },
+    {
+      "bytes": 6185,
+      "path": "runtime-web/_framework/Crisis.Runtime.Browser.wasm.br",
+      "sha256": "f39f2cac51c3ed615db5c49be2b25752b45e77a49fe91131e2f91a4fa0ee0058"
+    },
+    {
+      "bytes": 6907,
+      "path": "runtime-web/_framework/Crisis.Runtime.Browser.wasm.gz",
+      "sha256": "c1e8b6d47c436f3a018a5cb1f784937dca41672568b72703b0d9384799c0699b"
+    },
+    {
+      "bytes": 35076,
+      "path": "runtime-web/_framework/Crisis.Runtime.pdb.gz",
+      "sha256": "2b67a8138dcc508c8970b7d59a74e9e5adad1817ede9720049fe3e92e90ead81"
+    },
+    {
+      "bytes": 233749,
+      "path": "runtime-web/_framework/Crisis.Runtime.wasm",
+      "sha256": "c716ecd2889102fdc73eefc11570288ff78e5674a01d09b70d8be5af700b7285"
+    },
+    {
+      "bytes": 78377,
+      "path": "runtime-web/_framework/Crisis.Runtime.wasm.br",
+      "sha256": "ec8b499da82a3e2e0ea9d7df319be9c2a3752c2c32102e300732fa33ff2ef2a9"
+    },
+    {
+      "bytes": 94833,
+      "path": "runtime-web/_framework/Crisis.Runtime.wasm.gz",
+      "sha256": "bb89e6114e94acb24713cb692331aaaed4bcc4e3225bc6d60f47e7fe3cd67e97"
+    },
+    {
+      "bytes": 40725,
+      "path": "runtime-web/_framework/Microsoft.AspNetCore.Authorization.wasm",
+      "sha256": "615889cf4e51ebe249eaebb7e2c45c36035db873c7355a2aecdf7d6b44da721f"
+    },
+    {
+      "bytes": 15489,
+      "path": "runtime-web/_framework/Microsoft.AspNetCore.Authorization.wasm.br",
+      "sha256": "7842ad4d31efb89fa67f6c6df6933a94ee44634e39f3a480ff6c6402dea2a49b"
+    },
+    {
+      "bytes": 17688,
+      "path": "runtime-web/_framework/Microsoft.AspNetCore.Authorization.wasm.gz",
+      "sha256": "44b9b596d534bdfe0b81523be5381f096a845343c2d2aecbc1294907a9832496"
+    },
+    {
+      "bytes": 35093,
+      "path": "runtime-web/_framework/Microsoft.AspNetCore.Components.Forms.wasm",
+      "sha256": "d6397fa87a0f6ca4c9297096bb011f57e00fa30936bc2b8bead4816c021bee08"
+    },
+    {
+      "bytes": 14421,
+      "path": "runtime-web/_framework/Microsoft.AspNetCore.Components.Forms.wasm.br",
+      "sha256": "527355b38f7156965e756c9da6043d1a7d190143799a42ae9863ae295611f337"
+    },
+    {
+      "bytes": 16302,
+      "path": "runtime-web/_framework/Microsoft.AspNetCore.Components.Forms.wasm.gz",
+      "sha256": "423306f439d34856b6231f83d3f2a77daf5ce9901840c56c5a7883b5cb0d9c7b"
+    },
+    {
+      "bytes": 163605,
+      "path": "runtime-web/_framework/Microsoft.AspNetCore.Components.Web.wasm",
+      "sha256": "90e35df9f7182c03b97708d795c3ee592389d810919a947448ce86be35d2df1e"
+    },
+    {
+      "bytes": 55391,
+      "path": "runtime-web/_framework/Microsoft.AspNetCore.Components.Web.wasm.br",
+      "sha256": "0e65c132cb9969601abbc1e6c88744423fde417a16ba399048c9896e901a119b"
+    },
+    {
+      "bytes": 65399,
+      "path": "runtime-web/_framework/Microsoft.AspNetCore.Components.Web.wasm.gz",
+      "sha256": "3420219ba4320abe8225f18e7a1a84aab9ecf3b708b0d72a57a12c459ec2a695"
+    },
+    {
+      "bytes": 110357,
+      "path": "runtime-web/_framework/Microsoft.AspNetCore.Components.WebAssembly.wasm",
+      "sha256": "b9b4f8b41a6b589efa9cf2315d6ba93601b7907fa2bfacc9d56252a2b7dc5520"
+    },
+    {
+      "bytes": 39709,
+      "path": "runtime-web/_framework/Microsoft.AspNetCore.Components.WebAssembly.wasm.br",
+      "sha256": "dc853a9751b47d9cae5c6b070f2b92c8b65b51d3688f784b1227afe626544c2e"
+    },
+    {
+      "bytes": 46099,
+      "path": "runtime-web/_framework/Microsoft.AspNetCore.Components.WebAssembly.wasm.gz",
+      "sha256": "8752222464aefd4404febd8fa11d9853c8d0c2db3980431d8b684721a8ad44e5"
+    },
+    {
+      "bytes": 323861,
+      "path": "runtime-web/_framework/Microsoft.AspNetCore.Components.wasm",
+      "sha256": "76b9b75636d40dc820e897153cd44b2f9903958bda3b7a9b55c582843a70854a"
+    },
+    {
+      "bytes": 109729,
+      "path": "runtime-web/_framework/Microsoft.AspNetCore.Components.wasm.br",
+      "sha256": "be07222d9134089addf3f949ea52e196c014bbcb51d1f70c94750a08968aa7ef"
+    },
+    {
+      "bytes": 129431,
+      "path": "runtime-web/_framework/Microsoft.AspNetCore.Components.wasm.gz",
+      "sha256": "e6c6b01319dc9e089c7cd80c564aa53dd68706c8bcd25ecba3e58e9c23945de1"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/Microsoft.AspNetCore.Metadata.wasm",
+      "sha256": "2a6674bb35cb22fbf7f98b54175632af976f8735e2a824fddf4e37bb47029c90"
+    },
+    {
+      "bytes": 2153,
+      "path": "runtime-web/_framework/Microsoft.AspNetCore.Metadata.wasm.br",
+      "sha256": "c28e9ee7fbfa1d026bf62c559e3b6863c235b75383a7a9b023f4cf9bd743e742"
+    },
+    {
+      "bytes": 2406,
+      "path": "runtime-web/_framework/Microsoft.AspNetCore.Metadata.wasm.gz",
+      "sha256": "3ccca7e19757559fc2a842261be281363396f7b58361f952e67b0d0ffec63894"
+    },
+    {
+      "bytes": 298261,
+      "path": "runtime-web/_framework/Microsoft.CSharp.wasm",
+      "sha256": "1a0545e8e6d97dadf7ca4dbc5199fdc10995c34cbccda8f68899247fcbefa523"
+    },
+    {
+      "bytes": 110182,
+      "path": "runtime-web/_framework/Microsoft.CSharp.wasm.br",
+      "sha256": "5bac97d9baeb57ddef3a882518a3595b1811bc0d7292cb79ddc575d2059c5574"
+    },
+    {
+      "bytes": 131195,
+      "path": "runtime-web/_framework/Microsoft.CSharp.wasm.gz",
+      "sha256": "9611f4e268327c1202d0ba9f635e27a62c1771a5d3d657289d962a4ee9b52395"
+    },
+    {
+      "bytes": 17173,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Configuration.Abstractions.wasm",
+      "sha256": "c8d76a6ea0d61a2268f78dc3ecb3da939c6bc82044b0d1f4c2d762b94d51f551"
+    },
+    {
+      "bytes": 6901,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Configuration.Abstractions.wasm.br",
+      "sha256": "a7ff615e243fbb7e21e818c198341a5946ba5158ec6d82f2030d44e5412acd91"
+    },
+    {
+      "bytes": 7793,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Configuration.Abstractions.wasm.gz",
+      "sha256": "2880bb4879946858de265cb514a32db0aa5b89373866d59cab9ec2d9c97cba29"
+    },
+    {
+      "bytes": 32021,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Configuration.Binder.wasm",
+      "sha256": "7cd365cb25b8e32f06a7a76f3adb2f1e854dce94fc96b2a63e57a0e420e1440a"
+    },
+    {
+      "bytes": 12126,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Configuration.Binder.wasm.br",
+      "sha256": "ead0435168950c243171d228c3364ac7de12ed07231aae1197747d0918d2c8d3"
+    },
+    {
+      "bytes": 13809,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Configuration.Binder.wasm.gz",
+      "sha256": "209d6b87151683e1ecbe295fd2646d305204f15e3d66c70605fa93bf7cfe0ed3"
+    },
+    {
+      "bytes": 17173,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Configuration.FileExtensions.wasm",
+      "sha256": "4ab02d68d0ffdfe6527ee78173d99eb8acf216071a9b2540e7cd4be11ec09b3b"
+    },
+    {
+      "bytes": 6813,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Configuration.FileExtensions.wasm.br",
+      "sha256": "3876cd984d64298ebf2460895f30bbaa299eed28687aa45f5b7d99eae20991ed"
+    },
+    {
+      "bytes": 7680,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Configuration.FileExtensions.wasm.gz",
+      "sha256": "15ec76c3967f35974863d53cb335241b9ef137fc13262d23256ddc8acda1af4d"
+    },
+    {
+      "bytes": 16149,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Configuration.Json.wasm",
+      "sha256": "0ad2ec97dc395132571974dba7e490c4ccedf5ffe08d0e04932c2bb6e0ac72f5"
+    },
+    {
+      "bytes": 6612,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Configuration.Json.wasm.br",
+      "sha256": "5331a567d08f94c98437a1fd776d5d5b517be906493093cb2febdd6b61227244"
+    },
+    {
+      "bytes": 7509,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Configuration.Json.wasm.gz",
+      "sha256": "d663c7683c19b86bb1dd1f55742109ae81a2fc1273187c1dbad73ae25a3eff40"
+    },
+    {
+      "bytes": 33045,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Configuration.wasm",
+      "sha256": "503184411ec9dd64dfcd83203b3c55201c0542d284789bcef1482b59a832a5d1"
+    },
+    {
+      "bytes": 13269,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Configuration.wasm.br",
+      "sha256": "374b6eb7d18d9630cc3e85a0c7f2f88dbad8dffc6baa143753baea4d4c065d27"
+    },
+    {
+      "bytes": 15095,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Configuration.wasm.gz",
+      "sha256": "7c441262f82612986e67c82097125c6e20c77e791e96bcaa0b58ebcc3c2c6808"
+    },
+    {
+      "bytes": 53013,
+      "path": "runtime-web/_framework/Microsoft.Extensions.DependencyInjection.Abstractions.wasm",
+      "sha256": "34808a130da18e806197596fc4e061f1cc4e20df2492b187cf7a6f57578b2db6"
+    },
+    {
+      "bytes": 17803,
+      "path": "runtime-web/_framework/Microsoft.Extensions.DependencyInjection.Abstractions.wasm.br",
+      "sha256": "1c93d935fb0c0616d3e35dcde994d48c5c5bd1780b50d036e88ad4336b30effb"
+    },
+    {
+      "bytes": 20683,
+      "path": "runtime-web/_framework/Microsoft.Extensions.DependencyInjection.Abstractions.wasm.gz",
+      "sha256": "bbe4b6321722f127b35f696c7abc528aaff9f03151462d676551751c7299dfeb"
+    },
+    {
+      "bytes": 82197,
+      "path": "runtime-web/_framework/Microsoft.Extensions.DependencyInjection.wasm",
+      "sha256": "092f90acf2daa20977d9a520f844b511fe5018aa0cca3b7757ec06a221beb69c"
+    },
+    {
+      "bytes": 30933,
+      "path": "runtime-web/_framework/Microsoft.Extensions.DependencyInjection.wasm.br",
+      "sha256": "1683c8f6be63db652468138b3875513010099ff1ffee135e594bc7aa9f5375aa"
+    },
+    {
+      "bytes": 35118,
+      "path": "runtime-web/_framework/Microsoft.Extensions.DependencyInjection.wasm.gz",
+      "sha256": "1b0f0da6f3ea4cd488052fc21d7d9eac4beb4e48fde0d85b8a536fbb70a4e1b6"
+    },
+    {
+      "bytes": 11541,
+      "path": "runtime-web/_framework/Microsoft.Extensions.FileProviders.Abstractions.wasm",
+      "sha256": "214a298b1b95f04d3d98ff93220469fe55c46de69c5db5135bb72ed2fe41f537"
+    },
+    {
+      "bytes": 4541,
+      "path": "runtime-web/_framework/Microsoft.Extensions.FileProviders.Abstractions.wasm.br",
+      "sha256": "2fdd18eee95f7772727444ad372a852cdda7d152e083c4486054fbca92a85631"
+    },
+    {
+      "bytes": 5094,
+      "path": "runtime-web/_framework/Microsoft.Extensions.FileProviders.Abstractions.wasm.gz",
+      "sha256": "66d7dd29c9a84eb2cd9859df6f6cf6344d4747955f1b44e3d24cac059815801a"
+    },
+    {
+      "bytes": 34069,
+      "path": "runtime-web/_framework/Microsoft.Extensions.FileProviders.Physical.wasm",
+      "sha256": "312fb3074c642a12a4fd0744df66702ad765acb30b23fcb634028f51685c0558"
+    },
+    {
+      "bytes": 14332,
+      "path": "runtime-web/_framework/Microsoft.Extensions.FileProviders.Physical.wasm.br",
+      "sha256": "a425b48b89e8b4d9b92a929291fc0d91c3d7d05415985252e52775b0c6ebba39"
+    },
+    {
+      "bytes": 16310,
+      "path": "runtime-web/_framework/Microsoft.Extensions.FileProviders.Physical.wasm.gz",
+      "sha256": "d10e46d4cb076488aad52a20dca4a187527af903ec0ad3a931e1ea7fbdae857b"
+    },
+    {
+      "bytes": 35093,
+      "path": "runtime-web/_framework/Microsoft.Extensions.FileSystemGlobbing.wasm",
+      "sha256": "02759429dd2a27c64d2a4442d0014ad9c8e3b3307bade5e23fe6d77488bc6e27"
+    },
+    {
+      "bytes": 14138,
+      "path": "runtime-web/_framework/Microsoft.Extensions.FileSystemGlobbing.wasm.br",
+      "sha256": "20741114b2d5dfb8d8c1af0e0cefa5661442fcb208dd0615595290a7a6fd446a"
+    },
+    {
+      "bytes": 16109,
+      "path": "runtime-web/_framework/Microsoft.Extensions.FileSystemGlobbing.wasm.gz",
+      "sha256": "49f9895802d3cb7fd8b495a644fd9e1bc3bfd8fc1d9af5036293aa60d363978d"
+    },
+    {
+      "bytes": 54549,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Logging.Abstractions.wasm",
+      "sha256": "b9fd4a269d1f566d1ddc1b362450f5a31a3ce7b7551fe300f4017fb651f9604c"
+    },
+    {
+      "bytes": 19834,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Logging.Abstractions.wasm.br",
+      "sha256": "8d904e34244360366b49e61a00b1c31d80c907d0c4bfe9bfec54635ecc485ce8"
+    },
+    {
+      "bytes": 23619,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Logging.Abstractions.wasm.gz",
+      "sha256": "6c62352d4c2513a62f5058bcc70304cff3306b7b46b5c9d004ee97cb36fb34ad"
+    },
+    {
+      "bytes": 40213,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Logging.wasm",
+      "sha256": "a5ad0cddec7136f93a8396a753095a3c2f7d01f6b0b22d4666f25e535abf6463"
+    },
+    {
+      "bytes": 16164,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Logging.wasm.br",
+      "sha256": "4a32eb153f83fc0f5d266d3254567df8ab07dad22b0aef14c8a98abc31a46df8"
+    },
+    {
+      "bytes": 18424,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Logging.wasm.gz",
+      "sha256": "f86eb282727b8cf48ce78884c7ab687c5a56f0463d287376565c4d5154f8c532"
+    },
+    {
+      "bytes": 54037,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Options.wasm",
+      "sha256": "e7f9bec9514646e63e3788d09c3f90113287d007e102c9d5cdee5d279a202153"
+    },
+    {
+      "bytes": 19198,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Options.wasm.br",
+      "sha256": "ddea47b771b85a37f8c321f15f82ce33944101e19a0b52575c7c1038fecf6dd4"
+    },
+    {
+      "bytes": 23295,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Options.wasm.gz",
+      "sha256": "6bebd20909dc17d0f7417e674c372053195de32d5a105e87b7f5437dee4effb1"
+    },
+    {
+      "bytes": 33045,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Primitives.wasm",
+      "sha256": "a55ad83937e36f621396cdcb2880725b5b7c8f03805858669085437b0b49d461"
+    },
+    {
+      "bytes": 13048,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Primitives.wasm.br",
+      "sha256": "0d60c6ea105f0aec41370f05360b5a4d7cd81b6155f5ca97ab6931875e893f59"
+    },
+    {
+      "bytes": 14733,
+      "path": "runtime-web/_framework/Microsoft.Extensions.Primitives.wasm.gz",
+      "sha256": "cdb33a9715d2395a08710ce6fe5e66e3a66eadd5952f42fa63355e74231684a1"
+    },
+    {
+      "bytes": 14101,
+      "path": "runtime-web/_framework/Microsoft.JSInterop.WebAssembly.wasm",
+      "sha256": "3db1c6a0d018ab23878c7e5434f8f9661e531902cbf3dce3d322f9a1c2ca6859"
+    },
+    {
+      "bytes": 5952,
+      "path": "runtime-web/_framework/Microsoft.JSInterop.WebAssembly.wasm.br",
+      "sha256": "c51b05b0b4da95530491436bd116a8ed87812444db001e1ecbf4b4c5c088e486"
+    },
+    {
+      "bytes": 6768,
+      "path": "runtime-web/_framework/Microsoft.JSInterop.WebAssembly.wasm.gz",
+      "sha256": "20232c0043e5948a98fdbe1b43b18cdfd4b96e2ffa166dce9f1a883203c54ae7"
+    },
+    {
+      "bytes": 55573,
+      "path": "runtime-web/_framework/Microsoft.JSInterop.wasm",
+      "sha256": "b308530f0ccc911b443fb2a066f72e572d566d0305b0048a7a43d3787feb3d52"
+    },
+    {
+      "bytes": 21097,
+      "path": "runtime-web/_framework/Microsoft.JSInterop.wasm.br",
+      "sha256": "9ad8d4e2a1997d07873b7b8817789d3142a0de79989bd443161a769ba33e69b9"
+    },
+    {
+      "bytes": 24034,
+      "path": "runtime-web/_framework/Microsoft.JSInterop.wasm.gz",
+      "sha256": "180e85fa2805ba66d860eaee27e5b6b5e80c3e5062e9b01051073e9bc25651aa"
+    },
+    {
+      "bytes": 418581,
+      "path": "runtime-web/_framework/Microsoft.VisualBasic.Core.wasm",
+      "sha256": "64453f9a668a559d45926a440136ff7fc825af5c858a5d04e177e181148672a8"
+    },
+    {
+      "bytes": 139999,
+      "path": "runtime-web/_framework/Microsoft.VisualBasic.Core.wasm.br",
+      "sha256": "b7cb736e882121c573b955a809697f9b7d0f4f35017524eb0b30d094e56adb0b"
+    },
+    {
+      "bytes": 166939,
+      "path": "runtime-web/_framework/Microsoft.VisualBasic.Core.wasm.gz",
+      "sha256": "88f0e4328c813907c47679457ccb91d5acabad64d8486710cca825e22e6c6167"
+    },
+    {
+      "bytes": 6933,
+      "path": "runtime-web/_framework/Microsoft.VisualBasic.wasm",
+      "sha256": "b0ae3230d42e62343063a833cbd1b0c594877cb7c8b8b4887e0e8241467de9d6"
+    },
+    {
+      "bytes": 2507,
+      "path": "runtime-web/_framework/Microsoft.VisualBasic.wasm.br",
+      "sha256": "744705001f16590c5747489ff18dad6157f7889827b2a29190bbcabd94bed367"
+    },
+    {
+      "bytes": 2854,
+      "path": "runtime-web/_framework/Microsoft.VisualBasic.wasm.gz",
+      "sha256": "83cd8bcc2ee72d1fc133ec0672b48c581f2ba75a89818d741e1590ae00831830"
+    },
+    {
+      "bytes": 4885,
+      "path": "runtime-web/_framework/Microsoft.Win32.Primitives.wasm",
+      "sha256": "b7652b8f668b6741df3c8b2fc8f647080f50c6bfd780c075fe43ece06d73d8e6"
+    },
+    {
+      "bytes": 1934,
+      "path": "runtime-web/_framework/Microsoft.Win32.Primitives.wasm.br",
+      "sha256": "38291363702d9cf896ea60d48ba7e31ea82094dce697540a2d0a338a61fd85ac"
+    },
+    {
+      "bytes": 2195,
+      "path": "runtime-web/_framework/Microsoft.Win32.Primitives.wasm.gz",
+      "sha256": "ddb1e030c13ffb83aa76f8f4a95f2912ab26aee7429b92e4b46f9ae00fa89a72"
+    },
+    {
+      "bytes": 21269,
+      "path": "runtime-web/_framework/Microsoft.Win32.Registry.wasm",
+      "sha256": "eb5260bb6cb256a7073a858f15fa37a155afeea0c2f04affc7042204e1c438e6"
+    },
+    {
+      "bytes": 7380,
+      "path": "runtime-web/_framework/Microsoft.Win32.Registry.wasm.br",
+      "sha256": "702262cf4b74e9f91e34ae0c4664dce69ee0bb5452c9f9f7f8c0fdcf253205b4"
+    },
+    {
+      "bytes": 8539,
+      "path": "runtime-web/_framework/Microsoft.Win32.Registry.wasm.gz",
+      "sha256": "6ace3558ce75f0397860e991e0c74cf15093113524aec690ee393560c19fba25"
+    },
+    {
+      "bytes": 4885,
+      "path": "runtime-web/_framework/System.AppContext.wasm",
+      "sha256": "5769789c2968e1ddedaefdab9d1bc20dad0bd04c2eadb26a28408171b40864c9"
+    },
+    {
+      "bytes": 1871,
+      "path": "runtime-web/_framework/System.AppContext.wasm.br",
+      "sha256": "bab846ef27a5705db464bac65e9d227f64de3588d96d761bf66826fedd62d5c5"
+    },
+    {
+      "bytes": 2087,
+      "path": "runtime-web/_framework/System.AppContext.wasm.gz",
+      "sha256": "97cec14240b10d7b305e92a725cc5a8e529367dfcd6260d4801158077f1214d0"
+    },
+    {
+      "bytes": 4885,
+      "path": "runtime-web/_framework/System.Buffers.wasm",
+      "sha256": "02bdce5fefac47cd8fa75aab12f973ba7556887c7981c9a7318a708cf6735235"
+    },
+    {
+      "bytes": 1878,
+      "path": "runtime-web/_framework/System.Buffers.wasm.br",
+      "sha256": "a253f875d521ac3c1c5d57628884603c787bc4bb69c74caab5ae7aba3588b903"
+    },
+    {
+      "bytes": 2088,
+      "path": "runtime-web/_framework/System.Buffers.wasm.gz",
+      "sha256": "a83c93a49886a66ce82af5951cf3bc43ab8c8a06fb10d9736c0574df8d40d9fc"
+    },
+    {
+      "bytes": 75029,
+      "path": "runtime-web/_framework/System.Collections.Concurrent.wasm",
+      "sha256": "e83f42aa76819cd8df34a4e4f079d8b1dcf9eb19ab01253f9f3e917970c65711"
+    },
+    {
+      "bytes": 27774,
+      "path": "runtime-web/_framework/System.Collections.Concurrent.wasm.br",
+      "sha256": "54eb45fcec0dc2790f44cf98e810138d33b32dc23abd37700f9af347626a94cb"
+    },
+    {
+      "bytes": 32297,
+      "path": "runtime-web/_framework/System.Collections.Concurrent.wasm.gz",
+      "sha256": "c0a968ed7e47d4dcaf07563fd6a422ec821902d06e4a1b83e97f2e15e5b3fb88"
+    },
+    {
+      "bytes": 234773,
+      "path": "runtime-web/_framework/System.Collections.Immutable.wasm",
+      "sha256": "7e4ea70844f75e7d4453ee31c595f97d481eb7aab180e6f8db7c50f67c42064a"
+    },
+    {
+      "bytes": 78454,
+      "path": "runtime-web/_framework/System.Collections.Immutable.wasm.br",
+      "sha256": "a04ffef58cb0561b1e1283e1825b4227e9d6d874f843e67f32ec47ac8dc4c52b"
+    },
+    {
+      "bytes": 95461,
+      "path": "runtime-web/_framework/System.Collections.Immutable.wasm.gz",
+      "sha256": "f8a9c14f90b1c4d1048f57d443865b44125b1960d77ce273d1a68a4b8e9ad6d5"
+    },
+    {
+      "bytes": 36117,
+      "path": "runtime-web/_framework/System.Collections.NonGeneric.wasm",
+      "sha256": "d592a7166deb7a3616e9b727fe3a568889b69d4feb0ae3d90841c77c4456155a"
+    },
+    {
+      "bytes": 12286,
+      "path": "runtime-web/_framework/System.Collections.NonGeneric.wasm.br",
+      "sha256": "8f8bcabcbdd41f803a91d0708f206ce0d64675a1be4a14f0eb71a554e040601e"
+    },
+    {
+      "bytes": 14134,
+      "path": "runtime-web/_framework/System.Collections.NonGeneric.wasm.gz",
+      "sha256": "aba75ace186a29b4dd7892358b5f1069dae581d78579874ebe2dd85b5a16ca35"
+    },
+    {
+      "bytes": 36629,
+      "path": "runtime-web/_framework/System.Collections.Specialized.wasm",
+      "sha256": "d186571fce1c760eb3678c3caddcb296c53761223e5ce0391e8323739530a98a"
+    },
+    {
+      "bytes": 14076,
+      "path": "runtime-web/_framework/System.Collections.Specialized.wasm.br",
+      "sha256": "dcb3497e51bee6392350836adf8fe4acb0f7852af7e93c250c76534f067fff12"
+    },
+    {
+      "bytes": 16044,
+      "path": "runtime-web/_framework/System.Collections.Specialized.wasm.gz",
+      "sha256": "34f6b74becd3cc6a52d626bd8144061e11a4f8c5dadcbcaf4ebd14a55f1cb327"
+    },
+    {
+      "bytes": 91413,
+      "path": "runtime-web/_framework/System.Collections.wasm",
+      "sha256": "ad0dcc47fe6afa2a2831a7e100de6c33c2c906262260858017f0f350d97d752d"
+    },
+    {
+      "bytes": 33276,
+      "path": "runtime-web/_framework/System.Collections.wasm.br",
+      "sha256": "4268744862be52165564fafbbf3c410f5a266509c7b80171e59f1f14436d050f"
+    },
+    {
+      "bytes": 38918,
+      "path": "runtime-web/_framework/System.Collections.wasm.gz",
+      "sha256": "67d55d9ae9d0e462615a406f7b133270a35775cdfae656d2f628bc8131450da8"
+    },
+    {
+      "bytes": 90901,
+      "path": "runtime-web/_framework/System.ComponentModel.Annotations.wasm",
+      "sha256": "fb157df33dae340a41d7876693649e30f4bab5d7500af724ad0567d4fe23f2b3"
+    },
+    {
+      "bytes": 29837,
+      "path": "runtime-web/_framework/System.ComponentModel.Annotations.wasm.br",
+      "sha256": "016b17f1bac83b819dc37f55d30d9f8bd4ebf639bb7affea486cb70cea559969"
+    },
+    {
+      "bytes": 35117,
+      "path": "runtime-web/_framework/System.ComponentModel.Annotations.wasm.gz",
+      "sha256": "a45908b24f50e3492d90bd5660e642145186b8e47f845750265fc4f32626a665"
+    },
+    {
+      "bytes": 6421,
+      "path": "runtime-web/_framework/System.ComponentModel.DataAnnotations.wasm",
+      "sha256": "733549652892dfa38d508ad6ac147df47d2cbc6f6aa5879e9154cd634b888483"
+    },
+    {
+      "bytes": 2257,
+      "path": "runtime-web/_framework/System.ComponentModel.DataAnnotations.wasm.br",
+      "sha256": "888b6a43abcff70b73309bcc2f43f545cff44fadf6f9259a10bf660d5e20985e"
+    },
+    {
+      "bytes": 2567,
+      "path": "runtime-web/_framework/System.ComponentModel.DataAnnotations.wasm.gz",
+      "sha256": "1cc2057f9db019493286d51629bb55e012077b6f0fdd0f2ebf34e6664167b49e"
+    },
+    {
+      "bytes": 15637,
+      "path": "runtime-web/_framework/System.ComponentModel.EventBasedAsync.wasm",
+      "sha256": "980308ed43f4819320f315e4d04e13371d237ee763dbc87eb4af9cc2704b4108"
+    },
+    {
+      "bytes": 5981,
+      "path": "runtime-web/_framework/System.ComponentModel.EventBasedAsync.wasm.br",
+      "sha256": "91bf1f5a6c2bd5211eada41018cf5949b3803dd2cd3f3bcebb40f8b9b698bd78"
+    },
+    {
+      "bytes": 6780,
+      "path": "runtime-web/_framework/System.ComponentModel.EventBasedAsync.wasm.gz",
+      "sha256": "c12a8ddb314bceacd4357724bd85d136e24c72e2602b4b0e0ba39850483349f8"
+    },
+    {
+      "bytes": 30997,
+      "path": "runtime-web/_framework/System.ComponentModel.Primitives.wasm",
+      "sha256": "6aabfba251ac994dd98b8aaf732ae9ccd598c25d856a871a336eec0cbdc55ec8"
+    },
+    {
+      "bytes": 11287,
+      "path": "runtime-web/_framework/System.ComponentModel.Primitives.wasm.br",
+      "sha256": "9258404586eb5e0a860d6ce1d8f7849e436863c2b66ce66dee6ba969bef70b4a"
+    },
+    {
+      "bytes": 13074,
+      "path": "runtime-web/_framework/System.ComponentModel.Primitives.wasm.gz",
+      "sha256": "6278ac4141dba93f23aa7880281c4ec3354a7924e598e815a28e8194a5f2c71d"
+    },
+    {
+      "bytes": 291605,
+      "path": "runtime-web/_framework/System.ComponentModel.TypeConverter.wasm",
+      "sha256": "8d50f76fd51393362d2d6878a5aa25fed723412567d44cbc1812868ac6a64af5"
+    },
+    {
+      "bytes": 100217,
+      "path": "runtime-web/_framework/System.ComponentModel.TypeConverter.wasm.br",
+      "sha256": "83c948f6ad5f0167fcf1f4ef829b1efc149b2a806fc19fedf884851c8411df44"
+    },
+    {
+      "bytes": 118080,
+      "path": "runtime-web/_framework/System.ComponentModel.TypeConverter.wasm.gz",
+      "sha256": "a0a7f633c8f7401b82f92dee9164088acc8f3e72022d5a864b85feef930b09fb"
+    },
+    {
+      "bytes": 5909,
+      "path": "runtime-web/_framework/System.ComponentModel.wasm",
+      "sha256": "0ee3bbf2121f5354b070cfa46f42794462f413f12038795a9dc07e02ac21dcfc"
+    },
+    {
+      "bytes": 2285,
+      "path": "runtime-web/_framework/System.ComponentModel.wasm.br",
+      "sha256": "f0df4c300eda263ef5abf11c82dbd78827f5c5d950a6aeba8cf5b5f6124be78d"
+    },
+    {
+      "bytes": 2551,
+      "path": "runtime-web/_framework/System.ComponentModel.wasm.gz",
+      "sha256": "e4d552475f562a30bb79befe06b88babfd710522f56027be85d3faa3525cd8c5"
+    },
+    {
+      "bytes": 8981,
+      "path": "runtime-web/_framework/System.Configuration.wasm",
+      "sha256": "3cf3cbe2d63144d4bdf35d07c14947bae2d93b5a7363d03ed9a740bd1f35d32c"
+    },
+    {
+      "bytes": 2771,
+      "path": "runtime-web/_framework/System.Configuration.wasm.br",
+      "sha256": "0215aeff6f04ce75cbeb67df0e3201cbd2ffa1e378a67c40b844e4fa0c2f21c7"
+    },
+    {
+      "bytes": 3098,
+      "path": "runtime-web/_framework/System.Configuration.wasm.gz",
+      "sha256": "4cb795c6a3fd2542845117c5e298d4b14c525375b5c3d54c1c7f72672d30df7e"
+    },
+    {
+      "bytes": 43797,
+      "path": "runtime-web/_framework/System.Console.wasm",
+      "sha256": "44bc5d84626a95b834e9ea122a79d1e0f9d634b000e77bdbb91d7cc644468ee9"
+    },
+    {
+      "bytes": 16493,
+      "path": "runtime-web/_framework/System.Console.wasm.br",
+      "sha256": "31b45d9d4ae7a257a8f30b1b727b3d61594f9efcf25717e48f6b37e1cc31a16c"
+    },
+    {
+      "bytes": 19799,
+      "path": "runtime-web/_framework/System.Console.wasm.gz",
+      "sha256": "23d335a7f01669320484615f98c8cd7bbd76a9985f8458dc5ec0cc26997a596e"
+    },
+    {
+      "bytes": 13077,
+      "path": "runtime-web/_framework/System.Core.wasm",
+      "sha256": "f900f4545cabfa75c5d0255b616bb5f7d7d82e82c75e79d778ffe06997540142"
+    },
+    {
+      "bytes": 3822,
+      "path": "runtime-web/_framework/System.Core.wasm.br",
+      "sha256": "4f3a109dfaca74f5c29d12316b7baf5471f492acc918cc7aa14d9fe9b835e40a"
+    },
+    {
+      "bytes": 4528,
+      "path": "runtime-web/_framework/System.Core.wasm.gz",
+      "sha256": "d891bdb3564aa113c285c3e4dbb0fc71b9f153ce543b5ea492309798ac1f4fda"
+    },
+    {
+      "bytes": 1007893,
+      "path": "runtime-web/_framework/System.Data.Common.wasm",
+      "sha256": "201cbcb5669777ddc2c19055c0d6d48820b8a05842a950188e8886e54c9891b5"
+    },
+    {
+      "bytes": 310675,
+      "path": "runtime-web/_framework/System.Data.Common.wasm.br",
+      "sha256": "4d5540ea04135a1d05900419043d669d5c26353d69490532a2c81aeb9e924e05"
+    },
+    {
+      "bytes": 376209,
+      "path": "runtime-web/_framework/System.Data.Common.wasm.gz",
+      "sha256": "713f05b5cc944343f61955bf72e5de54499769298d46a88d947ae0f44b9dba94"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Data.DataSetExtensions.wasm",
+      "sha256": "61025a729f0606c785a9f30f1d99880325caedf8453d97579e27b728aa0592d9"
+    },
+    {
+      "bytes": 1812,
+      "path": "runtime-web/_framework/System.Data.DataSetExtensions.wasm.br",
+      "sha256": "07723144c930468546ff1ab82f62ee738b993a899d16f0ed7771b3b8d8922bd9"
+    },
+    {
+      "bytes": 2061,
+      "path": "runtime-web/_framework/System.Data.DataSetExtensions.wasm.gz",
+      "sha256": "291bfe1cce4c02f66d988480ac89c43baf501d7a4a4a12d9af0ad7263cc3200e"
+    },
+    {
+      "bytes": 14613,
+      "path": "runtime-web/_framework/System.Data.wasm",
+      "sha256": "f5ca18a89ca63572d6fccd3f273345bbf06f0f993537325c0f6eeddb8084a893"
+    },
+    {
+      "bytes": 4157,
+      "path": "runtime-web/_framework/System.Data.wasm.br",
+      "sha256": "941ee4de54e9ae0e8fd4edcff955c5e07788a0a30bf1a5f94d11c7c684aee19a"
+    },
+    {
+      "bytes": 4984,
+      "path": "runtime-web/_framework/System.Data.wasm.gz",
+      "sha256": "5ef7d8a0f89ea20831004f1f4485df3f6a5e5347c215a9e5ae177daa0922ac99"
+    },
+    {
+      "bytes": 5909,
+      "path": "runtime-web/_framework/System.Diagnostics.Contracts.wasm",
+      "sha256": "8260287a4852cffdb18900833e537d35f4412c896ac1d83543f9f48e0b45f9f6"
+    },
+    {
+      "bytes": 2095,
+      "path": "runtime-web/_framework/System.Diagnostics.Contracts.wasm.br",
+      "sha256": "ee44a310e19db2163aa1548e8589bdec0d7972d88e75ea44f9f356201ff50cb4"
+    },
+    {
+      "bytes": 2383,
+      "path": "runtime-web/_framework/System.Diagnostics.Contracts.wasm.gz",
+      "sha256": "1339e675b44fedc356f0ff810da354cdc33e0263adf032290f06975b32ef02c1"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Diagnostics.Debug.wasm",
+      "sha256": "164feb314b76f631664267f271aa701356ca028bcc0bc246ae7c5f3893c6286a"
+    },
+    {
+      "bytes": 2009,
+      "path": "runtime-web/_framework/System.Diagnostics.Debug.wasm.br",
+      "sha256": "0181e0060d1048f1b58d123d22ecc856c3747060ff9a9626eeecb636a016e22b"
+    },
+    {
+      "bytes": 2266,
+      "path": "runtime-web/_framework/System.Diagnostics.Debug.wasm.gz",
+      "sha256": "f8d447acaa5eb194a805b2eebadbad5f864a330d2e8c704cdef19b34960c196f"
+    },
+    {
+      "bytes": 153365,
+      "path": "runtime-web/_framework/System.Diagnostics.DiagnosticSource.wasm",
+      "sha256": "db860f256db4c6b7c519ccc74ba8fc713142f3277c982359965d478ffcf6294e"
+    },
+    {
+      "bytes": 56648,
+      "path": "runtime-web/_framework/System.Diagnostics.DiagnosticSource.wasm.br",
+      "sha256": "3476aaf8b504ebd4d3e49e4ead9f7b4f494f7463e233c454fb1976fb61885819"
+    },
+    {
+      "bytes": 65130,
+      "path": "runtime-web/_framework/System.Diagnostics.DiagnosticSource.wasm.gz",
+      "sha256": "7cb5755ec6726cb4294cba912e0a32cb469d42e51ad0b9ab0b0eedf2eca09f0f"
+    },
+    {
+      "bytes": 10517,
+      "path": "runtime-web/_framework/System.Diagnostics.FileVersionInfo.wasm",
+      "sha256": "eae1b6833d62e224cc79495f6b0bd13d8a34d64a27629c9811f9bb274be0ef1c"
+    },
+    {
+      "bytes": 3994,
+      "path": "runtime-web/_framework/System.Diagnostics.FileVersionInfo.wasm.br",
+      "sha256": "938668fb081654da9fe6768598ebcf1639cc008614542351a328970d260ba775"
+    },
+    {
+      "bytes": 4538,
+      "path": "runtime-web/_framework/System.Diagnostics.FileVersionInfo.wasm.gz",
+      "sha256": "5a7bcdf985fcd85e099690f9b4dc4820909fd79903554ce91e3bf8e84b0717f3"
+    },
+    {
+      "bytes": 44309,
+      "path": "runtime-web/_framework/System.Diagnostics.Process.wasm",
+      "sha256": "0a6d9931d24d6845154965f8010e6552bfb57980e22ad5c7e95640cdfe50b4d8"
+    },
+    {
+      "bytes": 12867,
+      "path": "runtime-web/_framework/System.Diagnostics.Process.wasm.br",
+      "sha256": "e4925b7a8368d989306f39d4bcf9aa9ecd06044a4fbf94be0ce579ce396d572d"
+    },
+    {
+      "bytes": 15498,
+      "path": "runtime-web/_framework/System.Diagnostics.Process.wasm.gz",
+      "sha256": "5232d40f7dacd9fa6ffcafe902fe6711494ca1e5c594a61c1f0778fc9d150e4a"
+    },
+    {
+      "bytes": 15637,
+      "path": "runtime-web/_framework/System.Diagnostics.StackTrace.wasm",
+      "sha256": "d6b40a63b43d71031765198e510d96eadc4a02e206fc4bc7cdcef2a4a85a44d9"
+    },
+    {
+      "bytes": 6558,
+      "path": "runtime-web/_framework/System.Diagnostics.StackTrace.wasm.br",
+      "sha256": "7b03e0a4553559b8a9918eee9249ed7a07caf4af655096d2b5ec470bd0a3d302"
+    },
+    {
+      "bytes": 7326,
+      "path": "runtime-web/_framework/System.Diagnostics.StackTrace.wasm.gz",
+      "sha256": "61a148603a59ccbf625cded05a41e2c599b8507fc4ef8bb9939e4f3ac19bc2a8"
+    },
+    {
+      "bytes": 20757,
+      "path": "runtime-web/_framework/System.Diagnostics.TextWriterTraceListener.wasm",
+      "sha256": "cba4207f68e76c327fee879cf73bc7a87e5815c2bd580bfc0a9ba5390324a899"
+    },
+    {
+      "bytes": 8498,
+      "path": "runtime-web/_framework/System.Diagnostics.TextWriterTraceListener.wasm.br",
+      "sha256": "878c53147bc7ceae26e2eca4f6fbe840c39170f070592b99fc7c3aa579f91547"
+    },
+    {
+      "bytes": 9380,
+      "path": "runtime-web/_framework/System.Diagnostics.TextWriterTraceListener.wasm.gz",
+      "sha256": "387b33995ce2bc7529e4ba743896c9fb14128094f43ea657629b4b82b47f22e6"
+    },
+    {
+      "bytes": 4885,
+      "path": "runtime-web/_framework/System.Diagnostics.Tools.wasm",
+      "sha256": "3653ca0a7dec49d7a13bd023c6f37821032b6675b8ca43b7d557a671721c40ce"
+    },
+    {
+      "bytes": 1946,
+      "path": "runtime-web/_framework/System.Diagnostics.Tools.wasm.br",
+      "sha256": "76a48e17f381f3657615834bb76302c71c59db2f02b47e74e6cdff449a345ec2"
+    },
+    {
+      "bytes": 2171,
+      "path": "runtime-web/_framework/System.Diagnostics.Tools.wasm.gz",
+      "sha256": "56056d44434bc0dbecee93bab960f52d5dcde248506607c3e7a9821fc11d5038"
+    },
+    {
+      "bytes": 46869,
+      "path": "runtime-web/_framework/System.Diagnostics.TraceSource.wasm",
+      "sha256": "e1f70e83f11e68a329592bb5c17a36c4c6f6765d312deaca2ed0e43aa962efc0"
+    },
+    {
+      "bytes": 16991,
+      "path": "runtime-web/_framework/System.Diagnostics.TraceSource.wasm.br",
+      "sha256": "434b80adc20c0ed257a7b596e4e9b33baf218392995c63798b4ab03c4cc859b4"
+    },
+    {
+      "bytes": 19517,
+      "path": "runtime-web/_framework/System.Diagnostics.TraceSource.wasm.gz",
+      "sha256": "4a5834fa4091b0cd995a0afa5439600c873b99e4ba7441efbecf743bbca9eac6"
+    },
+    {
+      "bytes": 5909,
+      "path": "runtime-web/_framework/System.Diagnostics.Tracing.wasm",
+      "sha256": "c27f1794b7c375cc934cd81ec88d7f648b08c26c6f3f220b5915a861a5debce4"
+    },
+    {
+      "bytes": 2209,
+      "path": "runtime-web/_framework/System.Diagnostics.Tracing.wasm.br",
+      "sha256": "06ff678b832e07f53e204fbb9a10a2193a7e1a141034730c80ad9e11042c7fa8"
+    },
+    {
+      "bytes": 2496,
+      "path": "runtime-web/_framework/System.Diagnostics.Tracing.wasm.gz",
+      "sha256": "7d93f4f372b4e1d65a75cb6cfc518ee2c2f7ae9737a7478832f03ca96cf625c0"
+    },
+    {
+      "bytes": 52501,
+      "path": "runtime-web/_framework/System.Drawing.Primitives.wasm",
+      "sha256": "463308dd97c198bbb96e67d83abfec6e3e0bdc7b6696c4d2cf1c280820e2fc39"
+    },
+    {
+      "bytes": 18721,
+      "path": "runtime-web/_framework/System.Drawing.Primitives.wasm.br",
+      "sha256": "aaf62f731351bdd96e1315e6df7f4df1b401c1b6ef36dd050674374c9cd7c986"
+    },
+    {
+      "bytes": 23207,
+      "path": "runtime-web/_framework/System.Drawing.Primitives.wasm.gz",
+      "sha256": "b7abe4834bad6ba745d67d56a238cc7735d5233c30d78eeab795db7d2697bc01"
+    },
+    {
+      "bytes": 10005,
+      "path": "runtime-web/_framework/System.Drawing.wasm",
+      "sha256": "324e518a2c6ad303e53cb33ef2717d537f55ad8d3ae13338fea954b56a486965"
+    },
+    {
+      "bytes": 3304,
+      "path": "runtime-web/_framework/System.Drawing.wasm.br",
+      "sha256": "089d6197e558bc552b92a44a6d80eb7b61b7b6fd85506501dd3f2a521643138e"
+    },
+    {
+      "bytes": 3829,
+      "path": "runtime-web/_framework/System.Drawing.wasm.gz",
+      "sha256": "dd92d5a86b856adbf1a13382c42f3cc6126089040e5edd1f432c4740eb0d6f7b"
+    },
+    {
+      "bytes": 5909,
+      "path": "runtime-web/_framework/System.Dynamic.Runtime.wasm",
+      "sha256": "d937cf1677d0b41b69aa0166274f074d055c108aae81b0a394b045033de03286"
+    },
+    {
+      "bytes": 2159,
+      "path": "runtime-web/_framework/System.Dynamic.Runtime.wasm.br",
+      "sha256": "cc9c3f9bc4f44fe0b02141c41ab8eb4f0eec31bc31dd976fa78f7cc12a848303"
+    },
+    {
+      "bytes": 2429,
+      "path": "runtime-web/_framework/System.Dynamic.Runtime.wasm.gz",
+      "sha256": "dec2e9ad45d8e7cf9b7e19d85cedcfa431d2b1cf0f5b16f3ca74c8b1ee72d6e8"
+    },
+    {
+      "bytes": 86293,
+      "path": "runtime-web/_framework/System.Formats.Asn1.wasm",
+      "sha256": "8bbf7715e20376e7155a929385eb19a32fe9ebb0419f5a7cc14349dea8cef0ac"
+    },
+    {
+      "bytes": 30275,
+      "path": "runtime-web/_framework/System.Formats.Asn1.wasm.br",
+      "sha256": "eac6fd188cf3f474aa69f3e50d83784895a43a93613ecc43bcd102362fab7160"
+    },
+    {
+      "bytes": 35450,
+      "path": "runtime-web/_framework/System.Formats.Asn1.wasm.gz",
+      "sha256": "fda92ca0d0755a74d98f3c27ac36a093413cf897fd3a13d8ee8ab7e8fb6b8c6d"
+    },
+    {
+      "bytes": 27413,
+      "path": "runtime-web/_framework/System.Formats.Tar.wasm",
+      "sha256": "b0fe58cf00ba2fc269f1a9fc224529e29a2d2c28b73c547e384779823af1ad5d"
+    },
+    {
+      "bytes": 8533,
+      "path": "runtime-web/_framework/System.Formats.Tar.wasm.br",
+      "sha256": "55d358c1ea99fde0ba92ad2e7241865624a2bbe80c6908eecfde04fd51d9c2ec"
+    },
+    {
+      "bytes": 10075,
+      "path": "runtime-web/_framework/System.Formats.Tar.wasm.gz",
+      "sha256": "003259e7df8ad5bdb317b3962ff9e34ee82c532a48f9de29a941d277622c5176"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Globalization.Calendars.wasm",
+      "sha256": "53d7a94481e5df66c18e6816e3e1b3bf51e7c138f1037bb9a74a17eb4eb7a4cb"
+    },
+    {
+      "bytes": 2049,
+      "path": "runtime-web/_framework/System.Globalization.Calendars.wasm.br",
+      "sha256": "3ef811ce89108532f00c21b4b0fc2135e3692e863e691343b9d11e5361860922"
+    },
+    {
+      "bytes": 2284,
+      "path": "runtime-web/_framework/System.Globalization.Calendars.wasm.gz",
+      "sha256": "efb13920d1cb22947fa0ec59666ff31f605e766eaeba47957a64bca65f95826f"
+    },
+    {
+      "bytes": 4885,
+      "path": "runtime-web/_framework/System.Globalization.Extensions.wasm",
+      "sha256": "9c448654e990f3b5f5b10e9702b5044ac70f8df3ccf59414d74595f013c37e7b"
+    },
+    {
+      "bytes": 1948,
+      "path": "runtime-web/_framework/System.Globalization.Extensions.wasm.br",
+      "sha256": "c5ab7b0ca17d1b6fec79aabe887b9152c05f4c982d2116458e4d5bf4fa77354b"
+    },
+    {
+      "bytes": 2170,
+      "path": "runtime-web/_framework/System.Globalization.Extensions.wasm.gz",
+      "sha256": "708ba36553d2db7b8b2ae6f23eb9bd91efa5019707507050ebf1d8c87db768dc"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Globalization.wasm",
+      "sha256": "2c294e5a4bb261b4f58eacef57016dd34d7b0087ffd03723c5d008dc82270a7f"
+    },
+    {
+      "bytes": 2006,
+      "path": "runtime-web/_framework/System.Globalization.wasm.br",
+      "sha256": "73b4c3f09793a263f08759b215873330b5c069b746180c74a50b0736c7e37a7c"
+    },
+    {
+      "bytes": 2250,
+      "path": "runtime-web/_framework/System.Globalization.wasm.gz",
+      "sha256": "336208bb55c2126d3f30e4fb899954850c2dbd4aba9626fbe1cfefdf7a158d93"
+    },
+    {
+      "bytes": 16149,
+      "path": "runtime-web/_framework/System.IO.Compression.Brotli.wasm",
+      "sha256": "1839b74b42d2a95d678eaa75d58c1f4d6031e3c12a8f325baf34d6dfb7aebc7c"
+    },
+    {
+      "bytes": 5461,
+      "path": "runtime-web/_framework/System.IO.Compression.Brotli.wasm.br",
+      "sha256": "81fe8ffdc25b1c3e23a56f7f6497e3e251d641a0f6be6b04017c30aa8ee8ecc9"
+    },
+    {
+      "bytes": 6270,
+      "path": "runtime-web/_framework/System.IO.Compression.Brotli.wasm.gz",
+      "sha256": "4d73cdc79915190bca4f2307f9e16901b17346023cd76b333d2ffc165d09a9b4"
+    },
+    {
+      "bytes": 4885,
+      "path": "runtime-web/_framework/System.IO.Compression.FileSystem.wasm",
+      "sha256": "bb0779e1636a6f2e21c5919a3f5914f7da05a195838036bec06963eb48a64944"
+    },
+    {
+      "bytes": 1737,
+      "path": "runtime-web/_framework/System.IO.Compression.FileSystem.wasm.br",
+      "sha256": "e3a79ca4cb94d58a815088c2ec00c7f044b60a6a713f025db0ee50da092dc89c"
+    },
+    {
+      "bytes": 1982,
+      "path": "runtime-web/_framework/System.IO.Compression.FileSystem.wasm.gz",
+      "sha256": "18880a159f6df2d7fa3bb97c59f459af2370e130752ba6e744d5753c6e09fb3b"
+    },
+    {
+      "bytes": 26389,
+      "path": "runtime-web/_framework/System.IO.Compression.ZipFile.wasm",
+      "sha256": "5343446fd2acfce7362b9858f83df92dd00cc9b90034575358249c31f8b23f12"
+    },
+    {
+      "bytes": 10568,
+      "path": "runtime-web/_framework/System.IO.Compression.ZipFile.wasm.br",
+      "sha256": "6cd816cba8b2a0f25a777699a48d1a221ad24480f02700e08b7d9afea6d19072"
+    },
+    {
+      "bytes": 12148,
+      "path": "runtime-web/_framework/System.IO.Compression.ZipFile.wasm.gz",
+      "sha256": "725fd5a942727b4834b777716aec53b542d1723e1c0e00a1d5524d26d1da3eb2"
+    },
+    {
+      "bytes": 97557,
+      "path": "runtime-web/_framework/System.IO.Compression.wasm",
+      "sha256": "7584a098110cad57494551c6b7365e168506adb88cd9780d184ca098497f63cc"
+    },
+    {
+      "bytes": 36082,
+      "path": "runtime-web/_framework/System.IO.Compression.wasm.br",
+      "sha256": "910976989de6ad3e9977500eea6f91a75ecb4ba82141356884ceb9cef3dde891"
+    },
+    {
+      "bytes": 42205,
+      "path": "runtime-web/_framework/System.IO.Compression.wasm.gz",
+      "sha256": "fb55acb0649ca3efc1ef0275b7eb49f907b9f967dab58c534947f46ce0254f6a"
+    },
+    {
+      "bytes": 20245,
+      "path": "runtime-web/_framework/System.IO.FileSystem.AccessControl.wasm",
+      "sha256": "df0b790600e5617aab6fc0eb85ee67d6cdb303c610d03be30654adab861b1a0b"
+    },
+    {
+      "bytes": 6831,
+      "path": "runtime-web/_framework/System.IO.FileSystem.AccessControl.wasm.br",
+      "sha256": "8c633fe4a7feb7fe5ce36d999c2f36d94a5b94ca249d744cba3c2b76454b4fda"
+    },
+    {
+      "bytes": 7896,
+      "path": "runtime-web/_framework/System.IO.FileSystem.AccessControl.wasm.gz",
+      "sha256": "b7ddc05aa32f2e869dba2c480dbeeb11cb3cb886d188e226750d41dc5a0df292"
+    },
+    {
+      "bytes": 12565,
+      "path": "runtime-web/_framework/System.IO.FileSystem.DriveInfo.wasm",
+      "sha256": "0986219073fcd5d6c5fb255c9df77008811e12f32c6c2b4a767fce85793fad23"
+    },
+    {
+      "bytes": 4907,
+      "path": "runtime-web/_framework/System.IO.FileSystem.DriveInfo.wasm.br",
+      "sha256": "c423573d445537339e932314e2e087ceac62063f571a78bd44cc8bb939fedf17"
+    },
+    {
+      "bytes": 5591,
+      "path": "runtime-web/_framework/System.IO.FileSystem.DriveInfo.wasm.gz",
+      "sha256": "ead3e337173a2ce979e2fa3807aaa0d375b56a7cbe82c0aee32855fe8868500d"
+    },
+    {
+      "bytes": 4885,
+      "path": "runtime-web/_framework/System.IO.FileSystem.Primitives.wasm",
+      "sha256": "407fef990079251bcb5ed79800460cafc35b7f41183776685ad400547567f491"
+    },
+    {
+      "bytes": 1923,
+      "path": "runtime-web/_framework/System.IO.FileSystem.Primitives.wasm.br",
+      "sha256": "35f29141f83baf2acfea2bd93e8aa5ce022f5397f73c4756abe71c25ace47140"
+    },
+    {
+      "bytes": 2165,
+      "path": "runtime-web/_framework/System.IO.FileSystem.Primitives.wasm.gz",
+      "sha256": "004b738af4b72c4eb9861e741a25599ca77b7768e03aa958afd24a67a474108f"
+    },
+    {
+      "bytes": 21269,
+      "path": "runtime-web/_framework/System.IO.FileSystem.Watcher.wasm",
+      "sha256": "bdeba1f7792b7c4cbb5e60a389848904211962b0dd5fb86b0b50f9e8c2b47bfc"
+    },
+    {
+      "bytes": 7098,
+      "path": "runtime-web/_framework/System.IO.FileSystem.Watcher.wasm.br",
+      "sha256": "87293e241772bbd896759b4db45419d93f715e48c07c00601c22580261a58f1c"
+    },
+    {
+      "bytes": 8186,
+      "path": "runtime-web/_framework/System.IO.FileSystem.Watcher.wasm.gz",
+      "sha256": "9eb553e190c770d47e32a5084b12f497df3514117b56233cad0c194da902b4e3"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.IO.FileSystem.wasm",
+      "sha256": "7ebb20ad27d11ab6a1d62d78cfe1979e123c836ddfd4877961757758be19366e"
+    },
+    {
+      "bytes": 2028,
+      "path": "runtime-web/_framework/System.IO.FileSystem.wasm.br",
+      "sha256": "97a69e07707127e5c2cc1f0c542c6bfada5c9fa25a152cf61925848859b4bc08"
+    },
+    {
+      "bytes": 2281,
+      "path": "runtime-web/_framework/System.IO.FileSystem.wasm.gz",
+      "sha256": "e24750a5aa60bc8a7a49b79519680e0a94304648aa34f90f6e51d97f01a93260"
+    },
+    {
+      "bytes": 23317,
+      "path": "runtime-web/_framework/System.IO.IsolatedStorage.wasm",
+      "sha256": "98042e6a777278a384bd42b1ae90013edec3cf0ccd496ac6f808fe6b9f018440"
+    },
+    {
+      "bytes": 7583,
+      "path": "runtime-web/_framework/System.IO.IsolatedStorage.wasm.br",
+      "sha256": "4fd6df712ff4ebdbfbceb8b9c3294b9c3a83fd45f0c2cc1d031491391da403d7"
+    },
+    {
+      "bytes": 8769,
+      "path": "runtime-web/_framework/System.IO.IsolatedStorage.wasm.gz",
+      "sha256": "bcdb838ceac8a594968ae61ed972c16894a52554775bb642a7961840fb057f21"
+    },
+    {
+      "bytes": 37653,
+      "path": "runtime-web/_framework/System.IO.MemoryMappedFiles.wasm",
+      "sha256": "60330dc53384bf6f6970c4bbedbc04ce13c84dba9f6f08ef67863465cc4be578"
+    },
+    {
+      "bytes": 14160,
+      "path": "runtime-web/_framework/System.IO.MemoryMappedFiles.wasm.br",
+      "sha256": "29b4fb7d0dac42f712157017334c6b0d6b4ee822c59c1ddf8681e6e061d31fbf"
+    },
+    {
+      "bytes": 16339,
+      "path": "runtime-web/_framework/System.IO.MemoryMappedFiles.wasm.gz",
+      "sha256": "26a101c5f57daf4b3136fd2d25b6aa52b5881065347404ca91d150d9678b6344"
+    },
+    {
+      "bytes": 67349,
+      "path": "runtime-web/_framework/System.IO.Pipelines.wasm",
+      "sha256": "26a541cba495fb7aa4f882b75498b2203b7d0ac564e9bd7fcad4d79ab2389933"
+    },
+    {
+      "bytes": 25581,
+      "path": "runtime-web/_framework/System.IO.Pipelines.wasm.br",
+      "sha256": "eb00ede8f49561cbd6f8101bce84c5d4b894060fb3eabeba04aec5c308891082"
+    },
+    {
+      "bytes": 29719,
+      "path": "runtime-web/_framework/System.IO.Pipelines.wasm.gz",
+      "sha256": "7b7a3a45fb0659f93bfbc8862d61dda703443ba51878982111477b96c729f1c8"
+    },
+    {
+      "bytes": 12053,
+      "path": "runtime-web/_framework/System.IO.Pipes.AccessControl.wasm",
+      "sha256": "583ce8e01853b2cb3797427b87218518ab5e6d4d04fe607e6c0da6ac347df0ce"
+    },
+    {
+      "bytes": 4658,
+      "path": "runtime-web/_framework/System.IO.Pipes.AccessControl.wasm.br",
+      "sha256": "7bd634f8ebae8775d8a07f7e80a9376640a82aae87fdcee8c718fed49f8b8d64"
+    },
+    {
+      "bytes": 5297,
+      "path": "runtime-web/_framework/System.IO.Pipes.AccessControl.wasm.gz",
+      "sha256": "f22fa577f0f4f930ebcfdfa4457a942fe73f3832a4c816a54bb806c867a55641"
+    },
+    {
+      "bytes": 29973,
+      "path": "runtime-web/_framework/System.IO.Pipes.wasm",
+      "sha256": "ba711057532cdb2fd32100820e1839eefec8a46c59559dcbc426fa49a731ab10"
+    },
+    {
+      "bytes": 9104,
+      "path": "runtime-web/_framework/System.IO.Pipes.wasm.br",
+      "sha256": "2d605a195041001c5b2fe298777dc5724f068c6061bd08604422acb320e6d963"
+    },
+    {
+      "bytes": 10476,
+      "path": "runtime-web/_framework/System.IO.Pipes.wasm.gz",
+      "sha256": "f08659e924a354601b04ed3ba6375d641cc79e34c3bad11d038232bbf4808e77"
+    },
+    {
+      "bytes": 4885,
+      "path": "runtime-web/_framework/System.IO.UnmanagedMemoryStream.wasm",
+      "sha256": "0ad5ebffa3fb60528e1f71bbe6d1bbe7a32a9e07dd7e1721ed0d668b6c315202"
+    },
+    {
+      "bytes": 1963,
+      "path": "runtime-web/_framework/System.IO.UnmanagedMemoryStream.wasm.br",
+      "sha256": "2b25cf39521ae0267cbbdb38413a27a025bdc2a819ab1e7968966869d276ce88"
+    },
+    {
+      "bytes": 2198,
+      "path": "runtime-web/_framework/System.IO.UnmanagedMemoryStream.wasm.gz",
+      "sha256": "e46f2d8c2625fc9239ee0b392afef3af4dc5e75fee4ec1e309a727b20636f0fa"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.IO.wasm",
+      "sha256": "7df3c1ce2f7537dd1cdd10019b0d6c271f2150dd69e9142b44ed97a464dddc2f"
+    },
+    {
+      "bytes": 2004,
+      "path": "runtime-web/_framework/System.IO.wasm.br",
+      "sha256": "a654de712aeacc472472081c022c203cce51ccc9a9d1f1167e4cc7e50ec2d1f8"
+    },
+    {
+      "bytes": 2253,
+      "path": "runtime-web/_framework/System.IO.wasm.gz",
+      "sha256": "f654ae0ea241b8be93a86ea2604ad3e2f22d599630157451268c2d0bc7472fa6"
+    },
+    {
+      "bytes": 564501,
+      "path": "runtime-web/_framework/System.Linq.Expressions.wasm",
+      "sha256": "305ad4f6c669e4e986dfddaa338f3df6433ef23cd315081423321e8bb9defe44"
+    },
+    {
+      "bytes": 174982,
+      "path": "runtime-web/_framework/System.Linq.Expressions.wasm.br",
+      "sha256": "de57fc9906b6648df92a632b0cf08c9983e68cfae8b63fd5d042a69576382fe4"
+    },
+    {
+      "bytes": 213340,
+      "path": "runtime-web/_framework/System.Linq.Expressions.wasm.gz",
+      "sha256": "7bfe52ca9f55984da82269b4eaf89dd37687bcfc4d7e77b7c67b687f22ed823a"
+    },
+    {
+      "bytes": 213781,
+      "path": "runtime-web/_framework/System.Linq.Parallel.wasm",
+      "sha256": "a8e056f0b75b51162651f32bf4d58c3518c47d32dd9be7996d5e07fc9dbe8bec"
+    },
+    {
+      "bytes": 72086,
+      "path": "runtime-web/_framework/System.Linq.Parallel.wasm.br",
+      "sha256": "017ad5837b9fdd96ab622cb5eaee52177da60deb06cd39d12e7fba4fee608c8f"
+    },
+    {
+      "bytes": 86887,
+      "path": "runtime-web/_framework/System.Linq.Parallel.wasm.gz",
+      "sha256": "9e6aa6100de1b53f81f9f072dedf71f57ef5ac5cb8d057e88c462138b388f906"
+    },
+    {
+      "bytes": 63253,
+      "path": "runtime-web/_framework/System.Linq.Queryable.wasm",
+      "sha256": "e6d5b0353985e4f973cea99e1b2283640edc03740bd9f65f4313aab397cb8910"
+    },
+    {
+      "bytes": 16707,
+      "path": "runtime-web/_framework/System.Linq.Queryable.wasm.br",
+      "sha256": "191a31ae700e3f7483b335b5a753f135957a8f943758f6fd09f38e995763137c"
+    },
+    {
+      "bytes": 19927,
+      "path": "runtime-web/_framework/System.Linq.Queryable.wasm.gz",
+      "sha256": "62d91bea136f6802cc3fd424587426c44a2a65299f3e3ae7c1f18558ab4ab2f7"
+    },
+    {
+      "bytes": 124181,
+      "path": "runtime-web/_framework/System.Linq.wasm",
+      "sha256": "b636d71abbb5629c198f93c1173beb2300de3897242237298b6cde1da9ce50aa"
+    },
+    {
+      "bytes": 40769,
+      "path": "runtime-web/_framework/System.Linq.wasm.br",
+      "sha256": "f9d1fcd2676f40b8a956ebe2d2d7cec3922c92479da2b7fa74a4d46cf57c3e86"
+    },
+    {
+      "bytes": 50148,
+      "path": "runtime-web/_framework/System.Linq.wasm.gz",
+      "sha256": "48bc1851ebca389c0c896ac5ec0413ede18692446ff37b31f6342152f2182753"
+    },
+    {
+      "bytes": 44309,
+      "path": "runtime-web/_framework/System.Memory.wasm",
+      "sha256": "f61d7a7e2c602fde108d26db05caf291c95ff0231d95196dcdaba90eed880c10"
+    },
+    {
+      "bytes": 18078,
+      "path": "runtime-web/_framework/System.Memory.wasm.br",
+      "sha256": "9609364200a611fa240a5e78fc527c4a9d9eb1831392bfca012f55ce0d532db2"
+    },
+    {
+      "bytes": 20343,
+      "path": "runtime-web/_framework/System.Memory.wasm.gz",
+      "sha256": "7d53bde5cc8df3a59bdf755557c2cbbd9c51c74ec57cef86a8fd9a4ba41fe121"
+    },
+    {
+      "bytes": 44821,
+      "path": "runtime-web/_framework/System.Net.Http.Json.wasm",
+      "sha256": "8cbf5c9064c7875613f33cf3cce10f53d727d40a4efb8705112d1f09dc7a9cff"
+    },
+    {
+      "bytes": 16164,
+      "path": "runtime-web/_framework/System.Net.Http.Json.wasm.br",
+      "sha256": "3a6b0617ca788c783c6159e465baa4e544fb804f49656a45d2d40a7f46dc5c29"
+    },
+    {
+      "bytes": 19092,
+      "path": "runtime-web/_framework/System.Net.Http.Json.wasm.gz",
+      "sha256": "04bb73b576f9a52c378be09c45e6993e8cee7d3e238f02d8594eeb50a71d9b7d"
+    },
+    {
+      "bytes": 266517,
+      "path": "runtime-web/_framework/System.Net.Http.wasm",
+      "sha256": "c765da09eaaaf34c256871e765b4be32077989084b691fffff3b9fd949ab30b4"
+    },
+    {
+      "bytes": 94649,
+      "path": "runtime-web/_framework/System.Net.Http.wasm.br",
+      "sha256": "83ee09de06fadaebdd9ff66e05d7e21a75e03c6092d5ccb295f1b3ee86535c76"
+    },
+    {
+      "bytes": 110849,
+      "path": "runtime-web/_framework/System.Net.Http.wasm.gz",
+      "sha256": "0c113a6b0bbf4e7d27e4fecfef4793d29c33f9068db21b2987a38429c976f268"
+    },
+    {
+      "bytes": 44309,
+      "path": "runtime-web/_framework/System.Net.HttpListener.wasm",
+      "sha256": "d7e5306b919103535ab5730a05fd2ac5b10044de0f1a45a97e510a73bba05bca"
+    },
+    {
+      "bytes": 12816,
+      "path": "runtime-web/_framework/System.Net.HttpListener.wasm.br",
+      "sha256": "4c41c85bd935c82cd4a7615db6779a3486d01ff4d73160b5afa62f8ba03e22f2"
+    },
+    {
+      "bytes": 15444,
+      "path": "runtime-web/_framework/System.Net.HttpListener.wasm.gz",
+      "sha256": "191caab2cb125ee2cd94d02321256bd974e0002eab8c6b2df98bec848ef7e75d"
+    },
+    {
+      "bytes": 92949,
+      "path": "runtime-web/_framework/System.Net.Mail.wasm",
+      "sha256": "05afe8cb2a39b4ea12b8bcce3b952680ab84af4c1c3a5b707586fd997d81137b"
+    },
+    {
+      "bytes": 34956,
+      "path": "runtime-web/_framework/System.Net.Mail.wasm.br",
+      "sha256": "928072659ecef75128c54d495e6358f7de2013b4729e9b6dd5ad328270512ff0"
+    },
+    {
+      "bytes": 41367,
+      "path": "runtime-web/_framework/System.Net.Mail.wasm.gz",
+      "sha256": "735aa26df3ae69213beeb691b3d81765247d8d5c697deb115df8e4a980d583bb"
+    },
+    {
+      "bytes": 12565,
+      "path": "runtime-web/_framework/System.Net.NameResolution.wasm",
+      "sha256": "cc543504ff47ff457a40a2dcf3a3c8b6213b84f365ea8e562d31aff725bf70aa"
+    },
+    {
+      "bytes": 4722,
+      "path": "runtime-web/_framework/System.Net.NameResolution.wasm.br",
+      "sha256": "4b1b829d8bb34d9a5be306326a3fd87a0ebe4750523991ef19dd91882a3f955d"
+    },
+    {
+      "bytes": 5338,
+      "path": "runtime-web/_framework/System.Net.NameResolution.wasm.gz",
+      "sha256": "d9d1d48e01d81ed3271bfb5373f15ea1b59e294a5720f8938badac69e9d84f71"
+    },
+    {
+      "bytes": 30485,
+      "path": "runtime-web/_framework/System.Net.NetworkInformation.wasm",
+      "sha256": "c8efb7420ab7f57837590b729c3a7321594f3e530710a2930876bd9488abad88"
+    },
+    {
+      "bytes": 10124,
+      "path": "runtime-web/_framework/System.Net.NetworkInformation.wasm.br",
+      "sha256": "bdab598553d93325b6d2c7f38890588a7e7c550be2e021e8f5852cd1c79725fe"
+    },
+    {
+      "bytes": 12139,
+      "path": "runtime-web/_framework/System.Net.NetworkInformation.wasm.gz",
+      "sha256": "fb967288e53f16c5d3cd127e4aa7b42cecc9ba2a1c2a36e59da0b79b6f0fdfca"
+    },
+    {
+      "bytes": 16149,
+      "path": "runtime-web/_framework/System.Net.Ping.wasm",
+      "sha256": "b4a789a7260b43a17849c2c3b6870739fd8f3ce636e568ea96015f04a1aa840f"
+    },
+    {
+      "bytes": 6071,
+      "path": "runtime-web/_framework/System.Net.Ping.wasm.br",
+      "sha256": "a204f4e77d69156b2b80e34d26124129cd25b5036cea6a370dd678e5763dfbba"
+    },
+    {
+      "bytes": 6939,
+      "path": "runtime-web/_framework/System.Net.Ping.wasm.gz",
+      "sha256": "4cd4de74e78e8c509bd31923258450f3f7785816b818a06f21cdcb7a4bc90e7d"
+    },
+    {
+      "bytes": 93973,
+      "path": "runtime-web/_framework/System.Net.Primitives.wasm",
+      "sha256": "d24af0016c56490b02ea866625ef5df6fce96f4af69581904162a4311a1fe00b"
+    },
+    {
+      "bytes": 39047,
+      "path": "runtime-web/_framework/System.Net.Primitives.wasm.br",
+      "sha256": "739a37cdecf87b1104c37e0e9c8edd0655a32b450d36b8c3ef1241dedf94038b"
+    },
+    {
+      "bytes": 44989,
+      "path": "runtime-web/_framework/System.Net.Primitives.wasm.gz",
+      "sha256": "2c104bfec47a82347c6baea789e656bd4b822e856b30261d8854f38fd25577d8"
+    },
+    {
+      "bytes": 27413,
+      "path": "runtime-web/_framework/System.Net.Quic.wasm",
+      "sha256": "49d12d23d8bbc99045c60197f00fa8ef2f1911cdd00e96ed9965324ff0e7322c"
+    },
+    {
+      "bytes": 9195,
+      "path": "runtime-web/_framework/System.Net.Quic.wasm.br",
+      "sha256": "a6efb0d21d938f91568e91b1f889d41b344b253c592d42c21c0554f1b012c485"
+    },
+    {
+      "bytes": 10624,
+      "path": "runtime-web/_framework/System.Net.Quic.wasm.gz",
+      "sha256": "b16c187ddf850e4253375b7f2de5cf1814d18e6f73918db9749d0f96f2a20c7c"
+    },
+    {
+      "bytes": 49941,
+      "path": "runtime-web/_framework/System.Net.Requests.wasm",
+      "sha256": "0f6a1af97ebc981fab55c59236af15d3074110a04720665cfad59c5f7a12c822"
+    },
+    {
+      "bytes": 15060,
+      "path": "runtime-web/_framework/System.Net.Requests.wasm.br",
+      "sha256": "ff381bdeafab62cfd2932c93168f2be278f7109948a1e0e3144d301cb2192394"
+    },
+    {
+      "bytes": 18134,
+      "path": "runtime-web/_framework/System.Net.Requests.wasm.gz",
+      "sha256": "d2a933fe72cdfee09fc021f9bf61fb12ec3cebd64d661b924037df302caedf4e"
+    },
+    {
+      "bytes": 97557,
+      "path": "runtime-web/_framework/System.Net.Security.wasm",
+      "sha256": "33a735da2f83247d92f5e1c529e2e50a39d4b15828fa749f714344b69c58ba9d"
+    },
+    {
+      "bytes": 25470,
+      "path": "runtime-web/_framework/System.Net.Security.wasm.br",
+      "sha256": "c7f0472679d584d0f4c861e57b7c22a0494986a97a660a327edeb9c8af580e9b"
+    },
+    {
+      "bytes": 31632,
+      "path": "runtime-web/_framework/System.Net.Security.wasm.gz",
+      "sha256": "b5de8786c11d928b5ac6551eddad47c7197a2bd5bdc359972da7a65cbae1c985"
+    },
+    {
+      "bytes": 15637,
+      "path": "runtime-web/_framework/System.Net.ServicePoint.wasm",
+      "sha256": "99afd77d28e198ddde3ffd4a7e3fbf8899eabb0616ef2df2b9325b5ba9cd43d2"
+    },
+    {
+      "bytes": 6410,
+      "path": "runtime-web/_framework/System.Net.ServicePoint.wasm.br",
+      "sha256": "7450bbc29605a605e6bdada5cbb1054bbb6c8f5e0fea64cfc9500cce12733f44"
+    },
+    {
+      "bytes": 7241,
+      "path": "runtime-web/_framework/System.Net.ServicePoint.wasm.gz",
+      "sha256": "f6b719d8c0cda6b133fcd94a6db5233371e852a2800ea1b8c08c6259fa667354"
+    },
+    {
+      "bytes": 62741,
+      "path": "runtime-web/_framework/System.Net.Sockets.wasm",
+      "sha256": "fa402e775032b9ead7eda24f3ca30f3aa8a0daa6d33780214104cc0ae056234b"
+    },
+    {
+      "bytes": 18563,
+      "path": "runtime-web/_framework/System.Net.Sockets.wasm.br",
+      "sha256": "fe3fcebac632a13aa9155047099a9c67d6417980325f4cf1b076416c94da3430"
+    },
+    {
+      "bytes": 22447,
+      "path": "runtime-web/_framework/System.Net.Sockets.wasm.gz",
+      "sha256": "e246500a026481cb0f32844f355aea2afc20cf2a784fb9d495da1ff8477041ec"
+    },
+    {
+      "bytes": 41749,
+      "path": "runtime-web/_framework/System.Net.WebClient.wasm",
+      "sha256": "b5bb99de1b62d1a1d217bfc3c82024c78842e78197b518efd0748312cd85a857"
+    },
+    {
+      "bytes": 11394,
+      "path": "runtime-web/_framework/System.Net.WebClient.wasm.br",
+      "sha256": "3a2a356cb2a38bde3de9891d75e707522074f3c5ad96db32d941257f69c08b78"
+    },
+    {
+      "bytes": 13333,
+      "path": "runtime-web/_framework/System.Net.WebClient.wasm.gz",
+      "sha256": "7798903ca7b16deec195d1a3b4b859e12a4f207b8f248adb7debfa58a0a9605f"
+    },
+    {
+      "bytes": 22805,
+      "path": "runtime-web/_framework/System.Net.WebHeaderCollection.wasm",
+      "sha256": "2f45708aa745258d19ef298f1444615e86aff22cbad59c793ab0506633c1d745"
+    },
+    {
+      "bytes": 9323,
+      "path": "runtime-web/_framework/System.Net.WebHeaderCollection.wasm.br",
+      "sha256": "166592df52e1d72b6a4e1d954f4cbe6ceb83feb0db77eb895484be03e05183c4"
+    },
+    {
+      "bytes": 10634,
+      "path": "runtime-web/_framework/System.Net.WebHeaderCollection.wasm.gz",
+      "sha256": "dd5011ccdcdee0acc997fcb7b310e56871f8f40ece71543f8f5de4b530be86a9"
+    },
+    {
+      "bytes": 11541,
+      "path": "runtime-web/_framework/System.Net.WebProxy.wasm",
+      "sha256": "87488e7d46a17d30c1bc77e8735e3249b42951557d07e0d1c7bd84c5fe67b5f1"
+    },
+    {
+      "bytes": 5027,
+      "path": "runtime-web/_framework/System.Net.WebProxy.wasm.br",
+      "sha256": "5ee04d547070114f68be021b8284b637b751f0745eaec9ac56aa99e1449f876a"
+    },
+    {
+      "bytes": 5607,
+      "path": "runtime-web/_framework/System.Net.WebProxy.wasm.gz",
+      "sha256": "0318aa5a10eeda111bb6f31ba042bf8dc0b592f9f8d61b4f7231985b32911fd9"
+    },
+    {
+      "bytes": 36629,
+      "path": "runtime-web/_framework/System.Net.WebSockets.Client.wasm",
+      "sha256": "6ab805999e2ddad2d8f792161936c7e9da592277ab330c7355514f6a62795930"
+    },
+    {
+      "bytes": 13939,
+      "path": "runtime-web/_framework/System.Net.WebSockets.Client.wasm.br",
+      "sha256": "f34eb76bf8aacf8d678466bbc2d5ba9a21acce61db3d8768cf6a3600365ac4e3"
+    },
+    {
+      "bytes": 16034,
+      "path": "runtime-web/_framework/System.Net.WebSockets.Client.wasm.gz",
+      "sha256": "f3bb010d267a562c982ce43da62e4e6b748fee4d43787e03fe8a203bb84e65d7"
+    },
+    {
+      "bytes": 71445,
+      "path": "runtime-web/_framework/System.Net.WebSockets.wasm",
+      "sha256": "db10d669f905cd2d33a53ebc06ac31e636d184d4db82dc41bc8627eea394559c"
+    },
+    {
+      "bytes": 26869,
+      "path": "runtime-web/_framework/System.Net.WebSockets.wasm.br",
+      "sha256": "5123a5c8957ed5212d8d8844ad0c0c83b8625d0183b861ed31d509a9d21008fd"
+    },
+    {
+      "bytes": 31412,
+      "path": "runtime-web/_framework/System.Net.WebSockets.wasm.gz",
+      "sha256": "cdadd52c4ce722523aabc1552c22daaab8bb8cb30761f2889f63fc48c8dbb394"
+    },
+    {
+      "bytes": 6933,
+      "path": "runtime-web/_framework/System.Net.wasm",
+      "sha256": "b03e681075937a437a86a93b733b856f2b7b77f8b4ec407310c7826cc69ac52a"
+    },
+    {
+      "bytes": 2424,
+      "path": "runtime-web/_framework/System.Net.wasm.br",
+      "sha256": "768107c83c382d0d9cff0a5fcc748b58e5c00223e04e653bcdd70f7b501fb3f1"
+    },
+    {
+      "bytes": 2727,
+      "path": "runtime-web/_framework/System.Net.wasm.gz",
+      "sha256": "a99a5d9a5b3c9ab6a8ca2f427d42e2378db1e78500d1d209070c94ba59f82f37"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Numerics.Vectors.wasm",
+      "sha256": "adb0aed9087895b40c9cc588d4ad7593dd66b47e9463d7f1a678bb697a148154"
+    },
+    {
+      "bytes": 2026,
+      "path": "runtime-web/_framework/System.Numerics.Vectors.wasm.br",
+      "sha256": "1adf0fb9bf6a8099c536ed4d7a42dfeed746721da7935713eebdb2db8b545991"
+    },
+    {
+      "bytes": 2246,
+      "path": "runtime-web/_framework/System.Numerics.Vectors.wasm.gz",
+      "sha256": "bd2d43d17be94b57e09723c65ffeaee9c860c7aaa6cdf9a3dd2908f0422043c6"
+    },
+    {
+      "bytes": 4885,
+      "path": "runtime-web/_framework/System.Numerics.wasm",
+      "sha256": "80e41a6ba1c584dd741078f8387ba621a6bdefb01bf0399014e2994bf722d439"
+    },
+    {
+      "bytes": 1789,
+      "path": "runtime-web/_framework/System.Numerics.wasm.br",
+      "sha256": "fdcf91c8c4b84ca03fc11d44938abfb3faaac3fac3454f850635e1f294b0f48a"
+    },
+    {
+      "bytes": 2019,
+      "path": "runtime-web/_framework/System.Numerics.wasm.gz",
+      "sha256": "f38fd92896ad49525393a88a319db8d3a50ed21168231ad8d699f5894d5c80b1"
+    },
+    {
+      "bytes": 28949,
+      "path": "runtime-web/_framework/System.ObjectModel.wasm",
+      "sha256": "8f19b04be16a1434e5f5601625626e054ad3781f261fb718aa8669186bfd79e9"
+    },
+    {
+      "bytes": 11116,
+      "path": "runtime-web/_framework/System.ObjectModel.wasm.br",
+      "sha256": "322c6dba83373be9dde24aa1e00c0e512051a5e98a9735408b27bba56c5563db"
+    },
+    {
+      "bytes": 12601,
+      "path": "runtime-web/_framework/System.ObjectModel.wasm.gz",
+      "sha256": "69039ed566b2a785678119f895377575553a1a27c7c8353a4d3917e1e8b19168"
+    },
+    {
+      "bytes": 4199705,
+      "path": "runtime-web/_framework/System.Private.CoreLib.wasm",
+      "sha256": "6d67d9e4499fb999dff70f3f9e9ec33f4f442cba6bdfa1f44b4a255e9151b5e2"
+    },
+    {
+      "bytes": 1108928,
+      "path": "runtime-web/_framework/System.Private.CoreLib.wasm.br",
+      "sha256": "040253b96a6aabffd943fe71024601f294689bc71886be4e050860ad6c149548"
+    },
+    {
+      "bytes": 1394645,
+      "path": "runtime-web/_framework/System.Private.CoreLib.wasm.gz",
+      "sha256": "2b00201f19242cc5d7ad6e5c169b7596d2af49364a7e6f29d01bc58ab040331c"
+    },
+    {
+      "bytes": 843541,
+      "path": "runtime-web/_framework/System.Private.DataContractSerialization.wasm",
+      "sha256": "bd46018ff28c580066388361acc38f33b72aa7cbf25583057b7dcedbf0bdba52"
+    },
+    {
+      "bytes": 245671,
+      "path": "runtime-web/_framework/System.Private.DataContractSerialization.wasm.br",
+      "sha256": "ca843c7b33c381f3a8b4bc5f4c77d7caee97df505e34a1b2b5429c62d6e87d90"
+    },
+    {
+      "bytes": 301142,
+      "path": "runtime-web/_framework/System.Private.DataContractSerialization.wasm.gz",
+      "sha256": "9ad1c2542845bedf908b4468e0f173ec5337c203c2b778922a7e74add3fdc9f0"
+    },
+    {
+      "bytes": 91413,
+      "path": "runtime-web/_framework/System.Private.Uri.wasm",
+      "sha256": "91728ee7174ff48f410820ed9deb36ce136189859f31e71e6b1381af5e286845"
+    },
+    {
+      "bytes": 36334,
+      "path": "runtime-web/_framework/System.Private.Uri.wasm.br",
+      "sha256": "96bc23d6de0fd3ecb61fe16a8ecafaaef37b2ff9062e4eb46d720dcbd6c843a5"
+    },
+    {
+      "bytes": 41138,
+      "path": "runtime-web/_framework/System.Private.Uri.wasm.gz",
+      "sha256": "0105242965c84b6bb1063d3f5683f303112770bc2a223ff23ba87c1a7dad156f"
+    },
+    {
+      "bytes": 142613,
+      "path": "runtime-web/_framework/System.Private.Xml.Linq.wasm",
+      "sha256": "96e4f0b20680cd4096f9bb773c518dc3e537ef31b3afd16f7f3a2bab88dcc460"
+    },
+    {
+      "bytes": 49053,
+      "path": "runtime-web/_framework/System.Private.Xml.Linq.wasm.br",
+      "sha256": "1e01b0358980f8b097c2a145795192d7a111078c36a685fa3d93926b66adc748"
+    },
+    {
+      "bytes": 58584,
+      "path": "runtime-web/_framework/System.Private.Xml.Linq.wasm.gz",
+      "sha256": "5113fb30763c1a338ae3364c220221f22f69d175602ed6d438244048a87ced3f"
+    },
+    {
+      "bytes": 3107097,
+      "path": "runtime-web/_framework/System.Private.Xml.wasm",
+      "sha256": "b12f7d6fca8cf0a5d0ac3180239d8106e42f875b4911c55e7561153c44b4432e"
+    },
+    {
+      "bytes": 855510,
+      "path": "runtime-web/_framework/System.Private.Xml.wasm.br",
+      "sha256": "f187086a1a64ab3e08e3a5693f64721120a74378155b9b76ce39ffaf3a391d7b"
+    },
+    {
+      "bytes": 1063440,
+      "path": "runtime-web/_framework/System.Private.Xml.wasm.gz",
+      "sha256": "c93e6e64baf80e2cd3d9db5d503af86993ecbb5bcea88f21fd2f3c83fc8b1af9"
+    },
+    {
+      "bytes": 26389,
+      "path": "runtime-web/_framework/System.Reflection.DispatchProxy.wasm",
+      "sha256": "73e5ebbab36195010177262a247ecc3810fea983978869eac3922601e877aa74"
+    },
+    {
+      "bytes": 10684,
+      "path": "runtime-web/_framework/System.Reflection.DispatchProxy.wasm.br",
+      "sha256": "a59f96bd1fe611d65ba929a013c4b98c15b44f711be9efb6bb94430aab98e70c"
+    },
+    {
+      "bytes": 12095,
+      "path": "runtime-web/_framework/System.Reflection.DispatchProxy.wasm.gz",
+      "sha256": "146137fbc878e830057a3aa55172e5f5f917a0120a5e230b0d16184c44c59f08"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Reflection.Emit.ILGeneration.wasm",
+      "sha256": "a87f9404fdfaee6633df61b3bec75767e9790a4863f2cac575e9ef9d6cda195a"
+    },
+    {
+      "bytes": 2009,
+      "path": "runtime-web/_framework/System.Reflection.Emit.ILGeneration.wasm.br",
+      "sha256": "9841794fcc3f82e6f8c934c12f66dd12c3556f7d9856f64e98880a1aa9213b0e"
+    },
+    {
+      "bytes": 2272,
+      "path": "runtime-web/_framework/System.Reflection.Emit.ILGeneration.wasm.gz",
+      "sha256": "5d6e9484346aeedb3e7d4bc3f6054acf371ede180e69d438294200fd2d55a14d"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Reflection.Emit.Lightweight.wasm",
+      "sha256": "e903178d2a2f1d8ef4911c1dbf921fea939e87a0ca0cffa1e1832cde274f120d"
+    },
+    {
+      "bytes": 1987,
+      "path": "runtime-web/_framework/System.Reflection.Emit.Lightweight.wasm.br",
+      "sha256": "86d5977b301f5a00889ecc86f341fb271f92fb2bd76edc6400aa03c4cbc77223"
+    },
+    {
+      "bytes": 2224,
+      "path": "runtime-web/_framework/System.Reflection.Emit.Lightweight.wasm.gz",
+      "sha256": "d8aaed7f771486f08d1b3a7847db09807f1054540c39063a6f32f8226356edf9"
+    },
+    {
+      "bytes": 61205,
+      "path": "runtime-web/_framework/System.Reflection.Emit.wasm",
+      "sha256": "a180a31936def208b1cdfb34c325af1aafec3e89b2c1f6cac70259e737570220"
+    },
+    {
+      "bytes": 23366,
+      "path": "runtime-web/_framework/System.Reflection.Emit.wasm.br",
+      "sha256": "05bf502f1a5d7bc58e60702dc7fbd6673f8ceeb668267712affb45be37cbe5ff"
+    },
+    {
+      "bytes": 26863,
+      "path": "runtime-web/_framework/System.Reflection.Emit.wasm.gz",
+      "sha256": "e972e7198a148a870dae0a36dbf81ded2f7a0ab6cc30e2f77d9e44bae5b4d234"
+    },
+    {
+      "bytes": 4885,
+      "path": "runtime-web/_framework/System.Reflection.Extensions.wasm",
+      "sha256": "1faff8f21578b910e3d11c80b67ecd82d0c0a6343803346e8b33c1997aadffd8"
+    },
+    {
+      "bytes": 1921,
+      "path": "runtime-web/_framework/System.Reflection.Extensions.wasm.br",
+      "sha256": "95f13fd0ee94d9467b7918c3d3aee48bd9061fcbd0e818fdf60ba1d65eee399c"
+    },
+    {
+      "bytes": 2141,
+      "path": "runtime-web/_framework/System.Reflection.Extensions.wasm.gz",
+      "sha256": "a84fc16157189c5e4308783dc25720715efd5ed3e0c731d84a75ed3cca470941"
+    },
+    {
+      "bytes": 465173,
+      "path": "runtime-web/_framework/System.Reflection.Metadata.wasm",
+      "sha256": "4ce0ab0a8413451250cd6223e6d0affcc7ae99be0a923c47d3ba5b3f0ec71da0"
+    },
+    {
+      "bytes": 143941,
+      "path": "runtime-web/_framework/System.Reflection.Metadata.wasm.br",
+      "sha256": "08d72d2a86a90d0362e9cf09ed74f791789a4771c95924f7c6f74669abc1debb"
+    },
+    {
+      "bytes": 180463,
+      "path": "runtime-web/_framework/System.Reflection.Metadata.wasm.gz",
+      "sha256": "e91f0b1704c4eff73396df98a1c5f7648a8efb0cf6596373162c28594d0dc1fc"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Reflection.Primitives.wasm",
+      "sha256": "e33e49007648c53d0266490543cf4ab357e22f17d8bbd7b0e9d07d52e748759d"
+    },
+    {
+      "bytes": 2085,
+      "path": "runtime-web/_framework/System.Reflection.Primitives.wasm.br",
+      "sha256": "6888a1da37b165d24263bd012decc8d6d455a38414a1d7a23dbd690952d3229d"
+    },
+    {
+      "bytes": 2353,
+      "path": "runtime-web/_framework/System.Reflection.Primitives.wasm.gz",
+      "sha256": "10c7e63d62c5c76830af41477c592e89b84882b7420492e7d2c94f3b5dff6a92"
+    },
+    {
+      "bytes": 13077,
+      "path": "runtime-web/_framework/System.Reflection.TypeExtensions.wasm",
+      "sha256": "404699d48f29abd305be1a289199ef61bebb0ddac5d9fa779586624c50bb2f6b"
+    },
+    {
+      "bytes": 4977,
+      "path": "runtime-web/_framework/System.Reflection.TypeExtensions.wasm.br",
+      "sha256": "f33397e7affb16809601387dbb760dc07f43f026b3750955a564b7edb17d6131"
+    },
+    {
+      "bytes": 5654,
+      "path": "runtime-web/_framework/System.Reflection.TypeExtensions.wasm.gz",
+      "sha256": "77f8850754d308b9068758ed8a39715753e7d2976d8d952d17c49ac6aa361524"
+    },
+    {
+      "bytes": 5909,
+      "path": "runtime-web/_framework/System.Reflection.wasm",
+      "sha256": "70192170989965c46e418b7238f3271125159a1b07b842cea217afeb3327173a"
+    },
+    {
+      "bytes": 2159,
+      "path": "runtime-web/_framework/System.Reflection.wasm.br",
+      "sha256": "91021f98672affb5445e847f54c3ca92faf7e2a278bda4d1d1d46bd4ca0741c6"
+    },
+    {
+      "bytes": 2444,
+      "path": "runtime-web/_framework/System.Reflection.wasm.gz",
+      "sha256": "1e406523303a2161cc06daf40c67be11fc693a3e9a59eb0f8c46a02e185e32dc"
+    },
+    {
+      "bytes": 4885,
+      "path": "runtime-web/_framework/System.Resources.Reader.wasm",
+      "sha256": "ae5367253327269fdade11a3b41d76d00eea6f6fb03a378c1a6efcb7ff2b2485"
+    },
+    {
+      "bytes": 1876,
+      "path": "runtime-web/_framework/System.Resources.Reader.wasm.br",
+      "sha256": "371a51f12c8e78570f52f544ab9ec91988954094166c4aa417e4aa08bd563ec7"
+    },
+    {
+      "bytes": 2105,
+      "path": "runtime-web/_framework/System.Resources.Reader.wasm.gz",
+      "sha256": "818d845e29e96b378d63d621f8814b20e55cbe7a56e9b19baa108d6d3cf508c7"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Resources.ResourceManager.wasm",
+      "sha256": "2cfd59a44cadb05dbfd0a21a924bcde858283bc0c26b191ba7dc86bcf2e7d8a2"
+    },
+    {
+      "bytes": 1976,
+      "path": "runtime-web/_framework/System.Resources.ResourceManager.wasm.br",
+      "sha256": "155ab7bef25200c876c551d9068fd6a66105e799a992cb2aa4011dc3778f9944"
+    },
+    {
+      "bytes": 2223,
+      "path": "runtime-web/_framework/System.Resources.ResourceManager.wasm.gz",
+      "sha256": "364afe77dc3881fec700bfa42dbeceb2c1909eb1f3778bdf6b824381d616814b"
+    },
+    {
+      "bytes": 16149,
+      "path": "runtime-web/_framework/System.Resources.Writer.wasm",
+      "sha256": "1a6fe6ac0d6c8bbbd39d8efffbb132e8425f3243666e61a17c122012a1d58f26"
+    },
+    {
+      "bytes": 6792,
+      "path": "runtime-web/_framework/System.Resources.Writer.wasm.br",
+      "sha256": "6e6075aca6a7b8b1c027b5ef17eb6998fdda814e2c41a09f54c70b8b681199a6"
+    },
+    {
+      "bytes": 7612,
+      "path": "runtime-web/_framework/System.Resources.Writer.wasm.gz",
+      "sha256": "cd54f6b79a7cdbe55fa6f0e90d3294f984ed573d8282560ea5b502c5771c7c8f"
+    },
+    {
+      "bytes": 4885,
+      "path": "runtime-web/_framework/System.Runtime.CompilerServices.Unsafe.wasm",
+      "sha256": "2c13123e2f7677d4d1007926abd3cdb0769d9efa4636230550a273504c419501"
+    },
+    {
+      "bytes": 1889,
+      "path": "runtime-web/_framework/System.Runtime.CompilerServices.Unsafe.wasm.br",
+      "sha256": "371e33c2357de3c29f6ed1f240eabd9523a108110577fa98d600bdd06ef6178b"
+    },
+    {
+      "bytes": 2107,
+      "path": "runtime-web/_framework/System.Runtime.CompilerServices.Unsafe.wasm.gz",
+      "sha256": "ea52cfb9957b67fd1ed64c1758b68f811a7633a6358f39e1fa985240fe891500"
+    },
+    {
+      "bytes": 6933,
+      "path": "runtime-web/_framework/System.Runtime.CompilerServices.VisualC.wasm",
+      "sha256": "4db7cf0d880af58aef4579b2c30f1db2403f79f4c1ac25c03b271c317cc9d06b"
+    },
+    {
+      "bytes": 2708,
+      "path": "runtime-web/_framework/System.Runtime.CompilerServices.VisualC.wasm.br",
+      "sha256": "73927ae5fc33e939c4114786415178234cd35e9f2847e86e682afb7d6ef65b68"
+    },
+    {
+      "bytes": 3033,
+      "path": "runtime-web/_framework/System.Runtime.CompilerServices.VisualC.wasm.gz",
+      "sha256": "1ad4c764de8ba80fda6590630107c3fe2940ddb20da5ad323999ed022e981081"
+    },
+    {
+      "bytes": 7445,
+      "path": "runtime-web/_framework/System.Runtime.Extensions.wasm",
+      "sha256": "65285825d0a7fa59037faa108159b469993e3dd975cef79db0920984ccb99c95"
+    },
+    {
+      "bytes": 2608,
+      "path": "runtime-web/_framework/System.Runtime.Extensions.wasm.br",
+      "sha256": "9e6f2b8c8a16335cf50e8a9276f51172c1666ed83b3e8d7e19aa4e87d3f7531f"
+    },
+    {
+      "bytes": 2958,
+      "path": "runtime-web/_framework/System.Runtime.Extensions.wasm.gz",
+      "sha256": "99164d134bc6328c3184b385832373a49ec8c5d296ae4332eb5405a4314c2433"
+    },
+    {
+      "bytes": 4885,
+      "path": "runtime-web/_framework/System.Runtime.Handles.wasm",
+      "sha256": "e05f9e195f499d847104df040c68d36ca27fef154effe06e6912804650d0d6de"
+    },
+    {
+      "bytes": 1945,
+      "path": "runtime-web/_framework/System.Runtime.Handles.wasm.br",
+      "sha256": "5706a03e1592a2c78d407fd462bf391718960c0f8a87bb1bd9fbc3aee5a178e4"
+    },
+    {
+      "bytes": 2187,
+      "path": "runtime-web/_framework/System.Runtime.Handles.wasm.gz",
+      "sha256": "ea6ecb7af82bc56eb160e0149465d327fca28d2055d8ed9f7aed952a2c6f3f30"
+    },
+    {
+      "bytes": 82709,
+      "path": "runtime-web/_framework/System.Runtime.InteropServices.JavaScript.wasm",
+      "sha256": "11b817895f8ab16a086465d2ff05db1a214f08a5dd89b2802b0b519411e2b3c6"
+    },
+    {
+      "bytes": 28781,
+      "path": "runtime-web/_framework/System.Runtime.InteropServices.JavaScript.wasm.br",
+      "sha256": "253e2ed1f377781682bb0d412a1a2bc9b9516040f12b06c7f1fdef9431b5bf2e"
+    },
+    {
+      "bytes": 34078,
+      "path": "runtime-web/_framework/System.Runtime.InteropServices.JavaScript.wasm.gz",
+      "sha256": "6b456a0b10ac54e601429900bec7e0cfa3edf73e668efb0acae103873c6b9396"
+    },
+    {
+      "bytes": 4885,
+      "path": "runtime-web/_framework/System.Runtime.InteropServices.RuntimeInformation.wasm",
+      "sha256": "f3926a23ee76ac6c3e9a6ed482c9ae33659ee60ba59151341e185392b48e4799"
+    },
+    {
+      "bytes": 1939,
+      "path": "runtime-web/_framework/System.Runtime.InteropServices.RuntimeInformation.wasm.br",
+      "sha256": "9c69707684577863ae6ac70e2c3134994fe98981f4a850ee3919c51fa6dfb6b2"
+    },
+    {
+      "bytes": 2145,
+      "path": "runtime-web/_framework/System.Runtime.InteropServices.RuntimeInformation.wasm.gz",
+      "sha256": "dad0fe365e4e096154a983e17f16e7726640ab38383f877a99515060bd4f4d19"
+    },
+    {
+      "bytes": 47381,
+      "path": "runtime-web/_framework/System.Runtime.InteropServices.wasm",
+      "sha256": "4312ceea2c75922247f8c052c927588780c6cdc1a2e2a3d5169f8ad2e0f774bf"
+    },
+    {
+      "bytes": 17556,
+      "path": "runtime-web/_framework/System.Runtime.InteropServices.wasm.br",
+      "sha256": "9cd23d43b8ee2ea2dacf2b6918445b7b1cabab4db62679312ddfd51bfa0600b2"
+    },
+    {
+      "bytes": 20361,
+      "path": "runtime-web/_framework/System.Runtime.InteropServices.wasm.gz",
+      "sha256": "ac5d3f141b3914ade1cce5a24353737ac9988c8acda0471fc250394358084562"
+    },
+    {
+      "bytes": 6421,
+      "path": "runtime-web/_framework/System.Runtime.Intrinsics.wasm",
+      "sha256": "10c6632a357c2428685586332385bea336e0a8323a0e177413d74936d9301d31"
+    },
+    {
+      "bytes": 2336,
+      "path": "runtime-web/_framework/System.Runtime.Intrinsics.wasm.br",
+      "sha256": "e95d589f7e74a2c9ca59f11bac5329a5a5ae657be655b1ce644c4339389dee7a"
+    },
+    {
+      "bytes": 2632,
+      "path": "runtime-web/_framework/System.Runtime.Intrinsics.wasm.gz",
+      "sha256": "36a6a3735e1cdf323286fa346fc6270a54ea70c53d8fb1c37d2295d547e93d59"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Runtime.Loader.wasm",
+      "sha256": "89fd37214c1ae9c2ee0c4a42bd32254ed3d993d16d199a153ebf1e8eb13db6b7"
+    },
+    {
+      "bytes": 2075,
+      "path": "runtime-web/_framework/System.Runtime.Loader.wasm.br",
+      "sha256": "275c220817aff9ac3f1ae2a3063804fd9e777a6ed937428e52314f295665809d"
+    },
+    {
+      "bytes": 2309,
+      "path": "runtime-web/_framework/System.Runtime.Loader.wasm.gz",
+      "sha256": "87bbf12fe5d406907a46a995d87e859c95cdf7a4c42acbb74ef6053e6d6a3b36"
+    },
+    {
+      "bytes": 117525,
+      "path": "runtime-web/_framework/System.Runtime.Numerics.wasm",
+      "sha256": "4ac54d83bda37425ea9c225e8f2a519e349133d2bcb2a9871c06877bf9735af0"
+    },
+    {
+      "bytes": 39958,
+      "path": "runtime-web/_framework/System.Runtime.Numerics.wasm.br",
+      "sha256": "0b3f3e667131866f5ccc9f625ed9ff8947c2358fbd7729b5d32be55f1ab46138"
+    },
+    {
+      "bytes": 45569,
+      "path": "runtime-web/_framework/System.Runtime.Numerics.wasm.gz",
+      "sha256": "5204131008ef4e89440a8121479685ececb5a9d67143ebbbdc8b372799e444c5"
+    },
+    {
+      "bytes": 55061,
+      "path": "runtime-web/_framework/System.Runtime.Serialization.Formatters.wasm",
+      "sha256": "77241d8cb3b4734c6614f48d7f1dfe6ef9c764b65792411fd1a92c73a593004c"
+    },
+    {
+      "bytes": 20813,
+      "path": "runtime-web/_framework/System.Runtime.Serialization.Formatters.wasm.br",
+      "sha256": "81d261d46f4f13e2236b7339cf0b3cfe900b3fafed7b4e07471793277104b0eb"
+    },
+    {
+      "bytes": 23893,
+      "path": "runtime-web/_framework/System.Runtime.Serialization.Formatters.wasm.gz",
+      "sha256": "99194509ae5075e16dbd6faa59be475fb1ed3e225d073ff1d9f0dd7724117e0e"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Runtime.Serialization.Json.wasm",
+      "sha256": "6b83364fbb00449a09b0a3496671557923178133deff27e68fa5d104193ef2c8"
+    },
+    {
+      "bytes": 2027,
+      "path": "runtime-web/_framework/System.Runtime.Serialization.Json.wasm.br",
+      "sha256": "2c1d74cd15a56f6ccbe60059edfde83b06d8231f86777a34d61b12c9e3f38523"
+    },
+    {
+      "bytes": 2248,
+      "path": "runtime-web/_framework/System.Runtime.Serialization.Json.wasm.gz",
+      "sha256": "1dc089c8077d8eae20a89392ffbe4a4b2949c805296e2666f33cf962d1916fe1"
+    },
+    {
+      "bytes": 12565,
+      "path": "runtime-web/_framework/System.Runtime.Serialization.Primitives.wasm",
+      "sha256": "249cba3824b97af66e28a63a9e13002e411166a8c387b536d0e46150ed0b40ef"
+    },
+    {
+      "bytes": 4744,
+      "path": "runtime-web/_framework/System.Runtime.Serialization.Primitives.wasm.br",
+      "sha256": "596a367abe7cc4f16ebff7e587f10bb10b24ba7001c08533591b9577901d8f24"
+    },
+    {
+      "bytes": 5409,
+      "path": "runtime-web/_framework/System.Runtime.Serialization.Primitives.wasm.gz",
+      "sha256": "2833723336ef6405d28f6bbbba1c1c52e5a8aec16deb01ace034c588e9fc0066"
+    },
+    {
+      "bytes": 6421,
+      "path": "runtime-web/_framework/System.Runtime.Serialization.Xml.wasm",
+      "sha256": "3c936252a115f56e57ce7acfe5470ea41602acb8f682a825a9c358dcef88a43a"
+    },
+    {
+      "bytes": 2271,
+      "path": "runtime-web/_framework/System.Runtime.Serialization.Xml.wasm.br",
+      "sha256": "5de7e6f1b9c277d7d5959492b8d328979245e8c6e1c9b95f9b160cdf71d8ebc4"
+    },
+    {
+      "bytes": 2552,
+      "path": "runtime-web/_framework/System.Runtime.Serialization.Xml.wasm.gz",
+      "sha256": "14d4427f8e41107a81e894967d9e1b5be7ee6f1bc5c606d3f93ff86ebcc07bc4"
+    },
+    {
+      "bytes": 6421,
+      "path": "runtime-web/_framework/System.Runtime.Serialization.wasm",
+      "sha256": "3c3de94ab3840229b810c202a27bcdbe7afb41f90476e24710583df72d1d991a"
+    },
+    {
+      "bytes": 2187,
+      "path": "runtime-web/_framework/System.Runtime.Serialization.wasm.br",
+      "sha256": "04de884d1564b5ea3d30983d76b6550547fd5ab1a313e78f5ea38548a8955034"
+    },
+    {
+      "bytes": 2488,
+      "path": "runtime-web/_framework/System.Runtime.Serialization.wasm.gz",
+      "sha256": "477a385a50d7a99bf6988ad216bf8af5063029ec9bc2c99ab47ab908bebf00dd"
+    },
+    {
+      "bytes": 33045,
+      "path": "runtime-web/_framework/System.Runtime.wasm",
+      "sha256": "454e8cb76e1ece84a59f2e88df9f1e3ef280e4771341783fe7fc98f956ad9953"
+    },
+    {
+      "bytes": 8558,
+      "path": "runtime-web/_framework/System.Runtime.wasm.br",
+      "sha256": "97f28462d3aaff8e3b1351ecdd87745d37bbc4b6f4a95916aa96c51d3aace1c4"
+    },
+    {
+      "bytes": 10439,
+      "path": "runtime-web/_framework/System.Runtime.wasm.gz",
+      "sha256": "a1751fdb4270a141788db29872501bc944669e51c361bc1a059c1013ab329254"
+    },
+    {
+      "bytes": 45845,
+      "path": "runtime-web/_framework/System.Security.AccessControl.wasm",
+      "sha256": "ab41347994c9e2f4214fea0e57df8e401866225abf0fa7c21feebbb63ede7868"
+    },
+    {
+      "bytes": 13702,
+      "path": "runtime-web/_framework/System.Security.AccessControl.wasm.br",
+      "sha256": "f7d2a47c66057db419947d85c5dfcdb39e36e169114ed38e9213d29ac27482fd"
+    },
+    {
+      "bytes": 16249,
+      "path": "runtime-web/_framework/System.Security.AccessControl.wasm.gz",
+      "sha256": "0a7c9a18094ef0a7bd34a557ad4f95fb5c3052378e453f025548ce83457ac4f6"
+    },
+    {
+      "bytes": 42261,
+      "path": "runtime-web/_framework/System.Security.Claims.wasm",
+      "sha256": "ae8b9a3029ce2d7150ab6bf52320a68df6ccab468d0d310e84111e64cc30e9ee"
+    },
+    {
+      "bytes": 13493,
+      "path": "runtime-web/_framework/System.Security.Claims.wasm.br",
+      "sha256": "48a705f90e9a713597388f7d63b86ce543d9df5c6315ecbdf657d4a35952cc9f"
+    },
+    {
+      "bytes": 15706,
+      "path": "runtime-web/_framework/System.Security.Claims.wasm.gz",
+      "sha256": "47010c0e5a3f98458009fe763535e89411fa65a697fc542ad3f1cb97429e5a8f"
+    },
+    {
+      "bytes": 6933,
+      "path": "runtime-web/_framework/System.Security.Cryptography.Algorithms.wasm",
+      "sha256": "51bc80422623605d6fc2f935bba61c73e1d71a0d1d64ee9abe772affd512fe0e"
+    },
+    {
+      "bytes": 2394,
+      "path": "runtime-web/_framework/System.Security.Cryptography.Algorithms.wasm.br",
+      "sha256": "36506257fbf3169c5065043597d2588c3f32bbb265e3a2c17f1f1933d40bfd6e"
+    },
+    {
+      "bytes": 2691,
+      "path": "runtime-web/_framework/System.Security.Cryptography.Algorithms.wasm.gz",
+      "sha256": "6270ba6f1a821fc5283cfe00e5beee57c286034e7a7cbfd482635485f7e0d45a"
+    },
+    {
+      "bytes": 5909,
+      "path": "runtime-web/_framework/System.Security.Cryptography.Cng.wasm",
+      "sha256": "1e43dab5d625b14999439d12e777a06bb9ec7af8d5859ad08ff93f8aa0cf0739"
+    },
+    {
+      "bytes": 2173,
+      "path": "runtime-web/_framework/System.Security.Cryptography.Cng.wasm.br",
+      "sha256": "d0c7d74cf08e8449e85e1393c90e1a638e91a262c07c0e4e6f640835985ec2eb"
+    },
+    {
+      "bytes": 2460,
+      "path": "runtime-web/_framework/System.Security.Cryptography.Cng.wasm.gz",
+      "sha256": "83063d006d1bdaefe0e89cdea10395f6d7040f5a75ee905f603e675adb25efd2"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Security.Cryptography.Csp.wasm",
+      "sha256": "44cf7b85818e21ed63732d52902131ce7ac34be3b9378756063dea27ffa2414d"
+    },
+    {
+      "bytes": 2104,
+      "path": "runtime-web/_framework/System.Security.Cryptography.Csp.wasm.br",
+      "sha256": "a1b3946efa0a9b72c8d362ac2dd8b1dd8905848c247681ef19cfa565367a5ace"
+    },
+    {
+      "bytes": 2319,
+      "path": "runtime-web/_framework/System.Security.Cryptography.Csp.wasm.gz",
+      "sha256": "3d394ef017d04270d7ccea4ccd5c7faa0eadba3462cf09b9919279e8ca33b541"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Security.Cryptography.Encoding.wasm",
+      "sha256": "2c07562b3b9817c901a6504b6890c901aac8cf6022623713b318f23d4f0fef1f"
+    },
+    {
+      "bytes": 2016,
+      "path": "runtime-web/_framework/System.Security.Cryptography.Encoding.wasm.br",
+      "sha256": "d90764bea5f493a1d251103fa934d0f777c57976ad40f44845c4d0cc058ba511"
+    },
+    {
+      "bytes": 2261,
+      "path": "runtime-web/_framework/System.Security.Cryptography.Encoding.wasm.gz",
+      "sha256": "8b1faf566f8cd58c7ec2bbba52baab7e87ebd2c5a16342c8ea80955737702d68"
+    },
+    {
+      "bytes": 4885,
+      "path": "runtime-web/_framework/System.Security.Cryptography.OpenSsl.wasm",
+      "sha256": "6f1b93bd914d97ff491a3552c770b39e64830c0091af633daf926cfc23462b54"
+    },
+    {
+      "bytes": 1989,
+      "path": "runtime-web/_framework/System.Security.Cryptography.OpenSsl.wasm.br",
+      "sha256": "9166400017a36c69bab11f52bfea1f94f4656540251b21cd499b3402e2959a24"
+    },
+    {
+      "bytes": 2196,
+      "path": "runtime-web/_framework/System.Security.Cryptography.OpenSsl.wasm.gz",
+      "sha256": "0127756a4add611307d897c3867341e4f5898f59bcbcf3276c438f48f0a396ae"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Security.Cryptography.Primitives.wasm",
+      "sha256": "783e69aa4b757e28827b69af7dd261dab4d3261c5592d64693479caf0c48ede4"
+    },
+    {
+      "bytes": 2073,
+      "path": "runtime-web/_framework/System.Security.Cryptography.Primitives.wasm.br",
+      "sha256": "d2e6101f44a72dabedcc98f26eaa7f34d0fd08f3d2c96e086df6a4b546ac64bd"
+    },
+    {
+      "bytes": 2316,
+      "path": "runtime-web/_framework/System.Security.Cryptography.Primitives.wasm.gz",
+      "sha256": "78eadddddcc10ba7c1d22a93521264e854d244627927f31afdab7010dabdd627"
+    },
+    {
+      "bytes": 6421,
+      "path": "runtime-web/_framework/System.Security.Cryptography.X509Certificates.wasm",
+      "sha256": "826c5be05fa54b43fd214142866173fc9c9b5ed086463140a6e48e4da2875c48"
+    },
+    {
+      "bytes": 2315,
+      "path": "runtime-web/_framework/System.Security.Cryptography.X509Certificates.wasm.br",
+      "sha256": "77fa4e3f10824113b7d3d5275b43da8ff120fc7f3a32b727bde9c5c1d2bc7836"
+    },
+    {
+      "bytes": 2654,
+      "path": "runtime-web/_framework/System.Security.Cryptography.X509Certificates.wasm.gz",
+      "sha256": "c07be38532cbf66ac3fc22cb7e2be009024219cb0d2da9436b10688d51185765"
+    },
+    {
+      "bytes": 469269,
+      "path": "runtime-web/_framework/System.Security.Cryptography.wasm",
+      "sha256": "fd92e9f3b15b09d29687262b1dba1e2744decb4e1565ba77473540967d7ff519"
+    },
+    {
+      "bytes": 147422,
+      "path": "runtime-web/_framework/System.Security.Cryptography.wasm.br",
+      "sha256": "a4ee3ecfae7ef2bbae38cc055ac85fc2d179d7071dd1dd4d966ec42769455fc1"
+    },
+    {
+      "bytes": 177340,
+      "path": "runtime-web/_framework/System.Security.Cryptography.wasm.gz",
+      "sha256": "e6b05b382febe65fa28fc1f5116251231f58e592065a9ea18204de53cbadfebf"
+    },
+    {
+      "bytes": 25877,
+      "path": "runtime-web/_framework/System.Security.Principal.Windows.wasm",
+      "sha256": "bae6166939f621bc7637e5f36c8553735e0e412080097f6bf810afed4066b311"
+    },
+    {
+      "bytes": 8934,
+      "path": "runtime-web/_framework/System.Security.Principal.Windows.wasm.br",
+      "sha256": "395b98db945d8f70020109404da9862584cc63d11e78aa644643ee2980eb313a"
+    },
+    {
+      "bytes": 10531,
+      "path": "runtime-web/_framework/System.Security.Principal.Windows.wasm.gz",
+      "sha256": "a3b1d18e76fbb5955c2afa88fbf2f503154e8208872815bed4eac9c1638c5fc9"
+    },
+    {
+      "bytes": 4885,
+      "path": "runtime-web/_framework/System.Security.Principal.wasm",
+      "sha256": "37c42a6cbaec2f6058f7555bf9fd0ec9753daa29334cde8c287657030ecb6153"
+    },
+    {
+      "bytes": 1941,
+      "path": "runtime-web/_framework/System.Security.Principal.wasm.br",
+      "sha256": "b40d616ba3ced45fea38ad1240fba6ee8b8113732cc04a5eb3c156c096cdbf62"
+    },
+    {
+      "bytes": 2147,
+      "path": "runtime-web/_framework/System.Security.Principal.wasm.gz",
+      "sha256": "b048373083f3db53acbf792736caa30e0f3d6240782d2fd11e2a41d9385356b3"
+    },
+    {
+      "bytes": 4885,
+      "path": "runtime-web/_framework/System.Security.SecureString.wasm",
+      "sha256": "ee652eff520676b610a9ee445b1d102b75cee3f2fa5ac904e4f3cbc0b539858e"
+    },
+    {
+      "bytes": 1964,
+      "path": "runtime-web/_framework/System.Security.SecureString.wasm.br",
+      "sha256": "3b556e9879f145d0014098d618933f7853bcf3b195790a4e66e8be5eb9bd5e1a"
+    },
+    {
+      "bytes": 2178,
+      "path": "runtime-web/_framework/System.Security.SecureString.wasm.gz",
+      "sha256": "9536dc4a611257c7f6f85453e2cf8566048784023b9038472f0c7c674b035510"
+    },
+    {
+      "bytes": 7957,
+      "path": "runtime-web/_framework/System.Security.wasm",
+      "sha256": "c7f55847af30f00b8a71d70d7c37913d3f0b070532a3f375cf8807313c33811a"
+    },
+    {
+      "bytes": 2595,
+      "path": "runtime-web/_framework/System.Security.wasm.br",
+      "sha256": "e64d98164b11eb70801c69c5ae29fc0b146d4a66b971640730c3d1e6ff3784ba"
+    },
+    {
+      "bytes": 2949,
+      "path": "runtime-web/_framework/System.Security.wasm.gz",
+      "sha256": "4732c45d161026e31bca40753e80ad4cf3ad854773d95adc254d014f04dd1704"
+    },
+    {
+      "bytes": 6421,
+      "path": "runtime-web/_framework/System.ServiceModel.Web.wasm",
+      "sha256": "606cb06f592a490a2495119ee17ccf64a3521bc51026e33068a3f9deb6cfe5b6"
+    },
+    {
+      "bytes": 2235,
+      "path": "runtime-web/_framework/System.ServiceModel.Web.wasm.br",
+      "sha256": "b6a8acab437c6e2190af5a539ec8c642a1b7689c5df2164d330b1fb08b52b766"
+    },
+    {
+      "bytes": 2528,
+      "path": "runtime-web/_framework/System.ServiceModel.Web.wasm.gz",
+      "sha256": "9b4b538343410d67fcbe60926c7caf8b051e0ca70f498bb019793ac885fc8247"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.ServiceProcess.wasm",
+      "sha256": "b05d1a86b5fb51fea0785259780ecf70c34df5e1662b2969e34875c91ca6e8b5"
+    },
+    {
+      "bytes": 2056,
+      "path": "runtime-web/_framework/System.ServiceProcess.wasm.br",
+      "sha256": "dea387f3a8664274cc5462ba497b3991e42960001538667ced78426278af9cac"
+    },
+    {
+      "bytes": 2285,
+      "path": "runtime-web/_framework/System.ServiceProcess.wasm.gz",
+      "sha256": "736918f9c1fe03e75268fd85a535661fe39e11ec2ddcd9d76d203bd61aa123ee"
+    },
+    {
+      "bytes": 729877,
+      "path": "runtime-web/_framework/System.Text.Encoding.CodePages.wasm",
+      "sha256": "244485a1b639ecca0d39f820ec519f6b1d9a27e03ffce497002c57020b68343c"
+    },
+    {
+      "bytes": 180825,
+      "path": "runtime-web/_framework/System.Text.Encoding.CodePages.wasm.br",
+      "sha256": "53b9619fa41fbebf3753d59d9a195071a1b2ae50f13f5fcca71d58c11202e2ed"
+    },
+    {
+      "bytes": 514590,
+      "path": "runtime-web/_framework/System.Text.Encoding.CodePages.wasm.gz",
+      "sha256": "fbf5255735c631688d113cb452c87acdbf77ae06abd91bf9a9ab738c330f9b08"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Text.Encoding.Extensions.wasm",
+      "sha256": "931bb51373deff099b97b66f1051093d56437fdc203271214d6154c91e306cb1"
+    },
+    {
+      "bytes": 1992,
+      "path": "runtime-web/_framework/System.Text.Encoding.Extensions.wasm.br",
+      "sha256": "bfc2d976bb263602dd6cda0d351f5e2037abf3cb4576e4dbe70f5c91815fb9cd"
+    },
+    {
+      "bytes": 2250,
+      "path": "runtime-web/_framework/System.Text.Encoding.Extensions.wasm.gz",
+      "sha256": "76242cb3d40b6968b8b0cdbc519d2c134b273064ad862481c622f1729756985a"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Text.Encoding.wasm",
+      "sha256": "424e48b0fe28ecacf37d0f5c5c51c9e45d646850083e02944a4f894b080d93bd"
+    },
+    {
+      "bytes": 1997,
+      "path": "runtime-web/_framework/System.Text.Encoding.wasm.br",
+      "sha256": "45512211f2a73a424a700c21d9700cf768500dba76dfc8d41057e1f1196b490a"
+    },
+    {
+      "bytes": 2224,
+      "path": "runtime-web/_framework/System.Text.Encoding.wasm.gz",
+      "sha256": "e0dbcf1b3057cb317dc4cb320bb80a33693eb5e6ac19a01f74ef6a2f5486fed0"
+    },
+    {
+      "bytes": 60181,
+      "path": "runtime-web/_framework/System.Text.Encodings.Web.wasm",
+      "sha256": "a742563cc76581fb8b8a8e6ef458268ccbe495d9f15dcf17da045c113a9e8c73"
+    },
+    {
+      "bytes": 19233,
+      "path": "runtime-web/_framework/System.Text.Encodings.Web.wasm.br",
+      "sha256": "b3318dca7538cd388a1c2806c5d2fd68207dbe5e4e7653e397a8ca41dde17f6c"
+    },
+    {
+      "bytes": 23473,
+      "path": "runtime-web/_framework/System.Text.Encodings.Web.wasm.gz",
+      "sha256": "76d031b4e269c7b94e359ebdd87915614e3eb895ffb51486c20e036b53f4e45e"
+    },
+    {
+      "bytes": 569621,
+      "path": "runtime-web/_framework/System.Text.Json.wasm",
+      "sha256": "b56bd21d0dd35f18132000d7b9d45d1d97d82afa6654a5739b9807e4e6f7326d"
+    },
+    {
+      "bytes": 165865,
+      "path": "runtime-web/_framework/System.Text.Json.wasm.br",
+      "sha256": "b0df8fbd41e0984b6920c46a1d2fbedb0b2f061762b7796fdb4cc4a5a28be457"
+    },
+    {
+      "bytes": 200891,
+      "path": "runtime-web/_framework/System.Text.Json.wasm.gz",
+      "sha256": "b22a03034778327b9e0fe196dde1144309f1cc6712f4c0b7cf6d9391c8ae659c"
+    },
+    {
+      "bytes": 348949,
+      "path": "runtime-web/_framework/System.Text.RegularExpressions.wasm",
+      "sha256": "9a1f89650a12ada96b21cd14331f09f536a43e48f8f041b233b6cc4575258a75"
+    },
+    {
+      "bytes": 125994,
+      "path": "runtime-web/_framework/System.Text.RegularExpressions.wasm.br",
+      "sha256": "5aca8e12e5fe6c720f7bec301396964cbd8f6d0a858891ad37d21d50892ad648"
+    },
+    {
+      "bytes": 149512,
+      "path": "runtime-web/_framework/System.Text.RegularExpressions.wasm.gz",
+      "sha256": "e5f021619e2d5ef981a3fc436c1d7139e220eb77fed6c71bc6689284c5d3b34e"
+    },
+    {
+      "bytes": 42261,
+      "path": "runtime-web/_framework/System.Threading.Channels.wasm",
+      "sha256": "9e40e02a7adc7d82f642c383c864057bbd561ac6f8082dd15e8784aeee1b03f8"
+    },
+    {
+      "bytes": 16879,
+      "path": "runtime-web/_framework/System.Threading.Channels.wasm.br",
+      "sha256": "c68c5233088244f910f6212fef7eef21775059454e9395b27e1f84c832b87494"
+    },
+    {
+      "bytes": 19234,
+      "path": "runtime-web/_framework/System.Threading.Channels.wasm.gz",
+      "sha256": "70714fa3124fc9a51359e1b6bd87652c509f1751d8c79486d5995b0a089bc441"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Threading.Overlapped.wasm",
+      "sha256": "778401ba386fd55bbf67ef61f663c7abaaef1212c3f4699e809610e3558ce77c"
+    },
+    {
+      "bytes": 2033,
+      "path": "runtime-web/_framework/System.Threading.Overlapped.wasm.br",
+      "sha256": "d76f32ed403d96f66e9d20f24053cf901d50c5d037dc9b997d17877d00bd5292"
+    },
+    {
+      "bytes": 2295,
+      "path": "runtime-web/_framework/System.Threading.Overlapped.wasm.gz",
+      "sha256": "c649a86caa2da7ddc9bf786305ca3ba32a9b0ea63b78f3a2257e322bc302aef4"
+    },
+    {
+      "bytes": 175893,
+      "path": "runtime-web/_framework/System.Threading.Tasks.Dataflow.wasm",
+      "sha256": "cf52071c6f9b59192f3eeaf6fb6fccae234f37d6f38a9e078e54c0c175b3cfaf"
+    },
+    {
+      "bytes": 62303,
+      "path": "runtime-web/_framework/System.Threading.Tasks.Dataflow.wasm.br",
+      "sha256": "34066041aac67d834854e05a539d1ec373667cf45f4c9d9b6eaecd6852c17f1c"
+    },
+    {
+      "bytes": 73780,
+      "path": "runtime-web/_framework/System.Threading.Tasks.Dataflow.wasm.gz",
+      "sha256": "9655ca2dbbfbc0281ce9349b8b42910ff04a46d1f7a955b32585ce4bdfa59889"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Threading.Tasks.Extensions.wasm",
+      "sha256": "811ec152ef18302debed1d42e3e36f3a0ec8236536415d7d472f34763b997e67"
+    },
+    {
+      "bytes": 2042,
+      "path": "runtime-web/_framework/System.Threading.Tasks.Extensions.wasm.br",
+      "sha256": "e417e02f8c97d6c4d68007f1f5dcfe42a416a9153429db5507118155662e5bf9"
+    },
+    {
+      "bytes": 2281,
+      "path": "runtime-web/_framework/System.Threading.Tasks.Extensions.wasm.gz",
+      "sha256": "555c500f28deac11ed72c82fb837fd8c33d5bbdd2e2fd3d7e857ebea54080814"
+    },
+    {
+      "bytes": 51989,
+      "path": "runtime-web/_framework/System.Threading.Tasks.Parallel.wasm",
+      "sha256": "44216eeb90bb44ff6ce3c5beb3bd454caec919fc257e4483a3b14f7fa31e36db"
+    },
+    {
+      "bytes": 18887,
+      "path": "runtime-web/_framework/System.Threading.Tasks.Parallel.wasm.br",
+      "sha256": "f76ef234824e93b1b77a44d83ab6299d2d66d02ccb1fac0bac95066ff6d3277b"
+    },
+    {
+      "bytes": 21571,
+      "path": "runtime-web/_framework/System.Threading.Tasks.Parallel.wasm.gz",
+      "sha256": "ddb92f134866b9574818e085886e48df373871affe0acd9b6ecf8691fe0288de"
+    },
+    {
+      "bytes": 6421,
+      "path": "runtime-web/_framework/System.Threading.Tasks.wasm",
+      "sha256": "d9a54ef7c9ef3b1585ba87a1ddecf400e37c28bd909d1b4d9dd9c9a603accdd8"
+    },
+    {
+      "bytes": 2259,
+      "path": "runtime-web/_framework/System.Threading.Tasks.wasm.br",
+      "sha256": "e53988d34869a654dd550abbd5286861019d3a4d779d6e6178d5431809e3d7cc"
+    },
+    {
+      "bytes": 2550,
+      "path": "runtime-web/_framework/System.Threading.Tasks.wasm.gz",
+      "sha256": "02948b8d04611e5e53cc59b2ec03d53052ac1547afa95e3727a5cba164cad992"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Threading.Thread.wasm",
+      "sha256": "facca2b3a0c60394c66bdfaca026feeba2aed3855af93fbd06b45ceb686135c1"
+    },
+    {
+      "bytes": 2072,
+      "path": "runtime-web/_framework/System.Threading.Thread.wasm.br",
+      "sha256": "90f720324d78bbb954750d4cf8a7d3de6387164313d9022e78abf4569b3b0104"
+    },
+    {
+      "bytes": 2322,
+      "path": "runtime-web/_framework/System.Threading.Thread.wasm.gz",
+      "sha256": "37eae16b377fedb6347c781f00645d8d97a17598bb496f6345df433e1e6fc274"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Threading.ThreadPool.wasm",
+      "sha256": "17238dd16fdeb791a29b6277b4a16e2fc9a51de7fd1f0ad739030fc7a72aaad0"
+    },
+    {
+      "bytes": 2021,
+      "path": "runtime-web/_framework/System.Threading.ThreadPool.wasm.br",
+      "sha256": "dbd22afe17bad591674f21b28a42ebd68084bfa4f8d8e46356f2fb50542ffb24"
+    },
+    {
+      "bytes": 2243,
+      "path": "runtime-web/_framework/System.Threading.ThreadPool.wasm.gz",
+      "sha256": "3c6e0bcd5cc37b39e949c0fbb697e9244c5eaa799b9a8ace5606edbdf87e480d"
+    },
+    {
+      "bytes": 4885,
+      "path": "runtime-web/_framework/System.Threading.Timer.wasm",
+      "sha256": "373b0e147dd94b5474a1aabdf32546c083509df5a85a9afa5358165bae80c333"
+    },
+    {
+      "bytes": 1888,
+      "path": "runtime-web/_framework/System.Threading.Timer.wasm.br",
+      "sha256": "b353ea8986103e3dcf66ab7b9b28dfdc9d24496aa0e5babe92eab1b3ead74b1c"
+    },
+    {
+      "bytes": 2119,
+      "path": "runtime-web/_framework/System.Threading.Timer.wasm.gz",
+      "sha256": "3326da6ce0f10041b90423763d19ba38f62cd60a642af126ee22cbe917fbd390"
+    },
+    {
+      "bytes": 33557,
+      "path": "runtime-web/_framework/System.Threading.wasm",
+      "sha256": "b398315abaa565f3ac5f0c95422a0ba8751e327644f1c040931a1f756956e396"
+    },
+    {
+      "bytes": 12593,
+      "path": "runtime-web/_framework/System.Threading.wasm.br",
+      "sha256": "08905bbb3c2706b7256825b0daff1afae36ac8b14948696a393cdcda5330761c"
+    },
+    {
+      "bytes": 14269,
+      "path": "runtime-web/_framework/System.Threading.wasm.gz",
+      "sha256": "3228cbeceac5d1744088877b488004b1c6ced281cb9c7f4f156de2936d2d0556"
+    },
+    {
+      "bytes": 164117,
+      "path": "runtime-web/_framework/System.Transactions.Local.wasm",
+      "sha256": "16e71f97c0e394f569f088a6823b5ee158226ab5dbc46b6b39892ed488571aec"
+    },
+    {
+      "bytes": 42370,
+      "path": "runtime-web/_framework/System.Transactions.Local.wasm.br",
+      "sha256": "01a6c2930eb72a2dffb669a31ea38aec9665e2933c24610b11a96ed81ba62752"
+    },
+    {
+      "bytes": 51104,
+      "path": "runtime-web/_framework/System.Transactions.Local.wasm.gz",
+      "sha256": "fd5fcda10086a055d6fcb8fc56944d5894c0e813f67f4ed5a7c5945114d5d940"
+    },
+    {
+      "bytes": 5909,
+      "path": "runtime-web/_framework/System.Transactions.wasm",
+      "sha256": "b0e99c816b40ecf401f91414264a27a2d9dcf0cfd4cb37e615419e74dc3eef52"
+    },
+    {
+      "bytes": 2090,
+      "path": "runtime-web/_framework/System.Transactions.wasm.br",
+      "sha256": "e05c93f3aa50cb320aeb4fa3972a8af8c5568d64010bea093bbf492ebb56683b"
+    },
+    {
+      "bytes": 2355,
+      "path": "runtime-web/_framework/System.Transactions.wasm.gz",
+      "sha256": "40bcd96be1258364ee36919d456e7602831843c6aa9149f21c398ede7c65a65e"
+    },
+    {
+      "bytes": 4885,
+      "path": "runtime-web/_framework/System.ValueTuple.wasm",
+      "sha256": "5355b15cd5c0621de16435b3a6f0a02c84999200822fea8d9e0090e676d0e48d"
+    },
+    {
+      "bytes": 1901,
+      "path": "runtime-web/_framework/System.ValueTuple.wasm.br",
+      "sha256": "b5c18feb77da9f85365fa4c74b7d9e193e8e67dcdb7f51590ad6bac5ded5aceb"
+    },
+    {
+      "bytes": 2163,
+      "path": "runtime-web/_framework/System.ValueTuple.wasm.gz",
+      "sha256": "67efc81516e239ce1f47bcf27da6051b870b09a1709bba8a60106392d06b60c0"
+    },
+    {
+      "bytes": 17173,
+      "path": "runtime-web/_framework/System.Web.HttpUtility.wasm",
+      "sha256": "d459073b2cf50411ea0acb2e4d2c5f497d889ae4240dba902cf0a5bba8e3f743"
+    },
+    {
+      "bytes": 7548,
+      "path": "runtime-web/_framework/System.Web.HttpUtility.wasm.br",
+      "sha256": "4fa003c336670c158580fb3e3feaf8c115ec0ca921303dc7e54ca24995230417"
+    },
+    {
+      "bytes": 8369,
+      "path": "runtime-web/_framework/System.Web.HttpUtility.wasm.gz",
+      "sha256": "97bd5966bdacc8c2c67e5c37ec9a29ce74c40b588f0136f6b84dfb6eaf3e767e"
+    },
+    {
+      "bytes": 4885,
+      "path": "runtime-web/_framework/System.Web.wasm",
+      "sha256": "9b04a48affce68d392f809a37e0201e38818d3a273e3fc6046325e14e2f9163a"
+    },
+    {
+      "bytes": 1889,
+      "path": "runtime-web/_framework/System.Web.wasm.br",
+      "sha256": "c194f652b7feee6ab4dec51a246521845bd68312b4889361822dbe11a8e1ddb7"
+    },
+    {
+      "bytes": 2100,
+      "path": "runtime-web/_framework/System.Web.wasm.gz",
+      "sha256": "99ee632b72652d456155bbc50134da2c81193e938d6ba255bf9f30faf7871218"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Windows.wasm",
+      "sha256": "cc6f168d09d34864cb6730367119b7b064b49ecfe0afad7b4b1375cc149b6dfc"
+    },
+    {
+      "bytes": 2009,
+      "path": "runtime-web/_framework/System.Windows.wasm.br",
+      "sha256": "c50ef69f95584fd2df4ee319150fa4c5427e681c745c747ede969bb9ef10f5cd"
+    },
+    {
+      "bytes": 2261,
+      "path": "runtime-web/_framework/System.Windows.wasm.gz",
+      "sha256": "b109884a5d49ab5df07676370a86537ea050f18225a8360b5935df623968324b"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Xml.Linq.wasm",
+      "sha256": "63bae882de43812a1192f02de1305c8144c97cd6089e581c1d2dd47cd8f08224"
+    },
+    {
+      "bytes": 1910,
+      "path": "runtime-web/_framework/System.Xml.Linq.wasm.br",
+      "sha256": "eac00f7a89b2f197333b142d3c14920e051f5654e9a6043d9e23e090679fa258"
+    },
+    {
+      "bytes": 2185,
+      "path": "runtime-web/_framework/System.Xml.Linq.wasm.gz",
+      "sha256": "1676cd63aa5544a3fc06ebafdae14aceb0ca99e4edb9ae8394be639fd99edf3b"
+    },
+    {
+      "bytes": 11541,
+      "path": "runtime-web/_framework/System.Xml.ReaderWriter.wasm",
+      "sha256": "393598059c6868743cb19c0a870c9c06b8b48f5df959b3905ff1552a25c762ac"
+    },
+    {
+      "bytes": 3450,
+      "path": "runtime-web/_framework/System.Xml.ReaderWriter.wasm.br",
+      "sha256": "9ac11cd60a38b0b5559fdbd28df5b49096f5584c59088b8fc4c4391358339cdb"
+    },
+    {
+      "bytes": 4006,
+      "path": "runtime-web/_framework/System.Xml.ReaderWriter.wasm.gz",
+      "sha256": "046d9a370581604f7c27a8f35e6534a08784704141bca34f5fd5e3a782fc56ab"
+    },
+    {
+      "bytes": 5909,
+      "path": "runtime-web/_framework/System.Xml.Serialization.wasm",
+      "sha256": "38ce850aadc03f197b0628f720145aa9a536685d6e1f0a4c4cfdd37cd09a81e2"
+    },
+    {
+      "bytes": 1970,
+      "path": "runtime-web/_framework/System.Xml.Serialization.wasm.br",
+      "sha256": "8d413369def174dcd5c887f111ab970298e2d6e264c49dbc59d32099a15291c6"
+    },
+    {
+      "bytes": 2226,
+      "path": "runtime-web/_framework/System.Xml.Serialization.wasm.gz",
+      "sha256": "e898042c1c33bf2cee356d80ab28d6a806881a8d15314b272d9451ecc691b677"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Xml.XDocument.wasm",
+      "sha256": "528100393a1ce203e3519e066677454586e8cf4139c061aa425b80ec92f96806"
+    },
+    {
+      "bytes": 2102,
+      "path": "runtime-web/_framework/System.Xml.XDocument.wasm.br",
+      "sha256": "a495505f919b80b3489bb2d4887f2d2975bff427d23afa1a34ff0cd9ee8fd715"
+    },
+    {
+      "bytes": 2381,
+      "path": "runtime-web/_framework/System.Xml.XDocument.wasm.gz",
+      "sha256": "f99e516a9121b1356116af65bb6e15335fb4e7974cae958b9e357caa6aa260b5"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Xml.XPath.XDocument.wasm",
+      "sha256": "0a4365645a54f274dd85b6c81f998e627626bd51dc6770533e2a9e3f70051932"
+    },
+    {
+      "bytes": 2224,
+      "path": "runtime-web/_framework/System.Xml.XPath.XDocument.wasm.br",
+      "sha256": "84f2ce41183cc608122696a43936acc9d49606e3262ed83df7fa238850075fd4"
+    },
+    {
+      "bytes": 2475,
+      "path": "runtime-web/_framework/System.Xml.XPath.XDocument.wasm.gz",
+      "sha256": "132c862e6d1eacd50622be370732c7ae600fd84914dc0e632f46c38905a45592"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Xml.XPath.wasm",
+      "sha256": "44d1e072066b8d346b1d0dc9a19048c260d0ad2670542e287d339a99434441e6"
+    },
+    {
+      "bytes": 2053,
+      "path": "runtime-web/_framework/System.Xml.XPath.wasm.br",
+      "sha256": "a8a17f279dfa2f8f75508ad48073c23966a7d82f34cdfae43ac4a9d66244567d"
+    },
+    {
+      "bytes": 2304,
+      "path": "runtime-web/_framework/System.Xml.XPath.wasm.gz",
+      "sha256": "549fa1bb224cc9c81c15c714ecbd7cc5691fbce9ef519a94bae164352e951777"
+    },
+    {
+      "bytes": 5397,
+      "path": "runtime-web/_framework/System.Xml.XmlDocument.wasm",
+      "sha256": "670d07296c3d23cd2918083ffc254751db27503ebba337a56be7f9ed4595e753"
+    },
+    {
+      "bytes": 2078,
+      "path": "runtime-web/_framework/System.Xml.XmlDocument.wasm.br",
+      "sha256": "19df432a22c1dbb245e97a2b953317fcf16d5a0d1e7b3c00fb3069e1e57de85e"
+    },
+    {
+      "bytes": 2341,
+      "path": "runtime-web/_framework/System.Xml.XmlDocument.wasm.gz",
+      "sha256": "7a366c356dda56694fc74abd23353f181d1db3b7758d2377faaf36606f0c2743"
+    },
+    {
+      "bytes": 7445,
+      "path": "runtime-web/_framework/System.Xml.XmlSerializer.wasm",
+      "sha256": "54d7c4b89d2291ada51603349ae72a0eaf99ba85394e95a2230926f1662b1a3b"
+    },
+    {
+      "bytes": 2500,
+      "path": "runtime-web/_framework/System.Xml.XmlSerializer.wasm.br",
+      "sha256": "9936a170890873fb65b2f1bf718f48f92299bdd6b2de4dd3a41de87622789171"
+    },
+    {
+      "bytes": 2837,
+      "path": "runtime-web/_framework/System.Xml.XmlSerializer.wasm.gz",
+      "sha256": "4c3db1e979f6492f592b334a4395cb5b4cd09aa2d8e9e500cd44a2204d9fc767"
+    },
+    {
+      "bytes": 13077,
+      "path": "runtime-web/_framework/System.Xml.wasm",
+      "sha256": "dab1e4be47f3b3720ab4c25572971d7c3fd8fce330216a2146bc8fd3ea29b7dc"
+    },
+    {
+      "bytes": 3599,
+      "path": "runtime-web/_framework/System.Xml.wasm.br",
+      "sha256": "3ffe6cc5848655188b800e6c33fa0ea84c404fd81809948d2348417b2b3ce53b"
+    },
+    {
+      "bytes": 4207,
+      "path": "runtime-web/_framework/System.Xml.wasm.gz",
+      "sha256": "82656d498d7070078b42d812e40d77d438ffda910255cbc292cc65e4922cd759"
+    },
+    {
+      "bytes": 39701,
+      "path": "runtime-web/_framework/System.wasm",
+      "sha256": "f090639b548b5f1c4bf6bf3b0f7a6c9b4b75422d8e487c886492995894958619"
+    },
+    {
+      "bytes": 9599,
+      "path": "runtime-web/_framework/System.wasm.br",
+      "sha256": "1554393b729a6b792f03aeb8ee2d0f81d87471362ef14ae9f4c0812c547bf171"
+    },
+    {
+      "bytes": 11742,
+      "path": "runtime-web/_framework/System.wasm.gz",
+      "sha256": "7861d144183ecf7268b116e51d645a5d03f204a5c40160d045c911a01042b487"
+    },
+    {
+      "bytes": 5909,
+      "path": "runtime-web/_framework/WindowsBase.wasm",
+      "sha256": "c78e3f043b297980a8e41b44cffc29c4e1f82905b733eb35560396c3482d1e49"
+    },
+    {
+      "bytes": 2254,
+      "path": "runtime-web/_framework/WindowsBase.wasm.br",
+      "sha256": "20196b9d5dcfd7924e2f4ef342a3074c63f20f0458bd1aa2c3168cc3c6a32480"
+    },
+    {
+      "bytes": 2515,
+      "path": "runtime-web/_framework/WindowsBase.wasm.gz",
+      "sha256": "24863ff3d3885fcc390e52cd2aca5bdcec0971d9bbfebd85528005b66f3978d0"
+    },
+    {
+      "bytes": 19433,
+      "path": "runtime-web/_framework/blazor.boot.json",
+      "sha256": "40d4ef075af38673548e1875c259c2344f30fefa6ee2460ce4fba3e965740e75"
+    },
+    {
+      "bytes": 8217,
+      "path": "runtime-web/_framework/blazor.boot.json.br",
+      "sha256": "320e24795249b1206a647f7e801012ac322302833a2fde7ad11f520bd12098c2"
+    },
+    {
+      "bytes": 8850,
+      "path": "runtime-web/_framework/blazor.boot.json.gz",
+      "sha256": "d50a0120db4b71fe774acf043a3c9d057e0790eedb9c24b31298d678e0d3ab77"
+    },
+    {
+      "bytes": 60300,
+      "path": "runtime-web/_framework/blazor.webassembly.js",
+      "sha256": "82f1df9e775f12ed6d45fd2b15be7df3cad6abb213228b4e684f3e00c6ca61b7"
+    },
+    {
+      "bytes": 16905,
+      "path": "runtime-web/_framework/blazor.webassembly.js.br",
+      "sha256": "208f414551923886a22a965b9ef75924347a62905998b2da893f6e16d6fc426f"
+    },
+    {
+      "bytes": 19025,
+      "path": "runtime-web/_framework/blazor.webassembly.js.gz",
+      "sha256": "5eee16b1db542b0554f79086a6ae88d3f64f3248125b57ab60a050727584a1f5"
+    },
+    {
+      "bytes": 35871,
+      "path": "runtime-web/_framework/dotnet.js",
+      "sha256": "c256a6ae0c9d4227d999fc92403803d07cf11c863e4cafa151f97c2c763bafdb"
+    },
+    {
+      "bytes": 10260,
+      "path": "runtime-web/_framework/dotnet.js.br",
+      "sha256": "60624bc599e98c5d927148ca0c824cb1c369ad7ef017607c863aa8ec4ae06c7d"
+    },
+    {
+      "bytes": 11478,
+      "path": "runtime-web/_framework/dotnet.js.gz",
+      "sha256": "4b974216c92628fd07f4c88914323294af75bb962397183652f4f984a06f65c3"
+    },
+    {
+      "bytes": 160089,
+      "path": "runtime-web/_framework/dotnet.native.8.0.32.7khlrjk2ob.js",
+      "sha256": "ea60e4426f3072ab1e3cb89e4b5b838e6649193971cb3b9aa0aae3b7b465ced9"
+    },
+    {
+      "bytes": 31459,
+      "path": "runtime-web/_framework/dotnet.native.8.0.32.7khlrjk2ob.js.br",
+      "sha256": "cf45e366eeae096f683f505b8ea153ec4e7b26aadd0c2c7f283f8942619e749d"
+    },
+    {
+      "bytes": 36158,
+      "path": "runtime-web/_framework/dotnet.native.8.0.32.7khlrjk2ob.js.gz",
+      "sha256": "45d93d6a5a42c750db495ed40995ff2b0c561e8c89c4a4c22618f0608c143662"
+    },
+    {
+      "bytes": 2921027,
+      "path": "runtime-web/_framework/dotnet.native.wasm",
+      "sha256": "a91f64bf1a44bf18fb4d83a924db7aaec8139f78abf6afb89c12900521c080d3"
+    },
+    {
+      "bytes": 951532,
+      "path": "runtime-web/_framework/dotnet.native.wasm.br",
+      "sha256": "c25e169f3bb51fa61a169b0e24a2f3b4b7abdad190ca13dc8281a1a41d3f3dd8"
+    },
+    {
+      "bytes": 1154587,
+      "path": "runtime-web/_framework/dotnet.native.wasm.gz",
+      "sha256": "366d56247c73a642625d889bd559abbc668165f66fde7b2c00e226adcbf4ec4b"
+    },
+    {
+      "bytes": 223202,
+      "path": "runtime-web/_framework/dotnet.runtime.8.0.32.w5ohvq2zrd.js",
+      "sha256": "fee7f28ea0216c0647ad8c45b452b2c99c7928e33b3719e6ab8719ad631893c2"
+    },
+    {
+      "bytes": 54612,
+      "path": "runtime-web/_framework/dotnet.runtime.8.0.32.w5ohvq2zrd.js.br",
+      "sha256": "60522a60f23e4bc4974f246a504ea43c3ce8a8af63771ce5979b2a93ba8c19be"
+    },
+    {
+      "bytes": 64973,
+      "path": "runtime-web/_framework/dotnet.runtime.8.0.32.w5ohvq2zrd.js.gz",
+      "sha256": "88ce219d09835eff651f138b5e8eb23c6b3009ed35421153ee8e8982af3684c3"
+    },
+    {
+      "bytes": 956416,
+      "path": "runtime-web/_framework/icudt_CJK.dat",
+      "sha256": "4992ed42745cd09930a8769bd155153fb4f7b813d2798cf1cc39e9c4fa549c79"
+    },
+    {
+      "bytes": 248840,
+      "path": "runtime-web/_framework/icudt_CJK.dat.br",
+      "sha256": "a8fcd127bbe9657ce07e7ff344de2c1350c290830e86fd2e86921effa50c623e"
+    },
+    {
+      "bytes": 333110,
+      "path": "runtime-web/_framework/icudt_CJK.dat.gz",
+      "sha256": "5d0bbe088eebaec540176424b2ae9697d8afe8c2e185197cdff6ef8f725f2627"
+    },
+    {
+      "bytes": 550832,
+      "path": "runtime-web/_framework/icudt_EFIGS.dat",
+      "sha256": "f1f22d7ad618f24434c30ea8c704cb893de85e50701caba66de3f6a51178c937"
+    },
+    {
+      "bytes": 143983,
+      "path": "runtime-web/_framework/icudt_EFIGS.dat.br",
+      "sha256": "f02d24fa2b5ee677a3e0bd5b8e2789a7a5ac7fd0d8f369fa7fce6f09e7492bf6"
+    },
+    {
+      "bytes": 196037,
+      "path": "runtime-web/_framework/icudt_EFIGS.dat.gz",
+      "sha256": "c456a4c529964e0ff89df23dc95f297c9fcaa262152bc9d26c692a9521377902"
+    },
+    {
+      "bytes": 1107168,
+      "path": "runtime-web/_framework/icudt_no_CJK.dat",
+      "sha256": "2fbb15ecd1183f7eff42bd853c278fa39709a918135d1c061eec05e50fb435fb"
+    },
+    {
+      "bytes": 222250,
+      "path": "runtime-web/_framework/icudt_no_CJK.dat.br",
+      "sha256": "7eff6642a201babfc94327b17caad5623769c3bcdd696e33578ab1224ce0c652"
+    },
+    {
+      "bytes": 317618,
+      "path": "runtime-web/_framework/icudt_no_CJK.dat.gz",
+      "sha256": "09b746e0bb0b89c9d571408b9dcfdd0394ebe73061c54892f8f5a3ccc162ec0e"
+    },
+    {
+      "bytes": 48917,
+      "path": "runtime-web/_framework/mscorlib.wasm",
+      "sha256": "ba7e18039aaa17d1e61cc36984601732340225f55bd24dd1f2f0f471c741c044"
+    },
+    {
+      "bytes": 12109,
+      "path": "runtime-web/_framework/mscorlib.wasm.br",
+      "sha256": "6f5b84ff8765b4c2f5684b1ee05a3fa1a81a6bb0a551540c1583f1e163c01098"
+    },
+    {
+      "bytes": 14742,
+      "path": "runtime-web/_framework/mscorlib.wasm.gz",
+      "sha256": "c95664a3b1d56783b20664793c85d34411ffb7a475454e0d4ccad0c4176bb5fb"
+    },
+    {
+      "bytes": 90389,
+      "path": "runtime-web/_framework/netstandard.wasm",
+      "sha256": "c9f026c5474e274aa075f1ce25ce47e7bdf5a91280d1cdde162054e0a2fde60b"
+    },
+    {
+      "bytes": 21247,
+      "path": "runtime-web/_framework/netstandard.wasm.br",
+      "sha256": "08acb766f79fb0974c0f668f8987e935766b838544438c57be17bef1038fa11d"
+    },
+    {
+      "bytes": 25994,
+      "path": "runtime-web/_framework/netstandard.wasm.gz",
+      "sha256": "6c6312c2f902c7a1982cc39981dc59c30fb029b338eb7356522328b63b92b064"
+    },
+    {
+      "bytes": 5742,
+      "path": "runtime-web/browser-input.mjs",
+      "sha256": "dcc6fe1cf0f50cf27a793a442b7a77e8928f6ee2f4b7578cf4182f17fafe12d4"
+    },
+    {
+      "bytes": 3122,
+      "path": "runtime-web/index.html",
+      "sha256": "67f6cabc551297ddeb582195c2db44ef1ac8393d2b62e88d5fd2ac2190e97265"
+    }
+  ],
+  "generatedSdkSelection": {
+    "bytes": 104,
+    "path": "global.json",
+    "sha256": "27f32db56696904b4739cfa792a6ef1205607ddd72d9876eea1f98b43b766835"
+  },
+  "schemaVersion": 1,
+  "scope": {
+    "browserTestedThisBuild": false,
+    "entrypoint": "/game/",
+    "hosting": "Not deployed; owner-restricted hosting required",
+    "mountPath": "/",
+    "nativeParityVerified": false,
+    "offlineComplete": false,
+    "originalGameComplete": false,
+    "physicalIPhoneTested": false
+  },
+  "sourceCommit": "1e501e252379113c79722c00ed17860280964f34",
+  "sourceInventory": [
+    {
+      "bytes": 2051,
+      "path": ".github/workflows/audit-original-impact-render-assets.yml",
+      "sha256": "ff64a3f1d192c7e2095591b2ce585d1b76b45f46265d393afab038b2afbbbef8"
+    },
+    {
+      "bytes": 1671,
+      "path": ".github/workflows/audit-original-particle-render-assets.yml",
+      "sha256": "acdaa46af47df4a93e2f570894eddf53af314cc17c296f32a8442aecef3f80f6"
+    },
+    {
+      "bytes": 1423,
+      "path": ".github/workflows/audit-original-particle-settings.yml",
+      "sha256": "f9f828b2b95bb9581d7a9fbe49b4cd47da76bba0ca6d2f863c67b250f767de84"
+    },
+    {
+      "bytes": 1418,
+      "path": ".github/workflows/audit-original-window-visuals.yml",
+      "sha256": "7abfbffeb6bdaea9d893f0a65fb219d78eec617130018aea880b470f9177a3c1"
+    },
+    {
+      "bytes": 3365,
+      "path": ".github/workflows/extract-original-exit-hole-asset.yml",
+      "sha256": "a0e06e277a41b59f9ff24d406aaee8b4d8d24eee5104f0bf8a6cb307d3aae34b"
+    },
+    {
+      "bytes": 4238,
+      "path": ".github/workflows/game-movement-smoke.yml",
+      "sha256": "496ff79d278398eaafef807c9c1a0f523daf258449135a0c543e055601a0698d"
+    },
+    {
+      "bytes": 2842,
+      "path": ".github/workflows/original-player-audit.yml",
+      "sha256": "27781249d707a5b2b77ccdeb43b2fd2b9031a9df361cb422205f81617f0715bc"
+    },
+    {
+      "bytes": 3312,
+      "path": ".github/workflows/pr-source-check.yml",
+      "sha256": "9634681474b89097dd093c5fc0f463f094739f4b9c7bdcf5942d55ed255db8ee"
+    },
+    {
+      "bytes": 2046,
+      "path": ".github/workflows/publish-original-mesh-viewer.yml",
+      "sha256": "557eff0e722b69851f8973b3ef4a5ea3a288bcab97fe0bc9f4ed17bf04d8f8ba"
+    },
+    {
+      "bytes": 4160,
+      "path": ".github/workflows/recover-original-particle-materials.yml",
+      "sha256": "277789e4ddf4cbd21a1f892003f396e26c321dde2f43b942da7c174bc2919a95"
+    },
+    {
+      "bytes": 3772,
+      "path": ".github/workflows/recover-original-particle-meshes.yml",
+      "sha256": "9f6718e7abb51e727c7f2f757d7008dbd2286bc0f5d7ec37c8e2dbb4320e02af"
+    },
+    {
+      "bytes": 4032,
+      "path": ".github/workflows/recover-original-particle-source.yml",
+      "sha256": "29591f13d0d751e327f354a87ce34097dc99f7cb9a12c4a671406a15cbde2506"
+    },
+    {
+      "bytes": 2861,
+      "path": ".github/workflows/runtime-foundation.yml",
+      "sha256": "cbba930e32d798c97889917b9ef9a8f25a54ff2ea5371faadb7e403f5d1d9c7d"
+    },
+    {
+      "bytes": 1291,
+      "path": ".github/workflows/source-window-shader-audit.yml",
+      "sha256": "c0f3221b83f8590c4d1f7af6d091995fad35b8d8c64d2a073b77a41ca727d815"
+    },
+    {
+      "bytes": 14384,
+      "path": ".github/workflows/unity-webgl-build.yml",
+      "sha256": "ff7d5893fd4b2ab5eddfa063f3738a6dd850c03047e7c0a2ee2efd1993521f19"
+    },
+    {
+      "bytes": 2017,
+      "path": ".github/workflows/verify-original-particle-assets.yml",
+      "sha256": "e2be85e119379bbebdd4a9f78521568f1591827d74f996453ec902672e84b706"
+    },
+    {
+      "bytes": 5968,
+      "path": ".github/workflows/wasm-arm-sequences.yml",
+      "sha256": "f7c1af79d8874f2b3cb10f4e9c3bddf508e4881e2c93c6b913508774b630dd11"
+    },
+    {
+      "bytes": 2603,
+      "path": ".github/workflows/wasm-continuation-verify.yml",
+      "sha256": "0a7aa197790936e91b6a0b18dc4549256b66e058465f9b70ec14760014b562d0"
+    },
+    {
+      "bytes": 144,
+      "path": "game/.gitignore",
+      "sha256": "4d092d2dff0f64f29a8c6f2595d548e134d125bf115f0d43bea73d7f452645e3"
+    },
+    {
+      "bytes": 322,
+      "path": "game/aim-direction.mjs",
+      "sha256": "5547b27df5a6dfbdfe0a8f600c60f727358239840af957f2d23df6b89755221d"
+    },
+    {
+      "bytes": 1286,
+      "path": "game/animation-pose.mjs",
+      "sha256": "0ed4294669e21e18976bd15584e372b0dead97adaca8d9bf571829e014b043d5"
+    },
+    {
+      "bytes": 1159509,
+      "path": "game/assets/ballistics.json.gz",
+      "sha256": "752a199a9d7ebd9caae8fd405466fc4ca04874d1524a9bb6f6d9298381a8b128"
+    },
+    {
+      "bytes": 56876,
+      "path": "game/assets/ballistics/audio-013a97cc3afe6244195fb6a68c9cd277.wav",
+      "sha256": "b79a95b10568f83af0d1037c83c09f80fa5a361410cdb0adda8ac549c227bec0"
+    },
+    {
+      "bytes": 32594,
+      "path": "game/assets/ballistics/audio-16005d63fc9214e4eb60fac28ef84c07.wav",
+      "sha256": "b6a873bf8fed9f4ec89b5bcf21658172c41c859223aa60ca9b258b901b147ee8"
+    },
+    {
+      "bytes": 88620,
+      "path": "game/assets/ballistics/audio-195f3015de49def4eaa86634a2928be2.wav",
+      "sha256": "07ee6b56f602b04ac309e30d9e1d111d7b3d7457815e1ec4f20a42a8a26a9b8a"
+    },
+    {
+      "bytes": 22394,
+      "path": "game/assets/ballistics/audio-1a69aaf9a16d0d949bea352be2e50da3.wav",
+      "sha256": "22631b8cc7cefdf05f94fa465dedbbc2134ef162c310815c7e452064710ed505"
+    },
+    {
+      "bytes": 43948,
+      "path": "game/assets/ballistics/audio-25548bcfd844fbb439525169b2c3eb7b.wav",
+      "sha256": "c80b9dcadb8b4569da88ba0eff21dfe99cb5678fc6b594b361354b79fc400879"
+    },
+    {
+      "bytes": 24364,
+      "path": "game/assets/ballistics/audio-26b86861ee35f814eb5ddbd90b36606e.wav",
+      "sha256": "1ae7dd2dbf7150684c30670b755c4343cf32966baa0248d0521ebdebb92f76e2"
+    },
+    {
+      "bytes": 72236,
+      "path": "game/assets/ballistics/audio-2b2e3452ded67f44f8be79458365dd67.wav",
+      "sha256": "76d8a6650a123a2488ab4e454a188596779b3733ccbe6a30f38554ca719889fb"
+    },
+    {
+      "bytes": 33462,
+      "path": "game/assets/ballistics/audio-3909a84bf4a2ed1418b6a11c30f45ffe.wav",
+      "sha256": "f193fc27771d639b8218b7dbc07c1b045314e52630063bd358a38d616f57a5fc"
+    },
+    {
+      "bytes": 18476,
+      "path": "game/assets/ballistics/audio-3be85d7681b0d194e8fc539cdf3288bd.wav",
+      "sha256": "43e5e588565e3f6ca3081405b6fbccbe5ae3016e31c197ea60c81c33587e4fcd"
+    },
+    {
+      "bytes": 12844,
+      "path": "game/assets/ballistics/audio-3ead4e93efe1bcb4c909301a9a81b94a.wav",
+      "sha256": "f7a77c0d3a8f9b5896caa407c6e71fc23d2b49f72cd7209961038d17ba3916fe"
+    },
+    {
+      "bytes": 34114,
+      "path": "game/assets/ballistics/audio-436331f9e230d1547bd1f21ae97954ce.wav",
+      "sha256": "1e59343a644c2cb729266a862b180e7cd61ed94b081704e834b7f076621cae3f"
+    },
+    {
+      "bytes": 18092,
+      "path": "game/assets/ballistics/audio-4368378c351febb4b8d0a9462f971bdd.wav",
+      "sha256": "ae24bdc964ce8d6dbd62c7118afac8fb591226ba9f6e3241e5d11da674557bf1"
+    },
+    {
+      "bytes": 31510,
+      "path": "game/assets/ballistics/audio-4b15d34a2ec950e41a7b2e179ecb9784.wav",
+      "sha256": "f47cbbb46ddc657c7ef34af405c91d80b272ef0f21e7f5cc4323ed2bd14eca3f"
+    },
+    {
+      "bytes": 69164,
+      "path": "game/assets/ballistics/audio-58bdb46305c121349a294141c78635e0.wav",
+      "sha256": "b723db41eff31a4fb951b226488445e6239ad4cca2967fde9432ced2d1f5f5c0"
+    },
+    {
+      "bytes": 29988,
+      "path": "game/assets/ballistics/audio-5d96622f0e7d6784ba244be3df4d3ec4.wav",
+      "sha256": "813921caf127135662b26be3db819950e5d635e9e0f9ba91ed2cbb5313cf9674"
+    },
+    {
+      "bytes": 17452,
+      "path": "game/assets/ballistics/audio-620008f68af0b4445a143d0acb023985.wav",
+      "sha256": "bbafa84b322e2e5102caede0c8882e73fa0dac50e09c94d6418e5c1466acddee"
+    },
+    {
+      "bytes": 29556,
+      "path": "game/assets/ballistics/audio-7389300dffb8116469369ca87efaf8e1.wav",
+      "sha256": "d9cb4e0983e413524f027bc9bf0ba2d9b9a1ade01dadb38ee9a01b2a1f026299"
+    },
+    {
+      "bytes": 28254,
+      "path": "game/assets/ballistics/audio-75c96c5e6ae502941b81351ee9231c91.wav",
+      "sha256": "0ec87120ed76146a44a299246cecce325390b7b9ad2a067c9f0c52bb7575acd8"
+    },
+    {
+      "bytes": 22608,
+      "path": "game/assets/ballistics/audio-80315f20a68ecd145911f6d431eaf031.wav",
+      "sha256": "9103d1f09ed1505f16f6fc8d48b24d1d6c6a618e46da154555952fea6904ba7e"
+    },
+    {
+      "bytes": 28688,
+      "path": "game/assets/ballistics/audio-822fc37fe99a09f43be4d2efc0487b92.wav",
+      "sha256": "685984f9ec07a761d76c24931142706023c5ef2cd569d4dcc7957521fc7aedf1"
+    },
+    {
+      "bytes": 25040,
+      "path": "game/assets/ballistics/audio-885967ed4cfa2564f852133c77c0b813.wav",
+      "sha256": "601eae7d008306e50e6bd86e7bb0d08af74737ea471de4b3cd8de5d970a73020"
+    },
+    {
+      "bytes": 54316,
+      "path": "game/assets/ballistics/audio-92ae34454635d804abeec6498b07d435.wav",
+      "sha256": "ae0d040a6aed0ab5f59dd7a873d13a730192a0210b213df9afc758a211b2cbc0"
+    },
+    {
+      "bytes": 52524,
+      "path": "game/assets/ballistics/audio-9320fcdb738fcf8418ca1fe1fc564fbf.wav",
+      "sha256": "7b266ac472871bdbbb4456f88b2140c2b0f45570c8ecba9ac39c3b4e4e634689"
+    },
+    {
+      "bytes": 56876,
+      "path": "game/assets/ballistics/audio-94ef907788eaa5249b236342e3497d42.wav",
+      "sha256": "362c53b37e0b4feb3cebded300db02f070b1ab6a241eb5af834547d341219863"
+    },
+    {
+      "bytes": 16812,
+      "path": "game/assets/ballistics/audio-95fc3e9255dd4b740b0bf0c0b470304c.wav",
+      "sha256": "5ba0e87f54fd60524baf8d486bfacf4728805c0b90a1728f18f3a9283214bafc"
+    },
+    {
+      "bytes": 25868,
+      "path": "game/assets/ballistics/audio-98a1090b113964443bde0f3892fa2f64.wav",
+      "sha256": "92d40fb50bbbb5f29a2858da152e59dc5844413386b60ea7643fcd4a01b2a48d"
+    },
+    {
+      "bytes": 14508,
+      "path": "game/assets/ballistics/audio-a33a14565c03a024e95b49ebbcb9b460.wav",
+      "sha256": "d9249dff320c7fe5b4277b7a2fe26c3de0030c1c406f7871c1caae41edd75f28"
+    },
+    {
+      "bytes": 46508,
+      "path": "game/assets/ballistics/audio-a3ae27369babb2e43b793941caf870b0.wav",
+      "sha256": "d4c7de2957775cbe8c49bf61a77e18e093df6fbe1382b5aefb0d1b408c4ec70c"
+    },
+    {
+      "bytes": 54316,
+      "path": "game/assets/ballistics/audio-b2796ef7a776614488deb11788d29fc1.wav",
+      "sha256": "e02e55cda6a6063c058c910add7333882cef0beb374de2e545cd7fb43551a2d4"
+    },
+    {
+      "bytes": 38454,
+      "path": "game/assets/ballistics/audio-b3b92b24fce0f7648826a58def06dc36.wav",
+      "sha256": "d8f2a0528cba5bb6199f5c017bb7b2d8a2d1d5e3e3a0f46ae6a8ac3af4c8c3e4"
+    },
+    {
+      "bytes": 19884,
+      "path": "game/assets/ballistics/audio-b4d9580d3d9ea294db5ad4a19e1138ff.wav",
+      "sha256": "a403c2489fcd07c6a29f6035050a44380f65eaf5cf1efc571e61411ce4519641"
+    },
+    {
+      "bytes": 16428,
+      "path": "game/assets/ballistics/audio-b95eefb582c70cb42b6023b6a97404fd.wav",
+      "sha256": "50759b363aaa7a6bc5b66ebb29de52c843208454a9c49cfc8c67021919381dd0"
+    },
+    {
+      "bytes": 12076,
+      "path": "game/assets/ballistics/audio-ba13ae879c7f28844a5ab793dad44e46.wav",
+      "sha256": "b4bce231688598e2694999d5b114524903980b063261ccf671480628952f2ef2"
+    },
+    {
+      "bytes": 23960,
+      "path": "game/assets/ballistics/audio-c06e9baa6e5fd7e44be13b296884c329.wav",
+      "sha256": "5fc15e69f136ccdb4a94a3139e1ef64edac3152e5c7e7ce07d4e385ef2dfd1dc"
+    },
+    {
+      "bytes": 19116,
+      "path": "game/assets/ballistics/audio-c23c816e93ca0994cada0add9be49d38.wav",
+      "sha256": "89fb9221072ace55b8374b285ecbb0bb697b7a9605771dfc181ce7bc2ae7b62c"
+    },
+    {
+      "bytes": 18604,
+      "path": "game/assets/ballistics/audio-d3ec638f53a7f3c4bacd8339fe5abb7a.wav",
+      "sha256": "a4ce6e68f480c8febba291366d3c4c7e5ada2a57f8482c9c8af79bf12db65f96"
+    },
+    {
+      "bytes": 24364,
+      "path": "game/assets/ballistics/audio-d80ebc4170419cc48bbb931b2aa6b893.wav",
+      "sha256": "e314b9acc2a501482c614e4cffcf8d7d8a12589c98cdfe1c15f833a1605c7520"
+    },
+    {
+      "bytes": 13228,
+      "path": "game/assets/ballistics/audio-e1b3c31ea1ed1ab4e8a4387aa9f954dc.wav",
+      "sha256": "f92cad96dd844e0c7b653838477abea466f05b109b2c89bbd2a9d2f137f79d04"
+    },
+    {
+      "bytes": 13740,
+      "path": "game/assets/ballistics/audio-e526160e408224540a4a6f1532e8a4fe.wav",
+      "sha256": "450875accf90d04d3f485d7331f3186bae5009d79189fbfc3ed09872d3e9a838"
+    },
+    {
+      "bytes": 19770,
+      "path": "game/assets/ballistics/audio-e73c91ecad564094a8d28a0f22e8b434.wav",
+      "sha256": "136b6a78b64342a60d25ec0362af2f0714ce9f65ab38c61f8c92e61381e73271"
+    },
+    {
+      "bytes": 11528,
+      "path": "game/assets/ballistics/audio-f5680c819f7f12d488337001530cfd7c.wav",
+      "sha256": "d9577ee523894fc7a7a925ef1659cfd005eb3a74ef677bb0e327a1f709636328"
+    },
+    {
+      "bytes": 17580,
+      "path": "game/assets/ballistics/audio-fb4a7784dc722b84098efc0106ee3a78.wav",
+      "sha256": "a965eaba9729f013dff1faa866d48bf5256ecf8aa04abcc2333612b84a1a9b4c"
+    },
+    {
+      "bytes": 2784,
+      "path": "game/assets/ballistics/original-particle-materials-source.json.gz",
+      "sha256": "bce1860f49f8ab6887deb825bad56118261b4949477653b88c88f94f77d04aa0"
+    },
+    {
+      "bytes": 10199,
+      "path": "game/assets/ballistics/original-particles-source.json.gz",
+      "sha256": "75bbdbeadf3595f9c8fa32563a689fc119d6747abe0efb6c5bd0c347cd70cf92"
+    },
+    {
+      "bytes": 1323,
+      "path": "game/assets/ballistics/particle-meshes/particle-mesh-8ed663818ef63e741bd160cb133722fe.json",
+      "sha256": "1800fecf7709307b513395be81c0bf5d9c6f5631d968adbe0963c4239d914777"
+    },
+    {
+      "bytes": 1242,
+      "path": "game/assets/ballistics/particle-meshes/particle-mesh-eedec0cf1e8d71a49b3949fbbc2cf3b4.json",
+      "sha256": "8eded9db4e3fa6d51b341585ddc097b3d53141ea54290432dadd2fe45f877df4"
+    },
+    {
+      "bytes": 1844,
+      "path": "game/assets/ballistics/particle-meshes/particle-mesh-f6fe08f20af97e149b26c77ded5823d7.json",
+      "sha256": "85df63eee0bf2a52da7fb7d7a67041e06f2e4e12cfc77e2458bbbd6d4c94ed49"
+    },
+    {
+      "bytes": 657,
+      "path": "game/assets/ballistics/texture-3446da7d139ac354abffd5bbbc5a7c47.png",
+      "sha256": "f1c46205c1da33e17af5d1180260984852fea44308ebbbed6f2933b00bff2606"
+    },
+    {
+      "bytes": 618500,
+      "path": "game/assets/ballistics/texture-584aeddb56b04f44fa12fcbade83a72d.png",
+      "sha256": "49176af3168bdc593cca36c880476a94ad9dda9fea978a528c16dc6fc8a65ee3"
+    },
+    {
+      "bytes": 107991,
+      "path": "game/assets/ballistics/texture-963f0135df8b0de489aa4fa9c68b9aae.png",
+      "sha256": "8dfd528d886d956b6f38ae9b230fefaeba8345edb1da0dc1fedf96b933fc1bff"
+    },
+    {
+      "bytes": 64647,
+      "path": "game/assets/ballistics/texture-bb3d703bd542afc47a1423a6c37397aa.png",
+      "sha256": "ba810cf6d18d29ac28aebfc07340188c0cd3d00f0c4fd4071f8e2a7b98d1d4b5"
+    },
+    {
+      "bytes": 22440,
+      "path": "game/assets/ballistics/texture-c47dd46995adae54495534dc170fbbc6.png",
+      "sha256": "a89371d1d5581a657caea57d97822240064f8936a1a9f46cc7d08b85a1672a02"
+    },
+    {
+      "bytes": 410925,
+      "path": "game/assets/ballistics/texture-e1eb655617e61e3488157be43fa6388a.png",
+      "sha256": "922f07ec2f1653ed75e029ef676b40944191632806dc234ac1518902e3b11fb6"
+    },
+    {
+      "bytes": 14851,
+      "path": "game/assets/ballistics/wood-exit-hole-source.json",
+      "sha256": "bc74f0f7f7c2d7cfc0436fa1dd56d40f726fbc8e49a18cb4e75c6d2d7eaf6ca6"
+    },
+    {
+      "bytes": 70247,
+      "path": "game/assets/contact-physics.json",
+      "sha256": "b5ef95c8cd37a1f61654e2d1b7decc3cf16d9f2e2465c124bdc6f055a134884d"
+    },
+    {
+      "bytes": 5627421,
+      "path": "game/assets/mission01.obj",
+      "sha256": "1c6aaa01cf2aee9671323b0ece5956f62c235122161e90cb6d7506e398e73e48"
+    },
+    {
+      "bytes": 218908,
+      "path": "game/assets/operator/animations.json",
+      "sha256": "f5277147d4090c66ec023b00db81142d16936e92431128796dc6071546732d91"
+    },
+    {
+      "bytes": 46645,
+      "path": "game/assets/operator/operator.json",
+      "sha256": "c93d90610a6db65edf4304bf82b590bc35dc56e5d7580899a511c10ef4c416f6"
+    },
+    {
+      "bytes": 12602,
+      "path": "game/assets/operator/skins/skin_000.png",
+      "sha256": "80a395d3a90e9566e438ac9a09b98be29e38be27274dd36677b023efd6b2a19c"
+    },
+    {
+      "bytes": 7399,
+      "path": "game/assets/operator/skins/skin_001.png",
+      "sha256": "2395929f5607c1fb40affd6d34013484166d3529fe1db175ed1c13183dcb3078"
+    },
+    {
+      "bytes": 36224,
+      "path": "game/assets/operator/skins/skin_002.png",
+      "sha256": "b361dfbd06cc0d25ef057ca7b30d8367abb47f3f4acd78bbdf5c93ab1d590a5f"
+    },
+    {
+      "bytes": 3786,
+      "path": "game/assets/operator/skins/skin_003.png",
+      "sha256": "d01ecdb83405e089b37ccbb9b66581f0a45dd07c8531958b7640b0cb122a0837"
+    },
+    {
+      "bytes": 24831,
+      "path": "game/assets/operator/skins/skin_004.png",
+      "sha256": "697287c9f935c44f26f7cf371e450190dff30ad7130f1215aed08bf77d504e4a"
+    },
+    {
+      "bytes": 5688,
+      "path": "game/assets/operator/skins/skin_005.png",
+      "sha256": "70f4afd59b6c87b096ccc33cd042a6caaaf535084f643db4361592782a9af9af"
+    },
+    {
+      "bytes": 3925,
+      "path": "game/assets/operator/skins/skin_006.png",
+      "sha256": "521b820c0840b88c157084da49bfa2ea3b515679b94c006e0f52201caabe3d91"
+    },
+    {
+      "bytes": 13457,
+      "path": "game/assets/operator/skins/skin_007.png",
+      "sha256": "56faccc73a7ba9b66fc6b2a9b1c130221db31730d1661416c17c5c986a926a9d"
+    },
+    {
+      "bytes": 12373,
+      "path": "game/assets/operator/skins/skin_008.png",
+      "sha256": "01976ef0e553605a31049f956ce827eb516d16369f3829ad76e4cedb8027a18c"
+    },
+    {
+      "bytes": 4441,
+      "path": "game/assets/operator/skins/skin_009.png",
+      "sha256": "1c3f18bd94e0d4c8fd1bfbbf89b0128aaef266e89525c9f00eaf0b0dde793672"
+    },
+    {
+      "bytes": 2499,
+      "path": "game/assets/operator/skins/skin_010.png",
+      "sha256": "0184b1ab372b65c12545c6ac54760265b18bd42addca48ac04ea372096f718a0"
+    },
+    {
+      "bytes": 8066,
+      "path": "game/assets/original-arm-sequences.json",
+      "sha256": "4fd3940e554f406ceee8cfc210a82a09f57cb9dc2f5f0211c74b8cedacb4fa25"
+    },
+    {
+      "bytes": 95660,
+      "path": "game/assets/presentation.json.gz",
+      "sha256": "d500f8ce08751a2b1b20ec32b6c5ed20f5f0ffcb4b6434427357b1a51ef297cf"
+    },
+    {
+      "bytes": 22521,
+      "path": "game/assets/weapon-runtime.json.gz",
+      "sha256": "bb59ee9fdc0fc10fe110cbd5b072ae6f52cbff1faaa3c58c42dac0f062799962"
+    },
+    {
+      "bytes": 78188,
+      "path": "game/assets/weapon-runtime/M4-magazine/textures/material_00.png",
+      "sha256": "214e2e4b26831789565d78831edf1746e3da054a5388002747c5a1e1d27fe3f4"
+    },
+    {
+      "bytes": 4121,
+      "path": "game/assets/weapon-runtime/M4-magazine/weapon.json",
+      "sha256": "d0fe4263d3b51ef526d31ff8225673e0d9c6e4448b34c46a16006811dd30832d"
+    },
+    {
+      "bytes": 13100,
+      "path": "game/assets/weapon-runtime/audioBoltExtract.wav",
+      "sha256": "ca9f72582c068ad2ce9b4e1852db96daaa8e83301590af49f899cca2c02101fa"
+    },
+    {
+      "bytes": 17324,
+      "path": "game/assets/weapon-runtime/audioBoltReturn.wav",
+      "sha256": "9e1bd4e5ecfc24142b2bf813a620e7a875dfda99bf2b5808dccfdcb12a2ef102"
+    },
+    {
+      "bytes": 25644,
+      "path": "game/assets/weapon-runtime/audioExtractMagazine.wav",
+      "sha256": "5076af4b582ae25505f0a330ca30624174619fc478b6dc170ab5526fc505660e"
+    },
+    {
+      "bytes": 61556,
+      "path": "game/assets/weapon-runtime/audioFire.wav",
+      "sha256": "663bbba66b6a19147b8734c7f2d83781a9c130d2cd6b399d35b604df375449df"
+    },
+    {
+      "bytes": 5676,
+      "path": "game/assets/weapon-runtime/audioFiringPin.wav",
+      "sha256": "dfecb781cc6ee12022dfe5026e068a4194de7b1918616c9bbbdacd1e7eb67379"
+    },
+    {
+      "bytes": 25260,
+      "path": "game/assets/weapon-runtime/audioInsertMagazine.wav",
+      "sha256": "46edbf035b4a3d0a0541b2edc96beaa5fa017514a982e6df42c21e507a399bd6"
+    },
+    {
+      "bytes": 46710,
+      "path": "game/assets/weapon-runtime/audioSupersonic.wav",
+      "sha256": "94291b6b4616ad8e2cc13e8e32a7a480f0275833e3e15e89ab9eaa8cbc1f03cd"
+    },
+    {
+      "bytes": 184397,
+      "path": "game/assets/weapon-runtime/flash.png",
+      "sha256": "664d730f0380939e5a376a4b4b54f9596f07c26336bed06e2950b44b2420eea6"
+    },
+    {
+      "bytes": 62916,
+      "path": "game/assets/weapons/Glock-18/textures/material_00.png",
+      "sha256": "c9c32ae963eaca00ed239f54d0046d4566da9f9139a6cdd9cb6c08aa5daa0614"
+    },
+    {
+      "bytes": 21774,
+      "path": "game/assets/weapons/Glock-18/textures/material_01.png",
+      "sha256": "ad8f492460ef239668e61d3493371a4889cfb80a6d0131902e7e061cb1d4efb4"
+    },
+    {
+      "bytes": 5671,
+      "path": "game/assets/weapons/Glock-18/textures/material_02.png",
+      "sha256": "42d01788c08ffb9996fe9a205e89d313acd7c9593ca70ad3b9aabbe50c7f6946"
+    },
+    {
+      "bytes": 7743,
+      "path": "game/assets/weapons/Glock-18/textures/material_03.png",
+      "sha256": "ca04b5af48b93edad4f1eb96a5d92893903775ed61ad4cb088b10bf3026cb784"
+    },
+    {
+      "bytes": 10886,
+      "path": "game/assets/weapons/Glock-18/textures/material_04.png",
+      "sha256": "f85a6f66ef664158f119e8c73bf336bb2cf47fff97d077b52d4bd9d246a5a757"
+    },
+    {
+      "bytes": 11569,
+      "path": "game/assets/weapons/Glock-18/weapon.json",
+      "sha256": "a2c0cd66949d0545d0de4c84b1af9d3ebb51206ac3f9c950bc26202fcc03d221"
+    },
+    {
+      "bytes": 75136,
+      "path": "game/assets/weapons/M4A1/textures/material_00.png",
+      "sha256": "4f6113f2988fc55faf62896325eb3f37e68fe2042b42640ffc28bfaea62b1468"
+    },
+    {
+      "bytes": 103464,
+      "path": "game/assets/weapons/M4A1/textures/material_01.png",
+      "sha256": "103e2afbe5c29d3a485528044b1a39d805ba3b19e8c47cc2bc48c883cdf7d818"
+    },
+    {
+      "bytes": 3580,
+      "path": "game/assets/weapons/M4A1/textures/material_02.png",
+      "sha256": "9bc6844dcd362481422ac2be2bec1fd2913c01ad55abe0bf15238b78e575e253"
+    },
+    {
+      "bytes": 344,
+      "path": "game/assets/weapons/M4A1/textures/material_03.png",
+      "sha256": "af159441840bec024d19e48fbd199f307965ca889341fa5a15fa1eb26204922e"
+    },
+    {
+      "bytes": 1718,
+      "path": "game/assets/weapons/M4A1/textures/material_04.png",
+      "sha256": "3a83319823f7975f4fce997fd94a2a2d63a06c7eb62b928b0eb1985fda68380f"
+    },
+    {
+      "bytes": 13323,
+      "path": "game/assets/weapons/M4A1/weapon.json",
+      "sha256": "81e18bbdbf1adae25201df1499a01e58b5149c4f06c7b3bba0d0f588647b7a26"
+    },
+    {
+      "bytes": 5742,
+      "path": "game/browser-input.mjs",
+      "sha256": "dcc6fe1cf0f50cf27a793a442b7a77e8928f6ee2f4b7578cf4182f17fafe12d4"
+    },
+    {
+      "bytes": 5559,
+      "path": "game/contact-physics.mjs",
+      "sha256": "0c331574c56dde74abdfd9cd6cb41ab931c42a78afc0b5d76f2bd6a63bb21f6f"
+    },
+    {
+      "bytes": 30064,
+      "path": "game/index.html",
+      "sha256": "dc4dd893ec6bcd9b3ea47c4c060166034d51eb2012cdd9c93c1eb37af272e19a"
+    },
+    {
+      "bytes": 700,
+      "path": "game/loading.mjs",
+      "sha256": "14471b3de4e3b0ed0c56442dcf6cfc4ef9e05617c32a5c368fdc9e92c3ded896"
+    },
+    {
+      "bytes": 5527,
+      "path": "game/magazine-hud.mjs",
+      "sha256": "225272e8831c3eac1becf0f3d5b0334d4eddd0d866955fd286c5c55baf3b0f7d"
+    },
+    {
+      "bytes": 5013,
+      "path": "game/original-impact-mesh.mjs",
+      "sha256": "bd2597ebdd993386ecbe855fbd642de8bdf5850318bf691b51133c8807e939d6"
+    },
+    {
+      "bytes": 6664,
+      "path": "game/original-particle-event-binding.mjs",
+      "sha256": "5d1a8cfb0fe2182757afcdcf157731f7ed98a4aed8827ded15863fee205e2b18"
+    },
+    {
+      "bytes": 5903,
+      "path": "game/original-window-visuals.mjs",
+      "sha256": "08b79ee61a50fa91fcde060ecb4cab493f5f6e217e985192713826b78783f127"
+    },
+    {
+      "bytes": 549,
+      "path": "game/package-lock.json",
+      "sha256": "7827a7b8d91184c4ad2d4a567161ab2478acdeca825ab13166a83819e53e0931"
+    },
+    {
+      "bytes": 175,
+      "path": "game/package.json",
+      "sha256": "d47cc79389f27f3f23fed9ffbbc474fba76b91747bde771f65f54bbc3528f719"
+    },
+    {
+      "bytes": 6967,
+      "path": "game/presentation.mjs",
+      "sha256": "3f73ff9519da316da434bf07b043064391306c8bcd3baded4a9b13d4bc4a96f5"
+    },
+    {
+      "bytes": 733,
+      "path": "game/source-effect-clock.mjs",
+      "sha256": "34b398d971b35e2b5aab07ddfa0938222b48e470cf0deba36692cc4753dbe2a9"
+    },
+    {
+      "bytes": 1067,
+      "path": "game/vendor/LICENSE.physx-js-webidl",
+      "sha256": "0879a16adc700c9956ca0b60fbcac1fcb52310219feee827c03d7a0ab9886fbd"
+    },
+    {
+      "bytes": 1959,
+      "path": "game/vendor/NOTICE.physx.md",
+      "sha256": "8b2c1bf8cb9153e08095ee44955c2a77eb0ec1e0ac52d7b2c77ad5aca56fc87e"
+    },
+    {
+      "bytes": 5918,
+      "path": "game/weapon-runtime.mjs",
+      "sha256": "228c9d38993fde2593d79c2e84ad47ab1d541c47c49252240e2e280aea548bc0"
+    },
+    {
+      "bytes": 935,
+      "path": "runtime/Browser/App.razor",
+      "sha256": "0dadd663fc9e41a929cbdae2e2702dfa04a67fed3ade0c14bac38e94aa265c45"
+    },
+    {
+      "bytes": 554,
+      "path": "runtime/Browser/Crisis.Runtime.Browser.csproj",
+      "sha256": "05d4151699ba3e710de70fd0b050fba80daeb2c553c3a11d647376378f3f532f"
+    },
+    {
+      "bytes": 3951,
+      "path": "runtime/Browser/Program.cs",
+      "sha256": "d387f7609c023d7024bbac332168b2ae93b21dd1a0fc065f53d8d1332b5a3846"
+    },
+    {
+      "bytes": 3110,
+      "path": "runtime/Browser/wwwroot/index.html",
+      "sha256": "f7fa0a0a50600940ef083a05a9a637c7b2e23ebc0dc2886c1a32265227c365b0"
+    },
+    {
+      "bytes": 4876,
+      "path": "runtime/Checks/ArmSequenceContracts.cs",
+      "sha256": "a34fa1cc453736c21205cf04f01f1022f70442993728f6c1dc334f6c5656249b"
+    },
+    {
+      "bytes": 11927,
+      "path": "runtime/Checks/BallisticContracts.cs",
+      "sha256": "74f4b3470e6c401c788940102678e703acb7c7129664d99a641974f7f72a31a0"
+    },
+    {
+      "bytes": 268,
+      "path": "runtime/Checks/Crisis.Runtime.Checks.csproj",
+      "sha256": "8613654f1ced5be9603d75c418fe7b6ac6246524582a453be7f8a7114d4a86fe"
+    },
+    {
+      "bytes": 1249,
+      "path": "runtime/Checks/PresentationContracts.cs",
+      "sha256": "3c822f3a4257eb54c5ef4c10172be5531506fdd1dd88c13ffcf5e1105a168804"
+    },
+    {
+      "bytes": 1380,
+      "path": "runtime/Checks/Program.cs",
+      "sha256": "81bce74ce258a6501f7d369849d22ae86b731de59839efb3039f6bb8a9cfe926"
+    },
+    {
+      "bytes": 2457,
+      "path": "runtime/Checks/WeaponContracts.cs",
+      "sha256": "b55388abbecf262849bbff10fb346f88e7735f8153fd7fa35382e1116265bdd6"
+    },
+    {
+      "bytes": 383,
+      "path": "runtime/Crisis.Runtime.csproj",
+      "sha256": "4fb60f12c07fdecd7ad259637db10255f08c6fc989bac4d6dce721d52731e473"
+    },
+    {
+      "bytes": 8182,
+      "path": "runtime/Engine/AmmunitionLoader.cs",
+      "sha256": "5c3db51cc49110fbb2471bdaaa1da155dcd26676439c6bbbba5ad6d933725747"
+    },
+    {
+      "bytes": 1863,
+      "path": "runtime/Engine/AnimationCurve.cs",
+      "sha256": "4ea4e4eac85226d5fa8fb6bad6d0990d0e5e575c24e8e2fb0f83d86755d8201a"
+    },
+    {
+      "bytes": 2690,
+      "path": "runtime/Engine/BallisticEffects.cs",
+      "sha256": "1cdb0a98a12fa759ebabfe9c1010dc8f6b92112a63b92aa3c58d762aa7e0867d"
+    },
+    {
+      "bytes": 5013,
+      "path": "runtime/Engine/BallisticEngine.cs",
+      "sha256": "299388aba1cc4e60bafb998149236d9dc4bf9d1e55050ddc5af5e367b9b1305c"
+    },
+    {
+      "bytes": 11599,
+      "path": "runtime/Engine/BallisticRuntimeHost.cs",
+      "sha256": "60f5f3646dea93189dcbea84106ed4c8e0c6757e740d564e4f9e838d74fd4397"
+    },
+    {
+      "bytes": 2861,
+      "path": "runtime/Engine/BodyPoseHost.cs",
+      "sha256": "85eb1ffe3a7fb9695f5df49b4bbc007175814d2be34fdbe56a524a38d57dc14d"
+    },
+    {
+      "bytes": 4172,
+      "path": "runtime/Engine/ClockInput.cs",
+      "sha256": "d64bf21d7a756cd7bc21beafe9e398517aafc104f5ec11333a4b4bcfa8d4eed6"
+    },
+    {
+      "bytes": 5613,
+      "path": "runtime/Engine/Math.cs",
+      "sha256": "00d3b1fe0f2459f24d83c5fdccc50cc936cef37c2f513c2b9fa882c8499b9394"
+    },
+    {
+      "bytes": 13598,
+      "path": "runtime/Engine/Objects.cs",
+      "sha256": "94862059c00c73a9a1afe5e1a1ec17301cbe9d4a193224ca85d20f89cd32932b"
+    },
+    {
+      "bytes": 3963,
+      "path": "runtime/Engine/OriginalArmSequences.cs",
+      "sha256": "5a2c6f5f8854019cbe3a2ded46a506b01a0bff11aa181fde8e8ccc38dddd55f0"
+    },
+    {
+      "bytes": 1904,
+      "path": "runtime/Engine/OriginalHandModes.cs",
+      "sha256": "d4aab555527c88b971b0507b840a1103ada777cec588ee18043c555316eac57b"
+    },
+    {
+      "bytes": 1340,
+      "path": "runtime/Engine/OriginalInputHost.cs",
+      "sha256": "1d4d2bdabbd7aa17049b84c19fcc67c1ba9de55e5932f0b91717717e3919a8ae"
+    },
+    {
+      "bytes": 3683,
+      "path": "runtime/Engine/Physics.cs",
+      "sha256": "5150e9a4ff861c38c479f3c8dec4d9d4e806dd2d54825ac7a300b8b90336a305"
+    },
+    {
+      "bytes": 5263,
+      "path": "runtime/Engine/PrefabCloner.cs",
+      "sha256": "442d2a1b15ed30944b9916676e1159ea817a5b272afdec6d030afee83b28bfcf"
+    },
+    {
+      "bytes": 7413,
+      "path": "runtime/Engine/PresentationHost.cs",
+      "sha256": "dc4fd65eab03e4458540223891249fe101383947739c2befc0421f7589740089"
+    },
+    {
+      "bytes": 1630,
+      "path": "runtime/Engine/ProjectileFlightHost.cs",
+      "sha256": "39b4797902af2f0f51910aea28735b210dd18bcac887b75f8afcd63be977fb7a"
+    },
+    {
+      "bytes": 1423,
+      "path": "runtime/Engine/ProjectileMaterialHost.cs",
+      "sha256": "c2394839666b04631ed494c981cb6fa05bdf3d3b450c72eafa8c9a9ed91ef93c"
+    },
+    {
+      "bytes": 1851,
+      "path": "runtime/Engine/Resources.cs",
+      "sha256": "cc2a87dcf9769dadeb2af0cf25d0b4528484d35ddc945469dd731b4dab4ae2d5"
+    },
+    {
+      "bytes": 10434,
+      "path": "runtime/Engine/RuntimeContracts.cs",
+      "sha256": "7ee1e7ec023aa27e5d84ad5cc5fcaafd97b9af29d0ffb3c3c459e8cb23a1c06f"
+    },
+    {
+      "bytes": 9312,
+      "path": "runtime/Engine/SceneLoader.cs",
+      "sha256": "a03dfc8e7725e88f73d7cb22f21d5fb5b94f91d7a52087f91722a2cf95dacb5a"
+    },
+    {
+      "bytes": 20179,
+      "path": "runtime/Engine/WeaponHost.cs",
+      "sha256": "b8b72d7f389d0bbc51942f01c65464d57aa3230c3bc6d0dfd52f4bdc476772e6"
+    },
+    {
+      "bytes": 3373,
+      "path": "runtime/Original/AmmunitionBase.cs",
+      "sha256": "aae789babe97de42389b4824d487ca5d2e5ced9a0bbd84e5a8192a197f950816"
+    },
+    {
+      "bytes": 799,
+      "path": "runtime/Original/Animation/Hand.cs",
+      "sha256": "d5e6b25be76a184dc6b117ae35127018b0cb65eccaa69db9f6d8922434e76537"
+    },
+    {
+      "bytes": 104,
+      "path": "runtime/Original/Animation/IKArmAction.cs",
+      "sha256": "a0f55abc4b7a4e24287ace9f27ba9042260c5f57d16c1cf79bf7b5837d603a53"
+    },
+    {
+      "bytes": 293,
+      "path": "runtime/Original/Animation/IKArmAnimationFrame.cs",
+      "sha256": "2c86f77d12425c4684ba4662319e53ba598b98f42dbdad43d0e00c65109769bd"
+    },
+    {
+      "bytes": 621,
+      "path": "runtime/Original/Animation/IKArmSequence.cs",
+      "sha256": "4eb0cc20d41d443dc24458c75b00d20a3199f60b4eee47125be82572fab417dd"
+    },
+    {
+      "bytes": 684,
+      "path": "runtime/Original/Animation/IKArmSequenceRuntime.cs",
+      "sha256": "68094854bb942efd098758eb7f01af933dd7d4171588527e1fa0d7fc54c7e924"
+    },
+    {
+      "bytes": 217,
+      "path": "runtime/Original/Animation/IKArmTarget.cs",
+      "sha256": "41f5e8658bd9b157a5462ddbec9c83245f48851741f51386468a9c23f0107892"
+    },
+    {
+      "bytes": 48,
+      "path": "runtime/Original/Animation/IKArmType.cs",
+      "sha256": "bc0801f3b205f09da8a2fb1f108d34f23e25f29090c77b28fa1e86731bcb589d"
+    },
+    {
+      "bytes": 300,
+      "path": "runtime/Original/Animation/IKControllerInvoke.cs",
+      "sha256": "a72a4dd99c730a855882d373b6def838a9812a6dc1141985bde5b721d928e37f"
+    },
+    {
+      "bytes": 2675,
+      "path": "runtime/Original/Animation/source-provenance.json",
+      "sha256": "43cb26b1da4cf957e2d9dd577cfeb11c60a20250a021aff665ff1472aaf9ad16"
+    },
+    {
+      "bytes": 201,
+      "path": "runtime/Original/AudioMaterial.cs",
+      "sha256": "3755bc5b0389a194737d0f385c2689ae8eb241cdeeed217c0b97829189dd1243"
+    },
+    {
+      "bytes": 758,
+      "path": "runtime/Original/Ballistics/AmmunitionFragments.cs",
+      "sha256": "c991b1c59de844a3cb3757c8ced747ef761898bb68d10482a38f31c10d4232f2"
+    },
+    {
+      "bytes": 1194,
+      "path": "runtime/Original/Ballistics/BallisticHitMeshEffect.cs",
+      "sha256": "86ba4596c9b9bde54b1f084c65b2624d15bdbdbca81f6bcb5293939d3fbf5f94"
+    },
+    {
+      "bytes": 15857,
+      "path": "runtime/Original/Ballistics/BallisticMaterial.cs",
+      "sha256": "7f3825cfa2f1315d091532f7448c319f0a8fad693dc6673c4bd7e73415a24d42"
+    },
+    {
+      "bytes": 517,
+      "path": "runtime/Original/Ballistics/BallisticMaterialProperties.cs",
+      "sha256": "084e1215943d6e4969f1ae03f3fc3104073e787cef89cc2506afa9379d620570"
+    },
+    {
+      "bytes": 232,
+      "path": "runtime/Original/Ballistics/BallisticResult.cs",
+      "sha256": "ab6169e83b9c37daf0112d28cc9e2453022284921aad0fe6b92c2b0e27880588"
+    },
+    {
+      "bytes": 3581,
+      "path": "runtime/Original/Ballistics/BallisticWindow.cs",
+      "sha256": "9c58b532fd785cac6e2fa20913d46c95abdacdef2c4538bc21c2395d5e35740f"
+    },
+    {
+      "bytes": 274,
+      "path": "runtime/Original/Ballistics/DelayedBallisticExit.cs",
+      "sha256": "1f363d33f1388bcff73656ec2aa36e08c990ee40e4ec54be0bf06c6676038f51"
+    },
+    {
+      "bytes": 1468,
+      "path": "runtime/Original/Ballistics/EffectPool.Methods.cs",
+      "sha256": "e9e4265caa40f7930a2672a2ce3fbab6f90f4c0451011158b7752b1619ec9fe8"
+    },
+    {
+      "bytes": 5412,
+      "path": "runtime/Original/Ballistics/ProjectileMaterial.Methods.cs",
+      "sha256": "e0aa4168170bb174836797fcd418125ed020dbe29a8023d1f4adda18286095b0"
+    },
+    {
+      "bytes": 725,
+      "path": "runtime/Original/Ballistics/StaticUtilities.cs",
+      "sha256": "979bf556d31c1809e05a4c5f78bad622aae66ba0c7af9b567163144d4c2c97a9"
+    },
+    {
+      "bytes": 3358,
+      "path": "runtime/Original/BodyPoseSlice.Methods.cs",
+      "sha256": "4bf4691888ff5b625a53130cec8822637446bf65b61ba03e33e1fe7738c6f4ca"
+    },
+    {
+      "bytes": 456,
+      "path": "runtime/Original/BuildingController.cs",
+      "sha256": "5bd1596db99116cc4aca2a9843e1f8a5f17d5771411c77a0c7b2742ff1574275"
+    },
+    {
+      "bytes": 619,
+      "path": "runtime/Original/DecayingObject.cs",
+      "sha256": "317f3a8373d81f01f7ce43f478ed6d2c99abafedbf4c74b4efbd327a22e49e9d"
+    },
+    {
+      "bytes": 2825,
+      "path": "runtime/Original/InputHandler.cs",
+      "sha256": "e1d4a90dcf8a6706b65ef9337b17eafd673dcab274b254a18c944c7778f95b99"
+    },
+    {
+      "bytes": 2494,
+      "path": "runtime/Original/InputKey.cs",
+      "sha256": "2bbcafdd110707dea7bb3b27906c8e391af1b7472909d09a2ed7dbd30ec9b1d8"
+    },
+    {
+      "bytes": 10182,
+      "path": "runtime/Original/InputMapping.cs",
+      "sha256": "0670d39bbee6692fe848e6c2942572f76df2e152cbe1af24be4e05a0a7e48241"
+    },
+    {
+      "bytes": 4711,
+      "path": "runtime/Original/InteriorCameraSlice.cs",
+      "sha256": "b6d06cff994cb65105fb2611365b2b6ca1264c9f55288f7b4886edaba5e1847e"
+    },
+    {
+      "bytes": 1155,
+      "path": "runtime/Original/InverseKinematics2D.cs",
+      "sha256": "214b22b7606af3a2234f1b86f99611b303bcf2c0d2ca4e1367806643f456e929"
+    },
+    {
+      "bytes": 284,
+      "path": "runtime/Original/KeyCode.cs",
+      "sha256": "ae2eec63fff7f420ff5f3261593f106e6297929afa339aa0581f6810b9d2fa54"
+    },
+    {
+      "bytes": 383,
+      "path": "runtime/Original/ObjectRemover.cs",
+      "sha256": "168d2d6175b0051cac2d3af2ca34cfdcd90105272f49e0e0cc92d1c3b2ace171"
+    },
+    {
+      "bytes": 4915,
+      "path": "runtime/Original/Projectile.cs",
+      "sha256": "db798f8b2bc0fb19e5497365626de662c4f27619108d9ae92f7ac5ea1debd552"
+    },
+    {
+      "bytes": 57,
+      "path": "runtime/Original/WeaponBrace.cs",
+      "sha256": "b3a19711c731cf599dfe8713dbede272b531f98c4dc54ba9891142d3c4f76f25"
+    },
+    {
+      "bytes": 4735,
+      "path": "runtime/Original/Weapons/ArmTransition.cs",
+      "sha256": "755052271ec8c37125b3aac9db67af8462eaad500fe4618f0c52a077836dd383"
+    },
+    {
+      "bytes": 8575,
+      "path": "runtime/Original/Weapons/ChangeMagazine.cs",
+      "sha256": "63dca8608dab3e47bc7a06c3b01cecab29bb89ebdf3c722080dad7481bd5fb68"
+    },
+    {
+      "bytes": 1247,
+      "path": "runtime/Original/Weapons/CharacterTrigger.Methods.cs",
+      "sha256": "050fa67e775074740eff0145c26c1d5aee658fbb92dada0309d67814469c8bf3"
+    },
+    {
+      "bytes": 8928,
+      "path": "runtime/Original/Weapons/CyclingBolt.cs",
+      "sha256": "23f95e93553c0d74debef2d329734c24e8280e50928a727a82393b17506f3698"
+    },
+    {
+      "bytes": 3606,
+      "path": "runtime/Original/Weapons/Equipment.cs",
+      "sha256": "3a1f3be66ee81b6b59e5cb58f3e9951daec56fa00e88a95a95cb5f37750c1161"
+    },
+    {
+      "bytes": 1370,
+      "path": "runtime/Original/Weapons/Magazine.cs",
+      "sha256": "3f67efd7bc4191bea9a5b01b4d1be7c3d654a1e6e0ea3abc024fe3f8b9fa1b7a"
+    },
+    {
+      "bytes": 3346,
+      "path": "runtime/Original/Weapons/ProjectileFlight.Methods.cs",
+      "sha256": "25f800f60e34071e06130cca94ccbfba93475f9816ad3d09014150fee39e746a"
+    },
+    {
+      "bytes": 406,
+      "path": "runtime/Original/Weapons/Recoil.cs",
+      "sha256": "f31ffce7510b4fb0f8dfb7a416ab2c755d64c849ced001bd4d2967902de7de3a"
+    },
+    {
+      "bytes": 2246,
+      "path": "runtime/Original/Weapons/WeaponBarrel.cs",
+      "sha256": "567af55bb9c55fe3d9a1ce8aecfc0d897ac1863aa290cb772b6a324e01ae5e13"
+    },
+    {
+      "bytes": 6429,
+      "path": "runtime/Original/Weapons/WeaponMechanism.Methods.cs",
+      "sha256": "71a67937dec45987828f817f8d582b5ae0a6be7cadfc1829e393e0b1397778e7"
+    },
+    {
+      "bytes": 3063,
+      "path": "runtime/Original/Weapons/WorkBolt.cs",
+      "sha256": "887fac0bc1e9b70fbaac0e131095b82023da5efc442f79f078857318fe3bda38"
+    },
+    {
+      "bytes": 8054,
+      "path": "runtime/Original/source-provenance.json",
+      "sha256": "3bac8564e98f1ff5a5d5b8d126665f96f76bc17f1f825aafaeda92650b17f44a"
+    },
+    {
+      "bytes": 14580,
+      "path": "runtime/README.md",
+      "sha256": "c8b5f70f56b5877370147b888205993764809c191f43be0b1c409a274d59e368"
+    },
+    {
+      "bytes": 550,
+      "path": "scripts/aim_direction_test.mjs",
+      "sha256": "33ecdfc6ad0294f055a383f262d919eb8ad80d4e02268778f87a1108792a43cd"
+    },
+    {
+      "bytes": 2463,
+      "path": "scripts/animation_pose_test.mjs",
+      "sha256": "b1647b1f26ea3e7aa6837df0200a50ec67fa4854786ed68fd9c7a32407e79b4a"
+    },
+    {
+      "bytes": 5710,
+      "path": "scripts/audit_original_effect_render_assets.py",
+      "sha256": "3ae61cf533c7140433d0fd32648d3f4c03dee995d55c450af3b1e9b060a85397"
+    },
+    {
+      "bytes": 5951,
+      "path": "scripts/audit_original_particle_mesh_materials.py",
+      "sha256": "023602524b42b66f738c9d6db04ebcae0ae8b31a590165c108320e87cf1eacd3"
+    },
+    {
+      "bytes": 6106,
+      "path": "scripts/audit_original_particle_sources.py",
+      "sha256": "4926d22852e9e89338a5428a607c161cf1c238b03029013253afc0a88593f4ab"
+    },
+    {
+      "bytes": 7667,
+      "path": "scripts/audit_original_player.py",
+      "sha256": "5fbcaa2965b3d3fb7ac3e653236cc6622dcd30c44b727b7aa4c42548a8240cb3"
+    },
+    {
+      "bytes": 2657,
+      "path": "scripts/audit_original_window_shaders.py",
+      "sha256": "a14a5cef097687b05ae9f27aae434dccb610cb4f64440e63e605db3d718fe9ae"
+    },
+    {
+      "bytes": 6511,
+      "path": "scripts/audit_original_window_visuals.py",
+      "sha256": "856e23e4e29139bffc85d784124b2a4e8b0c0a9adfb1936bffc64c1c19b950fc"
+    },
+    {
+      "bytes": 2070,
+      "path": "scripts/browser_character_smoke.mjs",
+      "sha256": "9cd6e2bd336dbee7cdd21eb2c0a0cdb50dbc1f42b19c18d1694235be00fef6af"
+    },
+    {
+      "bytes": 7378,
+      "path": "scripts/browser_input_test.mjs",
+      "sha256": "278dec94e16f3473ca018dcaaff8c87e674b89449c8bc0d4af334418ceee5377"
+    },
+    {
+      "bytes": 1618,
+      "path": "scripts/browser_mesh_smoke.mjs",
+      "sha256": "e07d9648efa3a48ab25fe1396018e8bc960f58a728ba734d2cc8b693d3ce3deb"
+    },
+    {
+      "bytes": 1711,
+      "path": "scripts/build_scene_binary.py",
+      "sha256": "8fef4564c8c9e9eb24ef5ced280121134c83557b1d06544bd70af17a82960b6a"
+    },
+    {
+      "bytes": 2887,
+      "path": "scripts/contact_physics_smoke.mjs",
+      "sha256": "a0d9383aa1c9ec13fa2a8fac5f0391e812dff59b51f04c703beb96c2a518ffda"
+    },
+    {
+      "bytes": 5410,
+      "path": "scripts/export_contact_physics.py",
+      "sha256": "3e03442d9bffeb5c3a2d3077daeb78c49e3470f727e9a495209b390fc6a97b22"
+    },
+    {
+      "bytes": 4179,
+      "path": "scripts/export_operator_animations.py",
+      "sha256": "b9bd39a6401b224fd0d49db8a3075e4dd62926ba7d96996940660d5fd6bcdb76"
+    },
+    {
+      "bytes": 7530,
+      "path": "scripts/export_operator_manifest.py",
+      "sha256": "596264c51b430b20caa2139194a322fe3148b074496102e7af6540df15ca86a1"
+    },
+    {
+      "bytes": 6114,
+      "path": "scripts/export_original_particle_manifest.py",
+      "sha256": "e3b1ee1e7ce324eaeb68bd12c0715d91a001100f0d9563141798982c9aeb0bd2"
+    },
+    {
+      "bytes": 5729,
+      "path": "scripts/export_original_particle_materials.py",
+      "sha256": "a14bc394e040bba9ea9d5f3ee4479952dd8ecb43d943a9da885b31b939fec1f2"
+    },
+    {
+      "bytes": 6976,
+      "path": "scripts/export_weapon_manifest.py",
+      "sha256": "38970e5cdef0ce661646ada86f92106bc625a36a518e772ed4df639a4100a879"
+    },
+    {
+      "bytes": 9186,
+      "path": "scripts/extract_ballistic_runtime.py",
+      "sha256": "3d7726d9c3ca220d61eddf21b16b4d0c7a4f32657bd9016181279c6a01d2c230"
+    },
+    {
+      "bytes": 6017,
+      "path": "scripts/extract_original_exit_hole_mesh.py",
+      "sha256": "f8a133457a67d6d26f79546279d979c15910cef85725faa2bf17981b6094b908"
+    },
+    {
+      "bytes": 6322,
+      "path": "scripts/extract_original_particle_meshes.py",
+      "sha256": "7cdd5b62860533dfd041b38bcce9325c2e2176591ee8ee6faac15dbcaa53cb7e"
+    },
+    {
+      "bytes": 8776,
+      "path": "scripts/extract_presentation.py",
+      "sha256": "cfc42e7802cac0cc89003fff3a876b5217830d3eed124d9d691e8f209bff8074"
+    },
+    {
+      "bytes": 4393,
+      "path": "scripts/extract_runtime_scene.py",
+      "sha256": "9b7dab876bb6c5de05f4f7b3c5a0e89f9e2e10efc0202b4058e8a510d39fabcb"
+    },
+    {
+      "bytes": 9167,
+      "path": "scripts/extract_runtime_sources.py",
+      "sha256": "01318edf8ac64d1daf11bf70c14760eef3b77e017fd48bda289abb1ecb2e6cbf"
+    },
+    {
+      "bytes": 12077,
+      "path": "scripts/extract_weapon_runtime.py",
+      "sha256": "2c679e6fca9367fbd115a8f2c6dc2e4d72f5d3989ac8daeda21071df9ecab38e"
+    },
+    {
+      "bytes": 1561,
+      "path": "scripts/game_loading_test.mjs",
+      "sha256": "e6042106a99d38cfb905976422f19e816f1747f52cb4f77fa11fb8332ead8163"
+    },
+    {
+      "bytes": 3667,
+      "path": "scripts/game_movement_smoke.mjs",
+      "sha256": "304380ecc32b2de2b1fe18a72667625459363ce42552ecaf98e4879a594f4660"
+    },
+    {
+      "bytes": 3388,
+      "path": "scripts/inspect_original_arm_controllers.py",
+      "sha256": "fd0e9b55813ccdd874a2c6e8e56f663dc445d4b804004631b198ee870401a193"
+    },
+    {
+      "bytes": 5688,
+      "path": "scripts/iphone_input_smoke.mjs",
+      "sha256": "2fbc061ffeced9212d619f57e6f617fc0a8ef808866b1453c03aeeeac39dfbd3"
+    },
+    {
+      "bytes": 4065,
+      "path": "scripts/magazine_hud_test.mjs",
+      "sha256": "f40656acad5b54761fe97c2be595ef16b50ad931154b564abb827392e6aff667"
+    },
+    {
+      "bytes": 3217,
+      "path": "scripts/original_arm_sequences_smoke.mjs",
+      "sha256": "fa433c1561aa3817d6d588f8db833d354d70b6a4dd2d2073eaa52820ac2934b8"
+    },
+    {
+      "bytes": 4243,
+      "path": "scripts/original_particle_event_binding_test.mjs",
+      "sha256": "9e6ad2bf86aa34f6bfeda5eaa30d246f20fa1faf9cb80912f4c7384651b45c34"
+    },
+    {
+      "bytes": 3147,
+      "path": "scripts/original_particle_material_source_test.mjs",
+      "sha256": "f3b006990dbb3820160482999b98976bd99792167d1cc6795563f7aa2f5d1baa"
+    },
+    {
+      "bytes": 2560,
+      "path": "scripts/original_particle_mesh_source_test.mjs",
+      "sha256": "46a96d8fb3270e6951fba0e462f82d996a43f7d2fd429ff672b39465b542f281"
+    },
+    {
+      "bytes": 2812,
+      "path": "scripts/original_particle_source_test.mjs",
+      "sha256": "59e384aed1011be7e3253733e18953052cd9399894ea7ec441a44bf13f42991a"
+    },
+    {
+      "bytes": 10355,
+      "path": "scripts/package_wasm_site.py",
+      "sha256": "4f1f4f84ae7d0a195a32147f8f1afe82e8eb209f2411e4aaff49c0caa202fa73"
+    },
+    {
+      "bytes": 6986,
+      "path": "scripts/package_wasm_site_test.py",
+      "sha256": "7ffedcc44b0a2302daa944cfd8af39fd11d9be1aa077f9a75000f553fd02c6ea"
+    },
+    {
+      "bytes": 3162,
+      "path": "scripts/presentation_smoke.mjs",
+      "sha256": "c4142d5c41e58111634fc683545127c38b1765c026608d74bb8fa2124ca29fe3"
+    },
+    {
+      "bytes": 4547,
+      "path": "scripts/preserve_original_arm_controller_sources.py",
+      "sha256": "365763cd669828dfd6c634969300299d97e48f5a7d104e7a1b721effecd890a6"
+    },
+    {
+      "bytes": 3718,
+      "path": "scripts/preserve_original_arm_limb_dependencies.py",
+      "sha256": "c4c0e54d463200d02493706b4fc546eea6c3cdb9e18b5880faee7a04db27ea36"
+    },
+    {
+      "bytes": 3680,
+      "path": "scripts/recover_original_arm_sequences.py",
+      "sha256": "8cebbb45e0d776b24be5254af6b95711da4b85acc02e6ff596eba6d0ba3c288d"
+    },
+    {
+      "bytes": 1935,
+      "path": "scripts/recover_original_armcontroller_source.py",
+      "sha256": "e23f5b9fa052bcd311e813f072b1c19a403d2cfd3421c640ad7f25a202914812"
+    },
+    {
+      "bytes": 3435,
+      "path": "scripts/replace_missing_308_casing_mesh.py",
+      "sha256": "8931782753eb54612588f22090eaa7e2444ee3364c5d17e0f370ce519ffda8a8"
+    },
+    {
+      "bytes": 4153,
+      "path": "scripts/runtime_wasm_smoke.mjs",
+      "sha256": "8a2440e6864f970b6e866315104a6f75b872a41337b852fed30b1d412589416d"
+    },
+    {
+      "bytes": 6937,
+      "path": "scripts/scene_dependency_audit.py",
+      "sha256": "27b9b8d1e82259376c0a26cb382dba26945b36c2bf92ad40bf4eafe5a4d1a617"
+    },
+    {
+      "bytes": 7843,
+      "path": "scripts/scene_manifest.py",
+      "sha256": "05f410d49ba4f5682e0afdcc6f5cc062d7e59242c3020bb17a738389de9714eb"
+    },
+    {
+      "bytes": 3064,
+      "path": "scripts/search_missing_mesh_guid.py",
+      "sha256": "0cb86327175e2b86c8f8788480676f55c689d55541c98b304794fe2bfdb9e829"
+    },
+    {
+      "bytes": 1268,
+      "path": "scripts/source_effect_clock_test.mjs",
+      "sha256": "5b1dd26a8f18582c887d9dbc407239762aaaed9d0f08e7a86b71ea22169259f3"
+    },
+    {
+      "bytes": 5984,
+      "path": "scripts/unity_api_inventory.py",
+      "sha256": "943abbc968599fb053c1aee19ca086d646109e74bb4491a2ff79acbf7e9093bd"
+    },
+    {
+      "bytes": 7648,
+      "path": "scripts/unity_mesh_to_obj.py",
+      "sha256": "fb2f8646e3952537da1f92e619acc65710ffed84e4b12e085e5c6a0204dfe466"
+    },
+    {
+      "bytes": 3765,
+      "path": "scripts/unity_packed_mesh.py",
+      "sha256": "21fd191578ab56a2c9190333699ec4bdc3a059008d4fc61959bf668a38a344ec"
+    },
+    {
+      "bytes": 4938,
+      "path": "scripts/validate_scene_manifest.py",
+      "sha256": "5581e2763445e227affe53f54ae38ad07564e9bccedd847b49f90646a82536eb"
+    },
+    {
+      "bytes": 418,
+      "path": "scripts/vendor_physics.mjs",
+      "sha256": "51d43cf0fd539ad5251f1fa1d8cc2a80ac0748544cd280b9533d822fa6fc1c3a"
+    },
+    {
+      "bytes": 3953,
+      "path": "scripts/verify_original_arm_controller_references.py",
+      "sha256": "1e540ea13ac3e1872989e1418f72d050bf0ce6402b1686288c8a6a85023436b9"
+    },
+    {
+      "bytes": 3212,
+      "path": "scripts/verify_original_arm_limb_sources.py",
+      "sha256": "34e2274acec199018812e59522561c47ee875f85374f6b753b21d6e4feeef760"
+    },
+    {
+      "bytes": 1334,
+      "path": "scripts/verify_original_arm_sequences.py",
+      "sha256": "ac4c1a3c52b6bc8e6a3ec184c08cb46739ffbb1f184eeb1e03b0d14c109de0d7"
+    },
+    {
+      "bytes": 2317,
+      "path": "scripts/verify_original_armcontroller_source.py",
+      "sha256": "17de03f6321d8340104220e7164e61a455a6f587b1529e0900375788ea5f9aa7"
+    },
+    {
+      "bytes": 3184,
+      "path": "scripts/wasm_target_smoke.mjs",
+      "sha256": "a63aa7fc3a4abb509394d077e7558426861195a0890d8e681d98d32ba5059ccd"
+    },
+    {
+      "bytes": 25526,
+      "path": "scripts/wasm_target_spike.sh",
+      "sha256": "3ac1c7732167923c87cbb3f81ff1c223554b0ebb1698514bfcd13baddc4840b1"
+    },
+    {
+      "bytes": 14693,
+      "path": "scripts/weapon_smoke.mjs",
+      "sha256": "f5559c090c6d00c660f7e68c5b5c3a1fce59c19bd686f6749f533a20ffea9cc8"
+    },
+    {
+      "bytes": 4254,
+      "path": "scripts/webgl_preflight.py",
+      "sha256": "1b702589b2c16ac0dfb221ff507dd1c8b8afef179220fe57a5d4a410cb5dc976"
+    },
+    {
+      "bytes": 104,
+      "path": "tools/wasm-compile/global.json",
+      "sha256": "27f32db56696904b4739cfa792a6ef1205607ddd72d9876eea1f98b43b766835"
+    }
+  ],
+  "toolchain": {
+    "dotnet": "8.0.426",
+    "node": "v22.23.3",
+    "npm": "10.9.9",
+    "python": "3.12.3"
+  }
+}
