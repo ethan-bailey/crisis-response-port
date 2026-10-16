@@ -28,6 +28,16 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   assert.equal(handState.presentation.originalIKUpdate,true);
   assert.equal(handState.presentation.originalHandSetMode,true);
   for(const side of ['right','left'])assert.equal(handState.weaponState[side].handObjects.filter(v=>v.active).length,1,'Original Hand.SetMode activation must reach renderer');
+  for(const [i,side] of ['right','left'].entries()){
+   const source=handState.weaponState[side];
+   const rendered=handState.presentation.armTargets[i];
+   const expected=[rendered[0],rendered[1],-rendered[2]];
+   assert.ok(Math.hypot(...source.grip.p.map((v,k)=>v-expected[k]))<1e-4,'C# IK and rendered weapon must share the configured grip');
+   assert.ok(Math.hypot(...source.target.map((v,k)=>v-source.grip.p[k]))<1e-4,'Settled original IK targets the configured weapon grip');
+  }
+  const chamber=page.locator('#magazineTouch [data-mag-chamber]');
+  assert.equal(await chamber.locator('.mag-cartridge').count(),1);
+  assert.equal(await chamber.evaluate(e=>e.parentElement.id),'magazineTouch','Chamber stays with the weapon when magazine is removed');
   await page.screenshot({path:`original-hands-${engine}.png`});
   const particles=await page.evaluate(()=>window.__gameState()?.presentation?.originalParticleSource);
   assert.equal(particles?.sourcePrefabs,14,'Recovered original impact prefab manifest must load');
@@ -200,6 +210,10 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   }
   const preReload=await state();await pullOriginalMagazine();
   await page.waitForFunction(()=>window.__gameState().weaponState.reloading,null,{timeout:30000});
+  await page.waitForFunction(()=>window.__gameState().weaponState.magazinePose.heldBy!==null,null,{timeout:30000});
+  const held=await state();const holding=held.weaponState.magazinePose.heldBy;
+  assert.ok(Math.hypot(...held.weaponState.magazinePose.ik.p.map((v,i)=>v-held.weaponState[holding].grab.p[i]))<1e-4,'Magazine source IK attachment meets the original hand grab point');
+  await page.screenshot({path:`reload-grip-${engine}.png`});
   await page.waitForFunction(()=>!window.__gameState().weaponState.reloading,null,{timeout:30000});await ready();
   const reloaded=await state();assert.equal(rounds(reloaded.weaponState),rounds(preReload.weaponState));assert.equal(reloaded.weaponState.magazine,30);assert.equal(reloaded.weaponState.reserve,29);
   const fireBox=await page.locator('#fire').boundingBox();await page.mouse.move(fireBox.x+fireBox.width/2,fireBox.y+fireBox.height/2);await page.mouse.down();

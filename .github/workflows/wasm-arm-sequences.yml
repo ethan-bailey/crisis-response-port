@@ -1,4 +1,4 @@
-name: Verify original hand quads and source IK update in WASM browsers
+name: Verify configured hand grips, reload contact and chamber display
 
 # Explicit full milestone: a feature/fix workflow YAML change triggers ONE test.
 # Merging reviewed code into develop/wasm must not duplicate the expensive build.
@@ -91,7 +91,7 @@ jobs:
         run: |
           node scripts/weapon_smoke.mjs
           cp weapon-smoke.json work/evidence/m4-magazine-browser-smoke.json
-          cp weapon-chromium.png weapon-webkit.png original-hands-chromium.png original-hands-webkit.png work/evidence/
+          cp weapon-chromium.png weapon-webkit.png original-hands-chromium.png original-hands-webkit.png reload-grip-chromium.png reload-grip-webkit.png work/evidence/
       - name: Store build evidence privately
         if: always()
         uses: actions/upload-artifact@v4
