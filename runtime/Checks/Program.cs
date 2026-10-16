@@ -23,6 +23,58 @@ if (args.Contains("--character-facing")) {
 
 return;
 }
+if (args.Contains("--character-dependencies")) {
+    var world=new UnityEngine.RuntimeWorld();
+    var obj=new UnityEngine.GameObject("character deps",world);
+    var animator=obj.AddComponent<UnityEngine.Animator>();
+    animator.SetFloat("KneelRatio",.35f);
+    animator.SetBool("Moving",true);
+    if(Math.Abs(animator.GetFloat("KneelRatio")-.35f)>1e-6f||!animator.GetBool("Moving"))
+       throw new Exception("Original animator parameter storage failed");
+    var col=obj.AddComponent<UnityEngine.CapsuleCollider>();
+    col.direction=0;col.radius=.5f;col.height=2f;
+    world.Initialize();
+    if(!col.Raycast(new UnityEngine.Ray(new UnityEngine.Vector3(-3,0,0),UnityEngine.Vector3.right),out var h,10f)
+        || Math.Abs(h.distance-2f)>1e-4f)
+       throw new Exception("Original axis-X capsule raycast failed");
+    if(col.Raycast(new UnityEngine.Ray(new UnityEngine.Vector3(0,0,0),UnityEngine.Vector3.right),out _,10f))
+       throw new Exception("Capsule raycast should ignore ray origin inside collider");
+    var physiology=new Crisis.Runtime.Character.OriginalPhysiologyConditions();
+    if(physiology.ShouldLoseFooting()||physiology.ShouldLoseConsciousness()||!physiology.ShouldRegainConsciousness())
+       throw new Exception("Original healthy physiology thresholds failed");
+    physiology.ShockResistance=.5f;
+    physiology.AddShock(5000f);
+    if(!physiology.ShouldLoseFooting()||Math.Abs(physiology.Shock-2500f)>1e-6f)
+       throw new Exception("Original shock resistance or footing threshold failed");
+    physiology.Concussion=.775f;
+    if(!physiology.ShouldLoseConsciousness()||physiology.ShouldRegainConsciousness())
+       throw new Exception("Original concussion unconsciousness threshold failed");
+    physiology.Concussion=.0f;physiology.BloodOxygen=.5f;
+    if(!physiology.ShouldLoseConsciousness())throw new Exception("Original blood oxygen threshold failed");
+    physiology.BloodOxygen=.9f;physiology.BrainTrauma=3f;
+    if(!physiology.ShouldLoseConsciousness())throw new Exception("Original brain trauma threshold failed");
+    var body=obj.AddComponent<Crisis.Runtime.Weapons.CharacterBody>();
+    body.Direction=1f;
+    var limb=obj.AddComponent<Crisis.Runtime.Weapons.Limb>();
+    limb.Body=body;
+    limb.visual=new UnityEngine.GameObject("limb visual",world).transform;
+    limb.visual.localPosition=new UnityEngine.Vector3(0,0,.4f);
+    limb.zLeft=-.25f;
+    var attach=new UnityEngine.GameObject("attachment",world).AddComponent<Crisis.Runtime.Weapons.LimbAttachment>();
+    attach.zLeft=-.15f;attach.zRight=.2f;
+    limb.attachments.Add(attach);
+    limb.CaptureSourceVisualDepth();
+    body.Direction=-1f;
+    limb.Flip();
+    if(Math.Abs(limb.visual.localPosition.z+.25f)>1e-6f || Math.Abs(attach.transform.localPosition.z+.15f)>1e-6f)
+       throw new Exception("Recovered original Limb.Flip left-depth source behavior failed");
+    body.Direction=1f;
+    limb.Flip();
+    if(Math.Abs(limb.visual.localPosition.z-.4f)>1e-6f || Math.Abs(attach.transform.localPosition.z-.2f)>1e-6f)
+       throw new Exception("Recovered original Limb.Flip right-depth source behavior failed");
+    Console.WriteLine("{\"CharacterBodyDependencyPrimitives\":\"pass\"}");
+    return;
+}
 Console.WriteLine(RuntimeContracts.Run());
 Console.WriteLine(ArmSequenceContracts.Run("game/assets/original-arm-sequences.json"));
 if(File.Exists("game/assets/presentation.json.gz"))Console.WriteLine(PresentationContracts.Run("game/assets/presentation.json.gz"));
