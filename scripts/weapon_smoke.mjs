@@ -196,7 +196,12 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   // The sprite is short-lived, so trigger a screenshot as soon as its source
   // C# event has produced a textured frame, rather than after fire is released.
   await page.waitForFunction(()=>window.__gameState()?.presentation?.originalMuzzleFlash?.activeDrawable>0,null,{timeout:30000});
-  await page.screenshot({path:`muzzle-flash-${engine}.png`});
+  // Short original clips need visual evidence across several browser paints.
+  // Keep holding the real fire control; capture consecutive original source
+  // frames rather than mislabeling a late empty-weapon screenshot as a flash.
+  for(let i=0;i<5;i++){
+   await page.screenshot({path:`muzzle-flash-${engine}-${i}.png`});
+  }
   await page.waitForFunction(()=>window.__gameState().weaponState.bolt==='Open'&&window.__gameState().weaponState.magazine===0,null,{timeout:30000});await page.mouse.up();
   const empty=await state();assert.equal(empty.weaponState.shots,32);
   assert.equal(empty.presentation.originalMuzzleFlash.shotsReceived,32,
