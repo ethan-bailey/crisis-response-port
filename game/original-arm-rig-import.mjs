@@ -1,2 +1,110 @@
-// Original Unity arm-rig source import boundary.
-export const originalArmRigFormat = 'crisis-original-arm-physics-v1';
+// Serialized Unity source -> pinned PhysX engine boundary. No replacement arm
+// solver, controller, force rules, or authored masses.
+import * as THREE from 'three';
+import {createArmPhysicsKernel} from './arm-physics-kernel.mjs';
+export const originalArmRigFormat='crisis-original-arm-physics-runtime-v1';
+const V=p=>new THREE.Vector3(p.x,p.y,p.z);
+const Q=q=>new THREE.Quaternion(q.x,q.y,q.z,q.w);
+const xyz=v=>v.toArray();
+const xyzw=q=>q.toArray();
+const LOCAL_X_TO_UNITY_HINGE_Z=new THREE.Quaternion().setFromUnitVectors(
+  new THREE.Vector3(1,0,0),new THREE.Vector3(0,0,1));
+export async function createOriginalArmRig(source,nodeById,character,{moduleOptions={}}={}){
+ if(source?.format!==originalArmRigFormat)throw Error('Original arm source required');
+ const prefab=source.prefabs.find(p=>p.name==='Operator');
+ if(!prefab)throw Error('Original Operator physics not recovered');
+ const records=new Map(prefab.records.map(r=>[r.fileID,r]));
+ const goByTransform=new Map(prefab.records.filter(r=>r.classID===4)
+   .map(r=>[r.fileID,r.fields.m_GameObject.fileID]));
+ const transformByGo=new Map([...goByTransform].map(([t,g])=>[g,t]));
+ const sourceNode=transform=>nodeById.get(goByTransform.get(transform));
+ const physics=source.physics[0];
+ const kernel=await createArmPhysicsKernel({moduleOptions,gravity:
+   [physics.m_Gravity.x,physics.m_Gravity.y,physics.m_Gravity.z]});
+ const bodies=new Map(),joints=new Map(),arms=[];
+ const pose=transform=>{
+   const node=sourceNode(transform);
+   if(!node)throw Error('Source physics Transform missing from character: '+transform);
+   node.updateWorldMatrix(true,false);
+   return {position:xyz(node.getWorldPosition(new THREE.Vector3())),
+     rotation:xyzw(node.getWorldQuaternion(new THREE.Quaternion()))};
+ };
+ function bodyFromId(rigidbodyId){
+   if(bodies.has(rigidbodyId))return bodies.get(rigidbodyId);
+   const rigidbody=records.get(rigidbodyId);
+   if(rigidbody?.classID!==54)throw Error('Missing original Rigidbody: '+rigidbodyId);
+   const go=rigidbody.fields.m_GameObject.fileID;
+   const collider=prefab.records.find(r=>r.classID===136&&r.fields.m_GameObject.fileID===go);
+   if(!collider||!collider.fields.m_Enabled||collider.fields.m_IsTrigger)
+     throw Error('Original active capsule collider required for '+go);
+   const transform=transformByGo.get(go),w=pose(transform),c=collider.fields,b=rigidbody.fields;
+   const actor=kernel.createCapsule({...w,mass:b.m_Mass,
+     linearDamping:b.m_Drag,angularDamping:b.m_AngularDrag,
+     isKinematic:!!b.m_IsKinematic,useGravity:!!b.m_UseGravity,
+     constraints:b.m_Constraints,radius:c.m_Radius,height:c.m_Height,
+     direction:c.m_Direction,center:xyz(V(c.m_Center))});
+   const value={actor,transform,gameObject:go,rigidbodyId,colliderId:collider.fileID};
+   bodies.set(rigidbodyId,value);
+   return value;
+ }
+ try{
+   // Real original body hierarchy: each limb connects to its prior body, with
+   // upper arms attached to the shared original Torso Rigidbody.
+   for(const [side,arm] of Object.entries(prefab.arms)){
+     const chain=[];
+     for(const limb of arm.limbs)chain.push({limb,...bodyFromId(limb.rigidbody)});
+     arms.push({side,chain,mode:arm.controller.mode});
+   }
+   for(const arm of arms)for(const entry of arm.chain){
+     const limb=entry.limb,j=records.get(limb.joint)?.fields;
+     if(!j||j.m_ConnectedBody.fileID!==limb.connectedBody)
+       throw Error('Original joint attachment mismatch');
+     const connected=bodyFromId(limb.connectedBody);
+     const movingNode=sourceNode(entry.transform),parentNode=sourceNode(connected.transform);
+     const worldQ=movingNode.getWorldQuaternion(new THREE.Quaternion())
+       .multiply(LOCAL_X_TO_UNITY_HINGE_Z);
+     const localMoving=LOCAL_X_TO_UNITY_HINGE_Z.clone();
+     const localParent=parentNode.getWorldQuaternion(new THREE.Quaternion())
+       .invert().multiply(worldQ);
+     const anchor=V(j.m_Anchor);
+     const pivot=movingNode.localToWorld(anchor.clone());
+     const connectedAnchor=j.m_AutoConfigureConnectedAnchor
+       ?parentNode.worldToLocal(pivot.clone()):V(j.m_ConnectedAnchor);
+     const hinge=kernel.createHinge(entry.actor,connected.actor,{
+       anchor:xyz(anchor),connectedAnchor:xyz(connectedAnchor),
+       rotation:xyzw(localMoving),connectedRotation:xyzw(localParent),
+       limits:j.m_UseLimits?j.m_Limits:null,enableCollision:!!j.m_EnableCollision});
+     hinge.setSpring(j.m_Spring,!!j.m_UseSpring);
+     joints.set(limb.joint,hinge);
+     entry.joint=hinge;
+   }
+   return {
+     kernel,arms,bodies,joints,
+     syncKinematic(){
+       // Only the original IK output determines the kinematic arm poses.
+       for(const body of bodies.values())if(body.actor.isKinematic){
+         const w=pose(body.transform);
+         kernel.syncKinematicPose(body.actor,w.position,w.rotation);
+       }
+     },
+     setDynamic(bodyId,dynamic){
+       const body=bodies.get(bodyId);
+       if(!body)throw Error('Unknown original limb Rigidbody');
+       kernel.setKinematic(body.actor,!dynamic);
+     },
+     addForce(bodyId,force,position,mode){
+       const body=bodies.get(bodyId);
+       if(!body)throw Error('Unknown original force recipient');
+       kernel.addForceAtPosition(body.actor,force,position,mode);
+     },
+     step(dt){kernel.step(dt);},
+     snapshot(){
+       return arms.map(arm=>({side:arm.side,chain:arm.chain.map(item=>({
+         transform:item.transform,body:item.rigidbodyId,
+         ...kernel.snapshot(item.actor)
+       }))}));
+     },
+     dispose(){kernel.dispose();}
+   };
+ }catch(error){kernel.dispose();throw error;}
+}
