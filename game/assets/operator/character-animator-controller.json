@@ -20,7 +20,13 @@
       "name": "Backward locomotion",
       "transitions": [
         {
-          "conditions": [],
+          "conditions": [
+            {
+              "mode": 2,
+              "parameter": "Moving",
+              "threshold": 0.0
+            }
+          ],
           "destination": "1102730242686860875",
           "duration": 0.25,
           "fixedDuration": true,
@@ -28,7 +34,18 @@
           "interruptionSource": 0
         },
         {
-          "conditions": [],
+          "conditions": [
+            {
+              "mode": 1,
+              "parameter": "Moving",
+              "threshold": 0.0
+            },
+            {
+              "mode": 3,
+              "parameter": "CrippledRatio",
+              "threshold": 0.25
+            }
+          ],
           "destination": "1102985305603660343",
           "duration": 0.25,
           "fixedDuration": true,
@@ -36,7 +53,23 @@
           "interruptionSource": 0
         },
         {
-          "conditions": [],
+          "conditions": [
+            {
+              "mode": 1,
+              "parameter": "Moving",
+              "threshold": 0.0
+            },
+            {
+              "mode": 4,
+              "parameter": "CrippledRatio",
+              "threshold": 0.25
+            },
+            {
+              "mode": 2,
+              "parameter": "Backwards",
+              "threshold": 0.0
+            }
+          ],
           "destination": "1102709867586078768",
           "duration": 0.25,
           "fixedDuration": true,
@@ -68,7 +101,18 @@
       "name": "Forward locomotion",
       "transitions": [
         {
-          "conditions": [],
+          "conditions": [
+            {
+              "mode": 1,
+              "parameter": "Moving",
+              "threshold": 0.0
+            },
+            {
+              "mode": 1,
+              "parameter": "Backwards",
+              "threshold": 0.0
+            }
+          ],
           "destination": "1102099118695303065",
           "duration": 0.25,
           "fixedDuration": true,
@@ -76,7 +120,18 @@
           "interruptionSource": 0
         },
         {
-          "conditions": [],
+          "conditions": [
+            {
+              "mode": 1,
+              "parameter": "Moving",
+              "threshold": 0.0
+            },
+            {
+              "mode": 3,
+              "parameter": "CrippledRatio",
+              "threshold": 0.25
+            }
+          ],
           "destination": "1102985305603660343",
           "duration": 0.25,
           "fixedDuration": true,
@@ -84,7 +139,13 @@
           "interruptionSource": 0
         },
         {
-          "conditions": [],
+          "conditions": [
+            {
+              "mode": 2,
+              "parameter": "Moving",
+              "threshold": 0.0
+            }
+          ],
           "destination": "1102730242686860875",
           "duration": 0.25,
           "fixedDuration": true,
@@ -116,7 +177,18 @@
       "name": "Stationary",
       "transitions": [
         {
-          "conditions": [],
+          "conditions": [
+            {
+              "mode": 1,
+              "parameter": "Moving",
+              "threshold": 0.0
+            },
+            {
+              "mode": 1,
+              "parameter": "Backwards",
+              "threshold": 0.0
+            }
+          ],
           "destination": "1102099118695303065",
           "duration": 0.2317524,
           "fixedDuration": true,
@@ -124,7 +196,18 @@
           "interruptionSource": 0
         },
         {
-          "conditions": [],
+          "conditions": [
+            {
+              "mode": 1,
+              "parameter": "Moving",
+              "threshold": 0.0
+            },
+            {
+              "mode": 4,
+              "parameter": "CrippledRatio",
+              "threshold": 0.25
+            }
+          ],
           "destination": "1102709867586078768",
           "duration": 0.5693313,
           "fixedDuration": true,
@@ -132,7 +215,18 @@
           "interruptionSource": 0
         },
         {
-          "conditions": [],
+          "conditions": [
+            {
+              "mode": 1,
+              "parameter": "Moving",
+              "threshold": 0.0
+            },
+            {
+              "mode": 3,
+              "parameter": "CrippledRatio",
+              "threshold": 0.25
+            }
+          ],
           "destination": "1102985305603660343",
           "duration": 0.25,
           "fixedDuration": true,
@@ -150,7 +244,18 @@
       "name": "One leg limp",
       "transitions": [
         {
-          "conditions": [],
+          "conditions": [
+            {
+              "mode": 1,
+              "parameter": "Moving",
+              "threshold": 0.0
+            },
+            {
+              "mode": 1,
+              "parameter": "Backwards",
+              "threshold": 0.0
+            }
+          ],
           "destination": "1102099118695303065",
           "duration": 0.25,
           "fixedDuration": true,
@@ -158,7 +263,13 @@
           "interruptionSource": 0
         },
         {
-          "conditions": [],
+          "conditions": [
+            {
+              "mode": 2,
+              "parameter": "Moving",
+              "threshold": 0.0
+            }
+          ],
           "destination": "1102730242686860875",
           "duration": 0.25,
           "fixedDuration": true,
