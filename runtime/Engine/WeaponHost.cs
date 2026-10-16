@@ -93,6 +93,7 @@ public sealed class WeaponHost {
  readonly Dictionary<string,Transform> weaponTransforms=[];readonly Dictionary<string,Transform> operatorTransforms=[];readonly Dictionary<string,Transform> magazineTransforms=[];
  public readonly WeaponEffects effects=new();
  public float Kick=>weapon.RecoilKick;public float Climb=>weapon.RecoilClimb;public bool Manipulating=>body.IsManipulatingEquipment;
+ public CharacterBody Character=>body;
  public static Vector3 V(JsonElement a)=>new(a[0].GetSingle(),a[1].GetSingle(),a[2].GetSingle());
  static Vector3 Vec(JsonElement a)=>new(a.GetProperty("x").GetSingle(),a.GetProperty("y").GetSingle(),a.GetProperty("z").GetSingle());
  public static AnimationCurve Curve(JsonElement c){float F(JsonElement n)=>n.ValueKind==JsonValueKind.String?(n.GetString() switch {"Infinity"=>float.PositiveInfinity,"-Infinity"=>float.NegativeInfinity,var text=>float.Parse(text,System.Globalization.CultureInfo.InvariantCulture)}):n.GetSingle();return new(c.GetProperty("m_Curve").EnumerateArray().Select(k=>new Keyframe(k.GetProperty("time").GetSingle(),k.GetProperty("value").GetSingle(),F(k.GetProperty("inSlope")),F(k.GetProperty("outSlope")))).ToArray()){serializedPreInfinity=2,serializedPostInfinity=2,clampOutside=true};}
