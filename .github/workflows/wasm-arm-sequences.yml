@@ -1,6 +1,7 @@
 name: Verify original M4 chamber ammo and weapon-matched HUD in WASM browsers
 
 # Explicit full milestone: a feature/fix workflow YAML change triggers ONE test.
+# Source milestone: verified original M4 muzzle flash first-frame/async render fix, PR #29 at 4eb209c3aa3d496af92b57e2a4e560bc5a40258c.
 # Merging reviewed code into develop/wasm must not duplicate the expensive build.
 # No automatic builds on source/doc edits, and workflow_dispatch remains available.
 on:
