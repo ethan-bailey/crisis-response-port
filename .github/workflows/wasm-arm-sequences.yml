@@ -1,4 +1,4 @@
-name: Verify original hand quads and source IK update in WASM browsers
+name: Compile original physical ArmController with PhysX and source IK in WASM browsers
 
 # Explicit full milestone: a feature/fix workflow YAML change triggers ONE test.
 # Merging reviewed code into develop/wasm must not duplicate the expensive build.
@@ -65,6 +65,7 @@ jobs:
           node --test scripts/browser_input_test.mjs scripts/animation_pose_test.mjs scripts/game_loading_test.mjs scripts/aim_direction_test.mjs scripts/source_effect_clock_test.mjs scripts/original_particle_source_test.mjs scripts/original_particle_mesh_source_test.mjs scripts/original_particle_event_binding_test.mjs scripts/magazine_hud_test.mjs | tee work/evidence/source-tests.txt
       - name: Compile original-code .NET WebAssembly
         run: |
+          set -o pipefail
           cp game/browser-input.mjs runtime/Browser/wwwroot/browser-input.mjs
           dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release -o work/published | tee work/evidence/publish-log.txt
       - name: Package both game and compiled runtime with source and output hashes
@@ -87,7 +88,7 @@ jobs:
         run: |
           python3 -m http.server 8000 --bind 127.0.0.1 --directory work/site > work/evidence/http-server.log 2>&1 &
           node scripts/original_arm_sequences_smoke.mjs
-      - name: Boot original C# weapon snapshot and verify correct M4 chamber and equipped-gun art in Chromium/WebKit
+      - name: Boot original C# physical ArmController and verify kinematic PhysX rig in Chromium/WebKit
         run: |
           node scripts/weapon_smoke.mjs
           cp weapon-smoke.json work/evidence/m4-magazine-browser-smoke.json

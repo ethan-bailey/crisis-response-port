@@ -16,7 +16,7 @@ export function configureCamera(camera,data){
  const p=data.cameraTransform.m_LocalPosition;camera.position.set(p.x,p.y,-p.z);camera.rotation.set(0,0,0);
  camera.fov=data.camera['field of view'];camera.near=data.camera['near clip plane'];camera.far=data.camera['far clip plane'];camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
 }
-export function createUpperBody(data,manifest,nodeById,character,weapon,runtimeCall,weaponData,scene,ballisticsData,sourceWindows,particleSources){
+export function createUpperBody(data,manifest,nodeById,character,weapon,runtimeCall,weaponData,scene,ballisticsData,sourceWindows,particleSources,armRig=null){
  const byTransform=new Map(manifest.nodes.map(n=>[n.transformFileID,nodeById.get(n.gameObjectFileID)]));
  const nodeForRef=ref=>nodeById.get(data.componentGameObjects[ref.fileID])||byTransform.get(ref.fileID);
  const torso=nodeForRef(data.body.Torso),head=nodeForRef(data.body.Head),neck=nodeForRef(data.body.Neck),abdomen=nodeForRef(data.body.Abdomen),eye=nodeForRef(data.body.Eye);
@@ -37,7 +37,7 @@ export function createUpperBody(data,manifest,nodeById,character,weapon,runtimeC
  let result=null,solutions=[],weaponResult=null;
  const api={
   shoulder:arms.find(a=>a.right).upper,
-  async update({position,velocity,direction,moving,sprinting,kneeling,aim,aspect,fire,reload},camera){
+  async update({position,velocity,direction,moving,sprinting,kneeling,aim,aspect,fire,reload,physicsStep=1/60},camera){
    character.updateWorldMatrix(true,true);
    const frame={position:unityVector(position),velocity:[velocity,0,0],direction,eye:unityVector(worldPosition(eye)),torso:unityVector(worldPosition(torso)),muzzle:unityVector(worldPosition(muzzle)),shoulder:unityVector(worldPosition(api.shoulder)),
     weaponRight:unityVector(new THREE.Vector3(1,0,0).applyQuaternion(weapon.root.getWorldQuaternion(new THREE.Quaternion()))),moving,sprinting,kneeling,aim:unityVector(aim),aspect,arms:[]};
@@ -47,7 +47,7 @@ export function createUpperBody(data,manifest,nodeById,character,weapon,runtimeC
    worldEuler(weapon.root,yaw,result.pose.weaponAngle);character.updateWorldMatrix(true,true);
    const operatorTransforms={};
    for(const [id,node] of sourceNodes){const p=worldPosition(node),q=node.getWorldQuaternion(new THREE.Quaternion());operatorTransforms[id]={p:unityVector(p),q:[-q.x,-q.y,q.z,q.w]};}
-   weaponResult=JSON.parse(await runtimeCall('StepWeapons',JSON.stringify({position:unityVector(position),direction,weaponPose:weaponWorld(),operatorTransforms,fire,reload})));
+   weaponResult=JSON.parse(await runtimeCall('StepWeapons',JSON.stringify({position:unityVector(position),direction,weaponPose:weaponWorld(),operatorTransforms,fire,reload,armAngles:armRig?.angles()??{}})));
    effects.update(weaponResult.events,weaponResult.magazinePose,weaponResult.sourceTime);
    // Original ArmIKSolver.Update now runs against the source C# bone hierarchy.
    // Apply its actual world rotations and original Hand.SetMode object states.
@@ -62,10 +62,16 @@ export function createUpperBody(data,manifest,nodeById,character,weapon,runtimeC
     applySourceRotation(a.upper,state.bones.upper);applySourceRotation(a.lower,state.bones.lower);applySourceRotation(a.hand,state.bones.hand);
     for(const visual of state.handObjects){const node=nodeById.get(visual.id);if(!node)throw new Error('Original hand visual missing: '+visual.id);node.visible=visual.active;}
    });
+   if(armRig){
+    armRig.applySourceCommands(weaponResult.physicalArms.commands);
+    armRig.syncKinematic();
+    armRig.step(physicsStep);
+    armRig.applyDynamicToCharacter();
+   }
    const [x,y,z]=result.camera.position;camera.position.set(x,y,-z);camera.fov=result.camera.fov;camera.updateProjectionMatrix();
   },
   weaponSnapshot(){return weaponResult;},
-  snapshot(){return {active:!!result,camera:result?.camera,pose:result?.pose,arms:solutions,originalIKUpdate:true,originalHandSetMode:true,worldHeadDirection:new THREE.Vector3(1,0,0).applyQuaternion(head.getWorldQuaternion(new THREE.Quaternion())).toArray(),worldShoulder:worldPosition(api.shoulder).toArray(),worldMuzzle:worldPosition(muzzle).toArray(),armTargets:anchors.map(a=>worldPosition(a).toArray()),originalMuzzleFlash:effects.flashSnapshot(),originalImpactMeshes:effects.impactMeshSnapshot(),originalWindows:effects.windowSnapshot(),originalParticleSource:effects.particleSourceSnapshot()};}
+  snapshot(){return {active:!!result,camera:result?.camera,pose:result?.pose,arms:solutions,originalIKUpdate:true,originalHandSetMode:true,originalPhysicalArmController:weaponResult?.physicalArms?.sourceControllerExecuted===true,physicalArmState:armRig?.snapshot()??null,worldHeadDirection:new THREE.Vector3(1,0,0).applyQuaternion(head.getWorldQuaternion(new THREE.Quaternion())).toArray(),worldShoulder:worldPosition(api.shoulder).toArray(),worldMuzzle:worldPosition(muzzle).toArray(),armTargets:anchors.map(a=>worldPosition(a).toArray()),originalMuzzleFlash:effects.flashSnapshot(),originalImpactMeshes:effects.impactMeshSnapshot(),originalWindows:effects.windowSnapshot(),originalParticleSource:effects.particleSourceSnapshot()};}
  };
  return api;
 }
