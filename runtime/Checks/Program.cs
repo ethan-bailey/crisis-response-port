@@ -39,6 +39,16 @@ if (args.Contains("--character-dependencies")) {
        throw new Exception("Original axis-X capsule raycast failed");
     if(col.Raycast(new UnityEngine.Ray(new UnityEngine.Vector3(0,0,0),UnityEngine.Vector3.right),out _,10f))
        throw new Exception("Capsule raycast should ignore ray origin inside collider");
+    var blood=new Crisis.Runtime.Character.OriginalPhysiologyConditions();
+    blood.InitializeBloodVolume(4500f);
+    blood.RemoveBlood(450f);
+    if(Math.Abs(blood.BloodVolume-4050f)>1e-5f ||
+       Math.Abs(blood.BloodOxygen-.9f)>1e-5f ||
+       Math.Abs(blood.BloodVolumeNormalized-.9f)>1e-5f)
+       throw new Exception("Original Physiology.RemoveBlood source regression");
+    blood.RemoveLungsOxygen(.2f);
+    if(Math.Abs(blood.LungsOxygen-.6f)>1e-5f)
+       throw new Exception("Original Physiology.RemoveLungsOxygen source regression");
     var physiology=new Crisis.Runtime.Character.OriginalPhysiologyConditions();
     if(physiology.ShouldLoseFooting()||physiology.ShouldLoseConsciousness()||!physiology.ShouldRegainConsciousness())
        throw new Exception("Original healthy physiology thresholds failed");
