@@ -1,5 +1,20 @@
 # Crisis Response — iPhone Web Port Research
 
+> **Current collaboration setup (October 16, 2026):** `main` is the stable repository baseline, **[`develop/wasm`](https://github.com/ethan-bailey/crisis-response-port/tree/develop/wasm)** is the sole integrated C#→WebAssembly game branch, and new work uses short-lived feature PRs targeting `develop/wasm`. The game is still incomplete. The older project notes below describe historical milestones, not the current code integration branch.
+
+## Work here
+
+- **[Contributor onboarding](CONTRIBUTING.md)** and **[branching, PR, label and release policy](docs/BRANCHING_AND_COLLABORATION.md)** — the required conventions for human and AI contributors.
+- **[Current next-agent handoff](https://github.com/ethan-bailey/crisis-response-port/blob/develop/wasm/NEXT_AGENT.md)** and **[workspace](https://github.com/ethan-bailey/crisis-response-port/blob/develop/wasm/WORKSPACE.md)** — what is integrated/tested, who owns what, and the next bounded original-code task.
+- **[Issue #22: original arm-controller playback](https://github.com/ethan-bailey/crisis-response-port/issues/22)** — next priority source dependency group.
+- **[Source-backed test milestone](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38901664939)** — combined original C#/WASM/Chromium/WebKit tests passed at SHA `1264c0b4579076b82e1b6b21955469313779fe39` (selected source slice only).
+- **[Manual private Vercel release protocol](https://github.com/ethan-bailey/crisis-response-port/blob/develop/wasm/docs/VERCEL_MANUAL_DEPLOYMENTS.md)** — Git commits no longer trigger Vercel deployments.
+
+Original recovered developer code and assets remain private. No invented gameplay, fake placeholders, public asset deployment, or 1:1 parity claims without source verification.
+
+---
+
+
 This repository tracks a source-preserving, evidence-driven effort to make the original *Crisis Response* playable on iPhone 16 through a web runtime if feasible.
 
 ## Important distinction
