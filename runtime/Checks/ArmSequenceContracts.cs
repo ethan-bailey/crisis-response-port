@@ -13,6 +13,24 @@ public static class ArmSequenceContracts {
         Check(ReferenceEquals(RuntimeWorld.Current, world) && Time.time == before, "Loading diagnostic sequences must not reset game clock/world");
         Check((int)IKArmType.Right == 0 && (int)IKArmType.Left == 1 && Enum.GetValues<IKArmType>().Length == 2,
             "Exact recovered original IKArmType arm-side ordering changed");
+        using var handProof = JsonDocument.Parse(OriginalHandModes.Run());
+        var handRoot = handProof.RootElement;
+        Check(handRoot.GetProperty("originalHandMethodExecuted").GetBoolean() &&
+              !handRoot.GetProperty("ikControllerPlaybackImplemented").GetBoolean(),
+              "Actual original Hand.SetMode must execute without claiming IK playback");
+        var handStates = handRoot.GetProperty("states").EnumerateArray().ToArray();
+        Check(handStates.Length == 3, "Three original hand modes must execute");
+        Check(handStates[0].GetProperty("mode").GetInt32() == 1 && handStates[0].GetProperty("fist").GetBoolean() &&
+              !handStates[0].GetProperty("trigger").GetBoolean() && !handStates[0].GetProperty("forwardAssist").GetBoolean(),
+              "Original fist-hand mode activation changed");
+        Check(handStates[1].GetProperty("mode").GetInt32() == 2 && !handStates[1].GetProperty("fist").GetBoolean() &&
+              !handStates[1].GetProperty("trigger").GetBoolean() && handStates[1].GetProperty("forwardAssist").GetBoolean(),
+              "Original forward-assist mode activation changed");
+        Check(handStates[2].GetProperty("mode").GetInt32() == 0 && !handStates[2].GetProperty("fist").GetBoolean() &&
+              handStates[2].GetProperty("trigger").GetBoolean() && !handStates[2].GetProperty("forwardAssist").GetBoolean(),
+              "Original trigger-hand mode activation changed");
+        Check(ReferenceEquals(RuntimeWorld.Current, world) && Time.time == before,
+              "Hand source contract must not reset current game world or time");
         Check(sequences.Count == 7, "All seven original prefabs loaded");
         Check(sequences.Values.Sum(s => s.right.Count + s.left.Count) == 21, "All 21 original frames loaded");
         var holster = sequences["Holster pistol"];
@@ -33,6 +51,6 @@ public static class ArmSequenceContracts {
         Check(result.RootElement.GetProperty("right").GetArrayLength() == 3 && !result.RootElement.GetProperty("playbackImplemented").GetBoolean(), "Browser transport keeps scope explicit");
         try { OriginalArmSequences.Load(json.Replace("\"action\": 0", "\"action\": 999")); throw new Exception("Invalid enum accepted"); }
         catch (InvalidDataException) { }
-        return JsonSerializer.Serialize(new {status = "pass", originalClasses = 6, originalPrefabs = 7, originalFrames = 21, playbackImplemented = false});
+        return JsonSerializer.Serialize(new {status = "pass", originalClasses = 6, originalPrefabs = 7, originalFrames = 21, playbackImplemented = false, originalHandModeExecuted = true});
     }
 }
