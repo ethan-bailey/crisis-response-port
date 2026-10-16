@@ -6,7 +6,7 @@
 
 - **`main`: stable repository baseline.** Not the current full game, not the destination for normal gameplay commits.
 - **`develop/wasm`: canonical integrated executable original C#/.NET 8 WASM + pinned PhysX + browser game.** All new normal gameplay feature/fix PRs target here. Recheck its HEAD and in-progress Actions before coding. Avoid force pushes, direct history rewrites and wholesale branch replacement.
-- **`feature/<issue>-<topic>`: short-lived contributor branch from the latest integration HEAD.** Next proposed branch: `feature/22-arm-controller` for [issue #22](https://github.com/ethan-bailey/crisis-response-port/issues/22).
+- **`feature/<issue>-<topic>`: short-lived contributor branch from the latest integration HEAD.** The first private work branch, [`feature/22-arm-controller`](https://github.com/ethan-bailey/crisis-response-port/tree/feature/22-arm-controller), is reserved for [issue #22](https://github.com/ethan-bailey/crisis-response-port/issues/22). Recheck/update its HEAD against `develop/wasm` before code changes; no original controller playback is implemented yet.
 - **`research/*`, `experiment/*`: isolated provenance and engine comparisons.** The separate Unity path [PR #7](https://github.com/ethan-bailey/crisis-response-port/pull/7) is not a WASM prerequisite.
 - Historic PRs #8 and #9's game/weapon/ballistics code is incorporated into `develop/wasm` as actual Git history. Original arm-sequence source batch #21 was copied and tested as documented below. PR #19 (tooling) and #20 (source/UI evidence) now target `develop/wasm` for selective review; avoid duplicate packaging tooling.
 
