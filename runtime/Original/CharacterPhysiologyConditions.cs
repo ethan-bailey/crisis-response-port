@@ -8,7 +8,6 @@ namespace Crisis.Runtime.Character;
 public sealed class OriginalPhysiologyConditions {
  public float StartingBloodVolume {get;private set;}
  public float BloodVolume {get;private set;}
- public float BloodOxygen {get;private set;}=1f;
  public float LungsOxygen {get;private set;}=.75f;
  float bloodDropOxygen;
  // Exact source Awake() blood state, with original Random.Range sample supplied
