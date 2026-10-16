@@ -1,3 +1,5 @@
+**Exact-SHA engine evidence:** [Actions #38939841563](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38939841563) SUCCESS at `b25a96a071abcd03ebba680516ad5dcc0270764c`, **31 contracts in each of Chromium and WebKit**. Private artifact `12061949554`, expires 2026-11-15, ZIP SHA256 `ab6c82d7b429c16da811cc222d6f0eb2116185a32e33fa3a278a762680080e62`. [Fast source/package #38940060276](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38940060276) PASS. No original physical ArmController or native Unity parity claimed.
+
 # PhysX implicit hinge spring and capsule prerequisites
 
 This extends the isolated kernel introduced by PR #30. It remains **outside the live game's imports** and does not claim unchanged original physical ArmController execution, original capsule/hierarchy import, original Unity solver parity or native trajectory comparison.
