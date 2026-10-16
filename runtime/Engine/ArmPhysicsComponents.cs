@@ -23,3 +23,8 @@ public sealed class HingeJoint:Component {
  // Last measured native PhysX joint angle (Unity degree convention).
  public float angle {get;set;}
 }
+
+public static class OriginalArmTransformOverloads {
+ public static Vector3 TransformPoint(this Transform transform,float x,float y,float z)
+  =>transform.TransformPoint(new Vector3(x,y,z));
+}
