@@ -87,6 +87,25 @@ export async function createOriginalArmRig(source,nodeById,character,{moduleOpti
          kernel.syncKinematicPose(body.actor,w.position,w.rotation);
        }
      },
+     angles(){return Object.fromEntries([...joints].map(([key,joint])=>[key,joint.angle()]));},
+     applySourceCommands(commands){
+       for(const command of commands){
+         if(command.type==='kinematic') {
+           const body=bodies.get(command.body);
+           if(!body)throw Error('Original arm kinematic command references unknown body');
+           kernel.setKinematic(body.actor,command.value);
+         } else if(command.type==='force'){
+           const body=bodies.get(command.body);
+           if(!body)throw Error('Original arm force references unknown body');
+           kernel.addForceAtPosition(body.actor,command.force,command.position,command.mode);
+         } else if(command.type==='spring'){
+           const joint=joints.get(command.joint);
+           if(!joint)throw Error('Original arm spring references unknown hinge');
+           joint.setSpring({spring:command.spring,damper:command.damper,
+             targetPosition:command.targetPosition},command.enabled);
+         } else throw Error('Unexpected original physical arm command');
+       }
+     },
      setDynamic(bodyId,dynamic){
        const body=bodies.get(bodyId);
        if(!body)throw Error('Unknown original limb Rigidbody');
@@ -98,6 +117,24 @@ export async function createOriginalArmRig(source,nodeById,character,{moduleOpti
        kernel.addForceAtPosition(body.actor,force,position,mode);
      },
      step(dt){kernel.step(dt);},
+     applyDynamicToCharacter(){
+       for(const body of bodies.values()){
+         if(body.actor.isKinematic)continue;
+         const node=sourceNode(body.transform),parent=node.parent;
+         const state=kernel.snapshot(body.actor);
+         const worldPosition=new THREE.Vector3(state.position[0],
+           state.position[1],-state.position[2]);
+         const worldRotation=new THREE.Quaternion(-state.rotation[0],
+           -state.rotation[1],state.rotation[2],state.rotation[3]);
+         if(parent) {
+           parent.updateWorldMatrix(true,false);
+           node.position.copy(parent.worldToLocal(worldPosition));
+           node.quaternion.copy(parent.getWorldQuaternion(
+             new THREE.Quaternion()).invert().multiply(worldRotation));
+         }else{node.position.copy(worldPosition);node.quaternion.copy(worldRotation);}
+         node.updateWorldMatrix(false,true);
+       }
+     },
      snapshot(){
        return arms.map(arm=>({side:arm.side,chain:arm.chain.map(item=>({
          transform:item.transform,body:item.rigidbodyId,
