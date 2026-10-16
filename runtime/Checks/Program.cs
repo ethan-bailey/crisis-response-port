@@ -23,6 +23,25 @@ if (args.Contains("--character-facing")) {
 
 return;
 }
+if (args.Contains("--character-dependencies")) {
+    var world=new UnityEngine.RuntimeWorld();
+    var obj=new UnityEngine.GameObject("character deps",world);
+    var animator=obj.AddComponent<UnityEngine.Animator>();
+    animator.SetFloat("KneelRatio",.35f);
+    animator.SetBool("Moving",true);
+    if(Math.Abs(animator.GetFloat("KneelRatio")-.35f)>1e-6f||!animator.GetBool("Moving"))
+       throw new Exception("Original animator parameter storage failed");
+    var col=obj.AddComponent<UnityEngine.CapsuleCollider>();
+    col.direction=0;col.radius=.5f;col.height=2f;
+    world.Initialize();
+    if(!col.Raycast(new UnityEngine.Ray(new UnityEngine.Vector3(-3,0,0),UnityEngine.Vector3.right),out var h,10f)
+        || Math.Abs(h.distance-1.5f)>1e-4f)
+       throw new Exception("Original axis-X capsule raycast failed");
+    if(col.Raycast(new UnityEngine.Ray(new UnityEngine.Vector3(0,0,0),UnityEngine.Vector3.right),out _,10f))
+       throw new Exception("Capsule raycast should ignore ray origin inside collider");
+    Console.WriteLine("{\"CharacterBodyDependencyPrimitives\":\"pass\"}");
+    return;
+}
 Console.WriteLine(RuntimeContracts.Run());
 Console.WriteLine(ArmSequenceContracts.Run("game/assets/original-arm-sequences.json"));
 if(File.Exists("game/assets/presentation.json.gz"))Console.WriteLine(PresentationContracts.Run("game/assets/presentation.json.gz"));
