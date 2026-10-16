@@ -45,3 +45,9 @@ Derived from the 2026-10-16 workflow audit. These rules keep the port moving fas
 
 - The repo stays **private**. No public forks, no public build artifacts, no secrets in logs or docs.
 - Heavy operations (full Unity rebuilds, IL2CPP, large uploads) get **one controlled run at a time** with cached outputs reused — never parallel redundant builds.
+
+## 8. Protect user-approved gameplay usability enhancements
+
+- The owner explicitly permits **beneficial, well-scoped iPhone usability improvements** even when they differ from strict original-game input behavior. This does not authorize invented substitutes for original gameplay.
+- **Variable-speed analog joystick is intentional and must be retained.** Horizontal thumb travel beyond the dead zone scales the original Operator walk/sprint target speed while preserving original input actions, source-derived acceleration/PhysX and full-speed keyboard controls. Do **not** silently regress the stick to digital-only left/right controls when porting original CharacterBody or PlayerController.
+- Implementation, normalization, lifecycle and test contract are documented in [the canonical WASM enhancement record](https://github.com/ethan-bailey/crisis-response-port/blob/develop/wasm/docs/APPROVED_IPHONE_ANALOG_MOVEMENT.md), which is also referenced in the WASM branch's AGENTS.md and NEXT_AGENT.md. Any removal or intentional behavior regression requires explicit owner approval.
