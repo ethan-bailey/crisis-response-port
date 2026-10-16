@@ -37,6 +37,12 @@ jobs:
           if [ -f scripts/verify_original_arm_controller_references.py ]; then
             python3 scripts/verify_original_arm_controller_references.py
           fi
+      - name: Verify five original arm limb and weapon developer sources
+        run: |
+          set -euo pipefail
+          if [ -f scripts/verify_original_arm_limb_sources.py ]; then
+            python3 scripts/verify_original_arm_limb_sources.py
+          fi
       - name: Verify WASM package integrity regressions
         run: |
           set -euo pipefail
