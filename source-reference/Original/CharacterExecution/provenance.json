@@ -1,0 +1,100 @@
+{
+  "archiveSha256": "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
+  "files": {
+    "source-reference/Original/CharacterExecution/Animation/Body kneel.anim": {
+      "archivePath": "export/ExportedProject/Assets/AnimationClip/Body kneel.anim",
+      "bytes": 163389,
+      "sha256": "3adac7b0153a6af61e68d21083f02429bae21131fb6f2739eb838718a9f3198f"
+    },
+    "source-reference/Original/CharacterExecution/Animation/Body sprint.anim": {
+      "archivePath": "export/ExportedProject/Assets/AnimationClip/Body sprint.anim",
+      "bytes": 100690,
+      "sha256": "2791f2f2c6b4000105115d1384ac5795b11ab46e93bf4415e9da317c172845fe"
+    },
+    "source-reference/Original/CharacterExecution/Animation/Body stand.anim": {
+      "archivePath": "export/ExportedProject/Assets/AnimationClip/Body stand.anim",
+      "bytes": 163566,
+      "sha256": "284f3e22bb2b3cf33629c28942aed262eb6a27052b222e14fffe16911e988595"
+    },
+    "source-reference/Original/CharacterExecution/Animation/Body walk backward.anim": {
+      "archivePath": "export/ExportedProject/Assets/AnimationClip/Body walk backward.anim",
+      "bytes": 216339,
+      "sha256": "207c1c7b184f87a2613862694313e94f42a658376743a4cb50318a6b8ee0b4d0"
+    },
+    "source-reference/Original/CharacterExecution/Animation/Body walk.anim": {
+      "archivePath": "export/ExportedProject/Assets/AnimationClip/Body walk.anim",
+      "bytes": 214726,
+      "sha256": "e33c8601068b2031b870b130d15bad0a2748b36adc8399a33980bba675922865"
+    },
+    "source-reference/Original/CharacterExecution/Animation/Character animator.controller": {
+      "archivePath": "export/ExportedProject/Assets/AnimatorController/Character animator.controller",
+      "bytes": 13865,
+      "sha256": "d1ef99a73f2f600c09be9f099e6f88b10aff8328099621c45ce19a6c5635803b"
+    },
+    "source-reference/Original/CharacterExecution/Animation/One leg limp.anim": {
+      "archivePath": "export/ExportedProject/Assets/AnimationClip/One leg limp.anim",
+      "bytes": 74583,
+      "sha256": "341e8559e3cb46da864d8db1c87a0ae5234afc8351d9ad341d3a77fc26965fe9"
+    },
+    "source-reference/Original/CharacterExecution/BloodStreamGenerator.cs": {
+      "archivePath": "decompiled/BloodStreamGenerator.cs",
+      "bytes": 864,
+      "sha256": "cb954d0d435c39d11a170049544f80690263ec40b65175e72014b824612feba0"
+    },
+    "source-reference/Original/CharacterExecution/CharacterBody.cs": {
+      "archivePath": "decompiled/CharacterBody.cs",
+      "bytes": 62210,
+      "sha256": "da845b3a93bf0649023532169e02608f9f9d487170cf632d865b84ce6254255b"
+    },
+    "source-reference/Original/CharacterExecution/IKArmController.cs": {
+      "archivePath": "decompiled/IKArmController.cs",
+      "bytes": 12131,
+      "sha256": "29404c041dfd6012879b20f7d81d29cd2b005f838fa120193c68e8b6975325f5"
+    },
+    "source-reference/Original/CharacterExecution/IKArmSequencer.cs": {
+      "archivePath": "decompiled/IKArmSequencer.cs",
+      "bytes": 5398,
+      "sha256": "24e226940183ed7e8fd5b098ff799b1c8a933c87bcecb1977d2233f80563bbce"
+    },
+    "source-reference/Original/CharacterExecution/Limb.cs": {
+      "archivePath": "decompiled/Limb.cs",
+      "bytes": 25646,
+      "sha256": "cc601ab51ac7ab0e3d96e48e04ba0085a737e5fccc31efe6493fb4b885801071"
+    },
+    "source-reference/Original/CharacterExecution/LimbAttachment.cs": {
+      "archivePath": "decompiled/LimbAttachment.cs",
+      "bytes": 155,
+      "sha256": "7564bf19cc2bd977eed2fb37b7a03a104d96e1818f955e7936b7010435666d24"
+    },
+    "source-reference/Original/CharacterExecution/LimbMuscle.cs": {
+      "archivePath": "decompiled/LimbMuscle.cs",
+      "bytes": 4111,
+      "sha256": "d3c9037680897a003d93c45cd3b3f1063cecc6c966153659baefae12d56c3603"
+    },
+    "source-reference/Original/CharacterExecution/LimbPhysiology.cs": {
+      "archivePath": "decompiled/LimbPhysiology.cs",
+      "bytes": 5674,
+      "sha256": "2e074df69195c7dd85fcaf8e6e77cbd808d6aa2d1e8c022db6fad54db2224827"
+    },
+    "source-reference/Original/CharacterExecution/LimbVitalFunction.cs": {
+      "archivePath": "decompiled/LimbVitalFunction.cs",
+      "bytes": 658,
+      "sha256": "1e73da1bf9bf84c1b152c99c42c6b60e1fde64de9c9f1e745966549efff0ba54"
+    },
+    "source-reference/Original/CharacterExecution/Physiology.cs": {
+      "archivePath": "decompiled/Physiology.cs",
+      "bytes": 22485,
+      "sha256": "b51c6e503eb3267f11cfc980c43109fc7504dea8e8fb53e7b1bdaadd49bd30ca"
+    },
+    "source-reference/Original/CharacterExecution/VitalFunctions.cs": {
+      "archivePath": "decompiled/VitalFunctions.cs",
+      "bytes": 1395,
+      "sha256": "dc115a2a70dab7cd415dba4b9ada78d9aef3f8bc05c4107e061aa5d2a34c4202"
+    },
+    "source-reference/Original/CharacterExecution/Wound.cs": {
+      "archivePath": "decompiled/Wound.cs",
+      "bytes": 2014,
+      "sha256": "51000a4edfbeb3e2b549d8f541edeb25eaa5f966563aa894ceee2596abaaf148"
+    }
+  }
+}

@@ -50,6 +50,8 @@ namespace Crisis.Runtime.Weapons {
       rb.isKinematic=f.GetProperty("m_IsKinematic").GetInt32()!=0;
       string sourceId=id;
       rb.KinematicChanged=state=>commands.Add(new{type="kinematic",body=sourceId,value=state});
+      rb.GravityChanged=state=>commands.Add(new{type="gravity",body=sourceId,value=state});
+      rb.DragChanged=value=>commands.Add(new{type="drag",body=sourceId,value});
       rb.PhysicsForceSink=(force,point,mode)=>commands.Add(new {
        type="force",body=sourceId,force=Arr(force),position=Arr(point),mode=mode.ToString()});
       bodies[id]=rb;
