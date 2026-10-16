@@ -16,6 +16,6 @@ Local native engine, original sequence, original hand activation, M4 firing, emp
 
 Initial grip/chamber source `5c34a6eb404aaaba3887ef70fe2060cb177c7757` passed native, .NET 8 WASM, source/package and both-browser gameplay checks in Actions `38941300573`. Evidence artifact `12063218011`, ZIP SHA256 `721de90c38d1df4907a90d0fbb06b52356e3d094355a523f642beacb9762f523`. Chromium/WebKit aiming and reload screenshots were inspected; configured targets match rendered anchors and held magazine IK points match original hand grab points.
 
-Final depth-corrected source `7a6b8804e2212b20422f23b2343a96601bded3f0` is undergoing full verification in Actions `38941678900`. Do not substitute the earlier artifact for this version. New browser assertions also require 19 real source cutout materials (17 operator skins and two magazine faces), all depth-writing with the recovered alpha cutoff.
+Final depth-corrected source `7a6b8804e2212b20422f23b2343a96601bded3f0` passed full native/.NET8 WASM/Chromium/WebKit verification in Actions `38941678900` during wrap-up; final screenshots still require review before publication. Do not substitute the earlier artifact for this version. New browser assertions also require 19 real source cutout materials (17 operator skins and two magazine faces), all depth-writing with the recovered alpha cutoff.
 
 Physical iPhone Safari acceptance and native Unity shader/animation parity remain unverified. This focused correction does not complete the separate physical ArmController seven-step dependency closure.
