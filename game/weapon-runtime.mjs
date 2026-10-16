@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {loadSourceCutoutMaterials,sourceCutoutMaterial} from './source-cutout-materials.mjs';
 import { createOriginalImpactMeshRenderer } from './original-impact-mesh.mjs';
 import { sourceEffectAge } from './source-effect-clock.mjs';
 import { createOriginalWindowVisuals } from './original-window-visuals.mjs';
@@ -30,7 +31,7 @@ export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,part
  const magRoot=new THREE.Group();scene.add(magRoot);const magNodes=new Map();
  for(const n of data.magazineVisual.nodes){const g=new THREE.Group();g.position.fromArray(n.position);g.quaternion.fromArray(n.rotation);g.scale.fromArray(n.scale);magNodes.set(n.gameObjectFileID,g);}
  for(const n of data.magazineVisual.nodes){const g=magNodes.get(n.gameObjectFileID);(magNodes.get(n.parentGameObjectFileID)||magRoot).add(g);}
- for(const r of data.magazineVisual.renderers)new THREE.TextureLoader().loadAsync('./assets/weapon-runtime/M4-magazine/'+r.texture).then(t=>{t.colorSpace=THREE.SRGBColorSpace;const m=new THREE.MeshBasicMaterial({map:t,transparent:true,alphaTest:.015,side:THREE.DoubleSide,depthWrite:false});const mesh=new THREE.Mesh(new THREE.PlaneGeometry(1,1),m);mesh.renderOrder=3;magNodes.get(r.gameObjectFileID).add(mesh);});
+ for(const r of data.magazineVisual.renderers)new THREE.TextureLoader().loadAsync('./assets/weapon-runtime/M4-magazine/'+r.texture).then(t=>{t.colorSpace=THREE.SRGBColorSpace;const m=sourceCutoutMaterial(t,data.renderMaterials.magazine);const mesh=new THREE.Mesh(new THREE.PlaneGeometry(1,1),m);mesh.renderOrder=3;magNodes.get(r.gameObjectFileID).add(mesh);});
  const duration=clip.m_AnimationClipSettings.m_StopTime,active=[];
  let shotsReceived=0,sourceFramesApplied=0,firstFramesApplied=0,maxDrawable=0;
  function attachOriginalTexture(item,t) {
