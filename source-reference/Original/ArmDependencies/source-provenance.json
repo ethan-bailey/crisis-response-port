@@ -12,10 +12,10 @@
     "Hand": {
       "bytes": 799,
       "lines": 47,
-      "repositoryPath": "source-reference/Original/ArmDependencies/Hand.cs",
+      "repositoryPath": "runtime/Original/Animation/Hand.cs",
       "sha256": "d5e6b25be76a184dc6b117ae35127018b0cb65eccaa69db9f6d8922434e76537",
       "sourcePath": "Assets/Scripts/Assembly-CSharp/Hand.cs",
-      "status": "original_recovered_not_compiled"
+      "status": "selected_original_runtime_source"
     },
     "Limb": {
       "bytes": 25867,
@@ -42,7 +42,7 @@
       "status": "original_recovered_not_compiled"
     }
   },
-  "compiledOriginalCount": 0,
+  "compiledOriginalCount": 1,
   "controllerPlaybackImplemented": false,
   "engineTypesNotDeveloperScripts": [
     "UnityEngine.Joint"
