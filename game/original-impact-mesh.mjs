@@ -14,6 +14,7 @@ export function createOriginalImpactMeshRenderer(scene) {
   // Keep only the newest authoritative C# instance snapshot while the
   // recovered source mesh is still loading; never replay historical impacts.
   let pendingFrame = null;
+  let disposed = false;
 
   const loading = fetch(SOURCE_ASSET)
     .then(response => {
@@ -56,6 +57,11 @@ export function createOriginalImpactMeshRenderer(scene) {
         roughness: 1 - source.floats._Glossiness,
         side: THREE.DoubleSide
       });
+      if (disposed) {
+        geometry.dispose();
+        material.dispose();
+        return;
+      }
       resource = { geometry, material };
       if (pendingFrame !== null) {
         const frame = pendingFrame;
@@ -68,6 +74,7 @@ export function createOriginalImpactMeshRenderer(scene) {
     });
 
   function update(events) {
+    if (disposed) return;
     if (!resource) {
       pendingFrame = events.filter(event => event.type === 'impactMesh' &&
         event.value?.source === WOOD_EXIT_PREFAB);
@@ -106,6 +113,7 @@ export function createOriginalImpactMeshRenderer(scene) {
              originalVertices: resource ? 186 : 0, assetError: error };
   }
   function dispose() {
+    disposed = true;
     for (const mesh of visible.values()) scene.remove(mesh);
     visible.clear();
     pendingFrame = null;
