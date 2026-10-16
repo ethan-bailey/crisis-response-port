@@ -50,6 +50,48 @@ export class BrowserInput {
     this.listen(button, 'contextmenu', event => event.preventDefault());
   }
 
+
+  // Touch-only movement surface. Produces the EXISTING left/right source input
+  // actions; it adds no player movement or animation implementation.
+  bindMovementStick(surface, thumb, {deadZone = 0.22} = {}) {
+    let pointer = null;
+    const source = 'stick:movement';
+    const reset = () => {
+      pointer = null;
+      this.set('left', source, false);
+      this.set('right', source, false);
+      if (thumb) thumb.style.transform = '';
+      surface.classList.remove('active');
+    };
+    const move = event => {
+      if (pointer !== event.pointerId) return;
+      const rect = surface.getBoundingClientRect();
+      const radius = Math.max(1, rect.width / 2);
+      const dx = (event.clientX - (rect.left + rect.width / 2)) / radius;
+      const clamped = Math.max(-1, Math.min(1, dx));
+      this.set('left', source, clamped < -deadZone);
+      this.set('right', source, clamped > deadZone);
+      if (thumb) thumb.style.transform = `translateX(${clamped * radius * .48}px)`;
+      event.preventDefault();
+    };
+    this.listen(surface, 'pointerdown', event => {
+      if (pointer !== null || (event.pointerType === 'mouse' && event.button !== 0)) return;
+      pointer = event.pointerId;
+      surface.setPointerCapture?.(pointer);
+      surface.classList.add('active');
+      move(event);
+    });
+    this.listen(surface, 'pointermove', move);
+    for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+      this.listen(surface, type, event => {
+        if (event.pointerId !== pointer) return;
+        reset();
+      });
+    }
+    this.cleanup.push(reset);
+    this.listen(surface, 'contextmenu', event => event.preventDefault());
+  }
+
   bindKeyboard(target, bindings) {
     this.listen(target, 'keydown', event => {
       const action = bindings[event.code];
