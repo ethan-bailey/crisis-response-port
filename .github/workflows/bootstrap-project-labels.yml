@@ -1,0 +1,86 @@
+name: Initialize project issue and PR labels once
+on:
+  push:
+    branches: [develop/wasm]
+    paths:
+      - '.github/workflows/bootstrap-project-labels.yml'
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+jobs:
+  labels:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Require the private source project and create labels
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY" --jq '.private')" = "true"
+          existing="$(gh label list -R "$GITHUB_REPOSITORY" --limit 200 --json name --jq '.[].name')"
+          while IFS='|' read -r name color description; do
+            [ -n "$name" ] || continue
+            if ! printf '%s\n' "$existing" | grep -Fqx "$name"; then
+              gh label create "$name" -R "$GITHUB_REPOSITORY" --color "$color" --description "$description"
+            fi
+          done <<'LABELS'
+          type:feature|1D76DB|Source-backed gameplay or runtime capability
+          type:research|BFD4F2|Source inspection, native reference or feasibility evidence
+          type:maintenance|C5DEF5|Repository, CI, packaging and release maintenance
+          area:wasm|5319E7|Original C sharp and WebAssembly integration
+          area:animation|D4C5F9|Original IK, poses and animation playback
+          area:gameplay|B60205|Weapons, ballistics, damage, AI and missions
+          area:assets|E4E669|Original source, scene and asset recovery
+          area:graphics|FBCA04|Original shaders, rendering and particle effects
+          area:ui|C2E0C6|Original menus, HUD, settings and save flow
+          area:ci-release|0052CC|CI, private deployment and packaged release
+          area:ios|0E8A16|Actual iPhone Safari interaction and performance
+          area:unity|5319E7|Independent native Unity feasibility or reference
+          priority:P1|B60205|Next critical executable dependency or blocker
+          priority:P2|FBCA04|Important work after critical path
+          priority:P3|C5DEF5|Optional, noncritical backlog
+          status:blocked|D73A4A|Cannot proceed without specific verified source or prerequisite
+          status:reference|D4C5F9|Reference or evidence branch, not integrated gameplay
+          status:integrated|0E8A16|Source-integrated with tested scope; not full-game completion
+          status:superseded|BFD4F2|Historical PR preserved, continuation moved elsewhere
+          LABELS
+      - name: Label established issues and legacy pull requests
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          label_issue() {
+            local issue="$1" labels="$2"
+            jq -cn --arg labels "$labels" '{labels: ($labels | split(","))}' |
+              gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$issue/labels" --input - >/dev/null
+            printf 'Labeled #%s\n' "$issue"
+          }
+          while IFS='|' read -r issue labels; do
+            [ -n "$issue" ] || continue
+            label_issue "$issue" "$labels"
+          done <<'ISSUES'
+          1|type:research,area:wasm,priority:P2
+          2|type:research,area:wasm,priority:P2
+          3|type:feature,area:ios,priority:P2
+          4|type:research,area:wasm,priority:P2
+          5|type:research,area:assets,status:blocked,priority:P2
+          6|type:feature,area:gameplay,priority:P2
+          7|type:research,area:unity,status:reference
+          8|type:feature,area:gameplay,status:superseded
+          9|type:feature,area:wasm,status:superseded
+          10|type:research,area:graphics,status:blocked,priority:P2
+          11|type:feature,area:graphics,priority:P2
+          12|type:feature,area:gameplay,priority:P1
+          13|type:feature,area:ios,priority:P2
+          14|type:feature,area:assets,priority:P1
+          15|type:feature,area:gameplay,priority:P1
+          16|type:feature,area:ui,priority:P2
+          17|type:research,area:wasm,priority:P1
+          18|type:maintenance,area:ci-release,priority:P2
+          19|type:maintenance,area:ci-release,status:reference
+          20|type:research,area:assets,status:reference
+          21|type:feature,area:animation,status:integrated
+          22|type:feature,area:animation,priority:P1
+          ISSUES
