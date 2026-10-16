@@ -5,6 +5,10 @@ using UnityEngine;
 using UnityEngine.Events;
 using Crisis.Runtime.Weapons;
 
+namespace Crisis.Runtime.FullSource;
+
+// The complete original source is staged in its own namespace until real
+// original dependencies replace the older partial browser host. No stubs.
 public partial class CharacterBody : MonoBehaviour
 {
 	public enum Team
