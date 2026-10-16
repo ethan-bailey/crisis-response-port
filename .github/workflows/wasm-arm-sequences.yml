@@ -1,4 +1,4 @@
-name: Verify combined arm controller, grip and chamber-inclusive magazine iPhone build
+name: Verify combined iPhone gameplay with fully loaded source materials
 
 # Explicit full milestone: a feature/fix workflow YAML change triggers ONE test.
 # Merging reviewed code into develop/wasm must not duplicate the expensive build.
