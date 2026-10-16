@@ -1,3 +1,11 @@
+## Active arm-physics continuation — 2026-10-16 (PR #30)
+
+Step 1 of the requested seven-step plan is now recovered from the SHA256-pinned original ZIP: Operator and Occupant, four arms, 12 limb rigidbodies/joints, 12 hand-mode references resolving to eight distinct authored GameObjects, parent transforms, colliders, external asset hashes and original physics/time settings. Do not invent three distinct meshes per hand: the original prefab aliases some hand modes. Offline data: `source-reference/Original/ArmPhysics/prefabs.json`; reproduce with `scripts/recover_original_arm_physics.py` and verify with `scripts/verify_original_arm_physics.py --archive <pinned ZIP>`.
+
+Step 2 has an **isolated engine prerequisite**, `game/arm-physics-kernel.mjs`: real pinned PhysX rigidbody force-at-position and revolute joints. Local Chromium passed 22 numerical contracts. It is **not loaded by the game** and **does not implement Unity hinge springs**, source capsule/hierarchy import, original controller execution or native Unity parity. `setSpring` deliberately throws. The focused milestone workflow preserves exact-SHA Chromium/WebKit evidence; this is not a full .NET WASM/browser game test. See [current seven-step status and next dependencies](docs/ARM_PHYSICS_CLOSURE_CHECKPOINT_2026-10-16.md).
+
+**Steps 3–7 remain unfinished:** real source dependency closure → unchanged original ArmController execution → original IK/sequencer playback → full game/WASM verification → matching deliberate iPhone deploy. Do not deploy or claim the missing visible hand fixed from the engine fixture. Existing preview remains the last muzzle-flash build documented below.
+
 # Next agent — active original-game WASM development handoff
 
 **Updated 2026-10-16.** This is the **sole current execution handoff**. [Start with the contributor guide](CONTRIBUTING.md), [branching policy](docs/BRANCHING_AND_COLLABORATION.md) and [project workspace](WORKSPACE.md). The previous stacked-PR instructions are preserved as [historical evidence](docs/history/NEXT_AGENT_BEFORE_DEVELOP_WASM_REORGANIZATION_2026-10-16.md), not live work orders.
@@ -109,3 +117,4 @@ Original arm/character and weapons → original AI, inventory, doors, physics/ph
 Shared integration branches are append-only. Revert only the affected reviewed commit(s) with new commits after examining downstream dependencies. Preserve the private original archive and earlier CI artifacts; never force reset, change repository visibility or claim WebKit CI is physical iPhone Safari. Each PR must list explicit original source SHA/GUID, input SHA, verification evidence, gaps and rollback files.
 
 **Session boundary:** Progress is made during an active agent/Work session only; do not imply code runs automatically after the session ends.
+
