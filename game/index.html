@@ -241,8 +241,21 @@ function updateAim(e){
 }
 input.bindAim(renderer.domElement, updateAim,()=>{tapPending++;});
 
-let last=null,frameBusy=false;
-async function frame(now){requestAnimationFrame(frame);if(frameBusy)return;const elapsed=last===null?0:(now-last)/1000;const dt=Math.min(elapsed,.05);last=now;if(loaded){frameBusy=true;try{
+let last=null,frameBusy=false,lastBusyRender=-Infinity;
+async function frame(now){
+ requestAnimationFrame(frame);
+ if(frameBusy){
+  // Original M4 sprite flash/impact meshes already carry the latest C# pose.
+  // The old scheduler discarded EVERY rAF while async .NET was processing,
+  // often dropping the only visible frame of a short original muzzle flash.
+  // Repaint the unchanged scene at up to 30fps without advancing any source
+  // physics, Unity Time.time, gameplay or recovered animation frame.
+  if(loaded && now-lastBusyRender>=33){
+   renderer.render(scene,camera);
+   lastBusyRender=now;
+  }
+  return;
+ }const elapsed=last===null?0:(now-last)/1000;const dt=Math.min(elapsed,.05);last=now;if(loaded){frameBusy=true;try{
  if(tapFrame){rawActions.fire=false;tapFrame=false;}else if(tapPending>0){tapPending--;rawActions.fire=true;tapFrame=true;}else rawActions.fire=input.pressed('fire');
  rawActions.magazine=reloadPending||input.pressed("magazine");reloadPending=false;
  originalInputState=JSON.parse(await runtimeCall("Tick",elapsed,JSON.stringify(rawActions)));
