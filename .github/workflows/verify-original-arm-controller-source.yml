@@ -1,0 +1,41 @@
+name: Verify original arm-controller source prerequisites (native only)
+on:
+  push:
+    branches: [feature/22-arm-controller]
+    paths: ['.github/workflows/verify-original-arm-controller-source.yml']
+permissions:
+  contents: read
+jobs:
+  check-original-source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Require private recovery project
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: test "$(gh api repos/$GITHUB_REPOSITORY --jq '.private')" = true
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: tools/wasm-compile/global.json
+      - name: Verify five original developer C# source SHA and executable prerequisite classification
+        run: |
+          set -euo pipefail
+          mkdir -p work/arm-prerequisites
+          python3 scripts/verify_original_arm_controller_references.py | tee work/arm-prerequisites/verified-original-controller-references.json
+          python3 scripts/verify_original_arm_sequences.py | tee work/arm-prerequisites/verified-original-arm-prefabs.json
+      - name: Compile selected actual original developer source and run native contracts
+        run: |
+          set -euo pipefail
+          dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj | tee work/arm-prerequisites/native-arm-contracts.jsonl
+          grep -q '"originalClasses":6' work/arm-prerequisites/native-arm-contracts.jsonl
+      - name: Keep private source and compiler evidence, no public site
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: private-original-arm-controller-prerequisites-evidence
+          path: work/arm-prerequisites/
+          retention-days: 14
+          if-no-files-found: warn
