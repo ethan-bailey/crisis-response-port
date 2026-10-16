@@ -1,0 +1,50 @@
+name: Recover original CharacterBody from pinned private artifact
+on:
+  push:
+    branches: [feature/original-character-sequencer-next]
+    paths: [.github/workflows/recover-original-character-body.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Recover unchanged C# source with immutable artifact digest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/cr-original
+          gh api -H 'Accept: application/vnd.github+json' \
+            "/repos/${GITHUB_REPOSITORY}/actions/artifacts/11903811738/zip" > /tmp/cr-original/recovery.zip
+          echo 'cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d  /tmp/cr-original/recovery.zip' | sha256sum -c -
+          python3 - <<'PY'
+          import zipfile, pathlib, hashlib
+          archive = zipfile.ZipFile('/tmp/cr-original/recovery.zip')
+          source = 'export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBody.cs'
+          data = archive.read(source)
+          digest = hashlib.sha256(data).hexdigest()
+          expected = '76301d45e6e94556d1a902f0d37f5f97111bc2efb89f36de7ed9acd935b55742'
+          assert digest == expected, (digest, expected)
+          target = pathlib.Path('source-reference/Original/CharacterBody.cs')
+          target.parent.mkdir(parents=True, exist_ok=True)
+          target.write_bytes(data)
+          print('Recovered verbatim',target,'bytes',len(data),'SHA256',digest)
+          PY
+      - name: Preserve exact original reference without modifying executable gameplay
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add source-reference/Original/CharacterBody.cs
+          git diff --cached --check
+          if ! git diff --cached --quiet; then
+            git commit -m "Recover complete original CharacterBody source verbatim (SHA256 verified)"
+            git push origin HEAD:feature/original-character-sequencer-next
+          fi
