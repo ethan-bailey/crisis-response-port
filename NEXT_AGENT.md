@@ -1,3 +1,33 @@
+## Handoff: grip correction and chamber HUD ready; finish publication (2026-10-16)
+
+**Latest user instruction:** stop testing every small change; test at major milestones. Wrap up this agent's work and pass it to the next agent. Do not initiate another full build merely for these handoff/docs changes.
+
+**Active draft [PR #33](https://github.com/ethan-bailey/crisis-response-port/pull/33)**, branch `fix/33-configured-grips-chamber`, base `develop/wasm`. Latest executable source `7a6b8804e2212b20422f23b2343a96601bded3f0`. User reported the hand hovering below the M4 and magazine crossing wrist/forearm, then requested a better chamber-round display.
+
+Changes:
+- Apply original WeaponBase.Initialize's configured grip offsets in C# before original IK initialization. Browser already used those offsets; C# had old prefab anchors. Source right grip (0.26,0.005), left (0.5,0.085).
+- Recover original operator and magazine alpha/depth settings from source materials. 17 limb skins and two magazine faces now use original cutoff 0.5 and depth writes instead of late transparent overlays. Original custom shader shading parity is still false.
+- Replace tiny upright chamber mark with horizontal cartridge in labeled chamber slot above magazine. It stays outside magazine drag/reload transform and derives visibility only from original chamberLive.
+- Browser telemetry/checks include configured grip equality, magazine IK-to-grab-point equality and 19 depth-writing source cutouts. Details/source extractor: [grip/contact notes](docs/GRIP_CONTACT_AND_CHAMBER_2026-10-16.md).
+
+Verified initial grip/chamber source `5c34a6eb404aaaba3887ef70fe2060cb177c7757`: [full Actions #38941300573](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38941300573) PASS, native + .NET8 WASM + Chromium/WebKit gameplay. Both browsers measured zero settled target/grip error; held magazine attachment check passed. Aim/reload screenshots inspected. Evidence artifact `12063218011`, ZIP SHA256 `721de90c38d1df4907a90d0fbb06b52356e3d094355a523f642beacb9762f523`; site artifact `12063906239`. Do NOT publish this superseded package.
+
+**Final depth-corrected build already running:** [Actions #38941678900](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38941678900), exact source `7a6b8804e2212b20422f23b2343a96601bded3f0`. At handoff it had passed native/source/package/WASM stages and was executing Chromium/WebKit gameplay. Inspect its final status and existing evidence; do not rebuild if it succeeds. Native contracts pass locally, depth metadata reproduces byte for byte from source, JS syntax checked. Draft remains unmerged and new changes are not deployed yet.
+
+Next concrete actions:
+1. Inspect final run status and its screenshots; if failed, address only actual failures. Do not claim final pass until checked.
+2. Record exact final evidence; mark PR ready and merge with ordinary merge after successful checks. Docs-only commits need no full rebuild.
+3. Stage the COMPLETE tested site artifact from final run through existing manual verified preview workflow, not a rebuild. The main workflow stays manual-only. Main `b71eb88fbb5b9c006241198d703485ee7c18effd` includes it.
+4. An empty staging-request branch `maintenance/request-grip-chamber-preview` exists from main. No request commit was pushed, so it has not staged or deployed anything. Reuse existing workflow with a branch-scoped temporary push request (as prior documented staging), pinned run38941678900/source7a6b..., then restore request branch workflow to manual-only. Source workflow validates successful exact SHA and every package hash before staging `preview/wasm-current-iphone`.
+5. Deploy verified snapshot explicitly to existing Vercel project `prj_EgsDBXSKhvina2fDecbdMf6ylTKE`, through connected create_deployment API default context; explicit team selector returns403. Preserve protection and git deploymentEnabled:false. No CLI fallback: prior CLI action was rejected for incidental telemetry, and connected API works.
+6. Update this handoff with deployed SHA/URL. Physical iPhone acceptance is still unverified.
+
+**Currently published old build is unchanged:** stable protected preview https://crisis-response-port-git-preview-w-6bd30d-ethanbaileymarsh-8332.vercel.app/game/ ; snapshot `06f19493febad1631ef59b2939eab0e1ef66d12a`, deployment `dpl_7Uy4wahnPynB4hTc5TDQkxFdDE7C`, source `c6c5dab6af0a3e80bb83e682a86aa373a640d2c0`. This is the version user reported; do not say latest fix is live.
+
+**Broader original seven-step physical-arm work remains unfinished.** Source data recovered; isolated PhysX force/hinge spring/capsule prerequisites pass31 contracts per browser at source `b25a96a071abcd03ebba680516ad5dcc0270764c`, run38939841563, merged PR32 `bef6a0dea43a5f9813f6ed822015dcf1648d2ba0`. Next source rig/material/layer/frame import and real physical ArmController dependency closure. No live dynamic ArmController or complete IKArmController/sequencer callback playback. Empty `feature/26-source-physics-rig` branch exists from PR32 merge; no code/PR there yet. Prior authorization remains autonomous work, but this agent is wrapping at user's request.
+
+---
+
 **Exact-SHA engine evidence:** [Actions #38939841563](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38939841563) SUCCESS at `b25a96a071abcd03ebba680516ad5dcc0270764c`, **31 contracts in each of Chromium and WebKit**. Private artifact `12061949554`, expires 2026-11-15, ZIP SHA256 `ab6c82d7b429c16da811cc222d6f0eb2116185a32e33fa3a278a762680080e62`. [Fast source/package #38940060276](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38940060276) PASS. No original physical ArmController or native Unity parity claimed.
 
 ## Current published game — original hands restored and source IK Update running (2026-10-16)
