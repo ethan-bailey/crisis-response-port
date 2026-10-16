@@ -1,6 +1,16 @@
 # Protected manual iPhone WASM preview — October 16, 2026
 
-## Latest M4 HUD device preview (supersedes earlier previews)
+## Latest verified M4 muzzle-flash fix preview — October 16, 2026
+
+**Open the stable iPhone link:** https://crisis-response-port-git-preview-w-6bd30d-ethanbaileymarsh-8332.vercel.app/game/
+
+Updated preview deployment **`dpl_BJzZ2TKbvdZCTHH7ai9CUvXPjV8S`**, Vercel **READY**, stable alias verified to map to that ID, snapshot `preview/wasm-current-iphone` SHA `422d05c0c0c8a9b151ec30b5e839ed175f8e5518`. This supersedes the M4 magazine HUD/chamber-only build below. Source gameplay from [PR #29](https://github.com/ethan-bailey/crisis-response-port/pull/29), merge SHA `4eb209c3aa3d496af92b57e2a4e560bc5a40258c`; original M4 muzzle flash atlas **visually restored** in Chromium and WebKit by source-safe immediate first frame and 30fps renderer-only repaint during async C#. Original Unity animation clip and source projectiles are unchanged.
+
+**Verified tests:** [Chromium/WebKit localhost screenshot/shot/collision run #38929448423](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38929448423) SUCCESS; private browser evidence artifact `12057399914`, 5 firing flash screenshots per browser manually inspected. [Complete compiled original SDK8 C# WASM/PhysX/package/browser run #38930818476](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38930818476) SUCCESS 24 steps, test input SHA `f5f9431a09a305cf9a6597047a081c63b79277ba`, private site artifact `12058667719`, evidence `12059126321`. [Manual staging #38931539116](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38931539116) SUCCESS, full private preview Git tree contains **all 726 manifest files** including original Mission01 scene and generated pinned PhysX backend. Deployed once, Git auto deploy off; Vercel protection may still require owner sign-in. **Vercel READY is not physical iPhone evidence**, so ask the user to try firing and note whether the original visual flash is clear and the M4 magazine control remains accessible.
+
+**Visual impact limitation:** original projectile material contacts occur; native impact ParticleSystem shaders/modules remain unrendered (`renderedParticles=0`), tracked by [issue #11](https://github.com/ethan-bailey/crisis-response-port/issues/11). Do not replace impact gameplay or invent particle visuals just to show hit effects.
+
+## Historical M4 HUD device preview (superseded)
 
 **Use this stable preview alias:** https://crisis-response-port-git-preview-w-6bd30d-ethanbaileymarsh-8332.vercel.app/game/
 
