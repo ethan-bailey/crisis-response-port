@@ -30,7 +30,7 @@ independent Unity branch, main and hosting stay unchanged.
   Windows registry, legacy networking, threading, filesystem namespaces,
   dynamic Resources loads, scene transitions, particles and navigation. These
   can match comments/strings; confirm code before implementing adapters.
-- `scripts/audit_wasm_source_closure_test.py`: nine synthetic reference/provenance
+- `scripts/audit_wasm_source_closure_test.py`: ten synthetic reference/provenance
   tests including cycles, all-scene enumeration, read-only operation, ambiguous
   GUIDs, missing source assets, dummy shader/binary graph boundaries, original
   hash drift, path escape and UTF-8 BOM handling. Fixtures are not game systems.
@@ -57,7 +57,7 @@ python3 -m unittest discover -s scripts -p audit_wasm_source_closure_test.py -v
 python3 scripts/audit_wasm_source_closure.py <recovered-ExportedProject> --repo . --output <new-audit-directory>
 ```
 
-Local targeted tests: **9/9 PASS**. Cloud original-data evidence and next
+Local targeted tests: **10/10 PASS**. Cloud original-data evidence and next
 bounded implementation priorities will be appended after the audit finishes.
 `source-closure.json` is the complete machine-readable graph/hash inventory;
 `source-closure.md` is its compact summary. The CLI fails on stale/missing raw
@@ -70,3 +70,22 @@ workflow. Selectively remove those additions in new commits after checking
 later dependencies; never reset shared branches or modify original recovery.
 The verified SDK-8 compiled archive and original private live Site v8 remain
 separate checkpoints. No new playable deployment is claimed by this source audit.
+
+## First preserved-original run and parser correction
+
+First metadata run `38889154540`, SHA `ba1f5d11806f99596b4811eb6884297a5f067ccb`,
+failed closed on 11 weapon source claims. Evidence artifact `12040548645`.
+The original files were not damaged: that manifest stores **bare filenames**,
+unlike the other manifests' project-relative paths. The initial audit wrongly
+looked for them at project root. It still inventoried all six scenes and
+verified the other 149 raw source claims. The correction resolves a bare name
+only when unique among recovered C# files, then checks the exact SHA256; an
+ambiguous name still fails. A new regression covers both unique and ambiguous
+names. No expected original hash was changed.
+
+The exact 101,082,158-byte original archive was also brought into this workspace
+and SHA256 verified against the preserved release before extraction. All 11
+weapon source claims were independently matched locally to unique original
+files and verified. Recovered source count is **1,333 Assembly-CSharp files**,
+**86 Assembly-CSharp-firstpass files** and **one AssetRipper patch**, not a
+claim that all 1,420 are the game's own code or are compiled into WASM.

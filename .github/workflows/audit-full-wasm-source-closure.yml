@@ -1,4 +1,5 @@
 name: Inventory all original scenes and WASM source dependencies
+# Audit revision 2: preserve bare-filename source provenance without guessing.
 on:
   push:
     branches: [codex/full-source-closure-audit]
@@ -7,6 +8,9 @@ on:
 
 permissions:
   contents: read
+defaults:
+  run:
+    shell: bash
 concurrency:
   group: original-source-closure-${{ github.ref }}
   cancel-in-progress: false

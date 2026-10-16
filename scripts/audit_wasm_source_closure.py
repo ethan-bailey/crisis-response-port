@@ -186,9 +186,21 @@ def audit(project, repo):
         for relative, expected in sorted(claims.items()):
             if not isinstance(expected, str) or not SHA.fullmatch(expected):
                 raise ValueError(f"Malformed source hash in {name}: {relative}")
+            declared = relative
+            # The weapon extractor records bare source filenames, whereas the
+            # presentation/ballistics manifests record project-relative paths.
+            # Resolve names only when unique; never select by a guessed class.
+            if PurePosixPath(relative).name == relative:
+                candidates = by_name.get(relative, [])
+                if len(candidates) != 1:
+                    source_claims.append({"manifest": name, "source": relative,
+                        "status": "ambiguousOrMissingSourceName", "expectedSha256": expected})
+                    continue
+                relative = candidates[0]
             source = checked_path(project, relative)
             actual = sha(source) if source.is_file() else None
-            source_claims.append({"manifest": name, "source": relative, "expectedSha256": expected,
+            source_claims.append({"manifest": name, "declaredSource": declared,
+                                  "source": relative, "expectedSha256": expected,
                                   "actualSha256": actual,
                                   "status": "verified" if actual == expected else "sourceHashMismatch"})
 
@@ -213,6 +225,8 @@ def audit(project, repo):
         "summary": {"scenes": len(scenes), "indexedGuids": len(index),
                     "ambiguousGuidCount": sum(len(v) != 1 for v in index.values()),
                     "recoveredCSharpFiles": len(recovered_scripts),
+                    "recoveredCSharpByAssembly": dict(sorted(collections.Counter(
+                        PurePosixPath(x["path"]).parts[2] for x in recovered_scripts).items())),
                     "selectedOriginalCompileFiles": sum(x["group"] == "Original" for x in compiled),
                     "engineCompileFiles": sum(x["group"] == "Engine" for x in compiled),
                     "sourceHashClaims": len(source_claims),

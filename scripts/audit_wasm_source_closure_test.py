@@ -119,6 +119,19 @@ class SourceClosureTests(unittest.TestCase):
                          {"filesystemNamespace", "dynamicResources"})
         self.assertFalse(result["scope"]["dynamicDependenciesResolved"])
 
+    def test_weapon_manifest_bare_source_names_resolve_only_when_unique(self):
+        source = self.project / "Assets/Scripts/Assembly-CSharp/Example.cs"
+        self.write(self.repo / "game/assets/weapon-runtime.json.gz", __import__("gzip").compress(
+            json.dumps({"sourceHashes": {"Example.cs": hashlib.sha256(source.read_bytes()).hexdigest()}}).encode()))
+        result = audit(self.project, self.repo)
+        self.assertEqual(result["summary"]["sourceHashFailures"], 0)
+        self.assertEqual(result["sourceHashClaims"][0]["declaredSource"], "Example.cs")
+        self.assertEqual(result["sourceHashClaims"][0]["source"], "Assets/Scripts/Assembly-CSharp/Example.cs")
+        self.write(self.project / "Assets/Scripts/Other/Example.cs", "different original class")
+        result = audit(self.project, self.repo)
+        self.assertEqual(result["summary"]["sourceHashFailures"], 2)
+        self.assertTrue(all(x["status"] == "ambiguousOrMissingSourceName" for x in result["sourceHashClaims"]))
+
 
 if __name__ == "__main__":
     unittest.main()
