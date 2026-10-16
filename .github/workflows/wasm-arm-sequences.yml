@@ -1,6 +1,6 @@
 name: Audit milestone original WASM baseline verification
 
-# One full source injury, PhysX-ragdoll, recovered AnimatorController and IK frame execution milestone.
+# Full verified checkpoint for live CharacterBody physiological tick plus original LimbMuscle source joints.
 # Merging reviewed code into develop/wasm must not duplicate the expensive build.
 # No automatic builds on source/doc edits, and workflow_dispatch remains available.
 on:
