@@ -1,4 +1,4 @@
-name: Verify iPhone circular joystick source movement
+name: Verify iPhone circular joystick and source sprint action
 on:
   push:
     branches: [feature/iphone-radial-joystick-icon-controls]
