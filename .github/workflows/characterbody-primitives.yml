@@ -1,4 +1,4 @@
-name: Validate CharacterBody engine dependency primitives
+name: Validate original character physics animation physiology primitives
 on:
   push:
     branches: [feature/characterbody-dependency-primitives]
