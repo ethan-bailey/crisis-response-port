@@ -1,0 +1,34 @@
+name: Verify iPhone circular joystick and source sprint action
+on:
+  push:
+    branches: [feature/iphone-radial-joystick-icon-controls]
+    paths: [.github/workflows/iphone-joystick-test.yml]
+permissions: {contents: read}
+jobs:
+  focused-input:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run source-backed browser and joystick contracts
+        run: |
+          node --check game/browser-input.mjs
+          node --test scripts/browser_input_test.mjs scripts/animation_pose_test.mjs scripts/aim_direction_test.mjs
+      - name: Verify iPhone layout icon/sprint contract
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          h=Path('game/index.html').read_text()
+          assert 'id="movementStick"' in h
+          assert 'id="sprint"' not in h
+          assert 'class="action-icon" data-action="kneel"' in h
+          assert 'class="action-icon" data-action="stand"' in h
+          assert 'class="action-icon" data-action="fire"' in h
+          assert 'input.movementProfile(' in h
+          assert 'StepBodyMovement' in h
+          assert 'source-character-animator.mjs' in h
+          print('joystick UI / source movement integration: pass')
+          PY
