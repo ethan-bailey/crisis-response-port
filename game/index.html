@@ -61,7 +61,7 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 <div id="hud"><div id="title">Crisis Response · incomplete port</div><div id="status">Loading recovered scene and original Operator prefab…</div><div id="position"></div><div id="weaponStatus">Loading original weapons…</div></div>
 <div id="help">A/D · Shift · S/W · drag or tap to aim · tap same spot to fire · <a href="../runtime-web/">Runtime checks</a></div>
 <div id="error"></div><div id="rotateNotice">Rotate your phone to landscape to view the port prototype.</div>
-<div id="controls"><div class="cluster"><div id="movementStick" role="group" aria-label="Slide left or right to move; release to stop"><span class="stick-thumb" aria-hidden="true"></span></div></div><div class="cluster"><button id="magazineTouch" type="button" aria-label="M4 magazine ammunition unavailable"><span class="mag-body"><img class="mag-image" data-mag-image alt="" draggable="false"><span class="mag-window" data-mag-rounds aria-hidden="true"></span><span class="mag-count" data-mag-count aria-hidden="true">–</span></span></button><button id="kneel" data-action="kneel" aria-label="Kneel">KNEEL</button><button id="stand" data-action="stand" aria-label="Stand">STAND</button><button id="sprint" data-action="sprint" aria-label="Sprint">SPRINT</button><button id="fire" data-action="fire" aria-label="Hold to fire">FIRE</button><button id="swap" disabled aria-label="Weapon switching is not implemented">SWAP · PENDING</button></div></div>
+<div id="controls"><div class="cluster"><div id="movementStick" role="group" aria-label="Slide left or right to move; farther from center moves faster; release to stop"><span class="stick-thumb" aria-hidden="true"></span></div></div><div class="cluster"><button id="magazineTouch" type="button" aria-label="M4 magazine ammunition unavailable"><span class="mag-body"><img class="mag-image" data-mag-image alt="" draggable="false"><span class="mag-window" data-mag-rounds aria-hidden="true"></span><span class="mag-count" data-mag-count aria-hidden="true">–</span></span></button><button id="kneel" data-action="kneel" aria-label="Kneel">KNEEL</button><button id="stand" data-action="stand" aria-label="Stand">STAND</button><button id="sprint" data-action="sprint" aria-label="Sprint">SPRINT</button><button id="fire" data-action="fire" aria-label="Hold to fire">FIRE</button><button id="swap" disabled aria-label="Weapon switching is not implemented">SWAP · PENDING</button></div></div>
 <script type="module">
 import * as THREE from "three";
 import { loadSourceCutoutMaterials, sourceCutoutMaterial } from "./source-cutout-materials.mjs";
@@ -292,6 +292,10 @@ async function frame(now){
    const crippled=false; // The recovered runtime has not ported physiology/crippling.
    let targetSpeed=contactPhysics.data.character.movement.walkSpeed; // Original Operator.prefab
    if(keys.sprint&&!movingAgainstFacing&&!crippled)targetSpeed=contactPhysics.data.character.movement.sprintSpeed;
+   // Owner-approved analog enhancement: scale only the target speed by thumb travel.
+   // Keep the original acceleration law, PhysX forces, friction and sprint limit.
+   // Digital keyboard and non-stick actions continue at full speed.
+   targetSpeed*=input.movementMagnitude(moveDir);
    const speed=Math.abs(velocity);
    if(!(speed>targetSpeed)){
     const speedDifference=targetSpeed-speed;
