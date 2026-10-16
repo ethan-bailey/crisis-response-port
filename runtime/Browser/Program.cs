@@ -26,6 +26,23 @@ public static class RuntimeBridge {
     [JSInvokable] public static string InitializePresentation(string json){presentation=new(json);return "ready";}
     [JSInvokable] public static string SolvePresentationArms(string json)=>Crisis.Runtime.Presentation.PresentationHost.SolveArms(json);
     [JSInvokable] public static string StepPresentation(string json){if(weapons!=null)presentation.SetWeaponState(weapons.Kick,weapons.Climb);return presentation.Step(json);}
+    // Original CharacterBody.Move / FixedUpdate are executed here with the live
+    // PhysX velocity; the browser applies the returned source acceleration.
+    static readonly Crisis.Runtime.Weapons.CharacterBody movementSource = new();
+    [JSInvokable] public static string StepBodyMovement(string json){
+        using var doc=JsonDocument.Parse(json);
+        var p=doc.RootElement;
+        float Number(string key)=>p.GetProperty(key).GetSingle();
+        bool Flag(string key)=>p.GetProperty(key).GetBoolean();
+        float dir=Number("direction");
+        movementSource.Direction=Number("facing");
+        movementSource.Move(dir);
+        var result=movementSource.ExecuteSourceMovement(Number("velocity"),Number("step"),
+            Number("walkSpeed"),Number("sprintSpeed"),Number("analogMagnitude"),
+            Flag("sprint"),Flag("crippled"),Flag("operator"),Flag("noPlayerLimp"),
+            Flag("precision"));
+        return JsonSerializer.Serialize(result);
+    }
     [JSInvokable] public static string Verify()=>RuntimeContracts.Run();
     [JSInvokable] public static string ResetInput(){input=new OriginalInputHost(new RuntimeWorld());return JsonSerializer.Serialize(input.Snapshot());}
     [JSInvokable] public static string Tick(float seconds,string states){
