@@ -247,11 +247,11 @@ def audit(project, repo):
 def markdown(report):
     lines = ["# Original-source compile dependency inventory", "",
              "Static inventory only; no original behavior, Unity import or C# compilation is performed.", "",
-             "| Scene | Reached assets | Unresolved refs | Built-in refs | Opaque serialized assets | Dummy shaders |",
-             "| --- | ---: | ---: | ---: | ---: | ---: |"]
+             "| Scene | Reached assets | Unresolved refs | Built-in refs | Identified assembly refs | Opaque serialized assets | Dummy shaders |",
+             "| --- | ---: | ---: | ---: | ---: | ---: | ---: |"]
     for scene in report["scenes"]:
-        lines.append("| `" + scene["scene"] + "` | " + " | ".join(str(len(scene[k])) for k in
-            ("reachableAssets", "unresolvedReferences", "unityBuiltinReferences", "opaqueSerializedAssets", "dummyShaders")) + " |")
+        lines.append("| `" + scene["scene"] + "` | " + " | ".join(str(len(scene.get(k, []))) for k in
+            ("reachableAssets", "unresolvedReferences", "unityBuiltinReferences", "originalAssemblyReferences", "opaqueSerializedAssets", "dummyShaders")) + " |")
     lines += ["", "## Source selection", ""]
     for name, value in report["summary"].items():
         lines.append(f"- {name}: {value}")
@@ -265,6 +265,13 @@ def markdown(report):
     for kind, count in sorted(collections.Counter(x["kind"] for x in report["lexicalApiCandidates"]).items()):
         lines.append(f"- {kind}: {count}")
     lines += ["", "Candidates may include comments/strings; inspect original source before implementing anything.", ""]
+    if report.get("originalAssemblyBindings"):
+        lines += ["## Identified original UI assembly types", "",
+                  "Type identity only. These UI components are not implemented or executed in the WASM runtime.", "",
+                  "| Original fileID | Original assembly type |", "| ---: | --- |"]
+        for file_id, item in sorted(report["originalAssemblyBindings"]["bindings"].items(), key=lambda item: int(item[0])):
+            lines.append(f"| {file_id} | `{item['fullName']}` |")
+        lines.append("")
     return "\n".join(lines)
 
 
@@ -273,11 +280,19 @@ def main():
     parser.add_argument("project", type=Path)
     parser.add_argument("--repo", type=Path, default=Path("."))
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--recovery-archive", type=Path,
+                        help="Verify exact original archive and identify preserved UI assembly types")
     args = parser.parse_args()
     report = audit(args.project, args.repo)
+    if args.recovery_archive:
+        from original_ui_bindings import identify_ui, annotate_closure
+        report = annotate_closure(report, identify_ui(args.recovery_archive, report))
     args.output.mkdir(parents=True, exist_ok=True)
     (args.output / "source-closure.json").write_text(json.dumps(report, sort_keys=True, indent=2) + "\n")
     (args.output / "source-closure.md").write_text(markdown(report))
+    if report.get("originalAssemblyBindings"):
+        (args.output / "original-ui-bindings.json").write_text(
+            json.dumps(report["originalAssemblyBindings"], sort_keys=True, indent=2) + "\n")
     print(json.dumps(report["summary"], sort_keys=True))
     if report["summary"]["sourceHashFailures"]:
         raise SystemExit("Original source hash mismatch: see private audit report; no original asset changed")

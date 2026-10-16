@@ -1,5 +1,7 @@
 # Original source closure continuation — 2026-10-16
 
+Latest continuation: [original UI binding handoff](ORIGINAL_UI_BINDINGS_HANDOFF_2026-10-16.md). All 24 UI component IDs are now identified from the original DLL; runtime behavior remains unimplemented. The report below records the earlier raw inventory checkpoint.
+
 ## Why this step
 
 The existing selected-source WASM slice compiles: exact SDK 8 checkpoint

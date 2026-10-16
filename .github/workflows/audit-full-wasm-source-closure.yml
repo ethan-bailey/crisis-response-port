@@ -1,5 +1,5 @@
 name: Inventory all original scenes and WASM source dependencies
-# Audit revision 2: preserve bare-filename source provenance without guessing.
+# Audit revision 3: identify UI component types from the exact original DLL.
 on:
   push:
     branches: [codex/full-source-closure-audit]
@@ -29,6 +29,7 @@ jobs:
         run: |
           mkdir -p work/source-closure
           python3 -m unittest discover -s scripts -p audit_wasm_source_closure_test.py -v 2>&1 | tee work/source-closure/tests.txt
+          python3 -m unittest discover -s scripts -p original_ui_bindings_test.py -v 2>&1 | tee work/source-closure/ui-tests.txt
       - name: Restore exact immutable original archive read-only
         env:
           GH_TOKEN: ${{ github.token }}
@@ -40,7 +41,7 @@ jobs:
           git rev-parse HEAD > work/source-closure/input-commit.txt
       - name: Inventory all recovered scenes and verify existing source hash claims
         run: |
-          python3 scripts/audit_wasm_source_closure.py work/original-recovery/export/ExportedProject --output work/source-closure | tee work/source-closure/summary.json
+          python3 scripts/audit_wasm_source_closure.py work/original-recovery/export/ExportedProject --recovery-archive work/original-recovery/crisis-response-recovery-direct-v3-1.zip --output work/source-closure | tee work/source-closure/summary.json
           python3 - <<'PY'
           import json
           data=json.load(open('work/source-closure/source-closure.json'))
@@ -48,6 +49,10 @@ jobs:
           assert data['summary']['sourceHashClaims']>0
           assert data['summary']['sourceHashFailures']==0
           assert data['scope']['fullGameClosureEstablished'] is False
+          assert data['summary']['identifiedOriginalUIComponentTypes']==24
+          assert data['summary']['unresolvedExternalGuids']==1
+          assert data['originalAssemblyBindings']['scope']['uiRuntimeImplemented'] is False
+          assert data['originalAssemblyBindings']['scope']['managedAssemblyExecuted'] is False
           print('Six-scene source inventory verified; unresolved engine/content dependencies remain explicit.')
           PY
       - name: Preserve private metadata and provenance only
