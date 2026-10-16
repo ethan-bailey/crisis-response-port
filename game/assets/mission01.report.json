@@ -1,0 +1,9 @@
+{
+  "sourceSha256": "1c6aaa01cf2aee9671323b0ece5956f62c235122161e90cb6d7506e398e73e48",
+  "binarySha256": "d16fc80fbbc0e20823ceef7dcfe0e0ae5d693d66810c3bb701654c36a266d948",
+  "vertices": 45356,
+  "triangles": 33666,
+  "sourceBytes": 5627421,
+  "binaryBytes": 1855400,
+  "attributes": "original corner positions/normals/UVs, Float32; original triangle order"
+}
