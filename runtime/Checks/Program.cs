@@ -60,6 +60,33 @@ if(args.Contains("--character-systems")){
   throw new Exception("Source gravity/drag restoration mismatch");
  body.SetKinematic(true);
  if(!rb.isKinematic)throw new Exception("Original character re-kinematic limb transition failed");
+ var hinge=bone.AddComponent<UnityEngine.HingeJoint>();
+ hinge.angle=33f;
+ var breaks=0;
+ var muscle=new Crisis.Runtime.Character.OriginalLimbMuscle(hinge,rb,physiology,()=>breaks++);
+ muscle.extendAngle=65f;
+ body.SetKinematic(false);
+ muscle.SetSignal(1f,0f,1f,1f,false,0f);
+ muscle.Update(.25f);
+ if(!hinge.useSpring||hinge.spring.spring<=0||Math.Abs(hinge.spring.targetPosition-65f)>1e-5f)
+  throw new Exception("Recovered LimbMuscle.Update source spring force and target mismatch");
+ muscle.LockCurrentAngle(.5f);
+ if(Math.Abs(hinge.spring.targetPosition-33f)>1e-5f)
+  throw new Exception("Recovered joint-angle locking incorrect");
+ muscle.AddJointTrauma(550f,1f);
+ if(breaks!=1||muscle.BoneIntegrityNormalized>=0f||muscle.JointIntegrityNormalized>=0f)
+  throw new Exception("Original LimbMuscle fracture propagated no joint-break callback");
+ muscle.Relax();
+ if(hinge.useSpring)throw new Exception("Recovered LimbMuscle.Relax did not release source hinge");
+ // Live CharacterBody owns and advances its original physiology, not a test-only kernel.
+ body.InitializeOriginalPhysiology(0f,4500f,0f,0f);
+ var initialVitals=body.SourcePhysiology.BloodOxygen;
+ var vitalSnapshot=body.StepOriginalPhysiology(.02f,.5f,1.4f,3.2f,heartRandom:0f);
+ if(body.SourcePhysiology.WorkIntensity<=0f||
+    body.SourcePhysiology.BloodOxygen>initialVitals||
+    body.SourcePhysiology.BloodVolume!=4500f||
+    body.SourcePhysiology.RespirationRate<=0f)
+  throw new Exception("Live CharacterBody original physiological work, blood and breathing did not advance");
  var target=new UnityEngine.GameObject("Original arm sequence target",world).transform;
  var binding=new SourceArmTestBindings(target);
  var arm=new Crisis.Runtime.Character.OriginalIKArmControllerPlayback(binding);
