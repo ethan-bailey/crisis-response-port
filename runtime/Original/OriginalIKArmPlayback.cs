@@ -79,7 +79,7 @@ public sealed class OriginalIKArmSequencer {
   if(frame.action==IKArmAction.Transition){
    Transform transform=bindings.TargetTransform(frame.transform,armType,out offset);
    if(transform!=null){
-    if(frame.offset!=Vector3.zero)
+    if(frame.offset.sqrMagnitude!=0f)
      offset=transform.TransformVector(frame.offset);
     bindings.TargetTransition(armType,transform,offset,frame.time);
    }
