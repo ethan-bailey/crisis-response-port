@@ -1,4 +1,5 @@
 using UnityEngine;
+using Crisis.Runtime.Weapons;
 namespace Crisis.Runtime.Character;
 
 // Executable source-accurate injury arithmetic from recovered Wound.cs and
@@ -54,6 +55,38 @@ public sealed class OriginalLimbPhysiology {
  public float Hemorrhaging=>InternalHemorrhaging*HemorrhagingNormalized*(physiology.Exsanguinated?0f:1f);
  public float HemorrhagingScore=>WoundCavityVolume*bloodPressureModifier;
  public void CreateWound(OriginalWound wound){wounds.Add(wound??throw new ArgumentNullException(nameof(wound)));}
+ // Original LimbPhysiology.CreateWound: retain authored limb-space wound
+ // position, randomized direction Z and source Wound.available state.
+ // The original GPU particle stream and dynamic decal dependencies remain
+ // separate and explicitly reject unsupported enabled settings.
+ public OriginalWound CreateWoundFromSourceProjectile(
+    Limb limb,float diameterMillimeters,float volume,float emissionRadiusMeters,
+    Vector3 worldPoint,Vector3 worldDirection,
+    bool useBloodParticles=false,bool useWoundStreams=false,float woundPowerMultiplier=1f){
+  if(limb==null)throw new ArgumentNullException(nameof(limb));
+  if(!ReferenceEquals(limb.LimbPhysiology,this))
+   throw new InvalidOperationException("Original source projectile hit a mismatched limb physiology");
+  if(useWoundStreams)
+   throw new NotSupportedException("Original BloodStreamGenerator rendering is not bound");
+  if(useBloodParticles)
+   throw new NotSupportedException("Original Limb.WoundEmission particle renderer is not bound");
+  if(diameterMillimeters<=0||!float.IsFinite(diameterMillimeters)||
+    !float.IsFinite(volume)||volume<0f||!float.IsFinite(woundPowerMultiplier)||
+    woundPowerMultiplier<=0f)
+   throw new ArgumentOutOfRangeException(nameof(diameterMillimeters));
+  Vector3 vector=limb.transform.InverseTransformPoint(worldPoint);
+  Vector3 localDirection=limb.transform.InverseTransformDirection(worldDirection);
+  if(Mathf.Abs(localDirection.z)<0.5f){
+   localDirection.z=UnityEngine.Random.value*
+       (!(UnityEngine.Random.value>0.5f)?-1f:1f);
+  }
+  var wound=new OriginalWound(diameterMillimeters,
+    new Vector3(vector.x,vector.y,0f),localDirection,
+    emissionRadiusMeters,UnityEngine.Random.Range(0f,1f),
+    useParticles:useBloodParticles,multiplier:woundPowerMultiplier);
+  CreateWound(wound);
+  return wound;
+ }
  // Original LimbPhysiology.AddTrauma method, no substitute injury thresholds.
  public void AddTrauma(float volume) {
   float num=Mathf.Min(volume,Mathf.Max(maxWoundCavityVolume-WoundCavityVolume,0f));
