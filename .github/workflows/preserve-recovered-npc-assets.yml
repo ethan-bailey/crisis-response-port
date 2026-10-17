@@ -1,0 +1,119 @@
+name: Permanently preserve recovered original NPC and scene sources
+on:
+  push:
+    branches:
+      - feature/original-projectile-limb-hit-runtime
+    paths:
+      - .github/workflows/preserve-recovered-npc-assets.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: original-npc-source-preservation
+  cancel-in-progress: false
+jobs:
+  preserve:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Retrieve and verify intact original AssetRipper recovery
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          curl --retry 3 --fail --location --silent --show-error \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/11903811738/zip" \
+            -o /tmp/original-recovery.zip
+          echo "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d  /tmp/original-recovery.zip" | sha256sum --check
+          mkdir -p /tmp/recovery-files
+          unzip -q /tmp/original-recovery.zip -d /tmp/recovery-files
+          test -f "/tmp/recovery-files/export/ExportedProject/Assets/Resources/characters/Occupant.prefab"
+      - name: Preserve exact original character art, prefabs, scenes and spawn source
+        run: |
+          set -euo pipefail
+          root="/tmp/recovery-files/export/ExportedProject/Assets"
+          saved="source-reference/Original/NPCRecovery/Assets"
+          for path in \
+            "Resources/characters/Occupant.prefab" \
+            "GameObject/Occupant.prefab" \
+            "GameObject/Big cardboard box.prefab" \
+            "GameObject/Small cardboard box.prefab" \
+            "Scenes/Mission 01.unity" \
+            "Scenes/Marksman range.unity" \
+            "Material/Dynamic occupant torso.mat" \
+            "Material/Static occupant torso.mat" \
+            "Scripts/Assembly-CSharp/OccupantSpawner.cs" \
+            "Scripts/Assembly-CSharp/OccupantSpawnData.cs" \
+            "Scripts/Assembly-CSharp/Occupants.cs" \
+            "Scripts/Assembly-CSharp/CharacterTemplate.cs" \
+            "Scripts/Assembly-CSharp/SerializableOccupantSpawn.cs" \
+            "Scripts/Assembly-CSharp/SerializableOccupantSpawnData.cs" \
+            "Scripts/Assembly-CSharp/SerializableOccupantSpecificSpawnGroup.cs" \
+            "Scripts/Assembly-CSharp/SerializableOccupantRandomizedSpawnGroup.cs" \
+            "Scripts/Assembly-CSharp/SpawnArea.cs"; do
+            test -f "$root/$path"
+            mkdir -p "$saved/$(dirname "$path")"
+            cp "$root/$path" "$saved/$path"
+            if test -f "$root/$path.meta"; then cp "$root/$path.meta" "$saved/$path.meta"; fi
+          done
+          for skin in \
+            "black pelvis.png" "black abdomen.png" "torso_0.png" \
+            "neck protector.png" "head 1.png" "head 2.png" "head 3.png" \
+            "head 4.png" "head 5.png" "upperarm.png" "lowerarm.png" \
+            "black upper leg.png" "black lower leg.png" "boot.png" \
+            "boot toes.png" "hand.png" "hand safe.png" \
+            "hand trigger.png" "hand front rifle.png"; do
+            mkdir -p "game/assets/occupant/skins"
+            test -f "$root/Texture2D/$skin"
+            cp "$root/Texture2D/$skin" "game/assets/occupant/skins/$skin"
+            mkdir -p "$saved/Texture2D"
+            cp "$root/Texture2D/$skin.meta" "$saved/Texture2D/$skin.meta"
+          done
+          echo "9094b840c49d6c53ffa077c274561ab5cbeedb202f85dbaade023ad67cb8c419  $saved/Resources/characters/Occupant.prefab" | sha256sum --check
+          echo "c43b36c415b4df14ef6223eaced686a8ddcead6c46f7504346aecb1a03c5743e  $saved/Scenes/Mission 01.unity" | sha256sum --check
+          echo "cc64f48f2087a62346fdc77ee85b874e7b09c727e1fb246f86007b9415b3d16b  $saved/Scenes/Marksman range.unity" | sha256sum --check
+          python3 - <<'PY'
+          import hashlib,json,pathlib
+          paths=[p for root in ['source-reference/Original/NPCRecovery/Assets','game/assets/occupant/skins'] for p in pathlib.Path(root).rglob('*') if p.is_file()]
+          manifest={'format':'crisis-original-occupant-and-spawn-source-v1',
+            'recoveryArtifactId':11903811738,'recoveryArtifactSha256':'cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d',
+            'sourceScenePaths':['Assets/Scenes/Mission 01.unity','Assets/Scenes/Marksman range.unity'],
+            'files':{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(paths)}}
+          p=pathlib.Path('source-reference/Original/NPCRecovery/MANIFEST.json')
+          p.write_text(json.dumps(manifest,indent=2,sort_keys=True)+'\n')
+          print('Preserved files:',len(paths),'original bytes:',sum(p.stat().st_size for p in paths))
+          PY
+      - name: Commit original art and source on this development branch only
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "source-reference/Original/NPCRecovery" "game/assets/occupant/skins"
+          if ! git diff --cached --quiet; then
+            git commit -m "Preserve authentic recovered NPC skins, spawn scripts and Unity scene definitions"
+            git pull --rebase origin feature/original-projectile-limb-hit-runtime
+            git push origin HEAD:feature/original-projectile-limb-hit-runtime
+          fi
+      - name: Archive full unmodified recovery beyond Actions artifact expiry
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="recovery-source-2026-10-17"
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Private source archive release already exists: $tag"
+          else
+            gh release create "$tag" \
+              "/tmp/original-recovery.zip#crisis-response-recovery-direct-v3-1.zip" \
+              --repo "$GITHUB_REPOSITORY" \
+              --target feature/original-projectile-limb-hit-runtime \
+              --title "[SOURCE ARCHIVE] Original Crisis Response Unity recovery" \
+              --notes "Private source-preservation backup only; NOT a compiled game release. Exact recovered Actions artifact SHA256: cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d. Original run: 38582072502; contains 7231 Unity project files, original scene hierarchy, textures, decompiled code and source provenance." \
+              --draft
+          fi
