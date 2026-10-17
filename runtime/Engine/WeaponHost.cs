@@ -90,6 +90,8 @@ public sealed class WeaponHost {
  JsonElement config;readonly List<global::Projectile> projectiles=[];public RuntimeWorld queryWorld;public int ballisticMask;
  readonly RuntimeWorld world;readonly WeaponBase weapon;readonly CharacterBody body;readonly ChangeMagazine reload;readonly WorkBolt workBolt;WeaponTask task;
  readonly OriginalArmPhysicsHost armPhysics;
+ readonly OriginalIKArmControllerLive liveIKController;
+ public OriginalIKArmControllerLive SourceArmController=>liveIKController;
  readonly Dictionary<string,Transform> weaponTransforms=[];readonly Dictionary<string,Transform> operatorTransforms=[];readonly Dictionary<string,Transform> magazineTransforms=[];
  public readonly WeaponEffects effects=new();
  public float Kick=>weapon.RecoilKick;public float Climb=>weapon.RecoilClimb;public bool Manipulating=>body.IsManipulatingEquipment;
@@ -164,6 +166,8 @@ public sealed class WeaponHost {
    a.InitializeSourcePose();a.SetOnWeapon(weapon,.1f,right);return a;
   }
   body.rightArm=Arm(true);body.leftArm=Arm(false);
+  liveIKController=new OriginalIKArmControllerLive(body,
+    ()=>throw new NotSupportedException("Original WeaponAimAlignment depends on unfinished character aiming state"));
   var limbSource=c.TryGetProperty("sourceLimbComponents",out var limbConfiguration)?limbConfiguration:default;
   armPhysics=new OriginalArmPhysicsHost(c.GetProperty("armPhysics"),operatorTransforms,body,world,limbSource);
   if(c.TryGetProperty("sourceSkinMasks",out var actualOriginalSkinMasks))
@@ -177,7 +181,7 @@ public sealed class WeaponHost {
    rootRigidbody.velocity=V(sourceVelocity);
   foreach(var pair in f.GetProperty("operatorTransforms").EnumerateObject())if(operatorTransforms.TryGetValue(pair.Name,out var target))SetWorld(target,pair.Value);
   SetWorld(weapon.transform,f.GetProperty("weaponPose"));
-  if(body.Kinematic){body.rightArm.Step();body.leftArm.Step();}
+  if(body.Kinematic){body.rightArm.Step();body.leftArm.Step();liveIKController.Update(Time.time);}
   armPhysics.Step(f,world);
   // Original CharacterBody.QueryTrigger clears one-frame requests; manipulation blocks new pulls.
   if(body.Kinematic&&f.GetProperty("fire").GetBoolean()&&!body.IsManipulatingEquipment)body.PullTrigger();
