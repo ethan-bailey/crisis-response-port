@@ -144,10 +144,17 @@ async function load(){
   // original renderer materials. These remain unrendered until source parity.
   const particleSourceReady=loadOriginalParticleSources();
   const ballisticsReady=fetch("./assets/ballistics.json.gz").then(r=>{if(!r.ok)throw new Error("Original material settings unavailable");return new Response(r.body.pipeThrough(new DecompressionStream("gzip"))).json();}).then(data=>{ballisticsData=data;return JSON.stringify(data);});
-  const armPhysicsReady=json("./assets/original-arm-physics.json");
-  const weaponRuntimeReady=Promise.all([presentationRuntimeReady,weaponReady,armPhysicsReady])
-    .then(async([_,data,source])=>runtimeCall("InitializeWeapons",
-      JSON.stringify({...data,armPhysics:source})));
+  const armPhysicsReady=json("./assets/original-full-character-physics.json");
+  const limbComponentsReady=json("./assets/original-character-limb-components.json");
+  const limbBallisticsReady=json("./assets/original-limb-ballistic-materials.json");
+  const originalSkinCoverageReady=fetch("./assets/operator/original-source-limb-damage-mask.json.gz")
+    .then(r=>{if(!r.ok)throw Error("Original LimbTextureData green coverage missing");
+      return new Response(r.body.pipeThrough(new DecompressionStream("gzip"))).json();});
+  const weaponRuntimeReady=Promise.all([
+      presentationRuntimeReady,weaponReady,armPhysicsReady,limbComponentsReady,originalSkinCoverageReady,limbBallisticsReady])
+    .then(async([_,data,source,limbs,skinMasks,limbBallistics])=>runtimeCall("InitializeWeapons",
+      JSON.stringify({...data,armPhysics:source,sourceLimbComponents:limbs,
+        sourceSkinMasks:skinMasks,sourceLimbBallistics:limbBallistics})));
   const manifestReady=json("./assets/operator/operator.json");
   const handRenderDataReady=json("./assets/operator/original-hand-renderers.json");
   const animationReady=json("./assets/operator/animations.json");
@@ -236,6 +243,7 @@ async function load(){
     sprintSpeed:contactPhysics.data.character.movement.sprintSpeed,
     crippledRatio:0,operator:true,deltaTime:dt,colliderVerticalOffset:-.725
    })));
+   if(original.ragdoll){return;} // PhysX owns bones after original source ragdoll.
    const timeline=sourceAnimator.step(dt,{
     Moving:original.moving,Backwards:original.backwards,
     MoveSpeed:original.moveSpeed,KneelRatio:original.KneelRatio,

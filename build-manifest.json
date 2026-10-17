@@ -3,7 +3,7 @@
     "blazorResources": 199,
     "wasmFiles": 195
   },
-  "buildRun": "https://github.com/ethan-bailey/crisis-response-port/actions/runs/38981248060",
+  "buildRun": "https://github.com/ethan-bailey/crisis-response-port/actions/runs/38998115604",
   "compilerPolicy": {
     "allowPrerelease": false,
     "rollForward": "disable",
@@ -365,6 +365,11 @@
       "sha256": "539f0348772602c65f1c5c4563b1e733cb363e2308475d1b1711aef22cfa39d5"
     },
     {
+      "bytes": 4942,
+      "path": "game/assets/operator/original-source-limb-damage-mask.json.gz",
+      "sha256": "6fe3ed6161512693e88342f882596a4795684b12ce34d377b51d42e1747949fb"
+    },
+    {
       "bytes": 12602,
       "path": "game/assets/operator/skins/skin_000.png",
       "sha256": "80a395d3a90e9566e438ac9a09b98be29e38be27274dd36677b023efd6b2a19c"
@@ -428,6 +433,21 @@
       "bytes": 8066,
       "path": "game/assets/original-arm-sequences.json",
       "sha256": "4fd3940e554f406ceee8cfc210a82a09f57cb9dc2f5f0211c74b8cedacb4fa25"
+    },
+    {
+      "bytes": 85126,
+      "path": "game/assets/original-character-limb-components.json",
+      "sha256": "7f89f6e6ab44a2bbd5c71f6d4c7bd838f66bb8568f07f5a7c4742476521466dd"
+    },
+    {
+      "bytes": 205863,
+      "path": "game/assets/original-full-character-physics.json",
+      "sha256": "642bd9bdc87211c8746c6715f2bff35e1763791d83defe2a4562a83af078e2c3"
+    },
+    {
+      "bytes": 9386,
+      "path": "game/assets/original-limb-ballistic-materials.json",
+      "sha256": "44b28c9bff533fa1e0701485ad1fcbd0b879145dfbe8bd1235ef1a5f138cd2dc"
     },
     {
       "bytes": 95660,
@@ -565,9 +585,9 @@
       "sha256": "0c331574c56dde74abdfd9cd6cb41ab931c42a78afc0b5d76f2bd6a63bb21f6f"
     },
     {
-      "bytes": 37078,
+      "bytes": 37825,
       "path": "game/index.html",
-      "sha256": "d659e96a88848d81749c7380e41e1e558ec1749df51f3c37873c70f476b3a456"
+      "sha256": "4ab55760ebac33843e7e74d50e4375adbd63504f1696e5e55793dd5c5b616e48"
     },
     {
       "bytes": 700,
@@ -580,9 +600,9 @@
       "sha256": "38cd83acf03dc53b5eeb9148e6fd9e57a0c69e8503367a91c63f708a3e4fb17e"
     },
     {
-      "bytes": 8469,
+      "bytes": 9931,
       "path": "game/original-arm-rig-import.mjs",
-      "sha256": "4b47d242faecc16461bfd7b6db03227f97ff4d79f1ab648af915088c3448cb53"
+      "sha256": "59fbe14ef8712f3e2e54a13454d7002c665c34425819a4ecfae7ef5c12e23337"
     },
     {
       "bytes": 2625,
@@ -605,9 +625,9 @@
       "sha256": "08b79ee61a50fa91fcde060ecb4cab493f5f6e217e985192713826b78783f127"
     },
     {
-      "bytes": 7089,
+      "bytes": 7164,
       "path": "game/presentation.mjs",
-      "sha256": "40e87307ef88f25152d73f57a7a28e7850d35b76ecfeeebb45ec655771f3000c"
+      "sha256": "93d6df2fe168bac39cc0518a82067b377a29563841089a02e79bcfd2ac628a90"
     },
     {
       "bytes": 3369,
@@ -655,44 +675,44 @@
       "sha256": "055b6f534d3069ff3c22511f290027d035a0bcca97b63dd6eb8abe5d94e17188"
     },
     {
-      "bytes": 9215,
+      "bytes": 11091,
       "path": "runtime-web/_framework/Crisis.Runtime.Browser.pdb.gz",
-      "sha256": "9fc661152338bf36cabcca3251a6be410647471ce4802e8f07e7397854dec12b"
+      "sha256": "ba96ece6525eec2d56a15972d1a1180b9b152c4a8566014552fa73a7a307c309"
     },
     {
-      "bytes": 17685,
+      "bytes": 38165,
       "path": "runtime-web/_framework/Crisis.Runtime.Browser.wasm",
-      "sha256": "10eb08ab7c10ec3333a52eed8c39f8c285cebc252c6a20c0aa9ef4a62bd3a674"
+      "sha256": "702c796ad35776154a063407a82dbad2e1480c7016da78dfaa4416db6a643485"
     },
     {
-      "bytes": 7239,
+      "bytes": 15247,
       "path": "runtime-web/_framework/Crisis.Runtime.Browser.wasm.br",
-      "sha256": "39905bbb679f087900c3da08d7e2ac9cb24d82bbf7d7ff03c92ca889aafa3531"
+      "sha256": "0b9a2bc43dc4c2d2cdae8ae7db50955118ec77362193022784e4175e716a956f"
     },
     {
-      "bytes": 8069,
+      "bytes": 17191,
       "path": "runtime-web/_framework/Crisis.Runtime.Browser.wasm.gz",
-      "sha256": "064a50922197a6469323e0b323792b06746b269cf238eb797cc78120f730f91f"
+      "sha256": "7134970c42ca5989524f6b8461d7d515f3ec43c0c2ddbb4573e836577a33e336"
     },
     {
-      "bytes": 42516,
+      "bytes": 48001,
       "path": "runtime-web/_framework/Crisis.Runtime.pdb.gz",
-      "sha256": "589e4b337e659dd3fbfc7cfbb8b87df5ae13447df0ef3e656103502192d579c0"
+      "sha256": "299a5c68171d80de7e1e65c7dc5aa2cc93450fbf7b2c553edc779b6cf7613d50"
     },
     {
-      "bytes": 294165,
+      "bytes": 336661,
       "path": "runtime-web/_framework/Crisis.Runtime.wasm",
-      "sha256": "9192eed73b794c2de15e994fb60f63fd86c56287228e9fee2a37cdb0dede8126"
+      "sha256": "658b5782f0a64f2e155d96801580085fc9d865d13e1a52a76cd33cf195539fc1"
     },
     {
-      "bytes": 96621,
+      "bytes": 109884,
       "path": "runtime-web/_framework/Crisis.Runtime.wasm.br",
-      "sha256": "888e27bfcec0209eb42fcfc36950ee78c16688ecdaedd4ce86d23fcdb4da6b39"
+      "sha256": "4627ba6b91935ba3a13022f37fc7e2ce3e43844a391131c20e1ae6a83b5b6c9f"
     },
     {
-      "bytes": 117486,
+      "bytes": 134825,
       "path": "runtime-web/_framework/Crisis.Runtime.wasm.gz",
-      "sha256": "0763bd97fefb4eb42f132e9c6a354ec5945bf5700ed5c9132b8f05a26e6633d9"
+      "sha256": "612c2ca2b43606c2d9b98aaf24b0c616e42d394dcd81d271df57995724bf20c1"
     },
     {
       "bytes": 40725,
@@ -3532,17 +3552,17 @@
     {
       "bytes": 19433,
       "path": "runtime-web/_framework/blazor.boot.json",
-      "sha256": "1b0b014271b354a183df8d9fe385513319b6e17126ce7ec4792286476c511cb7"
+      "sha256": "277987b18575dd5eb878a4c57e8aeaf9d99f7ac5904cfa75dfc2ab7fb9c64698"
     },
     {
-      "bytes": 8216,
+      "bytes": 8217,
       "path": "runtime-web/_framework/blazor.boot.json.br",
-      "sha256": "43c180f894041480343804378655cdd7d8a8e3a7b7aed15be540fed0cd99934b"
+      "sha256": "f8aa4627bceea5fac182bbd58f39b91871172f1056cb6bcbcfb8d6dabdecbace"
     },
     {
-      "bytes": 8847,
+      "bytes": 8849,
       "path": "runtime-web/_framework/blazor.boot.json.gz",
-      "sha256": "84a6ff113cb5d9cc853a5b9f39581bdf1912a6db6f89a87c9a09d9f3db86622f"
+      "sha256": "78565df22685753b54f7608ac07d9fa4ec9f773778666e9cd15db3b4195bdaf7"
     },
     {
       "bytes": 60300,
@@ -3721,7 +3741,7 @@
     "originalGameComplete": false,
     "physicalIPhoneTested": false
   },
-  "sourceCommit": "b9454d65f1d2ef164890fe770eff55dcd666cb2e",
+  "sourceCommit": "a3e792744b590502b9c8af1c98ed0bd7d84b8702",
   "sourceInventory": [
     {
       "bytes": 1829,
@@ -3774,9 +3794,29 @@
       "sha256": "9903e147e4c2b256667fcd0ef7b6db1b8c453bd74170452c323452a42e94cc0e"
     },
     {
+      "bytes": 1700,
+      "path": ".github/workflows/export-limb-ballistic-properties.yml",
+      "sha256": "2ced5fe0e99d52e1a24a5258462f7eeeb2f8fb7f353cdc54846c9c075a959b83"
+    },
+    {
+      "bytes": 1332,
+      "path": ".github/workflows/export-original-full-character-physics.yml",
+      "sha256": "50a77846c1f727a0a7db3e38dcff19e19c21045c7eeafc6196e85579ad37906c"
+    },
+    {
+      "bytes": 2720,
+      "path": ".github/workflows/export-original-limb-coverage.yml",
+      "sha256": "bcdd29f70b9ae81b812a84abdfbe4813871171f964f12bfeae046673193aa24d"
+    },
+    {
       "bytes": 3365,
       "path": ".github/workflows/extract-original-exit-hole-asset.yml",
       "sha256": "a0e06e277a41b59f9ff24d406aaee8b4d8d24eee5104f0bf8a6cb307d3aae34b"
+    },
+    {
+      "bytes": 1372,
+      "path": ".github/workflows/full-character-runtime-test.yml",
+      "sha256": "d350f539e5d0810cf99a160f043036eeab48fbc49168c203cee279eeb9c72dfa"
     },
     {
       "bytes": 4404,
@@ -3787,6 +3827,21 @@
       "bytes": 1333,
       "path": ".github/workflows/iphone-joystick-test.yml",
       "sha256": "9dd972ea28c8f2572393fe02a63deb2e7ea441b4059c8d12528819094ca59823"
+    },
+    {
+      "bytes": 866,
+      "path": ".github/workflows/live-limb-skin-native.yml",
+      "sha256": "5da5bde421f0f5225ca7befda1f850b0acfa96c7d2a8060e0ee0e958bad439ed"
+    },
+    {
+      "bytes": 1363,
+      "path": ".github/workflows/original-limb-skin-native.yml",
+      "sha256": "381c5521893969345f2da2e49107f3a0a91b13a696f120b67f01a795470a6c95"
+    },
+    {
+      "bytes": 1768,
+      "path": ".github/workflows/original-organ-trauma-contract.yml",
+      "sha256": "e9bea8c18d2ae2a27d9243a80c9fa108f87b6da88bf82241843d6cbceeb1ede2"
     },
     {
       "bytes": 2842,
@@ -3814,6 +3869,16 @@
       "sha256": "193c3ec40f02221da14d07f853163971ae56bd2295224d2eac06728a13546137"
     },
     {
+      "bytes": 1725,
+      "path": ".github/workflows/recover-original-full-character-limbs.yml",
+      "sha256": "90b48d310bcc73daccc73be7009d04659eeced2a0e705591a092e1d0ee5174e6"
+    },
+    {
+      "bytes": 1402,
+      "path": ".github/workflows/recover-original-limb-skin-source.yml",
+      "sha256": "cb8647861486db348d5e3d1674eca808353319656b58e5dfd5c593d643583978"
+    },
+    {
       "bytes": 4160,
       "path": ".github/workflows/recover-original-particle-materials.yml",
       "sha256": "277789e4ddf4cbd21a1f892003f396e26c321dde2f43b942da7c174bc2919a95"
@@ -3829,9 +3894,29 @@
       "sha256": "29591f13d0d751e327f354a87ce34097dc99f7cb9a12c4a671406a15cbde2506"
     },
     {
+      "bytes": 1535,
+      "path": ".github/workflows/recover-original-projectile-source.yml",
+      "sha256": "84830cf01ee096225244f0800eaf58364a722bb231a146de6ba54179bfafbed4"
+    },
+    {
+      "bytes": 1690,
+      "path": ".github/workflows/recover-source-limb-texture-importers.yml",
+      "sha256": "50d974eb2d37ce1916e63394fc6bd192e820cab30d7feb1e6dfa6fef6a98cf02"
+    },
+    {
       "bytes": 2861,
       "path": ".github/workflows/runtime-foundation.yml",
       "sha256": "cbba930e32d798c97889917b9ef9a8f25a54ff2ea5371faadb7e403f5d1d9c7d"
+    },
+    {
+      "bytes": 1289,
+      "path": ".github/workflows/source-limb-ballistic-contracts.yml",
+      "sha256": "ca6757366fc6967ebcd0dac08c2de4fdc4343cc5739ccb5e84ddb09d185186a5"
+    },
+    {
+      "bytes": 1030,
+      "path": ".github/workflows/source-limb-interior-contracts.yml",
+      "sha256": "c7e4fb2f4b112cf683c96d328999f3c3b301d7734fbcc89cf009058e98f399b5"
     },
     {
       "bytes": 610,
@@ -3854,9 +3939,9 @@
       "sha256": "e2be85e119379bbebdd4a9f78521568f1591827d74f996453ec902672e84b706"
     },
     {
-      "bytes": 6336,
+      "bytes": 7170,
       "path": ".github/workflows/wasm-arm-sequences.yml",
-      "sha256": "f4e097abf204a82a7e97bafd8f2441ef104ae3a7de1587b1670f820d03787205"
+      "sha256": "7a6c2055fc1970f97b62ec4b308c9e5bada8bb35519896f5b82099ec6f5b5f0f"
     },
     {
       "bytes": 2603,
@@ -4204,6 +4289,11 @@
       "sha256": "539f0348772602c65f1c5c4563b1e733cb363e2308475d1b1711aef22cfa39d5"
     },
     {
+      "bytes": 4942,
+      "path": "game/assets/operator/original-source-limb-damage-mask.json.gz",
+      "sha256": "6fe3ed6161512693e88342f882596a4795684b12ce34d377b51d42e1747949fb"
+    },
+    {
       "bytes": 12602,
       "path": "game/assets/operator/skins/skin_000.png",
       "sha256": "80a395d3a90e9566e438ac9a09b98be29e38be27274dd36677b023efd6b2a19c"
@@ -4267,6 +4357,21 @@
       "bytes": 8066,
       "path": "game/assets/original-arm-sequences.json",
       "sha256": "4fd3940e554f406ceee8cfc210a82a09f57cb9dc2f5f0211c74b8cedacb4fa25"
+    },
+    {
+      "bytes": 85126,
+      "path": "game/assets/original-character-limb-components.json",
+      "sha256": "7f89f6e6ab44a2bbd5c71f6d4c7bd838f66bb8568f07f5a7c4742476521466dd"
+    },
+    {
+      "bytes": 205863,
+      "path": "game/assets/original-full-character-physics.json",
+      "sha256": "642bd9bdc87211c8746c6715f2bff35e1763791d83defe2a4562a83af078e2c3"
+    },
+    {
+      "bytes": 9386,
+      "path": "game/assets/original-limb-ballistic-materials.json",
+      "sha256": "44b28c9bff533fa1e0701485ad1fcbd0b879145dfbe8bd1235ef1a5f138cd2dc"
     },
     {
       "bytes": 95660,
@@ -4404,9 +4509,9 @@
       "sha256": "0c331574c56dde74abdfd9cd6cb41ab931c42a78afc0b5d76f2bd6a63bb21f6f"
     },
     {
-      "bytes": 37078,
+      "bytes": 37825,
       "path": "game/index.html",
-      "sha256": "d659e96a88848d81749c7380e41e1e558ec1749df51f3c37873c70f476b3a456"
+      "sha256": "4ab55760ebac33843e7e74d50e4375adbd63504f1696e5e55793dd5c5b616e48"
     },
     {
       "bytes": 700,
@@ -4419,9 +4524,9 @@
       "sha256": "38cd83acf03dc53b5eeb9148e6fd9e57a0c69e8503367a91c63f708a3e4fb17e"
     },
     {
-      "bytes": 8469,
+      "bytes": 9931,
       "path": "game/original-arm-rig-import.mjs",
-      "sha256": "4b47d242faecc16461bfd7b6db03227f97ff4d79f1ab648af915088c3448cb53"
+      "sha256": "59fbe14ef8712f3e2e54a13454d7002c665c34425819a4ecfae7ef5c12e23337"
     },
     {
       "bytes": 2625,
@@ -4454,9 +4559,9 @@
       "sha256": "d47cc79389f27f3f23fed9ffbbc474fba76b91747bde771f65f54bbc3528f719"
     },
     {
-      "bytes": 7089,
+      "bytes": 7164,
       "path": "game/presentation.mjs",
-      "sha256": "40e87307ef88f25152d73f57a7a28e7850d35b76ecfeeebb45ec655771f3000c"
+      "sha256": "93d6df2fe168bac39cc0518a82067b377a29563841089a02e79bcfd2ac628a90"
     },
     {
       "bytes": 3369,
@@ -4494,14 +4599,14 @@
       "sha256": "0dadd663fc9e41a929cbdae2e2702dfa04a67fed3ade0c14bac38e94aa265c45"
     },
     {
-      "bytes": 554,
+      "bytes": 668,
       "path": "runtime/Browser/Crisis.Runtime.Browser.csproj",
-      "sha256": "05d4151699ba3e710de70fd0b050fba80daeb2c553c3a11d647376378f3f532f"
+      "sha256": "20046310a347e653f5f2e797337e7319efe440d8f692d2e06cccffcf87a0fe1c"
     },
     {
-      "bytes": 6352,
+      "bytes": 7176,
       "path": "runtime/Browser/Program.cs",
-      "sha256": "fcde8bae817698570de79400eb321e3c0adc0b0878dda18f37724127a27624a4"
+      "sha256": "3928d70846a576a8829ff291202f9faee5b6513ceadb236d5568a2a8da0c4e19"
     },
     {
       "bytes": 3110,
@@ -4514,9 +4619,9 @@
       "sha256": "a34fa1cc453736c21205cf04f01f1022f70442993728f6c1dc334f6c5656249b"
     },
     {
-      "bytes": 11927,
+      "bytes": 11986,
       "path": "runtime/Checks/BallisticContracts.cs",
-      "sha256": "74f4b3470e6c401c788940102678e703acb7c7129664d99a641974f7f72a31a0"
+      "sha256": "7c92cc0f84cbc212820c15d9435e08313fad3c487011d0fefe033b6907c811fa"
     },
     {
       "bytes": 268,
@@ -4529,14 +4634,19 @@
       "sha256": "3c822f3a4257eb54c5ef4c10172be5531506fdd1dd88c13ffcf5e1105a168804"
     },
     {
-      "bytes": 16707,
+      "bytes": 33147,
       "path": "runtime/Checks/Program.cs",
-      "sha256": "646e3323136e0c9800144a781c06b5f829fd45a81332adcd53530420a50df11e"
+      "sha256": "a889f30af9d9c4dae7870f61ea203a3121f04b3280da78f1c7a888d2b4235f4a"
     },
     {
-      "bytes": 3703,
+      "bytes": 14761,
+      "path": "runtime/Checks/ProjectileInjuryContracts.cs",
+      "sha256": "a0b439b9d26cb67439eaef4c30f32e8a253695d9c2dc5239b9c32ea0e06c50aa"
+    },
+    {
+      "bytes": 4323,
       "path": "runtime/Checks/WeaponContracts.cs",
-      "sha256": "f84e7e8376de459f10bc6fa69dd98ba403df8cc586d02379642a8c09232e4315"
+      "sha256": "69fac52ec75441081671d2a8550775c4322a9bef3d32cfbbcdc681d87c345d7a"
     },
     {
       "bytes": 383,
@@ -4569,9 +4679,9 @@
       "sha256": "299388aba1cc4e60bafb998149236d9dc4bf9d1e55050ddc5af5e367b9b1305c"
     },
     {
-      "bytes": 11599,
+      "bytes": 12030,
       "path": "runtime/Engine/BallisticRuntimeHost.cs",
-      "sha256": "60f5f3646dea93189dcbea84106ed4c8e0c6757e740d564e4f9e838d74fd4397"
+      "sha256": "e48bef15c1713c9bc45153c7727c552c1a0ce70ca7cfc1faa281e1de9df0a094"
     },
     {
       "bytes": 2861,
@@ -4584,9 +4694,9 @@
       "sha256": "d64bf21d7a756cd7bc21beafe9e398517aafc104f5ec11333a4b4bcfa8d4eed6"
     },
     {
-      "bytes": 5613,
+      "bytes": 6052,
       "path": "runtime/Engine/Math.cs",
-      "sha256": "00d3b1fe0f2459f24d83c5fdccc50cc936cef37c2f513c2b9fa882c8499b9394"
+      "sha256": "616d74d674bef83979220e0b9dd8fb40525747a875ad507a33d6ae2b16b0544b"
     },
     {
       "bytes": 13598,
@@ -4599,9 +4709,9 @@
       "sha256": "c4185852d69da14f06efbb13bb3f8d209f2317d3d4514dd472cf0e427d9ad1ae"
     },
     {
-      "bytes": 6087,
+      "bytes": 21937,
       "path": "runtime/Engine/OriginalArmPhysicsHost.cs",
-      "sha256": "1e64fe937ba42ac2f8de8482573e557c23ff369355998c4029a28df7e1fc865a"
+      "sha256": "725514e4634c3fbb7a431fe0752f67c6ce179f95d407ac893a617b93e13b6a8f"
     },
     {
       "bytes": 3963,
@@ -4639,9 +4749,9 @@
       "sha256": "bd73bfd7279defbf734f7707f51d33b6f433ed4c4dfb30deae0f514a84556726"
     },
     {
-      "bytes": 1630,
+      "bytes": 4039,
       "path": "runtime/Engine/ProjectileFlightHost.cs",
-      "sha256": "39b4797902af2f0f51910aea28735b210dd18bcac887b75f8afcd63be977fb7a"
+      "sha256": "2fdd5b1a4f49edf3f93e289bb57ed332e3de3866d6ba6ff551bcaffe58808508"
     },
     {
       "bytes": 1423,
@@ -4664,9 +4774,9 @@
       "sha256": "a03dfc8e7725e88f73d7cb22f21d5fb5b94f91d7a52087f91722a2cf95dacb5a"
     },
     {
-      "bytes": 23212,
+      "bytes": 24695,
       "path": "runtime/Engine/WeaponHost.cs",
-      "sha256": "34405d40b75254f3a7b6877458a76a63781f523e80c689085cdfac3c372be486"
+      "sha256": "7bc8eb2a92badcf43ca9e5bbd08a32d3f23db0240d1286a6633bca2c66564f80"
     },
     {
       "bytes": 3373,
@@ -4739,6 +4849,11 @@
       "sha256": "c991b1c59de844a3cb3757c8ced747ef761898bb68d10482a38f31c10d4232f2"
     },
     {
+      "bytes": 1193,
+      "path": "runtime/Original/Ballistics/ArmorClass.cs",
+      "sha256": "05bf128b0534323beec901296cb590efcd375c6bbd3044b23d4ea03866ff1811"
+    },
+    {
       "bytes": 1194,
       "path": "runtime/Original/Ballistics/BallisticHitMeshEffect.cs",
       "sha256": "86ba4596c9b9bde54b1f084c65b2624d15bdbdbca81f6bcb5293939d3fbf5f94"
@@ -4774,6 +4889,11 @@
       "sha256": "e9e4265caa40f7930a2672a2ce3fbab6f90f4c0451011158b7752b1619ec9fe8"
     },
     {
+      "bytes": 2370,
+      "path": "runtime/Original/Ballistics/LimbArmor.cs",
+      "sha256": "60cd3875a142cadd988ff0d036af75d10ef694487c7e758fc46be665b465e4a5"
+    },
+    {
       "bytes": 5412,
       "path": "runtime/Original/Ballistics/ProjectileMaterial.Methods.cs",
       "sha256": "e0aa4168170bb174836797fcd418125ed020dbe29a8023d1f4adda18286095b0"
@@ -4794,19 +4914,19 @@
       "sha256": "5bd1596db99116cc4aca2a9843e1f8a5f17d5771411c77a0c7b2742ff1574275"
     },
     {
-      "bytes": 4299,
+      "bytes": 6152,
       "path": "runtime/Original/CharacterLimbInjury.cs",
-      "sha256": "1a0027bd54a1df6967ed2790b6f1f4a363fcf3627d79792ebbca7f18d23cac91"
+      "sha256": "1a0768eeaebc3f312f497faa6b546d9e80fed438b873357f960c6f06ba72eaeb"
     },
     {
-      "bytes": 2902,
+      "bytes": 2974,
       "path": "runtime/Original/CharacterPhysiologyConditions.cs",
-      "sha256": "eba16407dc72233d9f94af53be3dba2c78bbb6a214cb56d94e250ef6c09fadd9"
+      "sha256": "017e9662cbd2d680cbdcb7699b924e3f6fe5bc7d2feeedb52928f7f5fd752391"
     },
     {
-      "bytes": 7333,
+      "bytes": 9671,
       "path": "runtime/Original/CharacterVitalDynamics.cs",
-      "sha256": "8c6fdea47b9d0fffb1e3c72e00485538cf9b2c94de24f4a68730812496aabe78"
+      "sha256": "2ffebeaa58c6208e764631b55215b300d024e6a952fcc788b1f3b8fbc1c2bd8c"
     },
     {
       "bytes": 619,
@@ -4854,9 +4974,19 @@
       "sha256": "4e49044eab68f1bd756d32161d799e79044f385e9dfe9860bc5b797f5a3b7c79"
     },
     {
-      "bytes": 3672,
+      "bytes": 4129,
       "path": "runtime/Original/OriginalLimbMuscle.cs",
-      "sha256": "cc5f6045e3f03208dc4afb2c047919ddf428acb7e576030c311729925e11e1a7"
+      "sha256": "2560aa6daa55f239d4a5a0e362e38ac0c0cb24d862b1ce5f8d5289db5b627489"
+    },
+    {
+      "bytes": 5622,
+      "path": "runtime/Original/OriginalLimbSkinTrace.cs",
+      "sha256": "2a6c42a1cc42a3aca3fd3c17fce455535f64a98373836561b7fb735680f0cf28"
+    },
+    {
+      "bytes": 4836,
+      "path": "runtime/Original/OriginalVitalFunctions.cs",
+      "sha256": "3ab0fc5d5e78ba6dd1e808e8276f420ccf92357e34730b5bd1b9b71ebfe593cb"
     },
     {
       "bytes": 4915,
@@ -4871,7 +5001,7 @@
     {
       "bytes": 7166,
       "path": "runtime/Original/Weapons/ArmTransition.cs",
-      "sha256": "a293077cdb559d89178c09c3affa411464d9fe1211bc1e72d715648fb05cc69b"
+      "sha256": "8c5f276a2f12cdd3a27f87c6363532073ca4be730384d16b6c2f21bddbc2c698"
     },
     {
       "bytes": 8575,
@@ -4879,9 +5009,14 @@
       "sha256": "63dca8608dab3e47bc7a06c3b01cecab29bb89ebdf3c722080dad7481bd5fb68"
     },
     {
-      "bytes": 2787,
+      "bytes": 2806,
       "path": "runtime/Original/Weapons/CharacterAnimationState.cs",
-      "sha256": "cd7ac0840258f70158ecb3b18ba2639ec12e378f8ac26341c53b889608492833"
+      "sha256": "dd64c451f0601861e0a57a2b7551559eb204d6d597a78255988e358fa738a421"
+    },
+    {
+      "bytes": 5335,
+      "path": "runtime/Original/Weapons/CharacterCombatNotifications.cs",
+      "sha256": "e7d7732da5f3ed71692f780188442908ea0549a9a2a6302c71d83629e016bc60"
     },
     {
       "bytes": 936,
@@ -4889,14 +5024,24 @@
       "sha256": "87514fc018c8c88390e65a176d0880232ac42981db8ebc1b73d4b123bd760588"
     },
     {
-      "bytes": 3576,
+      "bytes": 5691,
+      "path": "runtime/Original/Weapons/CharacterLimbBallisticMethods.cs",
+      "sha256": "dec3690d45dc980e50cdab556ab0fd6221c479b127c6f4c8e9fe1c183536d7fc"
+    },
+    {
+      "bytes": 6339,
       "path": "runtime/Original/Weapons/CharacterLimbRagdollState.cs",
-      "sha256": "73ac7369db0f87b9670a5725c1eb578547be2d1e4fdecfa33b7155496cb97e95"
+      "sha256": "a4e4a743838af25c3bd029fdb3a97d266afabc97e97d0725bbc2da2a2b1640a6"
     },
     {
       "bytes": 2547,
       "path": "runtime/Original/Weapons/CharacterMovement.cs",
       "sha256": "a8432efcc820921e165cf2d72bb1db0970663d16e25c3abed1853dc973108a0d"
+    },
+    {
+      "bytes": 1599,
+      "path": "runtime/Original/Weapons/CharacterScoreCard.cs",
+      "sha256": "d67024852e8a17ec79f6b75ce8fe3033938fb06733009ccd0b4dc1f8fbb489a0"
     },
     {
       "bytes": 1247,
@@ -4924,14 +5069,19 @@
       "sha256": "3f67efd7bc4191bea9a5b01b4d1be7c3d654a1e6e0ea3abc024fe3f8b9fa1b7a"
     },
     {
-      "bytes": 1962,
+      "bytes": 2988,
       "path": "runtime/Original/Weapons/OriginalCharacterVitalHost.cs",
-      "sha256": "2a3d35bbc8978423ebfc3066ec571359507d85c1674b3a7eabbe167d7461606b"
+      "sha256": "c28cc95363c2a193cfd81bf746cd9791ca34b405da3c2b00582c6a3ec0bbb3f8"
     },
     {
-      "bytes": 3346,
+      "bytes": 718,
+      "path": "runtime/Original/Weapons/ProjectileAttack.Methods.cs",
+      "sha256": "ee1b5b30daabecadc2caafb42e7ca3b1b24f3ea6667ed054e2614d9919a68aab"
+    },
+    {
+      "bytes": 3352,
       "path": "runtime/Original/Weapons/ProjectileFlight.Methods.cs",
-      "sha256": "25f800f60e34071e06130cca94ccbfba93475f9816ad3d09014150fee39e746a"
+      "sha256": "d541bcfa7edf91fa36d9dd8b8f1c0a124b4c4d21c959e3e2a6d176ede9c8531f"
     },
     {
       "bytes": 406,
@@ -4952,6 +5102,11 @@
       "bytes": 3063,
       "path": "runtime/Original/Weapons/WorkBolt.cs",
       "sha256": "887fac0bc1e9b70fbaac0e131095b82023da5efc442f79f078857318fe3bda38"
+    },
+    {
+      "bytes": 789,
+      "path": "runtime/Original/Weapons/combat-source-provenance.json",
+      "sha256": "574b6e529dba61723442168831fb92089d51049c2733504df8ea83e183928bcb"
     },
     {
       "bytes": 8054,
@@ -5054,6 +5209,11 @@
       "sha256": "3e03442d9bffeb5c3a2d3077daeb78c49e3470f727e9a495209b390fc6a97b22"
     },
     {
+      "bytes": 2289,
+      "path": "scripts/export_full_character_physics.py",
+      "sha256": "786d3ee5e9dbd9e855e1e5583ca936ddceb4f06b333168ec6e11c15eaf96a9b1"
+    },
+    {
       "bytes": 4179,
       "path": "scripts/export_operator_animations.py",
       "sha256": "b9bd39a6401b224fd0d49db8a3075e4dd62926ba7d96996940660d5fd6bcdb76"
@@ -5067,6 +5227,16 @@
       "bytes": 4705,
       "path": "scripts/export_original_character_animator.py",
       "sha256": "d63abc65a1046a9d02f22af3c522da5afefb1ec061cfc49f0c490b8a13cdd7e0"
+    },
+    {
+      "bytes": 4743,
+      "path": "scripts/export_original_limb_ballistic_materials.py",
+      "sha256": "25bb2f18f7c932bc1cf0e6ac2e7181e558506a6ca37ef5124d5b0fe8a84ba14a"
+    },
+    {
+      "bytes": 3052,
+      "path": "scripts/export_original_limb_skin_masks.py",
+      "sha256": "3b917590058ea8eda15f01a9e6d4fb9ca7ce5dffd545fc4c9a67c8667ff8a854"
     },
     {
       "bytes": 6114,
@@ -5119,6 +5289,11 @@
       "sha256": "2999b02e8a1eed9b9e0f7b7e853a6cedcbb0fe353cf1dabf3054754205fb49d4"
     },
     {
+      "bytes": 2330,
+      "path": "scripts/full_character_source_graph_test.mjs",
+      "sha256": "2a3797ff04af9b8fbaed2e76a8994762246e9a421a1245ed89802ee4ee23642c"
+    },
+    {
       "bytes": 1561,
       "path": "scripts/game_loading_test.mjs",
       "sha256": "e6042106a99d38cfb905976422f19e816f1747f52cb4f77fa11fb8332ead8163"
@@ -5147,6 +5322,11 @@
       "bytes": 3217,
       "path": "scripts/original_arm_sequences_smoke.mjs",
       "sha256": "fa433c1561aa3817d6d588f8db833d354d70b6a4dd2d2073eaa52820ac2934b8"
+    },
+    {
+      "bytes": 2878,
+      "path": "scripts/original_limb_ballistics_source_test.mjs",
+      "sha256": "28e524c3c25154685238cc447898b18eaa1b7b9f9861df6aae786eebb5ee36b5"
     },
     {
       "bytes": 4243,
@@ -5194,6 +5374,16 @@
       "sha256": "c4c0e54d463200d02493706b4fc546eea6c3cdb9e18b5880faee7a04db27ea36"
     },
     {
+      "bytes": 1971,
+      "path": "scripts/projectile_injury_smoke.mjs",
+      "sha256": "e0e66131f92173a57963131cc3c12a391c2363453892905a38929f330d46a433"
+    },
+    {
+      "bytes": 5011,
+      "path": "scripts/recover_character_limb_components.py",
+      "sha256": "16a43013d2aec7dbdf77230865e61c1b855041ed0b5ca57aff330153c5943e39"
+    },
+    {
       "bytes": 7322,
       "path": "scripts/recover_original_arm_physics.py",
       "sha256": "bcb4417fa92219e46ac8b440c36f39b754dc87dff62fe71c76222a0172c4f08a"
@@ -5212,6 +5402,21 @@
       "bytes": 4334,
       "path": "scripts/recover_original_hand_renderers.py",
       "sha256": "f1bed063ee3495b63352f2093d8eb411c96a072f0e2cc90fc5b70cc72fe18681"
+    },
+    {
+      "bytes": 1061,
+      "path": "scripts/recover_original_limb_skin_source.py",
+      "sha256": "6692b3a6f12e3834e7b369898904a24c006d8fcacb4195fd28c45ebbc19b9897"
+    },
+    {
+      "bytes": 1453,
+      "path": "scripts/recover_original_projectile_sources.py",
+      "sha256": "f3a61860051130f526a603fd0a6fa94fdf7a292ba79a848aef47cab201ceaa77"
+    },
+    {
+      "bytes": 3485,
+      "path": "scripts/recover_original_skin_texture_importers.py",
+      "sha256": "f1a3f842ff5175cb1ca71f0a9297aebfdbc857ecc15228b928ed71d04d5e9a55"
     },
     {
       "bytes": 2011,
@@ -5244,9 +5449,9 @@
       "sha256": "0cb86327175e2b86c8f8788480676f55c689d55541c98b304794fe2bfdb9e829"
     },
     {
-      "bytes": 5233,
+      "bytes": 5234,
       "path": "scripts/source_arm_runtime.py",
-      "sha256": "8769614f3679a422ffcf64050e6542669b03fc1f0afb031df898c6501e15f87e"
+      "sha256": "a5ef0ec1874e3eec9847d12f0178221c0f81bbd5fd3e3a387333a9c7e55e4f2e"
     },
     {
       "bytes": 2569,
@@ -5309,6 +5514,11 @@
       "sha256": "17de03f6321d8340104220e7164e61a455a6f587b1529e0900375788ea5f9aa7"
     },
     {
+      "bytes": 2782,
+      "path": "scripts/verify_original_combat_source.py",
+      "sha256": "728a1fb74391c47c07dea170aa357cc627d58a648193362a74eef01da8930b45"
+    },
+    {
       "bytes": 2696,
       "path": "scripts/verify_original_hand_runtime.py",
       "sha256": "8e2ff8b9360d77fe37aa456b9df4722226d77a2b7bc30c4935f75e02501634a2"
@@ -5324,9 +5534,9 @@
       "sha256": "3ac1c7732167923c87cbb3f81ff1c223554b0ebb1698514bfcd13baddc4840b1"
     },
     {
-      "bytes": 20293,
+      "bytes": 22349,
       "path": "scripts/weapon_smoke.mjs",
-      "sha256": "2f0018fd220f8984d9cd23407fc209262a76bac189cbf61c766ae1bb23c1182c"
+      "sha256": "f63cd474d6bbccb70f42841ef57fa0b14e1c1f404b7749824f94a354486b74e8"
     },
     {
       "bytes": 4254,
