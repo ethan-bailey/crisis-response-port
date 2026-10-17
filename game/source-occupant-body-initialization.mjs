@@ -15,15 +15,14 @@ export function applyOriginalOccupantSpawnState(record,{
   if(!Number.isFinite(value))throw Error('Invalid original Occupant RNG result');
   return value;
  };
+ // Recover exact source RNG order: ShockRecovery, blind-fire roll,
+ // SetWeaponSkill (skill, compensation random value, skill-range random).
+ const shockRecovery=f(.1,1);
+ const blindFire=f(0,1)<data.blindFireChance;
  const weaponSkill=f(occupantSettings.weaponSkill.low,occupantSettings.weaponSkill.high);
  const compensationX=weaponSkill+(1-weaponSkill)*f(0,1);
  const compensationY=Math.min(compensationX+
    (1-f(occupantSettings.weaponSkill.low,occupantSettings.weaponSkill.high))*3,3);
- // Source order: shock recovery, blind fire chance, SetWeaponSkill.
- // Calculate before mutating the C# body so failed validation cannot partially
- // install source behavior.
- const shockRecovery=f(.1,1);
- const blindFire=f(0,1)<data.blindFireChance;
  applyBlackboard({
   morale:data.morale,aggression:data.aggression,fear:data.fear,
   willBlindFire:blindFire,blindFireDistance:data.blindFireDistance,
