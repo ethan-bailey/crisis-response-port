@@ -281,6 +281,14 @@ namespace Crisis.Runtime.Weapons {
     limb.properties=prop;
     limb.width=sourceFields.GetProperty("width").GetSingle();
     limb.depth=sourceFields.GetProperty("depth").GetSingle();
+    // Preserve each developer-authored aim target and exit accumulation factor
+    // (including any source-omitted Unity field defaults). No generic aimpoint.
+    if(sourceFields.TryGetProperty("radius",out var authoredRadius))
+      limb.radius=authoredRadius.GetSingle();
+    if(sourceFields.TryGetProperty("aimpoint",out var authoredAim))
+      limb.aimpoint=Vec2(authoredAim);
+    if(sourceFields.TryGetProperty("exitAccumulationFactor",out var authoredAccumulation))
+      limb.exitAccumulationFactor=authoredAccumulation.GetSingle();
     limb.impenetrable=Flag(sourceFields.GetProperty("impenetrable"));
     limb.surfaceTestOnExit=Flag(sourceFields.GetProperty("surfaceTestOnExit"));
     limb.enabled=Flag(sourceFields.GetProperty("m_Enabled"));

@@ -10,6 +10,11 @@ public partial class Limb {
  // Original Limb exit-accumulation state. This remains meaningful even with
  // wound decals disabled; dynamic renderer/GPU effects still require source bindings.
  public float exitAccumulationFactor=0.25f;
+ // Developer Limb.radius/aimpoint and AimPoint property are used by real
+ // exit-wound placement. Bind the authored prefab's per-limb coordinates.
+ public float radius=0.15f;
+ public Vector2 aimpoint;
+ public Vector3 AimPoint=>transform.TransformPoint(new Vector3(aimpoint.x,aimpoint.y,0f));
  private float lastExitTimestamp;
  private float accumulatedExitVolume;
  public LimbArmor Armor=>GetComponent<LimbArmor>();

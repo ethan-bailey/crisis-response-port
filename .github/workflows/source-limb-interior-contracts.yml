@@ -7,6 +7,8 @@ on:
       - .github/workflows/source-limb-interior-contracts.yml
       - runtime/Original/Weapons/CharacterLimbBallisticMethods.cs
       - runtime/Checks/ProjectileInjuryContracts.cs
+      - runtime/Engine/OriginalArmPhysicsHost.cs
+      - runtime/Checks/BallisticContracts.cs
 permissions:
   contents: read
 jobs:
@@ -25,3 +27,4 @@ jobs:
           dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --source-limb-interior
           dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --source-tissue-penetration
           dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --character-systems
+          dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj

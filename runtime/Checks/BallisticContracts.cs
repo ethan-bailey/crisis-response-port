@@ -14,6 +14,37 @@ public static class BallisticContracts {
   var host=new WeaponHost(WeaponContracts.ComposeSourceConfiguration(Read("game/assets/weapon-runtime.json.gz"),"game/assets"),input.handler,presentation.QueryWorld){queryWorld=presentation.QueryWorld};
   host.InitializeBallistics(Read("game/assets/ballistics.json.gz"),presentation.QueryScene);
   var world=presentation.QueryWorld;var runtime=host.Ballistics;
+  // Inspect actual Operator limb instances constructed from the authenticated
+  // author prefab; detect accidental defaulting to a shared synthetic aimpoint.
+  var armField=typeof(WeaponHost).GetField("armPhysics",BindingFlags.Instance|BindingFlags.NonPublic);
+  Check(armField!=null,"Author Operator arm host field unavailable");
+  var sourceHost=(OriginalArmPhysicsHost)armField.GetValue(host);
+  var limbField=typeof(OriginalArmPhysicsHost).GetField("runtimeLimbs",BindingFlags.Instance|BindingFlags.NonPublic);
+  var authoredField=typeof(OriginalArmPhysicsHost).GetField("authoredLimbs",BindingFlags.Instance|BindingFlags.NonPublic);
+  Check(limbField!=null&&authoredField!=null,"Author limb registry/source serialization unavailable");
+  var actualLimbs=(Dictionary<LimbId,Limb>)limbField.GetValue(sourceHost);
+  var authoredLimbs=(Dictionary<LimbId,JsonElement>)authoredField.GetValue(sourceHost);
+  Check(actualLimbs.Count==19&&authoredLimbs.Count==19&&!sourceHost.SourceLimbProjectileContactsActive,
+    "Original limb registry size or projectile collision gate regressed");
+  foreach(var (id,originalLimb) in actualLimbs){
+   var sourceFields=authoredLimbs[id].GetProperty("sourceFields").GetProperty("Limb");
+   if(sourceFields.TryGetProperty("aimpoint",out var aim)){
+    var value=originalLimb.aimpoint;
+    Check(Mathf.Abs(value.x-aim.GetProperty("x").GetSingle())<1e-6f&&
+      Mathf.Abs(value.y-aim.GetProperty("y").GetSingle())<1e-6f,
+      "Authored Limb aimpoint mismatch: "+id);
+   }
+   if(sourceFields.TryGetProperty("radius",out var radius))
+    Check(Mathf.Abs(originalLimb.radius-radius.GetSingle())<1e-6f,
+      "Authored Limb aiming radius mismatch: "+id);
+   if(sourceFields.TryGetProperty("exitAccumulationFactor",out var accumulation))
+    Check(Mathf.Abs(originalLimb.exitAccumulationFactor-accumulation.GetSingle())<1e-6f,
+      "Authored Limb exit accumulation mismatch: "+id);
+   var aimWorld=originalLimb.transform.TransformPoint(
+     new Vector3(originalLimb.aimpoint.x,originalLimb.aimpoint.y,0f));
+   Check((originalLimb.AimPoint-aimWorld).sqrMagnitude<1e-10f,
+     "Original Limb.AimPoint local to world conversion mismatch: "+id);
+  }
   var sourceWindows=JsonSerializer.SerializeToElement(runtime.WindowVisuals());
   Check(sourceWindows.GetProperty("sceneSha256").GetString()=="c43b36c415b4df14ef6223eaced686a8ddcead6c46f7504346aecb1a03c5743e",
     "Recovered window render geometry does not match audited original scene");
@@ -113,7 +144,7 @@ public static class BallisticContracts {
   } finally {
     PerformanceManager.Instance.MaxEnvironmentHitEffects=originalEffectLimit;
   }
-  return JsonSerializer.Serialize(new{ballistics="PASS",sourceMaterials=386,meshColliders=runtime.loadedMeshColliders,unresolvedBuiltins=runtime.unsupportedColliders,shearedExitMeshReparent=true,liveSceneContact=true,thinPenetration=true,thickStop=true,impenetrable=true,delayedExitResumes=true,glassHolePassThrough=true,originalEntryEffectDelivered,fragmentCount=count,fragmentMassConserved=true,fullUnityParity=false});
+  return JsonSerializer.Serialize(new{ballistics="PASS",sourceMaterials=386,meshColliders=runtime.loadedMeshColliders,unresolvedBuiltins=runtime.unsupportedColliders,shearedExitMeshReparent=true,liveSceneContact=true,thinPenetration=true,thickStop=true,impenetrable=true,delayedExitResumes=true,glassHolePassThrough=true,originalEntryEffectDelivered,fragmentCount=count,fragmentMassConserved=true,originalLimbAimSource=true,fullUnityParity=false});
  }
 }
 
