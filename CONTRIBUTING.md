@@ -4,7 +4,7 @@ This private project preserves original Crisis Response developer code and behav
 
 ## Start here
 
-Read [the branching and collaboration guide](docs/BRANCHING_AND_COLLABORATION.md), then the current [NEXT_AGENT.md](https://github.com/ethan-bailey/crisis-response-port/blob/develop/wasm/NEXT_AGENT.md) on `develop/wasm`, the [workspace](https://github.com/ethan-bailey/crisis-response-port/blob/develop/wasm/WORKSPACE.md), and the linked issue. The latest plan is on `develop/wasm`; historical notes are not active assignments.
+Read the [audited operations board](docs/REPOSITORY_OPERATIONS_2026-10-17.md) and [branching and collaboration guide](docs/BRANCHING_AND_COLLABORATION.md), then the current [NEXT_AGENT.md](https://github.com/ethan-bailey/crisis-response-port/blob/develop/wasm/NEXT_AGENT.md) on `develop/wasm`, the [workspace](https://github.com/ethan-bailey/crisis-response-port/blob/develop/wasm/WORKSPACE.md), and the linked issue. The latest plan is on `develop/wasm`; historical notes are not active assignments.
 
 ## Standard workflow
 
