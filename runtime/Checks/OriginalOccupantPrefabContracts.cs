@@ -1,5 +1,7 @@
 using System.Text.Json;
 using Crisis.Runtime.Weapons;
+using Crisis.Runtime.Presentation;
+using System.IO.Compression;
 using UnityEngine;
 
 public static class OriginalOccupantPrefabContracts {
@@ -27,6 +29,30 @@ public static class OriginalOccupantPrefabContracts {
    "Incomplete original NPC live collisions activated before source mission/effects");
   Check(!a.PhysicsHost.SourceArmControlBound,
    "Occupant falsely advertises completed IK/ArmsControl without original Hand visuals");
+  // Bind actual recovered Occupant author flesh materials, armor and all
+  // 19 source CapsuleColliders to the exact Mission 01 material runtime.
+  // They must remain disabled until mission hit effects/renderer exist.
+  static string Zipped(string path) {
+   using var stream=new GZipStream(File.OpenRead(path),CompressionMode.Decompress);
+   using var reader=new StreamReader(stream);
+   return reader.ReadToEnd();
+  }
+  var scene=new PresentationHost(Zipped("game/assets/presentation.json.gz"));
+  var ballisticRuntime=new BallisticRuntimeHost(
+    Zipped("game/assets/ballistics.json.gz"),scene.QueryScene,
+    new WeaponEffects(),_=>{});
+  using var materialDoc=JsonDocument.Parse(
+    File.ReadAllText("game/assets/original-limb-ballistic-materials.json"));
+  a.BindSourceBallistics(materialDoc.RootElement,ballisticRuntime,world);
+  b.BindSourceBallistics(materialDoc.RootElement,ballisticRuntime,world);
+  Check(a.PhysicsHost.SourceLimbColliderCount==19&&b.PhysicsHost.SourceLimbColliderCount==19,
+   "Recovered original Occupant limb capsules did not bind");
+  Check(a.PhysicsHost.SourceLimbArmorCount==4&&b.PhysicsHost.SourceLimbArmorCount==4&&
+    a.PhysicsHost.SourceLimbMaterialCount==8&&b.PhysicsHost.SourceLimbMaterialCount==8,
+   "Author Occupant source armor/flesh GUID graph incomplete");
+  Check(a.Character.limbs.All(l=>l.properties!=null&&
+    l.GetComponent<CapsuleCollider>() is CapsuleCollider c&&!c.enabled),
+   "Source Occupant queried before original live NPC is ready");
   int ragdoll=0;
   a.Character.EventRagdoll.AddListener(()=>ragdoll++);
   a.Character.EnterSourceRagdoll();
@@ -39,6 +65,8 @@ public static class OriginalOccupantPrefabContracts {
    sourceOccupantPrefab="PASS",prefabActors=2,authoredBodiesPerActor=20,
    authoredJointsPerActor=18,authoredLimbsPerActor=19,
    originalMusclesPerActor=16,originalVitalsPerActor=9,
+   originalFleshMaterialsPerActor=8,authoredArmorPerActor=4,
+   disabledSourceCapsulesPerActor=19,
    authenticRagdollRelease=true,liveNpcGameplay=false
   });
  }
