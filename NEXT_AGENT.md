@@ -1,6 +1,11 @@
 # NEXT AGENT — Crisis Response Port
 Updated 2026-10-17 UTC. Living project status; maintain the affected sections incrementally under AGENTS.md §9.
 
+## 2026-10-17 continuation — asynchronous mission NPC spawn boundary
+- [17d1a13](https://github.com/ethan-bailey/crisis-response-port/commit/17d1a13b8bf0bcc4acbe06a4f1965d997801b095) introduces `game/source-occupant-mission-integration.mjs`: strict source OccupantSpawner → existing `spawnFromOriginalRecord` async visual/C# physics actor bridge, original group ordering and invalid-record rejection. **Not yet invoked by automatic game startup** because the original Global.Context / OccupantSettings, Unity RNG and ballistic collision raycast bindings remain unconnected.
+- [a27093e](https://github.com/ethan-bailey/crisis-response-port/commit/a27093e76f14b44b0db11b89d1bcb66fbe1c657e) adds `scripts/test_original_occupant_mission_integration.mjs` positive, tutorial and fail-closed fixtures. [0ff3880](https://github.com/ethan-bailey/crisis-response-port/commit/0ff3880eed8e7462d2d6544d4d5168af78687d09) adds matching focused CI. **CI results not yet verified.** No live NPC mission automatic spawning or public site resulting from this change.
+- Next: wire real Global.Context mission configuration and original Unity seed/RNG and obstruction queries into startup; verify full auto-spawn + physics and animation; then AI, projectile event notifications, wounds and ragdoll/drop; build full WASM/browser smoke. Avoid fabricated source settings and deploy claims.
+
 ## Current request and veracity
 User requested **original mission NPC spawning/visuals, production hit notifications/effects, wound rendering, and complete ragdoll/weapon-drop sequence**. **NOT YET COMPLETED.** PR #56 contains source-backed partial implementation only. A source-manifest Occupant is now **instantiable through the WASM runtime and attached to the browser scene by a test-only source-record callback**, but actual mission auto-spawn/AI, finished source wound renderer, fully production-bound character hit/audio/time effects or complete drop-weapon and ragdoll graph. Do not assert successful playable NPC combat, runtime parity, or iPhone proof. In particular, all 19 author CapsuleColliders remain disabled as projectile targets until all required dependencies exist. Do not introduce fabricated NPC targets or gameplay callbacks.
 
