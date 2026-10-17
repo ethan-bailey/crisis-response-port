@@ -1,0 +1,17 @@
+{
+  "archiveSha256": "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
+  "sources": {
+    "LimbLayer.cs": {
+      "archivePath": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/LimbLayer.cs",
+      "sha256": "86d3b58ea800d79f6c0c4e45bf0194bcf7d604e5718814d965ce30d37f71589e"
+    },
+    "LimbRenderer.cs": {
+      "archivePath": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/LimbRenderer.cs",
+      "sha256": "a54c9c2b4454d1a9e8d0c9f6c7c8326757db749e5146485383b0873820443592"
+    },
+    "LimbTextureData.cs": {
+      "archivePath": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/LimbTextureData.cs",
+      "sha256": "6497989fda940321313bee655475cfae8e790ffaa75848c1fa08c49cac8afacc"
+    }
+  }
+}
