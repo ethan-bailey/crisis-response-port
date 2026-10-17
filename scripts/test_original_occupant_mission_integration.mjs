@@ -46,3 +46,17 @@ assert(floatCalls>0);
 await assert.rejects(spawnOriginalSandboxMissionOccupants({
  visualSpawnSource:source,sceneName:'Marksman range',campaign:{active:true}
 }),/inactive campaign/);
+
+let initialized=0;
+const integrated=await spawnOriginalSandboxMissionOccupants({
+ visualSpawnSource:source,sceneName:'Marksman range',
+ occupantSettings:originalSettings,availableWeapons:[],
+ randomFloat:(a,b)=>a+(b-a)*.5,randomInt:(a,b)=>a,
+ raycast:()=>false,spawnData:{specificGroups:[],randomGroups:[]},
+ campaign:{active:false},
+ prepareSourceRecord:record=>{initialized++;return {...record,sourceWeaponSkill:.5}},
+ actorBridge:{spawnFromOriginalRecord:record=>({weaponSkill:record.sourceWeaponSkill})}
+});
+assert.equal(integrated.length,3);
+assert.equal(initialized,3);
+assert(integrated.every(x=>x.weaponSkill===.5));
