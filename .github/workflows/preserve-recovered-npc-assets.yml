@@ -101,12 +101,14 @@ jobs:
           p.write_text(json.dumps(manifest,indent=2,sort_keys=True)+'\n')
           print('Preserved files:',len(paths),'original bytes:',sum(p.stat().st_size for p in paths))
           PY
+      - name: Export verified renderer GUID to source material mappings
+        run: python3 scripts/export_original_occupant_materials.py
       - name: Commit original art and source on this development branch only
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- "source-reference/Original/NPCRecovery" "game/assets/occupant/skins"
+          git add -- "source-reference/Original/NPCRecovery" "game/assets/occupant/skins" "game/assets/occupant/source-materials.json"
           if ! git diff --cached --quiet; then
             git commit -m "Preserve authentic recovered NPC skins, spawn scripts and Unity scene definitions"
             git pull --rebase origin feature/original-projectile-limb-hit-runtime
