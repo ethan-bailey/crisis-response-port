@@ -17,6 +17,7 @@ public partial class Limb {
  public OriginalLimbPhysiology LimbPhysiology;
  public OriginalLimbMuscle SourceMuscle;
  public OriginalVitalFunctions SourceVitals;
+ public OriginalLimbSkinTrace SourceSkinTrace;
  public Rigidbody Rigidbody => GetComponent<Rigidbody>();
  Vector3 potentialForce,potentialPosition;
  float potentialTime,rigidBodyDefaultDrag;
