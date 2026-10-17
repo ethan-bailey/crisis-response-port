@@ -44,6 +44,80 @@ if(args.Contains("--original-limb-skin")){
  Console.WriteLine("{\"originalLimbSkinTrace\":\"pass\",\"sourceSkinTextures\":11,\"sourceRenderers\":17,\"nativePixelTrace\":true}");
  return;
 }
+if(args.Contains("--source-tissue-penetration")){
+ var world=new UnityEngine.RuntimeWorld();
+ world.MakeCurrent();
+ PerformanceManager.Instance=new PerformanceManager{MaxEnvironmentHitEffects=0};
+ MissionHelper.Instance.EffectsContainer=new UnityEngine.GameObject("source impact effects",world).transform;
+ var owner=new UnityEngine.GameObject("source impact shooter",world)
+    .AddComponent<Crisis.Runtime.Weapons.CharacterBody>();
+ var source=new UnityEngine.GameObject("source M4-like ballistic fixture",world)
+    .AddComponent<Crisis.Runtime.Weapons.WeaponBase>();
+ source.Owner=owner;
+ source.rifledBarrel=true;source.rifleTwistRate=7f;
+ var ammo=new UnityEngine.GameObject("source default ammo fixture",world)
+    .AddComponent<Crisis.Runtime.Weapons.WeaponAmmunition>();
+ // Source AmmunitionBase default velocity/mass/calibre, and the same genuine
+ // class energy/friction laws, with an explicit constant test expansion curve.
+ ammo.expansionFunction=new UnityEngine.AnimationCurve(
+     new UnityEngine.Keyframe(0f,1f,0f,0f),
+     new UnityEngine.Keyframe(1f,1f,0f,0f)){clampOutside=true};
+ source.ammunition=ammo;
+ var target=new UnityEngine.GameObject("source Torso target",world)
+    .AddComponent<Crisis.Runtime.Weapons.CharacterBody>();
+ var limb=target.gameObject.AddComponent<Crisis.Runtime.Weapons.Limb>();
+ limb.Body=target;limb.id=Crisis.Runtime.Weapons.LimbId.Torso;
+ limb.depth=.55f; // extracted source Operator Torso
+ var physiology=new Crisis.Runtime.Character.OriginalPhysiologyConditions();
+ physiology.InitializeBloodVolume(4500f);
+ physiology.InitializeVitalClock(0f,0f,0f);
+ physiology.SetBloodPressure(100f,190f,1f,.5f);
+ limb.LimbPhysiology=new Crisis.Runtime.Character.OriginalLimbPhysiology(physiology);
+ target.gameObject.AddComponent<UnityEngine.Rigidbody>().isKinematic=true;
+ limb.SourceSkinTrace=new Crisis.Runtime.Character.OriginalLimbSkinTrace(
+   new UnityEngine.GameObject("full skin fixture",world).transform,32,32,
+   Enumerable.Repeat((byte)0,1024).ToArray());
+ // The actual original torso flesh material, not test-generated density.
+ using var data=JsonDocument.Parse(File.ReadAllText("game/assets/original-limb-ballistic-materials.json"));
+ var material=data.RootElement.GetProperty("materials")
+   .GetProperty("d16aa32f896a9634581f616d9a27cfc4").GetProperty("fields");
+ var properties=target.gameObject.AddComponent<BallisticMaterialProperties>();
+ properties.surfaceDensity=material.GetProperty("surfaceDensity").GetSingle();
+ properties.surfaceThickness=material.GetProperty("surfaceThickness").GetSingle();
+ properties.density=material.GetProperty("density").GetSingle();
+ properties.maximumDeflection=material.GetProperty("maximumDeflection").GetSingle();
+ var range=material.GetProperty("densityRandomness");
+ properties.densityRandomness=new UnityEngine.Vector2(
+     range.GetProperty("x").GetSingle(),range.GetProperty("y").GetSingle());
+ limb.properties=properties;
+ limb.Awake();limb.Start();
+ var projectile=new UnityEngine.GameObject("source physical projectile",world)
+    .AddComponent<Projectile>();
+ projectile.meshTransform=new UnityEngine.GameObject("source projectile mesh",world).transform;
+ projectile.meshTransform.SetParent(projectile.transform,false);
+ // Marksman-specific source skin route avoids inventing a simulated exit
+ // thickness while testing the real recovered Projectile+Limb source code.
+ projectile.MarksmanOwner=source;
+ projectile.transform.position=new UnityEngine.Vector3(.10f,.10f,-.01f);
+ projectile.transform.rotation=UnityEngine.Quaternion.LookRotation(
+    new UnityEngine.Vector3(1f,0f,.2f));
+ projectile.ForceMultiplier=.015f; // recovered original Projectile.ForceScale
+ projectile.InitializeXY(source,false);
+ var initialEnergy=projectile.Energy;
+ var hitEvent=0;target.EventHit.AddListener(()=>hitEvent++);
+ Projectile outcome=limb.HandleProjectile(projectile,new UnityEngine.Vector3(-1f,0f,0f));
+ if(outcome!=projectile||!(initialEnergy>projectile.Energy)||
+   !(projectile.InteractionEnergy>0f)||!(projectile.DisplacedMaterialVolume>0f)||
+   !(limb.LimbPhysiology.WoundCavityVolume>0f)||
+   limb.LimbPhysiology.Wounds.Count!=1||hitEvent==0)
+  throw new Exception("Original authored torso material interior did not propagate projectile energy through trauma and wounds");
+ var bloodBefore=physiology.BloodVolume;
+ limb.LimbPhysiology.UpdateHemorrhaging(.02f);
+ if(!(physiology.BloodVolume<bloodBefore))
+  throw new Exception("Original projectile interior wound did not drive source hemorrhage/blood loss");
+ Console.WriteLine("{\"OriginalLimbTissuePenetration\":\"pass\",\"authorFleshDensity\":true,\"sourceCavity\":true}");
+ return;
+}
 if(args.Contains("--source-limb-interior")){
   var world=new UnityEngine.RuntimeWorld();
   world.MakeCurrent();
