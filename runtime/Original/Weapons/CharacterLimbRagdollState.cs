@@ -127,6 +127,25 @@ public partial class CharacterBody {
    EventUnconscious.Invoke();
   }
  }
+ // Fully bound original SetRagdoll path.  Remains gated until actual
+ // equipment, grenade and Target adapters exist in the mission scene.
+ public void EnterFullyBoundSourceRagdoll(
+   float weaponDropTime,Action<bool> dropWeapons,
+   Action disableTarget,Action startPinnedGrenadeFuse){
+  if(!Kinematic)return;
+  if(dropWeapons==null||disableTarget==null||startPinnedGrenadeFuse==null)
+   throw new NotSupportedException("Original ragdoll mission/equipment graph missing");
+  if(Time.time-weaponDropTime>1f)dropWeapons(true);
+  if(rightArm!=null)rightArm.enabled=false;
+  if(leftArm!=null)leftArm.enabled=false;
+  GetComponent<ArmsControl>()?.Relax();
+  SetKinematic(false);
+  disableTarget();
+  startPinnedGrenadeFuse();
+  SourceMuscleControl?.Relax();
+  foreach(var limb in limbs)limb.OnBecomeRagdoll();
+  EventRagdoll.Invoke();
+ }
  public void EnterSourceRagdoll(){
   if(!Kinematic)return;
   // Original CharacterBody.SetRagdoll: relax the real authored ArmsControl,
