@@ -62,6 +62,18 @@ jobs:
             cp "$root/$path" "$saved/$path"
             if test -f "$root/$path.meta"; then cp "$root/$path.meta" "$saved/$path.meta"; fi
           done
+          # Preserve every exact original material used by the 20 Occupant renderers.
+          for material in \
+            "Static abdomen.mat" "Static occupant torso.mat" "Static neck.mat" \
+            "Static head.mat" "Static upper arm.mat" "Static lower arm.mat" \
+            "hand.mat" "hand trigger.mat" "hand front rifle.mat" \
+            "Static upper leg.mat" "Static lower leg.mat" "Static foot.mat" \
+            "Static toes.mat"; do
+            test -f "$root/Material/$material"
+            mkdir -p "$saved/Material"
+            cp "$root/Material/$material" "$saved/Material/$material"
+            cp "$root/Material/$material.meta" "$saved/Material/$material.meta"
+          done
           for skin in \
             "black pelvis.png" "black abdomen.png" "torso_0.png" \
             "neck protector.png" "head 1.png" "head 2.png" "head 3.png" \
