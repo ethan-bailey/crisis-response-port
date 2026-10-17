@@ -19,6 +19,10 @@ public partial class Limb {
  public OriginalVitalFunctions SourceVitals;
  public OriginalLimbSkinTrace SourceSkinTrace;
  public Rigidbody Rigidbody => GetComponent<Rigidbody>();
+ // Original Limb.OnBecomeRagdoll: each source limb relaxes its own joint.
+ public void OnBecomeRagdoll(){
+  if(SourceMuscle!=null)SourceMuscle.Relax();
+ }
  Vector3 potentialForce,potentialPosition;
  float potentialTime,rigidBodyDefaultDrag;
  public void SetKinematic(bool kinematic,Vector3 worldSpaceVelocity=default(Vector3)){
@@ -133,7 +137,10 @@ public partial class CharacterBody {
   if(leftArm!=null)leftArm.enabled=false;
   GetComponent<ArmsControl>()?.Relax();
   SetKinematic(false);
+  // The original CharacterBody.SetRagdoll invokes every Limb.OnBecomeRagdoll
+  // after SetKinematic and before EventRagdoll.
   SourceMuscleControl?.Relax();
+  foreach(var limb in limbs)limb.OnBecomeRagdoll();
   EventRagdoll.Invoke();
  }
  public void SetKinematic(bool state){
