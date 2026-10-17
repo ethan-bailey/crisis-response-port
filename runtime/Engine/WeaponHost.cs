@@ -159,14 +159,18 @@ public sealed class WeaponHost {
    a.InitializeSourcePose();a.SetOnWeapon(weapon,.1f,right);return a;
   }
   body.rightArm=Arm(true);body.leftArm=Arm(false);
-  armPhysics=new OriginalArmPhysicsHost(c.GetProperty("armPhysics"),operatorTransforms,body,world);
+  var limbSource=c.TryGetProperty("sourceLimbComponents",out var limbConfiguration)?limbConfiguration:default;
+  armPhysics=new OriginalArmPhysicsHost(c.GetProperty("armPhysics"),operatorTransforms,body,world,limbSource);
   reload=bg.AddComponent<ChangeMagazine>();reload.isPlayer=true;reload.OnAwake();workBolt=bg.AddComponent<WorkBolt>();workBolt.OnAwake();effects.events.Clear();
  }
+ public void BindOriginalLimbPhysiology()=>armPhysics.BindOriginalPhysiology();
  public object Step(string json){world.MakeCurrent();using var d=JsonDocument.Parse(json);var f=d.RootElement;
   body.Direction=f.GetProperty("direction").GetSingle();body.transform.position=V(f.GetProperty("position"));body.transform.rotation=Quaternion.AngleAxis(body.RotationY,Vector3.up);
+  if(f.TryGetProperty("velocity",out var sourceVelocity)&&body.GetComponent<Rigidbody>() is Rigidbody rootRigidbody)
+   rootRigidbody.velocity=V(sourceVelocity);
   foreach(var pair in f.GetProperty("operatorTransforms").EnumerateObject())if(operatorTransforms.TryGetValue(pair.Name,out var target))SetWorld(target,pair.Value);
   SetWorld(weapon.transform,f.GetProperty("weaponPose"));
-  body.rightArm.Step();body.leftArm.Step();
+  if(body.Kinematic){body.rightArm.Step();body.leftArm.Step();}
   armPhysics.Step(f,world);
   // Original CharacterBody.QueryTrigger clears one-frame requests; manipulation blocks new pulls.
   if(f.GetProperty("fire").GetBoolean()&&!body.IsManipulatingEquipment)body.PullTrigger();
@@ -184,7 +188,11 @@ public sealed class WeaponHost {
    upper=a.upperArm.transform.eulerAngles.z,lower=a.lowerArm.transform.eulerAngles.z,
    bones=new{upper=Pose(a.upperArm.transform),lower=Pose(a.lowerArm.transform),hand=Pose(a.hand.transform)},
    handObjects=a.hand.SourceVisuals.Select(pair=>new{id=pair.Key,active=pair.Value.activeSelf}).ToArray()};// Presentation timing must use the same scaled Unity Time.time as the recovered weapon/effect events.
-  return new{sourceTime=Time.time,sourcePhysiology=body.SourcePhysiology==null?null:new{body.SourcePhysiology.Alive,body.SourcePhysiology.Conscious,body.SourcePhysiology.BloodVolume,body.SourcePhysiology.BloodOxygen,body.SourcePhysiology.HeartRate,body.SourcePhysiology.RespirationRate,body.SourcePhysiology.BrainTrauma},ballistics=Ballistics?.Snapshot(),magazinePose=new{p=new[]{mp.x,mp.y,mp.z},q=new[]{mq.x,mq.y,mq.z,mq.w},visible=weapon.ComponentMagazine.gameObject.activeSelf},shots=body.ShotsFired,
+  return new{sourceTime=Time.time,sourcePhysiology=body.SourcePhysiology==null?null:new{body.SourcePhysiology.Alive,body.SourcePhysiology.Conscious,body.SourcePhysiology.BloodVolume,body.SourcePhysiology.BloodOxygen,body.SourcePhysiology.HeartRate,body.SourcePhysiology.RespirationRate,body.SourcePhysiology.BrainTrauma,
+   body.SourcePhysiology.Shock,body.SourcePhysiology.LungsOxygen,
+   WoundVolume=body.limbs.Sum(l=>l.LimbPhysiology?.WoundCavityVolume??0f),
+   Hemorrhaging=body.limbs.Sum(l=>l.LimbPhysiology?.InternalHemorrhaging??0f),
+   limbCount=body.limbs.Count,body.Kinematic,body.CrippledRatio},ballistics=Ballistics?.Snapshot(),magazinePose=new{p=new[]{mp.x,mp.y,mp.z},q=new[]{mq.x,mq.y,mq.z,mq.w},visible=weapon.ComponentMagazine.gameObject.activeSelf},shots=body.ShotsFired,
    // The only currently executable original weapon host is the recovered M4A1.
    // Send source-owned magazine capacity and chamber state to the browser.
    // Future weapon hosts must supply their own actual equipped weapon identity;
