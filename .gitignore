@@ -1,0 +1,35 @@
+# Local development byproducts only.
+# Do NOT exclude recovered original game binaries/assets, authored .obj meshes,
+# .wasm builds that are intentionally committed, source .gz manifests, or
+# release/preview package evidence. Review additions to this file carefully.
+
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Local secrets: examples are safe to version deliberately.
+.env
+.env.*
+!.env.example
+*.local.env
+
+# Package-manager and tool caches at repository root.
+node_modules/
+.venv/
+.pytest_cache/
+.mypy_cache/
+__pycache__/
+*.py[cod]
+
+# Runtime compile intermediates, not original source/asset directories.
+runtime/**/bin/
+runtime/**/obj/
+tools/**/bin/
+tools/**/obj/
+
+# Machine-specific IDE/editor settings.
+.vscode/
+.idea/
+*.suo
+*.user
