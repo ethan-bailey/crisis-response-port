@@ -6,7 +6,7 @@ import {createSourceOccupantSandboxSettings} from './source-occupant-sandbox-set
 
 export async function spawnOriginalMissionOccupants({
   visualSpawnSource,sceneName,random,raycast,settings,spawnData,
-  campaign,tutorial=false,actorBridge
+  campaign,tutorial=false,actorBridge,prepareSourceRecord
 }={}) {
   if(!actorBridge || typeof actorBridge.spawnFromOriginalRecord!=='function')
     throw Error('Original mission NPC visual/physics bridge missing');
@@ -19,7 +19,9 @@ export async function spawnOriginalMissionOccupants({
          !Array.isArray(record.position) || record.position.length!==3 ||
          !record.position.every(Number.isFinite))
         throw Error('Original mission NPC record lacks a valid source prefab and position');
-      return actorBridge.spawnFromOriginalRecord(record);
+      const prepared=prepareSourceRecord?prepareSourceRecord(record):record;
+      if(!prepared || typeof prepared!=='object')throw Error('Original NPC source record initialization failed');
+      return actorBridge.spawnFromOriginalRecord(prepared);
     }
   });
   // The recovered spawner returns actor creation calls in source group order.
