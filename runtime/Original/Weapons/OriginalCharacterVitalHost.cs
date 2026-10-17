@@ -26,7 +26,7 @@ public partial class CharacterBody {
   float num4=(spasmsActive?.5f:0f)+(crampsActive?.75f:0f);
   float work=Mathf.Clamp01(num2+num+holdWeaponWorkIntensity+num3+num4);
   bool wasAlive=p.Alive,wasConscious=p.Conscious;
-  p.UpdateVitalDynamics(dt,now,work,respirationBlocked,heartRandom);
+  p.UpdateVitalDynamics(dt,now,work,respirationBlocked,heartRandom,deferPostCirculation:true);
   // The original Physiology.Update orders circulation/heart, then UpdateLimbs,
   // SetHemorrhaging, SetBloodOxygen, and SetCharacterState. The source limb
   // instances now belong to this actual gameplay character.
@@ -40,6 +40,7 @@ public partial class CharacterBody {
    }
    limb.SourceMuscle?.Update(now);
   }
+  p.CompletePostCirculation(dt,now);
   if(Kinematic&&(p.Shock>=1000f||p.ShouldLoseFooting()))
    EnterSourceRagdoll();
   if(wasConscious&&!p.Conscious){
@@ -54,3 +55,4 @@ public partial class CharacterBody {
        LimbCount=limbs.Count};
  }
 }
+

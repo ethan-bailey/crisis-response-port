@@ -1,6 +1,7 @@
 using Crisis.Runtime;
 using System.Text.Json;
 
+if(args.Contains("--projectile-injury-chain")){Console.WriteLine(ProjectileInjuryContracts.Run());return;}
 if(args.Contains("--original-limb-skin")){
  var file="game/assets/operator/original-source-limb-damage-mask.json.gz";
  using var fs=File.OpenRead(file);

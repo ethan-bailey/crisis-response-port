@@ -17,7 +17,7 @@ public void StepFlight()
 			float num4 = Velocity * num3;
 			NextPosition = base.transform.position + base.transform.forward * num4 + GravityVelocityAtTime(Time.time + num3) * num3;
 			Vector3 normalized = (NextPosition - base.transform.position).normalized;
-			bool flag2 = Physics.Raycast(base.transform.position, normalized, out nonDiscriminatingResult, num4, ballisticMask);
+			bool flag2 = FlightRaycast(new Ray(base.transform.position, normalized), out nonDiscriminatingResult, num4, ballisticMask);
 			BallisticResult ballisticResult = BallisticResult.Continue;
 			if (flag2)
 			{
@@ -42,7 +42,7 @@ public void StepFlight()
 						float maxDistance = num7 - num6;
 						raycastRay.origin = StartPosition + normalized * num6;
 						raycastRay.direction = normalized;
-						if (Physics.Raycast(raycastRay, out limbRaycastResult, maxDistance, limbMask))
+						if (FlightRaycast(raycastRay, out limbRaycastResult, maxDistance, limbMask))
 						{
 							ballisticResult = HandleLimbHit(limbRaycastResult);
 						}

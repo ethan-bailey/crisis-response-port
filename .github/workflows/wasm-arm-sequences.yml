@@ -1,6 +1,6 @@
 name: Audit milestone original WASM baseline verification
 
-# Execute original Projectile-to-Torso flesh penetration, source wound/circulation and editor verified native/WASM Chromium/WebKit milestone.
+# Execute source projectile combat/injury graph in native and WASM; live NPC collision activation stays gated.
 # Merging reviewed code into develop/wasm must not duplicate the expensive build.
 # No automatic builds on source/doc edits, and workflow_dispatch remains available.
 on:
@@ -52,10 +52,17 @@ jobs:
           python3 scripts/verify_original_arm_controller_references.py | tee work/evidence/controller-source-check.json
           python3 scripts/verify_original_arm_limb_sources.py | tee work/evidence/hand-limb-source-check.json
           python3 scripts/verify_original_hand_runtime.py | tee work/evidence/original-hand-runtime-check.json
+          python3 scripts/verify_original_combat_source.py | tee work/evidence/original-combat-source-check.json
       - name: Test package corruption and mixed-build rejection
         run: python3 -m unittest discover -s scripts -p package_wasm_site_test.py -v 2>&1 | tee work/evidence/package-tests.txt
       - name: Execute recovered original native contracts
-        run: dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj | tee work/evidence/native-contracts.jsonl
+        run: |
+          set -o pipefail
+          dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj | tee work/evidence/native-contracts.jsonl
+          dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --projectile-injury-chain | tee work/evidence/projectile-injury-native.json
+          dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --source-tissue-penetration | tee work/evidence/source-tissue-native.json
+          dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --source-limb-interior | tee work/evidence/source-interior-native.json
+          dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --character-systems | tee work/evidence/character-systems-native.json
       - name: Prepare original scene and pinned PhysX
         run: |
           npm ci --prefix game --ignore-scripts --no-audit --no-fund
@@ -89,6 +96,7 @@ jobs:
         run: |
           python3 -m http.server 8000 --bind 127.0.0.1 --directory work/site > work/evidence/http-server.log 2>&1 &
           node scripts/original_arm_sequences_smoke.mjs
+          node scripts/projectile_injury_smoke.mjs
       - name: Boot original C# physical ArmController and verify kinematic PhysX rig in Chromium/WebKit
         run: |
           node scripts/weapon_smoke.mjs
@@ -110,4 +118,5 @@ jobs:
           retention-days: 30
           compression-level: 0
           if-no-files-found: error
+
 

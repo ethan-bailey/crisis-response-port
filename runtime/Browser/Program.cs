@@ -13,6 +13,11 @@ builder.Services.AddScoped(_=>new HttpClient{BaseAddress=new Uri(builder.HostEnv
 await builder.Build().RunAsync();
 
 public static class RuntimeBridge {
+    // Run on an isolated diagnostic page before initializing gameplay.
+    [JSInvokable] public static string VerifyProjectileInjuryChain(string weaponJson,string materialJson){
+        if(weapons!=null||presentation!=null)throw new InvalidOperationException("Injury diagnostics require an isolated runtime page");
+        return ProjectileInjuryContracts.Run(weaponJson,materialJson);
+    }
     [JSInvokable] public static string ComposeOriginalArmSequences(string bundle,string namesJson)=>OriginalArmSequences.Compose(bundle,namesJson);
     [JSInvokable] public static string VerifyOriginalHandModes()=>OriginalHandModes.Run();
     static OriginalInputHost input;
@@ -92,3 +97,4 @@ public static class RuntimeBridge {
         return JsonSerializer.Serialize(new{found,distance=found?hit.distance:0,name=found?hit.collider.name:null,point=found?new[]{hit.point.x,hit.point.y,hit.point.z}:null});
     }
 }
+

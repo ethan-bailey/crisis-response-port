@@ -98,7 +98,7 @@ public sealed partial class OriginalPhysiologyConditions {
   Alive=false;RespirationDisabled=true;
  }
  public float UnconsciousTimestamp{get;private set;}
- public void UpdateVitalDynamics(float dt,float now,float workIntensity,bool respirationBlocked,float heartRandom){
+ public void UpdateVitalDynamics(float dt,float now,float workIntensity,bool respirationBlocked,float heartRandom,bool deferPostCirculation=false){
   if(StartingBloodVolume<=0)throw new InvalidOperationException("Missing original physiology initialization");
   if(!float.IsFinite(dt)||dt<=0||!float.IsFinite(now))throw new ArgumentOutOfRangeException(nameof(dt));
   if(heartRandom<0||heartRandom>1)throw new ArgumentOutOfRangeException(nameof(heartRandom));
@@ -177,6 +177,10 @@ public sealed partial class OriginalPhysiologyConditions {
    }
   }
   SetBloodPressure(HeartRate,heartRateMax,HeartEffectiveness,HeartBeatCycle);
+  if(!deferPostCirculation)CompletePostCirculation(dt,now);
+ }
+ // Original Update order places UpdateLimbs/SetHemorrhaging before these.
+ public void CompletePostCirculation(float dt,float now){
   // Physiology.SetBloodOxygen: consume oxygen at original work rate.
   BloodOxygen=Mathf.Clamp(BloodOxygen-WorkIntensity*workOxygenFactor*dt,0f,1f);
   if(Conscious&&ShouldLoseConsciousness())SetUnconscious(now);
@@ -186,3 +190,4 @@ public sealed partial class OriginalPhysiologyConditions {
   if(Alive&&now-lastBrainOxygenTimestamp>30f)SetDead(now);
  }
 }
+

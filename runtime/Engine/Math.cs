@@ -60,7 +60,8 @@ public static class Mathf {
     public static float Abs(float f) => MathF.Abs(f);
     public static float Min(float a,float b) => MathF.Min(a,b);
     public static float Max(float a,float b) => MathF.Max(a,b);
-    public static float Clamp(float f,float min,float max) => Math.Clamp(f,min,max);
+    // Unity Mathf.Clamp uses ordered comparisons, including inverted bounds.
+    public static float Clamp(float f,float min,float max){if(f<min)f=min;else if(f>max)f=max;return f;}
     public static float Clamp01(float f) => Math.Clamp(f,0,1);
     public static float Lerp(float a,float b,float t)=>a+(b-a)*Clamp01(t);
     public static float Pow(float value,float power)=>MathF.Pow(value,power);
@@ -86,3 +87,4 @@ public static class Random {
  public static int Range(int a,int b)=>source.Next(a,b);
 }
 public static class Debug {public static void LogWarningFormat(string format,params object[] args)=>Console.Error.WriteLine(format,args);}
+

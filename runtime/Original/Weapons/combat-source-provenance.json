@@ -1,0 +1,14 @@
+{
+  "source": "SHA-pinned recovered private archive",
+  "files": {
+    "Projectile.cs": "ef6443c2d6fece6866526fa8c9d4262c31fbc26a2ed77da57e607d681a0302b2",
+    "CharacterBody.cs": "76301d45e6e94556d1a902f0d37f5f97111bc2efb89f36de7ed9acd935b55742",
+    "CharacterScoreCard.cs": "db0af016c36ff62cf712a8caddd65b1c60d783cd45b23686a0e48d9b49320791"
+  },
+  "mapping": {
+    "CharacterScoreCard": "namespace only; unchanged original body",
+    "CharacterBody": "CanSeePosition, OnSuccessfulAttack, OnWasAttacked exact; OnWasHit redirects Mission/Audio/UI/Time/DropWeapons calls to required capability interface",
+    "Projectile": "RecordAttackInfo: MarksmanOwner call uses required typed source capability"
+  },
+  "liveBindingsComplete": false
+}

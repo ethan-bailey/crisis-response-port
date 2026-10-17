@@ -1,7 +1,7 @@
 using UnityEngine;
 using Crisis.Runtime.Weapons;
 // Selected non-explosive source projectile lifecycle. Material interactions are
-// executed by the recovered source; limb physiology remains unavailable.
+// executed by recovered source with explicit combat dependency preflight.
 public class TutorialSoftTarget:Component {}
 public partial class Projectile {
  public int Id {get;set;} public int SwarmId {get;set;} public int FlightMask {get;set;}
@@ -17,16 +17,18 @@ public partial class Projectile {
   StartPosition=transform.position;InteractionPosition=transform.position;
   if(weapon.rifledBarrel){RiflingTwistRate=weapon.rifleTwistRate;AssignNewSpin();}
  }
- // The original Projectile.HandleLimbHit order is: contact -> ballistic tissue
- // interaction -> attacker/victim notifications -> interaction events.
- // The original CharacterBody.OnWasHit / OnWasAttacked / mission score/AI
- // dependencies are not yet executable in this host. Require the genuine
- // notification bridge BEFORE modifying limb physiology; never silently
- // discard callbacks or leave a half-applied injury.
- public Action<Projectile,CharacterBody> RecordOriginalAttackInfo;
- public Action<Projectile,CharacterBody,Limb> NotifyOriginalVictimHit;
- public Action<Projectile> OriginalInteraction;
- public Action<Projectile,Limb> OriginalLimbInteraction;
+ // Source UnityEvent boundaries permit zero listeners, as native Unity does.
+ public ProjectileLimbEvent onLimbInteraction=new();
+ // Engine query adapter excludes only the owning character, retaining nearest
+ // non-owner material/limb hits, triggers and the exact requested layer mask.
+ bool FlightRaycast(Ray ray,out RaycastHit hit,float distance,int mask){
+  foreach(var candidate in Physics.RaycastAll(ray,distance,mask)){
+   var limb=candidate.collider.GetComponent<Limb>();
+   if(limb!=null&&Owner!=null&&ReferenceEquals(limb.Body,Owner))continue;
+   hit=candidate;return true;
+  }
+  hit=default;return false;
+ }
  BallisticResult HandleLimbHit(RaycastHit hit){
   if(hit.collider==null)return BallisticResult.Error;
   var limb=hit.collider.GetComponent<Limb>();
@@ -38,24 +40,36 @@ public partial class Projectile {
    return material.HandleProjectile(this,hit.normal).Status;
   }
   if(ReferenceEquals(limb.Body,Owner))
-   throw new NotSupportedException("Original owner collision filtering is not yet connected");
+   return BallisticResult.Continue;
   if(limb.Body==null||limb.LimbPhysiology==null)
    throw new InvalidOperationException("Original limb collision lacks its CharacterBody or LimbPhysiology");
   if(!limb.Body.limbs.Contains(limb))
    throw new InvalidOperationException("Collision limb is not registered on its source CharacterBody");
   if(limb.Body.SourcePhysiology==null)
    throw new InvalidOperationException("Collision victim has no initialized source blood/oxygen physiology");
-  if(RecordOriginalAttackInfo==null||NotifyOriginalVictimHit==null||
-     OriginalInteraction==null||OriginalLimbInteraction==null)
-   throw new NotSupportedException("Original projectile attack, victim, mission and interaction callbacks are not all bound");
+  limb.Body.RequireOriginalCombat(victimHit:true);
+  if(FiredByMarksman){
+   if(MarksmanOwner is not IOriginalMarksmanAttack marksman)
+    throw new NotSupportedException("Original Marksman success notification is not bound");
+   marksman.ValidateBindings();
+  }else if(Owner!=null)Owner.RequireOriginalCombat(victimHit:false);
   transform.position=hit.point;
   RecalculateVelocity();
   Projectile projectile=limb.HandleProjectile(this,hit.normal);
-  RecordOriginalAttackInfo(this,limb.Body);
-  NotifyOriginalVictimHit(this,limb.Body,limb);
-  OriginalInteraction(this);
-  OriginalLimbInteraction(this,limb);
+  RecordAttackInfo(limb.Body);
+  limb.Body.LastHitLimb=limb;
+  limb.Body.OnWasHit(this);
+  onInteraction.Invoke(this);
+  onLimbInteraction.Invoke(this,limb);
   return projectile.Status;
  }
 
+}
+
+
+// Engine equivalent of original UnityEvent<Projectile,Limb>.
+public sealed class ProjectileLimbEvent {
+ event Action<Projectile,Limb> listeners;
+ public void AddListener(Action<Projectile,Limb> listener)=>listeners+=listener;
+ public void Invoke(Projectile p,Limb limb)=>listeners?.Invoke(p,limb);
 }

@@ -40,6 +40,8 @@ public sealed partial class OriginalPhysiologyConditions {
  public void RemoveLungsOxygen(float normalizedPercent) {
   LungsOxygen=Mathf.Clamp(LungsOxygen-LungsOxygen*normalizedPercent,0f,1f);
  }
+ public bool invulnerable;
+ public float ShockNormalized=>Shock/1000f;
  public float Shock {get;set;}
  public float Concussion {get;set;}
  public float BloodOxygen {get;set;}=1f;
@@ -65,3 +67,4 @@ public sealed partial class OriginalPhysiologyConditions {
   Shock+=shock*(1f-ShockResistance);
  }
 }
+
