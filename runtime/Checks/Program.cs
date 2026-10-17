@@ -44,6 +44,59 @@ if(args.Contains("--original-limb-skin")){
  Console.WriteLine("{\"originalLimbSkinTrace\":\"pass\",\"sourceSkinTextures\":11,\"sourceRenderers\":17,\"nativePixelTrace\":true}");
  return;
 }
+if(args.Contains("--source-limb-interior")){
+  var world=new UnityEngine.RuntimeWorld();
+  world.MakeCurrent();
+  var go=new UnityEngine.GameObject("Original target torso",world);
+  var body=go.AddComponent<Crisis.Runtime.Weapons.CharacterBody>();
+  var limb=go.AddComponent<Crisis.Runtime.Weapons.Limb>();
+  var p=new Crisis.Runtime.Character.OriginalPhysiologyConditions();
+  p.InitializeBloodVolume(4500f);p.InitializeVitalClock(0f,0f,0f);
+  p.SetBloodPressure(100f,190f,1f,0.5f);
+  limb.Body=body;limb.id=Crisis.Runtime.Weapons.LimbId.Torso;
+  limb.LimbPhysiology=new Crisis.Runtime.Character.OriginalLimbPhysiology(p);
+  var skin=new UnityEngine.GameObject("Source skin",world).transform;
+  var coverage=Enumerable.Repeat((byte)0,32*32).ToArray();
+  limb.SourceSkinTrace=new Crisis.Runtime.Character.OriginalLimbSkinTrace(skin,32,32,coverage);
+  if(limb is not BallisticMaterial)
+    throw new Exception("Original Limb is no longer a BallisticMaterial");
+  if(typeof(Crisis.Runtime.Weapons.Limb).GetMethod("HandleInterior",
+     System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic|
+     System.Reflection.BindingFlags.DeclaredOnly)==null)
+    throw new Exception("Original Limb.HandleInterior is not executable in source runtime");
+  if(typeof(Crisis.Runtime.Weapons.Limb).GetMethod("FindInternalDistanceAndExitPosition",
+     System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic|
+     System.Reflection.BindingFlags.DeclaredOnly)==null)
+    throw new Exception("Original Limb.FindInternalDistanceAndExitPosition is not compiled");
+  limb.LimbPhysiology.AddTrauma(24f);
+  var entry=new UnityEngine.Vector3(.17f,.13f,0f);
+  var direction=new UnityEngine.Vector3(1f,.12f,.01f);
+  var wound=limb.LimbPhysiology.CreateWoundFromSourceProjectile(limb,5f,24f,.008f,entry,direction);
+  if(Math.Abs(wound.Diameter-5f)>1e-6f||
+     Math.Abs(wound.EmissionRadiusMeters-.008f)>1e-6f||
+     (wound.LocalPosition-entry).sqrMagnitude>1e-8f||
+     Math.Abs(wound.LocalPosition.z)>1e-6f||
+     Math.Abs(wound.LocalDirection.x-1f)>1e-6f||
+     wound.LocalDirection.z==0f||
+     !(wound.available>=0f&&wound.available<1f))
+    throw new Exception("Original LimbPhysiology.CreateWound source space/randomization mismatch");
+  if(limb.LimbPhysiology.Wounds.Count!=1)
+    throw new Exception("Projectile wound did not enter source limb bleed graph");
+  var blood=p.BloodVolume;
+  limb.LimbPhysiology.UpdateHemorrhaging(.02f);
+  if(!(p.BloodVolume<blood)||!(limb.LimbPhysiology.InternalBloodVolume>0f))
+    throw new Exception("Resolved original projectile wound did not circulate blood");
+  var woundCount=limb.LimbPhysiology.Wounds.Count;
+  try {
+   limb.LimbPhysiology.CreateWoundFromSourceProjectile(limb,5f,1f,.008f,entry,direction,
+     useWoundStreams:true);
+   throw new Exception("Unimplemented original BloodStreamGenerator cannot be silently invented");
+  }catch(NotSupportedException){}
+  if(limb.LimbPhysiology.Wounds.Count!=woundCount)
+    throw new Exception("Unsupported original stream mode mutated source wounds");
+  Console.WriteLine("{\"SourceLimbProjectileInterior\":\"pass\",\"sourceWoundAndHemorrhage\":true}");
+  return;
+}
 if(args.Contains("--character-systems")){
  var physiology=new Crisis.Runtime.Character.OriginalPhysiologyConditions();
  physiology.InitializeBloodVolume(4500f);
