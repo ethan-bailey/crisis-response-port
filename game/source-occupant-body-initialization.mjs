@@ -34,6 +34,11 @@ export function applyOriginalOccupantSpawnState(record,{
  const compensationX=weaponSkill+(1-weaponSkill)*f(0,1);
  const compensationY=Math.min(compensationX+
    (1-f(occupantSettings.weaponSkill.low,occupantSettings.weaponSkill.high))*3,3);
+ // Native spawn record is the authoritative transport for the C# body.
+ // Keep source calculations in one place and transport only validated state.
+ const sourceBlackboard={morale:data.morale,aggression:data.aggression,fear:data.fear,
+  willBlindFire:blindFire,blindFireDistance:data.blindFireDistance,negotiable:data.negotiable};
+ const sourceState={sourceWeaponSkill:weaponSkill,sourceBlackboard};
  applyBlackboard({
   morale:data.morale,aggression:data.aggression,fear:data.fear,
   willBlindFire:blindFire,blindFireDistance:data.blindFireDistance,
@@ -42,5 +47,5 @@ export function applyOriginalOccupantSpawnState(record,{
  applyPhysiology({fitness:data.fitness,shockResistance:data.shockResistance,shockRecovery});
  applyEquipment(data.equipment);
  registerBody(record);
- return {weaponSkill,recoilCompensation:[compensationX,compensationY],shockRecovery,blindFire};
+ return {weaponSkill,recoilCompensation:[compensationX,compensationY],shockRecovery,blindFire,sourceState};
 }
