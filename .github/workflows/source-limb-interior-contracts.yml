@@ -15,6 +15,9 @@ on:
       - runtime/Original/Weapons/OriginalCharacterVitalHost.cs
       - runtime/Original/Weapons/CharacterLimbRagdollState.cs
       - runtime/Checks/OriginalMuscleControlContracts.cs
+      - runtime/Engine/WeaponHost.cs
+      - runtime/Browser/Program.cs
+      - runtime/Checks/WeaponContracts.cs
       - runtime/Original/Weapons/OriginalOccupantPrefab.cs
       - runtime/Checks/OriginalOccupantPrefabContracts.cs
       - runtime/Original/Weapons/OriginalMissionHitEffects.cs

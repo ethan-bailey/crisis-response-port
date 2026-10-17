@@ -7,6 +7,17 @@ public static class WeaponContracts {
   var previousCulture=System.Globalization.CultureInfo.CurrentCulture;
   var localized=(System.Globalization.CultureInfo)System.Globalization.CultureInfo.InvariantCulture.Clone();localized.NumberFormat.PositiveInfinitySymbol="∞";localized.NumberFormat.NegativeInfinitySymbol="-∞";
   WeaponHost host;try{System.Globalization.CultureInfo.CurrentCulture=localized;host=new WeaponHost(config,input.handler);}finally{System.Globalization.CultureInfo.CurrentCulture=previousCulture;}
+  var npc=(JsonElement)JsonSerializer.SerializeToElement(host.SpawnSourceOccupant(JsonSerializer.Serialize(new{
+   bodyPrefab="Occupant",position=new[]{5f,1.25f,-1.5f}
+  })));
+  if(npc.GetProperty("sourceActorCount").GetInt32()!=20||
+     npc.GetProperty("limbs").GetInt32()!=(int)LimbId.NumberOfLimbs||
+     npc.GetProperty("originalProjectileContactsActive").GetBoolean()||
+     host.SourceOccupantCount!=1)
+   throw new Exception("Original live WeaponHost Occupant source graph spawn mismatch");
+  try{host.SpawnSourceOccupant(JsonSerializer.Serialize(new{bodyPrefab="Unverified",
+      position=new[]{0f,1f,-1.5f}}));throw new Exception("Accepted unauthenticated actor prefab");}
+  catch(NotSupportedException){}
   if(Time.time!=before)throw new Exception("Weapon import reset clock");
   JsonElement Step(bool fire=false,bool reload=false){input.Tick(.016f);return JsonSerializer.SerializeToElement(host.Step(JsonSerializer.Serialize(new{direction=1,position=new[]{-3f,1f,1.5f},operatorTransforms=new{},weaponPose=new{p=new[]{-3f,1.5f,1.5f},q=new[]{0f,0f,0f,1f}},fire,reload})));}
   JsonElement state=default;for(int i=0;i<20;i++)state=Step();
