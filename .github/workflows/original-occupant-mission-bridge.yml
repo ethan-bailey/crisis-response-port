@@ -6,10 +6,12 @@ on:
       - 'game/source-occupant-spawner.mjs'
       - 'game/source-occupant-mission-integration.mjs'
       - 'game/source-occupant-sandbox-settings.mjs'
+      - 'game/source-occupant-body-initialization.mjs'
       - 'game/assets/occupant/source-visual-spawn.json'
       - 'scripts/test_original_occupant_spawn.mjs'
       - 'scripts/test_original_occupant_mission_integration.mjs'
       - 'scripts/test_original_occupant_sandbox_settings.mjs'
+      - 'scripts/test_original_occupant_body_initialization.mjs'
       - '.github/workflows/original-occupant-mission-bridge.yml'
 permissions:
   contents: read
@@ -25,5 +27,7 @@ jobs:
         run: node scripts/test_original_occupant_spawn.mjs
       - name: Original sandbox settings contract
         run: node scripts/test_original_occupant_sandbox_settings.mjs
+      - name: Original occupant body initialization contract
+        run: node scripts/test_original_occupant_body_initialization.mjs
       - name: Async mission actor bridge contract
         run: node scripts/test_original_occupant_mission_integration.mjs
