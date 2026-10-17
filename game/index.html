@@ -312,7 +312,8 @@ async function load(){
     const body=JSON.parse(await runtimeCall('SpawnOriginalOccupant',JSON.stringify({
      bodyPrefab:record.sourceData.bodyPrefab,position:record.position,
      ...(skill===undefined?{}:{sourceWeaponSkill:skill}),
-     ...(record.sourceBlackboard===undefined?{}:record.sourceBlackboard)
+     ...(record.sourceBlackboard===undefined?{}:record.sourceBlackboard),
+     ...(record.sourcePhysiology===undefined?{}:{sourcePhysiology:record.sourcePhysiology})
     })));
     if(body.sourceActorCount!==20||body.limbs!==19||body.originalProjectileContactsActive)
      throw Error('Original Occupant anatomy and collision safety mismatch');
@@ -324,6 +325,13 @@ async function load(){
         !Number.isFinite(b[k])||Math.abs(native[k]-b[k])>1e-5)||
         native.willBlindFire!==b.willBlindFire||native.negotiable!==b.negotiable)
       throw Error('Original C# NPC blackboard source state mismatch');
+    }
+    if(record.sourcePhysiology!==undefined){
+     const native=body.sourcePhysiology,requested=record.sourcePhysiology;
+     if(!native||Math.abs(native.fitness-requested.fitness)>1e-5||
+        Math.abs(native.shockResistance-requested.shockResistance)>1e-5||
+        Math.abs(native.shockRecovery-requested.shockRecovery)>1e-5)
+      throw Error('Original C# NPC physiology source state mismatch');
     }
     const view=await createOriginalOccupantVisual(sourceOccupantVisual,sourceOccupantMaterials,{
      selectOriginalSkin:(count,id)=>{
