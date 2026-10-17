@@ -1,4 +1,5 @@
 name: Original projectile limb interior source native contracts
+# Verified original Vector3.Project math dependency for source limb depth alignment.
 on:
   push:
     branches: [feature/original-projectile-limb-hit-runtime]
