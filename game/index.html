@@ -312,8 +312,7 @@ async function load(){
     const body=JSON.parse(await runtimeCall('SpawnOriginalOccupant',JSON.stringify({
      bodyPrefab:record.sourceData.bodyPrefab,position:record.position,
      ...(skill===undefined?{}:{sourceWeaponSkill:skill}),
-     ...(record.sourceBlackboard===undefined?{}:record.sourceBlackboard),
-     ...(record.sourcePhysiology===undefined?{}:{sourcePhysiology:record.sourcePhysiology})
+     ...(record.sourceBlackboard===undefined?{}:record.sourceBlackboard)
     })));
     if(body.sourceActorCount!==20||body.limbs!==19||body.originalProjectileContactsActive)
      throw Error('Original Occupant anatomy and collision safety mismatch');
