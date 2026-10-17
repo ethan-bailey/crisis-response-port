@@ -60,3 +60,28 @@ const integrated=await spawnOriginalSandboxMissionOccupants({
 assert.equal(integrated.length,3);
 assert.equal(initialized,3);
 assert(integrated.every(x=>x.weaponSkill===.5));
+
+const nativeEvents=[];
+const sourceInit=await spawnOriginalSandboxMissionOccupants({
+ visualSpawnSource:source,sceneName:'Marksman range',
+ occupantSettings:originalSettings,availableWeapons:[],
+ randomFloat:(a,b)=>a+(b-a)*.5,randomInt:(a,b)=>a,
+ raycast:()=>false,spawnData:{specificGroups:[],randomGroups:[]},
+ campaign:{active:false},
+ nativeSourceStateBindings:record=>({
+  applyBlackboard:x=>nativeEvents.push(['blackboard',x]),
+  applyPhysiology:x=>nativeEvents.push(['physiology',x]),
+  applyEquipment:x=>nativeEvents.push(['equipment',x]),
+  registerBody:x=>nativeEvents.push(['register',x])
+ }),
+ actorBridge:{spawnFromOriginalRecord:record=>({
+   skill:record.sourceWeaponSkill,blackboard:record.sourceBlackboard
+ })}
+});
+assert.equal(sourceInit.length,3);
+assert.equal(nativeEvents.length,12);
+assert.deepEqual(nativeEvents.slice(0,4).map(x=>x[0]),
+ ['blackboard','physiology','equipment','register']);
+assert(sourceInit.every(x=>x.skill===.5));
+assert(sourceInit.every(x=>x.blackboard.morale===.5));
+assert(sourceInit.every(x=>x.blackboard.willBlindFire===false));
