@@ -1,4 +1,5 @@
 using UnityEngine;
+using Crisis.Runtime.Weapons; // Namespace bridge for unchanged original LimbArmor methods.
 
 public class LimbArmor : MonoBehaviour
 {
