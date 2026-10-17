@@ -1,4 +1,5 @@
 name: Original organ trauma native source contracts
+# Check exact original serialized brain curve output before changing source behavior.
 on:
   push:
     branches: [feature/live-character-limb-ballistic-damage]
