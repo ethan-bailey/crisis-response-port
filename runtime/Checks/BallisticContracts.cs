@@ -11,7 +11,15 @@ public static class BallisticContracts {
  public static string Run(){
   var input=new OriginalInputHost(new RuntimeWorld());input.Tick(.016f);
   var presentation=new PresentationHost(Read("game/assets/presentation.json.gz"));
-  var host=new WeaponHost(WeaponContracts.ComposeSourceConfiguration(Read("game/assets/weapon-runtime.json.gz"),"game/assets"),input.handler,presentation.QueryWorld){queryWorld=presentation.QueryWorld};
+  // Native fixture must compose the same original limb ballistic source
+  // material bundle as the browser. The weapon-only configuration does not
+  // enable BindSourceBallistics, so checking authored aimpoints before this
+  // would assert uninitialized Limb defaults rather than game bindings.
+  var sourceConfig=System.Text.Json.Nodes.JsonNode.Parse(
+    WeaponContracts.ComposeSourceConfiguration(Read("game/assets/weapon-runtime.json.gz"),"game/assets"));
+  sourceConfig["sourceLimbBallistics"]=System.Text.Json.Nodes.JsonNode.Parse(
+    File.ReadAllText("game/assets/original-limb-ballistic-materials.json"));
+  var host=new WeaponHost(sourceConfig.ToJsonString(),input.handler,presentation.QueryWorld){queryWorld=presentation.QueryWorld};
   host.InitializeBallistics(Read("game/assets/ballistics.json.gz"),presentation.QueryScene);
   var world=presentation.QueryWorld;var runtime=host.Ballistics;
   // Inspect actual Operator limb instances constructed from the authenticated
