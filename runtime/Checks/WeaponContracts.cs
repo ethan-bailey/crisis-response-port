@@ -34,8 +34,8 @@ public static class WeaponContracts {
   var livePhysiology=physiologyActor.GetProperty("sourcePhysiology");
   if(host.SourceOccupantCount!=4||
      MathF.Abs(livePhysiology.GetProperty("fitness").GetSingle()-.7f)>1e-6f||
-     MathF.Abs(livePhysiology.GetProperty("ShockResistance").GetSingle()-.25f)>1e-6f||
-     MathF.Abs(livePhysiology.GetProperty("ShockRecovery").GetSingle()-.55f)>1e-6f)
+     MathF.Abs(livePhysiology.GetProperty("shockResistance").GetSingle()-.25f)>1e-6f||
+     MathF.Abs(livePhysiology.GetProperty("shockRecovery").GetSingle()-.55f)>1e-6f)
    throw new Exception("Original Occupant physiology native state not applied");
   int beforeInvalidPhysiology=host.SourceOccupantCount;
   try{host.SpawnSourceOccupant(JsonSerializer.Serialize(new{bodyPrefab="Occupant",
