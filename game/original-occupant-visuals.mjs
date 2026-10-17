@@ -1,5 +1,21 @@
 import * as THREE from 'three';
 import {sourceCutoutMaterial} from './source-cutout-materials.mjs';
+export async function loadOriginalOccupantMaterials(){
+ const res=await fetch('./assets/occupant/source-materials.json');
+ if(!res.ok)throw Error('Original Occupant materials missing');
+ const source=await res.json();
+ if(source.format!=='original-occupant-source-materials-v1'||
+    Object.keys(source.materials||{}).length!==13)
+  throw Error('Original Occupant renderer material inventory invalid');
+ for(const [guid,m] of Object.entries(source.materials)){
+  if(!/^[0-9a-f]{32}$/.test(guid)||!m.texturePath?.startsWith('./assets/occupant/skins/')||
+     !/^[0-9a-f]{64}$/.test(m.sha256)||m.cutoff!==0.5||
+     m.shaderGuid!=='dfda7bb4fc1132e4b8c3293964087ef2')
+   throw Error('Unverified original Occupant material: '+guid);
+ }
+ return source.materials;
+}
+
 
 // Import the real Occupant prefab's authored Unity hierarchy, 20 MeshRenderers,
 // and LimbRenderer texture GUIDs. Spawn position, prefab skin RNG, AI and
