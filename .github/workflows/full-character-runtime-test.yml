@@ -1,4 +1,5 @@
 name: Source full character native and anatomy integration
+# Use original MonoBehaviour enabled state when releasing ArmIK during ragdoll.
 on:
   push:
     branches: [feature/characterbody-live-physiology-full-rig]
