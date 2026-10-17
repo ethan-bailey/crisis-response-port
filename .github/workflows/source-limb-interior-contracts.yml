@@ -1,5 +1,5 @@
 name: Original projectile limb interior source native contracts
-# Run original source marksman pixel trace, authored torso depth, wound creation and blood volume contract.
+# Test real author Torso density projectile penetration, source cavity and blood volume, plus marksman skin depth.
 on:
   push:
     branches: [feature/original-projectile-limb-hit-runtime]
@@ -19,4 +19,5 @@ jobs:
         run: |
           cp tools/wasm-compile/global.json global.json
           dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --source-limb-interior
+          dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --source-tissue-penetration
           dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --character-systems
