@@ -1,5 +1,5 @@
 name: Source full character native and anatomy integration
-# Preserve source archive identity across serialized limb and physics transport bundles.
+# Full original 21-actor/18-hinge export with GUID-resolved 19 limbs and native transform reconstruction.
 on:
   push:
     branches: [feature/characterbody-live-physiology-full-rig]
