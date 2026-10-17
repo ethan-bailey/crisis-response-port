@@ -85,7 +85,16 @@ export function createSourceOccupantSpawner(source,sceneName,{random,raycast,spa
     groups.push(settings.convertRandomizedGroup(group));
    }
   }
-  const actors=[];for(const group of groups)for(const member of group.members||[]){
+  // Check source records before executing any native spawn callback.
+  // Malformed later group entries cannot leave earlier Occupant actors alive.
+  for(const group of groups){
+   if(!Array.isArray(group?.members))throw Error('Original spawn group members missing');
+   for(const member of group.members){
+    if(member?.enabled&&(!member.bodyPrefab||typeof member.bodyPrefab!=='string'))
+     throw Error('Original SerializableOccupantSpawn bodyPrefab missing');
+   }
+  }
+  const actors=[];for(const group of groups)for(const member of group.members){
    if(member.enabled){const actor=spawnOne(member);if(actor)actors.push(actor);}
   }
   return actors;
