@@ -3,7 +3,8 @@
 // Callers supply the actual serialized OccupantSettings and recovered
 // EquipmentList.OccupantWeapons; no substitute weapon or configuration.
 export function createSourceOccupantSandboxSettings({
- occupantSettings, sceneSpawner, availableWeapons, randomFloat, randomInt
+ occupantSettings, sceneSpawner, availableWeapons, randomFloat, randomInt,
+ createLegacyGroup=true
 }={}) {
  if(!occupantSettings || !sceneSpawner ||
     !Array.isArray(availableWeapons) ||
@@ -77,7 +78,7 @@ export function createSourceOccupantSandboxSettings({
   return {enabled:true,members};
  }
  return {
-  legacyGroup:convertRandomizedGroup(randomized),
+  legacyGroup:createLegacyGroup?convertRandomizedGroup(randomized):null,
   convertRandomizedGroup
  };
 }
