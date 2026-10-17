@@ -1,0 +1,28 @@
+name: Verify original Occupant renderer and scene spawner manifest
+on:
+  push:
+    branches: [feature/original-projectile-limb-hit-runtime]
+    paths:
+      - scripts/export_original_occupant_visual_spawn.py
+      - .github/workflows/original-occupant-visual-spawn.yml
+      - source-reference/Original/NPCRecovery/Assets/**
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 -m pip install --disable-pip-version-check pyyaml
+      - run: python3 scripts/export_original_occupant_visual_spawn.py
+      - run: |
+          python3 - <<'PY'
+          import json
+          with open('game/assets/occupant/source-visual-spawn.json') as f: data=json.load(f)
+          assert len(data['nodes'])==56
+          assert len(data['renderers'])==20
+          assert len(data['dynamicLimbSkins'])==16
+          assert set(data['sceneSpawners'])=={'Mission 01','Marksman range'}
+          print('Source NPC visual/spawner manifest verification PASS')
+          PY
