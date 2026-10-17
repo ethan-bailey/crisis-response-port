@@ -3,7 +3,10 @@ name: Original projectile limb interior source native contracts
 on:
   push:
     branches: [feature/original-projectile-limb-hit-runtime]
-    paths: [.github/workflows/source-limb-interior-contracts.yml]
+    paths:
+      - .github/workflows/source-limb-interior-contracts.yml
+      - runtime/Original/Weapons/CharacterLimbBallisticMethods.cs
+      - runtime/Checks/ProjectileInjuryContracts.cs
 permissions:
   contents: read
 jobs:
@@ -18,6 +21,7 @@ jobs:
       - name: Run selected original Limb material and wound source contracts
         run: |
           cp tools/wasm-compile/global.json global.json
+          dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --projectile-injury-chain
           dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --source-limb-interior
           dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --source-tissue-penetration
           dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --character-systems

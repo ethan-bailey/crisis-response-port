@@ -139,6 +139,24 @@ public static class ProjectileInjuryContracts {
   Check((bool)query.Invoke(projectile,queryArgs)&&((RaycastHit)queryArgs[1]).collider.GetComponent<Limb>()==torso,"Owner filtering lost nearest distinct target");
   queryArgs[3]=1<<14;Check(!(bool)query.Invoke(projectile,queryArgs),"Flight query ignored layer mask");
   passed.Add("Nearest real non-owner collision and layer-mask exclusion");
+  // Original Limb.AccumulateExitingProjectiles has a precise 16.7ms window,
+  // and the first exit after a gap resets accumulation. Exercise its exact
+  // state transition without claiming unavailable GPU exit-wound rendering.
+  var exiting=Shot(23);exiting.DisplacedMaterialVolume=30f;
+  var accumulator=typeof(Limb).GetMethod("AccumulateExitingProjectiles",BindingFlags.Instance|BindingFlags.NonPublic);
+  var exitVolume=typeof(Limb).GetField("accumulatedExitVolume",BindingFlags.Instance|BindingFlags.NonPublic);
+  Check(accumulator!=null&&exitVolume!=null,"Original exit accumulation source was not imported");
+  accumulator.Invoke(torso,new object[]{exiting});
+  Check((float)exitVolume.GetValue(torso)==0f,"First exit after gap must clear accumulated volume");
+  accumulator.Invoke(torso,new object[]{exiting});
+  Check((float)exitVolume.GetValue(torso)==30f,"Second exit inside 16.7ms did not accumulate source displaced volume");
+  exiting.DisplacedMaterialVolume=3000f;
+  accumulator.Invoke(torso,new object[]{exiting});
+  Check((float)exitVolume.GetValue(torso)==1000f,"Original consecutive exit accumulation exceeded 1000 source cap");
+  Advance();
+  accumulator.Invoke(torso,new object[]{exiting});
+  Check((float)exitVolume.GetValue(torso)==0f,"Exit accumulation did not reset after source time window");
+  passed.Add("Original consecutive exit accumulation, 16.7ms reset and 1000 source cap");
   // Marksman path exercises authored depth and real recovered Torso PNG alpha.
   // Actor placement remains a controlled fixture, not a live mission target.
   var penetrating=Shot(20);var marksman=new GameObject("diagnostic marksman notification observer",world).AddComponent<MarksmanAttackObserver>();penetrating.MarksmanOwner=marksman;

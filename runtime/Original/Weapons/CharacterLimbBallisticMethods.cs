@@ -7,6 +7,11 @@ namespace Crisis.Runtime.Weapons;
 // This is not enabled in live projectile queries until exact hit callbacks,
 // texture-scoring and armor effects are verified end-to-end.
 public partial class Limb {
+ // Original Limb exit-accumulation state. This remains meaningful even with
+ // wound decals disabled; dynamic renderer/GPU effects still require source bindings.
+ public float exitAccumulationFactor=0.25f;
+ private float lastExitTimestamp;
+ private float accumulatedExitVolume;
  public LimbArmor Armor=>GetComponent<LimbArmor>();
 
  // From original Limb.HandleDeflection: energy converted into force and shock.
@@ -111,6 +116,21 @@ public partial class Limb {
  protected override void HandleExit(Projectile projectile,bool simulated=false){
   base.HandleExit(projectile,simulated);
   if(projectile.Status!=BallisticResult.Continue)return;
+  AccumulateExitingProjectiles(projectile);
   if(Armor!=null&&Armor.type!=ArmorClass.Type.None)Armor.Test(projectile,entry:false);
+ }
+ // Unchanged developer Limb.AccumulateExitingProjectiles behavior:
+ // same-frame exits accumulate within 0.0167s up to 1000; otherwise reset.
+ private void AccumulateExitingProjectiles(Projectile projectile)
+ {
+  if (Time.time - lastExitTimestamp < 0.0167f)
+  {
+   accumulatedExitVolume = Mathf.Min(accumulatedExitVolume + projectile.DisplacedMaterialVolume, 1000f);
+  }
+  else
+  {
+   accumulatedExitVolume = 0f;
+  }
+  lastExitTimestamp = Time.time;
  }
 }
