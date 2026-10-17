@@ -13,6 +13,7 @@ let actors=scene.spawn();
 assert.equal(actors.length,1);
 assert.equal(actors[0].sourceData.bodyPrefab,'Occupant');
 assert(actors[0].position[0]>=actors[0].patrolAreaLeft);
+assert.equal(actors[0].sourceWeight,80);
 const mission=createSourceOccupantSpawner(source,'Mission 01',base);
 assert.equal(mission.areas.length,1);
 assert.equal(mission.areas[0].probability,0);
@@ -21,3 +22,15 @@ assert.throws(()=>createSourceOccupantSpawner(source,'Mission 01',{}),/requires 
 const empty=createSourceOccupantSpawner(source,'Mission 01',{...base,tutorial:true});
 assert.equal(empty.spawn().length,0);
 console.log('PASS source serialized scene spawner paths, original group, area and strict dependency checks');
+
+// Source draw order: area choice, three position components, obstacle sign,
+// body weight, then non-Marksman patrol span.
+const draws=[];
+const testMission=createSourceOccupantSpawner(source,'Mission 01',{
+ ...base,random:()=>{draws.push(1);return .5}
+}).spawn();
+assert.equal(testMission[0].sourceWeight,80);
+assert.equal(draws.length,7);
+const broken=structuredClone(source);
+broken.sceneSpawners['Marksman range'].spawner.fields.areas=[];
+assert.throws(()=>createSourceOccupantSpawner(broken,'Marksman range',base),/authored spawn areas/);
