@@ -15,6 +15,12 @@
             "value": "1"
           }
         ],
+        "filterMode": [
+          {
+            "indent": 4,
+            "value": "0"
+          }
+        ],
         "isReadable": [
           {
             "indent": 2,
@@ -37,9 +43,33 @@
             "indent": 2,
             "value": "0"
           }
+        ],
+        "wrapMode": [],
+        "wrapU": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapV": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapW": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
         ]
       },
-      "metaSha256": "993c008ccf0c8a97459d298c79e6334a0c3a1817b8838eb6f2edb99343fb9b70"
+      "metaSha256": "993c008ccf0c8a97459d298c79e6334a0c3a1817b8838eb6f2edb99343fb9b70",
+      "sourceWrapLines": [
+        "wrapU: 1",
+        "wrapV: 1",
+        "wrapW: 1"
+      ]
     },
     {
       "assetPath": "Assets/Texture2D/head 4.png",
@@ -53,6 +83,12 @@
             "value": "1"
           }
         ],
+        "filterMode": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
         "isReadable": [
           {
             "indent": 2,
@@ -75,9 +111,33 @@
             "indent": 2,
             "value": "0"
           }
+        ],
+        "wrapMode": [],
+        "wrapU": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapV": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapW": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
         ]
       },
-      "metaSha256": "6e601d137daa39a85a4c8143d042872b8eda6acc17dde2be1bf1407622dd2fd5"
+      "metaSha256": "6e601d137daa39a85a4c8143d042872b8eda6acc17dde2be1bf1407622dd2fd5",
+      "sourceWrapLines": [
+        "wrapU: 1",
+        "wrapV: 1",
+        "wrapW: 1"
+      ]
     },
     {
       "assetPath": "Assets/Texture2D/neck protector.png",
@@ -91,6 +151,12 @@
             "value": "1"
           }
         ],
+        "filterMode": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
         "isReadable": [
           {
             "indent": 2,
@@ -113,9 +179,33 @@
             "indent": 2,
             "value": "0"
           }
+        ],
+        "wrapMode": [],
+        "wrapU": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapV": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapW": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
         ]
       },
-      "metaSha256": "0c2d3208753446fe7a9bf15b44c4e36d3a698f9524da3690dfd2bf570f873ffe"
+      "metaSha256": "0c2d3208753446fe7a9bf15b44c4e36d3a698f9524da3690dfd2bf570f873ffe",
+      "sourceWrapLines": [
+        "wrapU: 1",
+        "wrapV: 1",
+        "wrapW: 1"
+      ]
     },
     {
       "assetPath": "Assets/Texture2D/black pelvis.png",
@@ -129,6 +219,12 @@
             "value": "1"
           }
         ],
+        "filterMode": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
         "isReadable": [
           {
             "indent": 2,
@@ -151,9 +247,33 @@
             "indent": 2,
             "value": "0"
           }
+        ],
+        "wrapMode": [],
+        "wrapU": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapV": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapW": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
         ]
       },
-      "metaSha256": "0859109e8a7cdd6d6c6048d4089e909e8ea51ff5d6b73ebabf1d81811707d773"
+      "metaSha256": "0859109e8a7cdd6d6c6048d4089e909e8ea51ff5d6b73ebabf1d81811707d773",
+      "sourceWrapLines": [
+        "wrapU: 1",
+        "wrapV: 1",
+        "wrapW: 1"
+      ]
     },
     {
       "assetPath": "Assets/Texture2D/head 3.png",
@@ -167,6 +287,12 @@
             "value": "1"
           }
         ],
+        "filterMode": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
         "isReadable": [
           {
             "indent": 2,
@@ -189,9 +315,33 @@
             "indent": 2,
             "value": "0"
           }
+        ],
+        "wrapMode": [],
+        "wrapU": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapV": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapW": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
         ]
       },
-      "metaSha256": "66e4f593c2a6af0e28a1f05a9f9b834574b9a551af448a8e5096483e44b66046"
+      "metaSha256": "66e4f593c2a6af0e28a1f05a9f9b834574b9a551af448a8e5096483e44b66046",
+      "sourceWrapLines": [
+        "wrapU: 1",
+        "wrapV: 1",
+        "wrapW: 1"
+      ]
     },
     {
       "assetPath": "Assets/Texture2D/black lower leg.png",
@@ -205,6 +355,12 @@
             "value": "1"
           }
         ],
+        "filterMode": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
         "isReadable": [
           {
             "indent": 2,
@@ -227,9 +383,33 @@
             "indent": 2,
             "value": "0"
           }
+        ],
+        "wrapMode": [],
+        "wrapU": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapV": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapW": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
         ]
       },
-      "metaSha256": "ba9b0a46b6182f0c759732167d01d3f4aec93ab6e3072eb957899854c84e8375"
+      "metaSha256": "ba9b0a46b6182f0c759732167d01d3f4aec93ab6e3072eb957899854c84e8375",
+      "sourceWrapLines": [
+        "wrapU: 1",
+        "wrapV: 1",
+        "wrapW: 1"
+      ]
     },
     {
       "assetPath": "Assets/Texture2D/head 1.png",
@@ -243,6 +423,12 @@
             "value": "1"
           }
         ],
+        "filterMode": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
         "isReadable": [
           {
             "indent": 2,
@@ -265,9 +451,33 @@
             "indent": 2,
             "value": "0"
           }
+        ],
+        "wrapMode": [],
+        "wrapU": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapV": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapW": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
         ]
       },
-      "metaSha256": "5ef959e30973299b9fc98f4ead3bc90620c14a325cdda9a362f168b501a7a96a"
+      "metaSha256": "5ef959e30973299b9fc98f4ead3bc90620c14a325cdda9a362f168b501a7a96a",
+      "sourceWrapLines": [
+        "wrapU: 1",
+        "wrapV: 1",
+        "wrapW: 1"
+      ]
     },
     {
       "assetPath": "Assets/Texture2D/boot.png",
@@ -281,6 +491,12 @@
             "value": "1"
           }
         ],
+        "filterMode": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
         "isReadable": [
           {
             "indent": 2,
@@ -303,9 +519,33 @@
             "indent": 2,
             "value": "0"
           }
+        ],
+        "wrapMode": [],
+        "wrapU": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapV": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapW": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
         ]
       },
-      "metaSha256": "7087b517fbacb127918d4370e6a63f11ca9fc563b5cfaae9fcc66a8253cc7b37"
+      "metaSha256": "7087b517fbacb127918d4370e6a63f11ca9fc563b5cfaae9fcc66a8253cc7b37",
+      "sourceWrapLines": [
+        "wrapU: 1",
+        "wrapV: 1",
+        "wrapW: 1"
+      ]
     },
     {
       "assetPath": "Assets/Texture2D/torso.png",
@@ -319,6 +559,12 @@
             "value": "1"
           }
         ],
+        "filterMode": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
         "isReadable": [
           {
             "indent": 2,
@@ -341,9 +587,33 @@
             "indent": 2,
             "value": "0"
           }
+        ],
+        "wrapMode": [],
+        "wrapU": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapV": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapW": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
         ]
       },
-      "metaSha256": "22aa5fef8d286b7d50a0790258671d8362d3a6cd05361dff298c31f0cdc40eae"
+      "metaSha256": "22aa5fef8d286b7d50a0790258671d8362d3a6cd05361dff298c31f0cdc40eae",
+      "sourceWrapLines": [
+        "wrapU: 1",
+        "wrapV: 1",
+        "wrapW: 1"
+      ]
     },
     {
       "assetPath": "Assets/Texture2D/lowerarm.png",
@@ -357,6 +627,12 @@
             "value": "1"
           }
         ],
+        "filterMode": [
+          {
+            "indent": 4,
+            "value": "0"
+          }
+        ],
         "isReadable": [
           {
             "indent": 2,
@@ -379,9 +655,33 @@
             "indent": 2,
             "value": "0"
           }
+        ],
+        "wrapMode": [],
+        "wrapU": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapV": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapW": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
         ]
       },
-      "metaSha256": "0b7ef2dbb53866ec730ae8d0f32cedaa0b92da9674f03412a88d3bede406c0eb"
+      "metaSha256": "0b7ef2dbb53866ec730ae8d0f32cedaa0b92da9674f03412a88d3bede406c0eb",
+      "sourceWrapLines": [
+        "wrapU: 1",
+        "wrapV: 1",
+        "wrapW: 1"
+      ]
     },
     {
       "assetPath": "Assets/Texture2D/boot toes.png",
@@ -395,6 +695,12 @@
             "value": "1"
           }
         ],
+        "filterMode": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
         "isReadable": [
           {
             "indent": 2,
@@ -417,9 +723,33 @@
             "indent": 2,
             "value": "0"
           }
+        ],
+        "wrapMode": [],
+        "wrapU": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapV": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapW": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
         ]
       },
-      "metaSha256": "c837b662874be5a9e01279db2b3217cd14e64da05d49bc859fac5ecfd961cc60"
+      "metaSha256": "c837b662874be5a9e01279db2b3217cd14e64da05d49bc859fac5ecfd961cc60",
+      "sourceWrapLines": [
+        "wrapU: 1",
+        "wrapV: 1",
+        "wrapW: 1"
+      ]
     },
     {
       "assetPath": "Assets/Texture2D/black abdomen.png",
@@ -433,6 +763,12 @@
             "value": "1"
           }
         ],
+        "filterMode": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
         "isReadable": [
           {
             "indent": 2,
@@ -455,9 +791,33 @@
             "indent": 2,
             "value": "0"
           }
+        ],
+        "wrapMode": [],
+        "wrapU": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapV": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapW": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
         ]
       },
-      "metaSha256": "c4eb5822e39ae56289003bddba25c291e5bb7457c5ba1a1d641dc537f3c127ad"
+      "metaSha256": "c4eb5822e39ae56289003bddba25c291e5bb7457c5ba1a1d641dc537f3c127ad",
+      "sourceWrapLines": [
+        "wrapU: 1",
+        "wrapV: 1",
+        "wrapW: 1"
+      ]
     },
     {
       "assetPath": "Assets/Texture2D/head 5.png",
@@ -471,6 +831,12 @@
             "value": "1"
           }
         ],
+        "filterMode": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
         "isReadable": [
           {
             "indent": 2,
@@ -493,9 +859,33 @@
             "indent": 2,
             "value": "0"
           }
+        ],
+        "wrapMode": [],
+        "wrapU": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapV": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapW": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
         ]
       },
-      "metaSha256": "778492cae10beb0f6d20fb129240ff0be57dd17cee00334421c17328bcd6d78e"
+      "metaSha256": "778492cae10beb0f6d20fb129240ff0be57dd17cee00334421c17328bcd6d78e",
+      "sourceWrapLines": [
+        "wrapU: 1",
+        "wrapV: 1",
+        "wrapW: 1"
+      ]
     },
     {
       "assetPath": "Assets/Texture2D/head 2.png",
@@ -509,6 +899,12 @@
             "value": "1"
           }
         ],
+        "filterMode": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
         "isReadable": [
           {
             "indent": 2,
@@ -531,9 +927,33 @@
             "indent": 2,
             "value": "0"
           }
+        ],
+        "wrapMode": [],
+        "wrapU": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapV": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapW": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
         ]
       },
-      "metaSha256": "1581e80bde4a4821a63effc520acc41843ba3c376bbaf19c306261c64ecf9468"
+      "metaSha256": "1581e80bde4a4821a63effc520acc41843ba3c376bbaf19c306261c64ecf9468",
+      "sourceWrapLines": [
+        "wrapU: 1",
+        "wrapV: 1",
+        "wrapW: 1"
+      ]
     },
     {
       "assetPath": "Assets/Texture2D/black upper leg.png",
@@ -547,6 +967,12 @@
             "value": "1"
           }
         ],
+        "filterMode": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
         "isReadable": [
           {
             "indent": 2,
@@ -569,9 +995,33 @@
             "indent": 2,
             "value": "0"
           }
+        ],
+        "wrapMode": [],
+        "wrapU": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapV": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
+        ],
+        "wrapW": [
+          {
+            "indent": 4,
+            "value": "1"
+          }
         ]
       },
-      "metaSha256": "311192a14b36e5ae2c87ff747ec9b88c05acd570717754f2faf22447e9e07865"
+      "metaSha256": "311192a14b36e5ae2c87ff747ec9b88c05acd570717754f2faf22447e9e07865",
+      "sourceWrapLines": [
+        "wrapU: 1",
+        "wrapV: 1",
+        "wrapW: 1"
+      ]
     }
   ]
 }
