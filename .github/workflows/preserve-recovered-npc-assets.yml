@@ -48,6 +48,9 @@ jobs:
             "Scenes/Marksman range.unity" \
             "Material/Dynamic occupant torso.mat" \
             "Material/Static occupant torso.mat" \
+            "Resources/Global context.prefab" \
+            "Scripts/Assembly-CSharp/SerializableOccupantSettings.cs" \
+            "Scripts/Assembly-CSharp/EquipmentList.cs" \
             "Scripts/Assembly-CSharp/OccupantSpawner.cs" \
             "Scripts/Assembly-CSharp/OccupantSpawnData.cs" \
             "Scripts/Assembly-CSharp/Occupants.cs" \
