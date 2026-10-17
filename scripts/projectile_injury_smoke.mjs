@@ -21,7 +21,7 @@ for (const [name,engine] of [['chromium',chromium],['webkit',webkit]]) {
    const skinJson=await new Response(skin.body.pipeThrough(new DecompressionStream('gzip'))).text();
    return JSON.parse(await window.runtimeCall('VerifyProjectileInjuryChain',weapon,await material.text(),skinJson));
   });
-  assert.equal(result.status,'PASS');assert.equal(result.contracts.length,7);
+  assert.equal(result.status,'PASS');assert.equal(result.contracts.length,9,'Current source injury and notification contract inventory');
   assert.equal(result.originalTorsoSkin,true);assert.equal(result.liveNpcGameplay,false);assert.equal(result.sourceSkinFixture,true);
   assert.deepEqual(errors,[]);evidence.push({browser:name,...result});
  }finally{await browser.close();}
