@@ -316,6 +316,15 @@ async function load(){
     })));
     if(body.sourceActorCount!==20||body.limbs!==19||body.originalProjectileContactsActive)
      throw Error('Original Occupant anatomy and collision safety mismatch');
+    if(skill!==undefined&&Math.abs(body.sourceWeaponSkill-skill)>1e-5)
+     throw Error('Original C# NPC weapon skill was not applied');
+    if(record.sourceBlackboard!==undefined){
+     const b=record.sourceBlackboard,native=body.sourceBlackboard;
+     if(!native||['morale','aggression','fear','blindFireDistance'].some(k=>
+        !Number.isFinite(b[k])||Math.abs(native[k]-b[k])>1e-5)||
+        native.willBlindFire!==b.willBlindFire||native.negotiable!==b.negotiable)
+      throw Error('Original C# NPC blackboard source state mismatch');
+    }
     const view=await createOriginalOccupantVisual(sourceOccupantVisual,sourceOccupantMaterials,{
      selectOriginalSkin:(count,id)=>{
       const selection=body.skinChoices?.[id];
