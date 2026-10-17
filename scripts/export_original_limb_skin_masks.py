@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Preserve the green channel used by original LimbRenderer.TestPixel.
+"""Preserve the exact initial damage-mask green channel used by LimbRenderer.TestPixel.
 Input is exactly the original Operator manifest and its preserved PNG skins.
-Rows are bottom-up, matching Unity Texture2D.GetPixel's Y orientation.
+Original LimbTextureData.Initialize sets green to 0 where skin alpha>0 and 1 otherwise.\nRows are bottom-up, matching Unity Texture2D.GetPixel's Y orientation.
 No capsule or opaque-alpha substitution is used.
 """
 import base64,gzip,hashlib,io,json,sys
@@ -24,11 +24,11 @@ def export(operator_dir:Path, output:Path):
     width,height=image.size
     # Unity Texture2D.GetPixel(0,0) references the bottom-left texel.
     pixels=image.load()
-    green=bytes(pixels[x,y][1] for y in range(height-1,-1,-1) for x in range(width))
+    # Original LimbTextureData.Initialize:\n    # pixels[num].g = (!(pixels[num].a > 0f)) ? 1f : 0f;\n    green=bytes(0 if pixels[x,y][3]>0 else 255\n      for y in range(height-1,-1,-1) for x in range(width))
    if not green or width<=0 or height<=0:raise ValueError('Missing original limb coverage')
    entries[texture]={'texture':texture,'sha256':hashlib.sha256(original).hexdigest(),
      'width':width,'height':height,'pixelOrder':'left-to-right, bottom-to-top',
-     'greenChannelBottomUpBase64':base64.b64encode(green).decode('ascii'),
+     'originalStaticDamageGreenBottomUpBase64':base64.b64encode(green).decode('ascii'),
      'sourceRenderers':[]}
   entries[texture]['sourceRenderers'].append({
    'transformFileID':limb['transformFileID'],
@@ -36,7 +36,7 @@ def export(operator_dir:Path, output:Path):
    'skinGuids':limb['skinGuids']})
  if len(entries)!=manifest['copiedTextureCount'] or len(manifest['limbs'])!=manifest['limbRendererCount']:
   raise ValueError('Original renderer / skin manifest mismatch')
- bundle={'format':'crisis-original-limb-skin-g-channel-v1',
+ bundle={'format':'crisis-original-limb-initial-damage-green-v1',
    'sourceManifestSha256':hashlib.sha256(raw).hexdigest(),
    'originalTextureCount':len(entries),'originalRendererCount':len(manifest['limbs']),
    'skins':[entries[k] for k in sorted(entries)]}
