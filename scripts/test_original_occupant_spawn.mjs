@@ -23,14 +23,14 @@ const empty=createSourceOccupantSpawner(source,'Mission 01',{...base,tutorial:tr
 assert.equal(empty.spawn().length,0);
 console.log('PASS source serialized scene spawner paths, original group, area and strict dependency checks');
 
-// Source draw order: area choice, three position components, obstacle sign,
+// Source draw order: area choice, X and Z position, obstacle sign,
 // body weight, then non-Marksman patrol span.
 const draws=[];
 const testMission=createSourceOccupantSpawner(source,'Mission 01',{
  ...base,random:()=>{draws.push(1);return .5}
 }).spawn();
 assert.equal(testMission[0].sourceWeight,80);
-assert.equal(draws.length,7);
+assert.equal(draws.length,6);
 const broken=structuredClone(source);
 broken.sceneSpawners['Marksman range'].spawner.fields.areas=[];
 assert.throws(()=>createSourceOccupantSpawner(broken,'Marksman range',base),/authored spawn areas/);
