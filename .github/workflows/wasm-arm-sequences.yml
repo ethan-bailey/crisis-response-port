@@ -1,6 +1,6 @@
 name: Audit milestone original WASM baseline verification
 
-# Execute source projectile combat/injury graph with source-composed weapon fixtures; live NPC contacts stay gated.
+# Execute source projectile combat/injury graph with shared source-composed weapon/ballistic fixtures; live NPC contacts stay gated.
 # Merging reviewed code into develop/wasm must not duplicate the expensive build.
 # No automatic builds on source/doc edits, and workflow_dispatch remains available.
 on:

@@ -11,7 +11,7 @@ public static class BallisticContracts {
  public static string Run(){
   var input=new OriginalInputHost(new RuntimeWorld());input.Tick(.016f);
   var presentation=new PresentationHost(Read("game/assets/presentation.json.gz"));
-  var host=new WeaponHost(Read("game/assets/weapon-runtime.json.gz"),input.handler,presentation.QueryWorld){queryWorld=presentation.QueryWorld};
+  var host=new WeaponHost(WeaponContracts.ComposeSourceConfiguration(Read("game/assets/weapon-runtime.json.gz"),"game/assets"),input.handler,presentation.QueryWorld){queryWorld=presentation.QueryWorld};
   host.InitializeBallistics(Read("game/assets/ballistics.json.gz"),presentation.QueryScene);
   var world=presentation.QueryWorld;var runtime=host.Ballistics;
   var sourceWindows=JsonSerializer.SerializeToElement(runtime.WindowVisuals());
@@ -116,3 +116,4 @@ public static class BallisticContracts {
   return JsonSerializer.Serialize(new{ballistics="PASS",sourceMaterials=386,meshColliders=runtime.loadedMeshColliders,unresolvedBuiltins=runtime.unsupportedColliders,shearedExitMeshReparent=true,liveSceneContact=true,thinPenetration=true,thickStop=true,impenetrable=true,delayedExitResumes=true,glassHolePassThrough=true,originalEntryEffectDelivered,fragmentCount=count,fragmentMassConserved=true,fullUnityParity=false});
  }
 }
+

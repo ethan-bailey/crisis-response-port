@@ -2,13 +2,7 @@ using System.IO.Compression;using System.Text.Json;using Crisis.Runtime;using Cr
 public static class WeaponContracts {
  public static string Run(string path){
   using var stream=new GZipStream(File.OpenRead(path),CompressionMode.Decompress);string config=new StreamReader(stream).ReadToEnd();
-  // Mirror browser source composition: the compressed weapon bundle remains
-  // unchanged, and original physics/limb records are separate source assets.
-  var composed=System.Text.Json.Nodes.JsonNode.Parse(config);
-  var assets=Path.GetDirectoryName(path);
-  composed["armPhysics"]=System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(Path.Combine(assets,"original-full-character-physics.json")));
-  composed["sourceLimbComponents"]=System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(Path.Combine(assets,"original-character-limb-components.json")));
-  config=composed.ToJsonString();
+  config=ComposeSourceConfiguration(config,Path.GetDirectoryName(path));
   var input=new OriginalInputHost(new RuntimeWorld());input.Tick(.1f);var before=Time.time;
   var previousCulture=System.Globalization.CultureInfo.CurrentCulture;
   var localized=(System.Globalization.CultureInfo)System.Globalization.CultureInfo.InvariantCulture.Clone();localized.NumberFormat.PositiveInfinitySymbol="∞";localized.NumberFormat.NegativeInfinitySymbol="-∞";
@@ -38,5 +32,13 @@ public static class WeaponContracts {
   int shots=state.GetProperty("shots").GetInt32();for(int i=0;i<20;i++)state=Step();if(state.GetProperty("shots").GetInt32()!=shots)throw new Exception("Weapon fires without trigger input");
   return JsonSerializer.Serialize(new{weapons="PASS",initialRounds=31,emptyBoltLocks=true,originalReloadTasks=true,reloadedRounds=30,noInfiniteAmmo=true,localeIndependentTangents=true,originalIKUpdate=true,originalHandVisualActivation=true});
  }
+ public static string ComposeSourceConfiguration(string config,string assets){
+  // Mirror browser composition of preserved separate source assets.
+  var composed=System.Text.Json.Nodes.JsonNode.Parse(config);
+  composed["armPhysics"]=System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(Path.Combine(assets,"original-full-character-physics.json")));
+  composed["sourceLimbComponents"]=System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(Path.Combine(assets,"original-character-limb-components.json")));
+  return composed.ToJsonString();
+ }
+
 }
 
