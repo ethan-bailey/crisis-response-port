@@ -47,7 +47,7 @@ export function createUpperBody(data,manifest,nodeById,character,weapon,runtimeC
    worldEuler(weapon.root,yaw,result.pose.weaponAngle);character.updateWorldMatrix(true,true);
    const operatorTransforms={};
    for(const [id,node] of sourceNodes){const p=worldPosition(node),q=node.getWorldQuaternion(new THREE.Quaternion());operatorTransforms[id]={p:unityVector(p),q:[-q.x,-q.y,q.z,q.w]};}
-   weaponResult=JSON.parse(await runtimeCall('StepWeapons',JSON.stringify({position:unityVector(position),direction,weaponPose:weaponWorld(),operatorTransforms,fire,reload,armAngles:armRig?.angles()??{}})));
+   weaponResult=JSON.parse(await runtimeCall('StepWeapons',JSON.stringify({position:unityVector(position),velocity:[velocity,0,0],direction,weaponPose:weaponWorld(),operatorTransforms,fire,reload,armAngles:armRig?.angles()??{}})));
    effects.update(weaponResult.events,weaponResult.magazinePose,weaponResult.sourceTime);
    // Original ArmIKSolver.Update now runs against the source C# bone hierarchy.
    // Apply its actual world rotations and original Hand.SetMode object states.
