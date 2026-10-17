@@ -75,7 +75,8 @@ const sourceInit=await spawnOriginalSandboxMissionOccupants({
   registerBody:x=>nativeEvents.push(['register',x])
  }),
  actorBridge:{spawnFromOriginalRecord:record=>({
-   skill:record.sourceWeaponSkill,blackboard:record.sourceBlackboard
+   skill:record.sourceWeaponSkill,blackboard:record.sourceBlackboard,
+   physiology:record.sourcePhysiology
  })}
 });
 assert.equal(sourceInit.length,3);
@@ -85,3 +86,7 @@ assert.deepEqual(nativeEvents.slice(0,4).map(x=>x[0]),
 assert(sourceInit.every(x=>x.skill===.5));
 assert(sourceInit.every(x=>x.blackboard.morale===.5));
 assert(sourceInit.every(x=>x.blackboard.willBlindFire===false));
+
+assert(sourceInit.every(x=>x.physiology.fitness===.5));
+assert(sourceInit.every(x=>x.physiology.shockResistance===.25));
+assert(sourceInit.every(x=>x.physiology.shockRecovery===.55));
