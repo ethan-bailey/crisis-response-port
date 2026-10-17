@@ -1,4 +1,11 @@
 # NEXT AGENT — Crisis Response Port
+## 2026-10-17 native NPC physiology integration (five-step continuation)
+- Source-physiology write: [`39de164`](https://github.com/ethan-bailey/crisis-response-port/commit/39de16431bca9579623b8f7b715a1a5e754af57f) now applies original `fitness`, `ShockResistance`, `ShockRecovery` directly to each instantiated `OriginalOccupantPrefab.Character.SourcePhysiology`, rejecting incomplete/non-finite/out-of-bounds values before allocating native graph. Optional for backward-compatible source-prefab smoke.
+- Browser bridge: [`4cdf569`](https://github.com/ethan-bailey/crisis-response-port/commit/4cdf569a96a14b8d08cbd026c1167a61565c5351) carries original computed physiology into `SpawnOriginalOccupant` and asserts actual returned state before committing a rendered NPC.
+- Contracts: [`e571498`](https://github.com/ethan-bailey/crisis-response-port/commit/e5714980c22d758f36826053d9e1c5cf061e090d) tests native state readback, partial and invalid source records without actor allocation. [`cb27604`](https://github.com/ethan-bailey/crisis-response-port/commit/cb276046eea3e23a055dba244b6e7dd9295bbdb5) + [`0c10de6`](https://github.com/ethan-bailey/crisis-response-port/commit/0c10de60336cf7a5c6d13d084f8c73cb8d02efaa) align native JSON casing and tests. [`06131f4`](https://github.com/ethan-bailey/crisis-response-port/commit/06131f4360c15afe4af88b42f89f03e2c925c4a7) covers original sandbox spawn through computed physiology and registration callbacks.
+- Focused source/package and mission bridge checks passed at latest commit `76a0d9372c15bf37a2bd0fcfe7fbc76a0de89fa9` (runs 39076013719 and 39076013747). Full native + WASM + Chromium/WebKit workflow [39076009720](https://github.com/ethan-bailey/crisis-response-port/actions/runs/39076009720) was started; **check final conclusion before claiming full build**.
+- These are original source initialization properties, not the still-missing complete automatic NPC mission startup/AI/equipment or original projectile collider effects. Preserve existing deployed preview until full verification and on-demand redeploy.
+
 Updated 2026-10-17 UTC. Living project status; maintain the affected sections incrementally under AGENTS.md §9.
 
 ## 2026-10-17 continuation — asynchronous mission NPC spawn boundary
