@@ -94,6 +94,34 @@ public sealed class WeaponHost {
  public readonly WeaponEffects effects=new();
  public float Kick=>weapon.RecoilKick;public float Climb=>weapon.RecoilClimb;public bool Manipulating=>body.IsManipulatingEquipment;
  public CharacterBody Character=>body;
+ readonly List<OriginalOccupantPrefab> sourceOccupants=[];
+ public int SourceOccupantCount=>sourceOccupants.Count;
+ // Called exclusively by the exact source OccupantSpawner placement/selection
+ // bridge. Do not create fabricated test targets or activate unfinished AI.
+ public object SpawnSourceOccupant(string payload){
+  if(!config.TryGetProperty("armPhysics",out var physics)||
+     !config.TryGetProperty("sourceLimbComponents",out var limbs))
+   throw new NotSupportedException("Recovered source Occupant prefab physics unavailable");
+  using var doc=JsonDocument.Parse(payload);
+  var p=doc.RootElement;
+  if(p.GetProperty("bodyPrefab").GetString()!="Occupant")
+   throw new NotSupportedException("Non-Occupant prefab requires exact source importer");
+  var location=p.GetProperty("position");
+  var pos=V(location);
+  if(!float.IsFinite(pos.x)||!float.IsFinite(pos.y)||!float.IsFinite(pos.z))
+   throw new InvalidDataException("Original NPC spawn coordinates invalid");
+  world.MakeCurrent();
+  var occupant=new OriginalOccupantPrefab(physics,limbs,world);
+  occupant.Character.transform.position=pos;
+  if(config.TryGetProperty("sourceLimbBallistics",out var ballistics)&&Ballistics!=null)
+   occupant.BindSourceBallistics(ballistics,Ballistics,world);
+  sourceOccupants.Add(occupant);
+  return new {index=sourceOccupants.Count-1,position=new[]{pos.x,pos.y,pos.z},
+   limbs=occupant.Character.limbs.Count,
+   sourceActorCount=occupant.PhysicsHost.SourceActorCount,
+   originalProjectileContactsActive=occupant.PhysicsHost.SourceLimbProjectileContactsActive};
+ }
+
  public static Vector3 V(JsonElement a)=>new(a[0].GetSingle(),a[1].GetSingle(),a[2].GetSingle());
  static Vector3 Vec(JsonElement a)=>new(a.GetProperty("x").GetSingle(),a.GetProperty("y").GetSingle(),a.GetProperty("z").GetSingle());
  public static AnimationCurve Curve(JsonElement c){float F(JsonElement n)=>n.ValueKind==JsonValueKind.String?(n.GetString() switch {"Infinity"=>float.PositiveInfinity,"-Infinity"=>float.NegativeInfinity,var text=>float.Parse(text,System.Globalization.CultureInfo.InvariantCulture)}):n.GetSingle();return new(c.GetProperty("m_Curve").EnumerateArray().Select(k=>new Keyframe(k.GetProperty("time").GetSingle(),k.GetProperty("value").GetSingle(),F(k.GetProperty("inSlope")),F(k.GetProperty("outSlope")))).ToArray()){serializedPreInfinity=2,serializedPostInfinity=2,clampOutside=true};}

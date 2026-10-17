@@ -50,6 +50,9 @@ public static class RuntimeBridge {
     }
     [JSInvokable] public static string InitializeBallistics(string json){weapons.InitializeBallistics(json,presentation.QueryScene);return "ready";}
     [JSInvokable] public static string StepWeapons(string json)=>JsonSerializer.Serialize(weapons.Step(json));
+    [JSInvokable] public static string SpawnOriginalOccupant(string json)=>
+      JsonSerializer.Serialize((weapons??throw new InvalidOperationException("Original WeaponHost not initialized"))
+        .SpawnSourceOccupant(json));
     [JSInvokable] public static string OriginalWindowVisuals()=>JsonSerializer.Serialize(weapons?.Ballistics?.WindowVisuals()??throw new InvalidOperationException("Original windows not initialized"));
     static SceneLoadResult scene;
     static Crisis.Runtime.Presentation.PresentationHost presentation;
