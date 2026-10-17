@@ -6,6 +6,8 @@ on:
       - scripts/export_original_occupant_visual_spawn.py
       - .github/workflows/original-occupant-visual-spawn.yml
       - source-reference/Original/NPCRecovery/Assets/**
+      - game/source-occupant-spawner.mjs
+      - scripts/test_original_occupant_spawn.mjs
   workflow_dispatch:
 permissions:
   contents: write
@@ -15,7 +17,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: python3 -m pip install --disable-pip-version-check pyyaml
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - run: python3 scripts/export_original_occupant_visual_spawn.py
+      - run: node scripts/test_original_occupant_spawn.mjs
       - run: |
           python3 - <<'PY'
           import json
