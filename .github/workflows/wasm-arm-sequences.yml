@@ -1,6 +1,6 @@
 name: Audit milestone original WASM baseline verification
 
-# Retry verified full Operator 21-source-actor graph with source gravity schema and PlayerController ragdoll guard.
+# PR #51: compile original 15-organ source curves and brain/heart/lung/spine/bone callbacks on actual iPhone WASM operator.
 # Merging reviewed code into develop/wasm must not duplicate the expensive build.
 # No automatic builds on source/doc edits, and workflow_dispatch remains available.
 on:
