@@ -1,0 +1,35 @@
+{
+  "archiveSha256": "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
+  "sources": {
+    "LimbArmor.cs": {
+      "archivePath": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/LimbArmor.cs",
+      "bytes": 2278,
+      "sha256": "c413d2b927f35858c2aeee7efa48e4f18de1026e9bce17f642f356eea828412b"
+    },
+    "LimbRenderer.cs": {
+      "archivePath": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/LimbRenderer.cs",
+      "bytes": 14033,
+      "sha256": "a54c9c2b4454d1a9e8d0c9f6c7c8326757db749e5146485383b0873820443592"
+    },
+    "LimbVitalFunction.cs": {
+      "archivePath": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/LimbVitalFunction.cs",
+      "bytes": 686,
+      "sha256": "373036b26039364c1f65e79663ffc449616e1c60733c4b4885851a090dd1653b"
+    },
+    "Physiology.cs": {
+      "archivePath": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Physiology.cs",
+      "bytes": 22857,
+      "sha256": "a60d5ea1cebd66daa89ffd985f14fac98d86da0c1778558637c20c9e5d2133e4"
+    },
+    "Projectile.cs": {
+      "archivePath": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Projectile.cs",
+      "bytes": 22043,
+      "sha256": "ef6443c2d6fece6866526fa8c9d4262c31fbc26a2ed77da57e607d681a0302b2"
+    },
+    "VitalFunctions.cs": {
+      "archivePath": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/VitalFunctions.cs",
+      "bytes": 1405,
+      "sha256": "2d677971ac8db23154406da6d5b6c1bcb5a4fc5d93b1d08641750feb3dfaca99"
+    }
+  }
+}
