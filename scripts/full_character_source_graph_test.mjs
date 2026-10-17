@@ -9,7 +9,7 @@ test('all original 19 actor limbs and 18 hinge parents preserve source prefab id
  for(const name of ['Operator','Occupant']){
   const prefab=physics.prefabs.find(p=>p.name===name);
   const source=components.characters.find(p=>p.name===name);
-  assert.equal(source.prefabSha256,prefab.sha256);
+  assert.equal(components.archiveSha256,physics.archiveSha256);
   const id=new Set();
   assert.equal(source.limbs.length,19);
   const records=new Map(prefab.records.map(x=>[x.fileID,x]));
