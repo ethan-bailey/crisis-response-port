@@ -37,6 +37,8 @@ public partial class Projectile {
    RecalculateVelocity();
    return material.HandleProjectile(this,hit.normal).Status;
   }
+  if(ReferenceEquals(limb.Body,Owner))
+   throw new NotSupportedException("Original owner collision filtering is not yet connected");
   if(limb.Body==null||limb.LimbPhysiology==null)
    throw new InvalidOperationException("Original limb collision lacks its CharacterBody or LimbPhysiology");
   if(RecordOriginalAttackInfo==null||NotifyOriginalVictimHit==null||
