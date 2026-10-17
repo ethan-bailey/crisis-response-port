@@ -20,15 +20,18 @@ export async function spawnOriginalMissionOccupants({
          !Array.isArray(record.position) || record.position.length!==3 ||
          !record.position.every(Number.isFinite))
         throw Error('Original mission NPC record lacks a valid source prefab and position');
+      const expectedPrefab=record.sourceData.bodyPrefab;
+      const expectedScene=record.sourceScene;
+      const expectedPosition=record.position.slice();
       const prepared=prepareSourceRecord?prepareSourceRecord(record):record;
       if(!prepared || typeof prepared!=='object' || typeof prepared.then==='function')
         throw Error('Original NPC source record initialization must return a synchronous source record');
       // Preparation adds recovered physiology/AI/equipment state, never changes
       // the authored NPC prefab, original placement or source scene identity.
-      if(prepared.sourceData?.bodyPrefab!==record.sourceData.bodyPrefab ||
-         prepared.sourceScene!==record.sourceScene ||
+      if(prepared.sourceData?.bodyPrefab!==expectedPrefab ||
+         prepared.sourceScene!==expectedScene ||
          !Array.isArray(prepared.position) || prepared.position.length!==3 ||
-         !prepared.position.every((value,index)=>Number.isFinite(value)&&value===record.position[index]))
+         !prepared.position.every((value,index)=>Number.isFinite(value)&&value===expectedPosition[index]))
         throw Error('Original NPC preparation changed source prefab, scene or spawn position');
       return actorBridge.spawnFromOriginalRecord(prepared);
     }
