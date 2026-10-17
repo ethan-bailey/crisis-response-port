@@ -39,6 +39,12 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
     'All 18 authored Operator HingeJoints must be joined in PhysX');
   assert.equal(handState.weaponState.sourcePhysiology?.limbCount,19,
     'Actual live CharacterBody must own all 19 source limb components');
+  assert.equal(handState.weaponState.sourcePhysiology?.originalOrganGroups,9,
+    'Original serialized VitalFunctions must bind to all nine live limb groups');
+  assert.equal(handState.weaponState.sourcePhysiology?.originalOrgans,15,
+    'All 15 original source organ probability/position curves must be live');
+  assert.equal(handState.weaponState.sourcePhysiology?.Paralyzed,false,
+    'Healthy original Operator must begin without an invented spine injury');
   assert.equal(handState.weaponState.sourcePhysiology?.Kinematic,true,
     'Original living Operator starts animator-controlled rather than ragdolled');
 
