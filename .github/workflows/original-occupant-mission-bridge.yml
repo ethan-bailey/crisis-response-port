@@ -1,0 +1,25 @@
+name: Original Occupant mission bridge contracts
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'game/source-occupant-spawner.mjs'
+      - 'game/source-occupant-mission-integration.mjs'
+      - 'game/assets/occupant/source-visual-spawn.json'
+      - 'scripts/test_original_occupant_spawn.mjs'
+      - 'scripts/test_original_occupant_mission_integration.mjs'
+      - '.github/workflows/original-occupant-mission-bridge.yml'
+permissions:
+  contents: read
+jobs:
+  mission-bridge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Recovered spawner contract
+        run: node scripts/test_original_occupant_spawn.mjs
+      - name: Async mission actor bridge contract
+        run: node scripts/test_original_occupant_mission_integration.mjs
