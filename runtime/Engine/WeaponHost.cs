@@ -32,7 +32,7 @@ public class Hand:global::Hand {
  public Mode mode=>CurrentMode;
  public readonly Dictionary<string,GameObject> SourceVisuals=[];
 }
-public partial class Limb:Component {public CharacterBody Body;}
+public partial class Limb:BallisticMaterial {public CharacterBody Body;}
 public class WeaponArmConfiguration {public Hand.Mode rightHandMode,leftHandMode;public float rightHandAngle,leftHandAngle;}
 public class Blackboard {public float weaponSkill;}
 public partial class CharacterBody:Component {
