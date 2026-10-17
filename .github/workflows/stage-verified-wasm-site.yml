@@ -1,8 +1,5 @@
 name: Stage verified original WASM site for iPhone preview
 on:
-  push:
-    branches: [preview/wasm-current-iphone]
-    paths: [.github/workflows/stage-verified-wasm-site.yml]
   workflow_dispatch:
 permissions:
   contents: write
