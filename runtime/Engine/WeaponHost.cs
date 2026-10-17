@@ -161,7 +161,14 @@ public sealed class WeaponHost {
   if(config.TryGetProperty("sourceLimbBallistics",out var ballistics)&&Ballistics!=null)
    occupant.BindSourceBallistics(ballistics,Ballistics,world);
   sourceOccupants.Add(occupant);
+  var actualBlackboard=occupant.Character.Blackboard;
   return new {index=sourceOccupants.Count-1,position=new[]{pos.x,pos.y,pos.z},
+   sourceWeaponSkill=actualBlackboard.weaponSkill,
+   sourceBlackboard=hasSourceState?new {
+    actualBlackboard.morale,actualBlackboard.aggression,actualBlackboard.fear,
+    actualBlackboard.blindFireDistance,
+    willBlindFire=actualBlackboard.WillBlindFire,actualBlackboard.negotiable
+   }:null,
    limbs=occupant.Character.limbs.Count,skinChoices,
    sourceActorCount=occupant.PhysicsHost.SourceActorCount,
    originalProjectileContactsActive=occupant.PhysicsHost.SourceLimbProjectileContactsActive};
