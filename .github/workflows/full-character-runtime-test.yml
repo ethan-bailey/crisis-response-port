@@ -1,0 +1,27 @@
+name: Source full character native and anatomy integration
+on:
+  push:
+    branches: [feature/characterbody-live-physiology-full-rig]
+    paths: [.github/workflows/full-character-runtime-test.yml]
+permissions: {contents: read}
+jobs:
+  source-character:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 22}
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: tools/wasm-compile/global.json
+      - name: Execute original physiology, ragdoll and IK native source checks
+        run: |
+          cp tools/wasm-compile/global.json global.json
+          dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --character-systems
+          dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --character-dependencies
+      - name: Validate serialized original 19-limb full PhysX graph
+        run: |
+          node --check game/original-arm-rig-import.mjs
+          node --check game/presentation.mjs
+          node --test scripts/full_character_source_graph_test.mjs scripts/source_character_animator_test.mjs
