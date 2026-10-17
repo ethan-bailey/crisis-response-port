@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-const physics=JSON.parse(fs.readFileSync(new URL('../game/assets/original-arm-physics.json',import.meta.url),'utf8'));
+const physics=JSON.parse(fs.readFileSync(new URL('../game/assets/original-full-character-physics.json',import.meta.url),'utf8'));
 const components=JSON.parse(fs.readFileSync(new URL('../game/assets/original-character-limb-components.json',import.meta.url),'utf8'));
 test('all original 19 actor limbs and 18 hinge parents preserve source prefab identities',()=>{
  assert.equal(components.format,'crisis-original-character-limb-components-v1');
