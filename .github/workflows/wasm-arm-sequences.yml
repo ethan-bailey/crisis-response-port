@@ -1,6 +1,6 @@
 name: Audit milestone original WASM baseline verification
 
-# PR #53: verify live 17 original skin masks/limb visual identity binding in compiled original Operator C# WASM in Chromium and WebKit.
+# Full author flesh material and armor binding milestone: 19 original source colliders remain safely disabled until projectile injury execution.
 # Merging reviewed code into develop/wasm must not duplicate the expensive build.
 # No automatic builds on source/doc edits, and workflow_dispatch remains available.
 on:
