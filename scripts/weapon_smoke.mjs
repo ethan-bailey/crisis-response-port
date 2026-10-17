@@ -39,6 +39,8 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
     'All 18 authored Operator HingeJoints must be joined in PhysX');
   assert.equal(handState.weaponState.sourcePhysiology?.limbCount,19,
     'Actual live CharacterBody must own all 19 source limb components');
+  assert.equal(handState.weaponState.sourcePhysiology?.originalSkinRenderers,17,
+    'All 17 source LimbRenderer damage/skin coverage masks must attach to live C# limb transforms');
   assert.equal(handState.weaponState.sourcePhysiology?.originalOrganGroups,9,
     'Original serialized VitalFunctions must bind to all nine live limb groups');
   assert.equal(handState.weaponState.sourcePhysiology?.originalOrgans,15,
