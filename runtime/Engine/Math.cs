@@ -30,6 +30,12 @@ public struct Vector3 {
     public static Vector3 Lerp(Vector3 a,Vector3 b,float t)=>a+(b-a)*Mathf.Clamp01(t);
     public static float Dot(Vector3 a,Vector3 b) => N.Vector3.Dot(a.Native,b.Native);
     public static Vector3 Cross(Vector3 a,Vector3 b) => From(N.Vector3.Cross(a.Native,b.Native));
+    // UnityEngine.Vector3.Project: remove normal-to-plane component from an
+    // arbitrary vector, preserving the original projectile's depth alignment.
+    public static Vector3 Project(Vector3 vector,Vector3 onNormal){
+        float dot=Dot(onNormal,onNormal);
+        return dot<1e-15f?zero:onNormal*(Dot(vector,onNormal)/dot);
+    }
     public static float Angle(Vector3 a,Vector3 b){float n=a.magnitude*b.magnitude;return n<1e-15f?0:MathF.Acos(Math.Clamp(Dot(a,b)/n,-1,1))*180/MathF.PI;}
     public static Vector3 Reflect(Vector3 direction,Vector3 normal)=>direction-2*Dot(direction,normal)*normal;
     public static Vector3 Scale(Vector3 a,Vector3 b) => From(a.Native*b.Native);
