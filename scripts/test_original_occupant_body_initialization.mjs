@@ -15,6 +15,9 @@ const result=applyOriginalOccupantSpawnState(record,{
 assert.deepEqual(order,[[.1,1],[0,1],[.1,.9],[0,1],[.1,.9]]);
 assert.deepEqual(calls.map(x=>x[0]),['blackboard','physiology','equipment','register']);
 assert.equal(result.blindFire,true);
+assert.equal(result.sourceState.sourceWeaponSkill,.5);
+assert.equal(result.sourceState.sourceBlackboard.morale,.4);
+assert.equal(result.sourceState.sourceBlackboard.willBlindFire,true);
 assert.equal(result.weaponSkill,.5);
 assert.equal(result.recoilCompensation[0],.75);
 assert.equal(result.shockRecovery,.55);
