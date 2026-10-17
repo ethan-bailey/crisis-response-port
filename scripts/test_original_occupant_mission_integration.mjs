@@ -32,7 +32,9 @@ for(const prepareSourceRecord of [
  record=>({...record,position:[record.position[0]+1,...record.position.slice(1)]}),
  record=>({...record,sourceScene:'Mission 01'}),
  record=>({...record,sourceData:{...record.sourceData,bodyPrefab:'Operator'}}),
- async record=>record
+ async record=>record,
+ record=>{record.position[0]+=1;return record;},
+ record=>{record.sourceData.bodyPrefab='Operator';return record;}
 ]) {
  let actorCalls=0;
  await assert.rejects(spawnOriginalMissionOccupants({...base,prepareSourceRecord,
