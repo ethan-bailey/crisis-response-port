@@ -26,4 +26,16 @@ assert.throws(()=>applyOriginalOccupantSpawnState(record,{
  randomFloat:()=>NaN,occupantSettings:{weaponSkill:{low:0,high:1}},
  applyBlackboard(){},applyPhysiology(){},applyEquipment(){},registerBody(){}
 }),/invalid original Occupant RNG/i);
+
+let mutations=0;
+const hooks={randomFloat:(a,b)=>a,occupantSettings:{weaponSkill:{low:0,high:1}},
+ applyBlackboard(){mutations++},applyPhysiology(){mutations++},
+ applyEquipment(){mutations++},registerBody(){mutations++}};
+assert.throws(()=>applyOriginalOccupantSpawnState({
+ sourceData:{...record.sourceData,equipment:null}},hooks),/source missing/);
+assert.equal(mutations,0,'invalid equipment must not mutate the native actor');
+assert.throws(()=>applyOriginalOccupantSpawnState({
+ sourceData:{...record.sourceData,fitness:undefined}},hooks),/field missing: fitness/);
+assert.equal(mutations,0,'incomplete physiology must not partially register a body');
+
 console.log('PASS original Occupant spawn personality, source RNG order, physiology and equipment callbacks');
