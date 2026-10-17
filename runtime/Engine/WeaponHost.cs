@@ -101,7 +101,12 @@ public sealed class WeaponHost {
  void Hierarchy(JsonElement records,Dictionary<string,Transform> map){foreach(var p in records.EnumerateObject()){var t=Make(p.Name);map[p.Name]=t;}
  foreach(var p in records.EnumerateObject()){var f=p.Value;var t=map[p.Name];var pid=f.GetProperty("m_Father").GetProperty("fileID").GetString();if(map.TryGetValue(pid,out var parent))t.SetParent(parent,false);t.localPosition=Vec(f.GetProperty("m_LocalPosition"));t.localScale=Vec(f.GetProperty("m_LocalScale"));var q=f.GetProperty("m_LocalRotation");t.localRotation=new(q.GetProperty("x").GetSingle(),q.GetProperty("y").GetSingle(),q.GetProperty("z").GetSingle(),q.GetProperty("w").GetSingle());}}
  public BallisticRuntimeHost Ballistics {get;private set;}
- public void InitializeBallistics(string json,SceneLoadResult scene){Ballistics=new(json,scene,effects,p=>{p.FlightMask=ballisticMask;if(!projectiles.Contains(p))projectiles.Add(p);});ballisticMask=Masks.Instance.BallisticTargets;}
+ public void InitializeBallistics(string json,SceneLoadResult scene){
+  Ballistics=new(json,scene,effects,p=>{p.FlightMask=ballisticMask;if(!projectiles.Contains(p))projectiles.Add(p);});
+  ballisticMask=Masks.Instance.BallisticTargets;
+  if(config.TryGetProperty("sourceLimbBallistics",out var source))
+    armPhysics.BindSourceBallistics(source,Ballistics,world);
+ }
  public WeaponHost(string json,InputHandler input,RuntimeWorld sourceWorld=null){
   world=sourceWorld??new RuntimeWorld(true,false);world.MakeCurrent();using var d=JsonDocument.Parse(json);var c=d.RootElement;config=c.Clone();var w=c.GetProperty("weapon");Global.Context.InputHandler=input;
   Hierarchy(c.GetProperty("weaponTransforms"),weaponTransforms);Hierarchy(c.GetProperty("operatorTransforms"),operatorTransforms);
@@ -203,7 +208,11 @@ public sealed class WeaponHost {
    // Send source-owned magazine capacity and chamber state to the browser.
    // Future weapon hosts must supply their own actual equipped weapon identity;
    // a merely loaded Glock visual is NOT a playable equipped Glock.
-   physicalArms=armPhysics.Snapshot(),weaponId="M4A1",magazineCapacity=weapon.Magazine?.capacity??weapon.ComponentMagazine.capacity,
+   physicalArms=armPhysics.Snapshot(),
+    sourceLimbBallistics=new{materials=armPhysics.SourceLimbMaterialCount,
+       colliders=armPhysics.SourceLimbColliderCount,armors=armPhysics.SourceLimbArmorCount,
+       projectileContactsActive=armPhysics.SourceLimbProjectileContactsActive},
+    weaponId="M4A1",magazineCapacity=weapon.Magazine?.capacity??weapon.ComponentMagazine.capacity,
    magazine=weapon.Magazine?.roundCount??0,reserve=body.Equipment.PrimaryMagazines.Where(m=>!ReferenceEquals(m,weapon.Magazine)).Sum(m=>m.roundCount),chamberLive=weapon.cyclingBolt.Live,bolt=weapon.cyclingBolt.Status.ToString(),reloading=task!=null,manipulating=body.IsManipulatingEquipment,kick=Kick,climb=Climb,right=Arm(body.rightArm),left=Arm(body.leftArm),events=effects.events.ToArray()};}
 }
 }
