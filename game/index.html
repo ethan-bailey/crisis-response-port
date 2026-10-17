@@ -304,8 +304,14 @@ async function load(){
    async spawnFromOriginalRecord(record){
     if(!runtimeCall||!record?.sourceData?.bodyPrefab||!Array.isArray(record.position)||
        record.position.length!==3)throw Error('Original NPC source record missing');
+    // Weapon skill is produced by the recovered OccupantSpawner's
+    // SetWeaponSkill step; absent source state must not become a fake value.
+    const skill=record.sourceWeaponSkill;
+    if(skill!==undefined&&(!Number.isFinite(skill)||skill<0||skill>1))
+     throw Error('Original NPC source weapon skill invalid');
     const body=JSON.parse(await runtimeCall('SpawnOriginalOccupant',JSON.stringify({
-     bodyPrefab:record.sourceData.bodyPrefab,position:record.position
+     bodyPrefab:record.sourceData.bodyPrefab,position:record.position,
+     ...(skill===undefined?{}:{sourceWeaponSkill:skill})
     })));
     if(body.sourceActorCount!==20||body.limbs!==19||body.originalProjectileContactsActive)
      throw Error('Original Occupant anatomy and collision safety mismatch');
