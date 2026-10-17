@@ -6,7 +6,7 @@ import hashlib,json,re,sys,zipfile
 from pathlib import Path
 PIN='cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d'
 PREFIX='export/ExportedProject/'
-KEYS=('m_WrapMode','m_WrapU','m_WrapV','m_WrapW','m_FilterMode','m_Aniso',
+KEYS=('m_WrapMode','wrapMode','m_WrapU','wrapU','m_WrapV','wrapV','m_WrapW','wrapW','m_FilterMode','filterMode','m_Aniso',
       'm_Readable','isReadable','alphaIsTransparency','m_TextureType','textureType',
       'm_MipMapMode','m_MipMapsPreserveCoverage','m_AlphaIsTransparency')
 def main(archive,manifest,out):
@@ -43,6 +43,7 @@ def main(archive,manifest,out):
     'assetSha256':hashlib.sha256(source_bytes).hexdigest(),
     'metaSha256':hashlib.sha256(raw).hexdigest(),
     'importerLines':serialized,
+    'sourceWrapLines':[line.strip() for line in lines if re.search(r'wrap',line,re.IGNORECASE)],
     'importerKind':'TextureImporter' if re.search(r'(?m)^TextureImporter:',text) else 'Other',
    }
  missing=wanted-found.keys()
