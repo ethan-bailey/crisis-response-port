@@ -110,11 +110,8 @@ public sealed class WeaponHost {
   var pos=V(location);
   if(!float.IsFinite(pos.x)||!float.IsFinite(pos.y)||!float.IsFinite(pos.z))
    throw new InvalidDataException("Original NPC spawn coordinates invalid");
-  world.MakeCurrent();
-  var occupant=new OriginalOccupantPrefab(physics,limbs,world);
-  occupant.Character.transform.position=pos;
-  if(config.TryGetProperty("sourceLimbBallistics",out var ballistics)&&Ballistics!=null)
-   occupant.BindSourceBallistics(ballistics,Ballistics,world);
+  // Validate the exact source visual dependency before instantiating native
+  // rigidbodies: a failed visual binding must not leak an unregistered actor.
   if(!config.TryGetProperty("sourceOccupantVisual",out var visual)||
      visual.GetProperty("format").GetString()!="crisis-source-occupant-visual-spawn-v1"||
      visual.GetProperty("sourcePrefabSha256").GetString()!="9094b840c49d6c53ffa077c274561ab5cbeedb202f85dbaade023ad67cb8c419")
@@ -127,6 +124,11 @@ public sealed class WeaponHost {
    if(count<1)throw new InvalidDataException("Original Occupant skin candidate list empty");
    skinChoices.Add(skin.GetProperty("componentFileID").GetString(),UnityEngine.Random.Range(0,count));
   }
+  world.MakeCurrent();
+  var occupant=new OriginalOccupantPrefab(physics,limbs,world);
+  occupant.Character.transform.position=pos;
+  if(config.TryGetProperty("sourceLimbBallistics",out var ballistics)&&Ballistics!=null)
+   occupant.BindSourceBallistics(ballistics,Ballistics,world);
   sourceOccupants.Add(occupant);
   return new {index=sourceOccupants.Count-1,position=new[]{pos.x,pos.y,pos.z},
    limbs=occupant.Character.limbs.Count,skinChoices,
