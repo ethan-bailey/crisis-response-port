@@ -1,4 +1,4 @@
-# Explicit replay: 2026-10-17 owner-requested rebuild of latest source NPC Blackboard round-trip integration
+# Explicit replay: 2026-10-17 native Occupant physiology binding + source NPC state round-trip verification
 name: Audit milestone original WASM baseline verification
 
 # Execute original Torso skin/ammunition injury graph and compliance timing in native/WASM; live NPC contacts stay gated.
