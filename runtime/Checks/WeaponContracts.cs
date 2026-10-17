@@ -28,6 +28,28 @@ public static class WeaponContracts {
      MathF.Abs(stateActor.GetProperty("sourceBlackboard").GetProperty("morale").GetSingle()-.5f)>1e-6f||
      !stateActor.GetProperty("sourceBlackboard").GetProperty("willBlindFire").GetBoolean())
    throw new Exception("Original Occupant native blackboard registration mismatch");
+  var physiologyActor=JsonSerializer.SerializeToElement(host.SpawnSourceOccupant(
+   JsonSerializer.Serialize(new{bodyPrefab="Occupant",position=new[]{6.75f,1.25f,-1.5f},
+    sourcePhysiology=new{fitness=.7f,shockResistance=.25f,shockRecovery=.55f}})));
+  var livePhysiology=physiologyActor.GetProperty("sourcePhysiology");
+  if(host.SourceOccupantCount!=4||
+     MathF.Abs(livePhysiology.GetProperty("fitness").GetSingle()-.7f)>1e-6f||
+     MathF.Abs(livePhysiology.GetProperty("ShockResistance").GetSingle()-.25f)>1e-6f||
+     MathF.Abs(livePhysiology.GetProperty("ShockRecovery").GetSingle()-.55f)>1e-6f)
+   throw new Exception("Original Occupant physiology native state not applied");
+  int beforeInvalidPhysiology=host.SourceOccupantCount;
+  try{host.SpawnSourceOccupant(JsonSerializer.Serialize(new{bodyPrefab="Occupant",
+   position=new[]{7f,1.25f,-1.5f},sourcePhysiology=new{fitness=.7f}}));
+   throw new Exception("Accepted incomplete original Occupant physiology");}
+  catch(InvalidDataException){}
+  if(host.SourceOccupantCount!=beforeInvalidPhysiology)
+   throw new Exception("Invalid physiology allocated native rigidbodies");
+  try{host.SpawnSourceOccupant(JsonSerializer.Serialize(new{bodyPrefab="Occupant",
+   position=new[]{7f,1.25f,-1.5f},sourcePhysiology=new{fitness=2f,shockResistance=.2f,shockRecovery=.5f}}));
+   throw new Exception("Accepted out-of-range original Occupant fitness");}
+  catch(InvalidDataException){}
+  if(host.SourceOccupantCount!=beforeInvalidPhysiology)
+   throw new Exception("Out-of-range physiology allocated native actor");
   int beforeInvalidBlackboard=host.SourceOccupantCount;
   try{host.SpawnSourceOccupant(JsonSerializer.Serialize(new{bodyPrefab="Occupant",
    position=new[]{7f,1.25f,-1.5f},morale=.5f}));
