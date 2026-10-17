@@ -124,8 +124,19 @@ public sealed class WeaponHost {
    if(count<1)throw new InvalidDataException("Original Occupant skin candidate list empty");
    skinChoices.Add(skin.GetProperty("componentFileID").GetString(),UnityEngine.Random.Range(0,count));
   }
+  // Optional source-computed weapon skill can now bind to the actual native
+  // Occupant CharacterBody.Blackboard; absent state keeps the prior test path.
+  // Validate before creating rigidbodies, as with the prefab manifest.
+  float? sourceWeaponSkill=null;
+  if(p.TryGetProperty("sourceWeaponSkill",out var skillJson)){
+   float skill=skillJson.GetSingle();
+   if(!float.IsFinite(skill)||skill<0f||skill>1f)
+    throw new InvalidDataException("Original Occupant weapon skill invalid");
+   sourceWeaponSkill=skill;
+  }
   world.MakeCurrent();
   var occupant=new OriginalOccupantPrefab(physics,limbs,world);
+  if(sourceWeaponSkill.HasValue)occupant.Character.Blackboard.weaponSkill=sourceWeaponSkill.Value;
   occupant.Character.transform.position=pos;
   if(config.TryGetProperty("sourceLimbBallistics",out var ballistics)&&Ballistics!=null)
    occupant.BindSourceBallistics(ballistics,Ballistics,world);
