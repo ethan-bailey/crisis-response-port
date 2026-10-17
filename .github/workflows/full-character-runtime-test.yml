@@ -1,4 +1,5 @@
 name: Source full character native and anatomy integration
+# Validate source-derived 19-limb graph after full exported physic actors and hypoxia tests.
 # Full original 21-actor/18-hinge export with GUID-resolved 19 limbs and native transform reconstruction.
 on:
   push:
