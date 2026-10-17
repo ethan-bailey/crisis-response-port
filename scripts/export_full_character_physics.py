@@ -28,7 +28,8 @@ def export(source:Path,output:Path):
     raise ValueError('Missing original hinge parent')
   prefab.append({'name':name,'records':original,'arms':src['arms']})
  result={'format':'crisis-original-arm-physics-runtime-v1','archiveSha256':PIN,
-         'referenceSha256':hashlib.sha256(raw).hexdigest(),'physics':v['physics'],'prefabs':prefab}
+         'referenceSha256':hashlib.sha256(raw).hexdigest(),
+         'physics':[record['fields'] for record in v['physics']],'prefabs':prefab}
  output.parent.mkdir(parents=True,exist_ok=True)
  output.write_text(json.dumps(result,sort_keys=True,separators=(',',':'))+'\n')
  print(json.dumps({'characters':[p['name'] for p in prefab],
