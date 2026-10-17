@@ -9,6 +9,17 @@ export function applyOriginalOccupantSpawnState(record,{
     typeof applyPhysiology!=='function'||typeof applyEquipment!=='function'||
     typeof registerBody!=='function'||!occupantSettings?.weaponSkill)
   throw Error('Original Occupant state requires source spawn data and native body bindings');
+ // Validate every required recovered parameter before allocating, equipping, or
+ // registering the native actor. Never partially configure a body from an
+ // incomplete SerializableOccupantSpawn record.
+ for(const field of ['morale','aggression','fear','blindFireChance',
+   'blindFireDistance','fitness','shockResistance'])
+  if(!Number.isFinite(data[field]))throw Error('Original Occupant field missing: '+field);
+ if(typeof data.negotiable!=='boolean'||!data.equipment)
+  throw Error('Original Occupant negotiation/equipment source missing');
+ for(const field of ['low','high'])
+  if(!Number.isFinite(occupantSettings.weaponSkill[field]))
+   throw Error('Original Occupant weapon skill range missing: '+field);
  const f=(a,b)=>{
   if(!Number.isFinite(a)||!Number.isFinite(b))throw Error('Invalid source Occupant random range');
   const value=randomFloat(a,b);
