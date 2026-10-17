@@ -9,6 +9,13 @@ on:
       - runtime/Checks/ProjectileInjuryContracts.cs
       - runtime/Engine/OriginalArmPhysicsHost.cs
       - runtime/Checks/BallisticContracts.cs
+      - runtime/Original/OriginalMuscleControl.cs
+      - runtime/Original/CharacterVitalDynamics.cs
+      - runtime/Original/OriginalVitalFunctions.cs
+      - runtime/Original/Weapons/OriginalCharacterVitalHost.cs
+      - runtime/Original/Weapons/CharacterLimbRagdollState.cs
+      - runtime/Checks/OriginalMuscleControlContracts.cs
+      - runtime/Checks/Program.cs
 permissions:
   contents: read
 jobs:
@@ -27,4 +34,5 @@ jobs:
           dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --source-limb-interior
           dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --source-tissue-penetration
           dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --character-systems
+          dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --source-muscle-control
           dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj

@@ -46,6 +46,9 @@ public sealed partial class OriginalPhysiologyConditions {
   lastBrainOxygenTimestamp=now;Alive=true;Conscious=true;
  }
  public bool Paralyzed{get;private set;}
+ // Same source MuscleControl brain/heart/nerve decisions; installed only on
+ // original CharacterBody-owned physiological state, never synthetic observers.
+ public OriginalMuscleControl MuscleControl {get;set;}
  // Original Physiology.AddHeartTrauma source law and callback for immediate
  // CharacterBody unconscious/ragdoll transition. MuscleControl cramping is
  // deliberately unbound until the actual original nerve controller exists.
@@ -86,8 +89,16 @@ public sealed partial class OriginalPhysiologyConditions {
  public void AddBrainTrauma(float volume){
   BrainTrauma+=volume;
   BrainTissue=Mathf.Max(0f,BrainTissue-volume*.5f);
-  // Original neurologic muscle responses require the genuine MuscleControl
-  // event graph; they are not invented in this physiology-only component.
+  if(MuscleControl!=null){
+   // From original Physiology.AddBrainTrauma (nerve response enabled).
+   if(UnityEngine.Random.value<BrainTraumaNormalized*.4f)RespirationDisabled=true;
+   if(BrainTrauma>MaxConsciousBrainTrauma&&BrainTrauma<125f){
+    float value=UnityEngine.Random.value;
+    if(value<.1f)MuscleControl.SetDecerberate();
+    else if(value<.2f)MuscleControl.SetDecorticate();
+    else if(value<.3f)MuscleControl.StartHighIntensityMuscleSpasms();
+   }else MuscleControl.SingleSpasmOnBrainHit();
+  }
  }
  public void SetUnconscious(float time){
   if(Conscious){Conscious=false;UnconsciousTimestamp=time;}

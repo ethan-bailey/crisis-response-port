@@ -131,7 +131,7 @@ public partial class CharacterBody {
   leftArm.enabled=false;
   GetComponent<ArmsControl>()?.Relax();
   SetKinematic(false);
-  foreach(var limb in limbs)limb.SourceMuscle?.Relax();
+  SourceMuscleControl?.Relax();
   EventRagdoll.Invoke();
  }
  public void SetKinematic(bool state){

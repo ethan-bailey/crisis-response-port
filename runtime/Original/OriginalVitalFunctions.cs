@@ -82,10 +82,11 @@ public sealed class OriginalVitalFunctions {
     physiology.AddHeartTrauma(volume,shock,
       limb.Body.Torso?.LimbPhysiology ??
       throw new InvalidOperationException("Original heart hit requires source Torso physiology"),
-      () => limb.Body.OnOriginalOrganUnconscious());
+      () => limb.Body.OnOriginalOrganUnconscious(),
+      duration => limb.Body.SourceMuscleControl?.ActivateCramp(duration));
     break;
    case OrganType.Spine:
-    physiology.SetParalyzed();
+    physiology.SetParalyzed(duration => limb.Body.SourceMuscleControl?.ActivateCramp(duration));
     limb.Body.EnterSourceRagdoll();
     break;
    case OrganType.Bone:
