@@ -1,5 +1,5 @@
 name: Verify original limb material armor and physics source
-# Recheck source ArmorClass and LimbArmor with their actual runtime namespace bridge.
+# Recheck original Unity Random and LimbArmor namespace aliases without rewriting authored damage formulas.
 on:
   push:
     branches: [feature/original-projectile-limb-material-closure]
