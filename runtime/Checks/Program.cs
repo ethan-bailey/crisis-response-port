@@ -44,6 +44,47 @@ if(args.Contains("--original-limb-skin")){
  Console.WriteLine("{\"originalLimbSkinTrace\":\"pass\",\"sourceSkinTextures\":11,\"sourceRenderers\":17,\"nativePixelTrace\":true}");
  return;
 }
+if(args.Contains("--live-ikarmcontroller")){
+ var world=new UnityEngine.RuntimeWorld();
+ var root=new UnityEngine.GameObject("Original operator",world);
+ var body=root.AddComponent<Crisis.Runtime.Weapons.CharacterBody>();
+ body.rightArm=root.AddComponent<Crisis.Runtime.Weapons.ArmIKSolver>();
+ body.leftArm=root.AddComponent<Crisis.Runtime.Weapons.ArmIKSolver>();
+ var controller=new Crisis.Runtime.Weapons.OriginalIKArmControllerLive(body,
+  ()=>throw new NotSupportedException("Original source WeaponAimAlignment unavailable"));
+ var lower=new IKArmSequenceRuntime();
+ lower.right.Add(new IKArmAnimationFrame{action=IKArmAction.Wait,time=.1f,callback=IKControllerInvoke.LowerWeapon});
+ lower.left.Add(new IKArmAnimationFrame{action=IKArmAction.Wait,time=.1f});
+ controller.Play(lower,0f);
+ if(!controller.IsPlaying||controller.RightFrame!=0||body.IsLoweringWeapon)
+  throw new Exception("Original IKArmController did not initialize source frame");
+ controller.Update(.12f); // exact original Update marks the frame done
+ if(body.IsLoweringWeapon)throw new Exception("Original callback executed early");
+ controller.Update(.13f); // exact original Update invokes callback on next frame
+ if(!body.IsLoweringWeapon)
+  throw new Exception("Original IK_LowerWeapon callback did not affect real character");
+ body.rightArm.hand=new UnityEngine.GameObject("Original hand",world).AddComponent<Crisis.Runtime.Weapons.Hand>();
+ var grab=new UnityEngine.GameObject("Original grab point",world).transform;
+ body.rightArm.hand.grabPoint=grab;
+ var pending=new UnityEngine.GameObject("Original pending weapon",world).AddComponent<Crisis.Runtime.Weapons.WeaponBase>();
+ pending.transform.position=new UnityEngine.Vector3(3,2,0);
+ controller.PendingWeapon=pending;
+ var handSequence=new IKArmSequenceRuntime();
+ handSequence.right.Add(new IKArmAnimationFrame{action=IKArmAction.Wait,time=.05f,
+   callback=IKControllerInvoke.MovePendingWeaponToHand});
+ controller.Play(handSequence,.2f);
+ controller.Update(.26f);controller.Update(.27f);
+ if(pending.transform.parent!=grab||pending.transform.localPosition.sqrMagnitude>1e-7f)
+  throw new Exception("Recovered IK_MovePendingWeaponToHand did not parent real source weapon");
+ var unsupported=new IKArmSequenceRuntime();
+ unsupported.right.Add(new IKArmAnimationFrame{action=IKArmAction.Wait,time=.01f,
+   callback=IKControllerInvoke.PickupGrenade});
+ controller.Play(unsupported,.4f);controller.Update(.42f);
+ try {controller.Update(.43f);throw new Exception("Missing grenade dependencies silently claimed success");}
+ catch(NotSupportedException) {}
+ Console.WriteLine("{\"OriginalIKArmControllerLive\":\"pass\",\"RealWeaponAttachment\":true,\"UnsupportedActionGuard\":true}");
+ return;
+}
 if(args.Contains("--character-systems")){
  var physiology=new Crisis.Runtime.Character.OriginalPhysiologyConditions();
  physiology.InitializeBloodVolume(4500f);
