@@ -1,3 +1,5 @@
+> **Current normative behavior:** The first section below, **Approved circular iPhone joystick and icon controls (2026-10-16)**, supersedes the older horizontal 22% dead-zone/slider instructions in the second section. The approved joystick is circular with a **16% horizontal dead zone**, automatic smooth walk→sprint and no touch sprint button. Preserve the original developer movement/physics. See [current operations board](REPOSITORY_OPERATIONS_2026-10-17.md).
+
 # Approved circular iPhone joystick and icon controls (2026-10-16)
 
 The owner explicitly requested replacing the horizontal slider with a two-axis circular thumb joystick and removing the sprint touch button. This **supersedes the earlier 22% slider-specific dead zone and separate touch Sprint control**. Do not revert to a horizontal slider or require a sprint button during later source parity work.
