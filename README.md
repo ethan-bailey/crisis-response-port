@@ -1,12 +1,14 @@
 # Crisis Response — iPhone Web Port Research
 
+> **Repository status (2026-10-17):** Read the [audited repository operations board](docs/REPOSITORY_OPERATIONS_2026-10-17.md) **before** historic workspaces and handoffs. The current WASM integration branch is `develop/wasm`; active draft gameplay work is [projectile injuries #56](https://github.com/ethan-bailey/crisis-response-port/pull/56), [IK callbacks #57](https://github.com/ethan-bailey/crisis-response-port/pull/57), and the blocked [full CharacterBody #42](https://github.com/ethan-bailey/crisis-response-port/pull/42). The staged iPhone snapshot predates these changes; no full-game or device parity is claimed. This is a status index, not a code or release change.
+
 > **Current collaboration setup (October 16, 2026):** `main` is the stable repository baseline, **[`develop/wasm`](https://github.com/ethan-bailey/crisis-response-port/tree/develop/wasm)** is the sole integrated C#→WebAssembly game branch, and new work uses short-lived feature PRs targeting `develop/wasm`. The game is still incomplete. The older project notes below describe historical milestones, not the current code integration branch.
 
 ## Work here
 
 - **[Contributor onboarding](CONTRIBUTING.md)** and **[branching, PR, label and release policy](docs/BRANCHING_AND_COLLABORATION.md)** — the required conventions for human and AI contributors.
 - **[Current next-agent handoff](https://github.com/ethan-bailey/crisis-response-port/blob/develop/wasm/NEXT_AGENT.md)** and **[workspace](https://github.com/ethan-bailey/crisis-response-port/blob/develop/wasm/WORKSPACE.md)** — what is integrated/tested, who owns what, and the next bounded original-code task.
-- **[Issue #22: original arm-controller playback](https://github.com/ethan-bailey/crisis-response-port/issues/22)** — next priority source dependency group.
+- **[Issue #22: original arm-controller playback](https://github.com/ethan-bailey/crisis-response-port/issues/22)** — ongoing dependency group; current partial callback work is [draft PR #57](https://github.com/ethan-bailey/crisis-response-port/pull/57), not a completed integration.
 - **[Source-backed test milestone](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38901664939)** — combined original C#/WASM/Chromium/WebKit tests passed at SHA `1264c0b4579076b82e1b6b21955469313779fe39` (selected source slice only).
 - **[Manual private Vercel release protocol](https://github.com/ethan-bailey/crisis-response-port/blob/develop/wasm/docs/VERCEL_MANUAL_DEPLOYMENTS.md)** — Git commits no longer trigger Vercel deployments.
 

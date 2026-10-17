@@ -1,3 +1,17 @@
+# CURRENT AGENT ENTRYPOINT — 2026-10-17 repository audit
+
+**Read [docs/REPOSITORY_OPERATIONS_2026-10-17.md](docs/REPOSITORY_OPERATIONS_2026-10-17.md) first.** The previous top section below is an earlier snapshot, **not the current PR/branch roster**. Current audited `develop/wasm` premaintenance source commit: `e0a9ad26fb7def7c171dd04171eb93c9b79191af`. Re-check GitHub before editing.
+
+- [Draft PR #56](https://github.com/ethan-bailey/crisis-response-port/pull/56): head `7f09c84e01a971066e20388df556925c6a90586d`. Original limb interior source was tested at an older SHA; **new Projectile.HandleLimbHit dispatch and callback gates are not compiled or verified, and all live limb collision paths stay disabled** until original notifications, physiology stepping and self-hit filtering work. Its feature-branch `NEXT_AGENT.md` carries the latest projectile caveat.
+- [Draft PR #57](https://github.com/ethan-bailey/crisis-response-port/pull/57): IK callbacks head `2b73044c107b875d8545d03541bf6b2d35f64654`. Separate IK track; focused prior test only, incomplete target/action wiring.
+- [Draft PR #42](https://github.com/ethan-bailey/crisis-response-port/pull/42): unchanged original 2,454-line full-class source; **incomplete and uncompilable as one class**.
+- [Draft PR #7](https://github.com/ethan-bailey/crisis-response-port/pull/7): legacy independent Unity/mobile line on `main`; **do not merge wholesale into WASM**.
+- [Housekeeping PR #58](https://github.com/ethan-bailey/crisis-response-port/pull/58): documentation and narrowly scoped local ignores; no gameplay, CI trigger or deployment changes. Latest recorded compiled site snapshot has `sourceCommit=b9454d65f1d2ef164890fe770eff55dcd666cb2e` in its build manifest, **not** the latest limb/IK code.
+
+**Next gameplay task:** implement and test source-true projectile attacker/victim/mission callbacks and wound→hemorrhage→shock/oxygen/consciousness update sequence on #56, using a distinct target and correct collision owner filtering. Preserve the approved circular analog joystick, icon buttons, ammo UI and original source. Perform focused tests first; full compiled WASM/Chromium/WebKit only at a tested functional milestone, never for these documentation changes.
+
+---
+
 # CURRENT NEXT-AGENT HANDOFF — 2026-10-17 (read this section first)
 
 **Immediate user direction:** Continue the original developer-authored Crisis Response browser/WASM port toward complete `CharacterBody`, injury physics, AnimatorController, and IK sequencing. User requested a **handoff now**, not further unverified gameplay changes. Preserve original code and serialized assets, not placeholder rewrites. Read `AGENTS.md` before editing; this top section supersedes stale status language deeper in this historical file.

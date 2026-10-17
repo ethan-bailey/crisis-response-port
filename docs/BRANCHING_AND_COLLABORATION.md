@@ -1,5 +1,7 @@
 # Branches, pull requests, labels and release workflow
 
+> **Current active branch/PR/preview audit:** [REPOSITORY_OPERATIONS_2026-10-17.md](REPOSITORY_OPERATIONS_2026-10-17.md). The branch creation facts and legacy transition below remain historical; do not infer a current SHA, open PR, or deployment from them.
+
 **Effective October 16, 2026.** This is the authoritative, contributor-facing collaboration policy for the **private** `ethan-bailey/crisis-response-port` repository. For live code/test status read `NEXT_AGENT.md` on `develop/wasm`.
 
 ## Branch roles

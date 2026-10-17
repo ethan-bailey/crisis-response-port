@@ -4,6 +4,9 @@
 
 # Crisis Response Port — Agent Operating Instructions
 
+**Current repository status:** [2026-10-17 audited operations board](docs/REPOSITORY_OPERATIONS_2026-10-17.md) tracks active PRs, tested/deployed SHAs, historic branches, and manual-build constraints. Re-read it and current GitHub state before work; older handoff sections are chronological evidence.
+
+
 Derived from the 2026-10-16 workflow audit. These rules keep the port moving fast without burning quota, duplicating work, or losing results.
 
 ## 1. Deployments: on-demand only
