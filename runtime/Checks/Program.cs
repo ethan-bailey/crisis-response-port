@@ -68,6 +68,26 @@ if(args.Contains("--source-limb-interior")){
      System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic|
      System.Reflection.BindingFlags.DeclaredOnly)==null)
     throw new Exception("Original Limb.FindInternalDistanceAndExitPosition is not compiled");
+  // Execute the developer's marksman-specific entry/exit selector against
+  // real source skin mask bounds; original limb depth is used, never
+  // a made-up capsule thickness.
+  limb.depth=.55f; // recovered original Torso.prefab depth
+  var sourceProjectile=new UnityEngine.GameObject("Original marksman projectile",world)
+      .AddComponent<Projectile>();
+  sourceProjectile.MarksmanOwner=go.AddComponent<UnityEngine.Component>();
+  sourceProjectile.transform.position=new UnityEngine.Vector3(.17f,.13f,-.12f);
+  var originalFind=typeof(Crisis.Runtime.Weapons.Limb).GetMethod(
+    "FindInternalDistanceAndExitPosition",
+    System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic|
+    System.Reflection.BindingFlags.DeclaredOnly);
+  originalFind.Invoke(limb,[sourceProjectile]);
+  var distanceField=typeof(BallisticMaterial).GetField("availableInternalDistance",
+    System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+  var foundField=typeof(BallisticMaterial).GetField("foundPotentialExit",
+    System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+  if(Math.Abs((float)distanceField.GetValue(limb)-limb.depth)>1e-5f||
+    !(bool)foundField.GetValue(limb))
+    throw new Exception("Source Limb pixel-trace marksman path ignored authored depth and exit");
   limb.LimbPhysiology.AddTrauma(24f);
   var entry=new UnityEngine.Vector3(.17f,.13f,0f);
   var direction=new UnityEngine.Vector3(1f,.12f,.01f);
