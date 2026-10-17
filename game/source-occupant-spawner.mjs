@@ -9,7 +9,14 @@ export function createSourceOccupantSpawner(source,sceneName,{random,raycast,spa
  if(typeof random!=='function'||typeof raycast!=='function'||typeof spawnBody!=='function'||
     !settings||!spawnData||campaign===undefined)
   throw Error('Source OccupantSpawner requires original Unity RNG, collision query, prefab instantiation and mission context');
+ if(!Array.isArray(scene.areas)||scene.areas.length===0)
+  throw Error('Original OccupantSpawner requires authored spawn areas');
  const areas=scene.areas.map(area=>({...area}));
+ for(const area of areas){
+  if(!['probability','xMin','xMax','y','zMin','zMax','walkableMin','walkableMax']
+      .every(key=>Number.isFinite(area[key]))||area.probability<0||area.xMin>area.xMax||area.zMin>area.zMax)
+   throw Error('Original OccupantSpawner spawn area fields invalid');
+ }
  let accumulated=0;
  for(const area of areas){area.probabilityLow=accumulated;accumulated+=area.probability;area.probabilityHigh=accumulated;}
  const choose=()=>{const sample=random()*accumulated;
@@ -41,8 +48,11 @@ export function createSourceOccupantSpawner(source,sceneName,{random,raycast,spa
   if(!data?.enabled)return null;
   if(!data.bodyPrefab)throw Error('Original SerializableOccupantSpawn bodyPrefab missing');
   const info=positionFor(data,randomize);if(!info)return null;
+  // SpawnSandboxCharacter consumes Random.Range(75,85) for body weight
+  // immediately after successful Instantiate and before the patrol roll.
+  const weight=75+random()*10;
   const patrolSpan=(info.area.xMax-info.area.xMin)*(sceneName==='Marksman range'?1:random());
-  return spawnBody({sourceData:data,sourceScene:sceneName,position:info.position,
+  return spawnBody({sourceData:data,sourceScene:sceneName,position:info.position,sourceWeight:weight,
    patrolAreaLeft:Math.max(info.area.xMin,info.position[0]-patrolSpan*.5),
    patrolAreaRight:Math.min(info.area.xMax,info.position[0]+patrolSpan*.5),
    walkableAreaLeft:info.area.walkableMin,walkableAreaRight:info.area.walkableMax});
