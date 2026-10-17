@@ -1,6 +1,49 @@
 using Crisis.Runtime;
 using System.Text.Json;
 
+if(args.Contains("--original-limb-skin")){
+ var file="game/assets/operator/original-source-limb-damage-mask.json.gz";
+ using var fs=File.OpenRead(file);
+ using var gz=new System.IO.Compression.GZipStream(fs,System.IO.Compression.CompressionMode.Decompress);
+ using var document=JsonDocument.Parse(gz);
+ var masks=document.RootElement;
+ if(masks.GetProperty("format").GetString()!="crisis-original-limb-initial-damage-green-v1"||
+    masks.GetProperty("originalRendererCount").GetInt32()!=17||
+    masks.GetProperty("originalTextureCount").GetInt32()!=11)
+  throw new Exception("Original source LimbTextureData mask inventory changed");
+ int sampled=0;
+ foreach(var skin in masks.GetProperty("skins").EnumerateArray()){
+  int width=skin.GetProperty("width").GetInt32(),
+      height=skin.GetProperty("height").GetInt32();
+  var green=Convert.FromBase64String(skin.GetProperty("originalStaticDamageGreenBottomUpBase64").GetString());
+  if(green.Length!=width*height)throw new Exception("Original skin coverage pixel length mismatch");
+  var world=new UnityEngine.RuntimeWorld();
+  var visual=new UnityEngine.GameObject("Source LimbRenderer",world).transform;
+  var tracer=new Crisis.Runtime.Character.OriginalLimbSkinTrace(visual,width,height,green);
+  int filled=Array.FindIndex(green,b=>b==0);
+  if(filled<0)throw new Exception("Original skin contains no solid texels");
+  int x=filled%width,y=filled/width;
+  var p=new UnityEngine.Vector3((x+.5f)/width-.5f,(y+.5f)/height-.5f,0f);
+  UnityEngine.Vector3 entry=default,exit=default;
+  var status=tracer.FindMarksmanEntryAndExit(p,UnityEngine.Vector3.right,ref entry,ref exit);
+  if(status!=Crisis.Runtime.Character.OriginalLimbSkinTrace.TraceResult.EntryExit||
+     Math.Abs(tracer.InitialDamageGreen(x,y))>1e-5f||
+     (exit-entry-UnityEngine.Vector3.right*.2f).magnitude>1e-5f)
+   throw new Exception("Original LimbRenderer pixel/marksman source trace mismatch");
+  int transparent=Array.FindIndex(green,b=>b==255);
+  if(transparent>=0){
+   int tx=transparent%width,ty=transparent/width;
+   var q=new UnityEngine.Vector3((tx+.5f)/width-.5f,(ty+.5f)/height-.5f,0f);
+   status=tracer.FindMarksmanEntryAndExit(q,UnityEngine.Vector3.right,ref entry,ref exit);
+   if(status!=Crisis.Runtime.Character.OriginalLimbSkinTrace.TraceResult.Failure)
+    throw new Exception("Original alpha-derived transparent pixel falsely registers as solid");
+  }
+  sampled++;
+ }
+ if(sampled!=11)throw new Exception("Not all recovered source skin masks tested");
+ Console.WriteLine("{\"originalLimbSkinTrace\":\"pass\",\"sourceSkinTextures\":11,\"sourceRenderers\":17,\"nativePixelTrace\":true}");
+ return;
+}
 if(args.Contains("--character-systems")){
  var physiology=new Crisis.Runtime.Character.OriginalPhysiologyConditions();
  physiology.InitializeBloodVolume(4500f);
