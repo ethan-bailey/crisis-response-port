@@ -12,6 +12,7 @@ namespace Crisis.Runtime.Weapons {
  // All physical commands are transported to the pinned browser PhysX kernel.
  public sealed class OriginalArmPhysicsHost {
   readonly ArmsControl controller;
+  readonly string prefabName;
   readonly CharacterBody body;
   readonly Dictionary<string,Rigidbody> bodies=new();
   readonly Dictionary<string,HingeJoint> joints=new();
@@ -31,16 +32,21 @@ namespace Crisis.Runtime.Weapons {
   public bool SourceLimbProjectileContactsActive=>authenticatedLimbColliders.Any(c=>c.enabled);
   public int SourceActorCount=>bodies.Count;
   public int SourceJointCount=>joints.Count;
+  public bool SourceArmControlBound=>controller!=null;
   readonly Dictionary<string,Transform> transforms;
   static Vector3 Vector(JsonElement v)=>new(v.GetProperty("x").GetSingle(),
    v.GetProperty("y").GetSingle(),v.GetProperty("z").GetSingle());
   static float[] Arr(Vector3 v)=>[v.x,v.y,v.z];
   public OriginalArmPhysicsHost(JsonElement source,Dictionary<string,Transform> nodes,
-       CharacterBody subject,RuntimeWorld world,JsonElement sourceLimbConfiguration=default){
+       CharacterBody subject,RuntimeWorld world,JsonElement sourceLimbConfiguration=default,
+       string prefabName="Operator"){
+   if(prefabName!="Operator"&&prefabName!="Occupant")
+    throw new InvalidDataException("Unrecognized original physics character prefab");
+   this.prefabName=prefabName;
    if(source.GetProperty("format").GetString()!="crisis-original-arm-physics-runtime-v1")
     throw new InvalidDataException("Original physical arm source version mismatch");
    configuration=source.GetProperty("prefabs").EnumerateArray()
-     .First(p=>p.GetProperty("name").GetString()=="Operator").Clone();
+     .First(p=>p.GetProperty("name").GetString()==prefabName).Clone();
    transforms=nodes;body=subject;
    var records=configuration.GetProperty("records").EnumerateArray()
     .ToDictionary(r=>r.GetProperty("fileID").GetString(),r=>r.Clone());
@@ -120,15 +126,15 @@ namespace Crisis.Runtime.Weapons {
       spring=state.spring,damper=state.damper,targetPosition=state.targetPosition});
     joints[jointId]=hinge;
    }
-   if(bodies.Count!=21||joints.Count!=18)
-    throw new InvalidDataException($"Unexpected original Operator physics graph: {bodies.Count} bodies, {joints.Count} hinges");
+   if(bodies.Count!=(prefabName=="Operator"?21:20)||joints.Count!=18)
+    throw new InvalidDataException($"Unexpected original {prefabName} physics graph: {bodies.Count} bodies, {joints.Count} hinges");
    // Bind original MonoBehaviour Limb IDs, not a fabricated anatomical table.
    // Original serialized right/left hands have no LimbPhysiology component.
    if(sourceLimbConfiguration.ValueKind==JsonValueKind.Object){
     if(sourceLimbConfiguration.GetProperty("format").GetString()!="crisis-original-character-limb-components-v1")
       throw new InvalidDataException("Original limb source manifest format mismatch");
     var authored=sourceLimbConfiguration.GetProperty("characters").EnumerateArray()
-      .Single(c=>c.GetProperty("name").GetString()=="Operator");
+      .Single(c=>c.GetProperty("name").GetString()==prefabName);
     if(sourceLimbConfiguration.GetProperty("archiveSha256").GetString()!="cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d")
       throw new InvalidDataException("Original Limb components have an unverified source archive");
     if(authored.GetProperty("limbs").GetArrayLength()!=(int)LimbId.NumberOfLimbs)
@@ -147,7 +153,13 @@ namespace Crisis.Runtime.Weapons {
     }
     if(authoredLimbs.Count!=(int)LimbId.NumberOfLimbs)
      throw new InvalidDataException("Missing original source limbs");
+    subject.Torso=runtimeLimbs[LimbId.Torso];
+    subject.Pelvis=runtimeLimbs[LimbId.Pelvis];
    }
+   // The Occupant prefab contains the authentic physical arms but no loaded
+   // source Hand/IK visual instances yet. Never fabricate those to start an
+   // incomplete ArmsControl. Physics, limb/nerve state and source IDs remain live.
+   if(prefabName=="Operator"){
    controller=subject.gameObject.GetComponent<ArmsControl>()??
      subject.gameObject.AddComponent<ArmsControl>();
    ArmController Arm(string side){
@@ -172,6 +184,7 @@ namespace Crisis.Runtime.Weapons {
    // ArmsControl.Start is the unchanged recovered developer lifecycle method.
    world.Invoke(controller,"Start");
    commands.Clear();
+   }
   }
 
   // Attach original LimbTextureData green coverage to the actual rendered
@@ -229,9 +242,9 @@ namespace Crisis.Runtime.Weapons {
    var materialData=source.GetProperty("materials");
    if(materialData.EnumerateObject().Count()!=8)
      throw new InvalidDataException("Original limb source requires eight distinct flesh material assets");
-   var armorData=source.GetProperty("armor").GetProperty("Operator");
+   var armorData=source.GetProperty("armor").GetProperty(prefabName);
    if(armorData.EnumerateObject().Count()!=4)
-     throw new InvalidDataException("Operator source must contain four armor components");
+     throw new InvalidDataException(prefabName+" source must contain four armor components");
    string Guid(JsonElement value)
      =>value.TryGetProperty("guid",out var guid)?guid.GetString():null;
    static bool Flag(JsonElement value)
@@ -361,11 +374,11 @@ namespace Crisis.Runtime.Weapons {
       hinge.angle=entry.Value.GetSingle();
    // Original normal state has kinematic character arms. Original dynamic
    // transitions may change this via the real CharacterBody lifecycle.
-   world.Invoke(controller,"Update");
+   if(controller!=null)world.Invoke(controller,"Update");
   }
   public object Snapshot(){
    var current=commands.ToArray();commands.Clear();
-   return new {sourceControllerExecuted=true,sourceArmsKinematic=body.Kinematic,
+   return new {sourceControllerExecuted=controller!=null,sourceArmsKinematic=body.Kinematic,
      commands=current};
   }
  }

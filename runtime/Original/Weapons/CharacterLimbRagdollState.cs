@@ -127,8 +127,10 @@ public partial class CharacterBody {
   if(!Kinematic)return;
   // Original CharacterBody.SetRagdoll: relax the real authored ArmsControl,
   // release ALL source limb actors, and stop clip-driven bone transforms.
-  rightArm.enabled=false;
-  leftArm.enabled=false;
+  // Occupant preserves original physical limbs; its Hand/IK visual adapter
+  // cannot be fabricated before authentic NPC equipment is imported.
+  if(rightArm!=null)rightArm.enabled=false;
+  if(leftArm!=null)leftArm.enabled=false;
   GetComponent<ArmsControl>()?.Relax();
   SetKinematic(false);
   SourceMuscleControl?.Relax();
@@ -137,7 +139,8 @@ public partial class CharacterBody {
  public void SetKinematic(bool state){
   if(Kinematic==state)return;
   Kinematic=state;
-  GetComponent<Animator>().enabled=state;
+  var originalAnimator=GetComponent<Animator>();
+  if(originalAnimator!=null)originalAnimator.enabled=state;
   var velocity=GetComponent<Rigidbody>()?.velocity??Vector3.zero;
   foreach(Limb limb in limbs)limb.SetKinematic(state,velocity);
  }
