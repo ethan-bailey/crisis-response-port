@@ -188,9 +188,9 @@ public sealed class WeaponHost {
   return new {index=sourceOccupants.Count-1,position=new[]{pos.x,pos.y,pos.z},
    sourceWeaponSkill=actualBlackboard.weaponSkill,
    sourcePhysiology=hasSourcePhysiology?new {
-    occupant.Character.SourcePhysiology.fitness,
-    occupant.Character.SourcePhysiology.ShockResistance,
-    occupant.Character.SourcePhysiology.ShockRecovery
+    fitness=occupant.Character.SourcePhysiology.fitness,
+    shockResistance=occupant.Character.SourcePhysiology.ShockResistance,
+    shockRecovery=occupant.Character.SourcePhysiology.ShockRecovery
    }:null,
    sourceBlackboard=hasSourceState?new {
     actualBlackboard.morale,actualBlackboard.aggression,actualBlackboard.fear,
