@@ -16,6 +16,17 @@ public static class WeaponContracts {
      npc.GetProperty("skinChoices").EnumerateObject().Count()!=16||
      host.SourceOccupantCount!=1)
    throw new Exception("Original live WeaponHost Occupant source graph spawn mismatch");
+  var sourceSkillActor=JsonSerializer.SerializeToElement(host.SpawnSourceOccupant(
+   JsonSerializer.Serialize(new{bodyPrefab="Occupant",position=new[]{6f,1.25f,-1.5f},sourceWeaponSkill=.65f})));
+  if(sourceSkillActor.GetProperty("index").GetInt32()!=1 || host.SourceOccupantCount!=2)
+   throw new Exception("Source Occupant native weapon-skill actor failed registration");
+  int beforeInvalidSkill=host.SourceOccupantCount;
+  try{host.SpawnSourceOccupant(JsonSerializer.Serialize(new{bodyPrefab="Occupant",
+    position=new[]{7f,1.25f,-1.5f},sourceWeaponSkill=2f}));
+    throw new Exception("Accepted invalid source Occupant weapon skill");}
+  catch(InvalidDataException){}
+  if(host.SourceOccupantCount!=beforeInvalidSkill)
+   throw new Exception("Invalid source weapon skill allocated a native actor");
   try{host.SpawnSourceOccupant(JsonSerializer.Serialize(new{bodyPrefab="Unverified",
       position=new[]{0f,1f,-1.5f}}));throw new Exception("Accepted unauthenticated actor prefab");}
   catch(NotSupportedException){}
