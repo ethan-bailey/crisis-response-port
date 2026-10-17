@@ -1,5 +1,5 @@
 name: Original projectile limb interior source native contracts
-# Verified original Vector3.Project math dependency for source limb depth alignment.
+# Run original source marksman pixel trace, authored torso depth, wound creation and blood volume contract.
 on:
   push:
     branches: [feature/original-projectile-limb-hit-runtime]
