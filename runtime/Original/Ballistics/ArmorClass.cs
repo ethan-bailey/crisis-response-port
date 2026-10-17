@@ -1,4 +1,5 @@
 using UnityEngine;
+using Random=UnityEngine.Random; // Original Unity Random, not System.Random.
 
 public static class ArmorClass
 {
