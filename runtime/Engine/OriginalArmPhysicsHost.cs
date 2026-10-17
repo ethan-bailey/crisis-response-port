@@ -38,6 +38,30 @@ namespace Crisis.Runtime.Weapons {
    var transformByGo=records.Values.Where(r=>r.GetProperty("classID").GetInt32()==4)
     .ToDictionary(r=>r.GetProperty("fields").GetProperty("m_GameObject").GetProperty("fileID").GetString(),
                   r=>r.GetProperty("fileID").GetString());
+   // Original weapon fixture previously imported only upper-body transforms.
+   // Restore any missing real Operator transforms directly from the SAME
+   // serialized Unity prefab rather than assigning synthetic body/leg poses.
+   var missingTransforms=new HashSet<string>();
+   foreach(var record in records.Values.Where(r=>r.GetProperty("classID").GetInt32()==4)){
+    var id=record.GetProperty("fileID").GetString();
+    if(nodes.ContainsKey(id))continue;
+    var go=record.GetProperty("fields").GetProperty("m_GameObject").GetProperty("fileID").GetString();
+    var goRecord=records[go];
+    var name=goRecord.GetProperty("fields").GetProperty("m_Name").GetString();
+    nodes[id]=new GameObject(name,world).transform;
+    missingTransforms.Add(id);
+   }
+   foreach(var id in missingTransforms){
+    var f=records[id].GetProperty("fields");
+    var node=nodes[id],parent=f.GetProperty("m_Father").GetProperty("fileID").GetString();
+    if(nodes.TryGetValue(parent,out var parentNode))node.SetParent(parentNode,false);
+    node.localPosition=Vector(f.GetProperty("m_LocalPosition"));
+    node.localScale=Vector(f.GetProperty("m_LocalScale"));
+    var q=f.GetProperty("m_LocalRotation");
+    node.localRotation=new Quaternion(q.GetProperty("x").GetSingle(),
+      q.GetProperty("y").GetSingle(),q.GetProperty("z").GetSingle(),
+      q.GetProperty("w").GetSingle());
+   }
    Transform NodeForBody(string id){
     var record=records[id];
     var go=record.GetProperty("fields").GetProperty("m_GameObject").GetProperty("fileID").GetString();
