@@ -8,7 +8,7 @@ on:
       - source-reference/Original/NPCRecovery/Assets/**
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   verify:
     runs-on: ubuntu-24.04
@@ -26,3 +26,14 @@ jobs:
           assert set(data['sceneSpawners'])=={'Mission 01','Marksman range'}
           print('Source NPC visual/spawner manifest verification PASS')
           PY
+      - name: Retain exact recovered NPC visual/spawn manifest on branch
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add game/assets/occupant/source-visual-spawn.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Preserve original Occupant render hierarchy and authentic scene spawn definition manifest"
+            git pull --rebase origin feature/original-projectile-limb-hit-runtime
+            git push origin HEAD:feature/original-projectile-limb-hit-runtime
+          fi
