@@ -25,6 +25,7 @@ public static class RuntimeBridge {
         var capsule=character.GetComponent<CapsuleCollider>()??character.gameObject.AddComponent<CapsuleCollider>();
         character.InitializeSourceAnimation(animator,capsule);
         character.InitializeOriginalPhysiology(Time.time);
+        weapons.BindOriginalLimbPhysiology();
         return "ready";
     }
     [JSInvokable] public static string StepCharacterAnimation(string json){
@@ -39,7 +40,7 @@ public static class RuntimeBridge {
           F("sprintSpeed"),heartRandom:UnityEngine.Random.value);
         return JsonSerializer.Serialize(weapons.Character.ExecuteSourceUpdateAnimation(
           B("kneeling"),B("moving"),B("backwards"),F("velocity"),
-          F("walkSpeed"),F("sprintSpeed"),F("crippledRatio"),B("operator"),
+          F("walkSpeed"),F("sprintSpeed"),weapons.Character.CrippledRatio,B("operator"),
           F("deltaTime"),F("colliderVerticalOffset")));
     }
     [JSInvokable] public static string InitializeBallistics(string json){weapons.InitializeBallistics(json,presentation.QueryScene);return "ready";}
@@ -59,9 +60,10 @@ public static class RuntimeBridge {
         float Number(string key)=>p.GetProperty(key).GetSingle();
         bool Flag(string key)=>p.GetProperty(key).GetBoolean();
         float dir=Number("direction");
-        movementSource.Direction=Number("facing");
-        movementSource.Move(dir);
-        var result=movementSource.ExecuteSourceMovement(Number("velocity"),Number("step"),
+        var currentBody=weapons?.Character??movementSource;
+        currentBody.Direction=Number("facing");
+        currentBody.Move(dir);
+        var result=currentBody.ExecuteSourceMovement(Number("velocity"),Number("step"),
             Number("walkSpeed"),Number("sprintSpeed"),Number("analogMagnitude"),
             Flag("sprint"),Flag("crippled"),Flag("operator"),Flag("noPlayerLimp"),
             Flag("precision"));
