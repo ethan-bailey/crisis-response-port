@@ -1,0 +1,54 @@
+name: Export original skin-derived damage coverage mask
+on:
+  push:
+    branches: [feature/original-limb-renderer-trace]
+    paths: [.github/workflows/export-original-limb-coverage.yml]
+permissions: {contents: write}
+jobs:
+  mask:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install source pixel decoder (development tooling only)
+        run: python -m pip install --disable-pip-version-check pillow==12.0.0
+      - name: Extract exact initial source mask from all preserved skins
+        run: |
+          python scripts/export_original_limb_skin_masks.py game/assets/operator game/assets/operator/original-source-limb-damage-mask.json.gz
+          python - <<'PY'
+          import base64,gzip,hashlib,io,json
+          from pathlib import Path
+          from PIL import Image
+          root=Path('game/assets/operator')
+          raw=gzip.decompress((root/'original-source-limb-damage-mask.json.gz').read_bytes())
+          bundle=json.loads(raw)
+          assert bundle['format']=='crisis-original-limb-initial-damage-green-v1'
+          assert bundle['originalRendererCount']==17
+          assert bundle['originalTextureCount']==11
+          for skin in bundle['skins']:
+            path=root/skin['texture']
+            assert hashlib.sha256(path.read_bytes()).hexdigest()==skin['sha256']
+            data=base64.b64decode(skin['originalStaticDamageGreenBottomUpBase64'])
+            width,height=skin['width'],skin['height']
+            assert len(data)==width*height
+            assert set(data).issubset({0,255})
+            with Image.open(path) as im:
+              im=im.convert('RGBA')
+              for x,y in [(0,0),(width//2,height//2),(width-1,height-1)]:
+                expect=0 if im.getpixel((x,height-1-y))[3]>0 else 255
+                assert data[y*width+x]==expect
+          print('Source skin mask pixel coverage and all SHA hashes pass')
+          PY
+      - name: Commit original derived data without inventing texture artifacts
+        run: |
+          git add game/assets/operator/original-source-limb-damage-mask.json.gz
+          git diff --cached --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if ! git diff --cached --quiet; then
+            git commit -m 'Preserve actual source 17-limb initial damage mask green coverage and SHA-linked PNG texture data'
+            git push origin HEAD:feature/original-limb-renderer-trace
+          fi
