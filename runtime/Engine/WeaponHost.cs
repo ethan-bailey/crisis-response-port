@@ -170,7 +170,20 @@ public sealed class WeaponHost {
    armPhysics.BindOriginalSkinCoverage(actualOriginalSkinMasks);
   reload=bg.AddComponent<ChangeMagazine>();reload.isPlayer=true;reload.OnAwake();workBolt=bg.AddComponent<WorkBolt>();workBolt.OnAwake();effects.events.Clear();
  }
- public void BindOriginalLimbPhysiology()=>armPhysics.BindOriginalPhysiology();
+ public void BindOriginalLimbPhysiology(){
+  armPhysics.BindOriginalPhysiology();
+  foreach(var limb in body.limbs.Where(l=>l.SourceSkinTrace!=null)){
+   limb.SourceDrawDamage=(source,position,radius,depth,irregularity)=>{
+    // This is the original LimbRenderer.DrawDamage request, carrying the
+    // actual authored limb id and exact Unity world-space contact point.
+    // Browser presentation must render it against source skin material.
+    effects.Emit("sourceLimbDamage",new {
+     limb=(int)source.id,point=new[]{position.x,position.y,position.z},
+     radiusMillimeters=radius,depth,irregularity
+    });
+   };
+  }
+ }
  public object Step(string json){world.MakeCurrent();using var d=JsonDocument.Parse(json);var f=d.RootElement;
   body.Direction=f.GetProperty("direction").GetSingle();body.transform.position=V(f.GetProperty("position"));body.transform.rotation=Quaternion.AngleAxis(body.RotationY,Vector3.up);
   if(f.TryGetProperty("velocity",out var sourceVelocity)&&body.GetComponent<Rigidbody>() is Rigidbody rootRigidbody)
