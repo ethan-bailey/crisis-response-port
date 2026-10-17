@@ -1,4 +1,5 @@
 name: Export original skin-derived damage coverage mask
+# Correctly preserve authored alpha-to-green initialization and bottom-up texel order.
 on:
   push:
     branches: [feature/original-limb-renderer-trace]
