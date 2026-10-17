@@ -115,9 +115,21 @@ public sealed class WeaponHost {
   occupant.Character.transform.position=pos;
   if(config.TryGetProperty("sourceLimbBallistics",out var ballistics)&&Ballistics!=null)
    occupant.BindSourceBallistics(ballistics,Ballistics,world);
+  if(!config.TryGetProperty("sourceOccupantVisual",out var visual)||
+     visual.GetProperty("format").GetString()!="crisis-source-occupant-visual-spawn-v1"||
+     visual.GetProperty("sourcePrefabSha256").GetString()!="9094b840c49d6c53ffa077c274561ab5cbeedb202f85dbaade023ad67cb8c419")
+   throw new NotSupportedException("Original Occupant visual manifest missing or unverified");
+  // Unity LimbRenderer selects a skin candidate at creation; transport
+  // exactly the source candidates, never replace them with invented art.
+  var skinChoices=new Dictionary<string,int>();
+  foreach(var skin in visual.GetProperty("dynamicLimbSkins").EnumerateArray()){
+   int count=skin.GetProperty("skinCandidates").GetArrayLength();
+   if(count<1)throw new InvalidDataException("Original Occupant skin candidate list empty");
+   skinChoices.Add(skin.GetProperty("componentFileID").GetString(),UnityEngine.Random.Range(0,count));
+  }
   sourceOccupants.Add(occupant);
   return new {index=sourceOccupants.Count-1,position=new[]{pos.x,pos.y,pos.z},
-   limbs=occupant.Character.limbs.Count,
+   limbs=occupant.Character.limbs.Count,skinChoices,
    sourceActorCount=occupant.PhysicsHost.SourceActorCount,
    originalProjectileContactsActive=occupant.PhysicsHost.SourceLimbProjectileContactsActive};
  }

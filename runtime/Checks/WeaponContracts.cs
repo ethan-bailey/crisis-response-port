@@ -13,6 +13,7 @@ public static class WeaponContracts {
   if(npc.GetProperty("sourceActorCount").GetInt32()!=20||
      npc.GetProperty("limbs").GetInt32()!=(int)LimbId.NumberOfLimbs||
      npc.GetProperty("originalProjectileContactsActive").GetBoolean()||
+     npc.GetProperty("skinChoices").EnumerateObject().Count()!=16||
      host.SourceOccupantCount!=1)
    throw new Exception("Original live WeaponHost Occupant source graph spawn mismatch");
   try{host.SpawnSourceOccupant(JsonSerializer.Serialize(new{bodyPrefab="Unverified",
@@ -48,6 +49,7 @@ public static class WeaponContracts {
   var composed=System.Text.Json.Nodes.JsonNode.Parse(config);
   composed["armPhysics"]=System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(Path.Combine(assets,"original-full-character-physics.json")));
   composed["sourceLimbComponents"]=System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(Path.Combine(assets,"original-character-limb-components.json")));
+  composed["sourceOccupantVisual"]=System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(Path.Combine(assets,"occupant/source-visual-spawn.json")));
   return composed.ToJsonString();
  }
 
