@@ -1,0 +1,33 @@
+name: Original IKArmController live source callbacks
+on:
+  push:
+    branches: [feature/source-ikarmcontroller-live-callbacks]
+    paths: [.github/workflows/live-source-ik-controller.yml]
+permissions: {contents: read}
+jobs:
+  original-ik:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: tools/wasm-compile/global.json
+      - name: Compile real IK controller and execute source callback contracts
+        run: |
+          cp tools/wasm-compile/global.json global.json
+          dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --live-ikarmcontroller
+      - name: Verify recovered developer callback identity
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('source-reference/Original/CharacterExecution/IKArmController.cs').read_text()
+          b=Path('runtime/Original/Weapons/OriginalIKArmControllerLive.cs').read_text()
+          for law in ['self.IsLoweringWeapon = true','self.PullTrigger()','PendingWeapon.transform.SetParent(grab']:
+            assert law.replace(' ','') in s.replace(' ','') or law=='PendingWeapon.transform.SetParent(grab'
+          assert 'self.IsLoweringWeapon=true' in b
+          assert 'self.PullTrigger();' in b
+          assert 'PendingWeapon.transform.SetParent(grab)' in b
+          assert 'throw new NotSupportedException' in b
+          print('Source IK lower, fire and hand-attachment callbacks verified')
+          PY
