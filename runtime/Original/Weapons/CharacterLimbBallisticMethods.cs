@@ -18,6 +18,23 @@ public partial class Limb {
  private float lastExitTimestamp;
  private float accumulatedExitVolume;
  public LimbArmor Armor=>GetComponent<LimbArmor>();
+ // Browser visual bridge must paint the recovered LimbRenderer damage pass
+ // onto THIS limb's source skin, not a generic particle or torso sprite.
+ public Action<Limb,Vector3,float,float,float> SourceDrawDamage;
+ public bool useWoundDecals=true;
+ void RenderOriginalEntryWound(Projectile projectile,float radius,float halo){
+  if(!useWoundDecals||SourceDrawDamage==null)return;
+  if(SourceSkinTrace==null)throw new NotSupportedException("Original limb skin absent for dynamic damage");
+  if(projectile.FiredByMarksman){
+   SourceDrawDamage(this,worldEntryPosition,radius,0.8f,0.3f);
+  }else{
+   float depth=1.05f-Mathf.Clamp01((worldEntryPosition-AimPoint).magnitude/.15f);
+   SourceDrawDamage(this,worldEntryPosition,radius*2f,depth,0.3f);
+  }
+  SourceDrawDamage(this,worldEntryPosition,halo,UnityEngine.Random.Range(.5f,.6f),.3f);
+  SourceDrawDamage(this,worldEntryPosition,radius*2.5f,UnityEngine.Random.Range(.2f,.4f),.3f);
+ }
+
 
  // From original Limb.HandleDeflection: energy converted into force and shock.
  protected override Projectile HandleDeflection(Projectile projectile,Vector3 normal,bool simulation=false){
@@ -111,6 +128,7 @@ public partial class Limb {
   float num3=num2*3f*entryHoleModifier;
   LimbPhysiology.CreateWoundFromSourceProjectile(this,projectile.Diameter,
     projectile.DisplacedMaterialVolume,num3*.0005f,worldEntryPosition,normal);
+  RenderOriginalEntryWound(projectile,num2*entryHoleModifier,num3);
   // Source LimbRenderer.DrawDamage/DrawBurn operate on live GPU dynamic wound
   // textures. They are not yet ported; source skin CPU mask remains unchanged.
   return projectile;
