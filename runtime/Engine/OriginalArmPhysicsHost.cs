@@ -53,7 +53,7 @@ namespace Crisis.Runtime.Weapons {
    }
    foreach(var id in missingTransforms){
     var f=records[id].GetProperty("fields");
-    var node=nodes[id],parent=f.GetProperty("m_Father").GetProperty("fileID").GetString();
+    var node=nodes[id];var parent=f.GetProperty("m_Father").GetProperty("fileID").GetString();
     if(nodes.TryGetValue(parent,out var parentNode))node.SetParent(parentNode,false);
     node.localPosition=Vector(f.GetProperty("m_LocalPosition"));
     node.localScale=Vector(f.GetProperty("m_LocalScale"));
