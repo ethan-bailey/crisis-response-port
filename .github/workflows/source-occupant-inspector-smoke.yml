@@ -1,0 +1,53 @@
+name: Source Occupant browser inspection smoke
+on:
+  push:
+    branches: [feature/original-projectile-limb-hit-runtime]
+    paths:
+      - game/occupant-inspector.html
+      - game/original-occupant-visuals.mjs
+      - game/assets/occupant/**
+      - .github/workflows/source-occupant-inspector-smoke.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --no-audit --no-fund playwright@1.55.0
+      - run: npx playwright install --with-deps chromium
+      - name: Run read-only original Occupant mesh and materials smoke test
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8080 --directory game >/tmp/occupant-http.log 2>&1 &
+          server=$!
+          trap 'kill "$server" 2>/dev/null || true' EXIT
+          node --input-type=module <<'JS'
+          import {chromium} from 'playwright';
+          const browser=await chromium.launch({headless:true,args:['--use-gl=angle','--use-angle=swiftshader']});
+          const page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:1});
+          const errors=[];
+          page.on('pageerror',e=>errors.push(e.message));
+          await page.goto('http://127.0.0.1:8080/occupant-inspector.html');
+          await page.waitForFunction(()=>window.__occupantInspection?.renderers===20,{timeout:30000});
+          const state=await page.evaluate(()=>window.__occupantInspection);
+          if(state.dynamicSkins!==16||!state.sourceOnly||
+             state.originalPrefabSHA!=='9094b840c49d6c53ffa077c274561ab5cbeedb202f85dbaade023ad67cb8c419')
+           throw Error('Wrong original Occupant source manifest '+JSON.stringify(state));
+          if(errors.length)throw Error('Browser errors: '+errors.join('; '));
+          await page.screenshot({path:'/tmp/source-occupant-inspection.png'});
+          console.log('PASS original source Occupant web renderer:',JSON.stringify(state));
+          await browser.close();
+          JS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: source-occupant-inspection-screenshot
+          path: /tmp/source-occupant-inspection.png
+          if-no-files-found: warn
+          retention-days: 14
