@@ -1,0 +1,577 @@
+{
+  "archiveSha256": "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
+  "format": "crisis-original-limb-texture-importer-v1",
+  "operatorManifestSha256": "c93d90610a6db65edf4304bf82b590bc35dc56e5d7580899a511c10ef4c416f6",
+  "sourceSkinGuids": [
+    {
+      "assetPath": "Assets/Texture2D/upperarm.png",
+      "assetSha256": "70f4afd59b6c87b096ccc33cd042a6caaaf535084f643db4361592782a9af9af",
+      "guid": "0aa6bb99b8776644ba8817f736cf34ea",
+      "importerKind": "TextureImporter",
+      "importerLines": {
+        "alphaIsTransparency": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "isReadable": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "m_AlphaIsTransparency": [],
+        "m_Aniso": [],
+        "m_FilterMode": [],
+        "m_MipMapMode": [],
+        "m_MipMapsPreserveCoverage": [],
+        "m_Readable": [],
+        "m_TextureType": [],
+        "m_WrapMode": [],
+        "m_WrapU": [],
+        "m_WrapV": [],
+        "m_WrapW": [],
+        "textureType": [
+          {
+            "indent": 2,
+            "value": "0"
+          }
+        ]
+      },
+      "metaSha256": "993c008ccf0c8a97459d298c79e6334a0c3a1817b8838eb6f2edb99343fb9b70"
+    },
+    {
+      "assetPath": "Assets/Texture2D/head 4.png",
+      "assetSha256": "7667e423920985a3d2bf3eee4f2c20e6fa55c6ba32ce31a5c7d9e0d960cf6b02",
+      "guid": "19e41141a5e7d8840aa0ea0a1ef95fa1",
+      "importerKind": "TextureImporter",
+      "importerLines": {
+        "alphaIsTransparency": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "isReadable": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "m_AlphaIsTransparency": [],
+        "m_Aniso": [],
+        "m_FilterMode": [],
+        "m_MipMapMode": [],
+        "m_MipMapsPreserveCoverage": [],
+        "m_Readable": [],
+        "m_TextureType": [],
+        "m_WrapMode": [],
+        "m_WrapU": [],
+        "m_WrapV": [],
+        "m_WrapW": [],
+        "textureType": [
+          {
+            "indent": 2,
+            "value": "0"
+          }
+        ]
+      },
+      "metaSha256": "6e601d137daa39a85a4c8143d042872b8eda6acc17dde2be1bf1407622dd2fd5"
+    },
+    {
+      "assetPath": "Assets/Texture2D/neck protector.png",
+      "assetSha256": "d01ecdb83405e089b37ccbb9b66581f0a45dd07c8531958b7640b0cb122a0837",
+      "guid": "2dc75fac6a4a1d245aa10034af96866d",
+      "importerKind": "TextureImporter",
+      "importerLines": {
+        "alphaIsTransparency": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "isReadable": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "m_AlphaIsTransparency": [],
+        "m_Aniso": [],
+        "m_FilterMode": [],
+        "m_MipMapMode": [],
+        "m_MipMapsPreserveCoverage": [],
+        "m_Readable": [],
+        "m_TextureType": [],
+        "m_WrapMode": [],
+        "m_WrapU": [],
+        "m_WrapV": [],
+        "m_WrapW": [],
+        "textureType": [
+          {
+            "indent": 2,
+            "value": "0"
+          }
+        ]
+      },
+      "metaSha256": "0c2d3208753446fe7a9bf15b44c4e36d3a698f9524da3690dfd2bf570f873ffe"
+    },
+    {
+      "assetPath": "Assets/Texture2D/black pelvis.png",
+      "assetSha256": "80a395d3a90e9566e438ac9a09b98be29e38be27274dd36677b023efd6b2a19c",
+      "guid": "38b42807fa7576a44a0d6ea90b08db63",
+      "importerKind": "TextureImporter",
+      "importerLines": {
+        "alphaIsTransparency": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "isReadable": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "m_AlphaIsTransparency": [],
+        "m_Aniso": [],
+        "m_FilterMode": [],
+        "m_MipMapMode": [],
+        "m_MipMapsPreserveCoverage": [],
+        "m_Readable": [],
+        "m_TextureType": [],
+        "m_WrapMode": [],
+        "m_WrapU": [],
+        "m_WrapV": [],
+        "m_WrapW": [],
+        "textureType": [
+          {
+            "indent": 2,
+            "value": "0"
+          }
+        ]
+      },
+      "metaSha256": "0859109e8a7cdd6d6c6048d4089e909e8ea51ff5d6b73ebabf1d81811707d773"
+    },
+    {
+      "assetPath": "Assets/Texture2D/head 3.png",
+      "assetSha256": "873816d96dbc040026ebeae2168b5793f2dbf99fa68d558ebbb9540a47e79e48",
+      "guid": "3fc8ffd8d01921d4facd66216f545b69",
+      "importerKind": "TextureImporter",
+      "importerLines": {
+        "alphaIsTransparency": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "isReadable": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "m_AlphaIsTransparency": [],
+        "m_Aniso": [],
+        "m_FilterMode": [],
+        "m_MipMapMode": [],
+        "m_MipMapsPreserveCoverage": [],
+        "m_Readable": [],
+        "m_TextureType": [],
+        "m_WrapMode": [],
+        "m_WrapU": [],
+        "m_WrapV": [],
+        "m_WrapW": [],
+        "textureType": [
+          {
+            "indent": 2,
+            "value": "0"
+          }
+        ]
+      },
+      "metaSha256": "66e4f593c2a6af0e28a1f05a9f9b834574b9a551af448a8e5096483e44b66046"
+    },
+    {
+      "assetPath": "Assets/Texture2D/black lower leg.png",
+      "assetSha256": "01976ef0e553605a31049f956ce827eb516d16369f3829ad76e4cedb8027a18c",
+      "guid": "4c76e3fe80907fa4a8b66b1fbaddab53",
+      "importerKind": "TextureImporter",
+      "importerLines": {
+        "alphaIsTransparency": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "isReadable": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "m_AlphaIsTransparency": [],
+        "m_Aniso": [],
+        "m_FilterMode": [],
+        "m_MipMapMode": [],
+        "m_MipMapsPreserveCoverage": [],
+        "m_Readable": [],
+        "m_TextureType": [],
+        "m_WrapMode": [],
+        "m_WrapU": [],
+        "m_WrapV": [],
+        "m_WrapW": [],
+        "textureType": [
+          {
+            "indent": 2,
+            "value": "0"
+          }
+        ]
+      },
+      "metaSha256": "ba9b0a46b6182f0c759732167d01d3f4aec93ab6e3072eb957899854c84e8375"
+    },
+    {
+      "assetPath": "Assets/Texture2D/head 1.png",
+      "assetSha256": "697287c9f935c44f26f7cf371e450190dff30ad7130f1215aed08bf77d504e4a",
+      "guid": "7b0292089147ec442a3161d62c0470e9",
+      "importerKind": "TextureImporter",
+      "importerLines": {
+        "alphaIsTransparency": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "isReadable": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "m_AlphaIsTransparency": [],
+        "m_Aniso": [],
+        "m_FilterMode": [],
+        "m_MipMapMode": [],
+        "m_MipMapsPreserveCoverage": [],
+        "m_Readable": [],
+        "m_TextureType": [],
+        "m_WrapMode": [],
+        "m_WrapU": [],
+        "m_WrapV": [],
+        "m_WrapW": [],
+        "textureType": [
+          {
+            "indent": 2,
+            "value": "0"
+          }
+        ]
+      },
+      "metaSha256": "5ef959e30973299b9fc98f4ead3bc90620c14a325cdda9a362f168b501a7a96a"
+    },
+    {
+      "assetPath": "Assets/Texture2D/boot.png",
+      "assetSha256": "1c3f18bd94e0d4c8fd1bfbbf89b0128aaef266e89525c9f00eaf0b0dde793672",
+      "guid": "86fd777ed483d3042b8ee677a7405259",
+      "importerKind": "TextureImporter",
+      "importerLines": {
+        "alphaIsTransparency": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "isReadable": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "m_AlphaIsTransparency": [],
+        "m_Aniso": [],
+        "m_FilterMode": [],
+        "m_MipMapMode": [],
+        "m_MipMapsPreserveCoverage": [],
+        "m_Readable": [],
+        "m_TextureType": [],
+        "m_WrapMode": [],
+        "m_WrapU": [],
+        "m_WrapV": [],
+        "m_WrapW": [],
+        "textureType": [
+          {
+            "indent": 2,
+            "value": "0"
+          }
+        ]
+      },
+      "metaSha256": "7087b517fbacb127918d4370e6a63f11ca9fc563b5cfaae9fcc66a8253cc7b37"
+    },
+    {
+      "assetPath": "Assets/Texture2D/torso.png",
+      "assetSha256": "b361dfbd06cc0d25ef057ca7b30d8367abb47f3f4acd78bbdf5c93ab1d590a5f",
+      "guid": "8ae0405cae01eb84bbfac4af23499da0",
+      "importerKind": "TextureImporter",
+      "importerLines": {
+        "alphaIsTransparency": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "isReadable": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "m_AlphaIsTransparency": [],
+        "m_Aniso": [],
+        "m_FilterMode": [],
+        "m_MipMapMode": [],
+        "m_MipMapsPreserveCoverage": [],
+        "m_Readable": [],
+        "m_TextureType": [],
+        "m_WrapMode": [],
+        "m_WrapU": [],
+        "m_WrapV": [],
+        "m_WrapW": [],
+        "textureType": [
+          {
+            "indent": 2,
+            "value": "0"
+          }
+        ]
+      },
+      "metaSha256": "22aa5fef8d286b7d50a0790258671d8362d3a6cd05361dff298c31f0cdc40eae"
+    },
+    {
+      "assetPath": "Assets/Texture2D/lowerarm.png",
+      "assetSha256": "521b820c0840b88c157084da49bfa2ea3b515679b94c006e0f52201caabe3d91",
+      "guid": "99f5e930d9901504d8400a9b6303ea41",
+      "importerKind": "TextureImporter",
+      "importerLines": {
+        "alphaIsTransparency": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "isReadable": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "m_AlphaIsTransparency": [],
+        "m_Aniso": [],
+        "m_FilterMode": [],
+        "m_MipMapMode": [],
+        "m_MipMapsPreserveCoverage": [],
+        "m_Readable": [],
+        "m_TextureType": [],
+        "m_WrapMode": [],
+        "m_WrapU": [],
+        "m_WrapV": [],
+        "m_WrapW": [],
+        "textureType": [
+          {
+            "indent": 2,
+            "value": "0"
+          }
+        ]
+      },
+      "metaSha256": "0b7ef2dbb53866ec730ae8d0f32cedaa0b92da9674f03412a88d3bede406c0eb"
+    },
+    {
+      "assetPath": "Assets/Texture2D/boot toes.png",
+      "assetSha256": "0184b1ab372b65c12545c6ac54760265b18bd42addca48ac04ea372096f718a0",
+      "guid": "a53564d13106a29468ca9657720e1a9f",
+      "importerKind": "TextureImporter",
+      "importerLines": {
+        "alphaIsTransparency": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "isReadable": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "m_AlphaIsTransparency": [],
+        "m_Aniso": [],
+        "m_FilterMode": [],
+        "m_MipMapMode": [],
+        "m_MipMapsPreserveCoverage": [],
+        "m_Readable": [],
+        "m_TextureType": [],
+        "m_WrapMode": [],
+        "m_WrapU": [],
+        "m_WrapV": [],
+        "m_WrapW": [],
+        "textureType": [
+          {
+            "indent": 2,
+            "value": "0"
+          }
+        ]
+      },
+      "metaSha256": "c837b662874be5a9e01279db2b3217cd14e64da05d49bc859fac5ecfd961cc60"
+    },
+    {
+      "assetPath": "Assets/Texture2D/black abdomen.png",
+      "assetSha256": "2395929f5607c1fb40affd6d34013484166d3529fe1db175ed1c13183dcb3078",
+      "guid": "c7fa97abd80127e4993dd84f554d8771",
+      "importerKind": "TextureImporter",
+      "importerLines": {
+        "alphaIsTransparency": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "isReadable": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "m_AlphaIsTransparency": [],
+        "m_Aniso": [],
+        "m_FilterMode": [],
+        "m_MipMapMode": [],
+        "m_MipMapsPreserveCoverage": [],
+        "m_Readable": [],
+        "m_TextureType": [],
+        "m_WrapMode": [],
+        "m_WrapU": [],
+        "m_WrapV": [],
+        "m_WrapW": [],
+        "textureType": [
+          {
+            "indent": 2,
+            "value": "0"
+          }
+        ]
+      },
+      "metaSha256": "c4eb5822e39ae56289003bddba25c291e5bb7457c5ba1a1d641dc537f3c127ad"
+    },
+    {
+      "assetPath": "Assets/Texture2D/head 5.png",
+      "assetSha256": "f2b00675b758baa62300b9e3c9e941c891211da335aef1598d76de2c0b7f0c6b",
+      "guid": "d701c84638d2d934080508b9fb88f6ce",
+      "importerKind": "TextureImporter",
+      "importerLines": {
+        "alphaIsTransparency": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "isReadable": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "m_AlphaIsTransparency": [],
+        "m_Aniso": [],
+        "m_FilterMode": [],
+        "m_MipMapMode": [],
+        "m_MipMapsPreserveCoverage": [],
+        "m_Readable": [],
+        "m_TextureType": [],
+        "m_WrapMode": [],
+        "m_WrapU": [],
+        "m_WrapV": [],
+        "m_WrapW": [],
+        "textureType": [
+          {
+            "indent": 2,
+            "value": "0"
+          }
+        ]
+      },
+      "metaSha256": "778492cae10beb0f6d20fb129240ff0be57dd17cee00334421c17328bcd6d78e"
+    },
+    {
+      "assetPath": "Assets/Texture2D/head 2.png",
+      "assetSha256": "960c66ae50ee08f4db00726c1cd1047c55c3389bef5b1ca71bf63e3dab5d0e2a",
+      "guid": "dc8bececa667dc347998e6dd8e283f71",
+      "importerKind": "TextureImporter",
+      "importerLines": {
+        "alphaIsTransparency": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "isReadable": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "m_AlphaIsTransparency": [],
+        "m_Aniso": [],
+        "m_FilterMode": [],
+        "m_MipMapMode": [],
+        "m_MipMapsPreserveCoverage": [],
+        "m_Readable": [],
+        "m_TextureType": [],
+        "m_WrapMode": [],
+        "m_WrapU": [],
+        "m_WrapV": [],
+        "m_WrapW": [],
+        "textureType": [
+          {
+            "indent": 2,
+            "value": "0"
+          }
+        ]
+      },
+      "metaSha256": "1581e80bde4a4821a63effc520acc41843ba3c376bbaf19c306261c64ecf9468"
+    },
+    {
+      "assetPath": "Assets/Texture2D/black upper leg.png",
+      "assetSha256": "56faccc73a7ba9b66fc6b2a9b1c130221db31730d1661416c17c5c986a926a9d",
+      "guid": "ef2345e580c248d469ef0b3ade9ce1c9",
+      "importerKind": "TextureImporter",
+      "importerLines": {
+        "alphaIsTransparency": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "isReadable": [
+          {
+            "indent": 2,
+            "value": "1"
+          }
+        ],
+        "m_AlphaIsTransparency": [],
+        "m_Aniso": [],
+        "m_FilterMode": [],
+        "m_MipMapMode": [],
+        "m_MipMapsPreserveCoverage": [],
+        "m_Readable": [],
+        "m_TextureType": [],
+        "m_WrapMode": [],
+        "m_WrapU": [],
+        "m_WrapV": [],
+        "m_WrapW": [],
+        "textureType": [
+          {
+            "indent": 2,
+            "value": "0"
+          }
+        ]
+      },
+      "metaSha256": "311192a14b36e5ae2c87ff747ec9b88c05acd570717754f2faf22447e9e07865"
+    }
+  ]
+}
