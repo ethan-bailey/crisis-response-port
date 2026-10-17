@@ -21,6 +21,14 @@ namespace Crisis.Runtime.Weapons {
   readonly Dictionary<string,JsonElement> authoredCapsulesByGo=new();
   readonly Dictionary<LimbId,JsonElement> authoredLimbs=new();
   readonly Dictionary<LimbId,Limb> runtimeLimbs=new();
+  readonly Dictionary<string,BallisticMaterialProperties> sourceBallisticProperties=new();
+  readonly List<CapsuleCollider> authenticatedLimbColliders=new();
+  public int SourceLimbColliderCount=>authenticatedLimbColliders.Count;
+  public int SourceLimbMaterialCount=>sourceBallisticProperties.Count;
+  public int SourceLimbArmorCount=>runtimeLimbs.Values.Count(l=>l.GetComponent<LimbArmor>()!=null);
+  // Authoritative gameplay contacts remain gated until recovered original
+  // Projectile.HandleLimbHit and Limb.HandleInterior are wired end-to-end.
+  public bool SourceLimbProjectileContactsActive=>authenticatedLimbColliders.Any(c=>c.enabled);
   public int SourceActorCount=>bodies.Count;
   public int SourceJointCount=>joints.Count;
   readonly Dictionary<string,Transform> transforms;
@@ -203,6 +211,103 @@ namespace Crisis.Runtime.Weapons {
    if(matched.Count!=17||body.limbs.Count(l=>l.SourceSkinTrace!=null)!=17)
     throw new InvalidDataException("Failed to bind all 17 actual original limb skin renderers");
   }
+  // Recover the original serialized flesh resistance, authored layers,
+  // CapsuleColliders and LimbArmor from their actual Unity prefab records.
+  // These are real source objects, but do not include them in projectile queries
+  // until original Limb.HandleProjectile is executable; otherwise a self-shot
+  // would dispatch to an incomplete injury handler during ordinary gameplay.
+  public void BindSourceBallistics(JsonElement source,BallisticRuntimeHost ballistics,RuntimeWorld world){
+   if(ballistics==null||world==null)throw new ArgumentNullException(nameof(ballistics));
+   if(source.GetProperty("format").GetString()!="crisis-original-limb-ballistic-materials-v1"||
+      source.GetProperty("archiveSha256").GetString()!="cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d")
+     throw new InvalidDataException("Unverified source limb ballistic materials");
+   world.MakeCurrent();
+   var records=configuration.GetProperty("records").EnumerateArray()
+     .ToDictionary(r=>r.GetProperty("fileID").GetString(),r=>r.Clone());
+   var games=records.Values.Where(r=>r.GetProperty("classID").GetInt32()==1)
+     .ToDictionary(r=>r.GetProperty("fileID").GetString(),r=>r.GetProperty("fields").Clone());
+   var materialData=source.GetProperty("materials");
+   if(materialData.EnumerateObject().Count()!=8)
+     throw new InvalidDataException("Original limb source requires eight distinct flesh material assets");
+   var armorData=source.GetProperty("armor").GetProperty("Operator");
+   if(armorData.EnumerateObject().Count()!=4)
+     throw new InvalidDataException("Operator source must contain four armor components");
+   string Guid(JsonElement value)
+     =>value.TryGetProperty("guid",out var guid)?guid.GetString():null;
+   static bool Flag(JsonElement value)
+     =>value.ValueKind==JsonValueKind.True||value.ValueKind==JsonValueKind.Number&&value.GetInt32()!=0;
+   static Vector2 Vec2(JsonElement v)
+     =>new(v.GetProperty("x").GetSingle(),v.GetProperty("y").GetSingle());
+   foreach(var pair in authoredLimbs){
+    var limb=runtimeLimbs[pair.Key];
+    var goid=pair.Value.GetProperty("gameObject").GetString();
+    var sourceFields=pair.Value.GetProperty("sourceFields").GetProperty("Limb");
+    if(!games.TryGetValue(goid,out var go))
+     throw new InvalidDataException("Source limb GameObject is missing: "+goid);
+    var layer=go.GetProperty("m_Layer").GetInt32();
+    if(layer!=14&&layer!=24)
+     throw new InvalidDataException("Invalid recovered limb collider layer "+layer);
+    limb.gameObject.layer=layer;
+    if(!authoredCapsulesByGo.TryGetValue(goid,out var fields))
+     throw new InvalidDataException("Original limb CapsuleCollider missing: "+limb.id);
+    var capsule=limb.GetComponent<CapsuleCollider>()??limb.gameObject.AddComponent<CapsuleCollider>();
+    capsule.center=Vector(fields.GetProperty("m_Center"));
+    capsule.radius=fields.GetProperty("m_Radius").GetSingle();
+    capsule.height=fields.GetProperty("m_Height").GetSingle();
+    capsule.direction=fields.GetProperty("m_Direction").GetInt32();
+    capsule.isTrigger=Flag(fields.GetProperty("m_IsTrigger"));
+    // No half-port gameplay: a projectile may not query limb colliders until
+    // the source tissue/armor/skin interior and event graph is connected.
+    capsule.enabled=false;
+    authenticatedLimbColliders.Add(capsule);
+    var guid=Guid(sourceFields.GetProperty("properties"));
+    if(guid==null||!materialData.TryGetProperty(guid,out var entry))
+     throw new InvalidDataException("Unknown original ballistic material GUID for "+limb.id);
+    if(!sourceBallisticProperties.TryGetValue(guid,out var prop)){
+     var fields2=entry.GetProperty("fields");
+     prop=new GameObject("Original flesh material "+entry.GetProperty("assetPath").GetString(),world)
+       .AddComponent<BallisticMaterialProperties>();
+     prop.gameObject.assetObject=true;
+     prop.surfaceThickness=fields2.GetProperty("surfaceThickness").GetSingle();
+     prop.surfaceDensity=fields2.GetProperty("surfaceDensity").GetSingle();
+     prop.maximumDeflection=fields2.GetProperty("maximumDeflection").GetSingle();
+     prop.density=fields2.GetProperty("density").GetSingle();
+     prop.densityRandomness=Vec2(fields2.GetProperty("densityRandomness"));
+     prop.entryEffect=ballistics.SourceEntryOrExitEffect(Guid(fields2.GetProperty("entryEffect")));
+     prop.exitEffect=ballistics.SourceEntryOrExitEffect(Guid(fields2.GetProperty("exitEffect")));
+     prop.exitHole=ballistics.SourceExitHole(Guid(fields2.GetProperty("exitHole")));
+     sourceBallisticProperties.Add(guid,prop);
+    }
+    limb.properties=prop;
+    limb.width=sourceFields.GetProperty("width").GetSingle();
+    limb.depth=sourceFields.GetProperty("depth").GetSingle();
+    limb.impenetrable=Flag(sourceFields.GetProperty("impenetrable"));
+    limb.surfaceTestOnExit=Flag(sourceFields.GetProperty("surfaceTestOnExit"));
+    limb.enabled=Flag(sourceFields.GetProperty("m_Enabled"));
+    // The recovered Limb is a BallisticMaterial by inheritance, so these
+    // lifecycle calls initialize its actual source density/pressure contracts.
+    limb.Awake();
+    limb.Start();
+    if(armorData.TryGetProperty(goid,out var armorRow)){
+     var a=armorRow.GetProperty("fields");
+     var armor=limb.gameObject.AddComponent<LimbArmor>();
+     armor.type=(ArmorClass.Type)a.GetProperty("type").GetInt32();
+     armor.hasFrontArmor=Flag(a.GetProperty("hasFrontArmor"));
+     armor.hasBackArmor=Flag(a.GetProperty("hasBackArmor"));
+     armor.frontCoverage=Vec2(a.GetProperty("frontCoverage"));
+     armor.backCoverage=Vec2(a.GetProperty("backCoverage"));
+     armor.frontDamage=a.GetProperty("frontDamage").GetSingle();
+     armor.backDamage=a.GetProperty("backDamage").GetSingle();
+     armor.enabled=Flag(a.GetProperty("m_Enabled"));
+     world.Invoke(armor,"Awake");
+    }
+   }
+   if(authenticatedLimbColliders.Count!=(int)LimbId.NumberOfLimbs||
+      sourceBallisticProperties.Count!=8||SourceLimbArmorCount!=4||
+      SourceLimbProjectileContactsActive)
+    throw new InvalidDataException("Original ballistic limb source graph incomplete or prematurely enabled");
+  }
+
   // Invoke after the real CharacterBody has initialized original Physiology.
   // These settings are taken from the actual serialized Unity LimbPhysiology and
   // LimbMuscle MonoBehaviours, including source-absent hand components.
