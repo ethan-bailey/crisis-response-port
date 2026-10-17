@@ -2,7 +2,7 @@
 """Preserve the exact initial damage-mask green channel used by LimbRenderer.TestPixel.
 Input is exactly the original Operator manifest and its preserved PNG skins.
 Original LimbTextureData.Initialize sets green to 0 where skin alpha>0 and 1 otherwise.\nRows are bottom-up, matching Unity Texture2D.GetPixel's Y orientation.
-No capsule or opaque-alpha substitution is used.
+No capsule-based shape substitution or raw PNG green channel sampling is used.
 """
 import base64,gzip,hashlib,io,json,sys
 from pathlib import Path
@@ -24,7 +24,10 @@ def export(operator_dir:Path, output:Path):
     width,height=image.size
     # Unity Texture2D.GetPixel(0,0) references the bottom-left texel.
     pixels=image.load()
-    # Original LimbTextureData.Initialize:\n    # pixels[num].g = (!(pixels[num].a > 0f)) ? 1f : 0f;\n    green=bytes(0 if pixels[x,y][3]>0 else 255\n      for y in range(height-1,-1,-1) for x in range(width))
+    # Original LimbTextureData.Initialize:
+    # pixels[num].g = (!(pixels[num].a > 0f)) ? 1f : 0f;
+    green=bytes(0 if pixels[x,y][3]>0 else 255
+      for y in range(height-1,-1,-1) for x in range(width))
    if not green or width<=0 or height<=0:raise ValueError('Missing original limb coverage')
    entries[texture]={'texture':texture,'sha256':hashlib.sha256(original).hexdigest(),
      'width':width,'height':height,'pixelOrder':'left-to-right, bottom-to-top',
