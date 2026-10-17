@@ -4,6 +4,10 @@ Updated 2026-10-17 UTC. Living project status; maintain the affected sections in
 ## Current request and veracity
 User requested **original mission NPC spawning/visuals, production hit notifications/effects, wound rendering, and complete ragdoll/weapon-drop sequence**. **NOT YET COMPLETED.** PR #56 contains source-backed partial implementation only. There is **no visible live Occupant NPC**, original mission spawn/AI, finished source wound renderer, fully production-bound character hit/audio/time effects or complete drop-weapon and ragdoll graph. Do not assert successful playable NPC combat, runtime parity, or iPhone proof. In particular, all 19 author CapsuleColliders remain disabled as projectile targets until all required dependencies exist. Do not introduce fabricated NPC targets or gameplay callbacks.
 
+## Current verified/in-flight additions
+- `e62ef83b9493fe4ccab9a294e6ec4913142aa55e`: source LimbRenderer.RenderPoint triangle geometry and inverted-Y texture coordinates ported to C# with focused contracts. Native [39030760552](https://github.com/ethan-bailey/crisis-response-port/actions/runs/39030760552) SUCCESS; fast [39030763701](https://github.com/ethan-bailey/crisis-response-port/actions/runs/39030763701) SUCCESS. Real dynamic skin textures remain unconnected.
+- `db3fa676ddd7c7f062e7fd6bd81f21a885d3c009`: added strict original ordered SetRagdoll path with source drop timing, real equipment/Target/grenade dependency delegates before original limb/event cleanup. **Not yet production-bound** and native tests pending. Existing partial fixture SetRagdoll preserved; not a live full-body transition.
+
 ## Current lanes
 - **Draft [PR #56](https://github.com/ethan-bailey/crisis-response-port/pull/56), `feature/original-projectile-limb-hit-runtime`**: tested executable `77138e671dcd8a2a6d3aa9d4895dd463bd488a0f`; then source-preservation only `760b432eb79cbdd26ba66604a8658de40caa0ff4`; this handoff commit follows.
 - `develop/wasm` `ec4414358e1b31beb8cb540ac11aa421147b132f`: canonical WASM; NO #56 gameplay changes.
