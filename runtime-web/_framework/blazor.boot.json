@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "Crisis.Runtime.Browser",
   "resources": {
-    "hash": "sha256-mjgwnxpIcXbXkhLL8pvhMlcogv7/aOdwPHsVObjDitg=",
+    "hash": "sha256-0xg253ZmT1rFzUaU9Rg16phviPI45RCvb43VSMudcPs=",
     "jsModuleNative": {
       "dotnet.native.8.0.32.7khlrjk2ob.js": "sha256-6mDkQm8wcqsePLieS1uDjmZJGTlxyzuaoKrjt7Rlztk="
     },
@@ -17,8 +17,8 @@
       "icudt_no_CJK.dat": "sha256-L7sV7NEYP37/Qr2FPCePo5cJqRgTXRwGHuwF5Q+0Nfs="
     },
     "assembly": {
-      "Crisis.Runtime.Browser.wasm": "sha256-cCx5atNXdhVKBjQHqC260uFIDHAW2njfqkQW22pkNIU=",
-      "Crisis.Runtime.wasm": "sha256-ZYtXgvCmTy4VXZaAFYAIX8nYZdE+GlKnbNM88ZVTn8E=",
+      "Crisis.Runtime.Browser.wasm": "sha256-8j0cWtbTYB4fgtZIP6SPzR91bsA4WBKDUgmJ7QA4m5A=",
+      "Crisis.Runtime.wasm": "sha256-lU3BAixgtlQUfB5NKBmo5zJ1ACnI4kcNYp72ia17ukU=",
       "Microsoft.AspNetCore.Authorization.wasm": "sha256-YViJz05R6+JJ6uu34sRcNgNduHPHNVoq7N99a0Tach8=",
       "Microsoft.AspNetCore.Components.Forms.wasm": "sha256-1jl/qHoPbKTJKXCWuwEfV+APowk2vCuL6tSBbAIb7gg=",
       "Microsoft.AspNetCore.Components.wasm": "sha256-drm3VjbUDcgg6JcVPNRLL5kDlYvaO3qbVcWChDpwhUo=",

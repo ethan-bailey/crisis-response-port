@@ -3,7 +3,7 @@
     "blazorResources": 199,
     "wasmFiles": 195
   },
-  "buildRun": "https://github.com/ethan-bailey/crisis-response-port/actions/runs/38998115604",
+  "buildRun": "https://github.com/ethan-bailey/crisis-response-port/actions/runs/39070715359",
   "compilerPolicy": {
     "allowPrerelease": false,
     "rollForward": "disable",
@@ -330,6 +330,111 @@
       "sha256": "5595ea2010d708e69cd31b2b5dc8a5e543a3f78c919ed4271c6302a9c111fa00"
     },
     {
+      "bytes": 7399,
+      "path": "game/assets/occupant/skins/black abdomen.png",
+      "sha256": "2395929f5607c1fb40affd6d34013484166d3529fe1db175ed1c13183dcb3078"
+    },
+    {
+      "bytes": 12373,
+      "path": "game/assets/occupant/skins/black lower leg.png",
+      "sha256": "01976ef0e553605a31049f956ce827eb516d16369f3829ad76e4cedb8027a18c"
+    },
+    {
+      "bytes": 12602,
+      "path": "game/assets/occupant/skins/black pelvis.png",
+      "sha256": "80a395d3a90e9566e438ac9a09b98be29e38be27274dd36677b023efd6b2a19c"
+    },
+    {
+      "bytes": 13457,
+      "path": "game/assets/occupant/skins/black upper leg.png",
+      "sha256": "56faccc73a7ba9b66fc6b2a9b1c130221db31730d1661416c17c5c986a926a9d"
+    },
+    {
+      "bytes": 2499,
+      "path": "game/assets/occupant/skins/boot toes.png",
+      "sha256": "0184b1ab372b65c12545c6ac54760265b18bd42addca48ac04ea372096f718a0"
+    },
+    {
+      "bytes": 4441,
+      "path": "game/assets/occupant/skins/boot.png",
+      "sha256": "1c3f18bd94e0d4c8fd1bfbbf89b0128aaef266e89525c9f00eaf0b0dde793672"
+    },
+    {
+      "bytes": 11988,
+      "path": "game/assets/occupant/skins/hand front rifle.png",
+      "sha256": "8e821ef089bc6fb3cc7c610661e6f939ba8655d518eb5350b780efee8f13cdb2"
+    },
+    {
+      "bytes": 28143,
+      "path": "game/assets/occupant/skins/hand safe.png",
+      "sha256": "89d6c945612d3b7105e2206a302f6fd5cfccb0ce7aeba5031e3d2212f39f5ae8"
+    },
+    {
+      "bytes": 64057,
+      "path": "game/assets/occupant/skins/hand trigger.png",
+      "sha256": "acdd1e94f9dbb63d6b392ea9ac8882a25fd2401026de39f431af4eb52f90bf65"
+    },
+    {
+      "bytes": 35224,
+      "path": "game/assets/occupant/skins/hand.png",
+      "sha256": "2dd2516b085584c6ee78afbe8fffa32e0a55ef954d431512d131540c7c783785"
+    },
+    {
+      "bytes": 24831,
+      "path": "game/assets/occupant/skins/head 1.png",
+      "sha256": "697287c9f935c44f26f7cf371e450190dff30ad7130f1215aed08bf77d504e4a"
+    },
+    {
+      "bytes": 23505,
+      "path": "game/assets/occupant/skins/head 2.png",
+      "sha256": "960c66ae50ee08f4db00726c1cd1047c55c3389bef5b1ca71bf63e3dab5d0e2a"
+    },
+    {
+      "bytes": 22623,
+      "path": "game/assets/occupant/skins/head 3.png",
+      "sha256": "873816d96dbc040026ebeae2168b5793f2dbf99fa68d558ebbb9540a47e79e48"
+    },
+    {
+      "bytes": 24823,
+      "path": "game/assets/occupant/skins/head 4.png",
+      "sha256": "7667e423920985a3d2bf3eee4f2c20e6fa55c6ba32ce31a5c7d9e0d960cf6b02"
+    },
+    {
+      "bytes": 17847,
+      "path": "game/assets/occupant/skins/head 5.png",
+      "sha256": "f2b00675b758baa62300b9e3c9e941c891211da335aef1598d76de2c0b7f0c6b"
+    },
+    {
+      "bytes": 3925,
+      "path": "game/assets/occupant/skins/lowerarm.png",
+      "sha256": "521b820c0840b88c157084da49bfa2ea3b515679b94c006e0f52201caabe3d91"
+    },
+    {
+      "bytes": 3786,
+      "path": "game/assets/occupant/skins/neck protector.png",
+      "sha256": "d01ecdb83405e089b37ccbb9b66581f0a45dd07c8531958b7640b0cb122a0837"
+    },
+    {
+      "bytes": 27036,
+      "path": "game/assets/occupant/skins/torso_0.png",
+      "sha256": "563bd4883bacd040233dfabf1e5a4fcd71c781ebb901e31168fc41f5462f83a8"
+    },
+    {
+      "bytes": 5688,
+      "path": "game/assets/occupant/skins/upperarm.png",
+      "sha256": "70f4afd59b6c87b096ccc33cd042a6caaaf535084f643db4361592782a9af9af"
+    },
+    {
+      "bytes": 5239,
+      "path": "game/assets/occupant/source-materials.json",
+      "sha256": "7dba9ea4cf0b7bae8271e033565cc28ec2fa46daa7afe22e2823459a54e8dff5"
+    },
+    {
+      "bytes": 32785,
+      "path": "game/assets/occupant/source-visual-spawn.json",
+      "sha256": "5d3fa667d6592dd2df27c0ef595187ad231524255784c457f28f8d5131ca2fe5"
+    },
+    {
       "bytes": 218908,
       "path": "game/assets/operator/animations.json",
       "sha256": "f5277147d4090c66ec023b00db81142d16936e92431128796dc6071546732d91"
@@ -585,9 +690,9 @@
       "sha256": "0c331574c56dde74abdfd9cd6cb41ab931c42a78afc0b5d76f2bd6a63bb21f6f"
     },
     {
-      "bytes": 37825,
+      "bytes": 40894,
       "path": "game/index.html",
-      "sha256": "4ab55760ebac33843e7e74d50e4375adbd63504f1696e5e55793dd5c5b616e48"
+      "sha256": "121b2cb3c062573a851de50ea5cb1e0184164a6b653e134d33fed7131b7f2bcf"
     },
     {
       "bytes": 700,
@@ -598,6 +703,11 @@
       "bytes": 8431,
       "path": "game/magazine-hud.mjs",
       "sha256": "38cd83acf03dc53b5eeb9148e6fd9e57a0c69e8503367a91c63f708a3e4fb17e"
+    },
+    {
+      "bytes": 4686,
+      "path": "game/occupant-inspector.html",
+      "sha256": "baa15c66b6713f245efd3a121292295296fd0c5ddb8722287bf5ef30b215bc9c"
     },
     {
       "bytes": 9931,
@@ -613,6 +723,11 @@
       "bytes": 5663,
       "path": "game/original-impact-mesh.mjs",
       "sha256": "bbc86bea777e5406eea08c73fa34f269be1977622ba0f9324535fdaa6c178608"
+    },
+    {
+      "bytes": 5140,
+      "path": "game/original-occupant-visuals.mjs",
+      "sha256": "b16d5e662ac9e480b21e1dcbedd9bce9dc04e504cb81b5c2a86df447e6477574"
     },
     {
       "bytes": 6664,
@@ -645,6 +760,26 @@
       "sha256": "34b398d971b35e2b5aab07ddfa0938222b48e470cf0deba36692cc4753dbe2a9"
     },
     {
+      "bytes": 3127,
+      "path": "game/source-occupant-body-initialization.mjs",
+      "sha256": "2af735614025d9ad6aa6825515718e05053c497c0a65c36853957ca08aab57d0"
+    },
+    {
+      "bytes": 3869,
+      "path": "game/source-occupant-mission-integration.mjs",
+      "sha256": "48be50640ca72cf8bceb313b98c999c33cff596ceba433529f99a3857b2e1115"
+    },
+    {
+      "bytes": 4001,
+      "path": "game/source-occupant-sandbox-settings.mjs",
+      "sha256": "8b8dbca37b89d08c709ba0e725133ebec1d02da962bc3d07ac6df5395205f977"
+    },
+    {
+      "bytes": 4062,
+      "path": "game/source-occupant-spawner.mjs",
+      "sha256": "538b8bab0bba9efc58b29a0cbdfe89b735ee59f7e8325f9877b382ab23a707cc"
+    },
+    {
       "bytes": 1067,
       "path": "game/vendor/LICENSE.physx-js-webidl",
       "sha256": "0879a16adc700c9956ca0b60fbcac1fcb52310219feee827c03d7a0ab9886fbd"
@@ -675,44 +810,44 @@
       "sha256": "055b6f534d3069ff3c22511f290027d035a0bcca97b63dd6eb8abe5d94e17188"
     },
     {
-      "bytes": 11091,
+      "bytes": 11888,
       "path": "runtime-web/_framework/Crisis.Runtime.Browser.pdb.gz",
-      "sha256": "ba96ece6525eec2d56a15972d1a1180b9b152c4a8566014552fa73a7a307c309"
+      "sha256": "46ead8da772a2114eea64b6ecbb938e7533ab40fda8dd6b7ed3bcc9cbc28c50e"
     },
     {
-      "bytes": 38165,
+      "bytes": 41237,
       "path": "runtime-web/_framework/Crisis.Runtime.Browser.wasm",
-      "sha256": "702c796ad35776154a063407a82dbad2e1480c7016da78dfaa4416db6a643485"
+      "sha256": "f23d1c5ad6d3601e1f82d6483fa48fcd1f756ec038581283520989ed00389b90"
     },
     {
-      "bytes": 15247,
+      "bytes": 16134,
       "path": "runtime-web/_framework/Crisis.Runtime.Browser.wasm.br",
-      "sha256": "0b9a2bc43dc4c2d2cdae8ae7db50955118ec77362193022784e4175e716a956f"
+      "sha256": "e82ef593bb1cc255125432fe604570d866c6766eaeef7ff052601cf8d16969d6"
     },
     {
-      "bytes": 17191,
+      "bytes": 18184,
       "path": "runtime-web/_framework/Crisis.Runtime.Browser.wasm.gz",
-      "sha256": "7134970c42ca5989524f6b8461d7d515f3ec43c0c2ddbb4573e836577a33e336"
+      "sha256": "ddf5dabc67e2af2dd352cc4f5dcf21b827b3219034fea65d1bd0f0c5c93c5861"
     },
     {
-      "bytes": 48001,
+      "bytes": 51265,
       "path": "runtime-web/_framework/Crisis.Runtime.pdb.gz",
-      "sha256": "299a5c68171d80de7e1e65c7dc5aa2cc93450fbf7b2c553edc779b6cf7613d50"
+      "sha256": "25592e626f1cf54b75791e85e2e28ff46e18ecf101bb8df88564aae27db82ebf"
     },
     {
-      "bytes": 336661,
+      "bytes": 359701,
       "path": "runtime-web/_framework/Crisis.Runtime.wasm",
-      "sha256": "658b5782f0a64f2e155d96801580085fc9d865d13e1a52a76cd33cf195539fc1"
+      "sha256": "954dc1022c60b654147c1e4d2819a8e732750029c8e2470d629ef689ad7bba45"
     },
     {
-      "bytes": 109884,
+      "bytes": 116326,
       "path": "runtime-web/_framework/Crisis.Runtime.wasm.br",
-      "sha256": "4627ba6b91935ba3a13022f37fc7e2ce3e43844a391131c20e1ae6a83b5b6c9f"
+      "sha256": "3d1ed4fce5134e6b6d462dabb82841970d846c6d8d1dc86643b8b66212e97f85"
     },
     {
-      "bytes": 134825,
+      "bytes": 142724,
       "path": "runtime-web/_framework/Crisis.Runtime.wasm.gz",
-      "sha256": "612c2ca2b43606c2d9b98aaf24b0c616e42d394dcd81d271df57995724bf20c1"
+      "sha256": "4d18ef0af3b37ee16344950ae17feabdbeef963e3359fadc255430a1148c4d41"
     },
     {
       "bytes": 40725,
@@ -3552,17 +3687,17 @@
     {
       "bytes": 19433,
       "path": "runtime-web/_framework/blazor.boot.json",
-      "sha256": "277987b18575dd5eb878a4c57e8aeaf9d99f7ac5904cfa75dfc2ab7fb9c64698"
+      "sha256": "e566c97af6a800ea01f4e7e8ee1154493fec8e1286a10cc6704fc74f52295c89"
     },
     {
-      "bytes": 8217,
+      "bytes": 8218,
       "path": "runtime-web/_framework/blazor.boot.json.br",
-      "sha256": "f8aa4627bceea5fac182bbd58f39b91871172f1056cb6bcbcfb8d6dabdecbace"
+      "sha256": "5c95d09497a8146354a21b8b23b0539247b8d2c9f65893e0c9e7077f756c87e3"
     },
     {
-      "bytes": 8849,
+      "bytes": 8850,
       "path": "runtime-web/_framework/blazor.boot.json.gz",
-      "sha256": "78565df22685753b54f7608ac07d9fa4ec9f773778666e9cd15db3b4195bdaf7"
+      "sha256": "0c062c91b812c3aa21055324ada4d16442c9e744dc10ddb85c3f4fcd2c80b306"
     },
     {
       "bytes": 60300,
@@ -3741,7 +3876,7 @@
     "originalGameComplete": false,
     "physicalIPhoneTested": false
   },
-  "sourceCommit": "a3e792744b590502b9c8af1c98ed0bd7d84b8702",
+  "sourceCommit": "c18be8f8c86804f98550562d8646347ed959b1db",
   "sourceInventory": [
     {
       "bytes": 1829,
@@ -3839,6 +3974,16 @@
       "sha256": "381c5521893969345f2da2e49107f3a0a91b13a696f120b67f01a795470a6c95"
     },
     {
+      "bytes": 1351,
+      "path": ".github/workflows/original-occupant-mission-bridge.yml",
+      "sha256": "92bd05af95abf73c4136775460a70a00cd0c93a0eaf3bacd6bd988fd63d304c5"
+    },
+    {
+      "bytes": 1946,
+      "path": ".github/workflows/original-occupant-visual-spawn.yml",
+      "sha256": "1ca3722d39554d39bac8eea998a0e40c5e1ac27094dbf1ea0e8ba21412f8d236"
+    },
+    {
       "bytes": 1768,
       "path": ".github/workflows/original-organ-trauma-contract.yml",
       "sha256": "e9bea8c18d2ae2a27d9243a80c9fa108f87b6da88bf82241843d6cbceeb1ede2"
@@ -3857,6 +4002,11 @@
       "bytes": 3312,
       "path": ".github/workflows/pr-source-check.yml",
       "sha256": "9634681474b89097dd093c5fc0f463f094739f4b9c7bdcf5942d55ed255db8ee"
+    },
+    {
+      "bytes": 7745,
+      "path": ".github/workflows/preserve-recovered-npc-assets.yml",
+      "sha256": "5b4b91d2b2ad7f274c39b10a228774ac80d500c216f85ca5decc582643eeca87"
     },
     {
       "bytes": 2046,
@@ -3914,14 +4064,19 @@
       "sha256": "ca6757366fc6967ebcd0dac08c2de4fdc4343cc5739ccb5e84ddb09d185186a5"
     },
     {
-      "bytes": 1030,
+      "bytes": 2674,
       "path": ".github/workflows/source-limb-interior-contracts.yml",
-      "sha256": "c7e4fb2f4b112cf683c96d328999f3c3b301d7734fbcc89cf009058e98f399b5"
+      "sha256": "00e7d735a79c629cd691f5edb9e7c0e3115ff4ecc0e56158829a9621f75ff556"
     },
     {
       "bytes": 610,
       "path": ".github/workflows/source-limb-muscle-verify.yml",
       "sha256": "62282c30053577a3f36171e906a6db49f93700c2d914cbbaee70ec2ebea5163c"
+    },
+    {
+      "bytes": 2397,
+      "path": ".github/workflows/source-occupant-inspector-smoke.yml",
+      "sha256": "6a5799dc822a7575836930a123f2453b414f1f148e62fbe61d2b49680cda0544"
     },
     {
       "bytes": 1291,
@@ -3939,9 +4094,9 @@
       "sha256": "e2be85e119379bbebdd4a9f78521568f1591827d74f996453ec902672e84b706"
     },
     {
-      "bytes": 7170,
+      "bytes": 7355,
       "path": ".github/workflows/wasm-arm-sequences.yml",
-      "sha256": "7a6c2055fc1970f97b62ec4b308c9e5bada8bb35519896f5b82099ec6f5b5f0f"
+      "sha256": "03512d852338d50a097343bf4c586a6f4b33b80de26dfd6d4de9516a713e8a94"
     },
     {
       "bytes": 2603,
@@ -4254,6 +4409,111 @@
       "sha256": "1c6aaa01cf2aee9671323b0ece5956f62c235122161e90cb6d7506e398e73e48"
     },
     {
+      "bytes": 7399,
+      "path": "game/assets/occupant/skins/black abdomen.png",
+      "sha256": "2395929f5607c1fb40affd6d34013484166d3529fe1db175ed1c13183dcb3078"
+    },
+    {
+      "bytes": 12373,
+      "path": "game/assets/occupant/skins/black lower leg.png",
+      "sha256": "01976ef0e553605a31049f956ce827eb516d16369f3829ad76e4cedb8027a18c"
+    },
+    {
+      "bytes": 12602,
+      "path": "game/assets/occupant/skins/black pelvis.png",
+      "sha256": "80a395d3a90e9566e438ac9a09b98be29e38be27274dd36677b023efd6b2a19c"
+    },
+    {
+      "bytes": 13457,
+      "path": "game/assets/occupant/skins/black upper leg.png",
+      "sha256": "56faccc73a7ba9b66fc6b2a9b1c130221db31730d1661416c17c5c986a926a9d"
+    },
+    {
+      "bytes": 2499,
+      "path": "game/assets/occupant/skins/boot toes.png",
+      "sha256": "0184b1ab372b65c12545c6ac54760265b18bd42addca48ac04ea372096f718a0"
+    },
+    {
+      "bytes": 4441,
+      "path": "game/assets/occupant/skins/boot.png",
+      "sha256": "1c3f18bd94e0d4c8fd1bfbbf89b0128aaef266e89525c9f00eaf0b0dde793672"
+    },
+    {
+      "bytes": 11988,
+      "path": "game/assets/occupant/skins/hand front rifle.png",
+      "sha256": "8e821ef089bc6fb3cc7c610661e6f939ba8655d518eb5350b780efee8f13cdb2"
+    },
+    {
+      "bytes": 28143,
+      "path": "game/assets/occupant/skins/hand safe.png",
+      "sha256": "89d6c945612d3b7105e2206a302f6fd5cfccb0ce7aeba5031e3d2212f39f5ae8"
+    },
+    {
+      "bytes": 64057,
+      "path": "game/assets/occupant/skins/hand trigger.png",
+      "sha256": "acdd1e94f9dbb63d6b392ea9ac8882a25fd2401026de39f431af4eb52f90bf65"
+    },
+    {
+      "bytes": 35224,
+      "path": "game/assets/occupant/skins/hand.png",
+      "sha256": "2dd2516b085584c6ee78afbe8fffa32e0a55ef954d431512d131540c7c783785"
+    },
+    {
+      "bytes": 24831,
+      "path": "game/assets/occupant/skins/head 1.png",
+      "sha256": "697287c9f935c44f26f7cf371e450190dff30ad7130f1215aed08bf77d504e4a"
+    },
+    {
+      "bytes": 23505,
+      "path": "game/assets/occupant/skins/head 2.png",
+      "sha256": "960c66ae50ee08f4db00726c1cd1047c55c3389bef5b1ca71bf63e3dab5d0e2a"
+    },
+    {
+      "bytes": 22623,
+      "path": "game/assets/occupant/skins/head 3.png",
+      "sha256": "873816d96dbc040026ebeae2168b5793f2dbf99fa68d558ebbb9540a47e79e48"
+    },
+    {
+      "bytes": 24823,
+      "path": "game/assets/occupant/skins/head 4.png",
+      "sha256": "7667e423920985a3d2bf3eee4f2c20e6fa55c6ba32ce31a5c7d9e0d960cf6b02"
+    },
+    {
+      "bytes": 17847,
+      "path": "game/assets/occupant/skins/head 5.png",
+      "sha256": "f2b00675b758baa62300b9e3c9e941c891211da335aef1598d76de2c0b7f0c6b"
+    },
+    {
+      "bytes": 3925,
+      "path": "game/assets/occupant/skins/lowerarm.png",
+      "sha256": "521b820c0840b88c157084da49bfa2ea3b515679b94c006e0f52201caabe3d91"
+    },
+    {
+      "bytes": 3786,
+      "path": "game/assets/occupant/skins/neck protector.png",
+      "sha256": "d01ecdb83405e089b37ccbb9b66581f0a45dd07c8531958b7640b0cb122a0837"
+    },
+    {
+      "bytes": 27036,
+      "path": "game/assets/occupant/skins/torso_0.png",
+      "sha256": "563bd4883bacd040233dfabf1e5a4fcd71c781ebb901e31168fc41f5462f83a8"
+    },
+    {
+      "bytes": 5688,
+      "path": "game/assets/occupant/skins/upperarm.png",
+      "sha256": "70f4afd59b6c87b096ccc33cd042a6caaaf535084f643db4361592782a9af9af"
+    },
+    {
+      "bytes": 5239,
+      "path": "game/assets/occupant/source-materials.json",
+      "sha256": "7dba9ea4cf0b7bae8271e033565cc28ec2fa46daa7afe22e2823459a54e8dff5"
+    },
+    {
+      "bytes": 32785,
+      "path": "game/assets/occupant/source-visual-spawn.json",
+      "sha256": "5d3fa667d6592dd2df27c0ef595187ad231524255784c457f28f8d5131ca2fe5"
+    },
+    {
       "bytes": 218908,
       "path": "game/assets/operator/animations.json",
       "sha256": "f5277147d4090c66ec023b00db81142d16936e92431128796dc6071546732d91"
@@ -4509,9 +4769,9 @@
       "sha256": "0c331574c56dde74abdfd9cd6cb41ab931c42a78afc0b5d76f2bd6a63bb21f6f"
     },
     {
-      "bytes": 37825,
+      "bytes": 40894,
       "path": "game/index.html",
-      "sha256": "4ab55760ebac33843e7e74d50e4375adbd63504f1696e5e55793dd5c5b616e48"
+      "sha256": "121b2cb3c062573a851de50ea5cb1e0184164a6b653e134d33fed7131b7f2bcf"
     },
     {
       "bytes": 700,
@@ -4522,6 +4782,11 @@
       "bytes": 8431,
       "path": "game/magazine-hud.mjs",
       "sha256": "38cd83acf03dc53b5eeb9148e6fd9e57a0c69e8503367a91c63f708a3e4fb17e"
+    },
+    {
+      "bytes": 4686,
+      "path": "game/occupant-inspector.html",
+      "sha256": "baa15c66b6713f245efd3a121292295296fd0c5ddb8722287bf5ef30b215bc9c"
     },
     {
       "bytes": 9931,
@@ -4537,6 +4802,11 @@
       "bytes": 5663,
       "path": "game/original-impact-mesh.mjs",
       "sha256": "bbc86bea777e5406eea08c73fa34f269be1977622ba0f9324535fdaa6c178608"
+    },
+    {
+      "bytes": 5140,
+      "path": "game/original-occupant-visuals.mjs",
+      "sha256": "b16d5e662ac9e480b21e1dcbedd9bce9dc04e504cb81b5c2a86df447e6477574"
     },
     {
       "bytes": 6664,
@@ -4579,6 +4849,26 @@
       "sha256": "34b398d971b35e2b5aab07ddfa0938222b48e470cf0deba36692cc4753dbe2a9"
     },
     {
+      "bytes": 3127,
+      "path": "game/source-occupant-body-initialization.mjs",
+      "sha256": "2af735614025d9ad6aa6825515718e05053c497c0a65c36853957ca08aab57d0"
+    },
+    {
+      "bytes": 3869,
+      "path": "game/source-occupant-mission-integration.mjs",
+      "sha256": "48be50640ca72cf8bceb313b98c999c33cff596ceba433529f99a3857b2e1115"
+    },
+    {
+      "bytes": 4001,
+      "path": "game/source-occupant-sandbox-settings.mjs",
+      "sha256": "8b8dbca37b89d08c709ba0e725133ebec1d02da962bc3d07ac6df5395205f977"
+    },
+    {
+      "bytes": 4062,
+      "path": "game/source-occupant-spawner.mjs",
+      "sha256": "538b8bab0bba9efc58b29a0cbdfe89b735ee59f7e8325f9877b382ab23a707cc"
+    },
+    {
       "bytes": 1067,
       "path": "game/vendor/LICENSE.physx-js-webidl",
       "sha256": "0879a16adc700c9956ca0b60fbcac1fcb52310219feee827c03d7a0ab9886fbd"
@@ -4604,9 +4894,9 @@
       "sha256": "20046310a347e653f5f2e797337e7319efe440d8f692d2e06cccffcf87a0fe1c"
     },
     {
-      "bytes": 7176,
+      "bytes": 7406,
       "path": "runtime/Browser/Program.cs",
-      "sha256": "3928d70846a576a8829ff291202f9faee5b6513ceadb236d5568a2a8da0c4e19"
+      "sha256": "b0b9c85bdf730bfa21cbef6404b52a49da5f72e6a25e6f42914d889303a05959"
     },
     {
       "bytes": 3110,
@@ -4619,9 +4909,9 @@
       "sha256": "a34fa1cc453736c21205cf04f01f1022f70442993728f6c1dc334f6c5656249b"
     },
     {
-      "bytes": 11986,
+      "bytes": 14735,
       "path": "runtime/Checks/BallisticContracts.cs",
-      "sha256": "7c92cc0f84cbc212820c15d9435e08313fad3c487011d0fefe033b6907c811fa"
+      "sha256": "282f2d9678e31352a12ff3f912f832c395a4ab490627ca03d05c3cf01e72a009"
     },
     {
       "bytes": 268,
@@ -4629,24 +4919,44 @@
       "sha256": "8613654f1ced5be9603d75c418fe7b6ac6246524582a453be7f8a7114d4a86fe"
     },
     {
+      "bytes": 1334,
+      "path": "runtime/Checks/OriginalLimbDamageGeometryContracts.cs",
+      "sha256": "435305da33a2b75cc81faa82c3b7d9c7bdb635d07a9b01ad95b2333bb633a938"
+    },
+    {
+      "bytes": 1561,
+      "path": "runtime/Checks/OriginalMissionHitContracts.cs",
+      "sha256": "8cc918819d2f21d127b16f5f13070e911e8f4766ec04cc9aae181478b1a4c1d7"
+    },
+    {
+      "bytes": 2971,
+      "path": "runtime/Checks/OriginalMuscleControlContracts.cs",
+      "sha256": "5ec3e222954b6a67ecbd2471beb3d25ede9977e3620a77988027dfee70c1d7e1"
+    },
+    {
+      "bytes": 4312,
+      "path": "runtime/Checks/OriginalOccupantPrefabContracts.cs",
+      "sha256": "5967dff8f5669215c096da145cfcb4b41a034ce7ae2f8f0a7ee5b01a71f75757"
+    },
+    {
       "bytes": 1249,
       "path": "runtime/Checks/PresentationContracts.cs",
       "sha256": "3c822f3a4257eb54c5ef4c10172be5531506fdd1dd88c13ffcf5e1105a168804"
     },
     {
-      "bytes": 33147,
+      "bytes": 33597,
       "path": "runtime/Checks/Program.cs",
-      "sha256": "a889f30af9d9c4dae7870f61ea203a3121f04b3280da78f1c7a888d2b4235f4a"
+      "sha256": "7376ba3d0eedc6c31e270d2bca1bb4e173cea23f5e90da5a3d9e49e9276afaa3"
     },
     {
-      "bytes": 14761,
+      "bytes": 16880,
       "path": "runtime/Checks/ProjectileInjuryContracts.cs",
-      "sha256": "a0b439b9d26cb67439eaef4c30f32e8a253695d9c2dc5239b9c32ea0e06c50aa"
+      "sha256": "6f9710ee2d96dd334cb93ff4cbd0ede30b91c73ae097a272f6d5175f2e40479d"
     },
     {
-      "bytes": 4323,
+      "bytes": 7226,
       "path": "runtime/Checks/WeaponContracts.cs",
-      "sha256": "69fac52ec75441081671d2a8550775c4322a9bef3d32cfbbcdc681d87c345d7a"
+      "sha256": "bfecfb029d0d9569be75e9926170080b9a98df03e074f14d2046e06e587421ea"
     },
     {
       "bytes": 383,
@@ -4709,9 +5019,9 @@
       "sha256": "c4185852d69da14f06efbb13bb3f8d209f2317d3d4514dd472cf0e427d9ad1ae"
     },
     {
-      "bytes": 21937,
+      "bytes": 23207,
       "path": "runtime/Engine/OriginalArmPhysicsHost.cs",
-      "sha256": "725514e4634c3fbb7a431fe0752f67c6ce179f95d407ac893a617b93e13b6a8f"
+      "sha256": "07437c15ae3b3aa492860f61a7540cdc01c7708988aefdcedf43cb7b1a112561"
     },
     {
       "bytes": 3963,
@@ -4774,9 +5084,9 @@
       "sha256": "a03dfc8e7725e88f73d7cb22f21d5fb5b94f91d7a52087f91722a2cf95dacb5a"
     },
     {
-      "bytes": 24695,
+      "bytes": 30338,
       "path": "runtime/Engine/WeaponHost.cs",
-      "sha256": "7bc8eb2a92badcf43ca9e5bbd08a32d3f23db0240d1286a6633bca2c66564f80"
+      "sha256": "5c7e3878ba3886e5c6dfadd28aa18edbf94516ba315c9b3ee0c79d76a809d856"
     },
     {
       "bytes": 3373,
@@ -4924,9 +5234,9 @@
       "sha256": "017e9662cbd2d680cbdcb7699b924e3f6fe5bc7d2feeedb52928f7f5fd752391"
     },
     {
-      "bytes": 9671,
+      "bytes": 10244,
       "path": "runtime/Original/CharacterVitalDynamics.cs",
-      "sha256": "2ffebeaa58c6208e764631b55215b300d024e6a952fcc788b1f3b8fbc1c2bd8c"
+      "sha256": "53ac33d837ebebe715654058dea18dcc809fbd545982df34de941de01167c544"
     },
     {
       "bytes": 619,
@@ -4974,6 +5284,11 @@
       "sha256": "4e49044eab68f1bd756d32161d799e79044f385e9dfe9860bc5b797f5a3b7c79"
     },
     {
+      "bytes": 1940,
+      "path": "runtime/Original/OriginalLimbDamageGeometry.cs",
+      "sha256": "f5aaadf5d7385b7dc0552d2af89cfa420560cbe7878d0e72d884b32b6e60cc9b"
+    },
+    {
       "bytes": 4129,
       "path": "runtime/Original/OriginalLimbMuscle.cs",
       "sha256": "2560aa6daa55f239d4a5a0e362e38ac0c0cb24d862b1ce5f8d5289db5b627489"
@@ -4984,9 +5299,14 @@
       "sha256": "2a6c42a1cc42a3aca3fd3c17fce455535f64a98373836561b7fb735680f0cf28"
     },
     {
-      "bytes": 4836,
+      "bytes": 7135,
+      "path": "runtime/Original/OriginalMuscleControl.cs",
+      "sha256": "05b712073672f9763d07e2b65c3fd971d4f0af9c1413b7841c44897cf86c7356"
+    },
+    {
+      "bytes": 4976,
       "path": "runtime/Original/OriginalVitalFunctions.cs",
-      "sha256": "3ab0fc5d5e78ba6dd1e808e8276f420ccf92357e34730b5bd1b9b71ebfe593cb"
+      "sha256": "df1bf42d0e576579212e4e7624f59a7068673637d7c87d6ab7d1b8c48dc84d08"
     },
     {
       "bytes": 4915,
@@ -5024,14 +5344,14 @@
       "sha256": "87514fc018c8c88390e65a176d0880232ac42981db8ebc1b73d4b123bd760588"
     },
     {
-      "bytes": 5691,
+      "bytes": 7767,
       "path": "runtime/Original/Weapons/CharacterLimbBallisticMethods.cs",
-      "sha256": "dec3690d45dc980e50cdab556ab0fd6221c479b127c6f4c8e9fe1c183536d7fc"
+      "sha256": "0ee63ae10f9a3bb10d7bc323939783700dd197bc75852d463a8b51e8af253b4f"
     },
     {
-      "bytes": 6339,
+      "bytes": 7735,
       "path": "runtime/Original/Weapons/CharacterLimbRagdollState.cs",
-      "sha256": "a4e4a743838af25c3bd029fdb3a97d266afabc97e97d0725bbc2da2a2b1640a6"
+      "sha256": "15bdd68a0ca4d655df69b747e94a1b7c527871be6a4fa6793fd1add238cb250d"
     },
     {
       "bytes": 2547,
@@ -5069,9 +5389,19 @@
       "sha256": "3f67efd7bc4191bea9a5b01b4d1be7c3d654a1e6e0ea3abc024fe3f8b9fa1b7a"
     },
     {
-      "bytes": 2988,
+      "bytes": 3958,
       "path": "runtime/Original/Weapons/OriginalCharacterVitalHost.cs",
-      "sha256": "c28cc95363c2a193cfd81bf746cd9791ca34b405da3c2b00582c6a3ec0bbb3f8"
+      "sha256": "5e475afc3f5005a938dfa8102fc91e7ed35f00d43c571722410d615e259a8b5e"
+    },
+    {
+      "bytes": 2597,
+      "path": "runtime/Original/Weapons/OriginalMissionHitEffects.cs",
+      "sha256": "b83cb6868329ca0daa6156423688502094d15868556bb643c6aeee419f51c0d9"
+    },
+    {
+      "bytes": 3711,
+      "path": "runtime/Original/Weapons/OriginalOccupantPrefab.cs",
+      "sha256": "07bf23879b1761d496ea423bf859d4f7b57e647f2f718ad36f89db9c465e36bd"
     },
     {
       "bytes": 718,
@@ -5239,6 +5569,16 @@
       "sha256": "3b917590058ea8eda15f01a9e6d4fb9ca7ce5dffd545fc4c9a67c8667ff8a854"
     },
     {
+      "bytes": 2377,
+      "path": "scripts/export_original_occupant_materials.py",
+      "sha256": "f352cbe112677a72d3a0c80aaeb99dba87a39a38ee40cbc64fec4a5ac3c9ce27"
+    },
+    {
+      "bytes": 4537,
+      "path": "scripts/export_original_occupant_visual_spawn.py",
+      "sha256": "9a8688cdc1b2d1653c8cfa51b9d9b321943f3f8f84d8d47ca63da9ab058e4ef2"
+    },
+    {
       "bytes": 6114,
       "path": "scripts/export_original_particle_manifest.py",
       "sha256": "e3b1ee1e7ce324eaeb68bd12c0715d91a001100f0d9563141798982c9aeb0bd2"
@@ -5374,9 +5714,9 @@
       "sha256": "c4c0e54d463200d02493706b4fc546eea6c3cdb9e18b5880faee7a04db27ea36"
     },
     {
-      "bytes": 1971,
+      "bytes": 2031,
       "path": "scripts/projectile_injury_smoke.mjs",
-      "sha256": "e0e66131f92173a57963131cc3c12a391c2363453892905a38929f330d46a433"
+      "sha256": "943a18c051679e54f6e93ad2c443e22cf87f5acdb4b16210b616144207010419"
     },
     {
       "bytes": 5011,
@@ -5464,6 +5804,26 @@
       "sha256": "5b1dd26a8f18582c887d9dbc407239762aaaed9d0f08e7a86b71ea22169259f3"
     },
     {
+      "bytes": 2652,
+      "path": "scripts/test_original_occupant_body_initialization.mjs",
+      "sha256": "d154b5779de8b276da37119971d7002ed72803301b87998e86daad3fdc0001a0"
+    },
+    {
+      "bytes": 4204,
+      "path": "scripts/test_original_occupant_mission_integration.mjs",
+      "sha256": "afe6b2279651810509b0d652adf5e3789246fffdf7055b79d6b9618bf8535e9d"
+    },
+    {
+      "bytes": 1700,
+      "path": "scripts/test_original_occupant_sandbox_settings.mjs",
+      "sha256": "dbc1e9cfce4dfd689e192dc5b05014f787e48e76f6160fc19fc7c276609b10cf"
+    },
+    {
+      "bytes": 1440,
+      "path": "scripts/test_original_occupant_spawn.mjs",
+      "sha256": "2cc7240c4d3fbdebc00198ccf63cbb903ea1cb1d81354f230073abbfa756df60"
+    },
+    {
       "bytes": 5984,
       "path": "scripts/unity_api_inventory.py",
       "sha256": "943abbc968599fb053c1aee19ca086d646109e74bb4491a2ff79acbf7e9093bd"
@@ -5534,9 +5894,9 @@
       "sha256": "3ac1c7732167923c87cbb3f81ff1c223554b0ebb1698514bfcd13baddc4840b1"
     },
     {
-      "bytes": 22349,
+      "bytes": 23368,
       "path": "scripts/weapon_smoke.mjs",
-      "sha256": "f63cd474d6bbccb70f42841ef57fa0b14e1c1f404b7749824f94a354486b74e8"
+      "sha256": "532362abe8a464444bb7eda34fd2a7f26016e4ba94f95d1f5c5157c127117fb5"
     },
     {
       "bytes": 4254,

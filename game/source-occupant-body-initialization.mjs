@@ -1,0 +1,53 @@
+// Original OccupantSpawner.SpawnSandboxCharacter personality and weapon-skill
+// initialization. Never substitute missing native body callbacks.
+export function applyOriginalOccupantSpawnState(record,{
+  randomFloat,applyBlackboard,applyPhysiology,applyEquipment,registerBody,
+  occupantSettings
+}={}) {
+ const data=record?.sourceData;
+ if(!data||typeof randomFloat!=='function'||typeof applyBlackboard!=='function'||
+    typeof applyPhysiology!=='function'||typeof applyEquipment!=='function'||
+    typeof registerBody!=='function'||!occupantSettings?.weaponSkill)
+  throw Error('Original Occupant state requires source spawn data and native body bindings');
+ // Validate every required recovered parameter before allocating, equipping, or
+ // registering the native actor. Never partially configure a body from an
+ // incomplete SerializableOccupantSpawn record.
+ for(const field of ['morale','aggression','fear','blindFireChance',
+   'blindFireDistance','fitness','shockResistance'])
+  if(!Number.isFinite(data[field]))throw Error('Original Occupant field missing: '+field);
+ if(typeof data.negotiable!=='boolean'||!data.equipment)
+  throw Error('Original Occupant negotiation/equipment source missing');
+ for(const field of ['low','high'])
+  if(!Number.isFinite(occupantSettings.weaponSkill[field]))
+   throw Error('Original Occupant weapon skill range missing: '+field);
+ const f=(a,b)=>{
+  if(!Number.isFinite(a)||!Number.isFinite(b))throw Error('Invalid source Occupant random range');
+  const value=randomFloat(a,b);
+  if(!Number.isFinite(value))throw Error('Invalid original Occupant RNG result');
+  return value;
+ };
+ // Recover exact source RNG order: ShockRecovery, blind-fire roll,
+ // SetWeaponSkill (skill, compensation random value, skill-range random).
+ const shockRecovery=f(.1,1);
+ const blindFire=f(0,1)<data.blindFireChance;
+ const weaponSkill=f(occupantSettings.weaponSkill.low,occupantSettings.weaponSkill.high);
+ const compensationX=weaponSkill+(1-weaponSkill)*f(0,1);
+ const compensationY=Math.min(compensationX+
+   (1-f(occupantSettings.weaponSkill.low,occupantSettings.weaponSkill.high))*3,3);
+ // Native spawn record is the authoritative transport for the C# body.
+ // Keep source calculations in one place and transport only validated state.
+ const sourceBlackboard={morale:data.morale,aggression:data.aggression,fear:data.fear,
+  willBlindFire:blindFire,blindFireDistance:data.blindFireDistance,negotiable:data.negotiable};
+ const sourceState={sourceWeaponSkill:weaponSkill,sourceBlackboard,
+  sourcePhysiology:{fitness:data.fitness,shockResistance:data.shockResistance,
+   shockRecovery}};
+ applyBlackboard({
+  morale:data.morale,aggression:data.aggression,fear:data.fear,
+  willBlindFire:blindFire,blindFireDistance:data.blindFireDistance,
+  negotiable:data.negotiable,weaponSkill,recoilCompensation:[compensationX,compensationY]
+ });
+ applyPhysiology({fitness:data.fitness,shockResistance:data.shockResistance,shockRecovery});
+ applyEquipment(data.equipment);
+ registerBody(record);
+ return {weaponSkill,recoilCompensation:[compensationX,compensationY],shockRecovery,blindFire,sourceState};
+}

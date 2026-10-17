@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Crisis Response — Original Occupant Asset Inspector</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#101820;color:#e7f1f4;font:14px system-ui,-apple-system,sans-serif;overflow:hidden}
+#view{position:absolute;inset:0;touch-action:none;cursor:grab}
+header{position:absolute;z-index:2;top:calc(12px + env(safe-area-inset-top));left:16px;right:16px;pointer-events:none}
+h1{font-weight:700;font-size:17px;letter-spacing:.05em;margin:0 0 7px}
+p{font-size:12px;max-width:390px;color:#a8c3cb;line-height:1.5;margin:0}
+#panel{position:absolute;z-index:2;bottom:calc(16px + env(safe-area-inset-bottom));left:16px;right:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+button{background:#253a48;border:1px solid #567282;color:#fff;border-radius:8px;padding:10px 14px;cursor:pointer;font-size:13px}
+#status{background:#1c2a32d9;padding:10px 13px;border-radius:8px;min-width:150px;font-size:12px}
+small{color:#a4bdc8;display:block}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"}}</script>
+</head><body><div id="view"></div><header><h1>CRISIS RESPONSE · OCCUPANT</h1><p>Original recovered Unity 2017 prefab, meshes, transforms and skin textures. Asset inspection only — not an NPC gameplay simulation.</p></header>
+<div id="panel"><button id="left" aria-label="Rotate left">↶ Rotate</button><button id="right" aria-label="Rotate right">Rotate ↷</button><button id="head" aria-label="Change original head skin">Head variant</button><div id="status">Loading authentic source files…</div></div>
+<script type="module">
+import * as THREE from 'three';
+import {createOriginalOccupantVisual,loadOriginalOccupantMaterials} from './original-occupant-visuals.mjs';
+const holder=document.getElementById('view'),status=document.getElementById('status');
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setClearColor(0x101820);
+holder.appendChild(renderer.domElement);
+const scene=new THREE.Scene(),camera=new THREE.OrthographicCamera(-2.5,2.5,2,-2,.01,100);
+camera.position.set(0,1.35,9);camera.lookAt(0,1.2,0);
+let occupant=null,headIndex=0,angle=0,drag=null;
+const texLoader=new THREE.TextureLoader();
+const tex=async path=>{const t=await texLoader.loadAsync(path);t.colorSpace=THREE.SRGBColorSpace;return t;};
+const source=await (async()=>{const r=await fetch('./assets/occupant/source-visual-spawn.json');if(!r.ok)throw Error('Authentic Occupant manifest missing');return r.json();})();
+const materials=await loadOriginalOccupantMaterials();
+const setup=async()=>{
+ if(occupant){scene.remove(occupant.root);occupant.dispose();}
+ occupant=await createOriginalOccupantVisual(source,materials,{
+  // Inspector deliberately selects a listed skin. Actual gameplay must use
+  // source Unity RNG; this chooser is NOT an in-game spawn or AI selection.
+  selectOriginalSkin:(length)=>length===5?headIndex%length:0,
+  loadOriginalTexture:tex
+ });
+ scene.add(occupant.root);
+ occupant.root.rotation.y=angle;
+ status.innerHTML='<b>Authentic prefab loaded</b><small>'+occupant.renderers.length+' source renderers · '+occupant.skinBindings.size+' dynamic skins · '+(headIndex+1)+'/5 head variant</small>';
+ window.__occupantInspection={renderers:occupant.renderers.length,dynamicSkins:occupant.skinBindings.size,
+  originalPrefabSHA:occupant.sourcePrefabSha256,sourceOnly:true};
+};
+document.getElementById('left').onclick=()=>angle-=.25;
+document.getElementById('right').onclick=()=>angle+=.25;
+document.getElementById('head').onclick=async()=>{headIndex=(headIndex+1)%5;await setup();};
+holder.addEventListener('pointerdown',e=>{drag=e.clientX;holder.setPointerCapture(e.pointerId);});
+holder.addEventListener('pointermove',e=>{if(drag!==null){angle+=(e.clientX-drag)*.012;drag=e.clientX;}});
+holder.addEventListener('pointerup',()=>drag=null);holder.addEventListener('pointercancel',()=>drag=null);
+function resize(){const w=holder.clientWidth,h=holder.clientHeight;
+renderer.setSize(w,h);const aspect=w/Math.max(1,h);camera.left=-2.2*aspect;camera.right=2.2*aspect;camera.top=2.2;camera.bottom=-2.2;camera.updateProjectionMatrix();}
+addEventListener('resize',resize);resize();
+function animate(){if(occupant)occupant.root.rotation.y=angle;renderer.render(scene,camera);requestAnimationFrame(animate);}animate();
+setup().catch(e=>{status.textContent='Source asset loading failed: '+e.message;console.error(e);});
+</script></body></html>
