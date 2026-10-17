@@ -192,7 +192,10 @@ public sealed class WeaponHost {
    body.SourcePhysiology.Shock,body.SourcePhysiology.LungsOxygen,
    WoundVolume=body.limbs.Sum(l=>l.LimbPhysiology?.WoundCavityVolume??0f),
    Hemorrhaging=body.limbs.Sum(l=>l.LimbPhysiology?.InternalHemorrhaging??0f),
-   limbCount=body.limbs.Count,body.Kinematic,body.CrippledRatio},ballistics=Ballistics?.Snapshot(),magazinePose=new{p=new[]{mp.x,mp.y,mp.z},q=new[]{mq.x,mq.y,mq.z,mq.w},visible=weapon.ComponentMagazine.gameObject.activeSelf},shots=body.ShotsFired,
+   limbCount=body.limbs.Count,
+   originalOrganGroups=body.limbs.Count(l=>l.SourceVitals!=null),
+   originalOrgans=body.limbs.Sum(l=>l.SourceVitals?.Functions.Count??0),
+   body.SourcePhysiology.Paralyzed,body.Kinematic,body.CrippledRatio},ballistics=Ballistics?.Snapshot(),magazinePose=new{p=new[]{mp.x,mp.y,mp.z},q=new[]{mq.x,mq.y,mq.z,mq.w},visible=weapon.ComponentMagazine.gameObject.activeSelf},shots=body.ShotsFired,
    // The only currently executable original weapon host is the recovered M4A1.
    // Send source-owned magazine capacity and chamber state to the browser.
    // Future weapon hosts must supply their own actual equipped weapon identity;

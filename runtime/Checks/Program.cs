@@ -42,6 +42,58 @@ if(args.Contains("--character-systems")){
  concussion.AddConcussion(1.3f);
  if(concussion.BrainTrauma<2.9f||!concussion.ShouldLoseConsciousness())
   throw new Exception("Original concussion-to-brain-trauma propagation failed");
+ // Real recovered Head/LimbVitalFunction prefab curves drive the native
+ // original brain injury and unconsciousness thresholds, not test-only rules.
+ using(var sourceVitals=JsonDocument.Parse(File.ReadAllText("game/assets/original-character-limb-components.json")))
+ using(var physicsPrefab=JsonDocument.Parse(File.ReadAllText("game/assets/original-full-character-physics.json"))){
+  var sourceHead=sourceVitals.RootElement.GetProperty("characters").EnumerateArray()
+    .Single(c=>c.GetProperty("name").GetString()=="Operator")
+    .GetProperty("limbs").EnumerateArray()
+    .Single(l=>l.GetProperty("name").GetString()=="Head");
+  var sourceBrain=sourceHead.GetProperty("sourceFields").GetProperty("VitalFunctions")
+    .GetProperty("vitalFunctions").EnumerateArray()
+    .Single(v=>v.GetProperty("name").GetString()=="Brain");
+  var originalHeadGo=sourceHead.GetProperty("gameObject").GetString();
+  var sourceCapsule=physicsPrefab.RootElement.GetProperty("prefabs").EnumerateArray()
+    .Single(c=>c.GetProperty("name").GetString()=="Operator")
+    .GetProperty("records").EnumerateArray()
+    .Single(c=>c.GetProperty("classID").GetInt32()==136&&
+       c.GetProperty("fields").GetProperty("m_GameObject").GetProperty("fileID").GetString()==originalHeadGo)
+    .GetProperty("fields");
+  var anatomyWorld=new UnityEngine.RuntimeWorld();
+  var anatomyBody=new UnityEngine.GameObject("Original vital body",anatomyWorld)
+    .AddComponent<Crisis.Runtime.Weapons.CharacterBody>();
+  anatomyBody.InitializeOriginalPhysiology(0f,4500f,0f,0f);
+  var headLimb=new UnityEngine.GameObject("Original source Head",anatomyWorld)
+    .AddComponent<Crisis.Runtime.Weapons.Limb>();
+  headLimb.id=Crisis.Runtime.Weapons.LimbId.Head;headLimb.Body=anatomyBody;
+  headLimb.LimbPhysiology=new Crisis.Runtime.Character.OriginalLimbPhysiology(anatomyBody.SourcePhysiology);
+  var vitalOnly=JsonDocument.Parse(JsonSerializer.Serialize(new{vitalFunctions=new[]{sourceBrain.Clone()}}));
+  var vital=new Crisis.Runtime.Character.OriginalVitalFunctions(
+    headLimb,anatomyBody.SourcePhysiology,vitalOnly.RootElement,
+    sourceCapsule.GetProperty("m_Height").GetSingle(),
+    sourceCapsule.GetProperty("m_Center").GetProperty("y").GetSingle());
+  var sourceCenter=sourceCapsule.GetProperty("m_Center").GetProperty("y").GetSingle();
+  var sourceHeight=sourceCapsule.GetProperty("m_Height").GetSingle();
+  float normalizedSourceY=.7f*sourceHeight-(sourceHeight*.5f-sourceCenter);
+  var hit=new UnityEngine.Vector3(0f,normalizedSourceY,0f);
+  var announced=new List<string>();
+  vital.HitTest(12f,hit,hit,300f,name=>announced.Add(name));
+  float sourceBrainFactor=vital.Functions[0].Factor.Evaluate(.7f);
+  if(announced.Count!=1||announced[0]!="Brain"||
+    MathF.Abs(anatomyBody.SourcePhysiology.BrainTrauma-12f*sourceBrainFactor)>1e-4f||
+    !anatomyBody.SourcePhysiology.ShouldLoseConsciousness())
+   throw new Exception($"Original brain vital failure: names=[{string.Join(",",announced)}], trauma={anatomyBody.SourcePhysiology.BrainTrauma}, position={normalizedSourceY}, curve={vital.Functions[0].Factor.Evaluate(.7f)}, lost={anatomyBody.SourcePhysiology.ShouldLoseConsciousness()}");
+  var p=anatomyBody.SourcePhysiology;
+  var torsoHeart=new Crisis.Runtime.Character.OriginalLimbPhysiology(p);
+  var pressure=torsoHeart.bloodPressureModifier;
+  p.AddHeartTrauma(7f,0f,torsoHeart);
+  if(Math.Abs(p.HeartEffectiveness-.9f)>1e-4f||
+     Math.Abs(torsoHeart.bloodPressureModifier-(pressure+.1f))>1e-4f)
+    throw new Exception("Original heart trauma and torso pressure modification source mismatch");
+  p.SetParalyzed();
+  if(!p.Paralyzed)throw new Exception("Original spine paralysis state not retained");
+ }
  var world=new UnityEngine.RuntimeWorld();
  var host=new UnityEngine.GameObject("Source ragdoll operator",world);
  var body=host.AddComponent<Crisis.Runtime.Weapons.CharacterBody>();

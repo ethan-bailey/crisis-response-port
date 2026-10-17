@@ -16,6 +16,7 @@ public partial class Limb {
  public Transform kinematicParent;
  public OriginalLimbPhysiology LimbPhysiology;
  public OriginalLimbMuscle SourceMuscle;
+ public OriginalVitalFunctions SourceVitals;
  public Rigidbody Rigidbody => GetComponent<Rigidbody>();
  Vector3 potentialForce,potentialPosition;
  float potentialTime,rigidBodyDefaultDrag;
@@ -104,6 +105,14 @@ public partial class CharacterBody {
  public UnityEvent EventUnconscious=new();
  public UnityEvent EventDeath=new();
  public bool RagdollEntered=>!Kinematic;
+ public void OnOriginalOrganUnconscious(){
+  // Physiology.SetUnconscious calls the actual source CharacterBody transition.
+  if(SourcePhysiology?.Conscious==true)return;
+  if(Kinematic){
+   EnterSourceRagdoll();
+   EventUnconscious.Invoke();
+  }
+ }
  public void OnOriginalJointBroken(Limb limb){
   if(limb==null||!limbs.Contains(limb))throw new InvalidOperationException("Original joint not owned by character");
   // Original Physiology.OnJointBroken loses consciousness if conscious/kinematic.

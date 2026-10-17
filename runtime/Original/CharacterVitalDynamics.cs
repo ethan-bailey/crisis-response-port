@@ -45,6 +45,33 @@ public sealed partial class OriginalPhysiologyConditions {
   heartbeatTimestamp=now+heartRandom;respirationTimestamp=now+breathingRandom;
   lastBrainOxygenTimestamp=now;Alive=true;Conscious=true;
  }
+ public bool Paralyzed{get;private set;}
+ // Original Physiology.AddHeartTrauma source law and callback for immediate
+ // CharacterBody unconscious/ragdoll transition. MuscleControl cramping is
+ // deliberately unbound until the actual original nerve controller exists.
+ public void AddHeartTrauma(float volume,float shock,OriginalLimbPhysiology torso,
+    Action onUnconscious=null,Action<float> onCramp=null){
+  if(torso==null)throw new ArgumentNullException(nameof(torso));
+  float num=Mathf.Min(volume,heartCapacity)/startingHeartCapacity;
+  torso.bloodPressureModifier+=num;
+  heartCapacity=Mathf.Max(heartCapacity-volume,0f);
+  if(heartCapacity<=0f||shock>=500f){
+   CirculationDisabled=true;
+   if(UnityEngine.Random.value>.5f){
+    SetUnconscious(Time.time);
+    onUnconscious?.Invoke();
+   }
+  }
+  if(UnityEngine.Random.value>HeartEffectiveness)onCramp?.Invoke(4f);
+ }
+ // Original Physiology.SetParalyzed sets physical ragdoll, a persistent
+ // paralysis flag and optionally calls MuscleControl.ActivateCramp.
+ // The real CharacterBody ragdoll is dispatched by the source vital caller.
+ public void SetParalyzed(Action<float> onCramp=null){
+  if(UnityEngine.Random.value>.25f)
+   onCramp?.Invoke(UnityEngine.Random.Range(3f,5f));
+  Paralyzed=true;
+ }
  public void AddLungsTrauma(float volume,float shock){
   RemoveLungsOxygen(shock*.0005f);
   lungsLeakage+=volume*.001f;
