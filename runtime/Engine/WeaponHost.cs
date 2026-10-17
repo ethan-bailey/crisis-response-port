@@ -40,7 +40,7 @@ public partial class CharacterBody:Component {
  public Blackboard Blackboard=new(){weaponSkill=1};public Equipment Equipment;public WeaponBase ActiveWeapon;
  public ArmIKSolver leftArm,rightArm;public Limb Torso,Pelvis;
  public Transform chestRigIKTarget,pistolPivot,pistolIKTarget;
- public bool IsPlayer=true,IsManipulatingEquipment;public float Direction=1,LastFiredTimestamp;public bool IsUsingPrecision;public float RotationY=>Direction==1?0:180;public int ShotsFired;
+ public bool IsPlayer=true,IsManipulatingEquipment;public float weight;public float Direction=1,LastFiredTimestamp;public bool IsUsingPrecision;public float RotationY=>Direction==1?0:180;public int ShotsFired;
  public float Position=>transform.position.x;public bool FacingRight=>Direction==1f;public object AudioInstigator=>null;
  public CharacterAction PendingAction;bool triggerPulled;
  // Source arm state: default Operator rigidbodies are authored kinematic.
@@ -166,8 +166,16 @@ public sealed class WeaponHost {
       !float.IsFinite(shockRecovery)||shockRecovery<.1f||shockRecovery>1f)
     throw new InvalidDataException("Invalid original Occupant physiology");
   }
+  float? sourceWeight=null;
+  if(p.TryGetProperty("sourceWeight",out var weightJson)){
+   float value=weightJson.GetSingle();
+   if(!float.IsFinite(value)||value<75f||value>85f)
+    throw new InvalidDataException("Original Occupant source weight invalid");
+   sourceWeight=value;
+  }
   world.MakeCurrent();
   var occupant=new OriginalOccupantPrefab(physics,limbs,world);
+  if(sourceWeight.HasValue)occupant.Character.weight=sourceWeight.Value;
   if(hasSourcePhysiology){
    var physiologicalState=occupant.Character.SourcePhysiology;
    physiologicalState.fitness=fitness;
@@ -187,6 +195,7 @@ public sealed class WeaponHost {
   var actualBlackboard=occupant.Character.Blackboard;
   return new {index=sourceOccupants.Count-1,position=new[]{pos.x,pos.y,pos.z},
    sourceWeaponSkill=actualBlackboard.weaponSkill,
+   sourceWeight=sourceWeight.HasValue?occupant.Character.weight:(float?)null,
    sourcePhysiology=hasSourcePhysiology?new {
     fitness=occupant.Character.SourcePhysiology.fitness,
     shockResistance=occupant.Character.SourcePhysiology.ShockResistance,
