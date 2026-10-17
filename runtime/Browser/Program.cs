@@ -60,6 +60,10 @@ public static class RuntimeBridge {
         float Number(string key)=>p.GetProperty(key).GetSingle();
         bool Flag(string key)=>p.GetProperty(key).GetBoolean();
         float dir=Number("direction");
+        // Recovered PlayerController.Update stops accepting movement after
+        // CharacterBody becomes a ragdoll; do not keep driving a dead body.
+        if(weapons?.Character is {Kinematic:false})
+            return JsonSerializer.Serialize(new {forceX=0f,reset=true,animatorSpeed=1f});
         var currentBody=weapons?.Character??movementSource;
         currentBody.Direction=Number("facing");
         currentBody.Move(dir);
