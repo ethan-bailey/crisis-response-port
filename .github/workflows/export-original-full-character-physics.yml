@@ -1,4 +1,5 @@
 name: Export original complete character PhysX graph
+# Flatten genuine original PhysicsManager fields for the established PhysX importer.
 on:
   push:
     branches: [feature/characterbody-live-physiology-full-rig]
