@@ -1,0 +1,21 @@
+name: Original projectile limb interior source native contracts
+on:
+  push:
+    branches: [feature/original-projectile-limb-hit-runtime]
+    paths: [.github/workflows/source-limb-interior-contracts.yml]
+permissions:
+  contents: read
+jobs:
+  original-limb:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: tools/wasm-compile/global.json
+      - name: Run selected original Limb material and wound source contracts
+        run: |
+          cp tools/wasm-compile/global.json global.json
+          dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --source-limb-interior
+          dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --character-systems
