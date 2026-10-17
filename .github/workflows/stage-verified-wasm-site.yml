@@ -1,5 +1,8 @@
 name: Stage verified original WASM site for iPhone preview
 on:
+  push:
+    branches: [preview/wasm-current-iphone]
+    paths: [.github/workflows/stage-verified-wasm-site.yml]
   workflow_dispatch:
 permissions:
   contents: write
@@ -19,11 +22,11 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p /tmp/verified-site-artifact /tmp/verified-site
-          test "$(gh run view 38998115604 --repo "$GITHUB_REPOSITORY" --json conclusion --jq .conclusion)" = success
-          gh run download 38998115604 --repo "$GITHUB_REPOSITORY" --name crisis-response-arm-sequences-private-wasm-site --dir /tmp/verified-site-artifact
+          test "$(gh run view 39070715359 --repo "$GITHUB_REPOSITORY" --json conclusion --jq .conclusion)" = success
+          gh run download 39070715359 --repo "$GITHUB_REPOSITORY" --name crisis-response-arm-sequences-private-wasm-site --dir /tmp/verified-site-artifact
           test -s /tmp/verified-site-artifact/crisis-response-private-wasm-site.tar.gz
           tar -xzf /tmp/verified-site-artifact/crisis-response-private-wasm-site.tar.gz -C /tmp/verified-site
-          test "$(python3 -c "import json;print(json.load(open('/tmp/verified-site/build-manifest.json'))['sourceCommit'])")" = a3e792744b590502b9c8af1c98ed0bd7d84b8702
+          test "$(python3 -c "import json;print(json.load(open('/tmp/verified-site/build-manifest.json'))['sourceCommit'])")" = c18be8f8c86804f98550562d8646347ed959b1db
           git fetch --no-tags origin develop/wasm
           git show origin/develop/wasm:scripts/package_wasm_site.py > /tmp/verify-site.py
           python3 /tmp/verify-site.py verify /tmp/verified-site
@@ -41,5 +44,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git diff --cached --quiet && exit 0
-          git commit -m 'Stage verified original projectile combat WASM for iPhone'
+          git commit -m 'Stage verified 2026-10-17 NPC Blackboard WASM for iPhone'
           git push origin HEAD:preview/wasm-current-iphone
