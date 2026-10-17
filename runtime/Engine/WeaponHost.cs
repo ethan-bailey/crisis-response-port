@@ -149,8 +149,31 @@ public sealed class WeaponHost {
    if(!float.IsFinite(morale)||!float.IsFinite(aggression)||!float.IsFinite(fear)||
       !float.IsFinite(blindFireDistance))throw new InvalidDataException("Invalid original Occupant blackboard");
   }
+  // Original Occupant.SpawnSandboxCharacter physiology values, validated before
+  // allocating the authored rigidbody graph. Absent records retain the legacy
+  // source-prefab inspection path; partial payloads must fail closed.
+  bool hasSourcePhysiology=p.TryGetProperty("sourcePhysiology",out var sourcePhysiology);
+  float fitness=0f,shockResistance=0f,shockRecovery=0f;
+  if(hasSourcePhysiology){
+   if(sourcePhysiology.ValueKind!=JsonValueKind.Object||
+      !sourcePhysiology.TryGetProperty("fitness",out var fit)||
+      !sourcePhysiology.TryGetProperty("shockResistance",out var resistance)||
+      !sourcePhysiology.TryGetProperty("shockRecovery",out var recovery))
+    throw new InvalidDataException("Incomplete original Occupant physiology");
+   fitness=fit.GetSingle();shockResistance=resistance.GetSingle();shockRecovery=recovery.GetSingle();
+   if(!float.IsFinite(fitness)||fitness<0f||fitness>1f||
+      !float.IsFinite(shockResistance)||shockResistance<0f||shockResistance>1f||
+      !float.IsFinite(shockRecovery)||shockRecovery<.1f||shockRecovery>1f)
+    throw new InvalidDataException("Invalid original Occupant physiology");
+  }
   world.MakeCurrent();
   var occupant=new OriginalOccupantPrefab(physics,limbs,world);
+  if(hasSourcePhysiology){
+   var physiologicalState=occupant.Character.SourcePhysiology;
+   physiologicalState.fitness=fitness;
+   physiologicalState.ShockResistance=shockResistance;
+   physiologicalState.ShockRecovery=shockRecovery;
+  }
   if(hasSourceState){
    var b=occupant.Character.Blackboard;
    b.morale=morale;b.aggression=aggression;b.fear=fear;
@@ -164,6 +187,11 @@ public sealed class WeaponHost {
   var actualBlackboard=occupant.Character.Blackboard;
   return new {index=sourceOccupants.Count-1,position=new[]{pos.x,pos.y,pos.z},
    sourceWeaponSkill=actualBlackboard.weaponSkill,
+   sourcePhysiology=hasSourcePhysiology?new {
+    occupant.Character.SourcePhysiology.fitness,
+    occupant.Character.SourcePhysiology.ShockResistance,
+    occupant.Character.SourcePhysiology.ShockRecovery
+   }:null,
    sourceBlackboard=hasSourceState?new {
     actualBlackboard.morale,actualBlackboard.aggression,actualBlackboard.fear,
     actualBlackboard.blindFireDistance,
