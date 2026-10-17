@@ -1,4 +1,5 @@
 name: Recover source limb TextureImporter properties
+# Preserve native Unity lowercase wrapMode textureSettings fields, avoiding guessed wrap parity.
 on:
   push:
     branches: [feature/source-limb-texture-importers]
