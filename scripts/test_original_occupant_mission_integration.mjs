@@ -34,7 +34,10 @@ for(const prepareSourceRecord of [
  record=>({...record,sourceData:{...record.sourceData,bodyPrefab:'Operator'}}),
  async record=>record,
  record=>{record.position[0]+=1;return record;},
- record=>{record.sourceData.bodyPrefab='Operator';return record;}
+ record=>{record.sourceData.bodyPrefab='Operator';return record;},
+ record=>({...record,sourceWeight:999}),
+ record=>({...record,patrolAreaLeft:record.patrolAreaLeft+1}),
+ record=>{record.walkableAreaRight+=1;return record;}
 ]) {
  let actorCalls=0;
  await assert.rejects(spawnOriginalMissionOccupants({...base,prepareSourceRecord,
