@@ -64,8 +64,7 @@ texture's wrap behavior. GPU blood particle/stream emission and the full origina
 MuscleControl/body-state dependency graph remain incomplete.
 
 The browser diagnostic endpoint refuses to run after presentation or weapons
-have initialized, avoiding accidental reset of an active game clock/world. No
-new iPhone preview has been deployed from this checkpoint. PR #57 (IK), #42
+have initialized, avoiding accidental reset of an active game clock/world. The updated protected iPhone preview is recorded in the verified release section below. PR #57 (IK), #42
 (complete CharacterBody), and #7 (Unity) remain separate; this PR stays draft.
 
 Rollback the changed combat/flight methods, physiology ordering and Mathf adapter
@@ -94,3 +93,49 @@ The final injury fixture selects original Torso LimbRenderer transform
 and its alpha-derived initial damage channel. Geometry placement is still a
 controlled diagnostic, not a live NPC. A source equivalence check also covers
 original IsCompliant getter/setter timing rather than an instantaneous flag.
+
+## Exact live dependencies still requiring original execution
+
+`IOriginalCharacterHitEffects` must bind actual recovered systems. In particular,
+Mission.FirstInjuryTimestamp writes only while its backing value is zero; a raw
+float assignment is not a production replacement. CharacterAudio.Hurt uses the
+original samples, delay/cooldown, consciousness condition and AudioPropagator.
+InvokeBulletTimeOnHit calls TimeScaler with source player/computer settings.
+ShowStabilizeMarker uses original mission/occupant state and marker assets.
+DropWeapons(bool attachToRagdoll) includes source equipment, dead-grip,
+weapon-physics and original IK callbacks; recording an event is insufficient.
+
+The original CharacterBody.SetRagdoll additionally checks WeaponDropTime,
+disables the target, starts a readied grenade fuse and invokes each source
+Limb.OnBecomeRagdoll before EventRagdoll. SetUnconscious stops voice audio and
+releases grab joints. Full Physiology.SetCharacterState also runs MuscleControl
+spasms, recovery and death responses. Existing subset release/impulse tests do
+not establish this complete graph.
+
+The original Limb.HandleExit may create an additional exit wound inside its
+useWoundDecals branches. Those branches consume source renderer/RNG operations;
+do not copy only an exit-wound formula and silently skip its dependencies. The
+live source damage-texture/renderer path, associated wound streams/particles and
+source organ/nerve responses are still required for complete wound propagation.
+Actual mission NPC loading and original behavior-tree initialization must also
+be connected; a synthetic target inserted at an arbitrary position is not the
+requested original game integration.
+
+
+## Verified build and iPhone preview
+
+- Tested gameplay/source SHA: `a3e792744b590502b9c8af1c98ed0bd7d84b8702`.
+- Full [Actions run 38998115604](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38998115604): SUCCESS. Native contracts, all seven combat source members, seven native and Chromium/WebKit injury contracts using original Torso skin, existing gameplay/input/weapon/PhysX smoke and package validation passed. 50 source/input regressions and 12 package integrity tests passed. Physical iPhone Safari remains untested.
+- Evidence artifact `12088152433`; private site artifact `12087928555`; retained until 2026-11-16. Both final browser injury results explicitly report `originalTorsoSkin=true` and `liveNpcGameplay=false`.
+- Package verifies 742 indexed files, 199 Blazor resources and 195 WASM files.
+- [Staging run 38998497740](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38998497740): SUCCESS; verified artifact reused without rebuilding. Snapshot Git SHA `d6122e004d66a7d80746d24bba06ebc60475e92b`; staged build-manifest sourceCommit independently read back and matched the tested source SHA.
+- Vercel preview `dpl_HJk265kAiwBra1A8JypKZyQmJ4QF`: READY, project `prj_EgsDBXSKhvina2fDecbdMf6ylTKE`, exact snapshot SHA confirmed in deployment metadata and stable alias. Project SSO protection remains enabled. Git auto-deploy remains disabled and the staging workflow was restored to manual-only after success.
+- Stable device-test URL: https://crisis-response-port-git-preview-w-6bd30d-ethanbaileymarsh-8332.vercel.app/game/
+- Both final browser gameplay tests pass. The final WebKit screenshot was visually inspected: original hands visible, original magazine displays 29 available rounds for 28 magazine + 1 chamber, and mobile joystick/buttons remain intact.
+- Independent protected HTTP fetch could not complete: the Vercel connector returned 403 at `read_protection_bypass` (deployment aliases endpoint). Do not label this a successful remote HTTP/browser or physical iPhone acceptance test. Deployment READY/source/alias/SSO checks and localhost browser proof are available; no protection setting was loosened and no repeated unauthenticated retry was performed.
+
+All ten requested tasks are **not complete**. Live target queries, actual NPC
+loading, complete source hit-effects capabilities, wound exit/rendering and the
+full source ragdoll/MuscleControl graph remain unfinished. Keep PR #56 draft and
+all 19 live limb query colliders gated. The runtime/source improvements and
+verified preview above do not establish complete gameplay or native Unity parity.
