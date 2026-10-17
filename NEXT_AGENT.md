@@ -1,4 +1,13 @@
 # NEXT AGENT — Crisis Response Port
+
+## 2026-10-17 five-step source NPC spawn integrity continuation
+- `ba9c6e8`: reject invalid Unity RNG outputs, nonboolean original ballistic mask raycasts, invalid obstacle settings or spawn-area fields before NPC creation.
+- `e5147ca`: prevalidate every enabled authored NPC record across groups before invoking the first native spawn callback, preventing partial registration due to a malformed later entry.
+- `ccde9bb`: regressions for RNG, collision query and group preflight in `scripts/test_original_occupant_spawn.mjs`.
+- `7fb40ed`: preserve original authored Marksman area reverse-Z endpoints (several source areas intentionally serialize zMin > zMax). Initial focused CI correctly exposed this; corrected focused mission bridge run **39079694418 SUCCESS**.
+- `0a108e0`: requested full WASM/native/Chromium/WebKit rebuild **39079729107**; check final result before asserting success. Do not redeploy current stable iPhone preview before new executable passes.
+- Next functional dependencies remain authoritative source Global.Context/OccupantSettings and equipment extraction, true Unity RNG and ballistic collision queries at runtime, original automatic mission startup and AI. The validated adapter alone is not live NPC auto-spawning.
+
 ## 2026-10-17 native NPC physiology integration (five-step continuation)
 - Source-physiology write: [`39de164`](https://github.com/ethan-bailey/crisis-response-port/commit/39de16431bca9579623b8f7b715a1a5e754af57f) now applies original `fitness`, `ShockResistance`, `ShockRecovery` directly to each instantiated `OriginalOccupantPrefab.Character.SourcePhysiology`, rejecting incomplete/non-finite/out-of-bounds values before allocating native graph. Optional for backward-compatible source-prefab smoke.
 - Browser bridge: [`4cdf569`](https://github.com/ethan-bailey/crisis-response-port/commit/4cdf569a96a14b8d08cbd026c1167a61565c5351) carries original computed physiology into `SpawnOriginalOccupant` and asserts actual returned state before committing a rendered NPC.
