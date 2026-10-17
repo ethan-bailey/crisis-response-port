@@ -166,6 +166,43 @@ namespace Crisis.Runtime.Weapons {
    commands.Clear();
   }
 
+  // Attach original LimbTextureData green coverage to the actual rendered
+  // developer-authored limb visual Transform. The exact source visual IDs and
+  // texture SHA payloads are not replaceable with capsule silhouettes.
+  // This does NOT yet enable Projectile.HandleLimbHit or dynamic blood masks.
+  public void BindOriginalSkinCoverage(JsonElement sourceMasks){
+   if(sourceMasks.GetProperty("format").GetString()!="crisis-original-limb-initial-damage-green-v1"
+     ||sourceMasks.GetProperty("sourceManifestSha256").GetString()!="c93d90610a6db65edf4304bf82b590bc35dc56e5d7580899a511c10ef4c416f6")
+    throw new InvalidDataException("Original limb skin source identity mismatch");
+   if(sourceMasks.GetProperty("originalTextureCount").GetInt32()!=11||
+      sourceMasks.GetProperty("originalRendererCount").GetInt32()!=17)
+    throw new InvalidDataException("Incomplete source LimbRenderer skin inventory");
+   var byVisual=authoredLimbs.ToDictionary(
+     p=>p.Value.GetProperty("sourceFields").GetProperty("Limb")
+       .GetProperty("visual").GetProperty("fileID").GetString(),
+     p=>runtimeLimbs[p.Key]);
+   var matched=new HashSet<string>();
+   foreach(var skin in sourceMasks.GetProperty("skins").EnumerateArray()){
+    var width=skin.GetProperty("width").GetInt32();
+    var height=skin.GetProperty("height").GetInt32();
+    var green=Convert.FromBase64String(
+      skin.GetProperty("originalStaticDamageGreenBottomUpBase64").GetString());
+    foreach(var renderer in skin.GetProperty("sourceRenderers").EnumerateArray()){
+     var visualId=renderer.GetProperty("transformFileID").GetString();
+     if(!matched.Add(visualId))
+      throw new InvalidDataException("Duplicate source LimbRenderer visual");
+     if(!byVisual.TryGetValue(visualId,out var limb)||
+       !transforms.TryGetValue(visualId,out var originalVisual))
+      throw new InvalidDataException("Original LimbRenderer visual not connected to live character: "+visualId);
+     var sourceLimb=authoredLimbs[limb.id].GetProperty("sourceFields").GetProperty("Limb");
+     if(sourceLimb.GetProperty("limbRenderer").GetProperty("fileID").GetString()=="0")
+      throw new InvalidDataException("Cannot synthesize a missing source hand LimbRenderer");
+     limb.SourceSkinTrace=new OriginalLimbSkinTrace(originalVisual,width,height,green);
+    }
+   }
+   if(matched.Count!=17||body.limbs.Count(l=>l.SourceSkinTrace!=null)!=17)
+    throw new InvalidDataException("Failed to bind all 17 actual original limb skin renderers");
+  }
   // Invoke after the real CharacterBody has initialized original Physiology.
   // These settings are taken from the actual serialized Unity LimbPhysiology and
   // LimbMuscle MonoBehaviours, including source-absent hand components.

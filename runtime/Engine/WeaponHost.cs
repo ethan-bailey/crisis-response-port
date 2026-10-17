@@ -161,6 +161,8 @@ public sealed class WeaponHost {
   body.rightArm=Arm(true);body.leftArm=Arm(false);
   var limbSource=c.TryGetProperty("sourceLimbComponents",out var limbConfiguration)?limbConfiguration:default;
   armPhysics=new OriginalArmPhysicsHost(c.GetProperty("armPhysics"),operatorTransforms,body,world,limbSource);
+  if(c.TryGetProperty("sourceSkinMasks",out var actualOriginalSkinMasks))
+   armPhysics.BindOriginalSkinCoverage(actualOriginalSkinMasks);
   reload=bg.AddComponent<ChangeMagazine>();reload.isPlayer=true;reload.OnAwake();workBolt=bg.AddComponent<WorkBolt>();workBolt.OnAwake();effects.events.Clear();
  }
  public void BindOriginalLimbPhysiology()=>armPhysics.BindOriginalPhysiology();
@@ -193,6 +195,7 @@ public sealed class WeaponHost {
    WoundVolume=body.limbs.Sum(l=>l.LimbPhysiology?.WoundCavityVolume??0f),
    Hemorrhaging=body.limbs.Sum(l=>l.LimbPhysiology?.InternalHemorrhaging??0f),
    limbCount=body.limbs.Count,
+   originalSkinRenderers=body.limbs.Count(l=>l.SourceSkinTrace!=null),
    originalOrganGroups=body.limbs.Count(l=>l.SourceVitals!=null),
    originalOrgans=body.limbs.Sum(l=>l.SourceVitals?.Functions.Count??0),
    body.SourcePhysiology.Paralyzed,body.Kinematic,body.CrippledRatio},ballistics=Ballistics?.Snapshot(),magazinePose=new{p=new[]{mp.x,mp.y,mp.z},q=new[]{mq.x,mq.y,mq.z,mq.w},visible=weapon.ComponentMagazine.gameObject.activeSelf},shots=body.ShotsFired,
