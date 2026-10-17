@@ -1,0 +1,37 @@
+name: Original limb projectile-entry source boundary
+on:
+  push:
+    branches: [feature/original-limb-ballistic-entry-source]
+    paths: [.github/workflows/original-limb-entry-source.yml]
+permissions: {contents: read}
+jobs:
+  original-entry:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: tools/wasm-compile/global.json
+      - name: Compile and run authentic Limb armor/entry contract
+        run: |
+          cp tools/wasm-compile/global.json global.json
+          dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --limb-ballistic-entry
+      - name: Source provenance and safe collision gating
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          original=Path('source-reference/Original/CharacterExecution/Limb.cs').read_text()
+          runtime=Path('runtime/Original/Weapons/LimbBallisticEntry.cs').read_text()
+          for law in [
+            'float num = energy - projectile.Energy;',
+            'Armor.Test(projectile, entry: true);',
+            'LimbPhysiology.AddShock(num);',
+            'projectile.DisplacedMaterialVolume',
+          ]:
+            assert law in original and law in runtime, law
+          host=Path('runtime/Engine/OriginalArmPhysicsHost.cs').read_text()
+          assert 'capsule.enabled=false' in host
+          assert 'SourceLimbProjectileContactsActive' in host
+          print('Original limb source laws and disabled collision gate: pass')
+          PY
