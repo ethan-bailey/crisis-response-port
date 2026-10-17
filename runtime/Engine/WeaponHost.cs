@@ -34,7 +34,7 @@ public class Hand:global::Hand {
 }
 public partial class Limb:BallisticMaterial {public CharacterBody Body;}
 public class WeaponArmConfiguration {public Hand.Mode rightHandMode,leftHandMode;public float rightHandAngle,leftHandAngle;}
-public class Blackboard {public float weaponSkill;}
+public class Blackboard {public float weaponSkill; public float morale,aggression,fear,blindFireDistance; public bool WillBlindFire,negotiable;}
 public partial class CharacterBody:Component {
  public enum CharacterAction{None,SwitchMagazine,WorkBolt}
  public Blackboard Blackboard=new(){weaponSkill=1};public Equipment Equipment;public WeaponBase ActiveWeapon;
@@ -134,8 +134,28 @@ public sealed class WeaponHost {
     throw new InvalidDataException("Original Occupant weapon skill invalid");
    sourceWeaponSkill=skill;
   }
+  // Original OccupantSpawner assigns these values to CharacterBody.Blackboard.
+  // Require complete state if any of the source personality properties are sent.
+  string[] sourceFields={"morale","aggression","fear","blindFireDistance","willBlindFire","negotiable"};
+  bool hasSourceState=sourceFields.Any(pName=>p.TryGetProperty(pName,out _));
+  float morale=0,aggression=0,fear=0,blindFireDistance=0;
+  bool willBlindFire=false,negotiable=false;
+  if(hasSourceState){
+   foreach(var name in sourceFields)
+    if(!p.TryGetProperty(name,out _))throw new InvalidDataException("Incomplete original Occupant blackboard: "+name);
+   morale=p.GetProperty("morale").GetSingle();aggression=p.GetProperty("aggression").GetSingle();
+   fear=p.GetProperty("fear").GetSingle();blindFireDistance=p.GetProperty("blindFireDistance").GetSingle();
+   willBlindFire=p.GetProperty("willBlindFire").GetBoolean();negotiable=p.GetProperty("negotiable").GetBoolean();
+   if(!float.IsFinite(morale)||!float.IsFinite(aggression)||!float.IsFinite(fear)||
+      !float.IsFinite(blindFireDistance))throw new InvalidDataException("Invalid original Occupant blackboard");
+  }
   world.MakeCurrent();
   var occupant=new OriginalOccupantPrefab(physics,limbs,world);
+  if(hasSourceState){
+   var b=occupant.Character.Blackboard;
+   b.morale=morale;b.aggression=aggression;b.fear=fear;
+   b.blindFireDistance=blindFireDistance;b.WillBlindFire=willBlindFire;b.negotiable=negotiable;
+  }
   if(sourceWeaponSkill.HasValue)occupant.Character.Blackboard.weaponSkill=sourceWeaponSkill.Value;
   occupant.Character.transform.position=pos;
   if(config.TryGetProperty("sourceLimbBallistics",out var ballistics)&&Ballistics!=null)
