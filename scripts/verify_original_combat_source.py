@@ -11,7 +11,7 @@ def method(text,signature):
 def norm(text):return '\n'.join(line.strip() for line in text.strip().splitlines() if line.strip())
 source=(R/'source-reference/Original/CharacterBody.cs').read_text()
 runtime=(R/'runtime/Original/Weapons/CharacterCombatNotifications.cs').read_text()
-for sig in ['public bool CanSeePosition(float position)','public void OnSuccessfulAttack(CharacterBody victim, int projectileId)','public void OnWasAttacked(Projectile projectile)']:
+for sig in ['public bool CanSeePosition(float position)','public void OnSuccessfulAttack(CharacterBody victim, int projectileId)','public void OnWasAttacked(Projectile projectile)','public bool IsCompliant\n']:
  assert norm(method(source,sig))==norm(method(runtime,sig)),sig
 sig='public void OnWasHit(Projectile projectile)';hit=method(source,sig)
 substitutions={'Mission.FirstInjuryTimestamp':'hitEffects.FirstInjuryTimestamp','InvokeBulletTimeOnHit();':'hitEffects.InvokeBulletTimeOnHit(IsPlayer);','Physiology.HemorrhagingScore()':'HemorrhagingScore()','Mission.AllRoomsChecked':'hitEffects.AllRoomsChecked','Mission.Occupants != null':'hitEffects.HasOccupants','Mission.Occupants.AllRenderedSafe':'hitEffects.AllOccupantsRenderedSafe','Global.Context.Settings.General.showInteractionMarkers':'hitEffects.ShowInteractionMarkers','ShowStabilizeMarker(true);':'hitEffects.ShowStabilizeMarker(true);','Audio.Hurt(':'hitEffects.Hurt(','DropWeapons(false);':'hitEffects.DropWeapons(false);','Audio.VoicePlaying':'hitEffects.VoicePlaying'}
@@ -28,4 +28,4 @@ assert hashlib.sha256(original).hexdigest()==manifest['files']['CharacterScoreCa
 runtime=(R/'runtime/Original/Weapons/CharacterScoreCard.cs').read_text()
 assert norm(original.decode())==norm(runtime[runtime.index('public class CharacterScoreCard'):])
 assert manifest['liveBindingsComplete'] is False
-print(json.dumps({'originalCombatMethods':'PASS','sourceMethods':6,'liveBindingsComplete':False}))
+print(json.dumps({'originalCombatMethods':'PASS','sourceMethods':7,'liveBindingsComplete':False}))

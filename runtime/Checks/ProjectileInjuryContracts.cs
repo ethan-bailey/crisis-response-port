@@ -31,11 +31,11 @@ sealed class MarksmanAttackObserver : Component,IOriginalMarksmanAttack {
 public static class ProjectileInjuryContracts {
  static readonly MethodInfo handle=typeof(Projectile).GetMethod("HandleLimbHit",BindingFlags.Instance|BindingFlags.NonPublic);
  static void Check(bool b,string s){if(!b)throw new Exception(s);}
- static BallisticResult Hit(Projectile p,Limb l){
-  try{return (BallisticResult)handle.Invoke(p,new object[]{new RaycastHit{collider=l.GetComponent<BoxCollider>(),point=l.transform.position+new Vector3(.1f,.1f,-.01f),normal=new Vector3(-1f,0f,0f)}});}
+ static BallisticResult Hit(Projectile p,Limb l,Vector3? hitPoint=null){
+  try{return (BallisticResult)handle.Invoke(p,new object[]{new RaycastHit{collider=l.GetComponent<BoxCollider>(),point=hitPoint??(l.transform.position+new Vector3(.1f,.1f,-.01f)),normal=new Vector3(-1f,0f,0f)}});}
   catch(TargetInvocationException e){throw e.InnerException;}
  }
- public static string Run(string weaponJson=null,string materialJson=null){
+ public static string Run(string weaponJson=null,string materialJson=null,string skinJson=null){
   var passed=new List<string>();
   var world=new RuntimeWorld();
   // An empty second world advances the shared source clock without running
@@ -123,11 +123,14 @@ public static class ProjectileInjuryContracts {
   // Actual source scorecard formula: compliant first hit .1, rapid next hit
   // .1 * (.2 / 2); stray halves the latter. Facing/range are original logic.
   var penaltyTarget=Actor("compliant target",out var penaltyEffects);penaltyTarget.IsCompliant=true;
+  Check(!penaltyTarget.IsCompliant,"Source compliance must retain its half-second reaction margin");
+  for(int i=0;i<30;i++)Advance();
+  Check(penaltyTarget.IsCompliant,"Source compliance did not settle after the reaction margin");
   var penalty=Shot(19);penalty.transform.position=new Vector3(-2f,0f,0f);
   penaltyTarget.OnWasAttacked(penalty);
   penalty.IsStray=true;penaltyTarget.OnWasAttacked(penalty);
   Check(Math.Abs(penaltyTarget.ScoreCard.Compliant-.105f)<1e-6f&&penaltyTarget.ScoreCard.CompliantCount==2&&penaltyTarget.ScoreCard.UncheckedCount==2,"Source score penalties/visibility/burst modifier mismatch");
-  passed.Add("Original scorecard visibility, compliant penalties, burst and stray modifiers");
+  passed.Add("Original compliance timing, scorecard visibility, penalties, burst and stray modifiers");
   // Verify the query skips owner colliders and still returns nearest eligible
   // limb, respecting masks. This queries real adapter geometry, not a hit stub.
   selfTorso.transform.position=new Vector3(1f,0f,0f);torso.transform.position=new Vector3(2f,0f,0f);otherTorso.transform.position=new Vector3(3f,0f,0f);
@@ -136,14 +139,29 @@ public static class ProjectileInjuryContracts {
   Check((bool)query.Invoke(projectile,queryArgs)&&((RaycastHit)queryArgs[1]).collider.GetComponent<Limb>()==torso,"Owner filtering lost nearest distinct target");
   queryArgs[3]=1<<14;Check(!(bool)query.Invoke(projectile,queryArgs),"Flight query ignored layer mask");
   passed.Add("Nearest real non-owner collision and layer-mask exclusion");
-  // Marksman path exercises source internal thickness and real tissue math;
-  // this deterministic full mask is a fixture, not a replacement game asset.
+  // Marksman path exercises authored depth and real recovered Torso PNG alpha.
+  // Actor placement remains a controlled fixture, not a live mission target.
   var penetrating=Shot(20);var marksman=new GameObject("diagnostic marksman notification observer",world).AddComponent<MarksmanAttackObserver>();penetrating.MarksmanOwner=marksman;
   var injuryTarget=Actor("source wound target",out var injuryEffects);var injuryTorso=Torso(injuryTarget);
-  injuryTorso.SourceSkinTrace=new OriginalLimbSkinTrace(new GameObject("fixture full skin",world).transform,32,32,Enumerable.Repeat((byte)0,1024).ToArray());
+  if(skinJson==null){
+   using var sf=File.OpenRead("game/assets/operator/original-source-limb-damage-mask.json.gz");
+   using var sg=new System.IO.Compression.GZipStream(sf,System.IO.Compression.CompressionMode.Decompress);
+   using var sr=new StreamReader(sg);skinJson=sr.ReadToEnd();
+  }
+  using var masks=JsonDocument.Parse(skinJson);
+  var skin=masks.RootElement.GetProperty("skins").EnumerateArray().Single(s=>
+   s.GetProperty("sourceRenderers").EnumerateArray().Any(r=>r.GetProperty("transformFileID").GetString()=="4617365563186364"));
+  // Exact recovered Operator Torso renderer ID and original PNG SHA256.
+  Check(skin.GetProperty("sha256").GetString()=="b361dfbd06cc0d25ef057ca7b30d8367abb47f3f4acd78bbdf5c93ab1d590a5f","Wrong original Torso skin asset");
+  int sw=skin.GetProperty("width").GetInt32(),sh=skin.GetProperty("height").GetInt32();
+  var green=Convert.FromBase64String(skin.GetProperty("originalStaticDamageGreenBottomUpBase64").GetString());
+  var solid=Enumerable.Range(0,green.Length).Where(i=>green[i]==0)
+   .OrderBy(i=>Math.Abs(i%sw-sw/2)+Math.Abs(i/sw-sh/2)).First();
+  var sourceHit=new Vector3((solid%sw+.5f)/sw-.5f,(solid/sw+.5f)/sh-.5f,0f);
+  injuryTorso.SourceSkinTrace=new OriginalLimbSkinTrace(new GameObject("recovered Torso skin fixture plane",world).transform,sw,sh,green);
   var forces=new List<ForceMode>();injuryTorso.Rigidbody.PhysicsForceSink=(force,point,mode)=>forces.Add(mode);
   int unconscious=0,death=0,ragdoll=0;injuryTarget.EventUnconscious.AddListener(()=>unconscious++);injuryTarget.EventDeath.AddListener(()=>death++);injuryTarget.EventRagdoll.AddListener(()=>ragdoll++);
-  float beforeEnergy=penetrating.Energy;Hit(penetrating,injuryTorso);
+  float beforeEnergy=penetrating.Energy;Hit(penetrating,injuryTorso,sourceHit);
   Check(penetrating.Energy<beforeEnergy&&injuryTorso.LimbPhysiology.WoundCavityVolume>0f&&injuryTorso.LimbPhysiology.Wounds.Count==1&&marksman.Calls==1,"Original M4 energy-to-source-wound chain failed");
   var pstate=injuryTarget.SourcePhysiology;float blood=pstate.BloodVolume,oxygen=pstate.BloodOxygen;
   float now=Time.time;
@@ -162,6 +180,6 @@ public static class ProjectileInjuryContracts {
    "Hemorrhage must precede original oxygen/consciousness evaluation in the same frame");
   Check(Mathf.Clamp(-1f,0f,-2f)==0f&&Mathf.Clamp(1f,0f,-2f)==-2f,"Unity inverted-bound clamp semantics differ");
   passed.Add("Unity clamp and source same-frame hemorrhage/oxygen/state update ordering");
-  return JsonSerializer.Serialize(new{status="PASS",contracts=passed,liveNpcGameplay=false,sourceSkinFixture=true});
+  return JsonSerializer.Serialize(new{status="PASS",contracts=passed,liveNpcGameplay=false,sourceSkinFixture=true,originalTorsoSkin=true});
  }
 }

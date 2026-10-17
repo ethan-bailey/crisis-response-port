@@ -14,9 +14,9 @@ await builder.Build().RunAsync();
 
 public static class RuntimeBridge {
     // Run on an isolated diagnostic page before initializing gameplay.
-    [JSInvokable] public static string VerifyProjectileInjuryChain(string weaponJson,string materialJson){
+    [JSInvokable] public static string VerifyProjectileInjuryChain(string weaponJson,string materialJson,string skinJson){
         if(weapons!=null||presentation!=null)throw new InvalidOperationException("Injury diagnostics require an isolated runtime page");
-        return ProjectileInjuryContracts.Run(weaponJson,materialJson);
+        return ProjectileInjuryContracts.Run(weaponJson,materialJson,skinJson);
     }
     [JSInvokable] public static string ComposeOriginalArmSequences(string bundle,string namesJson)=>OriginalArmSequences.Compose(bundle,namesJson);
     [JSInvokable] public static string VerifyOriginalHandModes()=>OriginalHandModes.Run();

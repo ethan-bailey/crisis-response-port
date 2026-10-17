@@ -7,7 +7,7 @@
   },
   "mapping": {
     "CharacterScoreCard": "namespace only; unchanged original body",
-    "CharacterBody": "CanSeePosition, OnSuccessfulAttack, OnWasAttacked exact; OnWasHit redirects Mission/Audio/UI/Time/DropWeapons calls to required capability interface",
+    "CharacterBody": "IsCompliant (including source reaction windows), CanSeePosition, OnSuccessfulAttack, OnWasAttacked exact; OnWasHit redirects Mission/Audio/UI/Time/DropWeapons calls to required capability interface",
     "Projectile": "RecordAttackInfo: MarksmanOwner call uses required typed source capability"
   },
   "liveBindingsComplete": false

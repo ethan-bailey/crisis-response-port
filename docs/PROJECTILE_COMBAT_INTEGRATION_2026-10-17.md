@@ -7,7 +7,7 @@ Roslyn; no compiler fix was necessary. The source had unbound runtime callbacks.
 ## Executed original behavior
 
 - `Projectile.RecordAttackInfo`, `CharacterBody.OnSuccessfulAttack`,
-  `OnWasAttacked`, `CanSeePosition` and original `CharacterScoreCard` now execute.
+  `OnWasAttacked`, `CanSeePosition` and original `CharacterScoreCard` now execute. Original IsCompliant reaction windows are retained, including the half-second compliance delay.
 - `OnWasHit` retains its complete original conditions and order, with required
   mission, bullet-time, audio, marker and weapon-drop capabilities at their engine
   boundary. They are **not installed in live gameplay**. Tests use explicit
@@ -37,8 +37,8 @@ Locally compiled runtime + native checks with .NET SDK 8.0.130 Roslyn targeting
 mandatory preflight, owner exclusion, source notifications/events, first-hit and
 swarm accounting, score penalties, query masks, and the original ammunition to
 cavity/wound/circulation/hypoxia/unconsciousness/death sequence. The latter uses
-actual recovered M4 ammunition and authored flesh properties, a deterministic
-full-skin marksman fixture, distinct source CharacterBody instances, and an
+actual recovered M4 ammunition and authored flesh properties, the SHA-pinned recovered
+Operator Torso PNG alpha mask in a controlled marksman fixture, distinct source CharacterBody instances, and an
 observed rigidbody force boundary. It is **not a live NPC gameplay test or a
 native-Unity ragdoll parity comparison**.
 
@@ -87,3 +87,10 @@ had already changed to Behaviour for ragdoll-enabled state. Update the generator
 and provenance hash for that explicit engine inheritance adaptation, keeping all
 selected original method bodies intact. Source verification now uses pipefail
 so a stale individual check cannot be hidden by a subsequent successful check.
+
+The final injury fixture selects original Torso LimbRenderer transform
+`4617365563186364`, skin PNG SHA256
+`b361dfbd06cc0d25ef057ca7b30d8367abb47f3f4acd78bbdf5c93ab1d590a5f`,
+and its alpha-derived initial damage channel. Geometry placement is still a
+controlled diagnostic, not a live NPC. A source equivalence check also covers
+original IsCompliant getter/setter timing rather than an instantaneous flag.

@@ -16,13 +16,30 @@ public interface IOriginalCharacterHitEffects {
  void InvokeBulletTimeOnHit(bool isPlayer);
  void ShowStabilizeMarker(bool show);
  void Hurt(float delay);
- void DropWeapons(bool doNotDropTriggerPulledWeapon);
+ void DropWeapons(bool attachToRagdoll);
 }
 public partial class CharacterBody {
  public OriginalPhysiologyConditions Physiology=>SourcePhysiology;
  public bool Conscious=>Physiology.Conscious;
  public bool IsRestrained {get;set;}
- public bool IsCompliant {get;set;}
+ bool isCompliant;
+ public float ComplianceStateTimestamp {get;set;}
+ public bool IsCompliant
+	{
+		get
+		{
+			float num = Time.time - ComplianceStateTimestamp;
+			return (isCompliant && num >= 0.5f) || (!isCompliant && num < 1f);
+		}
+		set
+		{
+			if (isCompliant != value)
+			{
+				ComplianceStateTimestamp = Time.time;
+			}
+			isCompliant = value;
+		}
+	}
  public bool IsOperator {get;private set;}
  public Transform Eye {get;private set;}
  public float VisibleRange {get;set;}
@@ -50,7 +67,7 @@ public partial class CharacterBody {
   hitEffects.ValidateBindings();
   // CharacterBody.Awake original initialization; do not reset at each shot.
   ScoreCard=new CharacterScoreCard(this);HitCount=new HashSet<int>();
-  LastHitTimestamp=-100f;LastAttackTimestamp=-100f;
+  LastHitTimestamp=-100f;LastAttackTimestamp=-100f;ComplianceStateTimestamp=-100f;
  }
  public void RequireOriginalCombat(bool victimHit){
   if(Physiology==null||ScoreCard==null||HitCount==null||Eye==null)

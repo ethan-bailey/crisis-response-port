@@ -16,10 +16,13 @@ for (const [name,engine] of [['chromium',chromium],['webkit',webkit]]) {
    const weapon=await new Response(source.body.pipeThrough(new DecompressionStream('gzip'))).text();
    const material=await fetch('/game/assets/original-limb-ballistic-materials.json');
    if(!material.ok)throw Error(`Original tissue material: ${material.status}`);
-   return JSON.parse(await window.runtimeCall('VerifyProjectileInjuryChain',weapon,await material.text()));
+   const skin=await fetch('/game/assets/operator/original-source-limb-damage-mask.json.gz');
+   if(!skin.ok)throw Error(`Original skin mask: ${skin.status}`);
+   const skinJson=await new Response(skin.body.pipeThrough(new DecompressionStream('gzip'))).text();
+   return JSON.parse(await window.runtimeCall('VerifyProjectileInjuryChain',weapon,await material.text(),skinJson));
   });
   assert.equal(result.status,'PASS');assert.equal(result.contracts.length,7);
-  assert.equal(result.liveNpcGameplay,false);assert.equal(result.sourceSkinFixture,true);
+  assert.equal(result.originalTorsoSkin,true);assert.equal(result.liveNpcGameplay,false);assert.equal(result.sourceSkinFixture,true);
   assert.deepEqual(errors,[]);evidence.push({browser:name,...result});
  }finally{await browser.close();}
 }
