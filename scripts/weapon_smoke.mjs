@@ -58,6 +58,19 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   assert.equal(handState.weaponState.sourcePhysiology?.Kinematic,true,
     'Original living Operator starts animator-controlled rather than ragdolled');
 
+  // True original-body spawn from a Mission 01 source-area position, not a
+  // hand-drawn dummy. The in-game bridge instantiates 20 C# source actors and
+  // 20 recovered Unity MeshRenderers with Unity-selected skin candidates.
+  const npc=await page.evaluate(()=>window.__originalNpcBridge.spawnFromOriginalRecord({
+    sourceData:{enabled:true,bodyPrefab:'Occupant',name:'Original source mission Occupant'},
+    position:[2,1,-1.5]
+  }));
+  assert.equal(npc.originalRendererCount,20,'All original Occupant source renderers must attach in playable game');
+  assert.equal(npc.originalLimbs,19,'Source NPC independent C# body and all 19 limbs must attach');
+  assert.equal(npc.sourceOnly,true,'Unfinished original AI/attack effects must not be represented as complete');
+  const npcState=await page.evaluate(()=>window.__originalNpcBridge.snapshot());
+  assert.equal(npcState.count,1,'Exactly one requested source NPC actor must be visible');
+  await page.screenshot({path:`original-occupant-in-game-${engine}.png`});
   assert.equal(handState.presentation.physicalArmState?.length,2);
   for(const arm of handState.presentation.physicalArmState){
    assert.equal(arm.chain.length,3,'Original three limb rigidbodies per arm');
