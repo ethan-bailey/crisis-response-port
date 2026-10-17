@@ -26,6 +26,20 @@ await assert.rejects(spawnOriginalMissionOccupants({...base,actorBridge:null}),/
 await assert.rejects(spawnOriginalMissionOccupants({...base,settings:null}),/requires original/);
 await assert.rejects(spawnOriginalMissionOccupants({...base,raycast:null}),/requires original/);
 await assert.rejects(spawnOriginalMissionOccupants({...base,campaign:{active:true,occupants:[{}]}}),/valid source prefab and position/);
+// An initialization adapter must only add source state; it cannot relocate
+// recovered mission characters or substitute a different prefab.
+for(const prepareSourceRecord of [
+ record=>({...record,position:[record.position[0]+1,...record.position.slice(1)]}),
+ record=>({...record,sourceScene:'Mission 01'}),
+ record=>({...record,sourceData:{...record.sourceData,bodyPrefab:'Operator'}}),
+ async record=>record
+]) {
+ let actorCalls=0;
+ await assert.rejects(spawnOriginalMissionOccupants({...base,prepareSourceRecord,
+  actorBridge:{spawnFromOriginalRecord(){actorCalls++;throw Error('actor must not spawn');}}
+ }),/preparation changed source|must return a synchronous source record/);
+ assert.equal(actorCalls,0);
+}
 console.log('PASS original mission spawn-to-WASM actor bridge and fail-closed source contracts');
 
 const originalSettings={minCount:3,maxCount:6,morale:{low:0,high:1},
