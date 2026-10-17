@@ -79,8 +79,9 @@ if(args.Contains("--character-systems")){
   var hit=new UnityEngine.Vector3(0f,normalizedSourceY,0f);
   var announced=new List<string>();
   vital.HitTest(12f,hit,hit,300f,name=>announced.Add(name));
+  float sourceBrainFactor=vital.Functions[0].Factor.Evaluate(.7f);
   if(announced.Count!=1||announced[0]!="Brain"||
-    MathF.Abs(anatomyBody.SourcePhysiology.BrainTrauma-12f)>1e-4f||
+    MathF.Abs(anatomyBody.SourcePhysiology.BrainTrauma-12f*sourceBrainFactor)>1e-4f||
     !anatomyBody.SourcePhysiology.ShouldLoseConsciousness())
    throw new Exception($"Original brain vital failure: names=[{string.Join(",",announced)}], trauma={anatomyBody.SourcePhysiology.BrainTrauma}, position={normalizedSourceY}, curve={vital.Functions[0].Factor.Evaluate(.7f)}, lost={anatomyBody.SourcePhysiology.ShouldLoseConsciousness()}");
   var p=anatomyBody.SourcePhysiology;
