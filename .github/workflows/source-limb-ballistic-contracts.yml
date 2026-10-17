@@ -1,4 +1,5 @@
 name: Verify original limb material armor and physics source
+# Recheck source ArmorClass and LimbArmor with their actual runtime namespace bridge.
 on:
   push:
     branches: [feature/original-projectile-limb-material-closure]
