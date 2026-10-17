@@ -144,7 +144,7 @@ async function load(){
   // original renderer materials. These remain unrendered until source parity.
   const particleSourceReady=loadOriginalParticleSources();
   const ballisticsReady=fetch("./assets/ballistics.json.gz").then(r=>{if(!r.ok)throw new Error("Original material settings unavailable");return new Response(r.body.pipeThrough(new DecompressionStream("gzip"))).json();}).then(data=>{ballisticsData=data;return JSON.stringify(data);});
-  const armPhysicsReady=json("./assets/original-arm-physics.json");
+  const armPhysicsReady=json("./assets/original-full-character-physics.json");
   const limbComponentsReady=json("./assets/original-character-limb-components.json");
   const weaponRuntimeReady=Promise.all([presentationRuntimeReady,weaponReady,armPhysicsReady,limbComponentsReady])
     .then(async([_,data,source,limbs])=>runtimeCall("InitializeWeapons",
