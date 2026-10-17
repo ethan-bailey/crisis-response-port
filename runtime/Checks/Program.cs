@@ -82,7 +82,7 @@ if(args.Contains("--character-systems")){
   if(announced.Count!=1||announced[0]!="Brain"||
     MathF.Abs(anatomyBody.SourcePhysiology.BrainTrauma-12f)>1e-4f||
     !anatomyBody.SourcePhysiology.ShouldLoseConsciousness())
-   throw new Exception("Original serialized brain vital curve/probability did not inflict true brain trauma");
+   throw new Exception($"Original brain vital failure: names=[{string.Join(",",announced)}], trauma={anatomyBody.SourcePhysiology.BrainTrauma}, position={normalizedSourceY}, curve={vital.Functions[0].Factor.Evaluate(.7f)}, lost={anatomyBody.SourcePhysiology.ShouldLoseConsciousness()}");
   var p=anatomyBody.SourcePhysiology;
   var torsoHeart=new Crisis.Runtime.Character.OriginalLimbPhysiology(p);
   var pressure=torsoHeart.bloodPressureModifier;
