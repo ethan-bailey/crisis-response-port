@@ -177,10 +177,21 @@ public static class ProjectileInjuryContracts {
    .OrderBy(i=>Math.Abs(i%sw-sw/2)+Math.Abs(i/sw-sh/2)).First();
   var sourceHit=new Vector3((solid%sw+.5f)/sw-.5f,(solid/sw+.5f)/sh-.5f,0f);
   injuryTorso.SourceSkinTrace=new OriginalLimbSkinTrace(new GameObject("recovered Torso skin fixture plane",world).transform,sw,sh,green);
+  var damageCalls=new List<(float Radius,float Depth,float Irregularity)>();
+  injuryTorso.SourceDrawDamage=(limb,point,radius,depth,irregularity)=>{
+   Check(limb==injuryTorso,"Source wound dispatched to wrong limb");
+   damageCalls.Add((radius,depth,irregularity));
+  };
   var forces=new List<ForceMode>();injuryTorso.Rigidbody.PhysicsForceSink=(force,point,mode)=>forces.Add(mode);
   int unconscious=0,death=0,ragdoll=0;injuryTarget.EventUnconscious.AddListener(()=>unconscious++);injuryTarget.EventDeath.AddListener(()=>death++);injuryTarget.EventRagdoll.AddListener(()=>ragdoll++);
   float beforeEnergy=penetrating.Energy;Hit(penetrating,injuryTorso,sourceHit);
   Check(penetrating.Energy<beforeEnergy&&injuryTorso.LimbPhysiology.WoundCavityVolume>0f&&injuryTorso.LimbPhysiology.Wounds.Count==1&&marksman.Calls==1,"Original M4 energy-to-source-wound chain failed");
+  Check(damageCalls.Count==3&&damageCalls[0].Depth==.8f&&
+    damageCalls[1].Depth>=.5f&&damageCalls[1].Depth<=.6f&&
+    damageCalls[2].Depth>=.2f&&damageCalls[2].Depth<=.4f&&
+    damageCalls.All(c=>c.Radius>0f&&c.Irregularity==.3f),
+    "Original source three-layer wound texture draw order or opacity lost");
+  passed.Add("Original projectile performs three developer-authored source wound draw calls with authentic random ranges");
   var pstate=injuryTarget.SourcePhysiology;float blood=pstate.BloodVolume,oxygen=pstate.BloodOxygen;
   float now=Time.time;
   for(int i=0;i<15000&&pstate.Alive;i++){Advance();now+=.02f;injuryTarget.StepOriginalPhysiology(.02f,now,0f,3.2f,heartRandom:0f);}
