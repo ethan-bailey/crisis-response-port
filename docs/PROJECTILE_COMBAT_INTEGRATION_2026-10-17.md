@@ -139,3 +139,12 @@ loading, complete source hit-effects capabilities, wound exit/rendering and the
 full source ragdoll/MuscleControl graph remain unfinished. Keep PR #56 draft and
 all 19 live limb query colliders gated. The runtime/source improvements and
 verified preview above do not establish complete gameplay or native Unity parity.
+
+
+## Continuation: original limb aim and exit-source binding (2026-10-17 UTC)
+
+[Commit a8f9417](https://github.com/ethan-bailey/crisis-response-port/commit/a8f94172a45d5f9aae571a8d30ec86a6e197e2ca) recovers `Limb.AccumulateExitingProjectiles` from author source, retaining the 0.0167 second accumulation period, cap at 1000, and the default source exit-accumulation factor. The source `HandleExit`'s additional wound and renderer operations have **not** been ported and remain gated.
+
+[Native-tested commit 6cfcc04](https://github.com/ethan-bailey/crisis-response-port/commit/6cfcc046aec781d8cee27e5a65e81398c6a21ecc) restores `Limb.AimPoint` and loads per-limb author aimpoint/radius/exit accumulation fields in `OriginalArmPhysicsHost.BindSourceBallistics`. `BallisticContracts` checks all 19 original Operator instances against source `sourceFields.Limb` and leaves all projectile limb query colliders disabled. Operator and Occupant prefab records both exist, but **only Operator** is instantiated by this host.
+
+The first new native suite [38999885454](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38999885454) failed due to the test fixture composing the original limb component bundle **without** its ballistic-material bundle. The corrected fixture composes both original bundles. [Native suite 38999984171](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38999984171) and [source/package checks 38999987410](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38999987410) **SUCCESS** at identical executable SHA `6cfcc046aec781d8cee27e5a65e81398c6a21ecc`. The previous full WASM/browser milestone `a3e7927`, [38998115604](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38998115604), was **not rerun for these changes**. Current protected Vercel release remains that previous milestone; no new deployment, live-NPC proof or iPhone evidence was created by this continuation.
