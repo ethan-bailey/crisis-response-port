@@ -38,7 +38,9 @@ export function applyOriginalOccupantSpawnState(record,{
  // Keep source calculations in one place and transport only validated state.
  const sourceBlackboard={morale:data.morale,aggression:data.aggression,fear:data.fear,
   willBlindFire:blindFire,blindFireDistance:data.blindFireDistance,negotiable:data.negotiable};
- const sourceState={sourceWeaponSkill:weaponSkill,sourceBlackboard};
+ const sourceState={sourceWeaponSkill:weaponSkill,sourceBlackboard,
+  sourcePhysiology:{fitness:data.fitness,shockResistance:data.shockResistance,
+   shockRecovery}};
  applyBlackboard({
   morale:data.morale,aggression:data.aggression,fear:data.fear,
   willBlindFire:blindFire,blindFireDistance:data.blindFireDistance,
