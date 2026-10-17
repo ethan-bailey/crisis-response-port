@@ -19,6 +19,8 @@ on:
       - runtime/Checks/OriginalOccupantPrefabContracts.cs
       - runtime/Original/Weapons/OriginalMissionHitEffects.cs
       - runtime/Checks/OriginalMissionHitContracts.cs
+      - runtime/Original/OriginalLimbDamageGeometry.cs
+      - runtime/Checks/OriginalLimbDamageGeometryContracts.cs
       - runtime/Checks/Program.cs
 permissions:
   contents: read
@@ -41,4 +43,5 @@ jobs:
           dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --source-muscle-control
           dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --source-occupant-prefab
           dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --original-mission-hit
+          dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --original-limb-decal-geometry
           dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj

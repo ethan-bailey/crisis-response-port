@@ -5,6 +5,7 @@ if(args.Contains("--projectile-injury-chain")){Console.WriteLine(ProjectileInjur
 if(args.Contains("--source-muscle-control")){Console.WriteLine(OriginalMuscleControlContracts.Run());return;}
 if(args.Contains("--source-occupant-prefab")){Console.WriteLine(OriginalOccupantPrefabContracts.Run());return;}
 if(args.Contains("--original-mission-hit")){Console.WriteLine(OriginalMissionHitContracts.Run());return;}
+if(args.Contains("--original-limb-decal-geometry")){Console.WriteLine(OriginalLimbDamageGeometryContracts.Run());return;}
 if(args.Contains("--original-limb-skin")){
  var file="game/assets/operator/original-source-limb-damage-mask.json.gz";
  using var fs=File.OpenRead(file);
