@@ -311,12 +311,17 @@ async function load(){
      throw Error('Original NPC source weapon skill invalid');
     const body=JSON.parse(await runtimeCall('SpawnOriginalOccupant',JSON.stringify({
      bodyPrefab:record.sourceData.bodyPrefab,position:record.position,
+     ...(record.sourceWeight===undefined?{}:{sourceWeight:record.sourceWeight}),
      ...(skill===undefined?{}:{sourceWeaponSkill:skill}),
      ...(record.sourceBlackboard===undefined?{}:record.sourceBlackboard),
      ...(record.sourcePhysiology===undefined?{}:{sourcePhysiology:record.sourcePhysiology})
     })));
     if(body.sourceActorCount!==20||body.limbs!==19||body.originalProjectileContactsActive)
      throw Error('Original Occupant anatomy and collision safety mismatch');
+    if(record.sourceWeight!==undefined&&
+       (!Number.isFinite(record.sourceWeight)||
+        Math.abs(body.sourceWeight-record.sourceWeight)>1e-5))
+     throw Error('Original C# NPC randomized weight source mismatch');
     if(skill!==undefined&&Math.abs(body.sourceWeaponSkill-skill)>1e-5)
      throw Error('Original C# NPC weapon skill was not applied');
     if(record.sourceBlackboard!==undefined){
