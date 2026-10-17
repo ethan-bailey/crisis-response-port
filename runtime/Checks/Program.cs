@@ -219,6 +219,30 @@ if(args.Contains("--character-systems")){
  return;
 }
 
+if(args.Contains("--limb-ballistic-entry")){
+ var world=new UnityEngine.RuntimeWorld();
+ var host=new UnityEngine.GameObject("Original limb ballistic contact",world);
+ var body=host.AddComponent<Crisis.Runtime.Weapons.CharacterBody>();
+ body.InitializeOriginalPhysiology(0f,4500f,0f,0f);
+ var limb=new UnityEngine.GameObject("Original upper arm",world).AddComponent<Crisis.Runtime.Weapons.Limb>();
+ limb.Body=body;limb.id=Crisis.Runtime.Weapons.LimbId.RightUpperArm;
+ var projectile=new UnityEngine.GameObject("Original projectile",world).AddComponent<Projectile>();
+ var hitEntry=typeof(Crisis.Runtime.Weapons.Limb).GetMethod("HandleEntry",
+  System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+ if(hitEntry?.DeclaringType!=typeof(Crisis.Runtime.Weapons.Limb))
+  throw new Exception("Original Limb.HandleEntry does not override actual BallisticMaterial entry");
+ void MustThrow<T>(Action op) where T:Exception {
+  try{op();}catch(System.Reflection.TargetInvocationException e) when(e.InnerException is T){return;}
+  throw new Exception("Limb projectile source dependency should fail with "+typeof(T).Name);
+ }
+ MustThrow<InvalidOperationException>(()=>hitEntry.Invoke(limb,new object[]{projectile,UnityEngine.Vector3.right,false}));
+ limb.LimbPhysiology=new Crisis.Runtime.Character.OriginalLimbPhysiology(body.SourcePhysiology);
+ MustThrow<NotSupportedException>(()=>hitEntry.Invoke(limb,new object[]{projectile,UnityEngine.Vector3.right,false}));
+ if(limb.LimbPhysiology.WoundCavityVolume!=0f||body.SourcePhysiology.Shock!=0f)
+  throw new Exception("Unbound source impact audio caused phantom injury");
+ Console.WriteLine("{\"OriginalLimbBallisticEntry\":\"compiled\",\"UnboundImpactAudio\":\"guarded\"}");
+ return;
+}
 if (args.Contains("--character-facing")) {
 {
     var w = new UnityEngine.RuntimeWorld();
