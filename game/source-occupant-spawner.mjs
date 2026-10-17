@@ -18,7 +18,7 @@ export function createSourceOccupantSpawner(source,sceneName,{random,raycast,spa
  const areas=scene.areas.map(area=>({...area}));
  for(const area of areas){
   if(!['probability','xMin','xMax','y','zMin','zMax','walkableMin','walkableMax']
-      .every(key=>Number.isFinite(area[key]))||area.probability<0||area.xMin>area.xMax||area.zMin>area.zMax||area.walkableMin>area.walkableMax)
+      .every(key=>Number.isFinite(area[key]))||area.probability<0||area.xMin>area.xMax||area.walkableMin>area.walkableMax)
    throw Error('Original OccupantSpawner spawn area fields invalid');
  }
  let accumulated=0;
