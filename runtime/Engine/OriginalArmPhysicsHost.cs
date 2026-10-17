@@ -92,8 +92,10 @@ namespace Crisis.Runtime.Weapons {
       throw new InvalidDataException("Original limb source manifest format mismatch");
     var authored=sourceLimbConfiguration.GetProperty("characters").EnumerateArray()
       .Single(c=>c.GetProperty("name").GetString()=="Operator");
-    if(authored.GetProperty("prefabSha256").GetString()!=configuration.GetProperty("sha256").GetString())
-      throw new InvalidDataException("Source Limb and Rigidbody serialized prefabs disagree");
+    if(sourceLimbConfiguration.GetProperty("archiveSha256").GetString()!="cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d")
+      throw new InvalidDataException("Original Limb components have an unverified source archive");
+    if(authored.GetProperty("limbs").GetArrayLength()!=(int)LimbId.NumberOfLimbs)
+      throw new InvalidDataException("Original full character limb inventory incomplete");
     foreach(var entry in authored.GetProperty("limbs").EnumerateArray()){
       var id=(LimbId)entry.GetProperty("sourceFields").GetProperty("Limb").GetProperty("id").GetInt32();
       if(id<0||id>=LimbId.NumberOfLimbs||authoredLimbs.ContainsKey(id))
