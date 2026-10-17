@@ -37,7 +37,7 @@ export async function spawnOriginalMissionOccupants({
 // collision queries. Campaign actors use a different original source path.
 export async function spawnOriginalSandboxMissionOccupants({
   visualSpawnSource,sceneName,occupantSettings,availableWeapons,
-  randomFloat,randomInt,raycast,spawnData,campaign,tutorial=false,actorBridge
+  randomFloat,randomInt,raycast,spawnData,campaign,tutorial=false,actorBridge,prepareSourceRecord
 }={}) {
   if(!campaign || campaign.active!==false)
     throw Error('Original sandbox mission requires explicit inactive campaign state');
@@ -50,5 +50,5 @@ export async function spawnOriginalSandboxMissionOccupants({
     createLegacyGroup:!!scene.spawnLegacyGroup && !tutorial
   });
   return spawnOriginalMissionOccupants({visualSpawnSource,sceneName,
-    random:()=>randomFloat(0,1),raycast,settings,spawnData,campaign,tutorial,actorBridge});
+    random:()=>randomFloat(0,1),raycast,settings,spawnData,campaign,tutorial,actorBridge,prepareSourceRecord});
 }
