@@ -32,7 +32,7 @@ using Object=UnityEngine.Object;
 using Random=UnityEngine.Random;
 namespace Crisis.Runtime.Weapons;
 // Original selected method bodies. Explicit host scheduling, not full controller playback.
-public class ArmIKSolver:Component {
+public class ArmIKSolver:Behaviour {
  public enum HandRotationMode{Local=0,Global=1,TargetLocal=2}
  public AnimationCurve interpolation;public bool flip;
  public Limb upperArm,lowerArm;public Hand hand;public bool smoothing;public float smoothFactor=10f;
@@ -87,3 +87,4 @@ def provenance(source, output):
                              'Omit debug DrawLine; no visual gameplay effect',
                              'Explicit InitializeSourcePose/Step entry points; unselected Start/controller callbacks excluded'],
                 fullIKArmControllerPlayback=False, ragdollArmControllerExecuted=False)
+

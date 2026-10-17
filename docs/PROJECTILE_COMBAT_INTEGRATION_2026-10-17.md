@@ -71,3 +71,19 @@ new iPhone preview has been deployed from this checkpoint. PR #57 (IK), #42
 Rollback the changed combat/flight methods, physiology ordering and Mathf adapter
 as one reviewed unit, along with their focused contracts and workflow hooks. Do
 not revert earlier original limb/source assets or unrelated mobile enhancements.
+
+## First full-run failure and repair
+
+Run [38997480801](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38997480801)
+at `9fc5f4c97c2d77c5113ab822601e2c9318b1005e` compiled native C# but stopped
+before WASM: the existing WeaponContracts fixture omitted the source armPhysics
+bundle required by WeaponHost. It now composes original full-body physics and
+limb data exactly as the browser loader does. A new ProjectileLimbEvent also
+requires Serializable for real projectile prefab cloning; the full native
+31-shot/reload fixture now exercises that path and passes.
+
+The old IK source generator still declared Component while the existing runtime
+had already changed to Behaviour for ragdoll-enabled state. Update the generator
+and provenance hash for that explicit engine inheritance adaptation, keeping all
+selected original method bodies intact. Source verification now uses pipefail
+so a stale individual check cannot be hidden by a subsequent successful check.

@@ -3,10 +3,11 @@
     "Namespace and explicit existing host state views",
     "Remove two unread Joint query locals from Awake; no Joint stand-in",
     "Omit debug DrawLine; no visual gameplay effect",
-    "Explicit InitializeSourcePose/Step entry points; unselected Start/controller callbacks excluded"
+    "Explicit InitializeSourcePose/Step entry points; unselected Start/controller callbacks excluded",
+    "Engine base type Behaviour supplies the original enabled property used by source ragdoll transitions; original selected method bodies unchanged"
   ],
   "fullIKArmControllerPlayback": false,
-  "outputSha256": "a293077cdb559d89178c09c3affa411464d9fe1211bc1e72d715648fb05cc69b",
+  "outputSha256": "8c5f276a2f12cdd3a27f87c6363532073ca4be730384d16b6c2f21bddbc2c698",
   "ragdollArmControllerExecuted": false,
   "selectedMethods": {
     "private void Awake()": "9e8f3d039482ca9a5a7cd6018708009ed64bcb0c42480d78716b3c0e31bd648e",

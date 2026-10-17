@@ -39,7 +39,7 @@ public partial class Projectile {
    RecalculateVelocity();
    return material.HandleProjectile(this,hit.normal).Status;
   }
-  if(ReferenceEquals(limb.Body,Owner))
+  if(Owner!=null&&ReferenceEquals(limb.Body,Owner))
    return BallisticResult.Continue;
   if(limb.Body==null||limb.LimbPhysiology==null)
    throw new InvalidOperationException("Original limb collision lacks its CharacterBody or LimbPhysiology");
@@ -68,7 +68,7 @@ public partial class Projectile {
 
 
 // Engine equivalent of original UnityEvent<Projectile,Limb>.
-public sealed class ProjectileLimbEvent {
+[Serializable] public sealed class ProjectileLimbEvent {
  event Action<Projectile,Limb> listeners;
  public void AddListener(Action<Projectile,Limb> listener)=>listeners+=listener;
  public void Invoke(Projectile p,Limb limb)=>listeners?.Invoke(p,limb);
