@@ -34,3 +34,24 @@ assert.equal(draws.length,6);
 const broken=structuredClone(source);
 broken.sceneSpawners['Marksman range'].spawner.fields.areas=[];
 assert.throws(()=>createSourceOccupantSpawner(broken,'Marksman range',base),/authored spawn areas/);
+
+// A source RNG or ballistic collision adapter failure cannot silently place a body.
+let rejectedSpawns=0;
+const rejects={...base,spawnBody:()=>{rejectedSpawns++;}};
+assert.throws(()=>createSourceOccupantSpawner(source,'Marksman range',{
+ ...rejects,random:()=>NaN}).spawn(),/Unity random draw/);
+assert.throws(()=>createSourceOccupantSpawner(source,'Marksman range',{
+ ...rejects,random:()=>1.4}).spawn(),/Unity random draw/);
+assert.throws(()=>createSourceOccupantSpawner(source,'Marksman range',{
+ ...rejects,raycast:()=>undefined}).spawn(),/collision query must return a boolean/);
+assert.equal(rejectedSpawns,0,'invalid source queries may not instantiate native actors');
+// Incomplete later group cannot leave earlier valid actors partially registered.
+const invalidSpawn={...base,spawnBody:()=>{rejectedSpawns++;},settings:{
+ legacyGroup:{members:[{enabled:true,bodyPrefab:'Occupant'}, {enabled:true}]}
+}};
+assert.throws(()=>createSourceOccupantSpawner(source,'Marksman range',invalidSpawn).spawn(),/bodyPrefab missing/);
+assert.equal(rejectedSpawns,0,'source group preflight must precede all native registrations');
+const badConfig=structuredClone(source);
+badConfig.sceneSpawners['Marksman range'].spawner.fields.bodyClearRadius=-1;
+assert.throws(()=>createSourceOccupantSpawner(badConfig,'Marksman range',base),/obstacle configuration invalid/);
+console.log('PASS source RNG, collision-mask response, full group preflight, and obstacle constraints');
