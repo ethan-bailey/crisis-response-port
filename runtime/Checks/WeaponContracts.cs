@@ -50,6 +50,18 @@ public static class WeaponContracts {
   catch(InvalidDataException){}
   if(host.SourceOccupantCount!=beforeInvalidPhysiology)
    throw new Exception("Out-of-range physiology allocated native actor");
+  var weightedActor=JsonSerializer.SerializeToElement(host.SpawnSourceOccupant(
+   JsonSerializer.Serialize(new{bodyPrefab="Occupant",position=new[]{6.9f,1.25f,-1.5f},
+    sourceWeight=82.5f})));
+  if(MathF.Abs(weightedActor.GetProperty("sourceWeight").GetSingle()-82.5f)>1e-6f)
+   throw new Exception("Original Occupant weight not stored on native CharacterBody");
+  var beforeInvalidWeight=host.SourceOccupantCount;
+  try{host.SpawnSourceOccupant(JsonSerializer.Serialize(new{bodyPrefab="Occupant",
+   position=new[]{7f,1.25f,-1.5f},sourceWeight=110f}));
+   throw new Exception("Accepted source Occupant weight outside original range");}
+  catch(InvalidDataException){}
+  if(host.SourceOccupantCount!=beforeInvalidWeight)
+   throw new Exception("Invalid source weight allocated native physics actor");
   int beforeInvalidBlackboard=host.SourceOccupantCount;
   try{host.SpawnSourceOccupant(JsonSerializer.Serialize(new{bodyPrefab="Occupant",
    position=new[]{7f,1.25f,-1.5f},morale=.5f}));
