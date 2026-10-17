@@ -1,6 +1,6 @@
 name: Audit milestone original WASM baseline verification
 
-# Final exact-source checkpoint: radial joystick plus InputHandler automatic sprint propagation and icon-only controls.
+# Retry verified full Operator 21-source-actor graph with source gravity schema and PlayerController ragdoll guard.
 # Merging reviewed code into develop/wasm must not duplicate the expensive build.
 # No automatic builds on source/doc edits, and workflow_dispatch remains available.
 on:

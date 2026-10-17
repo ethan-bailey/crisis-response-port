@@ -25,9 +25,32 @@ public partial class CharacterBody {
   float num3=Mathf.Abs(velocity)/sprintSpeed;
   float num4=(spasmsActive?.5f:0f)+(crampsActive?.75f:0f);
   float work=Mathf.Clamp01(num2+num+holdWeaponWorkIntensity+num3+num4);
+  bool wasAlive=p.Alive,wasConscious=p.Conscious;
   p.UpdateVitalDynamics(dt,now,work,respirationBlocked,heartRandom);
+  // The original Physiology.Update orders circulation/heart, then UpdateLimbs,
+  // SetHemorrhaging, SetBloodOxygen, and SetCharacterState. The source limb
+  // instances now belong to this actual gameplay character.
+  if(!p.Exsanguinated)foreach(var limb in limbs)
+    limb.LimbPhysiology?.UpdateHemorrhaging(dt);
+  float hemorrhaging=0f,woundVolume=0f;
+  foreach(var limb in limbs){
+   if(limb.LimbPhysiology!=null){
+    hemorrhaging+=limb.LimbPhysiology.InternalHemorrhaging;
+    woundVolume+=limb.LimbPhysiology.WoundCavityVolume;
+   }
+   limb.SourceMuscle?.Update(now);
+  }
+  if(Kinematic&&(p.Shock>=1000f||p.ShouldLoseFooting()))
+   EnterSourceRagdoll();
+  if(wasConscious&&!p.Conscious){
+   EnterSourceRagdoll();
+   EventUnconscious.Invoke();
+  }
+  if(wasAlive&&!p.Alive)EventDeath.Invoke();
   return new {p.Alive,p.Conscious,p.BloodVolume,p.BloodOxygen,p.LungsOxygen,
        p.HeartRate,p.RespirationRate,p.HeartBeatCycle,p.Respiration,
-       p.BloodPressure,p.Shock,p.BrainTrauma,p.WorkIntensity};
+       p.BloodPressure,p.Shock,p.BrainTrauma,p.WorkIntensity,
+       Hemorrhaging=hemorrhaging,WoundVolume=woundVolume,Kinematic,CrippledRatio,
+       LimbCount=limbs.Count};
  }
 }

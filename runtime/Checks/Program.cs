@@ -28,6 +28,20 @@ if(args.Contains("--character-systems")){
  physiology.UpdateVitalDynamics(.02f,1f,.3f,false,0f);
  if(physiology.HeartRate<=0f||physiology.BloodPressure<=0f||physiology.RespirationRate<=0f)
   throw new Exception("Original heart/breathing pressures did not advance");
+ var hypoxia=new Crisis.Runtime.Character.OriginalPhysiologyConditions();
+ hypoxia.InitializeBloodVolume(4500f);
+ hypoxia.InitializeVitalClock(0f,0f,0f);
+ hypoxia.RemoveBlood(4500f);
+ hypoxia.CirculationDisabled=true;
+ hypoxia.UpdateVitalDynamics(.02f,1f,.2f,true,0f);
+ if(hypoxia.Conscious)throw new Exception("Source hypoxia should cause unconsciousness at 0 blood oxygen");
+ hypoxia.UpdateVitalDynamics(.02f,31.2f,.2f,true,0f);
+ if(hypoxia.Alive||!hypoxia.RespirationDisabled)
+  throw new Exception("Original 30-second blood-oxygen brain-death state not applied");
+ var concussion=new Crisis.Runtime.Character.OriginalPhysiologyConditions();
+ concussion.AddConcussion(1.3f);
+ if(concussion.BrainTrauma<2.9f||!concussion.ShouldLoseConsciousness())
+  throw new Exception("Original concussion-to-brain-trauma propagation failed");
  var world=new UnityEngine.RuntimeWorld();
  var host=new UnityEngine.GameObject("Source ragdoll operator",world);
  var body=host.AddComponent<Crisis.Runtime.Weapons.CharacterBody>();

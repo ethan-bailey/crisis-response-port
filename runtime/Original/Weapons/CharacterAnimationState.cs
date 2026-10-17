@@ -38,7 +38,7 @@ public partial class CharacterBody {
   sourceAnimator.SetFloat(hashMoveSpeed, (!(num2 < walkSpeed)) ? (Mathf.Clamp01((num2 - walkSpeed) / (sprintSpeed - walkSpeed)) * 0.5f) : 0f);
   sourceAnimator.SetFloat(hashKneelRatio, KneelRatio);
   sourceAnimator.SetFloat(hashCrippledRatio, (!isOperator) ? crippledRatio : 0f);
-  return new {KneelRatio,TargetKneelRatio,colliderHeight=sourceBodyCollider.height,
+  return new {KneelRatio,TargetKneelRatio,ragdoll=!Kinematic,colliderHeight=sourceBodyCollider.height,
    centerX=sourceBodyCollider.center.x,centerY=sourceBodyCollider.center.y,
    moving=sourceAnimator.GetBool(hashMoving),
    backwards=sourceAnimator.GetBool(hashBackwards),
