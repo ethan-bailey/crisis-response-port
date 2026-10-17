@@ -37,6 +37,14 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
     'Original contact-physics root retained; all 20 body/limb actors run in PhysX');
   assert.equal(handState.presentation.originalFullBodySource?.hingeCount,18,
     'All 18 authored Operator HingeJoints must be joined in PhysX');
+  assert.equal(handState.weaponState.sourceLimbBallistics?.materials,8,
+    'Every original flesh material property asset must initialize on the live Operator');
+  assert.equal(handState.weaponState.sourceLimbBallistics?.colliders,19,
+    'All original 19 limb CapsuleCollider dimensions and layers must load');
+  assert.equal(handState.weaponState.sourceLimbBallistics?.armors,4,
+    'Original two IIIA and two IV ballistic armor components must initialize');
+  assert.equal(handState.weaponState.sourceLimbBallistics?.projectileContactsActive,false,
+    'Never enable projectile hit dispatch while original limb interior code is unbound');
   assert.equal(handState.weaponState.sourcePhysiology?.limbCount,19,
     'Actual live CharacterBody must own all 19 source limb components');
   assert.equal(handState.weaponState.sourcePhysiology?.originalSkinRenderers,17,
