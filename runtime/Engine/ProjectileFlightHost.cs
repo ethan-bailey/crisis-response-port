@@ -41,6 +41,10 @@ public partial class Projectile {
    throw new NotSupportedException("Original owner collision filtering is not yet connected");
   if(limb.Body==null||limb.LimbPhysiology==null)
    throw new InvalidOperationException("Original limb collision lacks its CharacterBody or LimbPhysiology");
+  if(!limb.Body.limbs.Contains(limb))
+   throw new InvalidOperationException("Collision limb is not registered on its source CharacterBody");
+  if(limb.Body.SourcePhysiology==null)
+   throw new InvalidOperationException("Collision victim has no initialized source blood/oxygen physiology");
   if(RecordOriginalAttackInfo==null||NotifyOriginalVictimHit==null||
      OriginalInteraction==null||OriginalLimbInteraction==null)
    throw new NotSupportedException("Original projectile attack, victim, mission and interaction callbacks are not all bound");
