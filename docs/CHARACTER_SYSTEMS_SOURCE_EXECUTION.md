@@ -21,6 +21,13 @@ The pinned private recovery archive is GitHub Actions artifact `11903811738`, ar
 - PR #50 merged the full original **21 source Rigidbody records / 18 HingeJoint** Operator graph into the live PhysX importer, retaining the separate already simulated contact-physics root and 20 source limb/helmet actors. All **19 Limb** components are now attached to the actual C# player alongside **17 LimbPhysiology**, **16 LimbMuscle**, and original serialized numerical settings. Verified in Chromium and WebKit on [Actions #38985858499](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38985858499).
 - Remaining: source native contact callbacks, author-exact full ragdoll contact injury propagation and Unity physical trajectory parity; **a PhysX actor/joint count passing tests does not establish complete native ragdoll parity**.
 
+## Source-exact limb surface trace integration (PR #52 and PR #53)
+
+- Original `LimbTextureData.Initialize` builds damage mask green **from the original skin alpha**, not the PNG's green channel. The resulting 11 source-owned skin masks and 17 renderer-to-Unity-Transform references are preserved in `game/assets/operator/original-source-limb-damage-mask.json.gz` with source SHA provenance; source scripts are preserved in `source-reference/Original/LimbSkin`.
+- `runtime/Original/OriginalLimbSkinTrace.cs` executes original `LimbRenderer.PixelTrace`, `FindEdgePoint`, `FindEntryExit`, `FindMarksmanEntryAndExit` against these source pixels. Out-of-bounds Texture2D wrap semantics are **not** assumed; unsupported cases explicitly fail rather than fabricating Unity texture behavior.
+- PR #53 binds each of the 17 original `LimbRenderer` skin trace instances to the *actual live* `WeaponHost.Character` by source `Limb.visual.fileID`, leaving the two original no-renderer hands unmodified. Native source checks [#38990281100](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38990281100) passed. Combined WebAssembly and Chromium/WebKit smoke remains required before merge.
+- **No live projectile injury claim:** `Projectile.HandleLimbHit`, full original `Limb : BallisticMaterial`, original skin/armor entry-exit semantics and neurological `MuscleControl` still require integration. An accurately loaded mask is not evidence that live shots use it.
+
 ## Executable AnimatorController and live pose
 
 - `scripts/export_original_character_animator.py` parses the **recovered** `Character animator.controller` YAML at SHA-256 `d1ef99a73f2f600c09be9f099e6f88b10aff8328099621c45ce19a6c5635803b` into `game/assets/operator/character-animator-controller.json`. It asserts 4 states, 11 nonempty-condition transitions, authored fixed transition durations and blend trees.
