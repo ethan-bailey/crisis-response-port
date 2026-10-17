@@ -18,12 +18,15 @@ public static class WeaponContracts {
    throw new Exception("Original live WeaponHost Occupant source graph spawn mismatch");
   var sourceSkillActor=JsonSerializer.SerializeToElement(host.SpawnSourceOccupant(
    JsonSerializer.Serialize(new{bodyPrefab="Occupant",position=new[]{6f,1.25f,-1.5f},sourceWeaponSkill=.65f})));
-  if(sourceSkillActor.GetProperty("index").GetInt32()!=1 || host.SourceOccupantCount!=2)
+  if(sourceSkillActor.GetProperty("index").GetInt32()!=1 || host.SourceOccupantCount!=2 ||
+     MathF.Abs(sourceSkillActor.GetProperty("sourceWeaponSkill").GetSingle()-.65f)>1e-6f)
    throw new Exception("Source Occupant native weapon-skill actor failed registration");
   var stateActor=JsonSerializer.SerializeToElement(host.SpawnSourceOccupant(
    JsonSerializer.Serialize(new{bodyPrefab="Occupant",position=new[]{6.5f,1.25f,-1.5f},
     morale=.5f,aggression=.8f,fear=.2f,blindFireDistance=4f,willBlindFire=true,negotiable=false})));
-  if(stateActor.GetProperty("index").GetInt32()!=2||host.SourceOccupantCount!=3)
+  if(stateActor.GetProperty("index").GetInt32()!=2||host.SourceOccupantCount!=3||
+     MathF.Abs(stateActor.GetProperty("sourceBlackboard").GetProperty("morale").GetSingle()-.5f)>1e-6f||
+     !stateActor.GetProperty("sourceBlackboard").GetProperty("willBlindFire").GetBoolean())
    throw new Exception("Original Occupant native blackboard registration mismatch");
   int beforeInvalidBlackboard=host.SourceOccupantCount;
   try{host.SpawnSourceOccupant(JsonSerializer.Serialize(new{bodyPrefab="Occupant",
