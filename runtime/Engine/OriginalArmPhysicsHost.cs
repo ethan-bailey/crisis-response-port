@@ -18,6 +18,7 @@ namespace Crisis.Runtime.Weapons {
   readonly Dictionary<string,string> componentToBody=new();
   readonly List<object> commands=new();
   readonly JsonElement configuration;
+  readonly Dictionary<string,JsonElement> authoredCapsulesByGo=new();
   readonly Dictionary<LimbId,JsonElement> authoredLimbs=new();
   readonly Dictionary<LimbId,Limb> runtimeLimbs=new();
   public int SourceActorCount=>bodies.Count;
@@ -35,6 +36,10 @@ namespace Crisis.Runtime.Weapons {
    transforms=nodes;body=subject;
    var records=configuration.GetProperty("records").EnumerateArray()
     .ToDictionary(r=>r.GetProperty("fileID").GetString(),r=>r.Clone());
+   foreach(var cap in records.Values.Where(r=>r.GetProperty("classID").GetInt32()==136)){
+    var fields=cap.GetProperty("fields");
+    authoredCapsulesByGo.Add(fields.GetProperty("m_GameObject").GetProperty("fileID").GetString(),fields.Clone());
+   }
    var transformByGo=records.Values.Where(r=>r.GetProperty("classID").GetInt32()==4)
     .ToDictionary(r=>r.GetProperty("fields").GetProperty("m_GameObject").GetProperty("fileID").GetString(),
                   r=>r.GetProperty("fileID").GetString());
@@ -188,6 +193,14 @@ namespace Crisis.Runtime.Weapons {
        authoredStrength:muscle.GetProperty("strength").GetSingle(),
        authoredExtendAngle:muscle.GetProperty("extendAngle").GetSingle(),
        authoredContractAngle:muscle.GetProperty("contractAngle").GetSingle());
+    }
+    if(source.TryGetProperty("VitalFunctions",out var vital)){
+     var go=pair.Value.GetProperty("gameObject").GetString();
+     if(!authoredCapsulesByGo.TryGetValue(go,out var capsule))
+       throw new InvalidDataException("Original vital function missing its source capsule: "+id);
+     limb.SourceVitals=new OriginalVitalFunctions(limb,p,vital,
+       capsule.GetProperty("m_Height").GetSingle(),
+       capsule.GetProperty("m_Center").GetProperty("y").GetSingle());
     }
    }
   }
