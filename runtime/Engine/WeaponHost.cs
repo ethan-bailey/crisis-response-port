@@ -173,8 +173,8 @@ public sealed class WeaponHost {
   if(body.Kinematic){body.rightArm.Step();body.leftArm.Step();}
   armPhysics.Step(f,world);
   // Original CharacterBody.QueryTrigger clears one-frame requests; manipulation blocks new pulls.
-  if(f.GetProperty("fire").GetBoolean()&&!body.IsManipulatingEquipment)body.PullTrigger();
-  if(task==null&&f.GetProperty("reload").GetBoolean()){body.PendingAction=CharacterBody.CharacterAction.SwitchMagazine;task=reload;task.OnStart();}
+  if(body.Kinematic&&f.GetProperty("fire").GetBoolean()&&!body.IsManipulatingEquipment)body.PullTrigger();
+  if(body.Kinematic&&task==null&&f.GetProperty("reload").GetBoolean()){body.PendingAction=CharacterBody.CharacterAction.SwitchMagazine;task=reload;task.OnStart();}
   if(task!=null&&task.OnUpdate()!=TaskStatus.Running){task.OnEnd();task=null;}
   if(task==null&&body.PendingAction==CharacterBody.CharacterAction.WorkBolt){task=workBolt;task.OnStart();}
   weapon.Step();world.Invoke(weapon.cyclingBolt,"Update");body.QueryTrigger();
