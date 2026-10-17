@@ -1,6 +1,6 @@
 name: Audit milestone original WASM baseline verification
 
-# Final exact-source checkpoint: radial joystick plus InputHandler automatic sprint propagation and icon-only controls.
+# Full original Operator physical 21-body/18-joint graph, connected wound/physiology, verified WASM and browser milestone.
 # Merging reviewed code into develop/wasm must not duplicate the expensive build.
 # No automatic builds on source/doc edits, and workflow_dispatch remains available.
 on:
