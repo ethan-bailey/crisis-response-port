@@ -3,6 +3,7 @@
 // random/collision queries have been recovered and installed.
 import {createSourceOccupantSpawner} from './source-occupant-spawner.mjs';
 import {createSourceOccupantSandboxSettings} from './source-occupant-sandbox-settings.mjs';
+import {applyOriginalOccupantSpawnState} from './source-occupant-body-initialization.mjs';
 
 export async function spawnOriginalMissionOccupants({
   visualSpawnSource,sceneName,random,raycast,settings,spawnData,
@@ -37,7 +38,8 @@ export async function spawnOriginalMissionOccupants({
 // collision queries. Campaign actors use a different original source path.
 export async function spawnOriginalSandboxMissionOccupants({
   visualSpawnSource,sceneName,occupantSettings,availableWeapons,
-  randomFloat,randomInt,raycast,spawnData,campaign,tutorial=false,actorBridge,prepareSourceRecord
+  randomFloat,randomInt,raycast,spawnData,campaign,tutorial=false,actorBridge,prepareSourceRecord,
+  nativeSourceStateBindings
 }={}) {
   if(!campaign || campaign.active!==false)
     throw Error('Original sandbox mission requires explicit inactive campaign state');
@@ -49,6 +51,16 @@ export async function spawnOriginalSandboxMissionOccupants({
     occupantSettings,sceneSpawner:scene,availableWeapons,randomFloat,randomInt,
     createLegacyGroup:!!scene.spawnLegacyGroup && !tutorial
   });
+  // Source-data computation only runs when all original native state callbacks
+  // are explicitly installed. No phantom equipment or registration callbacks.
+  const sourcePreparation=prepareSourceRecord??(nativeSourceStateBindings?record=>{
+    const callbacks=nativeSourceStateBindings(record);
+    const state=applyOriginalOccupantSpawnState(record,{
+      randomFloat,occupantSettings,...callbacks
+    });
+    return {...record,...state.sourceState};
+  }:undefined);
   return spawnOriginalMissionOccupants({visualSpawnSource,sceneName,
-    random:()=>randomFloat(0,1),raycast,settings,spawnData,campaign,tutorial,actorBridge,prepareSourceRecord});
+    random:()=>randomFloat(0,1),raycast,settings,spawnData,campaign,tutorial,actorBridge,
+    prepareSourceRecord:sourcePreparation});
 }
