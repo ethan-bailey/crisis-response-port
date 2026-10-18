@@ -21,7 +21,7 @@ def check(root=ROOT):
         if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest()!=expected:
             errors.append(f'Legacy gameplay owner changed: {name}; migrate to original actor or document a reviewed exception')
     # A new partial declaration must not bypass the freeze by using a new file.
-    owners=re.compile(r'\bclass\s+(?:CharacterBody|Blackboard|Limb|WeaponBase|Equipment)\b')
+    owners=re.compile(r'\b(?:class|struct|record(?:\s+(?:class|struct))?)\s+(?:CharacterBody|Blackboard|Limb|WeaponBase|Equipment)\b')
     for directory in ('runtime/Engine','runtime/Original'):
         for path in (root/directory).rglob('*.cs'):
             source=NOISE.sub(' ',path.read_text(encoding='utf-8-sig'))
