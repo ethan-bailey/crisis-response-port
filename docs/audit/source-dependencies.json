@@ -114,7 +114,9 @@
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityInput/GetAxis.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityInput/GetKey.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityInput/GetMouseButton.cs",
+    "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityLight/GetColor.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityLight/SetColor.cs",
+    "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityLight/SetShadows.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityNavMeshAgent/Move.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityNavMeshAgent/Resume.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityNavMeshAgent/Stop.cs",
@@ -948,6 +950,7 @@
     "runtime/Original/FullSource/MuscleControl.cs",
     "runtime/Original/FullSource/OriginalActorIdentity.cs",
     "runtime/Original/FullSource/Physiology.cs",
+    "runtime/Original/FullSource/PoweredLight.cs",
     "runtime/Original/FullSource/QualityLevels.cs",
     "runtime/Original/FullSource/Room.cs",
     "runtime/Original/FullSource/SerializableAudioSettings.cs",
@@ -1401,12 +1404,13 @@
     },
     {
       "path": "runtime/Engine/Objects.cs",
-      "sha256": "bc1f8915ca522b6b6414ee60a049972bd75a110d7281a591c6f846d16381023e",
+      "sha256": "6e59f5c97443da463a4bd584f42fbc41b4effcb2f49b8eaf1bd1bf9084e6320a",
       "declares": [
         "ActivationScope",
         "Behaviour",
         "Component",
         "GameObject",
+        "ILightDriver",
         "Light",
         "MonoBehaviour",
         "Object",
@@ -1424,6 +1428,7 @@
         "CoroutineHandle",
         "Debug",
         "Destroy",
+        "Enum",
         "Euler",
         "GetChild",
         "GetComponent",
@@ -1431,6 +1436,7 @@
         "Input",
         "Instantiate",
         "Inverse",
+        "LightShadows",
         "Log",
         "Matrix4x4",
         "PrefabCloner",
@@ -1439,6 +1445,7 @@
         "Rotate",
         "SetActive",
         "SetParent",
+        "SetShadows",
         "SpringJoint",
         "Time",
         "Type",
@@ -1727,7 +1734,7 @@
     },
     {
       "path": "runtime/Engine/Rendering/GraphicsPrimitives.cs",
-      "sha256": "96b5b00e907d68cc39cf32b0b02eec063a52bcd3082250cce3a9f5035f9b3d33",
+      "sha256": "6d01bed8827d955636ca7ba65c6005a4592b4230b93cfc76c7a8dce5d21507ef",
       "declares": [
         "Color",
         "Material",
@@ -1741,10 +1748,12 @@
         "Collider",
         "Component",
         "Dot",
+        "GetColor",
         "Object",
         "Ray",
         "Raycast",
         "RaycastHit",
+        "SetColor",
         "Texture",
         "Texture2D",
         "Vector2",
@@ -5860,6 +5869,34 @@
         "Time",
         "UIHitAnnouncements",
         "Vector3",
+        "in"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/PoweredLight.cs",
+      "sha256": "940e6accb9f8fb14d223bf21d63dcd5cf50df8d12d920cffc9755ab07f30d4c3",
+      "declares": [
+        "MaterialLightPair",
+        "PoweredLight"
+      ],
+      "references": [
+        "AudioSource",
+        "BallisticMaterial",
+        "Color",
+        "GetComponent",
+        "Global",
+        "Light",
+        "LightShadows",
+        "Material",
+        "Mission",
+        "MonoBehaviour",
+        "Play",
+        "Projectile",
+        "Random",
+        "Renderer",
+        "Room",
+        "SetColor",
+        "Stop",
         "in"
       ]
     },
@@ -10190,6 +10227,7 @@
         "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Physiology.cs",
+        "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/FullSource/ToggleElectricity.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
         "source-reference/Original/CharacterDependencies/CharacterAudio.cs",
@@ -10417,6 +10455,7 @@
         "runtime/Original/Ballistics/ProjectileMaterial.Methods.cs",
         "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Limb.cs",
+        "runtime/Original/FullSource/PoweredLight.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/CharacterDependencies/Limb.cs"
       ]
@@ -13200,6 +13239,7 @@
         "runtime/Original/Foundation/FullSerializer/Internal/DirectConverters/GUIStyleState_DirectConverter.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
         "runtime/Original/FullSource/LimbTextureData.cs",
+        "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/FullSource/UIHitAnnouncement.cs",
         "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
         "source-reference/Original/Animation/ArmIKSolver.cs"
@@ -15160,6 +15200,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/AmmunitionLoader.cs",
+        "runtime/Engine/Objects.cs",
         "runtime/Engine/OriginalArmSequences.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserialization.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserializationDeprecated.cs",
@@ -16982,7 +17023,9 @@
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityLight/GetColor.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Engine/Rendering/GraphicsPrimitives.cs"
+      ]
     },
     {
       "name": "GetComponent",
@@ -17031,6 +17074,7 @@
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/MuscleControl.cs",
         "runtime/Original/FullSource/Physiology.cs",
+        "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/Target.cs",
         "runtime/Original/FullSource/ToggleElectricity.cs",
@@ -18252,6 +18296,7 @@
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/Physiology.cs",
+        "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/SerializableAudioSettings.cs",
         "runtime/Original/FullSource/SerializableExtraSettings.cs",
@@ -19405,6 +19450,19 @@
         "source-reference/Original/Animation/IKArmSequencer.cs",
         "source-reference/Original/CharacterDependencies/IKArmController.cs"
       ]
+    },
+    {
+      "name": "ILightDriver",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/Objects.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
     },
     {
       "name": "IParticleDriver",
@@ -21003,6 +21061,7 @@
         "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/Physiology.cs",
+        "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/FullSource/Room.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
         "source-reference/Original/CharacterDependencies/Mission.cs",
@@ -21036,7 +21095,9 @@
       "archiveEntries": [],
       "compilerMissing": true,
       "referencedBy": [
+        "runtime/Engine/Objects.cs",
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/SerializableGraphicsSettings_0_0_8_005.cs",
         "runtime/Original/FullSource/SerializableGraphicsSettings_v1.cs",
@@ -21895,14 +21956,17 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
-        "runtime/Original/FullSource/LimbRenderer.cs"
+        "runtime/Original/FullSource/LimbRenderer.cs",
+        "runtime/Original/FullSource/PoweredLight.cs"
       ]
     },
     {
       "name": "MaterialLightPair",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/PoweredLight.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -22248,6 +22312,7 @@
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/Physiology.cs",
+        "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/TimeScaler.cs",
         "runtime/Original/FullSource/ToggleElectricity.cs",
@@ -22584,6 +22649,7 @@
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/MuscleControl.cs",
         "runtime/Original/FullSource/Physiology.cs",
+        "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/Settings.cs",
         "runtime/Original/FullSource/Target.cs",
@@ -23929,6 +23995,7 @@
         "runtime/Original/FullSource/IKArmController.cs",
         "runtime/Original/FullSource/IKArmSequencer.cs",
         "runtime/Original/FullSource/Physiology.cs",
+        "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/FullSource/ToggleElectricity.cs",
         "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
         "runtime/Original/Weapons/CyclingBolt.cs",
@@ -24143,9 +24210,11 @@
     },
     {
       "name": "PoweredLight",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/PoweredLight.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -24263,6 +24332,7 @@
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/OriginalActorIdentity.cs",
         "runtime/Original/FullSource/Physiology.cs",
+        "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/FullSource/UIHitAnnouncements.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/Weapons/WeaponMechanism.Methods.cs",
@@ -24555,6 +24625,7 @@
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/MuscleControl.cs",
         "runtime/Original/FullSource/Physiology.cs",
+        "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/FullSource/QualityLevels.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/SerializableAudioSettings.cs",
@@ -25145,6 +25216,7 @@
       "referencedBy": [
         "runtime/Engine/BallisticRuntimeHost.cs",
         "runtime/Original/Ballistics/BallisticWindow.cs",
+        "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/FullSource/Room.cs",
         "source-reference/Original/CharacterDependencies/Room.cs"
       ]
@@ -25652,6 +25724,7 @@
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/FullSource/ToggleElectricity.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
@@ -27401,7 +27474,9 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
-        "runtime/Engine/UI.cs"
+        "runtime/Engine/Rendering/GraphicsPrimitives.cs",
+        "runtime/Engine/UI.cs",
+        "runtime/Original/FullSource/PoweredLight.cs"
       ]
     },
     {
@@ -28231,7 +28306,9 @@
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityLight/SetShadows.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Engine/Objects.cs"
+      ]
     },
     {
       "name": "SetSharedBool",
@@ -29971,6 +30048,7 @@
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/LimbArmor.cs",
+        "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/Weapons/ProjectileFlight.Methods.cs",
         "source-reference/Original/CharacterDependencies/CharacterAudio.cs",
         "source-reference/Original/CharacterDependencies/Communication.cs"
@@ -36335,6 +36413,7 @@
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/MuscleControl.cs",
         "runtime/Original/FullSource/Physiology.cs",
+        "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/SerializableDialogState.cs",
         "runtime/Original/FullSource/ToggleElectricity.cs",

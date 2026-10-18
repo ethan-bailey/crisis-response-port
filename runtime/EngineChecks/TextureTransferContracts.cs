@@ -50,6 +50,29 @@ static class TextureTransferContracts {
         RenderTexture.active=null;target.Release();secondTarget.Release();
         Throws<InvalidOperationException>(()=>copy.ReadPixels(new Rect(0,0,1,1),0,0));
         Throws<NotSupportedException>(()=>new Texture2D(2,2,TextureFormat.RGBA32,true));
+        var lightingGo=new GameObject("room lighting contracts",world);
+        var sourceLight=lightingGo.AddComponent<Light>();var lightDriver=new LightProbe();sourceLight.Driver=lightDriver;
+        lightDriver.Changes.Clear();sourceLight.enabled=false;sourceLight.shadows=LightShadows.Soft;
+        Check(lightDriver.Changes.SequenceEqual(new[]{"enabled:False","shadows:Soft"}),"source light toggles and shadow quality reach the bound engine driver in order");
+        Check(!sourceLight.enabled&&sourceLight.shadows==LightShadows.Soft,"source light state remains readable on the CPU");
+        Throws<ArgumentOutOfRangeException>(()=>sourceLight.shadows=(LightShadows)99);
+        var roomRenderer=lightingGo.AddComponent<MeshRenderer>();var firstMaterial=new Material();var secondMaterial=new Material();
+        Material[] observedMaterials=null;roomRenderer.OnMaterialsAssigned=materials=>observedMaterials=materials;
+        roomRenderer.materials=new[]{firstMaterial,secondMaterial};var materialSnapshot=roomRenderer.materials;
+        Check(ReferenceEquals(roomRenderer.material,firstMaterial)&&materialSnapshot.Length==2&&ReferenceEquals(materialSnapshot[1],secondMaterial),"original renderer material array preserves assigned material identities");
+        materialSnapshot[0]=new Material();
+        Check(ReferenceEquals(roomRenderer.materials[0],firstMaterial),"renderer material arrays are independent snapshots");
+        var emission=new Color(.2f,.4f,.6f,1);string colorProperty=null;Color observedColor=default;
+        firstMaterial.OnColorAssigned=(property,color)=>{colorProperty=property;observedColor=color;};
+        firstMaterial.SetColor("_EmissionColor",emission);
+        Check(colorProperty=="_EmissionColor"&&firstMaterial.GetColor(colorProperty).g==.4f&&observedColor.b==.6f,"source emissive material values persist and reach the presentation observer");
+        Check(observedMaterials.Length==2,"renderer assignment observer receives the complete material set");
         return count;
+    }
+
+    sealed class LightProbe:ILightDriver {
+        public readonly List<string> Changes=new();
+        public void SetEnabled(Light light,bool enabled)=>Changes.Add("enabled:"+enabled);
+        public void SetShadows(Light light,LightShadows shadows)=>Changes.Add("shadows:"+shadows);
     }
 }

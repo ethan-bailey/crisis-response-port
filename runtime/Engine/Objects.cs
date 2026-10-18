@@ -72,7 +72,7 @@ public class Component:Object {
 }
 public class Behaviour:Component {
     bool value=true;
-    public bool enabled {get=>value;set{this.value=value;world?.RefreshActivation();}}
+    public virtual bool enabled {get=>value;set{this.value=value;world?.RefreshActivation();}}
     public bool isActiveAndEnabled => this&&value&&gameObject.activeInHierarchy;
 }
 public class MonoBehaviour:Behaviour {
@@ -133,7 +133,27 @@ public class Transform:Component,IEnumerable<Transform> {
     IEnumerator IEnumerable.GetEnumerator()=>GetEnumerator();
 }
 public class RectTransform:Transform { }
-public class Light:Behaviour { public float intensity {get;set;}=1; }
+public interface ILightDriver {
+    void SetEnabled(Light light,bool enabled);
+    void SetShadows(Light light,LightShadows shadows);
+}
+public class Light:Behaviour {
+    LightShadows shadowType;
+    ILightDriver driver;
+    public float intensity {get;set;}=1;
+    public ILightDriver Driver {
+        get=>driver;
+        set {driver=value;if(driver!=null){driver.SetEnabled(this,enabled);driver.SetShadows(this,shadowType);}}
+    }
+    public override bool enabled {
+        get=>base.enabled;
+        set {base.enabled=value;driver?.SetEnabled(this,value);}
+    }
+    public LightShadows shadows {
+        get=>shadowType;
+        set {if(!Enum.IsDefined(value))throw new ArgumentOutOfRangeException(nameof(value));shadowType=value;driver?.SetShadows(this,value);}
+    }
+}
 
 public sealed class RuntimeWorld {
     [ThreadStatic] static RuntimeWorld current;

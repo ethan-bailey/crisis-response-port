@@ -360,6 +360,12 @@
       "sha256": "7655163a15723a4339b332746349fc8711e84f9ab69ff2222770512d005c2d43",
       "runtimeSha256": "0e528a560501e4276e145edff6d6d1fe31deff15371f867fc88aca24009fb4ae",
       "adaptation": "FullSource namespace wrapper only"
+    },
+    "PoweredLight.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/PoweredLight.cs",
+      "sha256": "422b99bafd4e29c3e34a3b780dccac43848d23d54b07d7f75b5d5a3071144b30",
+      "runtimeSha256": "940e6accb9f8fb14d223bf21d63dcd5cf50df8d12d920cffc9755ab07f30d4c3",
+      "adaptation": "FullSource namespace wrapper only"
     }
   }
 }

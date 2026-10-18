@@ -14,6 +14,7 @@ namespace UnityEngine {
  // are stored bottom-left first, as Unity Texture2D.GetPixels expects.
  public sealed class Material:Object {
   Texture2D texture;
+  readonly Dictionary<string,Color> colors=new();
   // Presentation observer only: source BallisticWindow.Reset assigns mainTexture
   // on a freshly cloned original CPU texture. Rebind browser stamp forwarding
   // without changing the recovered source Reset or StampAlpha algorithms.
@@ -27,12 +28,34 @@ namespace UnityEngine {
    if(property=="_MainTex" && value is Texture2D image)mainTexture=image;
   }
   public Action<Texture2D> OnMainTextureAssigned;
+  // Material values retain exact CPU-side source settings. A renderer or
+  // browser presentation host can observe changes without inventing pixels.
+  public Action<string,Color> OnColorAssigned;
+  public void SetColor(string property,Color value){ArgumentException.ThrowIfNullOrEmpty(property);colors[property]=value;OnColorAssigned?.Invoke(property,value);}
+  public Color GetColor(string property){ArgumentException.ThrowIfNullOrEmpty(property);return colors.GetValueOrDefault(property);}
   public Texture2D mainTexture {
    get=>texture;
    set {texture=value;OnMainTextureAssigned?.Invoke(value);}
   }
  }
- public class Renderer:Component {public Material material=new();}
+ public class Renderer:Component {
+  Material singleMaterial=new();Material[] materialInstances;
+  public Action<Material[]> OnMaterialsAssigned;
+  public Material material {
+   get=>materialInstances is {Length:>0}?materialInstances[0]:singleMaterial;
+   set {singleMaterial=value??throw new ArgumentNullException(nameof(value));if(materialInstances is {Length:>0})materialInstances[0]=value;}
+  }
+  public Material[] materials {
+   get=>materialInstances is null?new[]{singleMaterial}:(Material[])materialInstances.Clone();
+   set {
+    ArgumentNullException.ThrowIfNull(value);
+    if(Array.Exists(value,item=>item==null))throw new ArgumentException("Renderer materials cannot contain null",nameof(value));
+    materialInstances=(Material[])value.Clone();
+    if(materialInstances.Length>0)singleMaterial=materialInstances[0];
+    OnMaterialsAssigned?.Invoke((Material[])materialInstances.Clone());
+   }
+  }
+ }
  public sealed class MeshRenderer:Renderer {}
  // Imported source vertices. Convex planes are the hull of those vertices; this
  // is not a claim about matching Unity's PhysX cooking/reduction algorithm.
