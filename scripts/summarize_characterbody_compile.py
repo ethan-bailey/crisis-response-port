@@ -25,8 +25,24 @@ def summarize(log, source_sha=None, build_exit_code=None):
         elif match := GLOBAL.match(line):
             path, code, message = match.groups()
             rows.add((path.replace('\\', '/'), 0, 0, code, message))
+    # Group actual unresolved call sites by original symbol. Do not infer
+    # successful compilation from this inventory.
+    missing_sites = {}
+    for path, line_number, column, code, message in rows:
+        if code not in ('CS0246', 'CS0234'):
+            continue
+        match = re.search(r"(?:type or namespace name|namespace) '([^']+)'", message)
+        if match:
+            missing_sites.setdefault(match.group(1), []).append({
+                'path': path, 'line': line_number, 'column': column, 'code': code
+            })
+    missing_sites = {
+        name: sorted(sites, key=lambda site: (site['path'], site['line'], site['column']))
+        for name, sites in sorted(missing_sites.items())
+    }
     return {
         'schemaVersion': 1,
+        'missingSymbolCallsites': missing_sites,
         'sourceSha': source_sha,
         'buildExitCode': build_exit_code,
         'uniqueErrorCount': len(rows),
