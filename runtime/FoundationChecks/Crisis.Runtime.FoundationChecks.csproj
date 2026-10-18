@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup><TargetFramework>net8.0</TargetFramework><OutputType>Exe</OutputType><ImplicitUsings>enable</ImplicitUsings><Nullable>disable</Nullable><EnableDefaultCompileItems>false</EnableDefaultCompileItems></PropertyGroup>
+  <PropertyGroup><TargetFramework>net8.0</TargetFramework><OutputType>Exe</OutputType><ImplicitUsings>enable</ImplicitUsings><Nullable>disable</Nullable><EnableDefaultCompileItems>false</EnableDefaultCompileItems><DefineConstants>$(DefineConstants);CRISIS_FOUNDATION_TRANSPORT</DefineConstants></PropertyGroup>
   <ItemGroup>
     <Compile Include="../Engine/**/*.cs" />
-    <Compile Include="../Original/**/*.cs" Exclude="../Original/CharacterBody.Full.cs;../Original/Animation/ArmController.cs;../Original/Animation/ArmsControl.cs" />
+    <Compile Include="../Original/**/*.cs" Exclude="../Original/CharacterBody.Full.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 </Project>
