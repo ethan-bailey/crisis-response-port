@@ -1,0 +1,22 @@
+{
+  "sourceSha": "a41ae49b33139b6400089036f4984378f91382d3",
+  "sourceTree": "d7bfb42dd8459058533c2cf008e83c24a30d0d4a",
+  "baselineSha": "23e4cf0db8ca9a9aad09af44059f5939d70879c5",
+  "sdk": "8.0.426",
+  "fullBuildExitCode": 1,
+  "githubActionsRun": null,
+  "files": {
+    "actor-migration.log": "036b09c0e11b401545aa8f63078d1ca9f466544051937ba79b05eb25e9db9b43",
+    "audit-tests.log": "cc0b3b7fe8db3bbf1c1f95acfb6a86e12f1b70008ae0c09a703ede3995d1d138",
+    "final-engine-build.log": "7ae9abacdf985baa4deab48f4a84550d49a8740420688686c19c9d25f92ddc64",
+    "final-engine-tests.log": "2d030b533c8cda4df5c3f593c1b78a1b7f9977f3f607a4bdf3d2984e03c156af",
+    "final-foundation-build.log": "cdef685598d8741f289f8b79b8746be2afa480a2fb510b060a4160d894acd8f1",
+    "final-foundation-tests.log": "0a40c7fa2f1b7d6fd50c3ad51dfc148d727674c63e36f174a697247e78c84421",
+    "final-full-build.exit": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "final-full-build.log": "90e6c9ad6d56c9c69fb1744f3eaaef277e9c4850fb8912f4e184e62913735c1d",
+    "full-diagnostics.json": "25ec491abfad535008da06f58921d293aee53a2b381594405837ddbe83aa87d8",
+    "inventory.log": "b657f13faa1e8b57d305cabe3bfd8b9d715c3cd5c5cd7431985c938a774aff57",
+    "ownership.log": "c55ba47ed5da19342b0fff9615db8dfbf94229edfad8771f836d6e84649dd634",
+    "source-identities.log": "0bf032bbcd33a1091105c3213a1fb8523f698cf3a7913867456599c0301cdf00"
+  }
+}
