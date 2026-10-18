@@ -173,6 +173,17 @@ void Throws<T>(System.Action action,string label) where T:Exception {try{action(
  Check(property=="_DamageMask"&&ReferenceEquals(assigned,target),"damage target forwarded to material driver");
  Throws<ArgumentException>(()=>mesh.material.SetTexture("",target),"empty material parameter rejected");
 }
+// Original GL wound geometry forwards to a bound renderer; no fake pixels.
+{
+ var w=new RuntimeWorld();w.MakeCurrent();
+ Throws<NotSupportedException>(()=>GL.PushMatrix(),"unbound decal renderer fails explicitly");
+ var driver=new GLProbe();GL.Bind(w,driver);
+ GL.PushMatrix();GL.LoadPixelMatrix(0,64,64,0);GL.Begin(4);GL.Color(new Color(0,.5f,0));GL.Vertex3(4,8,0);GL.End();GL.PopMatrix();
+ Check(driver.Ops.SequenceEqual(new[]{"push","matrix","begin4","color","vertex","end","pop"}),"original decal GL commands retain ordering");
+ Throws<NotSupportedException>(()=>GL.Begin(9),"unsupported decal primitive rejected");
+ var other=new RuntimeWorld();other.MakeCurrent();
+ Throws<NotSupportedException>(()=>GL.End(),"GL renderer scoped to world");
+}
 Console.WriteLine(Crisis.Runtime.RuntimeContracts.Run());
 Console.WriteLine($"PASS: {assertions} foundation assertions; original full CharacterBody build is a separate required gate.");
 
@@ -204,4 +215,15 @@ sealed class RenderTargetProbe:IRenderTargetDriver {
  public RenderTexture ActiveTarget{get;private set;}
  public int Calls;
  public void SetActive(RenderTexture target){ActiveTarget=target;Calls++;}
+}
+
+sealed class GLProbe:IGLDriver {
+ public readonly List<string> Ops=[];
+ public void PushMatrix()=>Ops.Add("push");
+ public void PopMatrix()=>Ops.Add("pop");
+ public void LoadPixelMatrix(float left,float right,float bottom,float top)=>Ops.Add("matrix");
+ public void Begin(int mode)=>Ops.Add("begin"+mode);
+ public void End()=>Ops.Add("end");
+ public void Color(Color color)=>Ops.Add("color");
+ public void Vertex3(float x,float y,float z)=>Ops.Add("vertex");
 }
