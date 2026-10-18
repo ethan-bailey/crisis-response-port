@@ -121,6 +121,19 @@ void Throws<T>(System.Action action,string label) where T:Exception {try{action(
  first.MakeCurrent();
  Check(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name=="Original scene","source scene name preserved");
 }
+// Original time-scaling pitch must be forwarded, never silently accepted.
+{
+ var world=new RuntimeWorld();world.MakeCurrent();
+ var mixer=new UnityEngine.Audio.AudioMixer();
+ Throws<NotSupportedException>(()=>mixer.SetFloat("RealtimePitch",.75f),"unbound mixer rejected");
+ var driver=new MixerProbe();
+ UnityEngine.Audio.AudioMixer.Bind(world,driver);
+ Check(mixer.SetFloat("RealtimePitch",.75f),"original audio pitch driver accepted");
+ Check(driver.Name=="RealtimePitch"&&MathF.Abs(driver.Value-.75f)<1e-5f,"pitch passed without modification");
+ Throws<ArgumentOutOfRangeException>(()=>mixer.SetFloat("RealtimePitch",float.NaN),"nonfinite mixer pitch rejected");
+ var isolated=new RuntimeWorld();isolated.MakeCurrent();
+ Throws<NotSupportedException>(()=>mixer.SetFloat("RealtimePitch",1f),"audio mixer isolated by runtime world");
+}
 Console.WriteLine(Crisis.Runtime.RuntimeContracts.Run());
 Console.WriteLine($"PASS: {assertions} foundation assertions; original full CharacterBody build is a separate required gate.");
 
@@ -141,4 +154,9 @@ sealed class SceneTransitionProbe:UnityEngine.SceneManagement.ISceneManagerDrive
  public int LastIndex=-1;
  public UnityEngine.SceneManagement.Scene GetActiveScene()=>new(2,"Original scene");
  public void LoadScene(int buildIndex)=>LastIndex=buildIndex;
+}
+
+sealed class MixerProbe:UnityEngine.Audio.IAudioMixerDriver {
+ public string Name; public float Value;
+ public bool SetFloat(string name,float value){Name=name;Value=value;return true;}
 }
