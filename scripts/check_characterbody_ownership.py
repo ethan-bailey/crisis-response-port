@@ -32,6 +32,28 @@ REQUIRED_LIMBS = (
     "LeftUpperLeg", "LeftLowerLeg", "LeftFoot", "LeftToes",
 )
 
+def active_full_runtime_lines(source):
+    """Evaluate the foundation switch, preserving unknown branches conservatively."""
+    active=True
+    stack=[]
+    def condition(expression):
+        return {'CRISIS_FOUNDATION_TRANSPORT':False,'!CRISIS_FOUNDATION_TRANSPORT':True}.get(expression)
+    for number,line in enumerate(source.splitlines(),1):
+        directive=line.strip()
+        if directive.startswith('#if '):
+            value=condition(directive[4:].strip());stack.append((active,value))
+            active=active and value is not False
+        elif directive=='#else' and stack:
+            parent,value=stack[-1];active=parent and value is not True
+        elif directive.startswith('#elif ') and stack:
+            parent,previous=stack[-1];value=condition(directive[6:].strip())
+            active=parent and previous is not True and value is not False
+            stack[-1]=(parent,True if previous is True or value is True else None)
+        elif directive=='#endif' and stack:
+            active,_=stack.pop()
+        elif active:
+            yield number,line
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--strict", action="store_true")
@@ -45,19 +67,8 @@ def main() -> int:
         # The foundation harness deliberately compiles the legacy transport
         # under CRISIS_FOUNDATION_TRANSPORT. Reject it in the full runtime,
         # but do not report a false ownership conflict for that isolated target.
-        foundation_guard = False
-        for line_number, line in enumerate(source.splitlines(), 1):
-            directive = line.strip()
-            if directive == "#if CRISIS_FOUNDATION_TRANSPORT":
-                foundation_guard = True
-                continue
-            if directive == "#else" and foundation_guard:
-                foundation_guard = False
-                continue
-            if directive == "#endif" and foundation_guard:
-                foundation_guard = False
-                continue
-            if TRANSPORT_TYPE in line and not foundation_guard:
+        for line_number, line in active_full_runtime_lines(source):
+            if TRANSPORT_TYPE in line:
                 errors.append(f"{path.relative_to(ROOT)}:{line_number}: transport CharacterBody referenced in full runtime")
         if label == "full character":
             if f"namespace {ORIGINAL_TYPE.rsplit('.', 1)[0]};" not in source:

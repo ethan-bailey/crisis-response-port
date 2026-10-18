@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <!-- No recovered gameplay, transport actor, Behavior Designer or full graph. -->
+  <ItemGroup>
+    <Compile Include="../Engine/Math.cs;../Engine/Objects.cs;../Engine/ClockInput.cs;../Engine/Physics.cs;../Engine/CharacterPhysics.cs;../Engine/PhysicsComponents.cs;../Engine/PrefabCloner.cs;../Engine/AnimationCurve.cs;../Engine/SerializedEngineTypes.cs;../Engine/ArmPhysicsComponents.cs;../Engine/SpringJoint.cs;../Engine/Rendering/**/*.cs;../Engine/Mesh.cs;../Engine/GL.cs;../Engine/RenderTexture.cs;../Engine/BoxCollider2D.cs" />
+    <Compile Include="../Original/KeyCode.cs" />
+    <Compile Include="Program.cs" />
+  </ItemGroup>
+</Project>

@@ -2,11 +2,6 @@ name: Audit original window renderer and material provenance once
 
 # Read-only/private source audit; only editing this workflow triggers it.
 on:
-  push:
-    branches:
-      - codex/projectile-material-impacts
-    paths:
-      - ".github/workflows/audit-original-window-visuals.yml"
   workflow_dispatch:
 
 permissions:

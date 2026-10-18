@@ -1,11 +1,7 @@
 name: Verify recovered original particle sources without full browser rebuild
 on:
-  push:
-    branches:
-      - codex/projectile-material-impacts
-    paths:
-      - .github/workflows/verify-original-particle-assets.yml
   workflow_dispatch:
+
 permissions:
   contents: read
 jobs:

@@ -1,11 +1,7 @@
 name: Audit particle render assets including original Unity built-ins
 on:
-  push:
-    branches:
-      - codex/projectile-material-impacts
-    paths:
-      - .github/workflows/audit-original-particle-render-assets.yml
   workflow_dispatch:
+
 permissions:
   contents: read
   actions: read
