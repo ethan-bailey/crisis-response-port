@@ -63,7 +63,7 @@ or existing gameplay branches are replaced by this batch.
 9. Documented cross-PR contracts and ordered gates below. Preserved #56/#57 as
    workstreams and #7 as historical reference; none is superseded by this tooling
    batch, so closing or wholesale-merging them would lose useful work or mix actor
-   ownership. This change has its own review path into #42.
+   ownership. This change has its own review path into #42: [PR #66](https://github.com/ethan-bailey/crisis-response-port/pull/66).
 
 ### Workflows changed from push to manual
 
@@ -106,6 +106,13 @@ Local .NET SDK 8.0.426:
 The first local SDK invocation failed on the container's process-stat lookup;
 subsequent SDK execution and direct MSBuild invocation provided the results
 above. No failed invocation is represented as successful validation.
+
+Committed-source GitHub verification also passed: [run 39092992691](https://github.com/ethan-bailey/crisis-response-port/actions/runs/39092992691) at
+`46c4bae1749a656bb36019253ee4d62daf79520a` (all inventory, ownership, seven tool
+tests, isolated rendering and existing foundation checks).
+
+The narrow workflow preserves private native logs and the exact tested SHA as
+`engine-and-foundation-contracts` artifacts for 14 days.
 
 No WASM rebuild or public deployment was performed: this batch changes no
 runtime behavior and does not meet the actor integration acceptance gate below.
@@ -181,8 +188,10 @@ python3 scripts/summarize_characterbody_compile.py characterbody-compile.log \
 
 ## Revert procedure
 
-Use the atomic remediation commit linked in its PR. `git revert <remediation-commit>`
-reverses this batch without deleting source history or resetting another branch.
+The primary remediation commit is `46c4bae1749a656bb36019253ee4d62daf79520a`;
+its PR also records evidence-only follow-ups. Revert all remediation commits in
+reverse order, or revert PR #66's merge as described below. This reverses the
+batch without deleting source history or resetting another branch.
 If integrated with a merge commit, revert the remediation's ordinary commit(s),
 or use `git revert -m 1 <merge-commit>` only after verifying its first parent is
 PR #42's branch. Never reset `develop/wasm` or `main` to the rollback anchor.
