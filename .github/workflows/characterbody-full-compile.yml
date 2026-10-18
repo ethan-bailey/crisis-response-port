@@ -1,4 +1,7 @@
 name: Compile recovered full CharacterBody dependency closure
+# Gate 0 focused compiler refresh after the ArmController alias repair.
+# Expected to expose remaining authentic game/Unity/Behavior Designer dependencies;
+# a failed closure run is evidence, not a reason to substitute source methods.
 on:
   push:
     branches: [feature/full-source-characterbody-integration]
