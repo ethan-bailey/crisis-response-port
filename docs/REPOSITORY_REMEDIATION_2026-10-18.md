@@ -46,7 +46,7 @@ or existing gameplay branches are replaced by this batch.
    `ReflectionProbe`, `Rendering`). Asset-backed dependencies have an additional
    explicit flag. No missing name is silently assumed absent from the original.
 6. Added an executable actor migration boundary: freeze seven legacy gameplay
-   owner files, reject exclusions from the complete original project, and fix
+   owner files, reject new partial transport-owner declarations, reject exclusions from the complete original project, and fix
    nested conditional handling in the existing source ownership scan. A reviewed
    migration or necessary bug fix must update the manifest with a rationale here;
    arbitrary new gameplay in the transport graph now fails the fast check.

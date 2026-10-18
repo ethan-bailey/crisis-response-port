@@ -52,6 +52,10 @@ class BoundaryTests(unittest.TestCase):
             self.assertTrue(any('Legacy gameplay' in e for e in actor.check(target)))
             project=target/'runtime/Crisis.Runtime.csproj';project.write_text(project.read_text().replace('Include="Original/**/*.cs"','Include="Original/**/*.cs" Exclude="Original/CharacterBody.Full.cs"'))
             self.assertTrue(any('without exclusions' in e for e in actor.check(target)))
+            extra=target/'runtime/Original/Weapons/NewTransportState.cs'
+            extra.parent.mkdir(parents=True,exist_ok=True)
+            extra.write_text('namespace Crisis.Runtime.Weapons; public partial class CharacterBody { public float health; }')
+            self.assertTrue(any('New legacy gameplay owner' in e for e in actor.check(target)))
 
     def test_nested_foundation_guard_cannot_hide_production_transport(self):
         source='#if CRISIS_FOUNDATION_TRANSPORT\ntransport fixture\n#if UNKNOWN\nnested fixture\n#endif\n#else\nproduction binding\n#endif\nouter binding'
