@@ -5,7 +5,12 @@ name: Compile recovered full CharacterBody dependency closure
 on:
   push:
     branches: [feature/full-source-characterbody-integration]
-    paths: [.github/workflows/characterbody-full-compile.yml]
+    paths:
+      - '.github/workflows/characterbody-full-compile.yml'
+      - 'runtime/Original/CharacterBody.Full.cs'
+      - 'runtime/Original/Animation/ArmController.cs'
+      - 'runtime/Engine/**'
+      - 'runtime/Original/**'
   workflow_dispatch:
 permissions:
   contents: read
