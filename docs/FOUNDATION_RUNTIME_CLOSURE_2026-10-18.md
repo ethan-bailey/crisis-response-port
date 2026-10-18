@@ -26,6 +26,12 @@ dotnet build runtime/Crisis.Runtime.csproj -v:q
 
 The final command is intentionally still the real, failing closure probe. There is no expected-failure conversion to a green build. `scripts/summarize_characterbody_compile.py` records compiler output; it does not determine success from an empty or partial log.
 
+## Exact committed-source CI evidence
+
+Gameplay/source commit `7dd57df04cb6a7091ffd5fbf70a8e667456e0ca8`: [run 39084570789](https://github.com/ethan-bailey/crisis-response-port/actions/runs/39084570789). `foundation-contracts` **SUCCESS**, confirming 84 source identities, 59 assertions and all 10 prior contract groups. `compile-closure` **FAILURE**, confirming 30 compiler errors / 21 names; diagnostic summarization and artifact uploads succeeded. [Fast source/package run 39084572491](https://github.com/ethan-bailey/crisis-response-port/actions/runs/39084572491) **SUCCESS** at the same source.
+
+Private native evidence artifact `12119949035`, SHA256 `589ee636acce80ea043808623b3941f3c10c408b2257da453bc887096415c8cc`; full compiler evidence `12119969006`, SHA256 `2d0ccf5550f8a69d75ce02698cd8edab09e04e61dd808853279b3b6aac61a958`. Both expire **2026-11-01 UTC**. Documentation-only commits after this source do not establish a new tested executable SHA.
+
 ## Source recovery
 
 Recovery archive SHA256: `cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d`.
