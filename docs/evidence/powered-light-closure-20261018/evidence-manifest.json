@@ -1,0 +1,22 @@
+{
+  "sourceSha": "a4f36ebc7b1ef6ab2bf045c52dfbd83a457117ad",
+  "treeSha": "665d5428d4db48082b3d45a6b84dd8c3030ab707",
+  "files": {
+    "actor-migration.log": "036b09c0e11b401545aa8f63078d1ca9f466544051937ba79b05eb25e9db9b43",
+    "audit-tests.log": "e92bd6b90b2a59f97d47e6891ef68389bdd2d3ad0eaf22b15ded25ad0d711edc",
+    "diagnostics.json": "83ac1675c29ec4769f363b677ed2f0d6576bf95ce1584f0126b131ec14d5cd1b",
+    "engine-tests.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "engine-tests.log": "657243252763702fed11a20e0f5a601c4c6488ebb77f12d1c2bf771481b21007",
+    "enginechecks-direct-csc.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "enginechecks-direct-csc.log": "a1f311adb8edf5b272fc71c3f4573b192008e4453e1b60d0b2508fdd23406ec4",
+    "foundation-build.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "foundation-build.log": "78bf671244c34148a0623ca0d08b91629279bb5f3e681f6b47e7d0017be13c81",
+    "foundation-tests.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "foundation-tests.log": "0a40c7fa2f1b7d6fd50c3ad51dfc148d727674c63e36f174a697247e78c84421",
+    "inventory.log": "093d3ee4639b5808d728926af05235943faa91cbf84dcad5e95b949f3450e694",
+    "ownership.log": "c55ba47ed5da19342b0fff9615db8dfbf94229edfad8771f836d6e84649dd634",
+    "runtime-full-build.exit": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "runtime-full-build.log": "ead9987a52b6aaf245a80cb2655d143ebd864e96db39f8eb14c81743c9e9d81d",
+    "source-identities.log": "3a83c6699e7a8a92d42bd77b49db1bfca939ab61a851b9774974696107bae5db"
+  }
+}
