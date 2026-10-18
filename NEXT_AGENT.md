@@ -1,54 +1,34 @@
-# NEXT AGENT — Crisis Response Port
-Prepared 2026-10-17 UTC. This file completely replaces the previous handoff. Read `AGENTS.md`, especially §9; replace this entire file at the next transfer.
+# NEXT AGENT — Crisis Response Port (current handoff)
+**Prepared:** 2026-10-17 · **This branch:** `maintenance/foundation-first-master-plan-20261017` (documentation-only, not gameplay) · **Canonical integration:** `develop/wasm`.
 
-## Current state and branches
-The ten requested projectile-to-injury tasks are **not all complete**. PR #56 now compiles and passes controlled native/WASM/browser injury-chain checks. **Live NPC injury gameplay remains disabled; full source character/ragdoll integration and physical iPhone acceptance remain unfinished.**
+## Execute the adopted plan, not chronological handoff logs
+[Foundation-first completion execution plan](docs/FOUNDATION_FIRST_COMPLETION_PLAN_2026-10-17.md) specifies dependency order, owners, precise implementation and acceptance gates (0–8). The older [full-game inventory](docs/COMPLETE_WASM_PORT_ROADMAP.md) remains the exhaustive parity checklist. Read [AGENTS.md](AGENTS.md) and [operations audit](docs/REPOSITORY_OPERATIONS_2026-10-17.md); treat older recorded SHAs as historical. Every future handoff **replaces this entire file**, no appended status diaries.
 
-Repository: private `ethan-bailey/crisis-response-port`. Owner Ethan currently prefers one agent at a time; check current heads and writers before changes.
+## Actual current lane state
+| Lane | Inspected head | Readiness and merge decision |
+|---|---|---|
+| `develop/wasm` | `ec4414358e1b31beb8cb540ac11aa421147b132f` before this maintenance proposal | Canonical playable WASM baseline, not complete game. Keep verified rollback. |
+| [PR #56](https://github.com/ethan-bailey/crisis-response-port/pull/56) original projectile/limb + Occupant/spawn | `fb96e92a848409014b85f6e094d995a9376fb731` | Draft. 157 commits / 163 changed files ahead of develop at audit; substantial source work, controlled browser fixtures and later focused CI, but real automatic NPC mission startup, source AI, production hit effects, full ragdoll and live NPC collider enablement absent. **Do not bulk-merge.** |
+| [PR #57](https://github.com/ethan-bailey/crisis-response-port/pull/57) IK callbacks | `2b73044c107b875d8545d03541bf6b2d35f64654` | Draft, focused earlier callback check, full IK action closure/browser integration pending. |
+| [PR #42](https://github.com/ethan-bailey/crisis-response-port/pull/42) full original CharacterBody | `ebf6ef01de3172b72fbab321b4941c1decb3643e` | Draft, 2,454-line recovered class and supporting source, entire original dependency graph not compiling as one live class. Do not merge wholesale. |
+| [PR #7](https://github.com/ethan-bailey/crisis-response-port/pull/7) older Unity/iPhone | `ff2eed647e4eeb3446453b304bb4cbc4b6d31349` | Preserved historic alternative; not the primary C#→WASM integration workstream. |
 
-| Lane | Inspected head | Status / overlap |
-| --- | --- | --- |
-| `develop/wasm` | `c173099740d685daf597114db5e507527ba2dc7f` before this handoff | Canonical integration; does not contain PR #56 gameplay. |
-| PR #56, `feature/original-projectile-limb-hit-runtime` | `eef118868ae185bba5ab5700d7184199d8abede8` before handoff-only commit | Draft, unmerged; latest code tested at SHA below. |
-| PR #57, `feature/source-ikarmcontroller-live-callbacks` | `2b73044c107b875d8545d03541bf6b2d35f64654` | Draft; focused native source IK callback run 38994077400 passed; broader/browser integration missing. |
-| PR #42, `feature/full-source-characterbody-integration` | `ebf6ef01de3172b72fbab321b4941c1decb3643e` | Draft; original 2,454-line CharacterBody preserved, unified class still does not compile. |
-| PR #7, `codex/iphone-input-parity-foundation` | `ff2eed647e4eeb3446453b304bb4cbc4b6d31349` | Separate legacy Unity lane based on main; current focus is WASM. |
+## What is genuinely verified
+- #56 latest focused original Occupant mission-bridge regression [39080683868](https://github.com/ethan-bailey/crisis-response-port/actions/runs/39080683868) **SUCCESS** and fast source/package [39080683913](https://github.com/ethan-bailey/crisis-response-port/actions/runs/39080683913) **SUCCESS**, both on head `fb96e92a848409014b85f6e094d995a9376fb731`. Tests verify source record integrity, not actual live mission NPC AI.
+- Prior successful full WASM/browser milestone [39056615029](https://github.com/ethan-bailey/crisis-response-port/actions/runs/39056615029) on gameplay source `a41b49cb6182327f792bb0118d51910f197c5d43`: source record actor bridge, original Occupant visual and physical graph, browser checks. NPC creation was test-invoked, not automatic author mission startup.
+- More recent [39079729107](https://github.com/ethan-bailey/crisis-response-port/actions/runs/39079729107) reported `compile-package` job **SUCCESS** when inspected; distinguish its exact source and full browser coverage before calling it a complete game run. Current #56 head has only the two aforementioned focused checks confirmed here.
+- Protected older iPhone preview [stable URL](https://crisis-response-port-git-preview-w-6bd30d-ethanbaileymarsh-8332.vercel.app/game/) had Vercel READY but remote SSO/protection returned 403 and **physical Safari never validated**. Manual deployments only; do not quietly promote latest branch code or alter privacy settings.
 
-Do not bulk merge #42/#57 or rewrite shared branches. Develop changes since #56's integration baseline are documentation/governance, requiring reconciliation before gameplay integration. This handoff is a docs-only replacement on the feature branch and via maintenance PR into develop; it does not merge gameplay.
+## Immediate work order and tests
+1. **Gate 0:** Build an explicit original `CharacterBody` dependency/callsite matrix from [PR #42](https://github.com/ethan-bailey/crisis-response-port/pull/42), `source-reference/Original/CharacterDependencies/`, current `runtime/Original/`, original NPC Behavior Designer/task sources and preserved assets. Inventory source vs engine shim vs unbound vs tested. Compile the **actual** recovered complete class, record concrete errors, and fix one dependency family at a time. No placeholder implementations or bypassed methods.
+2. **Gate 1:** Finish shared actor `CharacterBody` physics, lifecycle, animation and physiology first; preserve existing source movement and approved iPhone proportional analog input. Test source update order and two independent original characters.
+3. **Gate 2:** Close #57 original arm IK/action/equipment dependencies and merge validated reusable slices; avoid duplicates with #42/#56.
+4. **Gate 3:** Complete original hit mission/audio/time/weapon-drop and body-state graph, source exit wounds/RNG/render dependencies, and real non-owner projectile collisions; keep all **19 NPC limb query colliders disabled** until a complete production hit dependency preflight and live two-actor test succeeds.
+5. **Gates 4–5:** Bind `game/source-occupant-spawner.mjs`, `game/source-occupant-mission-integration.mjs`, Global.Context/OccupantSettings/EquipmentList, real RNG/raycast to normal `game/index.html` startup and compile original source AI Behavior Designer trees/tasks for navigation/perception/combat. Create dedicated AI PR after foundations; no synthetic AI.
+6. **Gates 6–8:** Full missions, original asset presentation, source parity/reference tests, native then fixed-SHA WASM/PhysX/Chromium/WebKit; manual protected preview, physical iPhone test, reviewed small PR merges to `develop/wasm`.
 
-## Implemented and verified on PR #56
-- `runtime/Original/Weapons/CharacterCombatNotifications.cs`, `CharacterScoreCard.cs`, and `ProjectileAttack.Methods.cs` restore original RecordAttackInfo, OnWasAttacked, OnWasHit, compliance/visibility scoring and attacker-success behavior. Original FirstHitCharacter is reassigned for every victim despite its name; non-marksman attacker notification occurs only for the projectile's first victim; ShotsHit deduplicates by swarm ID.
-- `runtime/Engine/ProjectileFlightHost.cs` replaces unbound delegates with source calls and projectile events: preflight → tissue → RecordAttackInfo → LastHitLimb → OnWasHit → interaction → limb interaction. Required initialization/capabilities and self-hit rejection occur before tissue mutation. Sorted raycasts skip owner limbs while preserving masks and nearest non-owner hit. All **19 live limb query colliders remain disabled**.
-- `CharacterBody.StepOriginalPhysiology` now orders circulation → limb hemorrhage → oxygen/consciousness decisions. `runtime/Engine/Math.cs` preserves Unity's ordered Clamp comparisons when original blood loss produces inverted bounds.
-- `runtime/Checks/ProjectileInjuryContracts.cs` exercises real M4 ammunition, authored material and recovered Torso PNG mask through source cavity/wound creation, ongoing bleeding, hypoxia, unconsciousness/death, and an observed impulse. It also checks notification/event order, success credit, source compliance timing, masks and self-hit safety.
+## Source and safety invariants
+The repository and source assets stay private. Recovery archive SHA256 `cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d`; private preservation release `recovery-preservation-2026-10-15`. No original game logic substitutions, placeholder AI, fake targets, parallel health state, or unjustified parity claims. Preserve approved round-inclusive ammo UI/no extra chamber display, icon controls, circular iPhone joystick with 16% dead zone and 65% walk→sprint breakpoint, native full-speed keyboard. Retain screenshot/build artifacts with exact tested SHA. One heavy build per milestone; no auto Vercel deployments.
 
-These are controlled diagnostics: `liveNpcGameplay=false`. Geometry placement, notification observers and impulse sinks are test fixtures, not genuine NPC spawning, production side-effect bindings or a full PhysX ragdoll. Precision interaction remains unsupported. Do not claim original full-game or visual parity.
-
-Detailed evidence and source dependencies: [PROJECTILE_COMBAT_INTEGRATION_2026-10-17.md on PR #56](https://github.com/ethan-bailey/crisis-response-port/blob/feature/original-projectile-limb-hit-runtime/docs/PROJECTILE_COMBAT_INTEGRATION_2026-10-17.md).
-
-## Exact test and deployment evidence
-- **Tested gameplay SHA:** `a3e792744b590502b9c8af1c98ed0bd7d84b8702`.
-- **Passing full run:** [38998115604](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38998115604): native checks, source provenance, .NET 8 WASM, pinned PhysX, Chromium and WebKit diagnostics/gameplay. Includes 31-shot/reload, touch/movement, original hand rendering, 50 source/input checks and 12 package-integrity checks.
-- Evidence artifact **12088152433**; complete private site artifact **12087928555**; expire **2026-11-16**. Package verified: **742 files, 199 Blazor resources, 195 WASM files**.
-- Verified package reused without rebuild by staging run **38998497740**. Deployed snapshot on `preview/wasm-current-iphone`: `d6122e004d66a7d80746d24bba06ebc60475e92b`. Manifest sourceCommit matches tested SHA above.
-- Vercel deployment **dpl_HJk265kAiwBra1A8JypKZyQmJ4QF**, **READY**. Stable preview: https://crisis-response-port-git-preview-w-6bd30d-ethanbaileymarsh-8332.vercel.app/game/
-- Preview branch later advanced to `185c35305618b1aa121d06363ace83d831af349c` solely to restore manual-only staging workflow. Git auto-deploy stays disabled; SSO protection remains enabled.
-- Remote protected fetch failed with 403 at read_protection_bypass. READY metadata and CI browser tests are verified; independent remote browser acceptance and **physical iPhone Safari are unverified**. Do not loosen protection or repeat unchanged blocked authentication attempts.
-
-Keep the current verified deployment as rollback baseline; if a later preview regresses, restore this retained snapshot/package through the established manual path. Artifact retention is limited; Git snapshot/provenance remain durable.
-
-## Next actions, in order
-1. Recheck develop, all open PR heads, source and CI; reconcile governance/handoff changes without resurrecting old handoff text. Keep #56 draft until its live graph is complete.
-2. Bind a real production `IOriginalCharacterHitEffects` (currently test observers only) to Mission, TimeScaler, CharacterAudio/AudioPropagator, source markers and DropWeapons. Preserve Mission.FirstInjuryTimestamp's write-once-zero setter; original audio selection/delay/cooldown/consciousness; hit time scaling; mission marker conditions; and `DropWeapons(bool attachToRagdoll)` equipment/physics/dead-grip/IK behavior. Implement genuine typed `IOriginalMarksmanAttack` host before marksman support.
-3. Load distinct NPCs through original mission/prefab initialization, original limb registry, physiology/combat, source visibility, colliders and masks. Do not invent synthetic live targets or substitute AI.
-4. Complete source exit wounds, organs/fractures and rendering dependencies. Original `Limb.HandleExit` creates wounds and consumes RNG inside `useWoundDecals` renderer branches; copying formulas alone changes behavior. Dynamic damage masks, wound decals and original blood stream/particles remain incomplete. `LimbTextureData.Initialize` creates a new staticDamage texture: original PNG importer clamp does not establish its runtime wrap mode. Resolve unsupported out-of-bounds skin sampling from source; do not guess clamp/repeat.
-5. Complete original body-state/MuscleControl graph. SetRagdoll includes timed weapon drop, arm disabling, control relaxation, kinematic/target changes, grenade fuse, Limb.OnBecomeRagdoll and EventRagdoll. SetUnconscious stops voice/releases grabs; Physiology.SetCharacterState includes spasms/recovery/death. Reuse StepOriginalPhysiology; do not add a parallel health system. Coordinate #57 weapon-drop/IK callbacks.
-6. Only then enable the 19 colliders and test two genuine source characters with owner exclusion, original ammo/skin/armor, ordered events/credit, entry/exit/organ/fracture wounds, hemorrhage/shock/oxygen/state transitions and actual PhysX injury/joint/muscle responses.
-7. Run focused checks first: `python3 scripts/verify_original_combat_source.py`; `dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --projectile-injury-chain`, plus `--source-tissue-penetration`, `--source-limb-interior`, `--character-systems` and full checks as relevant. Use `scripts/projectile_injury_smoke.mjs` and `.github/workflows/wasm-arm-sequences.yml` for one exact-SHA full milestone. Reuse its passing package for a manual preview, then obtain real iPhone Safari evidence.
-
-## Preservation and operating rules
-Preserve original source and recovery provenance (`recovery-preservation-2026-10-15`, archive SHA256 `cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d`). No invented gameplay, no production no-op callbacks, fake particles/shaders or parity percentages.
-
-Preserve approved circular joystick: 16% horizontal dead zone, 65% walk-to-sprint breakpoint, analog speed with keyboard full speed, icon controls/no sprint button, and chamber-inclusive ammo count. Follow `docs/APPROVED_IPHONE_ANALOG_MOVEMENT.md`.
-
-Use one controlled heavy build at a time, manual deployments only, private artifacts, and no runtime rebuild for handoff-only edits. Re-read the committed handoff and confirm complete replacement; history belongs in Git and dated reports.
+## Before handing off again
+Re-query branch heads, all active PRs, focused/full CI, exact deployed manifest and current blocker status. Replace this entire file (not append). Commit and read back both first section and total length. Preserve history in Git, not in this document.
