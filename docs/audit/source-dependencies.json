@@ -915,20 +915,25 @@
     "runtime/Original/FullSource/CharacterScoreCard.cs",
     "runtime/Original/FullSource/Communication.cs",
     "runtime/Original/FullSource/CommunicationLine.cs",
+    "runtime/Original/FullSource/Coroutine.cs",
     "runtime/Original/FullSource/DialogTree.cs",
     "runtime/Original/FullSource/DoorController.cs",
     "runtime/Original/FullSource/DoorLockState.cs",
     "runtime/Original/FullSource/DoorMechanismState.cs",
     "runtime/Original/FullSource/DoorOpenState.cs",
+    "runtime/Original/FullSource/Doors.cs",
     "runtime/Original/FullSource/DynamicInteractionMarker.cs",
     "runtime/Original/FullSource/DynamicLimbTextureData.cs",
     "runtime/Original/FullSource/DynamicLimbTexturePool.cs",
     "runtime/Original/FullSource/Emitter.cs",
     "runtime/Original/FullSource/Encryption.cs",
+    "runtime/Original/FullSource/FireAlarm.cs",
     "runtime/Original/FullSource/FloorStreakPainter.cs",
     "runtime/Original/FullSource/Grenade.cs",
     "runtime/Original/FullSource/IKArmController.cs",
     "runtime/Original/FullSource/IKArmSequencer.cs",
+    "runtime/Original/FullSource/Interactable.cs",
+    "runtime/Original/FullSource/Interaction.cs",
     "runtime/Original/FullSource/Limb.cs",
     "runtime/Original/FullSource/LimbArmor.cs",
     "runtime/Original/FullSource/LimbAttachment.cs",
@@ -975,6 +980,7 @@
     "runtime/Original/FullSource/StaticDebug.cs",
     "runtime/Original/FullSource/Target.cs",
     "runtime/Original/FullSource/TimeScaler.cs",
+    "runtime/Original/FullSource/ToggleElectricity.cs",
     "runtime/Original/FullSource/UIGrenadeTimer.cs",
     "runtime/Original/FullSource/UIHitAnnouncement.cs",
     "runtime/Original/FullSource/UIHitAnnouncements.cs",
@@ -5046,6 +5052,20 @@
       ]
     },
     {
+      "path": "runtime/Original/FullSource/Coroutine.cs",
+      "sha256": "e2cf3abe34c34d002e1a4cba910225ef69f2ec7904b904a4846a07f31d8d771d",
+      "declares": [
+        "Coroutine"
+      ],
+      "references": [
+        "Debug",
+        "Global",
+        "GlobalContext",
+        "MonoBehaviour",
+        "WaitForSeconds"
+      ]
+    },
+    {
       "path": "runtime/Original/FullSource/DialogTree.cs",
       "sha256": "1dc193c302f6eee2e1e302418834bf94b4b32042597f46a2c0f29fbcb2b5f30f",
       "declares": [
@@ -5134,6 +5154,21 @@
       "references": []
     },
     {
+      "path": "runtime/Original/FullSource/Doors.cs",
+      "sha256": "0e278f147957ed3f15f48d7e05e0b1c5d5e7beeea0277a42122280aacbe5878b",
+      "declares": [
+        "Doors"
+      ],
+      "references": [
+        "DoorController",
+        "Global",
+        "MonoBehaviour",
+        "SerializableExtraSettings",
+        "Settings",
+        "in"
+      ]
+    },
+    {
       "path": "runtime/Original/FullSource/DynamicInteractionMarker.cs",
       "sha256": "3680dbe379bc707037d72ecac8aa06fbe8cc2a55096326751941c949ebb3de5e",
       "declares": [
@@ -5212,6 +5247,39 @@
         "Object",
         "Random",
         "Text"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/FireAlarm.cs",
+      "sha256": "0e528a560501e4276e145edff6d6d1fe31deff15371f867fc88aca24009fb4ae",
+      "declares": [
+        "FireAlarm"
+      ],
+      "references": [
+        "AddForce",
+        "AudioClip",
+        "AudioSource",
+        "BallisticMaterial",
+        "Coroutine",
+        "Destroy",
+        "ForceMode",
+        "GameObject",
+        "GetComponent",
+        "Global",
+        "Light",
+        "MonoBehaviour",
+        "Object",
+        "Play",
+        "Projectile",
+        "Random",
+        "Rigidbody",
+        "SerializableExtraSettings",
+        "SetActive",
+        "SetParent",
+        "Settings",
+        "Stop",
+        "Time",
+        "in"
       ]
     },
     {
@@ -5366,6 +5434,29 @@
         "Wait",
         "WeaponBase",
         "Wound"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/Interactable.cs",
+      "sha256": "fd567b19efe15702e3aa61d6911d54ed27e0d6c08164a22af6e6f0c2ede069c0",
+      "declares": [
+        "Interactable"
+      ],
+      "references": [
+        "CharacterBody",
+        "MonoBehaviour"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/Interaction.cs",
+      "sha256": "e8101b18cdd50e948a46c344c6639fdb08d74c9f768c189fa8ff73fc13effcaf",
+      "declares": [
+        "Interaction"
+      ],
+      "references": [
+        "CharacterBody",
+        "Mathf",
+        "MonoBehaviour"
       ]
     },
     {
@@ -6403,6 +6494,24 @@
         "Settings",
         "Time",
         "UIInteriorModeTextIndicator"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/ToggleElectricity.cs",
+      "sha256": "7f8f11a009dca8c7e5851d9014fdea0e5535413ae2dd41924920ac42b1793635",
+      "declares": [
+        "ToggleElectricity"
+      ],
+      "references": [
+        "AudioSource",
+        "CharacterBody",
+        "GetComponent",
+        "Global",
+        "Interaction",
+        "Mission",
+        "Play",
+        "Room",
+        "in"
       ]
     },
     {
@@ -8918,6 +9027,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Limb.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
@@ -9867,6 +9977,7 @@
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/CommunicationLine.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
         "source-reference/Original/CharacterDependencies/AudioSurface.cs",
@@ -10076,8 +10187,10 @@
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Physiology.cs",
+        "runtime/Original/FullSource/ToggleElectricity.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
         "source-reference/Original/CharacterDependencies/CharacterAudio.cs",
         "source-reference/Original/CharacterDependencies/Communication.cs",
@@ -10302,6 +10415,7 @@
         "runtime/Engine/BallisticRuntimeHost.cs",
         "runtime/Original/Ballistics/BallisticWindow.cs",
         "runtime/Original/Ballistics/ProjectileMaterial.Methods.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Limb.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/CharacterDependencies/Limb.cs"
@@ -12594,6 +12708,8 @@
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/IKArmController.cs",
         "runtime/Original/FullSource/IKArmSequencer.cs",
+        "runtime/Original/FullSource/Interactable.cs",
+        "runtime/Original/FullSource/Interaction.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbArmor.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
@@ -12602,6 +12718,7 @@
         "runtime/Original/FullSource/OriginalActorIdentity.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Target.cs",
+        "runtime/Original/FullSource/ToggleElectricity.cs",
         "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/Weapons/ArmTransition.cs",
@@ -13745,9 +13862,11 @@
     },
     {
       "name": "Coroutine",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/Coroutine.cs"
+      ],
       "engineSources": [
         "runtime/Engine/ClockInput.cs"
       ],
@@ -13763,6 +13882,7 @@
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/Task.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/Communication.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Mission.cs",
         "source-reference/Original/CharacterDependencies/CharacterAudio.cs",
         "source-reference/Original/CharacterDependencies/Communication.cs",
@@ -13955,6 +14075,7 @@
         "runtime/Original/BehaviorDesigner/BinaryDeserialization.cs",
         "runtime/Original/BehaviorDesigner/BinaryDeserializationDeprecated.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/Coroutine.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbTextureData.cs",
         "runtime/Original/FullSource/SerializableAudioSettings.cs",
@@ -14101,6 +14222,7 @@
         "runtime/Original/DecayingObject.cs",
         "runtime/Original/FullSource/BallisticObstacle.cs",
         "runtime/Original/FullSource/DynamicLimbTextureData.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Limb.cs",
@@ -14308,6 +14430,7 @@
       "referencedBy": [
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/AudioPropagator.cs",
+        "runtime/Original/FullSource/Doors.cs",
         "runtime/Original/FullSource/Room.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
@@ -14444,9 +14567,11 @@
     },
     {
       "name": "Doors",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/Doors.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -15586,9 +15711,11 @@
     },
     {
       "name": "FireAlarm",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/FireAlarm.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -16077,6 +16204,7 @@
         "runtime/Engine/PhysicsComponents.cs",
         "runtime/Original/Animation/ArmController.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Limb.cs",
         "source-reference/Original/Animation/ArmController.cs",
@@ -16563,6 +16691,7 @@
         "runtime/Original/BehaviorDesigner/BinaryDeserializationDeprecated.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/Mission.cs",
@@ -16889,6 +17018,7 @@
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/Emitter.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/IKArmController.cs",
@@ -16903,6 +17033,7 @@
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/Target.cs",
+        "runtime/Original/FullSource/ToggleElectricity.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/InteriorCameraSlice.cs",
@@ -18113,8 +18244,11 @@
       "referencedBy": [
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/Communication.cs",
+        "runtime/Original/FullSource/Coroutine.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/Doors.cs",
         "runtime/Original/FullSource/Emitter.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/Physiology.cs",
@@ -18128,6 +18262,7 @@
         "runtime/Original/FullSource/SerializablePerformanceSettings.cs",
         "runtime/Original/FullSource/SerializableTimeSettings.cs",
         "runtime/Original/FullSource/TimeScaler.cs",
+        "runtime/Original/FullSource/ToggleElectricity.cs",
         "runtime/Original/FullSource/UIGrenadeTimer.cs",
         "runtime/Original/FullSource/UIHitAnnouncements.cs",
         "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
@@ -18165,6 +18300,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Original/FullSource/Coroutine.cs",
         "runtime/Original/FullSource/DoorController.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
         "source-reference/Original/CharacterDependencies/DoorController.cs",
@@ -19818,9 +19954,11 @@
     },
     {
       "name": "Interactable",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/Interactable.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -19834,9 +19972,11 @@
     },
     {
       "name": "Interaction",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/Interaction.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -19844,6 +19984,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Original/FullSource/ToggleElectricity.cs",
         "runtime/Original/InputHandler.cs",
         "runtime/Original/InputKey.cs",
         "runtime/Original/InputMapping.cs"
@@ -20859,6 +21000,7 @@
         "runtime/Engine/PrefabCloner.cs",
         "runtime/Engine/SceneLoader.cs",
         "runtime/Original/BuildingController.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Room.cs",
@@ -21815,6 +21957,7 @@
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/IKArmController.cs",
+        "runtime/Original/FullSource/Interaction.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbArmor.cs",
         "runtime/Original/FullSource/LimbMuscle.cs",
@@ -22107,6 +22250,7 @@
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/TimeScaler.cs",
+        "runtime/Original/FullSource/ToggleElectricity.cs",
         "runtime/Original/FullSource/UIGrenadeTimer.cs",
         "runtime/Original/FullSource/UIHitAnnouncements.cs",
         "runtime/Original/FullSource/UIVocalizationText.cs",
@@ -22422,12 +22566,17 @@
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/CharacterDialog.cs",
         "runtime/Original/FullSource/Communication.cs",
+        "runtime/Original/FullSource/Coroutine.cs",
         "runtime/Original/FullSource/DialogTree.cs",
+        "runtime/Original/FullSource/Doors.cs",
         "runtime/Original/FullSource/DynamicInteractionMarker.cs",
         "runtime/Original/FullSource/Emitter.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/IKArmController.cs",
+        "runtime/Original/FullSource/Interactable.cs",
+        "runtime/Original/FullSource/Interaction.cs",
         "runtime/Original/FullSource/LimbArmor.cs",
         "runtime/Original/FullSource/LimbMuscle.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
@@ -22856,6 +23005,7 @@
         "runtime/Original/FullSource/DynamicLimbTextureData.cs",
         "runtime/Original/FullSource/DynamicLimbTexturePool.cs",
         "runtime/Original/FullSource/Encryption.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Limb.cs",
@@ -23775,9 +23925,11 @@
         "runtime/Original/Ballistics/EffectPool.Methods.cs",
         "runtime/Original/FullSource/AudioPlayer.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/IKArmController.cs",
         "runtime/Original/FullSource/IKArmSequencer.cs",
         "runtime/Original/FullSource/Physiology.cs",
+        "runtime/Original/FullSource/ToggleElectricity.cs",
         "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
         "runtime/Original/Weapons/CyclingBolt.cs",
         "runtime/Original/Weapons/WeaponMechanism.Methods.cs",
@@ -24104,6 +24256,7 @@
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/Foundation/ArmorClass.cs",
         "runtime/Original/FullSource/CharacterScoreCard.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbArmor.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
@@ -24391,6 +24544,7 @@
         "runtime/Original/FullSource/DynamicLimbTextureData.cs",
         "runtime/Original/FullSource/DynamicLimbTexturePool.cs",
         "runtime/Original/FullSource/Encryption.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/IKArmController.cs",
@@ -25418,6 +25572,7 @@
         "runtime/Original/Ballistics/ProjectileMaterial.Methods.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/Emitter.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbMuscle.cs",
@@ -25497,6 +25652,7 @@
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/ToggleElectricity.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
@@ -26277,7 +26433,9 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/Doors.cs",
         "runtime/Original/FullSource/Emitter.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/Settings.cs",
@@ -27060,6 +27218,7 @@
         "runtime/Original/Ballistics/ProjectileMaterial.Methods.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/Foundation/MissionMode.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/Room.cs",
@@ -27830,6 +27989,7 @@
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/Ballistics/ProjectileMaterial.Methods.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/IKArmController.cs",
         "runtime/Original/FullSource/Limb.cs",
@@ -28719,7 +28879,9 @@
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/Doors.cs",
         "runtime/Original/FullSource/Emitter.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/Mission.cs",
@@ -29807,6 +29969,7 @@
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/TaskCoroutine.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/Communication.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/LimbArmor.cs",
         "runtime/Original/Weapons/ProjectileFlight.Methods.cs",
         "source-reference/Original/CharacterDependencies/CharacterAudio.cs",
@@ -30962,6 +31125,7 @@
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/Emitter.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/IKArmController.cs",
@@ -31087,9 +31251,11 @@
     },
     {
       "name": "ToggleElectricity",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/ToggleElectricity.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -34043,7 +34209,8 @@
       "referencedBy": [
         "runtime/Engine/RuntimeContracts.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/BehaviorManager.cs",
-        "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/VariableSynchronizer.cs"
+        "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/VariableSynchronizer.cs",
+        "runtime/Original/FullSource/Coroutine.cs"
       ]
     },
     {
@@ -36160,6 +36327,8 @@
         "runtime/Original/Foundation/SerializableItems.cs",
         "runtime/Original/Foundation/SerializableWeapon.cs",
         "runtime/Original/FullSource/AudioPropagator.cs",
+        "runtime/Original/FullSource/Doors.cs",
+        "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
@@ -36168,6 +36337,7 @@
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/SerializableDialogState.cs",
+        "runtime/Original/FullSource/ToggleElectricity.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/InputHandler.cs",
@@ -36291,6 +36461,10 @@
     "Communication": [
       "runtime/Original/FullSource/Communication.cs",
       "source-reference/Original/CharacterDependencies/Communication.cs"
+    ],
+    "Coroutine": [
+      "runtime/Engine/ClockInput.cs",
+      "runtime/Original/FullSource/Coroutine.cs"
     ],
     "DialogTree": [
       "runtime/Original/FullSource/DialogTree.cs",

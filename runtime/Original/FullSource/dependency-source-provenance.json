@@ -324,6 +324,42 @@
       "sha256": "b490c93103ce7130385cb42a95ca8b12d5cb15e80d1a61d5e9f4dedb219f68e4",
       "runtimeSha256": "195dc54dd6f85a10eca8d1a7508cfcd434b5870f27b19e02efbf9119a524cbb8",
       "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "Coroutine.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Coroutine.cs",
+      "sha256": "be60b26733c6d1fa4a694d42435bc8fd880eb23f8ac3fc1054bfff96503e6216",
+      "runtimeSha256": "e2cf3abe34c34d002e1a4cba910225ef69f2ec7904b904a4846a07f31d8d771d",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Interaction.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Interaction.cs",
+      "sha256": "f62ca854a9d6091e9621e6cae6badd5bb66377f98f6775abe922417836d02eae",
+      "runtimeSha256": "e8101b18cdd50e948a46c344c6639fdb08d74c9f768c189fa8ff73fc13effcaf",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Interactable.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Interactable.cs",
+      "sha256": "85bd4b9bc94a43a2f73b3ed63ab765525949ef676e5ffb9d9cf76377b023f840",
+      "runtimeSha256": "fd567b19efe15702e3aa61d6911d54ed27e0d6c08164a22af6e6f0c2ede069c0",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "ToggleElectricity.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ToggleElectricity.cs",
+      "sha256": "34a433099eeb6c85b6127729a78be4fd4ae46a98a605f303f76c7b03a150b4f2",
+      "runtimeSha256": "7f8f11a009dca8c7e5851d9014fdea0e5535413ae2dd41924920ac42b1793635",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Doors.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Doors.cs",
+      "sha256": "c3d1ba30b0fe26b91a02d9afc00336dffca34537854a5d08881638ff035ddfb5",
+      "runtimeSha256": "0e278f147957ed3f15f48d7e05e0b1c5d5e7beeea0277a42122280aacbe5878b",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "FireAlarm.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FireAlarm.cs",
+      "sha256": "7655163a15723a4339b332746349fc8711e84f9ab69ff2222770512d005c2d43",
+      "runtimeSha256": "0e528a560501e4276e145edff6d6d1fe31deff15371f867fc88aca24009fb4ae",
+      "adaptation": "FullSource namespace wrapper only"
     }
   }
 }
