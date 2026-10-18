@@ -1,4 +1,9 @@
 using Grenade = Crisis.Runtime.Weapons.GrenadeReference;
+#if CRISIS_FOUNDATION_TRANSPORT
+using CharacterBody = Crisis.Runtime.Weapons.CharacterBody;
+#else
+using CharacterBody = Crisis.Runtime.FullSource.CharacterBody;
+#endif
 using System;
 using UnityEngine;
 
@@ -36,7 +41,7 @@ public class ArmController
 
 	public bool isRightArm;
 
-	private Crisis.Runtime.FullSource.CharacterBody body;
+	private CharacterBody body;
 
 	private ArmsControl controller;
 
@@ -74,7 +79,7 @@ public class ArmController
 
 	public bool TargetReached { get; private set; }
 
-	public void Initialize(ArmsControl controller, Crisis.Runtime.FullSource.CharacterBody body)
+	public void Initialize(ArmsControl controller, CharacterBody body)
 	{
 		this.body = body;
 		this.controller = controller;
