@@ -12,7 +12,15 @@ public sealed class AnimationCurve {
         if(values.Any(k=>k.time==key.time))return -1;
         values=values.Append(key).OrderBy(k=>k.time).ToArray();return Array.FindIndex(values,k=>k.time==key.time);
     }
-    public Keyframe[] keys=>(Keyframe[])values.Clone();
+    public Keyframe[] keys {
+        get=>(Keyframe[])values.Clone();
+        set {
+            ArgumentNullException.ThrowIfNull(value);
+            var sorted=value.OrderBy(k=>k.time).ToArray();
+            for(int i=1;i<sorted.Length;i++)if(sorted[i].time<=sorted[i-1].time)throw new NotSupportedException("Duplicate curve key time");
+            values=sorted;
+        }
+    }
     public int length=>values.Length;
     public bool clampOutside {get;init;}
     public int serializedPreInfinity {get;init;}

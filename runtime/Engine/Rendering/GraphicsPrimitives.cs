@@ -1,7 +1,15 @@
 using UnityEngine;
 namespace UnityEngine {
  public struct Color {public static Color black=>new(0,0,0,1);public float r,g,b,a;public Color(float r,float g,float b,float a){this.r=r;this.g=g;this.b=b;this.a=a;}}
- public struct Rect {public float x,y,width,height;public Rect(float x,float y,float w,float h){this.x=x;this.y=y;width=w;height=h;}public Vector2 min=>new(x,y);public Vector2 max=>new(x+width,y+height);}
+ public struct Rect {
+  public float x,y,width,height;
+  public Rect(float x,float y,float w,float h){this.x=x;this.y=y;width=w;height=h;}
+  public float xMin {get=>x;set{float end=xMax;x=value;width=end-x;}}
+  public float yMin {get=>y;set{float end=yMax;y=value;height=end-y;}}
+  public float xMax {get=>x+width;set=>width=value-x;}
+  public float yMax {get=>y+height;set=>height=value-y;}
+  public Vector2 min=>new(x,y);public Vector2 max=>new(x+width,y+height);
+ }
  // Read/write CPU texture adapter for the original glass alpha decisions. Pixels
  // are stored bottom-left first, as Unity Texture2D.GetPixels expects.
  public sealed class Texture2D:Texture {

@@ -195,6 +195,7 @@ void Throws<T>(System.Action action,string label) where T:Exception {try{action(
  Throws<ArgumentException>(()=>mesh.triangles=[0,1,3],"out of range triangle rejected");
  Throws<ArgumentException>(()=>mesh.vertices=[Vector3.zero],"triangle indices survive invalid mesh shrink");
 }
+assertions+=SerializationContracts.Run();
 Console.WriteLine(Crisis.Runtime.RuntimeContracts.Run());
 Console.WriteLine($"PASS: {assertions} foundation assertions; original full CharacterBody build is a separate required gate.");
 

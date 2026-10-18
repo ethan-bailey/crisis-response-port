@@ -51,7 +51,11 @@ def verify(archive_path=None):
             prefix, suffix = b"namespace Crisis.Runtime.FullSource\n{\n", b"\n}\n"
             assert data.startswith(prefix) and data.endswith(suffix), name
             original = data[len(prefix):-len(suffix)]
-            if item["adaptation"] == "FullSource namespace wrapper and Unity Random/Object aliases":
+            if item["adaptation"] == "FullSource namespace wrapper, weapon namespace import and Unity Random/Object aliases":
+                aliases = b"using Crisis.Runtime.Weapons;\nusing Random = UnityEngine.Random;\nusing Object = UnityEngine.Object;\n"
+                assert original.startswith(aliases), name
+                original = original[len(aliases):]
+            elif item["adaptation"] == "FullSource namespace wrapper and Unity Random/Object aliases":
                 aliases = b"using Random = UnityEngine.Random;\nusing Object = UnityEngine.Object;\n"
                 assert original.startswith(aliases), name
                 original = original[len(aliases):]

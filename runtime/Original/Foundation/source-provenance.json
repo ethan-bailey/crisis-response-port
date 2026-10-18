@@ -180,6 +180,360 @@
       "sha256": "b07843590a04418d396b44ca9c8a086de291bc6595ba3c76f868aa31c78eab1a",
       "runtimeSha256": "b07843590a04418d396b44ca9c8a086de291bc6595ba3c76f868aa31c78eab1a",
       "adaptation": "none"
+    },
+    "FullSerializer/Internal/Converters/UnityEvent_Converter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/Converters/UnityEvent_Converter.cs",
+      "sha256": "719ceeb2e7d1e6cc960fc6f0bc54e1070b94cac218e9ca93ef7e23d139cb692d",
+      "runtimeSha256": "719ceeb2e7d1e6cc960fc6f0bc54e1070b94cac218e9ca93ef7e23d139cb692d",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/DirectConverters/AnimationCurve_DirectConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/DirectConverters/AnimationCurve_DirectConverter.cs",
+      "sha256": "89941ff18e031e8ce89a50d88c35425890973bdfca026a1008b605b584675099",
+      "runtimeSha256": "89941ff18e031e8ce89a50d88c35425890973bdfca026a1008b605b584675099",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/DirectConverters/Bounds_DirectConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/DirectConverters/Bounds_DirectConverter.cs",
+      "sha256": "1b3113b881341cc75e8b3c539199877fbc8e7a5c2ce532ca7119658eb033d2c0",
+      "runtimeSha256": "1b3113b881341cc75e8b3c539199877fbc8e7a5c2ce532ca7119658eb033d2c0",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/DirectConverters/GUIStyleState_DirectConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/DirectConverters/GUIStyleState_DirectConverter.cs",
+      "sha256": "a5e34cf3363be9dfd60ffe9d6927dbf5e297b3f7577fe6539e0b535ef9c539a4",
+      "runtimeSha256": "a5e34cf3363be9dfd60ffe9d6927dbf5e297b3f7577fe6539e0b535ef9c539a4",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/DirectConverters/GUIStyle_DirectConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/DirectConverters/GUIStyle_DirectConverter.cs",
+      "sha256": "5c26abd2e6634119dfb3f66e7ed4498449f07887c2404ad7eead9ff46db6c711",
+      "runtimeSha256": "5c26abd2e6634119dfb3f66e7ed4498449f07887c2404ad7eead9ff46db6c711",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/DirectConverters/Gradient_DirectConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/DirectConverters/Gradient_DirectConverter.cs",
+      "sha256": "696d22f636c8e6706411b5c917cc0e323a5bc83b6dca631c897d376730000ebc",
+      "runtimeSha256": "696d22f636c8e6706411b5c917cc0e323a5bc83b6dca631c897d376730000ebc",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/DirectConverters/Keyframe_DirectConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/DirectConverters/Keyframe_DirectConverter.cs",
+      "sha256": "73a5a966449545a2a6d47c3ebe4dc794454be144da1a0a9235618c434e7e8186",
+      "runtimeSha256": "73a5a966449545a2a6d47c3ebe4dc794454be144da1a0a9235618c434e7e8186",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/DirectConverters/LayerMask_DirectConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/DirectConverters/LayerMask_DirectConverter.cs",
+      "sha256": "1fa545d5db1e2dff7b056e6e560ac814abbf64cdd7202cc76f4ef3f6ac258102",
+      "runtimeSha256": "1fa545d5db1e2dff7b056e6e560ac814abbf64cdd7202cc76f4ef3f6ac258102",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/DirectConverters/RectOffset_DirectConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/DirectConverters/RectOffset_DirectConverter.cs",
+      "sha256": "b462487eeb201d4eb6f7cb6daee30c8ab852f39f0681655fb7a6a2a4d202133a",
+      "runtimeSha256": "b462487eeb201d4eb6f7cb6daee30c8ab852f39f0681655fb7a6a2a4d202133a",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/DirectConverters/Rect_DirectConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/DirectConverters/Rect_DirectConverter.cs",
+      "sha256": "3a377d1e8da31921fe41b269b2d908eec46ad15b39ea6565c4c02402144cc531",
+      "runtimeSha256": "3a377d1e8da31921fe41b269b2d908eec46ad15b39ea6565c4c02402144cc531",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsArrayConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsArrayConverter.cs",
+      "sha256": "49cb6e7a875ad6a1b9de97f909f0056237b9486478d4277857942d635c4caf54",
+      "runtimeSha256": "49cb6e7a875ad6a1b9de97f909f0056237b9486478d4277857942d635c4caf54",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsCyclicReferenceManager.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsCyclicReferenceManager.cs",
+      "sha256": "9f973d18c53750431ba72c0e8f9b99f8b7a3a84d5cec3ca1a5cd808fbf4bdf7e",
+      "runtimeSha256": "9f973d18c53750431ba72c0e8f9b99f8b7a3a84d5cec3ca1a5cd808fbf4bdf7e",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsDateConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsDateConverter.cs",
+      "sha256": "95308c26c71648102df5283c10ef071c86dec6802aa12bbd8bb1cf5d86f6178a",
+      "runtimeSha256": "95308c26c71648102df5283c10ef071c86dec6802aa12bbd8bb1cf5d86f6178a",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsDictionaryConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsDictionaryConverter.cs",
+      "sha256": "c9852cdb36cbfec6c926ee30b7a5470e27e6af57c6a01bd675614b682af09c52",
+      "runtimeSha256": "c9852cdb36cbfec6c926ee30b7a5470e27e6af57c6a01bd675614b682af09c52",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsEnumConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsEnumConverter.cs",
+      "sha256": "099beafc34015721871c7d1cdafe00bd018cc8da5dbce24c567d8f51341d2855",
+      "runtimeSha256": "099beafc34015721871c7d1cdafe00bd018cc8da5dbce24c567d8f51341d2855",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsForwardConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsForwardConverter.cs",
+      "sha256": "bbea0e3ad8e0005101da06a5d533e736775f58c11e92da5f8db233e30da91c4b",
+      "runtimeSha256": "bbea0e3ad8e0005101da06a5d533e736775f58c11e92da5f8db233e30da91c4b",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsGuidConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsGuidConverter.cs",
+      "sha256": "4e7699deeaed2d5c3548dcaac8fc2da800302fd6d2d7b7c8eebfeca68c4bfd9b",
+      "runtimeSha256": "4e7699deeaed2d5c3548dcaac8fc2da800302fd6d2d7b7c8eebfeca68c4bfd9b",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsIEnumerableConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsIEnumerableConverter.cs",
+      "sha256": "327d92c072aaba7c78f478cd5e4061779535636761168dc157ad77ab9f50fd7e",
+      "runtimeSha256": "327d92c072aaba7c78f478cd5e4061779535636761168dc157ad77ab9f50fd7e",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsKeyValuePairConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsKeyValuePairConverter.cs",
+      "sha256": "8d83b213e966fd1b81d59b0c6e541c6b7502aa45e006a0091f3751bb5e2aeddb",
+      "runtimeSha256": "8d83b213e966fd1b81d59b0c6e541c6b7502aa45e006a0091f3751bb5e2aeddb",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsMetaProperty.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsMetaProperty.cs",
+      "sha256": "59d1adea910d0562d364a12939ec77eaac688cd7252cd3d6d3e592b4765934b4",
+      "runtimeSha256": "59d1adea910d0562d364a12939ec77eaac688cd7252cd3d6d3e592b4765934b4",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsNullableConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsNullableConverter.cs",
+      "sha256": "86aba6964adc0f0d002999c4e5245914974ed4e6763f1731f1dd9a56238687bb",
+      "runtimeSha256": "86aba6964adc0f0d002999c4e5245914974ed4e6763f1731f1dd9a56238687bb",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsOption.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsOption.cs",
+      "sha256": "7adaebc4bb62b56df86c77e6dd7cb666c2906fc3d91124ea700154e7ea3d6674",
+      "runtimeSha256": "7adaebc4bb62b56df86c77e6dd7cb666c2906fc3d91124ea700154e7ea3d6674",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsPortableReflection.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsPortableReflection.cs",
+      "sha256": "06c2b27c20b6022950dee06b111a42b644a1f976ea5d58baa12fcdae2ba1679b",
+      "runtimeSha256": "06c2b27c20b6022950dee06b111a42b644a1f976ea5d58baa12fcdae2ba1679b",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsPrimitiveConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsPrimitiveConverter.cs",
+      "sha256": "39b4634b9c699f6790995b26363e86359ee08765f0ff249cd7fbff852b0f1be8",
+      "runtimeSha256": "39b4634b9c699f6790995b26363e86359ee08765f0ff249cd7fbff852b0f1be8",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsReflectedConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsReflectedConverter.cs",
+      "sha256": "8c9e70103175a20f6d9ebbabdc99f2ec744381d10e928faab677571da1a232df",
+      "runtimeSha256": "8c9e70103175a20f6d9ebbabdc99f2ec744381d10e928faab677571da1a232df",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsReflectionUtility.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsReflectionUtility.cs",
+      "sha256": "6c55cdc946d08918d952c921bfdf538587cba5c8d5a5acc91e91e6b14dee777e",
+      "runtimeSha256": "6c55cdc946d08918d952c921bfdf538587cba5c8d5a5acc91e91e6b14dee777e",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsSerializationCallbackProcessor.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsSerializationCallbackProcessor.cs",
+      "sha256": "b10c8eb06ba7cbcfd29b17e169e0fdc79ca8f3b7f3e4bdcfca07126c0b16a196",
+      "runtimeSha256": "b10c8eb06ba7cbcfd29b17e169e0fdc79ca8f3b7f3e4bdcfca07126c0b16a196",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsSerializationCallbackReceiverProcessor.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsSerializationCallbackReceiverProcessor.cs",
+      "sha256": "df3776867f4539cd9bce11e84d0d7bdc738051244479f1ba41af01230c2fc703",
+      "runtimeSha256": "df3776867f4539cd9bce11e84d0d7bdc738051244479f1ba41af01230c2fc703",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsTypeCache.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsTypeCache.cs",
+      "sha256": "51e0eaa1c4f22d43ff5050117aed7f7c00d4039a1381965c97ae372631fd3afa",
+      "runtimeSha256": "51e0eaa1c4f22d43ff5050117aed7f7c00d4039a1381965c97ae372631fd3afa",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsTypeConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsTypeConverter.cs",
+      "sha256": "32844bdf233d916e6e9720d6b454e4c51a08ae029b9d8c1d5959fb98d36ec9f3",
+      "runtimeSha256": "32844bdf233d916e6e9720d6b454e4c51a08ae029b9d8c1d5959fb98d36ec9f3",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsVersionManager.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsVersionManager.cs",
+      "sha256": "3aa31b6afad2a41d26de0d809ea97680d368d7cc91b8dbb564380d81944ca69b",
+      "runtimeSha256": "3aa31b6afad2a41d26de0d809ea97680d368d7cc91b8dbb564380d81944ca69b",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsVersionedType.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsVersionedType.cs",
+      "sha256": "1747264c739551f3287a8461141be981114c32c6c01dcce84c5b9a6aab4a0d6c",
+      "runtimeSha256": "1747264c739551f3287a8461141be981114c32c6c01dcce84c5b9a6aab4a0d6c",
+      "adaptation": "none"
+    },
+    "FullSerializer/Internal/fsWeakReferenceConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/Internal/fsWeakReferenceConverter.cs",
+      "sha256": "df19adc0c69fd4c380b8488ac0d0ecd7a6b83e3619369876e966b2ad916005da",
+      "runtimeSha256": "df19adc0c69fd4c380b8488ac0d0ecd7a6b83e3619369876e966b2ad916005da",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsAotCompilationManager.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsAotCompilationManager.cs",
+      "sha256": "59e49e062fe3fddc7fd28e68cbeb518ac73720c826b0613697466fc17961a9bd",
+      "runtimeSha256": "59e49e062fe3fddc7fd28e68cbeb518ac73720c826b0613697466fc17961a9bd",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsAotConfiguration.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsAotConfiguration.cs",
+      "sha256": "e638ca2dd5e3f9e028c6b86f22cb1df766e61d7c92b5165e871523a414ba94c2",
+      "runtimeSha256": "e638ca2dd5e3f9e028c6b86f22cb1df766e61d7c92b5165e871523a414ba94c2",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsAotVersionInfo.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsAotVersionInfo.cs",
+      "sha256": "e1570713e1dc2a408ab63f6c52f7576e38b1b36b8901567bda800c566ebe990a",
+      "runtimeSha256": "e1570713e1dc2a408ab63f6c52f7576e38b1b36b8901567bda800c566ebe990a",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsBaseConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsBaseConverter.cs",
+      "sha256": "919e5df0e67af8fac83ecba4f0a9eb1d68e8d89259192a67da37325103b7db05",
+      "runtimeSha256": "919e5df0e67af8fac83ecba4f0a9eb1d68e8d89259192a67da37325103b7db05",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsConfig.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsConfig.cs",
+      "sha256": "0c99960803b36c0c9c5c51ddb2532beb1b5130488079942f2f1c73a2dc4ee88f",
+      "runtimeSha256": "0c99960803b36c0c9c5c51ddb2532beb1b5130488079942f2f1c73a2dc4ee88f",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsConverter.cs",
+      "sha256": "e55e3823286768cbabc8dc1617e6cf9c05b1a3845f5db34dda7525fec20b9e2d",
+      "runtimeSha256": "e55e3823286768cbabc8dc1617e6cf9c05b1a3845f5db34dda7525fec20b9e2d",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsContext.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsContext.cs",
+      "sha256": "615b1dfe8465111d397a5d176f0cfdf6ccbc94b0babb86c92795c6280215ff4d",
+      "runtimeSha256": "615b1dfe8465111d397a5d176f0cfdf6ccbc94b0babb86c92795c6280215ff4d",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsData.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsData.cs",
+      "sha256": "eeb2c3ce98268084cd93ed463b3d369c602f3fdbf711acf5bd3b0525e8a861eb",
+      "runtimeSha256": "eeb2c3ce98268084cd93ed463b3d369c602f3fdbf711acf5bd3b0525e8a861eb",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsConverterRegistrar.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsConverterRegistrar.cs",
+      "sha256": "e5df91c30c3e36ea8568b49694ee11ce1cd1d58d5be805a2505d3c149e8c7129",
+      "runtimeSha256": "e5df91c30c3e36ea8568b49694ee11ce1cd1d58d5be805a2505d3c149e8c7129",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsDataType.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsDataType.cs",
+      "sha256": "a3b811428571d70541e5f0451de8849c1a56fdd183fceb457f2306a4c8708d53",
+      "runtimeSha256": "a3b811428571d70541e5f0451de8849c1a56fdd183fceb457f2306a4c8708d53",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsDirectConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsDirectConverter.cs",
+      "sha256": "220110a46bb66c5b9a4155c9fb1df28c1c48c68c2fa5a8fa705562752c69b130",
+      "runtimeSha256": "220110a46bb66c5b9a4155c9fb1df28c1c48c68c2fa5a8fa705562752c69b130",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsDuplicateVersionNameException.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsDuplicateVersionNameException.cs",
+      "sha256": "64a95b45faddac338d660b625fd888942806ddf6637bee9b765c692b7c1b87b1",
+      "runtimeSha256": "64a95b45faddac338d660b625fd888942806ddf6637bee9b765c692b7c1b87b1",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsForwardAttribute.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsForwardAttribute.cs",
+      "sha256": "fea3755a72556b2e1eb0439359aea7e674b5ec13ca9c868386d0ee7aa632d04c",
+      "runtimeSha256": "fea3755a72556b2e1eb0439359aea7e674b5ec13ca9c868386d0ee7aa632d04c",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsGlobalConfig.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsGlobalConfig.cs",
+      "sha256": "e5cbf5bb4ae316b8c46d0aea0f59af3c83c31b8d0048972318a0650843b69b5a",
+      "runtimeSha256": "e5cbf5bb4ae316b8c46d0aea0f59af3c83c31b8d0048972318a0650843b69b5a",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsIAotConverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsIAotConverter.cs",
+      "sha256": "aeaa15fc39d36a3f86a94e141aecc20f3aca3cef5e9b4199b5c9bd2cca3a60a5",
+      "runtimeSha256": "aeaa15fc39d36a3f86a94e141aecc20f3aca3cef5e9b4199b5c9bd2cca3a60a5",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsISerializationCallbacks.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsISerializationCallbacks.cs",
+      "sha256": "036e1f41dcda603128a414055300bd13be835afa19e303a8e9e4d9c6818389f1",
+      "runtimeSha256": "036e1f41dcda603128a414055300bd13be835afa19e303a8e9e4d9c6818389f1",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsIgnoreAttribute.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsIgnoreAttribute.cs",
+      "sha256": "146564fd934d3c3328f992f768f5bcb4d1c11ccf6d9ddb506caae67cffb6a5ae",
+      "runtimeSha256": "146564fd934d3c3328f992f768f5bcb4d1c11ccf6d9ddb506caae67cffb6a5ae",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsJsonParser.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsJsonParser.cs",
+      "sha256": "f8bf9efb2f5a5c3a0cf52777e1ad48a0d67066033807a478316f6b9cc1775dff",
+      "runtimeSha256": "f8bf9efb2f5a5c3a0cf52777e1ad48a0d67066033807a478316f6b9cc1775dff",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsJsonPrinter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsJsonPrinter.cs",
+      "sha256": "c173b99d4a9111f35317288ade7f5ff3e938e2d1db79abf20e23d1f92867f8ca",
+      "runtimeSha256": "c173b99d4a9111f35317288ade7f5ff3e938e2d1db79abf20e23d1f92867f8ca",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsMetaType.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsMetaType.cs",
+      "sha256": "2e02619085c695faa50c07119a16ec25870ca9516d13a363173e811c0ec22953",
+      "runtimeSha256": "2e02619085c695faa50c07119a16ec25870ca9516d13a363173e811c0ec22953",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsMissingVersionConstructorException.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsMissingVersionConstructorException.cs",
+      "sha256": "f540b3134ead98a238373011a7b2bbc2eb29b51d5c3cbb8e5c97fa246a636e72",
+      "runtimeSha256": "f540b3134ead98a238373011a7b2bbc2eb29b51d5c3cbb8e5c97fa246a636e72",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsObjectProcessor.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsObjectProcessor.cs",
+      "sha256": "bec086250bc0cc48519b5ea985691ab4d13b84970021533082877441c03d4a16",
+      "runtimeSha256": "bec086250bc0cc48519b5ea985691ab4d13b84970021533082877441c03d4a16",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsPropertyAttribute.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsPropertyAttribute.cs",
+      "sha256": "612ac819cab92dafa581540d7175c43191334f59c54557d89c67fd0acf8bc99c",
+      "runtimeSha256": "612ac819cab92dafa581540d7175c43191334f59c54557d89c67fd0acf8bc99c",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsResult.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsResult.cs",
+      "sha256": "be2fb46581f20f3d5d481aa9028b739b52aac75afd04f45a328c92f91742c964",
+      "runtimeSha256": "be2fb46581f20f3d5d481aa9028b739b52aac75afd04f45a328c92f91742c964",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsSerializer.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsSerializer.cs",
+      "sha256": "2cbbf1121c43313e8caa44c6bb9b28f7386e270db8d39902bc03a0feca2bc6ea",
+      "runtimeSha256": "2cbbf1121c43313e8caa44c6bb9b28f7386e270db8d39902bc03a0feca2bc6ea",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsTypeExtensions.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsTypeExtensions.cs",
+      "sha256": "dfc345688a27889a8b87ba36fc70b964ca4c69844fb34d9051346813de3d9b8e",
+      "runtimeSha256": "dfc345688a27889a8b87ba36fc70b964ca4c69844fb34d9051346813de3d9b8e",
+      "adaptation": "none"
     }
   }
 }

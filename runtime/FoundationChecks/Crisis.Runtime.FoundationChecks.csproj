@@ -4,5 +4,8 @@
     <Compile Include="../Engine/**/*.cs" />
     <Compile Include="../Original/**/*.cs" Exclude="../Original/CharacterBody.Full.cs;../Original/FullSource/**/*.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="SerializationContracts.cs" />
+    <Compile Include="../Original/FullSource/QualityLevels.cs" />
+    <Compile Include="../Original/FullSource/SerializableAudioSettings_v*.cs;../Original/FullSource/SerializableBulletTimeEntry.cs;../Original/FullSource/SerializableRangeSlider.cs;../Original/FullSource/SerializableGraphicsSettings_v*.cs;../Original/FullSource/SerializableGraphicsSettings_0_0_8_005.cs" />
   </ItemGroup>
 </Project>
