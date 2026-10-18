@@ -1,0 +1,10 @@
+Recorded 19 distinct errors; 16 missing names; build exit=1
+RESOLVED: 9
+  runtime/Original/FullSource/FloorStreakPainter.cs CS0246 x2: The type or namespace name 'PaintableSurface' could not be found (are you missing a using directive or an assembly reference?)
+  runtime/Original/FullSource/Limb.cs CS0246 x1: The type or namespace name 'DynamicLimbDecalRenderer' could not be found (are you missing a using directive or an assembly reference?)
+  runtime/Original/FullSource/Limb.cs CS0246 x1: The type or namespace name 'FloorPoolPainter' could not be found (are you missing a using directive or an assembly reference?)
+  runtime/Original/FullSource/Mission.cs CS0246 x1: The type or namespace name 'BloodStream' could not be found (are you missing a using directive or an assembly reference?)
+  runtime/Original/FullSource/Mission.cs CS0246 x2: The type or namespace name 'FloorPoolPainter' could not be found (are you missing a using directive or an assembly reference?)
+  runtime/Original/FullSource/Mission.cs CS0246 x1: The type or namespace name 'WallStreakPainter' could not be found (are you missing a using directive or an assembly reference?)
+  runtime/Original/FullSource/Wound.cs CS0246 x1: The type or namespace name 'BloodStreamGenerator' could not be found (are you missing a using directive or an assembly reference?)
+INTRODUCED: 0
