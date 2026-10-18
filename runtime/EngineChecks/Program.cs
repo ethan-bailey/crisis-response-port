@@ -33,7 +33,32 @@ var second=new RuntimeWorld();second.MakeCurrent();
 Throws<NotSupportedException>(()=>GL.End());
 Throws<NotSupportedException>(()=>{var value=RenderTexture.active;});
 first.MakeCurrent();Check(RenderTexture.active==null,"world target restored");
-Console.WriteLine($"PASS: {assertions} isolated engine rendering assertions; no gameplay or full CharacterBody compiled.");
+// Verify new Unity-compatible API surfaces without claiming live rendering.
+var eventOrder=new List<int>();
+var typedEvent=new UnityEngine.Events.UnityEvent<int>();
+Action<int> firstListener=value=>eventOrder.Add(value);
+Action<int> secondListener=value=>eventOrder.Add(value+1);
+typedEvent.AddListener(firstListener);typedEvent.AddListener(secondListener);typedEvent.Invoke(3);
+Check(eventOrder.SequenceEqual(new[]{3,4}),"typed UnityEvent listeners execute in registration order");
+typedEvent.RemoveListener(firstListener);typedEvent.Invoke(5);
+Check(eventOrder.SequenceEqual(new[]{3,4,6}),"removing a typed listener preserves other callbacks");
+typedEvent.RemoveAllListeners();typedEvent.Invoke(7);
+Check(eventOrder.Count==3,"removed typed listeners do not execute");
+var emitterGo=new GameObject("original emitter module",first);
+var emitter=emitterGo.AddComponent<ParticleSystem>();
+var mainModule=emitter.main;var shapeModule=emitter.shape;
+mainModule.maxParticles=48;mainModule.startSpeed=new ParticleSystem.MinMaxCurve(2f,5f);
+shapeModule.radius=.4f;shapeModule.angle=21f;
+Check(emitter.main.maxParticles==48 && emitter.main.startSpeed.constantMax==5f &&
+      emitter.shape.radius==.4f && emitter.shape.angle==21f,"particle module value handles mutate shared state");
+Throws<ArgumentOutOfRangeException>(()=>{mainModule.maxParticles=-1;});
+Throws<NotSupportedException>(()=>emitter.Emit(1));
+var probe=emitterGo.AddComponent<ReflectionProbe>();
+Throws<NotSupportedException>(()=>probe.RenderProbe());
+probe.timeSlicingMode=UnityEngine.Rendering.ReflectionProbeTimeSlicingMode.IndividualFaces;
+Check(probe.timeSlicingMode==UnityEngine.Rendering.ReflectionProbeTimeSlicingMode.IndividualFaces,
+      "original reflection probe slicing value round-trips");
+Console.WriteLine($"PASS: {assertions} isolated engine graphics and source API assertions; no gameplay or full CharacterBody compiled.");
 
 sealed class GraphicsProbe:IRenderTargetDriver,IGLDriver {
  public readonly List<string> Ops=new();
