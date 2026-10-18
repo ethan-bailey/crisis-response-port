@@ -1,0 +1,14 @@
+Microsoft (R) Visual C# Compiler version 4.11.0-3.25569.22 (3fb752d4)
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+runtime/Engine/UI.cs(38,110): info CS9258: 'value' is a contextual keyword in property accessors starting in language version preview. Use '@value' instead.
+runtime/Original/BehaviorDesigner/BinaryDeserialization.cs(587,18): warning SYSLIB0021: 'SHA1Managed' is obsolete: 'Derived cryptographic types are obsolete. Use the Create method on the base type instead.' (https://aka.ms/dotnet-warnings/SYSLIB0021)
+runtime/Original/Foundation/FullSerializer/fsMetaType.cs(262,12): warning SYSLIB0050: 'FormatterServices' is obsolete: 'Formatter-based serialization is obsolete and should not be used.' (https://aka.ms/dotnet-warnings/SYSLIB0050)
+runtime/Engine/Math.cs(77,86): warning CS9113: Parameter 'text' is unread.
+runtime/Engine/Math.cs(78,85): warning CS9113: Parameter 'text' is unread.
+runtime/Engine/Objects.cs(75,54): info CS9258: 'value' is a contextual keyword in property accessors starting in language version preview. Use '@value' instead.
+runtime/Engine/ProjectileFlightHost.cs(11,30): warning CS0649: Field 'Projectile.segmentEndMagnitude' is never assigned to, and will always have its default value 0
+runtime/Engine/ProjectileFlightHost.cs(11,8): warning CS0649: Field 'Projectile.segmentBeginMagnitude' is never assigned to, and will always have its default value 0
+runtime/Engine/ProjectileMaterialHost.cs(9,52): warning CS0649: Field 'Projectile.segmentLength' is never assigned to, and will always have its default value 0
+
+Direct Roslyn compile exit 0; 246 source files

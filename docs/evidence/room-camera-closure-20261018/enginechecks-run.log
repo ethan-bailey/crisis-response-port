@@ -1,0 +1,3 @@
+PASS: 60 isolated engine graphics and source API assertions; no gameplay or full CharacterBody compiled.
+
+Direct host exit 0
