@@ -15,6 +15,12 @@ static class OriginalUIContracts {
         Check(original.fill.text=="Original hit"&&original.outline.text=="Original hit","original setter updates fill and outline together");
         var display=new GraphicProbe();original.fill.Driver=display;
         Check(display.Text=="Original hit","presentation binding synchronizes the original text state");
+        original.fill.color=new Color(.2f,.4f,.6f,.8f);
+        var clonedText=UnityEngine.Object.Instantiate(original.fill);
+        Check(clonedText.text=="Original hit"&&clonedText.color.a==.8f,"cloned original UI retains serialized text and tint");
+        Check(clonedText.Driver==null,"prefab cloning does not copy native presentation bindings");
+        clonedText.text="Clone";clonedText.color=Color.clear;
+        Check(original.fill.text=="Original hit"&&original.fill.color.a==.8f,"cloned UI state is independent of its source component");
         var start=new Vector3(10,20,0);original.Initialize(start);world.Tick(.25f);
         Check(MathF.Abs(go.transform.localScale.x-1.15625f)<1e-5f,"original announcement evaluates the authored scale curve");
         Check(MathF.Abs(original.fill.color.a-.84375f)<1e-5f&&original.fill.color.a==original.outline.color.a,"original announcement applies the authored alpha to both graphics");

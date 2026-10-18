@@ -1575,7 +1575,7 @@
     },
     {
       "path": "runtime/Engine/PrefabCloner.cs",
-      "sha256": "442d2a1b15ed30944b9916676e1159ea817a5b272afdec6d030afee83b28bfcf",
+      "sha256": "425b235f503df94d797a1a020aeffb11ee6e18e7fb351e1b0a942c74dc96c14f",
       "declares": [
         "PrefabCloner"
       ],
@@ -1583,6 +1583,7 @@
         "AnimationCurve",
         "Behaviour",
         "BoxCollider",
+        "Color",
         "Component",
         "GameObject",
         "Keyframe",
@@ -1969,7 +1970,7 @@
     },
     {
       "path": "runtime/Engine/UI.cs",
-      "sha256": "c6db449ae085527baae90bcc2fffb6df32c0c40d31ed8a29a787e861d248bdf2",
+      "sha256": "9e44a96f2349668701a6e36f410430b3fd8116fbc9210ead3001a3c63088c5ce",
       "declares": [
         "Graphic",
         "IGraphicDriver",
@@ -1981,6 +1982,7 @@
         "Action",
         "Color",
         "MonoBehaviour",
+        "SerializeField",
         "SetColor",
         "UnityEvent"
       ]
@@ -13068,6 +13070,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/GL.cs",
+        "runtime/Engine/PrefabCloner.cs",
         "runtime/Engine/Rendering/Texture2D.cs",
         "runtime/Engine/Rendering/TextureTransfers.cs",
         "runtime/Engine/SerializationTypes.cs",
@@ -26920,6 +26923,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/PrefabCloner.cs",
+        "runtime/Engine/UI.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/Behavior.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/BehaviorManager.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/BehaviorSource.cs",

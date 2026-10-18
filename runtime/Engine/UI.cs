@@ -7,7 +7,7 @@ public interface IGraphicDriver {
     void SetText(Text text,string value);
 }
 public class Graphic:MonoBehaviour {
-    Color tint=Color.white;
+    [SerializeField] Color tint=Color.white;
     IGraphicDriver driver;
     public Color color {get=>tint;set{tint=value;driver?.SetColor(this,value);}}
     public IGraphicDriver Driver {get=>driver;set{driver=value;if(driver!=null)Present();}}
@@ -15,17 +15,17 @@ public class Graphic:MonoBehaviour {
     public virtual void Present()=>RequiredDriver.SetColor(this,color);
 }
 public sealed class Text:Graphic {
-    string content=string.Empty;
+    [SerializeField] string content=string.Empty;
     public string text {get=>content;set{content=value??string.Empty;Driver?.SetText(this,content);}}
     public override void Present() {base.Present();RequiredDriver.SetText(this,text);}
 }
 public sealed class Image:Graphic { }
 public sealed class Slider:MonoBehaviour {
-    float current;
+    [SerializeField] float current;
     public float minValue=0,maxValue=1;
     public bool wholeNumbers;
     public readonly UnityEngine.Events.UnityEvent<float> onValueChanged=new();
-    public Action<float> OnVisualValueChanged;
+    [NonSerialized] public Action<float> OnVisualValueChanged;
     public float value {
         get=>current;
         set {

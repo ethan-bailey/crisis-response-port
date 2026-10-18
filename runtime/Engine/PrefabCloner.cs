@@ -30,7 +30,7 @@ public static class PrefabCloner {
             if(value==null)return null;
             if(value is Object reference)return map.TryGetValue(reference,out var replacement)?replacement:reference;
             var type=value.GetType();
-            if(type.IsPrimitive||type.IsEnum||type==typeof(string)||value is Vector2 or Vector3 or Quaternion or Keyframe)return value;
+            if(type.IsPrimitive||type.IsEnum||type==typeof(string)||value is Vector2 or Vector3 or Quaternion or Keyframe or Color)return value;
             if(values.TryGetValue(value,out var existing))return existing;
             if(value is AnimationCurve curve)return new AnimationCurve(curve.keys){clampOutside=curve.clampOutside,serializedPreInfinity=curve.serializedPreInfinity,serializedPostInfinity=curve.serializedPostInfinity};
             if(value is Array array){var output=Array.CreateInstance(type.GetElementType(),array.Length);values[value]=output;
