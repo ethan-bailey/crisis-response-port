@@ -178,7 +178,7 @@ void Throws<T>(System.Action action,string label) where T:Exception {try{action(
  var w=new RuntimeWorld();w.MakeCurrent();
  Throws<NotSupportedException>(()=>GL.PushMatrix(),"unbound decal renderer fails explicitly");
  var driver=new GLProbe();GL.Bind(w,driver);
- GL.PushMatrix();GL.LoadPixelMatrix(0,64,64,0);GL.Begin(4);GL.Color(new Color(0,.5f,0));GL.Vertex3(4,8,0);GL.End();GL.PopMatrix();
+ GL.PushMatrix();GL.LoadPixelMatrix(0,64,64,0);GL.Begin(4);GL.Color(new Color(0,.5f,0,1f));GL.Vertex3(4,8,0);GL.End();GL.PopMatrix();
  Check(driver.Ops.SequenceEqual(new[]{"push","matrix","begin4","color","vertex","end","pop"}),"original decal GL commands retain ordering");
  Throws<NotSupportedException>(()=>GL.Begin(9),"unsupported decal primitive rejected");
  var other=new RuntimeWorld();other.MakeCurrent();
