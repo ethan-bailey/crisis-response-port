@@ -3,8 +3,10 @@
 ## Baseline and rollback anchor
 
 Repository: `ethan-bailey/crisis-response-port`. Inspected full-source branch head:
-`407c66d026784b72c96490eabae6085dd87c22e6` (PR #42). Browser integration branch:
-`develop/wasm` at `e0a9ad26fb7def7c171dd04171eb93c9b79191af`.
+`407c66d026784b72c96490eabae6085dd87c22e6` (PR #42). PR #42's recorded fork-base snapshot is
+`e0a9ad26fb7def7c171dd04171eb93c9b79191af`; direct branch verification found
+`develop/wasm` at `ba12245122a5fc256a4bbb6c3f815050d25bcc20` (integrated
+Occupant spawn contracts, PR #65). That browser branch was not changed by this batch.
 
 Authoritative compiler evidence: [run 39091701268](https://github.com/ethan-bailey/crisis-response-port/actions/runs/39091701268),
 job `117569703653`, at the full-source head above: **144 distinct errors, 60 missing names**.
@@ -111,6 +113,15 @@ Committed-source GitHub verification also passed: [run 39092992691](https://gith
 `46c4bae1749a656bb36019253ee4d62daf79520a` (all inventory, ownership, seven tool
 tests, isolated rendering and existing foundation checks).
 
+Final remediation verification: [run 39093133256](https://github.com/ethan-bailey/crisis-response-port/actions/runs/39093133256) **SUCCESS** at
+`389d8e8dcc3cc49d4327cc55588d874271dc4271`. Private artifact `12123895692`,
+SHA256 `ac33366d664bb03f7573f751c44df80837e04c686f5c54d6b6284f3167730d8c`,
+expires **2026-11-01T03:18:44Z**. PR #66 merged into the full-source branch as
+`6c4415e62cef53646818c8c08412d5604282a740`; the three reviewed remediation
+commits are `46c4bae`, `6d584cb` and `389d8e8`. This final log update changes
+no executable files. No full closure build was automatically launched for the
+remediation branch.
+
 The narrow workflow preserves private native logs and the exact tested SHA as
 `engine-and-foundation-contracts` artifacts for 14 days.
 
@@ -193,8 +204,9 @@ its PR also records evidence-only follow-ups. Revert all remediation commits in
 reverse order, or revert PR #66's merge as described below. This reverses the
 batch without deleting source history or resetting another branch.
 If integrated with a merge commit, revert the remediation's ordinary commit(s),
-or use `git revert -m 1 <merge-commit>` only after verifying its first parent is
-PR #42's branch. Never reset `develop/wasm` or `main` to the rollback anchor.
+or use `git revert -m 1 6c4415e62cef53646818c8c08412d5604282a740` after
+verifying its first parent is `407c66d026784b72c96490eabae6085dd87c22e6`.
+A subsequent documentation-only log commit can be reverted separately if desired. Never reset `develop/wasm` or `main` to the rollback anchor.
 
 For a partial rollback: restore only `.github/workflows/` from the anchor to
 restore old triggers; revert the paired engine host/extracted-file changes
