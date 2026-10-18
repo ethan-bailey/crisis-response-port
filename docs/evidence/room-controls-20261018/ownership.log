@@ -1,0 +1,4 @@
+Original CharacterBody: Crisis.Runtime.FullSource.CharacterBody
+Legacy browser transport: Crisis.Runtime.Weapons.CharacterBody
+Required actor components: 13; limb identities: 19
+Ownership source scan clear (native compile still required).

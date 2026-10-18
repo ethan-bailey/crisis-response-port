@@ -1,0 +1,28 @@
+{
+  "sourceSha": "7b592b18fd8972cd31f03725124b10c7aadc290f",
+  "treeSha": "5726855a5f8548a5e5c9ee5fa0cd93e0e68f6676",
+  "files": {
+    "actor-migration.log": "036b09c0e11b401545aa8f63078d1ca9f466544051937ba79b05eb25e9db9b43",
+    "audit-tests.log": "1c6791a9d1bb61b304e660ca4da6e334d9d29a671d52407ea72311667aadbc67",
+    "diagnostics.json": "b2d6564c448a2f32661de881bbe86001f30c920666e8e8cb7158c5e159c9f559",
+    "direct-msbuild-startup.exit": "d7b906a85360766ca93a7f2a3391ddc205bb248d2ec6e045769e67889fc1ebd5",
+    "direct-msbuild-startup.log": "9cab5598e87b7ea201b1848d6b94c52abb029dfa652fd14612530fbc2bd82957",
+    "dotnet-cli-startup.exit": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "dotnet-cli-startup.log": "1e936d1715393e912436513a33ce107bf3bd35694e5cebbfb4d49ec2ca78d86f",
+    "engine-build.exit": "d7b906a85360766ca93a7f2a3391ddc205bb248d2ec6e045769e67889fc1ebd5",
+    "engine-build.log": "2de1bc608961421e8fafccd61a83915dad3617aacfbcf15b62ad5dc6e83bc33b",
+    "engine-tests.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "engine-tests.log": "2d030b533c8cda4df5c3f593c1b78a1b7f9977f3f607a4bdf3d2984e03c156af",
+    "foundation-build.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "foundation-build.log": "3d8ec68609d1f86b544559c318371c4894a51d013589d588cf9d47bd6022cc07",
+    "foundation-tests.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "foundation-tests.log": "0a40c7fa2f1b7d6fd50c3ad51dfc148d727674c63e36f174a697247e78c84421",
+    "inventory-check.log": "a0e0b8c0b03227e3b41a56bf88499aa7b8757bbc1fdf7a0a8ee723f476748677",
+    "ownership.log": "c55ba47ed5da19342b0fff9615db8dfbf94229edfad8771f836d6e84649dd634",
+    "roslyn-direct-compile.exit": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "roslyn-direct-compile.log": "0c673d49dca893696a261f3d1926cb38a8c58a1bb5be3f28aeb91910a90e613a",
+    "runtime-full-build.exit": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "runtime-full-build.log": "1e936d1715393e912436513a33ce107bf3bd35694e5cebbfb4d49ec2ca78d86f",
+    "source-identities.log": "c8d3c8088eb0e670bfc6b8e83130fc07f5ed59909086fa6c2d37945695ba20eb"
+  }
+}
