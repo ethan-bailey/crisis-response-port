@@ -11,5 +11,6 @@
     <Compile Include="../Engine/Math.cs;../Engine/Objects.cs;../Engine/ClockInput.cs;../Engine/Physics.cs;../Engine/CharacterPhysics.cs;../Engine/PhysicsComponents.cs;../Engine/PrefabCloner.cs;../Engine/AnimationCurve.cs;../Engine/SerializedEngineTypes.cs;../Engine/ArmPhysicsComponents.cs;../Engine/SpringJoint.cs;../Engine/Rendering/**/*.cs;../Engine/Mesh.cs;../Engine/GL.cs;../Engine/RenderTexture.cs;../Engine/BoxCollider2D.cs;../Engine/UnityEventTyped.cs;../Engine/ReflectionProbe.cs;../Engine/ParticleSystem.cs" />
     <Compile Include="../Original/KeyCode.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="TextureTransferContracts.cs" />
   </ItemGroup>
 </Project>

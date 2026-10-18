@@ -264,6 +264,30 @@
       "sha256": "b8b71fceaef0f80f49f97855013e229a94df6ae17637216346feaffece9d2894",
       "runtimeSha256": "a38d3fdc112c35c2dfc0e97b8de2d11568d9995d42b6e9a65be07ec9db72dbcb",
       "adaptation": "FullSource namespace wrapper, weapon namespace import and Unity Random/Object aliases"
+    },
+    "LimbTextureData.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/LimbTextureData.cs",
+      "sha256": "6497989fda940321313bee655475cfae8e790ffaa75848c1fa08c49cac8afacc",
+      "runtimeSha256": "6f2cebc0fd528c084a7a66262a2221b901daa0d2564c3e9820d082cb99dc0295",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "DynamicLimbTextureData.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DynamicLimbTextureData.cs",
+      "sha256": "3b29909c33929716827f3b92baf245952beb9aeb8f242ab6c67a888dc95cf9a8",
+      "runtimeSha256": "d020cd6dca8d96840d45b92ec91f4ac19a107ccf40250b244010a4f8a6d43b61",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "DynamicLimbTexturePool.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DynamicLimbTexturePool.cs",
+      "sha256": "383f46c6d9ed88041c91b9107ffdf14202c097ae5d9dee46d8f8336e9d6b82e3",
+      "runtimeSha256": "8b10727365d7f584307f7b5868b887e0169acb10f4d4f82eec37f84c9fd035bc",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "StaticDebug.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/StaticDebug.cs",
+      "sha256": "35b0a79489c66a0e9570149229e19964806cf454058fef4f26922d05e28e65b0",
+      "runtimeSha256": "56da3518bd388834e3e3aa388f11b0ae49e0d31875bd30e9aa18750be676c660",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
     }
   }
 }

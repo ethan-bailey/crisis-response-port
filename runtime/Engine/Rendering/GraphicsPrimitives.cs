@@ -1,6 +1,6 @@
 using UnityEngine;
 namespace UnityEngine {
- public struct Color {public static Color black=>new(0,0,0,1);public float r,g,b,a;public Color(float r,float g,float b,float a){this.r=r;this.g=g;this.b=b;this.a=a;}}
+ public struct Color {public static Color black=>new(0,0,0,1);public static Color white=>new(1,1,1,1);public static Color clear=>new(0,0,0,0);public float r,g,b,a;public Color(float r,float g,float b,float a=1){this.r=r;this.g=g;this.b=b;this.a=a;}}
  public struct Rect {
   public float x,y,width,height;
   public Rect(float x,float y,float w,float h){this.x=x;this.y=y;width=w;height=h;}
@@ -12,15 +12,6 @@ namespace UnityEngine {
  }
  // Read/write CPU texture adapter for the original glass alpha decisions. Pixels
  // are stored bottom-left first, as Unity Texture2D.GetPixels expects.
- public sealed class Texture2D:Texture {
-  public int width,height;byte[] rgba;public string SourceID;public Action<Texture2D,int,int,int,int,byte[]> Changed;
-  public Texture2D(int w,int h,byte[] bytes,RuntimeWorld owner=null){world=owner??RuntimeWorld.Current;width=w;height=h;rgba=(byte[])bytes.Clone();world.Register(this);}
-  public Texture2D CloneTexture(RuntimeWorld owner)=>new(width,height,rgba,owner){SourceID=SourceID,Changed=Changed};
-  public Color GetPixel(int x,int y){int i=(y*width+x)*4;return new(rgba[i]/255f,rgba[i+1]/255f,rgba[i+2]/255f,rgba[i+3]/255f);}
-  public Color[] GetPixels(int x,int y,int w,int h,int mip=0){var result=new Color[w*h];for(int row=0;row<h;row++)for(int col=0;col<w;col++)result[row*w+col]=GetPixel(x+col,y+row);return result;}
-  public void SetPixels(int x,int y,int w,int h,Color[] values){var patch=new byte[w*h*4];for(int row=0;row<h;row++)for(int col=0;col<w;col++){var c=values[row*w+col];float[] v=[c.r,c.g,c.b,c.a];for(int channel=0;channel<4;channel++){byte b=(byte)Math.Clamp((int)MathF.Round(v[channel]*255),0,255);rgba[((y+row)*width+x+col)*4+channel]=b;patch[(row*w+col)*4+channel]=b;}}Changed?.Invoke(this,x,y,w,h,patch);}
-  public void Apply(){} // CPU writes are immediate; there is no native GPU copy in this adapter.
- }
  public sealed class Material:Object {
   Texture2D texture;
   // Presentation observer only: source BallisticWindow.Reset assigns mainTexture
