@@ -1,6 +1,6 @@
 name: Compile recovered full CharacterBody dependency closure
-# Gate 0 focused compiler refresh after the ArmController alias repair.
-# Expected to expose remaining authentic game/Unity/Behavior Designer dependencies;
+# Focused original-source compiler and foundation contract gates.
+# Missing dependencies are expected until the full graph is recovered;
 # a failed closure run is evidence, not a reason to substitute source methods.
 on:
   push:
@@ -14,9 +14,14 @@ on:
       - 'runtime/FoundationChecks/**'
       - 'scripts/verify_foundation_sources.py'
       - 'scripts/summarize_characterbody_compile.py'
+      - 'scripts/check_characterbody_ownership.py'
+      - 'scripts/verify_full_characterbody_enums.py'
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: characterbody-closure-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   foundation-contracts:
     runs-on: ubuntu-24.04
