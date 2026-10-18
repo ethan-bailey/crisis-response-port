@@ -1,4 +1,4 @@
-using CharacterBody = Crisis.Runtime.Weapons.CharacterBody;
+using CharacterBody = Crisis.Runtime.FullSource.CharacterBody;
 using UnityEngine;
 
 public class ArmsControl : MonoBehaviour
