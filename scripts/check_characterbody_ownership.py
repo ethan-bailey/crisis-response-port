@@ -49,10 +49,10 @@ def main() -> int:
             if f"namespace {ORIGINAL_TYPE.rsplit('.', 1)[0]};" not in source:
                 errors.append("full character's namespace changed")
             for type_name in REQUIRED_COMPONENTS:
-                if not re.search(r"GetComponent<" + type_name + r">\\s*\\(", source):
+                if not re.search(r"GetComponent<" + type_name + r">\s*\(", source):
                     errors.append(f"original Awake component lookup missing: {type_name}")
             for limb in REQUIRED_LIMBS:
-                if not re.search(r"\\b" + limb + r"\\b", source):
+                if not re.search(r"\b" + limb + r"\b", source):
                     errors.append(f"original limb identity missing: {limb}")
             for marker in (
                 "EquipmentHelper.Instance.SpawnEquipment(equipment)",
