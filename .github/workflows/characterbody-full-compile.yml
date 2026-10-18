@@ -56,6 +56,8 @@ jobs:
           global-json-file: tools/wasm-compile/global.json
       - name: Verify exact original CharacterBody enum identities
         run: python3 scripts/verify_full_characterbody_enums.py
+      - name: Audit original actor ownership before compile
+        run: python3 scripts/check_characterbody_ownership.py | tee characterbody-ownership.log
       - name: Compile all source lines and preserve missing dependencies
         run: |
           cp tools/wasm-compile/global.json global.json
@@ -74,5 +76,6 @@ jobs:
           path: |
             characterbody-compile.log
             characterbody-diagnostics.json
+            characterbody-ownership.log
           retention-days: 14
           if-no-files-found: warn
