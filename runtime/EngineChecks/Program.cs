@@ -67,6 +67,14 @@ Throws<NotSupportedException>(()=>probe.RenderProbe());
 probe.timeSlicingMode=UnityEngine.Rendering.ReflectionProbeTimeSlicingMode.IndividualFaces;
 Check(probe.timeSlicingMode==UnityEngine.Rendering.ReflectionProbeTimeSlicingMode.IndividualFaces,
       "original reflection probe slicing value round-trips");
+var shaderObject=new Shader{name="original image effect shader",isSupported=true};Shader.Resolver=name=>name=="original image effect shader"?shaderObject:null;
+Check(ReferenceEquals(Shader.Find("original image effect shader"),shaderObject)&&Shader.Find("missing") is null,
+      "shader lookup resolves only assets supplied by the host");
+var compute=new ComputeBuffer(2,4);var sourceValues=new[]{4,7};var targetValues=new int[2];compute.SetData(sourceValues);compute.GetData(targetValues);
+Check(targetValues.SequenceEqual(sourceValues),"compute buffer CPU transfer preserves typed source values");compute.Release();
+Throws<ObjectDisposedException>(()=>compute.SetData(sourceValues));
+Check(typeof(MetadataProbe).GetCustomAttributes(typeof(RequireComponentAttribute),true).Length==1,
+      "Unity required component metadata is retained");
 assertions+=TextureTransferContracts.Run();
 Console.WriteLine($"PASS: {assertions} isolated engine graphics and source API assertions; no gameplay or full CharacterBody compiled.");
 
@@ -79,3 +87,6 @@ sealed class GraphicsProbe:IRenderTargetDriver,IGLDriver {
  public void Begin(int mode)=>Ops.Add("begin"+mode);public void End()=>Ops.Add("end");
  public void Color(Color color)=>Ops.Add("color");public void Vertex3(float x,float y,float z)=>Ops.Add("vertex");
 }
+
+[RequireComponent(typeof(Camera))]
+sealed class MetadataProbe:MonoBehaviour { }

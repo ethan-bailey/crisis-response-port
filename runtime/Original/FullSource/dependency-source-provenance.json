@@ -420,6 +420,55 @@
       "sha256": "bb720e28909f86da246eddf7ba167e6e63e1dda2c1b9d6e01433313b408b7ddc",
       "runtimeSha256": "16ebc6887c63fb16c64e2f0d55ad17747e700a67b4df7a8573c501d57d76cd48",
       "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "FogOfWarElement.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FogOfWarElement.cs",
+      "sha256": "1d0c4b0074da126de6f8989c32106e24b3bc5f0f219fb8f711186a6d1551c77b",
+      "runtimeSha256": "65176835cad29d72ace38950808bc45b4fc9c246aea8d4c7726e24990869fbc2",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "InteriorCamera.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/InteriorCamera.cs",
+      "sha256": "c07b427aea583bc4eef882c275f87abfab5631305388af4b142bd8fb7869c76c",
+      "runtimeSha256": "a4d1141802155928828429b60287fe467fe1e99e95437889a393d55a9ee9a3a3",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    }
+  },
+  "plugins": {
+    "PostEffectsBase.cs": {
+      "runtimePath": "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs",
+      "archiveEntry": "export/ExportedProject/Assets/Plugins/Assembly-CSharp-firstpass/UnityStandardAssets/ImageEffects/PostEffectsBase.cs",
+      "sha256": "c92ccc479bc3679b9d9535b69f3154798093d42e8b111c1c02c0a8d37620b395",
+      "runtimeSha256": "c92ccc479bc3679b9d9535b69f3154798093d42e8b111c1c02c0a8d37620b395",
+      "adaptation": "Unity Standard Assets source and namespace preserved"
+    },
+    "NoiseAndGrain.cs": {
+      "runtimePath": "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
+      "archiveEntry": "export/ExportedProject/Assets/Plugins/Assembly-CSharp-firstpass/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
+      "sha256": "ec42aad10020931be31cc3b847e242298dc48aa6c2bd25e18d949e5810d004f4",
+      "runtimeSha256": "ec42aad10020931be31cc3b847e242298dc48aa6c2bd25e18d949e5810d004f4",
+      "adaptation": "Unity Standard Assets source and namespace preserved"
+    },
+    "BloomOptimized.cs": {
+      "runtimePath": "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs",
+      "archiveEntry": "export/ExportedProject/Assets/Plugins/Assembly-CSharp-firstpass/UnityStandardAssets/ImageEffects/BloomOptimized.cs",
+      "sha256": "364564eecc0e6db47098c715068f98f61d82837e349de77080ed3c9194ebe5d6",
+      "runtimeSha256": "364564eecc0e6db47098c715068f98f61d82837e349de77080ed3c9194ebe5d6",
+      "adaptation": "Unity Standard Assets source and namespace preserved"
+    },
+    "CameraMotionBlur.cs": {
+      "runtimePath": "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+      "archiveEntry": "export/ExportedProject/Assets/Plugins/Assembly-CSharp-firstpass/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+      "sha256": "4357f98ac7c90fec5961816ca7ed069307ba08cd17c8658355ce74cd1d1b4c29",
+      "runtimeSha256": "4357f98ac7c90fec5961816ca7ed069307ba08cd17c8658355ce74cd1d1b4c29",
+      "adaptation": "Unity Standard Assets source and namespace preserved"
+    },
+    "DepthOfField.cs": {
+      "runtimePath": "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
+      "archiveEntry": "export/ExportedProject/Assets/Plugins/Assembly-CSharp-firstpass/UnityStandardAssets/ImageEffects/DepthOfField.cs",
+      "sha256": "40b165badf7f1c9872d59938baa86aaec0f82b2dee0ef441ed61ad2dad0f54ba",
+      "runtimeSha256": "40b165badf7f1c9872d59938baa86aaec0f82b2dee0ef441ed61ad2dad0f54ba",
+      "adaptation": "Unity Standard Assets source and namespace preserved"
     }
   }
 }

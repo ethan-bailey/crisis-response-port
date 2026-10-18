@@ -66,6 +66,17 @@ def verify(archive_path=None):
                 assert original == archive.read(item["archiveEntry"]), name
             count += 1
 
+        # Unity Standard Assets retain their original assembly namespace and
+        # source bytes; they are not wrapped into the game FullSource namespace.
+        for name, item in manifest.get("plugins", {}).items():
+            data = (ROOT / item["runtimePath"]).read_bytes()
+            assert sha(data) == item["runtimeSha256"], name
+            assert item["adaptation"] == "Unity Standard Assets source and namespace preserved", name
+            assert sha(data) == item["sha256"], name
+            if archive:
+                assert data == archive.read(item["archiveEntry"]), name
+            count += 1
+
         plugin = ROOT / "runtime/Original/BehaviorDesigner"
         manifest = json.loads((plugin / "source-provenance.json").read_text())
         assert manifest["archiveSha256"] == PIN

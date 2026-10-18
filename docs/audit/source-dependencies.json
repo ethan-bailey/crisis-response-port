@@ -197,6 +197,7 @@
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorLibrary/Components/Composites/RootSelector.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorLibrary/Components/Composites/Sequence.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorLibrary/Components/Conditionals/Conditional.cs",
+    "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorLibrary/Components/Decorators/Counter.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorLibrary/StatefulSelector.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorLibrary/StatefulSequence.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/Benchmark.cs",
@@ -753,6 +754,7 @@
     "runtime/Engine/ReflectionProbe.cs",
     "runtime/Engine/RenderTexture.cs",
     "runtime/Engine/Rendering/GraphicsPrimitives.cs",
+    "runtime/Engine/Rendering/ShaderAndCompute.cs",
     "runtime/Engine/Rendering/Texture2D.cs",
     "runtime/Engine/Rendering/TextureTransfers.cs",
     "runtime/Engine/Resources.cs",
@@ -936,12 +938,14 @@
     "runtime/Original/FullSource/FireAlarm.cs",
     "runtime/Original/FullSource/FloorPoolPainter.cs",
     "runtime/Original/FullSource/FloorStreakPainter.cs",
+    "runtime/Original/FullSource/FogOfWarElement.cs",
     "runtime/Original/FullSource/Grenade.cs",
     "runtime/Original/FullSource/GrenadeSpoon.cs",
     "runtime/Original/FullSource/IKArmController.cs",
     "runtime/Original/FullSource/IKArmSequencer.cs",
     "runtime/Original/FullSource/Interactable.cs",
     "runtime/Original/FullSource/Interaction.cs",
+    "runtime/Original/FullSource/InteriorCamera.cs",
     "runtime/Original/FullSource/Limb.cs",
     "runtime/Original/FullSource/LimbArmor.cs",
     "runtime/Original/FullSource/LimbAttachment.cs",
@@ -1002,6 +1006,11 @@
     "runtime/Original/FullSource/UnityEventFloatFloat.cs",
     "runtime/Original/FullSource/UnityEventInt.cs",
     "runtime/Original/FullSource/UnityEventIntInt.cs",
+    "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs",
+    "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+    "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
+    "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
+    "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs",
     "runtime/Original/FullSource/VitalFunctions.cs",
     "runtime/Original/FullSource/WallStreakPainter.cs",
     "runtime/Original/FullSource/WeaponAimer.cs",
@@ -1747,7 +1756,7 @@
     },
     {
       "path": "runtime/Engine/Rendering/GraphicsPrimitives.cs",
-      "sha256": "ff3a1685d741051c0e80ecdae72ce0bdf6146d1b1eafb8a266e22931733ce63e",
+      "sha256": "a7570d1bf0320fd0fcc3670764d78f2764d75cfed6d4022205799a594a74847b",
       "declares": [
         "Color",
         "Material",
@@ -1762,16 +1771,39 @@
         "Component",
         "Dot",
         "GetColor",
+        "HideFlags",
         "Object",
         "Ray",
         "Raycast",
         "RaycastHit",
         "SetColor",
+        "Shader",
         "Texture",
         "Texture2D",
         "Vector2",
         "Vector3",
         "in"
+      ]
+    },
+    {
+      "path": "runtime/Engine/Rendering/ShaderAndCompute.cs",
+      "sha256": "42704c72d3d99d1cd9bf0b1a9a89846d8c7ee21c343105283c4e1ad4233ebbfd",
+      "declares": [
+        "ComputeBuffer",
+        "ComputeBufferType",
+        "ExecuteInEditModeAttribute",
+        "FilterMode",
+        "HideFlags",
+        "IComputeBufferDriver",
+        "RequireComponentAttribute",
+        "Shader"
+      ],
+      "references": [
+        "Counter",
+        "Find",
+        "HideInInspector",
+        "Object",
+        "Type"
       ]
     },
     {
@@ -5473,6 +5505,35 @@
       ]
     },
     {
+      "path": "runtime/Original/FullSource/FogOfWarElement.cs",
+      "sha256": "65176835cad29d72ace38950808bc45b4fc9c246aea8d4c7726e24990869fbc2",
+      "declares": [
+        "FogOfWarElement"
+      ],
+      "references": [
+        "Angle",
+        "CharacterBody",
+        "Direction",
+        "DoorController",
+        "Doors",
+        "GetComponent",
+        "Global",
+        "InteriorCamera",
+        "InteriorMode",
+        "Masks",
+        "Mathf",
+        "Mission",
+        "MonoBehaviour",
+        "Operators",
+        "Physics",
+        "Ray",
+        "Raycast",
+        "Renderer",
+        "Room",
+        "Vector3"
+      ]
+    },
+    {
       "path": "runtime/Original/FullSource/Grenade.cs",
       "sha256": "12cc577a03407d265ce783095473ad0464fb5ac26f565291af513402409fb567",
       "declares": [
@@ -5645,6 +5706,52 @@
         "CharacterBody",
         "Mathf",
         "MonoBehaviour"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/InteriorCamera.cs",
+      "sha256": "a4d1141802155928828429b60287fe467fe1e99e95437889a393d55a9ee9a3a3",
+      "declares": [
+        "ChangeSubjectDirection",
+        "ConsciousState",
+        "InteriorCamera"
+      ],
+      "references": [
+        "BloomOptimized",
+        "Camera",
+        "CameraMotionBlur",
+        "CharacterBody",
+        "DepthOfField",
+        "Direction",
+        "DoorController",
+        "GetComponent",
+        "Global",
+        "Graphics",
+        "InputHandler",
+        "InteriorMode",
+        "Lerp",
+        "Masks",
+        "Mathf",
+        "Mission",
+        "MonoBehaviour",
+        "NoiseAndGrain",
+        "Object",
+        "Occupants",
+        "Operators",
+        "Physics",
+        "Physiology",
+        "Random",
+        "Raycast",
+        "RaycastHit",
+        "Rigidbody",
+        "SerializableGraphicsSettings",
+        "SerializablePerformanceSettings",
+        "Settings",
+        "Time",
+        "Transform",
+        "UnityEventVoid",
+        "Vector3",
+        "in"
       ]
     },
     {
@@ -6947,6 +7054,144 @@
         "Object",
         "Random",
         "UnityEvent"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs",
+      "sha256": "364564eecc0e6db47098c715068f98f61d82837e349de77080ed3c9194ebe5d6",
+      "declares": [
+        "BloomOptimized",
+        "BlurType",
+        "Resolution"
+      ],
+      "references": [
+        "AddComponentMenu",
+        "Camera",
+        "DestroyImmediate",
+        "FilterMode",
+        "Graphics",
+        "Material",
+        "Object",
+        "PostEffectsBase",
+        "RenderTexture",
+        "Shader",
+        "Vector4"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+      "sha256": "4357f98ac7c90fec5961816ca7ed069307ba08cd17c8658355ce74cd1d1b4c29",
+      "declares": [
+        "CameraMotionBlur",
+        "MotionBlurFilter"
+      ],
+      "references": [
+        "AddComponentMenu",
+        "Angle",
+        "Camera",
+        "DestroyImmediate",
+        "Dot",
+        "FilterMode",
+        "Find",
+        "GL",
+        "GameObject",
+        "GetComponent",
+        "Graphics",
+        "HideFlags",
+        "Inverse",
+        "LayerMask",
+        "Material",
+        "Mathf",
+        "Matrix4x4",
+        "Object",
+        "PostEffectsBase",
+        "Quaternion",
+        "RenderTexture",
+        "RenderTextureFormat",
+        "SetFloat",
+        "Shader",
+        "Slerp",
+        "Texture2D",
+        "TextureWrapMode",
+        "Time",
+        "Vector3",
+        "Vector4"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
+      "sha256": "40b165badf7f1c9872d59938baa86aaec0f82b2dee0ef441ed61ad2dad0f54ba",
+      "declares": [
+        "BlurSampleCount",
+        "BlurType",
+        "DepthOfField"
+      ],
+      "references": [
+        "AddComponentMenu",
+        "Camera",
+        "ComputeBuffer",
+        "ComputeBufferType",
+        "DestroyImmediate",
+        "FilterMode",
+        "GetComponent",
+        "Graphics",
+        "Material",
+        "Mathf",
+        "Object",
+        "PostEffectsBase",
+        "RenderTexture",
+        "SetFloat",
+        "Shader",
+        "Texture2D",
+        "Transform",
+        "Vector3",
+        "Vector4"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
+      "sha256": "ec42aad10020931be31cc3b847e242298dc48aa6c2bd25e18d949e5810d004f4",
+      "declares": [
+        "NoiseAndGrain"
+      ],
+      "references": [
+        "AddComponentMenu",
+        "Camera",
+        "Debug",
+        "FilterMode",
+        "GL",
+        "Graphics",
+        "Material",
+        "Mathf",
+        "PostEffectsBase",
+        "Random",
+        "RenderTexture",
+        "SetFloat",
+        "Shader",
+        "Texture2D",
+        "TextureWrapMode",
+        "Time",
+        "Vector3"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs",
+      "sha256": "c92ccc479bc3679b9d9535b69f3154798093d42e8b111c1c02c0a8d37620b395",
+      "declares": [
+        "PostEffectsBase"
+      ],
+      "references": [
+        "Camera",
+        "Debug",
+        "GL",
+        "GetComponent",
+        "HideFlags",
+        "Log",
+        "Material",
+        "MonoBehaviour",
+        "RenderTexture",
+        "RenderTextureFormat",
+        "Shader"
       ]
     },
     {
@@ -9278,6 +9523,10 @@
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/BehaviorManager.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/BehaviorTree.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/VariableSynchronizer.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
         "source-reference/Original/BehaviorDesigner/BehaviorGameGUI.cs"
       ]
     },
@@ -9572,8 +9821,10 @@
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/AudioPropagator.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/FogOfWarElement.cs",
         "runtime/Original/FullSource/LimbMuscle.cs",
         "runtime/Original/FullSource/Room.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
@@ -12238,6 +12489,48 @@
       "referencedBy": []
     },
     {
+      "name": "BloomOptimized",
+      "category": "recovered source",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs"
+      ],
+      "engineSources": [],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Original/FullSource/InteriorCamera.cs"
+      ]
+    },
+    {
+      "name": "BlurSampleCount",
+      "category": "recovered source",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs"
+      ],
+      "engineSources": [],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
+    },
+    {
+      "name": "BlurType",
+      "category": "recovered source",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs"
+      ],
+      "engineSources": [],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
+    },
+    {
       "name": "BodyHelpers",
       "category": "recoverable source",
       "requiresAuthoredAssets": false,
@@ -12515,9 +12808,15 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/PresentationHost.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/UIGrenadeTimer.cs",
         "runtime/Original/FullSource/UIHitAnnouncements.cs",
         "runtime/Original/FullSource/UIVocalizationText.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs",
         "runtime/Original/InteriorCameraSlice.cs",
         "source-reference/Original/BehaviorDesigner/BehaviorGameGUI.cs"
       ]
@@ -12559,6 +12858,21 @@
       ],
       "compilerMissing": false,
       "referencedBy": []
+    },
+    {
+      "name": "CameraMotionBlur",
+      "category": "recovered source",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs"
+      ],
+      "engineSources": [],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Original/FullSource/InteriorCamera.cs"
+      ]
     },
     {
       "name": "CameraSubjectSnapshot",
@@ -12816,9 +13130,11 @@
     },
     {
       "name": "ChangeSubjectDirection",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/InteriorCamera.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -13003,11 +13319,13 @@
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/Explosive.cs",
+        "runtime/Original/FullSource/FogOfWarElement.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/IKArmController.cs",
         "runtime/Original/FullSource/IKArmSequencer.cs",
         "runtime/Original/FullSource/Interactable.cs",
         "runtime/Original/FullSource/Interaction.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbArmor.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
@@ -13942,6 +14260,36 @@
       "referencedBy": []
     },
     {
+      "name": "ComputeBuffer",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/Rendering/ShaderAndCompute.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs"
+      ]
+    },
+    {
+      "name": "ComputeBufferType",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/Rendering/ShaderAndCompute.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs"
+      ]
+    },
+    {
       "name": "ComputerMode",
       "category": "recoverable source",
       "requiresAuthoredAssets": false,
@@ -14027,9 +14375,11 @@
     },
     {
       "name": "ConsciousState",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/InteriorCamera.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -14248,7 +14598,9 @@
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorLibrary/Components/Decorators/Counter.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Engine/Rendering/ShaderAndCompute.cs"
+      ]
     },
     {
       "name": "CpuTextureTransferDriver",
@@ -14392,6 +14744,8 @@
         "runtime/Original/FullSource/SerializablePerformanceSettings.cs",
         "runtime/Original/FullSource/SerializableTimeSettings.cs",
         "runtime/Original/FullSource/TimeScaler.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs",
         "runtime/Original/Weapons/Equipment.cs",
         "source-reference/Original/Animation/ArmIKSolver.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
@@ -14505,6 +14859,21 @@
       "referencedBy": []
     },
     {
+      "name": "DepthOfField",
+      "category": "recovered source",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs"
+      ],
+      "engineSources": [],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Original/FullSource/InteriorCamera.cs"
+      ]
+    },
+    {
       "name": "Destroy",
       "category": "recoverable source",
       "requiresAuthoredAssets": false,
@@ -14575,7 +14944,10 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Original/FullSource/BloodStream.cs",
-        "runtime/Original/FullSource/PaintableSurface.cs"
+        "runtime/Original/FullSource/PaintableSurface.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs"
       ]
     },
     {
@@ -14629,7 +15001,9 @@
         "runtime/Engine/PresentationHost.cs",
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/FogOfWarElement.cs",
         "runtime/Original/FullSource/IKArmController.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/InteriorCameraSlice.cs",
@@ -14745,6 +15119,8 @@
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/AudioPropagator.cs",
         "runtime/Original/FullSource/Doors.cs",
+        "runtime/Original/FullSource/FogOfWarElement.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Room.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
@@ -14894,6 +15270,7 @@
       "compilerMissing": true,
       "referencedBy": [
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/FogOfWarElement.cs",
         "runtime/Original/FullSource/Mission.cs",
         "source-reference/Original/CharacterDependencies/DoorController.cs",
         "source-reference/Original/CharacterDependencies/Mission.cs"
@@ -14919,6 +15296,7 @@
         "runtime/Engine/Rendering/GraphicsPrimitives.cs",
         "runtime/Original/Ballistics/BallisticMaterial.cs",
         "runtime/Original/FullSource/Limb.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
         "runtime/Original/Projectile.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/CharacterDependencies/Limb.cs"
@@ -15677,6 +16055,19 @@
       "referencedBy": []
     },
     {
+      "name": "ExecuteInEditModeAttribute",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/Rendering/ShaderAndCompute.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
+    },
+    {
       "name": "ExecutionsPerTickType",
       "category": "recovered source",
       "requiresAuthoredAssets": false,
@@ -15941,6 +16332,24 @@
       "referencedBy": []
     },
     {
+      "name": "FilterMode",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/Rendering/ShaderAndCompute.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs"
+      ]
+    },
+    {
       "name": "Find",
       "category": "recoverable source",
       "requiresAuthoredAssets": false,
@@ -15953,7 +16362,9 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/Rendering/ShaderAndCompute.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/CharacterBody.cs"
       ]
@@ -16425,9 +16836,11 @@
     },
     {
       "name": "FogOfWarElement",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/FogOfWarElement.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -16911,7 +17324,10 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
-        "runtime/Original/FullSource/LimbRenderer.cs"
+        "runtime/Original/FullSource/LimbRenderer.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs"
       ]
     },
     {
@@ -17026,6 +17442,7 @@
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/UIVocalizationText.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
         "runtime/Original/Weapons/ArmTransition.cs",
         "source-reference/Original/Animation/ArmIKSolver.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
@@ -17355,10 +17772,12 @@
         "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
+        "runtime/Original/FullSource/FogOfWarElement.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
         "runtime/Original/FullSource/IKArmController.cs",
         "runtime/Original/FullSource/IKArmSequencer.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbArmor.cs",
         "runtime/Original/FullSource/LimbMuscle.cs",
@@ -17372,6 +17791,9 @@
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/Target.cs",
         "runtime/Original/FullSource/ToggleElectricity.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/InteriorCameraSlice.cs",
@@ -18589,8 +19011,10 @@
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/FloorPoolPainter.cs",
+        "runtime/Original/FullSource/FogOfWarElement.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/Physiology.cs",
@@ -18772,10 +19196,15 @@
         "runtime/Engine/RenderTexture.cs",
         "runtime/Engine/Rendering/Texture2D.cs",
         "runtime/Original/FullSource/FloorPoolPainter.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbTextureData.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/Settings.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/CharacterDependencies/Limb.cs",
         "source-reference/Original/CharacterDependencies/Mission.cs",
@@ -19402,6 +19831,23 @@
       "referencedBy": []
     },
     {
+      "name": "HideFlags",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/Rendering/ShaderAndCompute.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Engine/Rendering/GraphicsPrimitives.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs"
+      ]
+    },
+    {
       "name": "HideInInspector",
       "category": "native Unity adapter",
       "requiresAuthoredAssets": false,
@@ -19413,6 +19859,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/Rendering/ShaderAndCompute.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/BehaviorReference.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/UnknownTask.cs"
       ]
@@ -19510,6 +19957,19 @@
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/BehaviorSource.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/ExternalBehavior.cs"
       ]
+    },
+    {
+      "name": "IComputeBufferDriver",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/Rendering/ShaderAndCompute.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
     },
     {
       "name": "IDisplaySettingsDriver",
@@ -20096,6 +20556,7 @@
       "referencedBy": [
         "runtime/Engine/OriginalInputHost.cs",
         "runtime/Engine/WeaponHost.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/TimeScaler.cs",
         "runtime/Original/InputKey.cs",
@@ -20366,9 +20827,11 @@
     },
     {
       "name": "InteriorCamera",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/InteriorCamera.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -20376,6 +20839,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Original/FullSource/FogOfWarElement.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/CharacterDependencies/PlayerController.cs",
         "source-reference/Original/CharacterDependencies/TeamOperator.cs"
@@ -20410,6 +20874,8 @@
       "referencedBy": [
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/Communication.cs",
+        "runtime/Original/FullSource/FogOfWarElement.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/UIGrenadeTimer.cs",
         "runtime/Original/FullSource/UIHitAnnouncements.cs",
@@ -20519,7 +20985,8 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/Math.cs",
-        "runtime/Engine/Objects.cs"
+        "runtime/Engine/Objects.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs"
       ]
     },
     {
@@ -21206,7 +21673,8 @@
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserializationDeprecated.cs",
         "runtime/Original/BehaviorDesigner/BinaryDeserialization.cs",
         "runtime/Original/BehaviorDesigner/BinaryDeserializationDeprecated.cs",
-        "runtime/Original/Foundation/FullSerializer/Internal/DirectConverters/LayerMask_DirectConverter.cs"
+        "runtime/Original/Foundation/FullSerializer/Internal/DirectConverters/LayerMask_DirectConverter.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs"
       ]
     },
     {
@@ -21268,6 +21736,7 @@
         "runtime/Original/FullSource/Emitter.cs",
         "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/TimeScaler.cs",
         "runtime/Original/InteriorCameraSlice.cs",
@@ -21814,7 +22283,8 @@
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/BehaviorManager.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserialization.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserializationDeprecated.cs",
-        "runtime/Original/FullSource/SerializableGraphicsSettings.cs"
+        "runtime/Original/FullSource/SerializableGraphicsSettings.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs"
       ]
     },
     {
@@ -22227,6 +22697,8 @@
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
+        "runtime/Original/FullSource/FogOfWarElement.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Room.cs",
@@ -22273,7 +22745,12 @@
       "referencedBy": [
         "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
-        "runtime/Original/FullSource/PoweredLight.cs"
+        "runtime/Original/FullSource/PoweredLight.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs"
       ]
     },
     {
@@ -22338,9 +22815,11 @@
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
+        "runtime/Original/FullSource/FogOfWarElement.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/IKArmController.cs",
         "runtime/Original/FullSource/Interaction.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbArmor.cs",
         "runtime/Original/FullSource/LimbMuscle.cs",
@@ -22354,6 +22833,9 @@
         "runtime/Original/FullSource/TimeScaler.cs",
         "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
         "runtime/Original/FullSource/UIVocalizationText.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/FullSource/WallStreakPainter.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
@@ -22409,7 +22891,8 @@
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserialization.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserializationDeprecated.cs",
         "runtime/Original/BehaviorDesigner/BinaryDeserialization.cs",
-        "runtime/Original/BehaviorDesigner/BinaryDeserializationDeprecated.cs"
+        "runtime/Original/BehaviorDesigner/BinaryDeserializationDeprecated.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs"
       ]
     },
     {
@@ -22648,8 +23131,10 @@
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/Explosive.cs",
+        "runtime/Original/FullSource/FogOfWarElement.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/Physiology.cs",
@@ -22987,11 +23472,13 @@
         "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
+        "runtime/Original/FullSource/FogOfWarElement.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
         "runtime/Original/FullSource/IKArmController.cs",
         "runtime/Original/FullSource/Interactable.cs",
         "runtime/Original/FullSource/Interaction.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/LimbArmor.cs",
         "runtime/Original/FullSource/LimbMuscle.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
@@ -23010,6 +23497,7 @@
         "runtime/Original/FullSource/UIHitAnnouncements.cs",
         "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
         "runtime/Original/FullSource/UIVocalizationText.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/FullSource/WallStreakPainter.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
@@ -23052,6 +23540,19 @@
         "source-reference/Original/CharacterDependencies/WeaponAimer.cs",
         "source-reference/Original/CharacterDependencies/WeaponBase.cs"
       ]
+    },
+    {
+      "name": "MotionBlurFilter",
+      "category": "recovered source",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs"
+      ],
+      "engineSources": [],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
     },
     {
       "name": "Move",
@@ -23301,6 +23802,21 @@
       ]
     },
     {
+      "name": "NoiseAndGrain",
+      "category": "recovered source",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs"
+      ],
+      "engineSources": [],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Original/FullSource/InteriorCamera.cs"
+      ]
+    },
+    {
       "name": "Normalize",
       "category": "recoverable source",
       "requiresAuthoredAssets": false,
@@ -23340,6 +23856,7 @@
         "runtime/Engine/PrefabCloner.cs",
         "runtime/Engine/ProjectileMaterialHost.cs",
         "runtime/Engine/Rendering/GraphicsPrimitives.cs",
+        "runtime/Engine/Rendering/ShaderAndCompute.cs",
         "runtime/Engine/Resources.cs",
         "runtime/Engine/RuntimeContracts.cs",
         "runtime/Engine/SceneLoader.cs",
@@ -23433,6 +23950,7 @@
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
         "runtime/Original/FullSource/LimbStreak.cs",
@@ -23474,6 +23992,9 @@
         "runtime/Original/FullSource/UnityEventFloatFloat.cs",
         "runtime/Original/FullSource/UnityEventInt.cs",
         "runtime/Original/FullSource/UnityEventIntInt.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/FullSource/WallStreakPainter.cs",
         "runtime/Original/FullSource/WeaponType.cs",
@@ -23692,6 +24213,7 @@
       "compilerMissing": true,
       "referencedBy": [
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/Settings.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
@@ -23806,6 +24328,8 @@
       "compilerMissing": true,
       "referencedBy": [
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/FogOfWarElement.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Mission.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
@@ -24257,6 +24781,8 @@
         "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
+        "runtime/Original/FullSource/FogOfWarElement.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Room.cs",
@@ -24310,6 +24836,7 @@
         "runtime/Original/BodyPoseSlice.Methods.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/CharacterScoreCard.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbMuscle.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
@@ -24530,6 +25057,24 @@
       ],
       "compilerMissing": false,
       "referencedBy": []
+    },
+    {
+      "name": "PostEffectsBase",
+      "category": "recovered source",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs"
+      ],
+      "engineSources": [],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs"
+      ]
     },
     {
       "name": "PostFeedback",
@@ -24889,6 +25434,7 @@
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/Emitter.cs",
         "runtime/Original/FullSource/Limb.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
         "runtime/Original/Weapons/WeaponMechanism.Methods.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
@@ -25000,6 +25546,7 @@
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
         "runtime/Original/FullSource/IKArmController.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
@@ -25046,6 +25593,7 @@
         "runtime/Original/FullSource/UnityEventFloatFloat.cs",
         "runtime/Original/FullSource/UnityEventInt.cs",
         "runtime/Original/FullSource/UnityEventIntInt.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/FullSource/WallStreakPainter.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
@@ -25213,6 +25761,7 @@
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
+        "runtime/Original/FullSource/FogOfWarElement.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
@@ -25248,6 +25797,8 @@
         "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
+        "runtime/Original/FullSource/FogOfWarElement.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/InteriorCameraSlice.cs",
@@ -25284,6 +25835,7 @@
         "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
@@ -25560,7 +26112,12 @@
         "runtime/Engine/Rendering/TextureTransfers.cs",
         "runtime/Original/FullSource/DynamicLimbTextureData.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
-        "runtime/Original/FullSource/LimbTextureData.cs"
+        "runtime/Original/FullSource/LimbTextureData.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs"
       ]
     },
     {
@@ -25576,7 +26133,9 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/RenderTexture.cs",
-        "runtime/Original/FullSource/DynamicLimbTextureData.cs"
+        "runtime/Original/FullSource/DynamicLimbTextureData.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs"
       ]
     },
     {
@@ -25606,6 +26165,7 @@
       "referencedBy": [
         "runtime/Engine/BallisticRuntimeHost.cs",
         "runtime/Original/Ballistics/BallisticWindow.cs",
+        "runtime/Original/FullSource/FogOfWarElement.cs",
         "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/FullSource/Room.cs",
         "source-reference/Original/CharacterDependencies/Room.cs"
@@ -25792,6 +26352,19 @@
       "referencedBy": []
     },
     {
+      "name": "RequireComponentAttribute",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/Rendering/ShaderAndCompute.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
+    },
+    {
       "name": "RequiredComponentAttribute",
       "category": "recovered source",
       "requiresAuthoredAssets": false,
@@ -25845,9 +26418,11 @@
     },
     {
       "name": "Resolution",
-      "category": "native Unity adapter",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs"
+      ],
       "engineSources": [
         "runtime/Engine/DisplaySettings.cs"
       ],
@@ -26037,6 +26612,7 @@
         "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbMuscle.cs",
         "runtime/Original/InteriorCameraSlice.cs",
@@ -26113,6 +26689,7 @@
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/AudioPropagator.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/FogOfWarElement.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/PoweredLight.cs",
@@ -27052,6 +27629,7 @@
       ],
       "compilerMissing": true,
       "referencedBy": [
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Settings.cs",
         "source-reference/Original/CharacterDependencies/Settings.cs"
       ]
@@ -27341,6 +27919,7 @@
       "compilerMissing": true,
       "referencedBy": [
         "runtime/Original/FullSource/Emitter.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/Settings.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
@@ -28045,6 +28624,9 @@
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/VariableSynchronizer.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/TimeScaler.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/TimeScaler.cs"
@@ -29358,6 +29940,7 @@
         "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/PaintableSurface.cs",
@@ -29393,6 +29976,26 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": []
+    },
+    {
+      "name": "Shader",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/Rendering/ShaderAndCompute.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Engine/Rendering/GraphicsPrimitives.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs"
+      ]
     },
     {
       "name": "ShadowProjection",
@@ -30050,7 +30653,9 @@
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityQuaternion/Slerp.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs"
+      ]
     },
     {
       "name": "Slider",
@@ -31389,7 +31994,10 @@
         "runtime/Original/Foundation/FullSerializer/Internal/DirectConverters/GUIStyleState_DirectConverter.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
         "runtime/Original/FullSource/LimbTextureData.cs",
-        "runtime/Original/FullSource/PaintableSurface.cs"
+        "runtime/Original/FullSource/PaintableSurface.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs"
       ]
     },
     {
@@ -31472,7 +32080,9 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
-        "runtime/Original/FullSource/PaintableSurface.cs"
+        "runtime/Original/FullSource/PaintableSurface.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs"
       ]
     },
     {
@@ -31614,6 +32224,7 @@
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/IKArmController.cs",
         "runtime/Original/FullSource/IKArmSequencer.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbMuscle.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
@@ -31626,6 +32237,8 @@
         "runtime/Original/FullSource/TimeScaler.cs",
         "runtime/Original/FullSource/UIHitAnnouncement.cs",
         "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
         "runtime/Original/FullSource/WallStreakPainter.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/FullSource/Wound.cs",
@@ -31871,6 +32484,7 @@
         "runtime/Original/FullSource/GrenadeSpoon.cs",
         "runtime/Original/FullSource/IKArmController.cs",
         "runtime/Original/FullSource/IKArmSequencer.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbAttachment.cs",
         "runtime/Original/FullSource/LimbStreak.cs",
@@ -31879,6 +32493,7 @@
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/UIHitAnnouncements.cs",
         "runtime/Original/FullSource/UIVocalizationText.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
         "runtime/Original/InteriorCameraSlice.cs",
         "runtime/Original/Projectile.cs",
         "runtime/Original/Weapons/ArmTransition.cs",
@@ -32076,6 +32691,7 @@
         "runtime/Engine/Animator.cs",
         "runtime/Engine/Objects.cs",
         "runtime/Engine/PrefabCloner.cs",
+        "runtime/Engine/Rendering/ShaderAndCompute.cs",
         "runtime/Engine/Resources.cs",
         "runtime/Engine/SceneLoader.cs",
         "runtime/Engine/SerializationTypes.cs",
@@ -34187,6 +34803,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/SerializableTimeSettings.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
@@ -34516,10 +35133,12 @@
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
+        "runtime/Original/FullSource/FogOfWarElement.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
         "runtime/Original/FullSource/IKArmController.cs",
         "runtime/Original/FullSource/IKArmSequencer.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
@@ -34531,6 +35150,9 @@
         "runtime/Original/FullSource/UIGrenadeTimer.cs",
         "runtime/Original/FullSource/UIHitAnnouncement.cs",
         "runtime/Original/FullSource/UIVocalizationText.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/FullSource/WallStreakPainter.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
@@ -34587,7 +35209,10 @@
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserializationDeprecated.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/MiniJSON.cs",
         "runtime/Original/BehaviorDesigner/BinaryDeserialization.cs",
-        "runtime/Original/BehaviorDesigner/BinaryDeserializationDeprecated.cs"
+        "runtime/Original/BehaviorDesigner/BinaryDeserializationDeprecated.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs"
       ]
     },
     {
@@ -36841,6 +37466,7 @@
         "runtime/Original/FullSource/DynamicLimbDecalRenderer.cs",
         "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/FloorPoolPainter.cs",
+        "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
@@ -36920,6 +37546,10 @@
     "BehaviorTree": [
       "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/BehaviorManager.cs",
       "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/BehaviorTree.cs"
+    ],
+    "BlurType": [
+      "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs",
+      "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs"
     ],
     "BodyPoseSlice": [
       "runtime/Engine/BodyPoseHost.cs",
@@ -37138,6 +37768,10 @@
     "ProjectileEvent": [
       "runtime/Engine/BallisticEngine.cs",
       "runtime/Engine/WeaponHost.cs"
+    ],
+    "Resolution": [
+      "runtime/Engine/DisplaySettings.cs",
+      "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs"
     ],
     "Room": [
       "runtime/Original/FullSource/Room.cs",

@@ -13,6 +13,12 @@ namespace UnityEngine {
  // Read/write CPU texture adapter for the original glass alpha decisions. Pixels
  // are stored bottom-left first, as Unity Texture2D.GetPixels expects.
  public sealed class Material:Object {
+  public Material(){}
+  public Material(Shader shader){this.shader=shader??throw new ArgumentNullException(nameof(shader));}
+  public Shader shader {get;set;}
+  public HideFlags hideFlags {get;set;}
+  public int passCount {get;set;}
+  public bool SetPass(int pass){if(pass<0||pass>=passCount)throw new ArgumentOutOfRangeException(nameof(pass));return false;}
   Texture2D texture;
   readonly Dictionary<string,Color> colors=new();
   // Presentation observer only: source BallisticWindow.Reset assigns mainTexture
