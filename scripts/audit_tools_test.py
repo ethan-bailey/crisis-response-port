@@ -39,6 +39,28 @@ class DiagnosticDiffTests(unittest.TestCase):
 
 
 class BoundaryTests(unittest.TestCase):
+    def test_record_and_struct_transport_owners_are_rejected(self):
+        root = actor.ROOT
+        with tempfile.TemporaryDirectory() as d:
+            target = Path(d)
+            manifest = json.loads((root/'docs/audit/actor-migration-boundary.json').read_text())
+            files = list(manifest['frozenLegacyFiles']) + [
+                'docs/audit/actor-migration-boundary.json',
+                'runtime/Crisis.Runtime.csproj']
+            for name in files:
+                destination = target/name
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(root/name, destination)
+            self.assertEqual(actor.check(target), [])
+            extra = target/'runtime/Original/Weapons/AnotherOwner.cs'
+            extra.parent.mkdir(parents=True, exist_ok=True)
+            for declaration in ('struct Limb', 'record CharacterBody', 'record class Equipment',
+                                'record struct Blackboard'):
+                extra.write_text('namespace Crisis.Runtime.Weapons;\\npublic ' +
+                                 declaration + ' {}\\n')
+                self.assertTrue(any('New legacy gameplay owner declaration' in e
+                                    for e in actor.check(target)), declaration)
+
     def test_transport_change_and_production_exclusion_are_rejected(self):
         root=actor.ROOT
         with tempfile.TemporaryDirectory() as d:
