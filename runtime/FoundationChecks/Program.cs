@@ -146,6 +146,20 @@ void Throws<T>(System.Action action,string label) where T:Exception {try{action(
  Throws<ArgumentOutOfRangeException>(()=>bounds.size=new Vector2(-1,1),"negative skin dimensions rejected");
  Throws<ArgumentOutOfRangeException>(()=>bounds.offset=new Vector2(float.NaN,0),"nonfinite skin offset rejected");
 }
+// Unity RenderTexture.active must reach the real graphics backend, not silently mutate a fake buffer.
+{
+ var first=new RuntimeWorld();first.MakeCurrent();
+ Throws<NotSupportedException>(()=>{var _=RenderTexture.active;},"unbound render target rejected");
+ var driver=new RenderTargetProbe();
+ RenderTexture.Bind(first,driver);
+ var target=new RenderTexture();
+ RenderTexture.active=target;
+ Check(ReferenceEquals(RenderTexture.active,target),"original wound target reaches graphics driver");
+ RenderTexture.active=null;
+ Check(RenderTexture.active==null&&driver.Calls==2,"render target reset forwarded");
+ var next=new RuntimeWorld();next.MakeCurrent();
+ Throws<NotSupportedException>(()=>{var _=RenderTexture.active;},"render driver isolated across actor worlds");
+}
 Console.WriteLine(Crisis.Runtime.RuntimeContracts.Run());
 Console.WriteLine($"PASS: {assertions} foundation assertions; original full CharacterBody build is a separate required gate.");
 
@@ -171,4 +185,10 @@ sealed class SceneTransitionProbe:UnityEngine.SceneManagement.ISceneManagerDrive
 sealed class MixerProbe:UnityEngine.Audio.IAudioMixerDriver {
  public string Name; public float Value;
  public bool SetFloat(string name,float value){Name=name;Value=value;return true;}
+}
+
+sealed class RenderTargetProbe:IRenderTargetDriver {
+ public RenderTexture ActiveTarget{get;private set;}
+ public int Calls;
+ public void SetActive(RenderTexture target){ActiveTarget=target;Calls++;}
 }
