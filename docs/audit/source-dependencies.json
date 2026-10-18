@@ -759,6 +759,7 @@
     "runtime/Engine/SerializationTypes.cs",
     "runtime/Engine/SerializedEngineTypes.cs",
     "runtime/Engine/SpringJoint.cs",
+    "runtime/Engine/UI.cs",
     "runtime/Engine/UnityEventTyped.cs",
     "runtime/Engine/WeaponHost.cs",
     "runtime/Original/AmmunitionBase.cs",
@@ -904,6 +905,7 @@
     "runtime/Original/Foundation/WeaponComponentSlotOrientation.cs",
     "runtime/Original/Foundation/WeaponComponentSlotType.cs",
     "runtime/Original/FullSource/AudioInstigator.cs",
+    "runtime/Original/FullSource/AudioPlayer.cs",
     "runtime/Original/FullSource/AudioPropagator.cs",
     "runtime/Original/FullSource/AudioStimuli.cs",
     "runtime/Original/FullSource/AudioStimuliType.cs",
@@ -973,6 +975,11 @@
     "runtime/Original/FullSource/StaticDebug.cs",
     "runtime/Original/FullSource/Target.cs",
     "runtime/Original/FullSource/TimeScaler.cs",
+    "runtime/Original/FullSource/UIGrenadeTimer.cs",
+    "runtime/Original/FullSource/UIHitAnnouncement.cs",
+    "runtime/Original/FullSource/UIHitAnnouncements.cs",
+    "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
+    "runtime/Original/FullSource/UIVocalizationText.cs",
     "runtime/Original/FullSource/UnityEventBool.cs",
     "runtime/Original/FullSource/UnityEventFloat.cs",
     "runtime/Original/FullSource/UnityEventFloatFloat.cs",
@@ -1068,6 +1075,7 @@
         "RuntimeWorld",
         "SetActive",
         "SetValue",
+        "Text",
         "Time",
         "Vector3"
       ]
@@ -1193,6 +1201,7 @@
         "Action",
         "Component",
         "Projectile",
+        "Text",
         "Transform",
         "Vector3"
       ]
@@ -1228,6 +1237,7 @@
         "SetParent",
         "Status",
         "Step",
+        "Text",
         "Texture2D",
         "Transform",
         "Vector3",
@@ -1452,6 +1462,7 @@
         "Rigidbody",
         "RuntimeWorld",
         "Step",
+        "Text",
         "Transform",
         "Vector3",
         "in"
@@ -1474,6 +1485,7 @@
         "IKControllerInvoke",
         "RuntimeWorld",
         "Sequence",
+        "Text",
         "Vector3",
         "in"
       ]
@@ -1489,6 +1501,7 @@
         "Hand",
         "Mode",
         "RuntimeWorld",
+        "Text",
         "in"
       ]
     },
@@ -1623,6 +1636,7 @@
         "SceneLoader",
         "SetValue",
         "Step",
+        "Text",
         "Time",
         "Transform",
         "Vector3",
@@ -1781,6 +1795,7 @@
         "Object",
         "Replace",
         "RuntimeWorld",
+        "Text",
         "Type",
         "in"
       ]
@@ -1819,6 +1834,7 @@
         "Raycast",
         "RuntimeWorld",
         "SetParent",
+        "Text",
         "Time",
         "Transform",
         "Vector3",
@@ -1855,6 +1871,7 @@
         "SetActive",
         "SetParent",
         "SetValue",
+        "Text",
         "Time",
         "Transform",
         "Type",
@@ -1951,6 +1968,24 @@
       ]
     },
     {
+      "path": "runtime/Engine/UI.cs",
+      "sha256": "c6db449ae085527baae90bcc2fffb6df32c0c40d31ed8a29a787e861d248bdf2",
+      "declares": [
+        "Graphic",
+        "IGraphicDriver",
+        "Image",
+        "Slider",
+        "Text"
+      ],
+      "references": [
+        "Action",
+        "Color",
+        "MonoBehaviour",
+        "SetColor",
+        "UnityEvent"
+      ]
+    },
+    {
       "path": "runtime/Engine/UnityEventTyped.cs",
       "sha256": "100c638134fe0d1ae46223a5deb96d3f51ac333daa0c16f69745e9a0ef9b24a6",
       "declares": [
@@ -2036,6 +2071,7 @@
         "Settings",
         "Status",
         "Step",
+        "Text",
         "Time",
         "Transform",
         "Type",
@@ -2789,6 +2825,7 @@
         "Quaternion",
         "Task",
         "TaskStatus",
+        "Text",
         "Vector2",
         "Vector3",
         "Vector4",
@@ -3317,6 +3354,7 @@
         "TaskSerializationData",
         "TaskStatus",
         "TaskUtility",
+        "Text",
         "Type",
         "UnknownParentTask",
         "UnknownTask",
@@ -3368,6 +3406,7 @@
         "TaskSerializationData",
         "TaskStatus",
         "TaskUtility",
+        "Text",
         "Type",
         "UnknownParentTask",
         "UnknownTask",
@@ -4020,6 +4059,7 @@
         "Enum",
         "FullSerializer",
         "Serializer",
+        "Text",
         "Type",
         "fsConverter",
         "fsData",
@@ -4311,6 +4351,7 @@
         "Format",
         "FullSerializer",
         "Member",
+        "Text",
         "Type",
         "fsAotVersionInfo",
         "fsConfig",
@@ -4547,6 +4588,7 @@
         "Format",
         "FullSerializer",
         "IsNullOrEmpty",
+        "Text",
         "fsData",
         "fsGlobalConfig",
         "fsResult"
@@ -4562,6 +4604,7 @@
         "Format",
         "FullSerializer",
         "Object",
+        "Text",
         "Type",
         "fsData",
         "fsDataType",
@@ -4830,6 +4873,24 @@
         "CharacterBody",
         "GetComponent",
         "MonoBehaviour"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/AudioPlayer.cs",
+      "sha256": "195dc54dd6f85a10eca8d1a7508cfcd434b5870f27b19e02efbf9119a524cbb8",
+      "declares": [
+        "AudioPlayer"
+      ],
+      "references": [
+        "AudioClip",
+        "AudioSource",
+        "GetComponent",
+        "MonoBehaviour",
+        "Object",
+        "Play",
+        "PlayOneShot",
+        "Random",
+        "Time"
       ]
     },
     {
@@ -5147,7 +5208,8 @@
         "GetString",
         "Mode",
         "Object",
-        "Random"
+        "Random",
+        "Text"
       ]
     },
     {
@@ -6339,6 +6401,117 @@
         "Settings",
         "Time",
         "UIInteriorModeTextIndicator"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/UIGrenadeTimer.cs",
+      "sha256": "78f00aa1680fadee5986ab57aec071c10c6e8f55062b4dcb5cdcf046d2ef5291",
+      "declares": [
+        "UIGrenadeTimer"
+      ],
+      "references": [
+        "Camera",
+        "Destroy",
+        "Global",
+        "Grenade",
+        "InteriorMode",
+        "Mission",
+        "MonoBehaviour",
+        "Object",
+        "Random",
+        "SetParent",
+        "SetPosition",
+        "Slider",
+        "Vector3"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/UIHitAnnouncement.cs",
+      "sha256": "762b1ec96f5c1b67a0deb82e3a6eba8cf3a5b0473bb81ef60ff8d8e77be22c3b",
+      "declares": [
+        "UIHitAnnouncement"
+      ],
+      "references": [
+        "AnimationCurve",
+        "Color",
+        "Destroy",
+        "MonoBehaviour",
+        "Object",
+        "Random",
+        "Text",
+        "Time",
+        "Vector3"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/UIHitAnnouncements.cs",
+      "sha256": "93e1d0da471672bfdac01ca53eb908a6d18b583afe820a29857dfa408dd894f7",
+      "declares": [
+        "UIHitAnnouncements"
+      ],
+      "references": [
+        "Camera",
+        "Global",
+        "Instantiate",
+        "InteriorMode",
+        "MarksmanMode",
+        "Mission",
+        "MonoBehaviour",
+        "Object",
+        "Projectile",
+        "Random",
+        "SetParent",
+        "Text",
+        "Transform",
+        "UIHitAnnouncement"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
+      "sha256": "07f851d7f7c383f84a3c6357ee0987cbe2c8c0f5e91684f92e897fcc988d217d",
+      "declares": [
+        "UIInteriorModeTextIndicator"
+      ],
+      "references": [
+        "AnimationCurve",
+        "AudioClip",
+        "AudioPlayer",
+        "Color",
+        "Global",
+        "Image",
+        "Mathf",
+        "MonoBehaviour",
+        "Object",
+        "Play",
+        "Random",
+        "Text",
+        "Time"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/UIVocalizationText.cs",
+      "sha256": "153ba838ac9fb2e3f7c6a700595aa9393a6557597a8dd6c816e09878c79a22b6",
+      "declares": [
+        "UIVocalizationText"
+      ],
+      "references": [
+        "Camera",
+        "CharacterBody",
+        "Direction",
+        "GameObject",
+        "Global",
+        "InteriorMode",
+        "Mathf",
+        "Mission",
+        "MonoBehaviour",
+        "Object",
+        "Random",
+        "SetActive",
+        "SetParent",
+        "Text",
+        "Transform",
+        "Vector2",
+        "Vector3"
       ]
     },
     {
@@ -8614,6 +8787,7 @@
         "runtime/Engine/Rendering/GraphicsPrimitives.cs",
         "runtime/Engine/Rendering/Texture2D.cs",
         "runtime/Engine/SerializedEngineTypes.cs",
+        "runtime/Engine/UI.cs",
         "runtime/Engine/UnityEventTyped.cs",
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/Behavior.cs",
@@ -9078,6 +9252,8 @@
         "runtime/Original/FullSource/LimbVitalFunction.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/TimeScaler.cs",
+        "runtime/Original/FullSource/UIHitAnnouncement.cs",
+        "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
         "runtime/Original/Weapons/ArmTransition.cs",
         "runtime/Original/Weapons/CyclingBolt.cs",
         "runtime/Original/Weapons/WeaponBarrel.cs",
@@ -9685,10 +9861,12 @@
       "referencedBy": [
         "runtime/Original/Foundation/AudioSurface.cs",
         "runtime/Original/Foundation/AudioSurfaceProperties.cs",
+        "runtime/Original/FullSource/AudioPlayer.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/CommunicationLine.cs",
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/Grenade.cs",
+        "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
         "source-reference/Original/CharacterDependencies/AudioSurface.cs",
         "source-reference/Original/CharacterDependencies/CharacterAudio.cs",
         "source-reference/Original/CharacterDependencies/DoorController.cs",
@@ -9813,16 +9991,20 @@
     },
     {
       "name": "AudioPlayer",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/AudioPlayer.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AudioPlayer.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs"
+      ]
     },
     {
       "name": "AudioPriority",
@@ -9888,6 +10070,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Original/FullSource/AudioPlayer.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/DoorController.cs",
@@ -11919,6 +12102,9 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/PresentationHost.cs",
+        "runtime/Original/FullSource/UIGrenadeTimer.cs",
+        "runtime/Original/FullSource/UIHitAnnouncements.cs",
+        "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/InteriorCameraSlice.cs",
         "source-reference/Original/BehaviorDesigner/BehaviorGameGUI.cs"
       ]
@@ -12414,6 +12600,7 @@
         "runtime/Original/FullSource/OriginalActorIdentity.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Target.cs",
+        "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/Weapons/ArmTransition.cs",
         "runtime/Original/Weapons/ChangeMagazine.cs",
@@ -12884,6 +13071,7 @@
         "runtime/Engine/Rendering/Texture2D.cs",
         "runtime/Engine/Rendering/TextureTransfers.cs",
         "runtime/Engine/SerializationTypes.cs",
+        "runtime/Engine/UI.cs",
         "runtime/Original/Ballistics/BallisticWindow.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserialization.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserializationDeprecated.cs",
@@ -12892,6 +13080,8 @@
         "runtime/Original/Foundation/FullSerializer/Internal/DirectConverters/GUIStyleState_DirectConverter.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
         "runtime/Original/FullSource/LimbTextureData.cs",
+        "runtime/Original/FullSource/UIHitAnnouncement.cs",
+        "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
         "source-reference/Original/Animation/ArmIKSolver.cs"
       ]
     },
@@ -13914,6 +14104,8 @@
         "runtime/Original/FullSource/LimbRenderer.cs",
         "runtime/Original/FullSource/LimbTextureData.cs",
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/UIGrenadeTimer.cs",
+        "runtime/Original/FullSource/UIHitAnnouncement.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/ObjectRemover.cs",
         "runtime/Original/Weapons/CharacterTrigger.Methods.cs",
@@ -13999,6 +14191,7 @@
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/IKArmController.cs",
+        "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/InteriorCameraSlice.cs",
         "runtime/Original/Weapons/ArmTransition.cs",
@@ -16370,6 +16563,7 @@
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/Weapons/ArmTransition.cs",
         "source-reference/Original/Animation/ArmIKSolver.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
@@ -16686,6 +16880,7 @@
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/Task.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/AudioInstigator.cs",
+        "runtime/Original/FullSource/AudioPlayer.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/CharacterDialog.cs",
         "runtime/Original/FullSource/Communication.cs",
@@ -17930,6 +18125,10 @@
         "runtime/Original/FullSource/SerializablePerformanceSettings.cs",
         "runtime/Original/FullSource/SerializableTimeSettings.cs",
         "runtime/Original/FullSource/TimeScaler.cs",
+        "runtime/Original/FullSource/UIGrenadeTimer.cs",
+        "runtime/Original/FullSource/UIHitAnnouncements.cs",
+        "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
+        "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/Weapons/ArmTransition.cs",
         "runtime/Original/Weapons/ChangeMagazine.cs",
         "source-reference/Original/Animation/ArmIKSolver.cs",
@@ -18064,6 +18263,19 @@
       ]
     },
     {
+      "name": "Graphic",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/UI.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
+    },
+    {
       "name": "Graphics",
       "category": "native Unity adapter",
       "requiresAuthoredAssets": false,
@@ -18121,6 +18333,7 @@
         "runtime/Original/Animation/ArmController.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/IKArmController.cs",
+        "runtime/Original/FullSource/UIGrenadeTimer.cs",
         "source-reference/Original/Animation/ArmController.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/Animation/IKArmController.cs",
@@ -18840,6 +19053,19 @@
       "referencedBy": []
     },
     {
+      "name": "IGraphicDriver",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/UI.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
+    },
+    {
       "name": "IKArmAction",
       "category": "recovered source",
       "requiresAuthoredAssets": false,
@@ -19252,6 +19478,21 @@
       "referencedBy": []
     },
     {
+      "name": "Image",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/UI.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs"
+      ]
+    },
+    {
       "name": "ImageColorFlasher",
       "category": "recoverable source",
       "requiresAuthoredAssets": false,
@@ -19478,6 +19719,7 @@
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/UIHitAnnouncements.cs",
         "runtime/Original/Weapons/CyclingBolt.cs",
         "runtime/Original/Weapons/WeaponMechanism.Methods.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
@@ -19664,6 +19906,9 @@
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/UIGrenadeTimer.cs",
+        "runtime/Original/FullSource/UIHitAnnouncements.cs",
+        "runtime/Original/FullSource/UIVocalizationText.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/CharacterBody.cs",
@@ -21342,6 +21587,7 @@
       "referencedBy": [
         "runtime/Original/Ballistics/BallisticMaterial.cs",
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/UIHitAnnouncements.cs",
         "source-reference/Original/CharacterDependencies/Mission.cs"
       ]
     },
@@ -21576,6 +21822,8 @@
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/TimeScaler.cs",
+        "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
+        "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/FullSource/Wound.cs",
@@ -21856,6 +22104,9 @@
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/TimeScaler.cs",
+        "runtime/Original/FullSource/UIGrenadeTimer.cs",
+        "runtime/Original/FullSource/UIHitAnnouncements.cs",
+        "runtime/Original/FullSource/UIVocalizationText.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
@@ -22143,6 +22394,7 @@
         "runtime/Engine/PrefabCloner.cs",
         "runtime/Engine/RuntimeContracts.cs",
         "runtime/Engine/SpringJoint.cs",
+        "runtime/Engine/UI.cs",
         "runtime/Original/AmmunitionBase.cs",
         "runtime/Original/Animation/ArmsControl.cs",
         "runtime/Original/Animation/Hand.cs",
@@ -22162,6 +22414,7 @@
         "runtime/Original/Foundation/AudioSurfaceProperties.cs",
         "runtime/Original/Foundation/MissionMode.cs",
         "runtime/Original/FullSource/AudioInstigator.cs",
+        "runtime/Original/FullSource/AudioPlayer.cs",
         "runtime/Original/FullSource/BallisticObstacle.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/CharacterDialog.cs",
@@ -22183,6 +22436,11 @@
         "runtime/Original/FullSource/Settings.cs",
         "runtime/Original/FullSource/Target.cs",
         "runtime/Original/FullSource/TimeScaler.cs",
+        "runtime/Original/FullSource/UIGrenadeTimer.cs",
+        "runtime/Original/FullSource/UIHitAnnouncement.cs",
+        "runtime/Original/FullSource/UIHitAnnouncements.cs",
+        "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
+        "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/InputHandler.cs",
@@ -22589,6 +22847,7 @@
         "runtime/Original/Foundation/FullSerializer/fsDataType.cs",
         "runtime/Original/Foundation/FullSerializer/fsDirectConverter.cs",
         "runtime/Original/Foundation/FullSerializer/fsJsonPrinter.cs",
+        "runtime/Original/FullSource/AudioPlayer.cs",
         "runtime/Original/FullSource/BallisticObstacle.cs",
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/DynamicLimbTextureData.cs",
@@ -22625,6 +22884,11 @@
         "runtime/Original/FullSource/SerializableTimeSettings.cs",
         "runtime/Original/FullSource/Serializer.cs",
         "runtime/Original/FullSource/StaticDebug.cs",
+        "runtime/Original/FullSource/UIGrenadeTimer.cs",
+        "runtime/Original/FullSource/UIHitAnnouncement.cs",
+        "runtime/Original/FullSource/UIHitAnnouncements.cs",
+        "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
+        "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/FullSource/UnityEventBool.cs",
         "runtime/Original/FullSource/UnityEventFloat.cs",
         "runtime/Original/FullSource/UnityEventFloatFloat.cs",
@@ -23506,10 +23770,12 @@
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/Ballistics/BallisticHitMeshEffect.cs",
         "runtime/Original/Ballistics/EffectPool.Methods.cs",
+        "runtime/Original/FullSource/AudioPlayer.cs",
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/IKArmController.cs",
         "runtime/Original/FullSource/IKArmSequencer.cs",
         "runtime/Original/FullSource/Physiology.cs",
+        "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
         "runtime/Original/Weapons/CyclingBolt.cs",
         "runtime/Original/Weapons/WeaponMechanism.Methods.cs",
         "source-reference/Original/Animation/IKArmController.cs",
@@ -23547,6 +23813,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/Audio.cs",
+        "runtime/Original/FullSource/AudioPlayer.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/DoorController.cs",
@@ -23840,6 +24107,7 @@
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/OriginalActorIdentity.cs",
         "runtime/Original/FullSource/Physiology.cs",
+        "runtime/Original/FullSource/UIHitAnnouncements.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/Weapons/WeaponMechanism.Methods.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
@@ -24113,6 +24381,7 @@
         "runtime/Original/Foundation/ArmorClass.cs",
         "runtime/Original/Foundation/AudioSurfaceProperties.cs",
         "runtime/Original/Foundation/BehaviorDesigner/Runtime/Tasks/Wait.cs",
+        "runtime/Original/FullSource/AudioPlayer.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/DoorController.cs",
@@ -24155,6 +24424,11 @@
         "runtime/Original/FullSource/SerializableTimeSettings.cs",
         "runtime/Original/FullSource/Serializer.cs",
         "runtime/Original/FullSource/StaticDebug.cs",
+        "runtime/Original/FullSource/UIGrenadeTimer.cs",
+        "runtime/Original/FullSource/UIHitAnnouncement.cs",
+        "runtime/Original/FullSource/UIHitAnnouncements.cs",
+        "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
+        "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/FullSource/UnityEventBool.cs",
         "runtime/Original/FullSource/UnityEventFloat.cs",
         "runtime/Original/FullSource/UnityEventFloatFloat.cs",
@@ -26785,6 +27059,7 @@
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/Room.cs",
+        "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/Weapons/CharacterTrigger.Methods.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
@@ -26962,7 +27237,9 @@
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityLight/SetColor.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Engine/UI.cs"
+      ]
     },
     {
       "name": "SetConstraints",
@@ -27553,6 +27830,9 @@
         "runtime/Original/FullSource/IKArmController.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/UIGrenadeTimer.cs",
+        "runtime/Original/FullSource/UIHitAnnouncements.cs",
+        "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/Weapons/ArmTransition.cs",
         "runtime/Original/Weapons/ChangeMagazine.cs",
         "runtime/Original/Weapons/CharacterTrigger.Methods.cs",
@@ -27611,7 +27891,9 @@
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityTransform/SetPosition.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Original/FullSource/UIGrenadeTimer.cs"
+      ]
     },
     {
       "name": "SetPriority",
@@ -29129,6 +29411,21 @@
       "referencedBy": []
     },
     {
+      "name": "Slider",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/UI.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Original/FullSource/UIGrenadeTimer.cs"
+      ]
+    },
+    {
       "name": "SoftNormalsToVertexColor",
       "category": "recoverable source",
       "requiresAuthoredAssets": false,
@@ -30301,6 +30598,43 @@
       "referencedBy": []
     },
     {
+      "name": "Text",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/UI.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Engine/AmmunitionLoader.cs",
+        "runtime/Engine/BallisticEngine.cs",
+        "runtime/Engine/BallisticRuntimeHost.cs",
+        "runtime/Engine/OriginalArmPhysicsHost.cs",
+        "runtime/Engine/OriginalArmSequences.cs",
+        "runtime/Engine/OriginalHandModes.cs",
+        "runtime/Engine/PresentationHost.cs",
+        "runtime/Engine/Resources.cs",
+        "runtime/Engine/RuntimeContracts.cs",
+        "runtime/Engine/SceneLoader.cs",
+        "runtime/Engine/WeaponHost.cs",
+        "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/MiniJSON.cs",
+        "runtime/Original/BehaviorDesigner/BinaryDeserialization.cs",
+        "runtime/Original/BehaviorDesigner/BinaryDeserializationDeprecated.cs",
+        "runtime/Original/Foundation/FullSerializer/Internal/fsEnumConverter.cs",
+        "runtime/Original/Foundation/FullSerializer/fsAotCompilationManager.cs",
+        "runtime/Original/Foundation/FullSerializer/fsJsonParser.cs",
+        "runtime/Original/Foundation/FullSerializer/fsJsonPrinter.cs",
+        "runtime/Original/FullSource/Encryption.cs",
+        "runtime/Original/FullSource/UIHitAnnouncement.cs",
+        "runtime/Original/FullSource/UIHitAnnouncements.cs",
+        "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
+        "runtime/Original/FullSource/UIVocalizationText.cs"
+      ]
+    },
+    {
       "name": "TextAnchor",
       "category": "native Unity adapter",
       "requiresAuthoredAssets": false,
@@ -30617,6 +30951,7 @@
         "runtime/Original/DecayingObject.cs",
         "runtime/Original/Foundation/ActionScheduler.cs",
         "runtime/Original/Foundation/BehaviorDesigner/Runtime/Tasks/Wait.cs",
+        "runtime/Original/FullSource/AudioPlayer.cs",
         "runtime/Original/FullSource/AudioPropagator.cs",
         "runtime/Original/FullSource/BallisticObstacle.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
@@ -30635,6 +30970,8 @@
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Settings.cs",
         "runtime/Original/FullSource/TimeScaler.cs",
+        "runtime/Original/FullSource/UIHitAnnouncement.cs",
+        "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/FullSource/Wound.cs",
         "runtime/Original/InputHandler.cs",
@@ -30878,6 +31215,8 @@
         "runtime/Original/FullSource/LimbAttachment.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/Room.cs",
+        "runtime/Original/FullSource/UIHitAnnouncements.cs",
+        "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/InteriorCameraSlice.cs",
         "runtime/Original/Projectile.cs",
         "runtime/Original/Weapons/ArmTransition.cs",
@@ -31815,9 +32154,11 @@
     },
     {
       "name": "UIGrenadeTimer",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": true,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/UIGrenadeTimer.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -31844,22 +32185,28 @@
     },
     {
       "name": "UIHitAnnouncement",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/UIHitAnnouncement.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIHitAnnouncement.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Original/FullSource/UIHitAnnouncements.cs"
+      ]
     },
     {
       "name": "UIHitAnnouncements",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": true,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/UIHitAnnouncements.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -31951,9 +32298,11 @@
     },
     {
       "name": "UIInteriorModeTextIndicator",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": true,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -32895,9 +33244,11 @@
     },
     {
       "name": "UIVocalizationText",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": true,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/UIVocalizationText.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -32974,6 +33325,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/UI.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/Foundation/FullSerializer/Internal/Converters/UnityEvent_Converter.cs",
         "runtime/Original/Foundation/UnityEventVoid.cs",
@@ -33422,6 +33774,7 @@
         "runtime/Original/FullSource/LimbTextureData.cs",
         "runtime/Original/FullSource/MuscleControl.cs",
         "runtime/Original/FullSource/Room.cs",
+        "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/Weapons/WeaponMechanism.Methods.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
@@ -33500,6 +33853,9 @@
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Room.cs",
+        "runtime/Original/FullSource/UIGrenadeTimer.cs",
+        "runtime/Original/FullSource/UIHitAnnouncement.cs",
+        "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/FullSource/Wound.cs",

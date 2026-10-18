@@ -288,6 +288,42 @@
       "sha256": "35b0a79489c66a0e9570149229e19964806cf454058fef4f26922d05e28e65b0",
       "runtimeSha256": "56da3518bd388834e3e3aa388f11b0ae49e0d31875bd30e9aa18750be676c660",
       "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "UIHitAnnouncements.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIHitAnnouncements.cs",
+      "sha256": "2b23ec695ccbc238498b5c2accd5b7294c4e425726d61401c26795398697b072",
+      "runtimeSha256": "93e1d0da471672bfdac01ca53eb908a6d18b583afe820a29857dfa408dd894f7",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "UIHitAnnouncement.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIHitAnnouncement.cs",
+      "sha256": "9ab750d4afe40745ca6afc956cfeb9e70ca9e45804deb43402107e4869226250",
+      "runtimeSha256": "762b1ec96f5c1b67a0deb82e3a6eba8cf3a5b0473bb81ef60ff8d8e77be22c3b",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "UIVocalizationText.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIVocalizationText.cs",
+      "sha256": "de6fc5fb43a058a123af4b160d953d7ae256e767fd186c480dd3a783bc4ffb1f",
+      "runtimeSha256": "153ba838ac9fb2e3f7c6a700595aa9393a6557597a8dd6c816e09878c79a22b6",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "UIInteriorModeTextIndicator.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIInteriorModeTextIndicator.cs",
+      "sha256": "6382b4036d29499972b802f0c9757e06dcd5c909496eb7d0a973139ce3da7ead",
+      "runtimeSha256": "07f851d7f7c383f84a3c6357ee0987cbe2c8c0f5e91684f92e897fcc988d217d",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "UIGrenadeTimer.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIGrenadeTimer.cs",
+      "sha256": "163448f6bc3bee780641fe293262adcb85e2cf76c39da56c2175be895acff39d",
+      "runtimeSha256": "78f00aa1680fadee5986ab57aec071c10c6e8f55062b4dcb5cdcf046d2ef5291",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "AudioPlayer.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AudioPlayer.cs",
+      "sha256": "b490c93103ce7130385cb42a95ca8b12d5cb15e80d1a61d5e9f4dedb219f68e4",
+      "runtimeSha256": "195dc54dd6f85a10eca8d1a7508cfcd434b5870f27b19e02efbf9119a524cbb8",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
     }
   }
 }
