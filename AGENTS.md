@@ -4,6 +4,17 @@
 
 # Crisis Response Port — Agent Operating Instructions
 
+## 0. Mandatory live-state and checkpoint precedence gate
+
+**Before ANY code or documentation edit**, inspect live `develop/wasm`, all open PRs (including PRs recently merged into feature branches), the target branch head, recent relevant CI and `docs/REPOSITORY_REMEDIATION_2026-10-18.md` on the current full-source branch. Never choose a task solely from an old audit, conversation, `NEXT_AGENT.md`, issue body or historical compiler count. GitHub commit-search results are not sufficient to identify the newest branch head.
+
+Record: (a) exact target branch and inspected head, (b) newest comparable tested source SHA/run, (c) what is superseded, (d) next unmet acceptance gate. Verify the target head has not moved before writing. When checkpoints use different compiler graphs, **never infer regression or improvement from raw error totals**.
+
+The 30-errors/21-names CharacterBody checkpoint is **superseded** by the complete-graph 144-errors/60-names checkpoint in `docs/REPOSITORY_REMEDIATION_2026-10-18.md` (run 39091701268), followed by PR #66 remediation tests (run 39093133256). Read live results again, because these markers will also age. The remediation adds source inventory, compiler baseline, workflow gating and actor-ownership guards; do not duplicate those tools or resume older tasks before checking them.
+
+For every handoff replace `NEXT_AGENT.md` entirely, begin with the observed current branch/SHA and latest validated checkpoint, and put superseded material only in Git history or dated evidence docs. If live state cannot be established, make no source changes and report the limitation.
+
+
 Derived from the 2026-10-16 workflow audit. These rules keep the port moving fast without burning quota, duplicating work, or losing results.
 
 ## 1. Deployments: on-demand only
