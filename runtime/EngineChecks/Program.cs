@@ -14,6 +14,9 @@ clone.SetPixels(1,0,1,1,new[]{new Color(0,0,1,.5f)});clone.Apply();
 Check(original.GetPixel(1,0).g==1,"cloned writes must not modify original texture");
 Check(clone.GetPixel(1,0).b==1&&patch.SequenceEqual(new byte[]{0,0,255,128}),"pixel patch reaches observer in original RGBA order");
 var go=new GameObject("source limb renderer",first);var renderer=go.AddComponent<MeshRenderer>();
+var bloodMask=new Texture2D(1,1,new byte[4]);
+renderer.material.SetTexture("_Bloodmask",bloodMask);
+Check(ReferenceEquals(renderer.material.GetTexture("_Bloodmask"),bloodMask),"CPU material retains the source blood-mask texture binding");
 Throws<NotSupportedException>(()=>renderer.material.SetTexture("_DamageMask",null));
 Throws<NotSupportedException>(()=>GL.PushMatrix());
 Throws<NotSupportedException>(()=>{var value=RenderTexture.active;});
@@ -26,9 +29,15 @@ GL.PushMatrix();GL.LoadPixelMatrix(0,2,1,0);GL.Begin(4);GL.Color(new Color(1,0,0
 Check(graphics.Ops.SequenceEqual(new[]{"target","_DamageMask","push","matrix","begin4","color","vertex","end","pop","restore"}),"target/material/GL transaction order");
 Throws<NotSupportedException>(()=>GL.Begin(9));
 var mesh=new Mesh();mesh.vertices=new[]{Vector3.zero,Vector3.right,Vector3.up};mesh.triangles=new[]{0,1,2};
+mesh.uv=new[]{Vector2.zero,new Vector2(1,0),new Vector2(0,1)};mesh.RecalculateNormals();
 var vertices=mesh.vertices;vertices[0]=Vector3.up;
 Check(mesh.vertices[0].sqrMagnitude==0,"mesh caller cannot mutate source vertices");
+Check(mesh.uv.Length==3&&mesh.normals.Length==3&&Math.Abs(mesh.normals[0].z-1)<1e-6,
+      "mesh UVs and recalculated normals follow source vertex and triangle data");
+var meshOwner=new GameObject("original source mesh filter",first);var meshFilter=meshOwner.AddComponent<MeshFilter>();meshFilter.mesh=mesh;
+Check(ReferenceEquals(meshFilter.sharedMesh,mesh),"MeshFilter retains the source-assigned mesh identity");
 Throws<ArgumentException>(()=>mesh.triangles=new[]{0,1,3});
+mesh.Clear();Check(mesh.vertexCount==0&&mesh.uv.Length==0&&mesh.normals.Length==0,"Mesh.Clear resets source mesh buffers");
 var second=new RuntimeWorld();second.MakeCurrent();
 Throws<NotSupportedException>(()=>GL.End());
 Throws<NotSupportedException>(()=>{var value=RenderTexture.active;});

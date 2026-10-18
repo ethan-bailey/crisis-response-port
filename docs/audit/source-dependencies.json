@@ -912,6 +912,8 @@
     "runtime/Original/FullSource/AudioStimuli.cs",
     "runtime/Original/FullSource/AudioStimuliType.cs",
     "runtime/Original/FullSource/BallisticObstacle.cs",
+    "runtime/Original/FullSource/BloodStream.cs",
+    "runtime/Original/FullSource/BloodStreamGenerator.cs",
     "runtime/Original/FullSource/CharacterAudio.cs",
     "runtime/Original/FullSource/CharacterDialog.cs",
     "runtime/Original/FullSource/CharacterScoreCard.cs",
@@ -925,12 +927,14 @@
     "runtime/Original/FullSource/DoorOpenState.cs",
     "runtime/Original/FullSource/Doors.cs",
     "runtime/Original/FullSource/DynamicInteractionMarker.cs",
+    "runtime/Original/FullSource/DynamicLimbDecalRenderer.cs",
     "runtime/Original/FullSource/DynamicLimbTextureData.cs",
     "runtime/Original/FullSource/DynamicLimbTexturePool.cs",
     "runtime/Original/FullSource/Emitter.cs",
     "runtime/Original/FullSource/Encryption.cs",
     "runtime/Original/FullSource/Explosive.cs",
     "runtime/Original/FullSource/FireAlarm.cs",
+    "runtime/Original/FullSource/FloorPoolPainter.cs",
     "runtime/Original/FullSource/FloorStreakPainter.cs",
     "runtime/Original/FullSource/Grenade.cs",
     "runtime/Original/FullSource/GrenadeSpoon.cs",
@@ -946,11 +950,13 @@
     "runtime/Original/FullSource/LimbMuscle.cs",
     "runtime/Original/FullSource/LimbPhysiology.cs",
     "runtime/Original/FullSource/LimbRenderer.cs",
+    "runtime/Original/FullSource/LimbStreak.cs",
     "runtime/Original/FullSource/LimbTextureData.cs",
     "runtime/Original/FullSource/LimbVitalFunction.cs",
     "runtime/Original/FullSource/Mission.cs",
     "runtime/Original/FullSource/MuscleControl.cs",
     "runtime/Original/FullSource/OriginalActorIdentity.cs",
+    "runtime/Original/FullSource/PaintableSurface.cs",
     "runtime/Original/FullSource/Physiology.cs",
     "runtime/Original/FullSource/PoweredLight.cs",
     "runtime/Original/FullSource/QualityLevels.cs",
@@ -997,6 +1003,7 @@
     "runtime/Original/FullSource/UnityEventInt.cs",
     "runtime/Original/FullSource/UnityEventIntInt.cs",
     "runtime/Original/FullSource/VitalFunctions.cs",
+    "runtime/Original/FullSource/WallStreakPainter.cs",
     "runtime/Original/FullSource/WeaponAimer.cs",
     "runtime/Original/FullSource/WeaponMode.cs",
     "runtime/Original/FullSource/WeaponType.cs",
@@ -1395,12 +1402,16 @@
     },
     {
       "path": "runtime/Engine/Mesh.cs",
-      "sha256": "2e0ec412d6557fdaa19684b9ec21d9843f64b806bc3385d3aa411b7626784f27",
+      "sha256": "aac42c0efe2b044264dc20f9c70e303697afb9a5f72f3be448225d4c8da04693",
       "declares": [
-        "Mesh"
+        "Mesh",
+        "MeshFilter"
       ],
       "references": [
+        "Clear",
+        "Component",
         "Object",
+        "Vector2",
         "Vector3"
       ]
     },
@@ -1736,7 +1747,7 @@
     },
     {
       "path": "runtime/Engine/Rendering/GraphicsPrimitives.cs",
-      "sha256": "6d01bed8827d955636ca7ba65c6005a4592b4230b93cfc76c7a8dce5d21507ef",
+      "sha256": "ff3a1685d741051c0e80ecdae72ce0bdf6146d1b1eafb8a266e22931733ce63e",
       "declares": [
         "Color",
         "Material",
@@ -4973,6 +4984,59 @@
       ]
     },
     {
+      "path": "runtime/Original/FullSource/BloodStream.cs",
+      "sha256": "59555b29ce4bb4695ee5625115259dfb39c057b563b018fb5cf74fdd7a3d3cf0",
+      "declares": [
+        "BloodStream",
+        "BloodstreamParticle"
+      ],
+      "references": [
+        "Clear",
+        "Destroy",
+        "DestroyImmediate",
+        "Emitter",
+        "FloorPoolPainter",
+        "GameObject",
+        "GetComponent",
+        "Lerp",
+        "LookRotation",
+        "Masks",
+        "Mathf",
+        "Mesh",
+        "MeshFilter",
+        "MonoBehaviour",
+        "Object",
+        "PaintableSurface",
+        "Physics",
+        "Quaternion",
+        "Random",
+        "Raycast",
+        "RaycastHit",
+        "SetParent",
+        "Time",
+        "Transform",
+        "Vector2",
+        "Vector3",
+        "in"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/BloodStreamGenerator.cs",
+      "sha256": "143030e869774a0716ea856b72962caf55a7bf7c4acdb9c38f7e50c0c90e6dcb",
+      "declares": [
+        "BloodStreamGenerator"
+      ],
+      "references": [
+        "BloodStream",
+        "Emitter",
+        "MissionHelper",
+        "Object",
+        "PerformanceManager",
+        "Random",
+        "Vector3"
+      ]
+    },
+    {
       "path": "runtime/Original/FullSource/CharacterAudio.cs",
       "sha256": "d9ad534c9933afa6058fcf994fc4b14cb8d9affb6bb01fe002051e4669f8de89",
       "declares": [
@@ -5192,6 +5256,26 @@
       ]
     },
     {
+      "path": "runtime/Original/FullSource/DynamicLimbDecalRenderer.cs",
+      "sha256": "e9e80fb40e91dfddacd936d4e6a1b5c93ea058fb49f40626fe3be7283b246af1",
+      "declares": [
+        "DynamicLimbDecalRenderer"
+      ],
+      "references": [
+        "GetComponent",
+        "Limb",
+        "LimbRenderer",
+        "LimbStreak",
+        "MonoBehaviour",
+        "Object",
+        "PerformanceManager",
+        "Random",
+        "Time",
+        "Vector3",
+        "in"
+      ]
+    },
+    {
       "path": "runtime/Original/FullSource/DynamicLimbTextureData.cs",
       "sha256": "d020cd6dca8d96840d45b92ec91f4ac19a107ccf40250b244010a4f8a6d43b61",
       "declares": [
@@ -5320,6 +5404,43 @@
         "Settings",
         "Stop",
         "Time",
+        "in"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/FloorPoolPainter.cs",
+      "sha256": "bebf728ddb005a06de40ec1f052c905d8abdf12f6ccf514757b5264efeba565b",
+      "declares": [
+        "FloorPoolPainter",
+        "PoolPoint"
+      ],
+      "references": [
+        "AnimationCurve",
+        "Clear",
+        "Destroy",
+        "GameObject",
+        "GetComponent",
+        "Global",
+        "Graphics",
+        "Instantiate",
+        "Lerp",
+        "Masks",
+        "Material",
+        "Mathf",
+        "MissionHelper",
+        "MonoBehaviour",
+        "Object",
+        "PaintableSurface",
+        "Physics",
+        "Random",
+        "Ray",
+        "Raycast",
+        "RaycastHit",
+        "SetParent",
+        "Settings",
+        "Time",
+        "Vector2",
+        "Vector3",
         "in"
       ]
     },
@@ -5726,6 +5847,22 @@
       ]
     },
     {
+      "path": "runtime/Original/FullSource/LimbStreak.cs",
+      "sha256": "16ebc6887c63fb16c64e2f0d55ad17747e700a67b4df7a8573c501d57d76cd48",
+      "declares": [
+        "LimbStreak"
+      ],
+      "references": [
+        "LimbRenderer",
+        "Normalize",
+        "Object",
+        "Random",
+        "Time",
+        "Transform",
+        "Vector3"
+      ]
+    },
+    {
       "path": "runtime/Original/FullSource/LimbTextureData.cs",
       "sha256": "6f2cebc0fd528c084a7a66262a2221b901daa0d2564c3e9820d082cb99dc0295",
       "declares": [
@@ -5890,6 +6027,38 @@
         "Limb",
         "Physiology",
         "Projectile"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/PaintableSurface.cs",
+      "sha256": "d4f6a4cb907038addb5bfbe29ca74d37119d8cd0093690b1dc6259dda015e00b",
+      "declares": [
+        "Mode",
+        "PaintableSurface"
+      ],
+      "references": [
+        "Color",
+        "Destroy",
+        "DestroyImmediate",
+        "GameObject",
+        "GetComponent",
+        "Global",
+        "Mathf",
+        "MeshRenderer",
+        "Mission",
+        "MonoBehaviour",
+        "Object",
+        "PerformanceManager",
+        "Random",
+        "SetParent",
+        "Settings",
+        "Texture2D",
+        "TextureWrapMode",
+        "Time",
+        "Transform",
+        "Vector2",
+        "Vector3",
+        "WallStreakPainter"
       ]
     },
     {
@@ -6800,6 +6969,23 @@
         "Random",
         "Vector3",
         "in"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/WallStreakPainter.cs",
+      "sha256": "3de1264c2f739c0adaf79f45f1ab641708bd159b6c0babf517a264ffca8d6bce",
+      "declares": [
+        "WallStreakPainter"
+      ],
+      "references": [
+        "Destroy",
+        "Mathf",
+        "MonoBehaviour",
+        "Object",
+        "PaintableSurface",
+        "Random",
+        "Time",
+        "Vector3"
       ]
     },
     {
@@ -9455,6 +9641,7 @@
         "runtime/Original/BehaviorDesigner/BinaryDeserializationDeprecated.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/Foundation/FullSerializer/Internal/DirectConverters/AnimationCurve_DirectConverter.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/IKArmController.cs",
         "runtime/Original/FullSource/LimbVitalFunction.cs",
@@ -11975,9 +12162,11 @@
     },
     {
       "name": "BloodStream",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/BloodStream.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -11985,15 +12174,18 @@
       ],
       "compilerMissing": true,
       "referencedBy": [
+        "runtime/Original/FullSource/BloodStreamGenerator.cs",
         "runtime/Original/FullSource/Mission.cs",
         "source-reference/Original/CharacterDependencies/Mission.cs"
       ]
     },
     {
       "name": "BloodStreamGenerator",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/BloodStreamGenerator.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -12032,9 +12224,11 @@
     },
     {
       "name": "BloodstreamParticle",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/BloodStream.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -13100,6 +13294,7 @@
       "referencedBy": [
         "runtime/Engine/BallisticRuntimeHost.cs",
         "runtime/Engine/ClockInput.cs",
+        "runtime/Engine/Mesh.cs",
         "runtime/Engine/Objects.cs",
         "runtime/Engine/OriginalArmPhysicsHost.cs",
         "runtime/Engine/Resources.cs",
@@ -13120,6 +13315,8 @@
         "runtime/Original/Foundation/SerializableWeapon.cs",
         "runtime/Original/Foundation/SerializableWeaponComponentSlot.cs",
         "runtime/Original/FullSource/AudioPropagator.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/SerializableDialogState.cs",
@@ -13305,6 +13502,7 @@
         "runtime/Original/Foundation/FullSerializer/Internal/DirectConverters/GUIStyleState_DirectConverter.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
         "runtime/Original/FullSource/LimbTextureData.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/FullSource/UIHitAnnouncement.cs",
         "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
@@ -13696,6 +13894,7 @@
       "referencedBy": [
         "runtime/Engine/ArmPhysicsComponents.cs",
         "runtime/Engine/BallisticEngine.cs",
+        "runtime/Engine/Mesh.cs",
         "runtime/Engine/ParticleSystem.cs",
         "runtime/Engine/PhysicsComponents.cs",
         "runtime/Engine/PrefabCloner.cs",
@@ -14327,9 +14526,11 @@
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/DecayingObject.cs",
         "runtime/Original/FullSource/BallisticObstacle.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/DynamicLimbTextureData.cs",
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/FireAlarm.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
@@ -14337,9 +14538,11 @@
         "runtime/Original/FullSource/LimbRenderer.cs",
         "runtime/Original/FullSource/LimbTextureData.cs",
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/UIGrenadeTimer.cs",
         "runtime/Original/FullSource/UIHitAnnouncement.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
+        "runtime/Original/FullSource/WallStreakPainter.cs",
         "runtime/Original/ObjectRemover.cs",
         "runtime/Original/Weapons/CharacterTrigger.Methods.cs",
         "runtime/Original/Weapons/CyclingBolt.cs",
@@ -14370,7 +14573,10 @@
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityGameObject/DestroyImmediate.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Original/FullSource/BloodStream.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs"
+      ]
     },
     {
       "name": "DetectClosedDoor",
@@ -14790,9 +14996,11 @@
     },
     {
       "name": "DynamicLimbDecalRenderer",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": true,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/DynamicLimbDecalRenderer.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -15100,6 +15308,8 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
+        "runtime/Original/FullSource/BloodStreamGenerator.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/Mission.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
@@ -16126,9 +16336,11 @@
     },
     {
       "name": "FloorPoolPainter",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/FloorPoolPainter.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -16136,6 +16348,7 @@
       ],
       "compilerMissing": true,
       "referencedBy": [
+        "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/Mission.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
@@ -16803,12 +17016,15 @@
         "runtime/Original/BehaviorDesigner/BinaryDeserialization.cs",
         "runtime/Original/BehaviorDesigner/BinaryDeserializationDeprecated.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/FireAlarm.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/Weapons/ArmTransition.cs",
         "source-reference/Original/Animation/ArmIKSolver.cs",
@@ -17129,12 +17345,15 @@
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/AudioInstigator.cs",
         "runtime/Original/FullSource/AudioPlayer.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/CharacterDialog.cs",
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/DynamicLimbDecalRenderer.cs",
         "runtime/Original/FullSource/Emitter.cs",
         "runtime/Original/FullSource/FireAlarm.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
@@ -17147,6 +17366,7 @@
         "runtime/Original/FullSource/LimbRenderer.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/MuscleControl.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/FullSource/Room.cs",
@@ -18368,9 +18588,11 @@
         "runtime/Original/FullSource/Emitter.cs",
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/FireAlarm.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/FullSource/Room.cs",
@@ -18549,6 +18771,7 @@
       "referencedBy": [
         "runtime/Engine/RenderTexture.cs",
         "runtime/Engine/Rendering/Texture2D.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbTextureData.cs",
         "runtime/Original/FullSource/Mission.cs",
@@ -19991,6 +20214,7 @@
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/Explosive.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
@@ -21040,7 +21264,9 @@
         "runtime/Original/Ballistics/BallisticMaterial.cs",
         "runtime/Original/BodyPoseSlice.Methods.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/Emitter.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/TimeScaler.cs",
@@ -21219,6 +21445,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/DynamicLimbDecalRenderer.cs",
         "runtime/Original/FullSource/LimbArmor.cs",
         "runtime/Original/FullSource/LimbMuscle.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
@@ -21451,9 +21678,11 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Original/FullSource/DynamicLimbDecalRenderer.cs",
         "runtime/Original/FullSource/DynamicLimbTextureData.cs",
         "runtime/Original/FullSource/DynamicLimbTexturePool.cs",
         "runtime/Original/FullSource/Limb.cs",
+        "runtime/Original/FullSource/LimbStreak.cs",
         "runtime/Original/FullSource/LimbTextureData.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/CharacterDependencies/Limb.cs"
@@ -21461,16 +21690,20 @@
     },
     {
       "name": "LimbStreak",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/LimbStreak.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/LimbStreak.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Original/FullSource/DynamicLimbDecalRenderer.cs"
+      ]
     },
     {
       "name": "LimbTextureData",
@@ -21646,6 +21879,7 @@
         "runtime/Engine/Math.cs",
         "runtime/Original/Ballistics/BallisticMaterial.cs",
         "runtime/Original/Ballistics/ProjectileMaterial.Methods.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/Emitter.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/Weapons/WeaponMechanism.Methods.cs",
@@ -21989,7 +22223,9 @@
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/AudioPropagator.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/Communication.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/Physiology.cs",
@@ -22035,6 +22271,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
         "runtime/Original/FullSource/PoweredLight.cs"
       ]
@@ -22093,11 +22330,13 @@
         "runtime/Original/BodyPoseSlice.Methods.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/AudioPropagator.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/CharacterDialog.cs",
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/Emitter.cs",
         "runtime/Original/FullSource/Explosive.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/IKArmController.cs",
@@ -22109,12 +22348,14 @@
         "runtime/Original/FullSource/LimbRenderer.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/MuscleControl.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/TimeScaler.cs",
         "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
         "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
+        "runtime/Original/FullSource/WallStreakPainter.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/FullSource/Wound.cs",
         "runtime/Original/InputHandler.cs",
@@ -22265,6 +22506,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/Mission.cs",
         "source-reference/Original/CharacterDependencies/Mission.cs"
       ]
@@ -22282,6 +22524,21 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/BallisticRuntimeHost.cs"
+      ]
+    },
+    {
+      "name": "MeshFilter",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/Mesh.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Original/FullSource/BloodStream.cs"
       ]
     },
     {
@@ -22309,7 +22566,8 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
-        "runtime/Original/FullSource/LimbRenderer.cs"
+        "runtime/Original/FullSource/LimbRenderer.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs"
       ]
     },
     {
@@ -22393,6 +22651,7 @@
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
         "runtime/Original/FullSource/Limb.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/FullSource/Room.cs",
@@ -22461,7 +22720,9 @@
         "runtime/Engine/BallisticRuntimeHost.cs",
         "runtime/Original/Ballistics/BallisticMaterial.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/BloodStreamGenerator.cs",
         "runtime/Original/FullSource/Explosive.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
@@ -22620,6 +22881,7 @@
         "runtime/Original/Animation/ArmController.cs",
         "runtime/Original/Animation/Hand.cs",
         "runtime/Original/FullSource/LimbMuscle.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/TimeScaler.cs"
       ],
       "engineSources": [],
@@ -22711,6 +22973,7 @@
         "runtime/Original/FullSource/AudioInstigator.cs",
         "runtime/Original/FullSource/AudioPlayer.cs",
         "runtime/Original/FullSource/BallisticObstacle.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/CharacterDialog.cs",
         "runtime/Original/FullSource/Communication.cs",
@@ -22718,9 +22981,11 @@
         "runtime/Original/FullSource/DialogTree.cs",
         "runtime/Original/FullSource/Doors.cs",
         "runtime/Original/FullSource/DynamicInteractionMarker.cs",
+        "runtime/Original/FullSource/DynamicLimbDecalRenderer.cs",
         "runtime/Original/FullSource/Emitter.cs",
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/FireAlarm.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
@@ -22733,6 +22998,7 @@
         "runtime/Original/FullSource/LimbRenderer.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/MuscleControl.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/FullSource/Room.cs",
@@ -22745,6 +23011,7 @@
         "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
         "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
+        "runtime/Original/FullSource/WallStreakPainter.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/InputHandler.cs",
         "runtime/Original/InteriorCameraSlice.cs",
@@ -23047,6 +23314,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Original/FullSource/Limb.cs",
+        "runtime/Original/FullSource/LimbStreak.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/CharacterDependencies/Limb.cs"
       ]
@@ -23152,19 +23420,25 @@
         "runtime/Original/Foundation/FullSerializer/fsJsonPrinter.cs",
         "runtime/Original/FullSource/AudioPlayer.cs",
         "runtime/Original/FullSource/BallisticObstacle.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
+        "runtime/Original/FullSource/BloodStreamGenerator.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/DynamicLimbDecalRenderer.cs",
         "runtime/Original/FullSource/DynamicLimbTextureData.cs",
         "runtime/Original/FullSource/DynamicLimbTexturePool.cs",
         "runtime/Original/FullSource/Encryption.cs",
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/FireAlarm.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
+        "runtime/Original/FullSource/LimbStreak.cs",
         "runtime/Original/FullSource/LimbTextureData.cs",
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/QualityLevels.cs",
         "runtime/Original/FullSource/SerializableAudioSettings.cs",
         "runtime/Original/FullSource/SerializableAudioSettings_v1.cs",
@@ -23201,6 +23475,7 @@
         "runtime/Original/FullSource/UnityEventInt.cs",
         "runtime/Original/FullSource/UnityEventIntInt.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
+        "runtime/Original/FullSource/WallStreakPainter.cs",
         "runtime/Original/FullSource/WeaponType.cs",
         "runtime/Original/ObjectRemover.cs",
         "runtime/Original/Weapons/ArmTransition.cs",
@@ -23674,9 +23949,11 @@
     },
     {
       "name": "PaintableSurface",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/PaintableSurface.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -23684,7 +23961,10 @@
       ],
       "compilerMissing": true,
       "referencedBy": [
+        "runtime/Original/FullSource/BloodStream.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
+        "runtime/Original/FullSource/WallStreakPainter.cs",
         "source-reference/Original/CharacterDependencies/FloorStreakPainter.cs"
       ]
     },
@@ -23921,8 +24201,11 @@
       "referencedBy": [
         "runtime/Engine/BallisticRuntimeHost.cs",
         "runtime/Original/Ballistics/BallisticMaterial.cs",
+        "runtime/Original/FullSource/BloodStreamGenerator.cs",
+        "runtime/Original/FullSource/DynamicLimbDecalRenderer.cs",
         "runtime/Original/FullSource/Emitter.cs",
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs",
         "source-reference/Original/CharacterDependencies/Emitter.cs",
         "source-reference/Original/CharacterDependencies/Mission.cs"
       ]
@@ -23971,6 +24254,8 @@
         "runtime/Engine/RuntimeContracts.cs",
         "runtime/Engine/SceneLoader.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/Physiology.cs",
@@ -24194,9 +24479,11 @@
     },
     {
       "name": "PoolPoint",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/FloorPoolPainter.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -24598,6 +24885,7 @@
         "runtime/Original/BehaviorDesigner/BinaryDeserialization.cs",
         "runtime/Original/BehaviorDesigner/BinaryDeserializationDeprecated.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/Emitter.cs",
         "runtime/Original/FullSource/Limb.cs",
@@ -24696,14 +24984,18 @@
         "runtime/Original/Foundation/AudioSurfaceProperties.cs",
         "runtime/Original/Foundation/BehaviorDesigner/Runtime/Tasks/Wait.cs",
         "runtime/Original/FullSource/AudioPlayer.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
+        "runtime/Original/FullSource/BloodStreamGenerator.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/DynamicLimbDecalRenderer.cs",
         "runtime/Original/FullSource/DynamicLimbTextureData.cs",
         "runtime/Original/FullSource/DynamicLimbTexturePool.cs",
         "runtime/Original/FullSource/Encryption.cs",
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/FireAlarm.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
@@ -24711,9 +25003,11 @@
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
+        "runtime/Original/FullSource/LimbStreak.cs",
         "runtime/Original/FullSource/LimbTextureData.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/MuscleControl.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/PoweredLight.cs",
         "runtime/Original/FullSource/QualityLevels.cs",
@@ -24753,6 +25047,7 @@
         "runtime/Original/FullSource/UnityEventInt.cs",
         "runtime/Original/FullSource/UnityEventIntInt.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
+        "runtime/Original/FullSource/WallStreakPainter.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/FullSource/WeaponType.cs",
         "runtime/Original/FullSource/Wound.cs",
@@ -24916,6 +25211,7 @@
         "runtime/Engine/RuntimeContracts.cs",
         "runtime/Engine/SceneLoader.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Room.cs",
@@ -24949,6 +25245,8 @@
         "runtime/Engine/RuntimeContracts.cs",
         "runtime/Engine/SceneLoader.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/Physiology.cs",
@@ -24983,6 +25281,8 @@
         "runtime/Engine/Rendering/GraphicsPrimitives.cs",
         "runtime/Original/Ballistics/ProjectileMaterial.Methods.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/Room.cs",
@@ -28155,13 +28455,16 @@
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/Ballistics/ProjectileMaterial.Methods.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/FireAlarm.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
         "runtime/Original/FullSource/IKArmController.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/UIGrenadeTimer.cs",
         "runtime/Original/FullSource/UIHitAnnouncements.cs",
         "runtime/Original/FullSource/UIVocalizationText.cs",
@@ -29053,9 +29356,11 @@
         "runtime/Original/FullSource/Emitter.cs",
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/FireAlarm.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/TimeScaler.cs",
@@ -31083,7 +31388,8 @@
         "runtime/Original/Ballistics/BallisticWindow.cs",
         "runtime/Original/Foundation/FullSerializer/Internal/DirectConverters/GUIStyleState_DirectConverter.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
-        "runtime/Original/FullSource/LimbTextureData.cs"
+        "runtime/Original/FullSource/LimbTextureData.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs"
       ]
     },
     {
@@ -31165,7 +31471,9 @@
       "referenceSources": [],
       "archiveEntries": [],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Original/FullSource/PaintableSurface.cs"
+      ]
     },
     {
       "name": "ThirdPartyObjectType",
@@ -31293,12 +31601,15 @@
         "runtime/Original/FullSource/AudioPlayer.cs",
         "runtime/Original/FullSource/AudioPropagator.cs",
         "runtime/Original/FullSource/BallisticObstacle.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/DynamicLimbDecalRenderer.cs",
         "runtime/Original/FullSource/Emitter.cs",
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/FireAlarm.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/IKArmController.cs",
@@ -31306,13 +31617,16 @@
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbMuscle.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
+        "runtime/Original/FullSource/LimbStreak.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/MuscleControl.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Settings.cs",
         "runtime/Original/FullSource/TimeScaler.cs",
         "runtime/Original/FullSource/UIHitAnnouncement.cs",
         "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
+        "runtime/Original/FullSource/WallStreakPainter.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/FullSource/Wound.cs",
         "runtime/Original/InputHandler.cs",
@@ -31550,6 +31864,7 @@
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/Task.cs",
         "runtime/Original/BuildingController.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/DynamicInteractionMarker.cs",
         "runtime/Original/FullSource/Grenade.cs",
@@ -31558,7 +31873,9 @@
         "runtime/Original/FullSource/IKArmSequencer.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbAttachment.cs",
+        "runtime/Original/FullSource/LimbStreak.cs",
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/UIHitAnnouncements.cs",
         "runtime/Original/FullSource/UIVocalizationText.cs",
@@ -34096,6 +34413,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/BoxCollider2D.cs",
+        "runtime/Engine/Mesh.cs",
         "runtime/Engine/PrefabCloner.cs",
         "runtime/Engine/Rendering/GraphicsPrimitives.cs",
         "runtime/Engine/SerializationTypes.cs",
@@ -34114,11 +34432,14 @@
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/Foundation/BehaviorDesigner/Runtime/SharedVector2.cs",
         "runtime/Original/Foundation/FullSerializer/Internal/DirectConverters/GUIStyle_DirectConverter.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbArmor.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
         "runtime/Original/FullSource/LimbTextureData.cs",
         "runtime/Original/FullSource/MuscleControl.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/Weapons/WeaponMechanism.Methods.cs",
@@ -34186,10 +34507,14 @@
         "runtime/Original/BodyPoseSlice.Methods.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/Foundation/FullSerializer/Internal/DirectConverters/Bounds_DirectConverter.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
+        "runtime/Original/FullSource/BloodStreamGenerator.cs",
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/DynamicInteractionMarker.cs",
+        "runtime/Original/FullSource/DynamicLimbDecalRenderer.cs",
         "runtime/Original/FullSource/Emitter.cs",
         "runtime/Original/FullSource/Explosive.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
@@ -34198,13 +34523,16 @@
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
+        "runtime/Original/FullSource/LimbStreak.cs",
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/UIGrenadeTimer.cs",
         "runtime/Original/FullSource/UIHitAnnouncement.cs",
         "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
+        "runtime/Original/FullSource/WallStreakPainter.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/FullSource/Wound.cs",
         "runtime/Original/InteriorCameraSlice.cs",
@@ -34434,9 +34762,11 @@
     },
     {
       "name": "WallStreakPainter",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/WallStreakPainter.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -34445,6 +34775,7 @@
       "compilerMissing": true,
       "referencedBy": [
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/PaintableSurface.cs",
         "source-reference/Original/CharacterDependencies/Mission.cs"
       ]
     },
@@ -36505,8 +36836,11 @@
         "runtime/Original/Foundation/SerializableItems.cs",
         "runtime/Original/Foundation/SerializableWeapon.cs",
         "runtime/Original/FullSource/AudioPropagator.cs",
+        "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/Doors.cs",
+        "runtime/Original/FullSource/DynamicLimbDecalRenderer.cs",
         "runtime/Original/FullSource/FireAlarm.cs",
+        "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
@@ -36754,6 +37088,7 @@
       "runtime/Original/Animation/ArmController.cs",
       "runtime/Original/Animation/Hand.cs",
       "runtime/Original/FullSource/LimbMuscle.cs",
+      "runtime/Original/FullSource/PaintableSurface.cs",
       "runtime/Original/FullSource/TimeScaler.cs",
       "source-reference/Original/Animation/ArmController.cs",
       "source-reference/Original/CharacterDependencies/TimeScaler.cs"

@@ -378,6 +378,48 @@
       "sha256": "0c3dee64954d259cadfbb39929da832fa76982071be5e82f5d140b944559dc42",
       "runtimeSha256": "d8d14bf297b72cc2edbde93dcc1272f406bfbf4c51c45efccaee8bfcbabd5e45",
       "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "PaintableSurface.cs": {
+      "archiveEntry": "decompiled/PaintableSurface.cs",
+      "sha256": "c00365995f0f818a2f3cb55ca11d160addac750ff66860bbaa89d69d12902110",
+      "runtimeSha256": "d4f6a4cb907038addb5bfbe29ca74d37119d8cd0093690b1dc6259dda015e00b",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "FloorPoolPainter.cs": {
+      "archiveEntry": "decompiled/FloorPoolPainter.cs",
+      "sha256": "63d8cc3c1881276915f183ee16b89d1abbb329e33d33aeeea855ae150ea7b438",
+      "runtimeSha256": "bebf728ddb005a06de40ec1f052c905d8abdf12f6ccf514757b5264efeba565b",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "WallStreakPainter.cs": {
+      "archiveEntry": "decompiled/WallStreakPainter.cs",
+      "sha256": "25c9fcfbf2cb715ab973ba9818af5f2fd6fb1773d9aa1ee45e1b38f7a7ca59eb",
+      "runtimeSha256": "3de1264c2f739c0adaf79f45f1ab641708bd159b6c0babf517a264ffca8d6bce",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "DynamicLimbDecalRenderer.cs": {
+      "archiveEntry": "decompiled/DynamicLimbDecalRenderer.cs",
+      "sha256": "293d9b628856dc8a5dfaa20a8a9d1719f6eb21a74683b1b85f9a81b286637efa",
+      "runtimeSha256": "e9e80fb40e91dfddacd936d4e6a1b5c93ea058fb49f40626fe3be7283b246af1",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "BloodStream.cs": {
+      "archiveEntry": "decompiled/BloodStream.cs",
+      "sha256": "05c03edfd36724f052350a8f16e9cd656d1e1a1fdc623f51a70b2378c61c7dce",
+      "runtimeSha256": "59555b29ce4bb4695ee5625115259dfb39c057b563b018fb5cf74fdd7a3d3cf0",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "BloodStreamGenerator.cs": {
+      "archiveEntry": "decompiled/BloodStreamGenerator.cs",
+      "sha256": "cb954d0d435c39d11a170049544f80690263ec40b65175e72014b824612feba0",
+      "runtimeSha256": "143030e869774a0716ea856b72962caf55a7bf7c4acdb9c38f7e50c0c90e6dcb",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "LimbStreak.cs": {
+      "archiveEntry": "decompiled/LimbStreak.cs",
+      "sha256": "bb720e28909f86da246eddf7ba167e6e63e1dda2c1b9d6e01433313b408b7ddc",
+      "runtimeSha256": "16ebc6887c63fb16c64e2f0d55ad17747e700a67b4df7a8573c501d57d76cd48",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
     }
   }
 }

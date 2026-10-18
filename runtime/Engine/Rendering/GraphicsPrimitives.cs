@@ -18,15 +18,19 @@ namespace UnityEngine {
   // Presentation observer only: source BallisticWindow.Reset assigns mainTexture
   // on a freshly cloned original CPU texture. Rebind browser stamp forwarding
   // without changing the recovered source Reset or StampAlpha algorithms.
-  // Source limb skin material properties require an attached graphics driver.
-  // This records no fictitious pixels or GPU state when the driver is absent.
+  // Material property values are retained by the CPU adapter; an attached
+  // observer may forward them to a renderer without claiming GPU execution.
   public Action<string,Texture> OnTextureAssigned;
+  readonly Dictionary<string,Texture> textures=new();
   public void SetTexture(string property,Texture value){
    ArgumentException.ThrowIfNullOrEmpty(property);
-   if(OnTextureAssigned==null)throw new NotSupportedException("Source material texture driver is not bound");
-   OnTextureAssigned(property,value);
+   if(OnTextureAssigned==null && !(property=="_Bloodmask" && value is Texture2D))
+    throw new NotSupportedException("Source material texture driver is not bound");
+   OnTextureAssigned?.Invoke(property,value);
+   textures[property]=value;
    if(property=="_MainTex" && value is Texture2D image)mainTexture=image;
   }
+  public Texture GetTexture(string property){ArgumentException.ThrowIfNullOrEmpty(property);return textures.GetValueOrDefault(property);}
   public Action<Texture2D> OnMainTextureAssigned;
   // Material values retain exact CPU-side source settings. A renderer or
   // browser presentation host can observe changes without inventing pixels.
