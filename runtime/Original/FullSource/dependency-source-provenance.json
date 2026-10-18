@@ -432,6 +432,12 @@
       "sha256": "c07b427aea583bc4eef882c275f87abfab5631305388af4b142bd8fb7869c76c",
       "runtimeSha256": "a4d1141802155928828429b60287fe467fe1e99e95437889a393d55a9ee9a3a3",
       "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "DoorTrap.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DoorTrap.cs",
+      "sha256": "a30958e1c991d0c45da3e8fb1e5abcb322038cc41efb9d235deea86e3514be4d",
+      "runtimeSha256": "08c0741be66f994811226f05b28409725c253dfd1c28f19c1c7cfc6a00f109d5",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
     }
   },
   "plugins": {
@@ -469,6 +475,57 @@
       "sha256": "40b165badf7f1c9872d59938baa86aaec0f82b2dee0ef441ed61ad2dad0f54ba",
       "runtimeSha256": "40b165badf7f1c9872d59938baa86aaec0f82b2dee0ef441ed61ad2dad0f54ba",
       "adaptation": "Unity Standard Assets source and namespace preserved"
+    }
+  },
+  "namespaceSources": {
+    "MissionData_DEPRECATED.cs": {
+      "runtimePath": "runtime/Original/FullSource/Usage/MissionData_DEPRECATED.cs",
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Usage/MissionData_DEPRECATED.cs",
+      "sha256": "fc44044676dd54ca1fb2200efc25699f04c20f22bc2867ea0cf2f265ddaf7e5e",
+      "runtimeSha256": "fc44044676dd54ca1fb2200efc25699f04c20f22bc2867ea0cf2f265ddaf7e5e",
+      "adaptation": "Original declared namespace preserved"
+    },
+    "SerializableClientData.cs": {
+      "runtimePath": "runtime/Original/FullSource/Usage/SerializableClientData.cs",
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Usage/SerializableClientData.cs",
+      "sha256": "ed5d1b39640d7a4c6149235384ab736d4edd6f27397c19e03e82dfdae8c10ccd",
+      "runtimeSha256": "ed5d1b39640d7a4c6149235384ab736d4edd6f27397c19e03e82dfdae8c10ccd",
+      "adaptation": "Original declared namespace preserved"
+    },
+    "SerializableSessionData.cs": {
+      "runtimePath": "runtime/Original/FullSource/Usage/SerializableSessionData.cs",
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Usage/SerializableSessionData.cs",
+      "sha256": "af43a3accda36860271676762288b913f4b726bf0988343fe6d33c2a3addc1c7",
+      "runtimeSha256": "af43a3accda36860271676762288b913f4b726bf0988343fe6d33c2a3addc1c7",
+      "adaptation": "Original declared namespace preserved"
+    },
+    "Statistics.cs": {
+      "runtimePath": "runtime/Original/FullSource/Usage/Statistics.cs",
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Usage/Statistics.cs",
+      "sha256": "4667d48b437e32a462f0c133a0a24323f50ef43a7190a2ffafdd5154e92a53a2",
+      "runtimeSha256": "4667d48b437e32a462f0c133a0a24323f50ef43a7190a2ffafdd5154e92a53a2",
+      "adaptation": "Original declared namespace preserved"
+    },
+    "HTTPRequest.cs": {
+      "runtimePath": "runtime/Original/FullSource/HTTPRequest.cs",
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/HTTPRequest.cs",
+      "sha256": "1764b263c7e7458135b0c586d564eb6a35599c217b34f276e68a9dd2091e4141",
+      "runtimeSha256": "1764b263c7e7458135b0c586d564eb6a35599c217b34f276e68a9dd2091e4141",
+      "adaptation": "Original declared namespace preserved"
+    },
+    "UnityEventBool.cs": {
+      "runtimePath": "runtime/Original/FullSource/Global/UnityEventBool.cs",
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UnityEventBool.cs",
+      "sha256": "bf1cb1ca4ae8008c37ef4b93b4d278efb769d5888d4f337087c1e528962bd572",
+      "runtimeSha256": "bf1cb1ca4ae8008c37ef4b93b4d278efb769d5888d4f337087c1e528962bd572",
+      "adaptation": "Original declared namespace preserved"
+    },
+    "ThreadedJob.cs": {
+      "runtimePath": "runtime/Original/FullSource/Threading/ThreadedJob.cs",
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Threading/ThreadedJob.cs",
+      "sha256": "570b1aa9f9df685f38c677370d5e26885ab972561bb2b9caf934866d39619aa0",
+      "runtimeSha256": "570b1aa9f9df685f38c677370d5e26885ab972561bb2b9caf934866d39619aa0",
+      "adaptation": "Original declared namespace preserved"
     }
   }
 }

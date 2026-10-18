@@ -77,6 +77,17 @@ def verify(archive_path=None):
                 assert data == archive.read(item["archiveEntry"]), name
             count += 1
 
+        # Some game dependencies live in their own original namespaces (for
+        # example Usage); preserve those identities instead of nesting them.
+        for name, item in manifest.get("namespaceSources", {}).items():
+            data = (ROOT / item["runtimePath"]).read_bytes()
+            assert sha(data) == item["runtimeSha256"], name
+            assert item["adaptation"] == "Original declared namespace preserved", name
+            assert sha(data) == item["sha256"], name
+            if archive:
+                assert data == archive.read(item["archiveEntry"]), name
+            count += 1
+
         plugin = ROOT / "runtime/Original/BehaviorDesigner"
         manifest = json.loads((plugin / "source-provenance.json").read_text())
         assert manifest["archiveSha256"] == PIN

@@ -927,6 +927,7 @@
     "runtime/Original/FullSource/DoorLockState.cs",
     "runtime/Original/FullSource/DoorMechanismState.cs",
     "runtime/Original/FullSource/DoorOpenState.cs",
+    "runtime/Original/FullSource/DoorTrap.cs",
     "runtime/Original/FullSource/Doors.cs",
     "runtime/Original/FullSource/DynamicInteractionMarker.cs",
     "runtime/Original/FullSource/DynamicLimbDecalRenderer.cs",
@@ -939,8 +940,10 @@
     "runtime/Original/FullSource/FloorPoolPainter.cs",
     "runtime/Original/FullSource/FloorStreakPainter.cs",
     "runtime/Original/FullSource/FogOfWarElement.cs",
+    "runtime/Original/FullSource/Global/UnityEventBool.cs",
     "runtime/Original/FullSource/Grenade.cs",
     "runtime/Original/FullSource/GrenadeSpoon.cs",
+    "runtime/Original/FullSource/HTTPRequest.cs",
     "runtime/Original/FullSource/IKArmController.cs",
     "runtime/Original/FullSource/IKArmSequencer.cs",
     "runtime/Original/FullSource/Interactable.cs",
@@ -994,6 +997,7 @@
     "runtime/Original/FullSource/Settings.cs",
     "runtime/Original/FullSource/StaticDebug.cs",
     "runtime/Original/FullSource/Target.cs",
+    "runtime/Original/FullSource/Threading/ThreadedJob.cs",
     "runtime/Original/FullSource/TimeScaler.cs",
     "runtime/Original/FullSource/ToggleElectricity.cs",
     "runtime/Original/FullSource/UIGrenadeTimer.cs",
@@ -1011,6 +1015,9 @@
     "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
     "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
     "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs",
+    "runtime/Original/FullSource/Usage/SerializableClientData.cs",
+    "runtime/Original/FullSource/Usage/SerializableSessionData.cs",
+    "runtime/Original/FullSource/Usage/Statistics.cs",
     "runtime/Original/FullSource/VitalFunctions.cs",
     "runtime/Original/FullSource/WallStreakPainter.cs",
     "runtime/Original/FullSource/WeaponAimer.cs",
@@ -5261,6 +5268,41 @@
       "references": []
     },
     {
+      "path": "runtime/Original/FullSource/DoorTrap.cs",
+      "sha256": "08c0741be66f994811226f05b28409725c253dfd1c28f19c1c7cfc6a00f109d5",
+      "declares": [
+        "DoorTrap"
+      ],
+      "references": [
+        "Angle",
+        "AudioClip",
+        "AudioSource",
+        "CharacterBody",
+        "Destroy",
+        "DoorController",
+        "DoorTrapState",
+        "Explosive",
+        "Global",
+        "Grenade",
+        "Instantiate",
+        "Mathf",
+        "Mission",
+        "MonoBehaviour",
+        "Object",
+        "Operators",
+        "PlayOneShot",
+        "PlayerController",
+        "Random",
+        "SetParent",
+        "Settings",
+        "Stop",
+        "TimeScaler",
+        "Transform",
+        "Vector2",
+        "Vector3"
+      ]
+    },
+    {
       "path": "runtime/Original/FullSource/Doors.cs",
       "sha256": "0e278f147957ed3f15f48d7e05e0b1c5d5e7beeea0277a42122280aacbe5878b",
       "declares": [
@@ -5534,6 +5576,16 @@
       ]
     },
     {
+      "path": "runtime/Original/FullSource/Global/UnityEventBool.cs",
+      "sha256": "bf1cb1ca4ae8008c37ef4b93b4d278efb769d5888d4f337087c1e528962bd572",
+      "declares": [
+        "UnityEventBool"
+      ],
+      "references": [
+        "UnityEvent"
+      ]
+    },
+    {
       "path": "runtime/Original/FullSource/Grenade.cs",
       "sha256": "12cc577a03407d265ce783095473ad0464fb5ac26f565291af513402409fb567",
       "declares": [
@@ -5609,6 +5661,23 @@
         "SetParent",
         "Transform",
         "Vector3"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/HTTPRequest.cs",
+      "sha256": "1764b263c7e7458135b0c586d564eb6a35599c217b34f276e68a9dd2091e4141",
+      "declares": [
+        "HTTPRequest",
+        "Type"
+      ],
+      "references": [
+        "Debug",
+        "IsNullOrEmpty",
+        "LogFormat",
+        "ThreadedJob",
+        "Threading",
+        "Time",
+        "Version"
       ]
     },
     {
@@ -6838,6 +6907,17 @@
       ]
     },
     {
+      "path": "runtime/Original/FullSource/Threading/ThreadedJob.cs",
+      "sha256": "570b1aa9f9df685f38c677370d5e26885ab972561bb2b9caf934866d39619aa0",
+      "declares": [
+        "ThreadedJob"
+      ],
+      "references": [
+        "Stop",
+        "Threading"
+      ]
+    },
+    {
       "path": "runtime/Original/FullSource/TimeScaler.cs",
       "sha256": "25393f5894903a82cb476f7e096911f5f7b9fe1dcde0e0052de5c5c3aea15ffb",
       "declares": [
@@ -7192,6 +7272,74 @@
         "RenderTexture",
         "RenderTextureFormat",
         "Shader"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/Usage/MissionData_DEPRECATED.cs",
+      "sha256": "fc44044676dd54ca1fb2200efc25699f04c20f22bc2867ea0cf2f265ddaf7e5e",
+      "declares": [
+        "MissionData_DEPRECATED"
+      ],
+      "references": [
+        "Usage"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/Usage/SerializableClientData.cs",
+      "sha256": "ed5d1b39640d7a4c6149235384ab736d4edd6f27397c19e03e82dfdae8c10ccd",
+      "declares": [
+        "SerializableClientData"
+      ],
+      "references": [
+        "Application",
+        "Debug",
+        "FullSerializer",
+        "Save",
+        "Serializer",
+        "Type",
+        "Usage",
+        "fsIgnore",
+        "fsObject"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/Usage/SerializableSessionData.cs",
+      "sha256": "af43a3accda36860271676762288b913f4b726bf0988343fe6d33c2a3addc1c7",
+      "declares": [
+        "SerializableSessionData"
+      ],
+      "references": [
+        "Usage"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/Usage/Statistics.cs",
+      "sha256": "4667d48b437e32a462f0c133a0a24323f50ef43a7190a2ffafdd5154e92a53a2",
+      "declares": [
+        "Statistics"
+      ],
+      "references": [
+        "Application",
+        "Debug",
+        "GetLatestVersion",
+        "Global",
+        "GlobalContext",
+        "HTTPRequest",
+        "LogFormat",
+        "MainMenu",
+        "Mathf",
+        "MonoBehaviour",
+        "PerformanceCounter",
+        "PostClient",
+        "PostClose",
+        "PostSession",
+        "PostStaticInformation",
+        "Save",
+        "SerializableClientData",
+        "SerializableSessionData",
+        "Time",
+        "UnityEventBool",
+        "Usage"
       ]
     },
     {
@@ -9821,6 +9969,7 @@
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/AudioPropagator.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/FogOfWarElement.cs",
         "runtime/Original/FullSource/LimbMuscle.cs",
         "runtime/Original/FullSource/Room.cs",
@@ -10071,6 +10220,8 @@
         "runtime/Original/FullSource/SerializableOccupantSettings.cs",
         "runtime/Original/FullSource/SerializablePerformanceSettings.cs",
         "runtime/Original/FullSource/SerializableTimeSettings.cs",
+        "runtime/Original/FullSource/Usage/SerializableClientData.cs",
+        "runtime/Original/FullSource/Usage/Statistics.cs",
         "source-reference/Original/CharacterDependencies/SerializableExtraSettings.cs"
       ]
     },
@@ -10511,6 +10662,7 @@
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/CommunicationLine.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
@@ -10724,6 +10876,7 @@
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
@@ -13318,6 +13471,7 @@
         "runtime/Original/FullSource/CharacterScoreCard.cs",
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/FogOfWarElement.cs",
         "runtime/Original/FullSource/Grenade.cs",
@@ -14733,6 +14887,7 @@
         "runtime/Original/BehaviorDesigner/BinaryDeserializationDeprecated.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/Coroutine.cs",
+        "runtime/Original/FullSource/HTTPRequest.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbTextureData.cs",
         "runtime/Original/FullSource/SerializableAudioSettings.cs",
@@ -14746,6 +14901,8 @@
         "runtime/Original/FullSource/TimeScaler.cs",
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs",
+        "runtime/Original/FullSource/Usage/SerializableClientData.cs",
+        "runtime/Original/FullSource/Usage/Statistics.cs",
         "runtime/Original/Weapons/Equipment.cs",
         "source-reference/Original/Animation/ArmIKSolver.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
@@ -14896,6 +15053,7 @@
         "runtime/Original/DecayingObject.cs",
         "runtime/Original/FullSource/BallisticObstacle.cs",
         "runtime/Original/FullSource/BloodStream.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/DynamicLimbTextureData.cs",
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/FireAlarm.cs",
@@ -15118,6 +15276,7 @@
       "referencedBy": [
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/AudioPropagator.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/Doors.cs",
         "runtime/Original/FullSource/FogOfWarElement.cs",
         "runtime/Original/FullSource/InteriorCamera.cs",
@@ -15224,9 +15383,11 @@
     },
     {
       "name": "DoorTrap",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/DoorTrap.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -15253,7 +15414,9 @@
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DoorController.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Original/FullSource/DoorTrap.cs"
+      ]
     },
     {
       "name": "Doors",
@@ -16128,7 +16291,9 @@
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Explosive.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Original/FullSource/DoorTrap.cs"
+      ]
     },
     {
       "name": "ExteriorCamera",
@@ -17210,6 +17375,7 @@
         "runtime/Original/FullSource/SerializableRangeSlider.cs",
         "runtime/Original/FullSource/SerializableTimeSettings.cs",
         "runtime/Original/FullSource/Serializer.cs",
+        "runtime/Original/FullSource/Usage/SerializableClientData.cs",
         "source-reference/Original/CharacterDependencies/SerializableEquipment.cs",
         "source-reference/Original/CharacterDependencies/SerializableExtraSettings.cs"
       ]
@@ -18208,7 +18374,9 @@
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/GetLatestVersion.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Original/FullSource/Usage/Statistics.cs"
+      ]
     },
     {
       "name": "GetLayer",
@@ -19006,6 +19174,7 @@
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/Coroutine.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/Doors.cs",
         "runtime/Original/FullSource/Emitter.cs",
         "runtime/Original/FullSource/Explosive.cs",
@@ -19034,6 +19203,7 @@
         "runtime/Original/FullSource/UIHitAnnouncements.cs",
         "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
         "runtime/Original/FullSource/UIVocalizationText.cs",
+        "runtime/Original/FullSource/Usage/Statistics.cs",
         "runtime/Original/Weapons/ArmTransition.cs",
         "runtime/Original/Weapons/ChangeMagazine.cs",
         "source-reference/Original/Animation/ArmIKSolver.cs",
@@ -19069,6 +19239,7 @@
       "referencedBy": [
         "runtime/Original/FullSource/Coroutine.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/Usage/Statistics.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
         "source-reference/Original/CharacterDependencies/DoorController.cs",
         "source-reference/Original/CharacterDependencies/WeaponBase.cs"
@@ -19244,6 +19415,7 @@
       "referencedBy": [
         "runtime/Original/Animation/ArmController.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/IKArmController.cs",
         "runtime/Original/FullSource/UIGrenadeTimer.cs",
         "source-reference/Original/Animation/ArmController.cs",
@@ -19375,16 +19547,20 @@
     },
     {
       "name": "HTTPRequest",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/HTTPRequest.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/HTTPRequest.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Original/FullSource/Usage/Statistics.cs"
+      ]
     },
     {
       "name": "HammerUnsupported",
@@ -20674,6 +20850,7 @@
         "runtime/Original/Ballistics/ProjectileMaterial.Methods.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
@@ -21303,6 +21480,7 @@
         "runtime/Original/Foundation/FullSerializer/Internal/fsVersionManager.cs",
         "runtime/Original/Foundation/FullSerializer/fsAotVersionInfo.cs",
         "runtime/Original/Foundation/FullSerializer/fsJsonParser.cs",
+        "runtime/Original/FullSource/HTTPRequest.cs",
         "runtime/Original/InputHandler.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
         "source-reference/Original/CharacterDependencies/PlayerController.cs",
@@ -22299,7 +22477,9 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
-        "runtime/Original/FullSource/SerializableGraphicsSettings.cs"
+        "runtime/Original/FullSource/HTTPRequest.cs",
+        "runtime/Original/FullSource/SerializableGraphicsSettings.cs",
+        "runtime/Original/FullSource/Usage/Statistics.cs"
       ]
     },
     {
@@ -22412,7 +22592,9 @@
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/MainMenu.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Original/FullSource/Usage/Statistics.cs"
+      ]
     },
     {
       "name": "MainMenuGridMover",
@@ -22811,6 +22993,7 @@
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/CharacterDialog.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/Emitter.cs",
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/FloorPoolPainter.cs",
@@ -22836,6 +23019,7 @@
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
+        "runtime/Original/FullSource/Usage/Statistics.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/FullSource/WallStreakPainter.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
@@ -23130,6 +23314,7 @@
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/FogOfWarElement.cs",
         "runtime/Original/FullSource/Grenade.cs",
@@ -23164,9 +23349,11 @@
     },
     {
       "name": "MissionData_DEPRECATED",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/Usage/MissionData_DEPRECATED.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -23464,6 +23651,7 @@
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/Coroutine.cs",
         "runtime/Original/FullSource/DialogTree.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/Doors.cs",
         "runtime/Original/FullSource/DynamicInteractionMarker.cs",
         "runtime/Original/FullSource/DynamicLimbDecalRenderer.cs",
@@ -23498,6 +23686,7 @@
         "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
         "runtime/Original/FullSource/UIVocalizationText.cs",
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs",
+        "runtime/Original/FullSource/Usage/Statistics.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/FullSource/WallStreakPainter.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
@@ -23940,6 +24129,7 @@
         "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/BloodStreamGenerator.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/DynamicLimbDecalRenderer.cs",
         "runtime/Original/FullSource/DynamicLimbTextureData.cs",
         "runtime/Original/FullSource/DynamicLimbTexturePool.cs",
@@ -24328,6 +24518,7 @@
       "compilerMissing": true,
       "referencedBy": [
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/FogOfWarElement.cs",
         "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Mission.cs",
@@ -24704,6 +24895,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/Usage/Statistics.cs",
         "source-reference/Original/CharacterDependencies/Mission.cs"
       ]
     },
@@ -24938,6 +25130,7 @@
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
         "source-reference/Original/CharacterDependencies/CharacterAudio.cs",
@@ -24987,6 +25180,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/CharacterBody.cs"
       ]
@@ -25043,7 +25237,9 @@
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/PostClient.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Original/FullSource/Usage/Statistics.cs"
+      ]
     },
     {
       "name": "PostClose",
@@ -25056,7 +25252,9 @@
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/PostClose.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Original/FullSource/Usage/Statistics.cs"
+      ]
     },
     {
       "name": "PostEffectsBase",
@@ -25113,7 +25311,9 @@
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/PostSession.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Original/FullSource/Usage/Statistics.cs"
+      ]
     },
     {
       "name": "PostStaticInformation",
@@ -25126,7 +25326,9 @@
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/PostStaticInformation.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Original/FullSource/Usage/Statistics.cs"
+      ]
     },
     {
       "name": "PoweredLight",
@@ -25535,6 +25737,7 @@
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/DynamicLimbDecalRenderer.cs",
         "runtime/Original/FullSource/DynamicLimbTextureData.cs",
         "runtime/Original/FullSource/DynamicLimbTexturePool.cs",
@@ -26907,6 +27110,8 @@
         "runtime/Original/FullSource/SerializableTimeSettings.cs",
         "runtime/Original/FullSource/Settings.cs",
         "runtime/Original/FullSource/TimeScaler.cs",
+        "runtime/Original/FullSource/Usage/SerializableClientData.cs",
+        "runtime/Original/FullSource/Usage/Statistics.cs",
         "source-reference/Original/CharacterDependencies/SerializableExtraSettings.cs",
         "source-reference/Original/CharacterDependencies/Settings.cs",
         "source-reference/Original/CharacterDependencies/TimeScaler.cs"
@@ -27354,16 +27559,20 @@
     },
     {
       "name": "SerializableClientData",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/Usage/SerializableClientData.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Usage/SerializableClientData.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Original/FullSource/Usage/Statistics.cs"
+      ]
     },
     {
       "name": "SerializableDialogOption",
@@ -27947,16 +28156,20 @@
     },
     {
       "name": "SerializableSessionData",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/Usage/SerializableSessionData.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Usage/SerializableSessionData.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Original/FullSource/Usage/Statistics.cs"
+      ]
     },
     {
       "name": "SerializableTeam",
@@ -28195,6 +28408,7 @@
         "runtime/Original/FullSource/SerializableOccupantSettings.cs",
         "runtime/Original/FullSource/SerializablePerformanceSettings.cs",
         "runtime/Original/FullSource/SerializableTimeSettings.cs",
+        "runtime/Original/FullSource/Usage/SerializableClientData.cs",
         "source-reference/Original/CharacterDependencies/SerializableExtraSettings.cs"
       ]
     },
@@ -29038,6 +29252,7 @@
         "runtime/Original/Ballistics/ProjectileMaterial.Methods.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/BloodStream.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/FloorPoolPainter.cs",
@@ -29934,6 +30149,7 @@
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/Doors.cs",
         "runtime/Original/FullSource/Emitter.cs",
         "runtime/Original/FullSource/Explosive.cs",
@@ -30931,9 +31147,11 @@
     },
     {
       "name": "Statistics",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/Usage/Statistics.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -31050,9 +31268,11 @@
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/TaskCoroutine.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/Communication.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/FireAlarm.cs",
         "runtime/Original/FullSource/LimbArmor.cs",
         "runtime/Original/FullSource/PoweredLight.cs",
+        "runtime/Original/FullSource/Threading/ThreadedJob.cs",
         "runtime/Original/Weapons/ProjectileFlight.Methods.cs",
         "source-reference/Original/CharacterDependencies/CharacterAudio.cs",
         "source-reference/Original/CharacterDependencies/Communication.cs"
@@ -32126,16 +32346,20 @@
     },
     {
       "name": "ThreadedJob",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/Threading/ThreadedJob.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Threading/ThreadedJob.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Original/FullSource/HTTPRequest.cs"
+      ]
     },
     {
       "name": "Threading",
@@ -32148,7 +32372,10 @@
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Threading/ThreadedJob.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Original/FullSource/HTTPRequest.cs",
+        "runtime/Original/FullSource/Threading/ThreadedJob.cs"
+      ]
     },
     {
       "name": "ThrowStunThroughDoor",
@@ -32222,6 +32449,7 @@
         "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Grenade.cs",
+        "runtime/Original/FullSource/HTTPRequest.cs",
         "runtime/Original/FullSource/IKArmController.cs",
         "runtime/Original/FullSource/IKArmSequencer.cs",
         "runtime/Original/FullSource/InteriorCamera.cs",
@@ -32239,6 +32467,7 @@
         "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
+        "runtime/Original/FullSource/Usage/Statistics.cs",
         "runtime/Original/FullSource/WallStreakPainter.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/FullSource/Wound.cs",
@@ -32298,6 +32527,7 @@
       "referencedBy": [
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Mission.cs",
@@ -32479,6 +32709,7 @@
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/DynamicInteractionMarker.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
@@ -32659,6 +32890,7 @@
         "runtime/Original/Ballistics/BallisticMaterial.cs",
         "runtime/Original/Foundation/ArmorClass.cs",
         "runtime/Original/FullSource/Grenade.cs",
+        "runtime/Original/FullSource/HTTPRequest.cs",
         "runtime/Original/FullSource/LimbVitalFunction.cs"
       ],
       "engineSources": [
@@ -32792,6 +33024,7 @@
         "runtime/Original/FullSource/SerializableRangeSlider.cs",
         "runtime/Original/FullSource/SerializableTimeSettings.cs",
         "runtime/Original/FullSource/Serializer.cs",
+        "runtime/Original/FullSource/Usage/SerializableClientData.cs",
         "source-reference/Original/Animation/ArmController.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/Animation/IKArmController.cs",
@@ -34608,6 +34841,7 @@
         "runtime/Original/Foundation/FullSerializer/Internal/Converters/UnityEvent_Converter.cs",
         "runtime/Original/Foundation/UnityEventVoid.cs",
         "runtime/Original/FullSource/Explosive.cs",
+        "runtime/Original/FullSource/Global/UnityEventBool.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/SerializableAudioSettings.cs",
         "runtime/Original/FullSource/SerializableExtraSettings.cs",
@@ -34646,6 +34880,7 @@
       "category": "recovered source",
       "requiresAuthoredAssets": false,
       "runtimeSources": [
+        "runtime/Original/FullSource/Global/UnityEventBool.cs",
         "runtime/Original/FullSource/UnityEventBool.cs"
       ],
       "engineSources": [
@@ -34662,6 +34897,7 @@
         "runtime/Original/FullSource/SerializableGeneralSettings.cs",
         "runtime/Original/FullSource/SerializableGraphicsSettings.cs",
         "runtime/Original/FullSource/SerializablePerformanceSettings.cs",
+        "runtime/Original/FullSource/Usage/Statistics.cs",
         "runtime/Original/Weapons/CyclingBolt.cs",
         "source-reference/Original/CharacterDependencies/SerializableExtraSettings.cs"
       ]
@@ -34937,6 +35173,10 @@
       "compilerMissing": true,
       "referencedBy": [
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/Usage/MissionData_DEPRECATED.cs",
+        "runtime/Original/FullSource/Usage/SerializableClientData.cs",
+        "runtime/Original/FullSource/Usage/SerializableSessionData.cs",
+        "runtime/Original/FullSource/Usage/Statistics.cs",
         "source-reference/Original/CharacterDependencies/Mission.cs"
       ]
     },
@@ -35050,6 +35290,7 @@
         "runtime/Original/Foundation/BehaviorDesigner/Runtime/SharedVector2.cs",
         "runtime/Original/Foundation/FullSerializer/Internal/DirectConverters/GUIStyle_DirectConverter.cs",
         "runtime/Original/FullSource/BloodStream.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbArmor.cs",
@@ -35127,6 +35368,7 @@
         "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/BloodStreamGenerator.cs",
         "runtime/Original/FullSource/DoorController.cs",
+        "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/DynamicInteractionMarker.cs",
         "runtime/Original/FullSource/DynamicLimbDecalRenderer.cs",
         "runtime/Original/FullSource/Emitter.cs",
@@ -35231,6 +35473,7 @@
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserialization.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/TaskSerializationData.cs",
         "runtime/Original/BehaviorDesigner/BinaryDeserialization.cs",
+        "runtime/Original/FullSource/HTTPRequest.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
         "source-reference/Original/CharacterDependencies/PlayerController.cs",
         "source-reference/Original/CharacterDependencies/WeaponBase.cs"
@@ -36806,7 +37049,8 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Original/FullSource/SerializableOccupantSettings.cs",
-        "runtime/Original/FullSource/SerializableTimeSettings.cs"
+        "runtime/Original/FullSource/SerializableTimeSettings.cs",
+        "runtime/Original/FullSource/Usage/SerializableClientData.cs"
       ]
     },
     {
@@ -37036,6 +37280,7 @@
         "runtime/Original/FullSource/SerializablePerformanceSettings.cs",
         "runtime/Original/FullSource/SerializableRangeSlider.cs",
         "runtime/Original/FullSource/SerializableTimeSettings.cs",
+        "runtime/Original/FullSource/Usage/SerializableClientData.cs",
         "source-reference/Original/CharacterDependencies/SerializableEquipment.cs",
         "source-reference/Original/CharacterDependencies/SerializableExtraSettings.cs"
       ]
@@ -37844,6 +38089,7 @@
       "runtime/Original/Ballistics/BallisticMaterial.cs",
       "runtime/Original/Foundation/ArmorClass.cs",
       "runtime/Original/FullSource/Grenade.cs",
+      "runtime/Original/FullSource/HTTPRequest.cs",
       "runtime/Original/FullSource/LimbVitalFunction.cs",
       "source-reference/Original/CharacterDependencies/ArmorClass.cs",
       "source-reference/Original/CharacterDependencies/Grenade.cs"
@@ -37854,6 +38100,7 @@
     ],
     "UnityEventBool": [
       "runtime/Engine/WeaponHost.cs",
+      "runtime/Original/FullSource/Global/UnityEventBool.cs",
       "runtime/Original/FullSource/UnityEventBool.cs"
     ],
     "WeaponAimer": [
