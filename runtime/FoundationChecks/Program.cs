@@ -134,6 +134,18 @@ void Throws<T>(System.Action action,string label) where T:Exception {try{action(
  var isolated=new RuntimeWorld();isolated.MakeCurrent();
  Throws<NotSupportedException>(()=>mixer.SetFloat("RealtimePitch",1f),"audio mixer isolated by runtime world");
 }
+// Source limb skin 2D bounds are serialized data, not invented collision results.
+{
+ var w=new RuntimeWorld();var go=new GameObject("limb skin",w);
+ var bounds=go.AddComponent<BoxCollider2D>();
+ Check(bounds.size.x==1f&&bounds.size.y==1f,"original 2D bounds initial size");
+ bounds.size=new Vector2(.6f,1.3f);
+ bounds.offset=new Vector2(.05f,-.1f);
+ Near(bounds.size.y,1.3f,"limb skin height retained");
+ Near(bounds.offset.x,.05f,"limb skin offset retained");
+ Throws<ArgumentOutOfRangeException>(()=>bounds.size=new Vector2(-1,1),"negative skin dimensions rejected");
+ Throws<ArgumentOutOfRangeException>(()=>bounds.offset=new Vector2(float.NaN,0),"nonfinite skin offset rejected");
+}
 Console.WriteLine(Crisis.Runtime.RuntimeContracts.Run());
 Console.WriteLine($"PASS: {assertions} foundation assertions; original full CharacterBody build is a separate required gate.");
 
