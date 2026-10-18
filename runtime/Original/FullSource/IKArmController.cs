@@ -67,6 +67,10 @@ public class IKArmController : MonoBehaviour
 
 	public void Play(IKArmSequenceRuntime sequence)
 	{
+		// Use only the controller and solvers belonging to this source actor.
+		OriginalActorIdentity.RequireController(self, this);
+		if (RightSequencer == null || LeftSequencer == null || self.rightArm == null || self.leftArm == null)
+			throw new System.InvalidOperationException("Original IK sequencers and arm solvers must be initialized on the same actor");
 		RightSequencer.Play(sequence.right);
 		LeftSequencer.Play(sequence.left);
 	}
