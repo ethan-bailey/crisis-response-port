@@ -19,13 +19,23 @@ namespace UnityEngine {
   // Presentation observer only: source BallisticWindow.Reset assigns mainTexture
   // on a freshly cloned original CPU texture. Rebind browser stamp forwarding
   // without changing the recovered source Reset or StampAlpha algorithms.
+  // Source limb skin material properties require an attached graphics driver.
+  // This records no fictitious pixels or GPU state when the driver is absent.
+  public Action<string,Texture> OnTextureAssigned;
+  public void SetTexture(string property,Texture value){
+   ArgumentException.ThrowIfNullOrEmpty(property);
+   if(OnTextureAssigned==null)throw new NotSupportedException("Source material texture driver is not bound");
+   OnTextureAssigned(property,value);
+   if(property=="_MainTex" && value is Texture2D image)mainTexture=image;
+  }
   public Action<Texture2D> OnMainTextureAssigned;
   public Texture2D mainTexture {
    get=>texture;
    set {texture=value;OnMainTextureAssigned?.Invoke(value);}
   }
  }
- public sealed class Renderer:Component {public Material material=new();}
+ public class Renderer:Component {public Material material=new();}
+ public sealed class MeshRenderer:Renderer {}
  // Imported source vertices. Convex planes are the hull of those vertices; this
  // is not a claim about matching Unity's PhysX cooking/reduction algorithm.
  public sealed class MeshCollider:Collider {
