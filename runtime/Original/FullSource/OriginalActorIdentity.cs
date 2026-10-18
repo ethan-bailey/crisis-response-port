@@ -55,16 +55,17 @@ namespace Crisis.Runtime.FullSource
             return equipment;
         }
 
-        // Original callback stays on CharacterBody. No transport victim, duplicate
-        // first-hit counter or independent injury/health state is constructed here.
-        public static void NotifyOriginalHit(CharacterBody victim, Limb hitLimb,
-            Crisis.Runtime.Weapons.Projectile projectile)
+        // Validate before entering the original source callback sequence.
+        // The caller must still execute RecordAttackInfo / OnWasAttacked /
+        // OnWasHit in source order; this method intentionally dispatches none.
+        public static CharacterBody RequireProjectileHitContext(CharacterBody victim,
+            Limb hitLimb, Crisis.Runtime.Weapons.Projectile projectile)
         {
             RequireLimb(victim, hitLimb);
             RequirePhysiology(victim, victim.Physiology);
             if (projectile == null)
                 throw new ArgumentNullException(nameof(projectile));
-            victim.OnWasHit(projectile);
+            return victim;
         }
     }
 }
