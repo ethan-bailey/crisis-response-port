@@ -78,6 +78,15 @@ public class Behaviour:Component {
 public class MonoBehaviour:Behaviour {
     internal bool awoken,started,enableNotified;
     public CoroutineHandle StartCoroutine(IEnumerator routine) => world.StartRoutine(this,routine);
+    public Coroutine StartCoroutine(string name){
+        var method=GetType().GetMethod(name,BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic,null,Type.EmptyTypes,null)??throw new MissingMethodException(GetType().FullName,name);
+        if(method.Invoke(this,null) is not IEnumerator routine)throw new InvalidOperationException("Coroutine method must return IEnumerator");
+        var handle=world.StartRoutine(this,routine);handle.methodName=name;return handle;
+    }
+    public void StopCoroutine(IEnumerator routine)=>world.StopRoutine(this,routine);
+    public void StopCoroutine(string name)=>world.StopRoutine(this,name);
+    public void StopCoroutine(Coroutine routine){if(routine is CoroutineHandle handle&&handle.owner==this)handle.finished=true;}
+    public static void print(object message)=>Debug.Log(message);
     public void StopAllCoroutines() => world.StopRoutines(this);
 }
 public class Transform:Component,IEnumerable<Transform> {
@@ -130,9 +139,12 @@ public sealed class RuntimeWorld {
     [ThreadStatic] static RuntimeWorld current;
     public static RuntimeWorld Current => current??=new RuntimeWorld();
     public readonly List<Object> Objects=[];
+    public Func<SpringJoint,ISpringJointDriver> SpringJointFactory;
+    public Func<Vector3,float,int,QueryTriggerInteraction,Collider[]> OverlapSphereQuery;
     readonly HashSet<Object> destroyQueue=[];
     readonly List<CoroutineHandle> routines=[];
     readonly Dictionary<(Type,string),MethodInfo> messages=[];
+    readonly Dictionary<(Type,string),MethodInfo> collisionMessages=[];
     int activationDeferrals;
     public bool Initialized {get;private set;}
     public RuntimeWorld(bool makeCurrent=true,bool resetClock=true){if(makeCurrent)current=this;if(resetClock){Time.Reset();Input.Reset();}}
@@ -147,6 +159,22 @@ public sealed class RuntimeWorld {
         }
         if(method==null)return;
         try{method.Invoke(target,null);}catch(TargetInvocationException e){throw new InvalidOperationException($"{target.GetType().Name}.{message} on {target.name}",e.InnerException);}
+    }
+    // Called with contacts from the native physics bridge, never inferred from
+    // rendering overlap. Unity delivers collisions to disabled behaviours too.
+    public void DispatchCollision(GameObject receiver,string message,Collision collision){
+        if(message is not ("OnCollisionEnter" or "OnCollisionStay" or "OnCollisionExit"))throw new ArgumentException(nameof(message));
+        if(receiver.world!=this||collision.collider.world!=this)throw new InvalidOperationException("Cross-world collision");
+        if(!receiver.activeInHierarchy)return;
+        foreach(var target in receiver.GetComponents<MonoBehaviour>()){
+            if(!collisionMessages.TryGetValue((target.GetType(),message),out var method)){
+                for(var type=target.GetType();type!=null&&method==null;type=type.BaseType)
+                    method=type.GetMethod(message,BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.DeclaredOnly,null,[typeof(Collision)],null);
+                collisionMessages[(target.GetType(),message)]=method;
+            }
+            if(method==null)continue;
+            try{method.Invoke(target,[collision]);}catch(TargetInvocationException e){throw new InvalidOperationException($"{target.GetType().Name}.{message} on {target.name}",e.InnerException);}
+        }
     }
     internal void Activate(Component c){if(activationDeferrals>0||c is not MonoBehaviour m||!m.gameObject.activeInHierarchy)return;
         if(!m.awoken){m.awoken=true;Invoke(m,"Awake");}
@@ -180,6 +208,8 @@ public sealed class RuntimeWorld {
         if(obj is Component component)component.gameObject.components.Remove(component);
     }
     internal CoroutineHandle StartRoutine(MonoBehaviour owner,IEnumerator routine){var handle=new CoroutineHandle(owner,routine);routines.Add(handle);handle.Advance(true);return handle;}
+    internal void StopRoutine(MonoBehaviour owner,IEnumerator routine){foreach(var r in routines.Where(r=>r.owner==owner&&ReferenceEquals(r.routineIdentity,routine)))r.finished=true;}
+    internal void StopRoutine(MonoBehaviour owner,string name){foreach(var r in routines.Where(r=>r.owner==owner&&r.methodName==name))r.finished=true;}
     internal void StopRoutines(MonoBehaviour owner){foreach(var r in routines.Where(r=>r.owner==owner))r.finished=true;}
     public IDisposable DeferActivation(){activationDeferrals++;return new ActivationScope(this);}
     sealed class ActivationScope(RuntimeWorld world):IDisposable {
@@ -187,3 +217,4 @@ public sealed class RuntimeWorld {
         public void Dispose(){if(value==null)return;var w=value;value=null;if(--w.activationDeferrals==0)w.RefreshActivation();}
     }
 }
+

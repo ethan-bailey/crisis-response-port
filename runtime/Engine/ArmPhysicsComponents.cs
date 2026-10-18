@@ -8,10 +8,24 @@ public enum ForceMode {Force=0,Acceleration=5,Impulse=1,VelocityChange=2}
 public struct JointSpring {
  public float spring,damper,targetPosition;
 }
+public struct JointLimits {
+ public float min,max,bounciness,bounceMinVelocity,contactDistance;
+}
 public sealed class HingeJoint:Component {
  bool springEnabled;
  JointSpring currentSpring;
+ JointLimits currentLimits;
+ bool limitsEnabled;
  public Action<JointSpring,bool> SpringChanged;
+ public Action<JointLimits,bool> LimitsChanged;
+ public JointLimits limits {
+  get=>currentLimits;
+  set {currentLimits=value;LimitsChanged?.Invoke(currentLimits,limitsEnabled);}
+ }
+ public bool useLimits {
+  get=>limitsEnabled;
+  set {limitsEnabled=value;LimitsChanged?.Invoke(currentLimits,limitsEnabled);}
+ }
  public bool useSpring {
   get=>springEnabled;
   set {springEnabled=value;SpringChanged?.Invoke(currentSpring,springEnabled);}

@@ -1,0 +1,185 @@
+{
+  "archiveSha256": "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
+  "scripts": {
+    "ArmorClass.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ArmorClass.cs",
+      "sha256": "9a3eb060f2cb51c0388d08871a6b7fb1ee62b61a25082727d44934cd1fd4b05c",
+      "runtimeSha256": "e5ff1734546c3a540dbeec7ee8816b6fb8809ba89f54edd754da6e085909c964",
+      "adaptation": "Random alias only"
+    },
+    "SerializableEquipment.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableEquipment.cs",
+      "sha256": "d2a1acaeb61d1d7b3499dced30d39159abe60a14052eb89473ab134a50653858",
+      "runtimeSha256": "d2a1acaeb61d1d7b3499dced30d39159abe60a14052eb89473ab134a50653858",
+      "adaptation": "none"
+    },
+    "SerializableWeapon.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableWeapon.cs",
+      "sha256": "88f61769b3ab5dcdeaeddafc0d5815d8eba9a4ffc123268636c0c7a869b8239b",
+      "runtimeSha256": "88f61769b3ab5dcdeaeddafc0d5815d8eba9a4ffc123268636c0c7a869b8239b",
+      "adaptation": "none"
+    },
+    "SerializableItems.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableItems.cs",
+      "sha256": "b2e5cd67921bc21c9fbf36a41987dd37f9d6573ff161469aafed5553b94eb03c",
+      "runtimeSha256": "b2e5cd67921bc21c9fbf36a41987dd37f9d6573ff161469aafed5553b94eb03c",
+      "adaptation": "none"
+    },
+    "TutorialEquipment.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/TutorialEquipment.cs",
+      "sha256": "2c530d62572211786fd9ae5a39d2542862c189ebc94e10d0e6cf68fbbf723862",
+      "runtimeSha256": "2c530d62572211786fd9ae5a39d2542862c189ebc94e10d0e6cf68fbbf723862",
+      "adaptation": "none"
+    },
+    "SerializableWeaponComponentSlot.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableWeaponComponentSlot.cs",
+      "sha256": "3d4bcbd7d95031b09ab059b9b09cc42e03dbf2440056ac55a288408f32c86867",
+      "runtimeSha256": "3d4bcbd7d95031b09ab059b9b09cc42e03dbf2440056ac55a288408f32c86867",
+      "adaptation": "none"
+    },
+    "WeaponComponentSlotType.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WeaponComponentSlotType.cs",
+      "sha256": "aa3a1bfbd01b3f181869febe32cb2bca940e02bfb96dc3fe398ffba05c30c878",
+      "runtimeSha256": "aa3a1bfbd01b3f181869febe32cb2bca940e02bfb96dc3fe398ffba05c30c878",
+      "adaptation": "none"
+    },
+    "WeaponComponentSlotOrientation.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WeaponComponentSlotOrientation.cs",
+      "sha256": "ea0425f8e1545dced7bf83c29ab77ad9e916b7403f2a1717256210c9cdc9b1e7",
+      "runtimeSha256": "ea0425f8e1545dced7bf83c29ab77ad9e916b7403f2a1717256210c9cdc9b1e7",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsObjectAttribute.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsObjectAttribute.cs",
+      "sha256": "7bb1c733fd907abd9291fbb79bb62298c3b39d6a46806c2366137196362b2d55",
+      "runtimeSha256": "7bb1c733fd907abd9291fbb79bb62298c3b39d6a46806c2366137196362b2d55",
+      "adaptation": "none"
+    },
+    "FullSerializer/fsMemberSerialization.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FullSerializer/fsMemberSerialization.cs",
+      "sha256": "2b9fc845c07e30584140921f0f6a71f5d27ea68ee4e30a1fc82b21ce2b0ed7d7",
+      "runtimeSha256": "2b9fc845c07e30584140921f0f6a71f5d27ea68ee4e30a1fc82b21ce2b0ed7d7",
+      "adaptation": "none"
+    },
+    "ActionScheduler.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ActionScheduler.cs",
+      "sha256": "3a266072f5b78e7dd954b1fcb26f987920e42236c73678f09a373384730e3537",
+      "runtimeSha256": "3a266072f5b78e7dd954b1fcb26f987920e42236c73678f09a373384730e3537",
+      "adaptation": "none"
+    },
+    "MissionMode.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/MissionMode.cs",
+      "sha256": "aa1f58d800f35d17f72bc9e0bed197203b597acb12fa0a7f52ca060b88390c5f",
+      "runtimeSha256": "aa1f58d800f35d17f72bc9e0bed197203b597acb12fa0a7f52ca060b88390c5f",
+      "adaptation": "none"
+    },
+    "UnityEventVoid.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UnityEventVoid.cs",
+      "sha256": "e52ae1b59fb9016083ca24347c7a855392748ab9e7c2aefb91fce5e362b15604",
+      "runtimeSha256": "e52ae1b59fb9016083ca24347c7a855392748ab9e7c2aefb91fce5e362b15604",
+      "adaptation": "none"
+    },
+    "AudioSurface.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AudioSurface.cs",
+      "sha256": "8bfa3a366ec5a58cdebb955e83872b9a4f9579dc815c6ef06731a5f71f05497e",
+      "runtimeSha256": "8bfa3a366ec5a58cdebb955e83872b9a4f9579dc815c6ef06731a5f71f05497e",
+      "adaptation": "none"
+    },
+    "AudioSurfaceProperties.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AudioSurfaceProperties.cs",
+      "sha256": "8b5e0bf66b8d67fc724c602c7a9f6cd4345dbb9d8191431364a7705388343424",
+      "runtimeSha256": "a802734bd1adc1b154ce006c2d554a64038f6a9b00b0cc741eee8ff5b745384a",
+      "adaptation": "Random alias only"
+    },
+    "BehaviorDesigner/Runtime/SharedFloat.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/SharedFloat.cs",
+      "sha256": "9eb107c3e6b461c6d7c117251af67d332e97945bb1664b271efde04d33d69277",
+      "runtimeSha256": "9eb107c3e6b461c6d7c117251af67d332e97945bb1664b271efde04d33d69277",
+      "adaptation": "none"
+    },
+    "BehaviorDesigner/Runtime/SharedBool.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/SharedBool.cs",
+      "sha256": "e15793f9f2cdc9d2bad38f283283350e67b18e661cfbd5083e5fe6127edc0edf",
+      "runtimeSha256": "e15793f9f2cdc9d2bad38f283283350e67b18e661cfbd5083e5fe6127edc0edf",
+      "adaptation": "none"
+    },
+    "BehaviorDesigner/Runtime/SharedInt.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/SharedInt.cs",
+      "sha256": "8486a7ec772e029058dc60025a78e589c749afb5262ca996ebff260018dc887d",
+      "runtimeSha256": "8486a7ec772e029058dc60025a78e589c749afb5262ca996ebff260018dc887d",
+      "adaptation": "none"
+    },
+    "BehaviorDesigner/Runtime/SharedVector2.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/SharedVector2.cs",
+      "sha256": "1e56760ac3d38ae2a4571ea19257b3fd7f714fe49451fe9de537f22a63a7ddbd",
+      "runtimeSha256": "1e56760ac3d38ae2a4571ea19257b3fd7f714fe49451fe9de537f22a63a7ddbd",
+      "adaptation": "none"
+    },
+    "BehaviorDesigner/Runtime/SharedString.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/SharedString.cs",
+      "sha256": "e7d3a7871f8ecd53f72c89af29aec9ff0ef08a7eb6b330f23094afbca04c20e9",
+      "runtimeSha256": "e7d3a7871f8ecd53f72c89af29aec9ff0ef08a7eb6b330f23094afbca04c20e9",
+      "adaptation": "none"
+    },
+    "BehaviorDesigner/Runtime/Tasks/Sequence.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Sequence.cs",
+      "sha256": "fcad24db66619ff6caeffe0ab4498e2123c975f4afce1839f67143cec8815316",
+      "runtimeSha256": "fcad24db66619ff6caeffe0ab4498e2123c975f4afce1839f67143cec8815316",
+      "adaptation": "none"
+    },
+    "BehaviorDesigner/Runtime/Tasks/Selector.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Selector.cs",
+      "sha256": "b92f3c3ebb56aaf4a64ef3037d164f510c1f5bf9e97973e30890a61abbdb8a5f",
+      "runtimeSha256": "b92f3c3ebb56aaf4a64ef3037d164f510c1f5bf9e97973e30890a61abbdb8a5f",
+      "adaptation": "none"
+    },
+    "BehaviorDesigner/Runtime/Tasks/Parallel.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Parallel.cs",
+      "sha256": "8a25d0bf048f0353ecd8c7523fbbbc74c7d7caadaf16fe499200891647002bb9",
+      "runtimeSha256": "8a25d0bf048f0353ecd8c7523fbbbc74c7d7caadaf16fe499200891647002bb9",
+      "adaptation": "none"
+    },
+    "BehaviorDesigner/Runtime/Tasks/Repeater.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Repeater.cs",
+      "sha256": "fed31fa66eda31238a1c4fc1014cc51beb356fa95607efd04f45c3d1b7ebfcf6",
+      "runtimeSha256": "fed31fa66eda31238a1c4fc1014cc51beb356fa95607efd04f45c3d1b7ebfcf6",
+      "adaptation": "none"
+    },
+    "BehaviorDesigner/Runtime/Tasks/Wait.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Wait.cs",
+      "sha256": "15457b233769ecc1a97f1f13d78a94d1b46524356ffb424187c822b125e7e922",
+      "runtimeSha256": "d24234efcead0855596cbef2d666d625674357b271b77596fd043f199511c596",
+      "adaptation": "Random alias only"
+    },
+    "BehaviorDesigner/Runtime/Tasks/ReturnSuccess.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/ReturnSuccess.cs",
+      "sha256": "b376c77057f5229d9131233793c8912979fcf63622b4fc4d435f2af4ed149578",
+      "runtimeSha256": "b376c77057f5229d9131233793c8912979fcf63622b4fc4d435f2af4ed149578",
+      "adaptation": "none"
+    },
+    "BehaviorDesigner/Runtime/Tasks/ReturnFailure.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/ReturnFailure.cs",
+      "sha256": "a0ad068e5899d586c592b25f8430c934f08823899974361f6fe8dcd1e61e83f2",
+      "runtimeSha256": "a0ad068e5899d586c592b25f8430c934f08823899974361f6fe8dcd1e61e83f2",
+      "adaptation": "none"
+    },
+    "BehaviorDesigner/Runtime/Tasks/Inverter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Inverter.cs",
+      "sha256": "bc11b8a7df68cb2f5f668ebff2bf6939f0de7267bc3ceea886f59571c86b0441",
+      "runtimeSha256": "bc11b8a7df68cb2f5f668ebff2bf6939f0de7267bc3ceea886f59571c86b0441",
+      "adaptation": "none"
+    },
+    "BehaviorDesigner/Runtime/Tasks/UntilSuccess.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/UntilSuccess.cs",
+      "sha256": "ce6963a35b92261c3d82c43d354f01ea3e1df0056b084f0de0b6bab61c1ada5d",
+      "runtimeSha256": "ce6963a35b92261c3d82c43d354f01ea3e1df0056b084f0de0b6bab61c1ada5d",
+      "adaptation": "none"
+    },
+    "BehaviorDesigner/Runtime/Tasks/UntilFailure.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/UntilFailure.cs",
+      "sha256": "b07843590a04418d396b44ca9c8a086de291bc6595ba3c76f868aa31c78eab1a",
+      "runtimeSha256": "b07843590a04418d396b44ca9c8a086de291bc6595ba3c76f868aa31c78eab1a",
+      "adaptation": "none"
+    }
+  }
+}

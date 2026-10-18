@@ -1,11 +1,11 @@
 using System.Text.Json;
 using UnityEngine;
 namespace UnityEngine {
- public struct Color {public float r,g,b,a;public Color(float r,float g,float b,float a){this.r=r;this.g=g;this.b=b;this.a=a;}}
+ public struct Color {public static Color black=>new(0,0,0,1);public float r,g,b,a;public Color(float r,float g,float b,float a){this.r=r;this.g=g;this.b=b;this.a=a;}}
  public struct Rect {public float x,y,width,height;public Rect(float x,float y,float w,float h){this.x=x;this.y=y;width=w;height=h;}public Vector2 min=>new(x,y);public Vector2 max=>new(x+width,y+height);}
  // Read/write CPU texture adapter for the original glass alpha decisions. Pixels
  // are stored bottom-left first, as Unity Texture2D.GetPixels expects.
- public sealed class Texture2D:Object {
+ public sealed class Texture2D:Texture {
   public int width,height;byte[] rgba;public string SourceID;public Action<Texture2D,int,int,int,int,byte[]> Changed;
   public Texture2D(int w,int h,byte[] bytes,RuntimeWorld owner=null){world=owner??RuntimeWorld.Current;width=w;height=h;rgba=(byte[])bytes.Clone();world.Register(this);}
   public Texture2D CloneTexture(RuntimeWorld owner)=>new(width,height,rgba,owner){SourceID=SourceID,Changed=Changed};
@@ -46,3 +46,4 @@ public sealed class AudioInstigator:Component {}
 public static class MarksmanMode {public static float DeflectionModifier=.15f;}
 public sealed class Masks {public static Masks Instance=new();public int Limbs,BallisticTargets,BallisticTargetsSansLimbs;}
 public sealed class MissionHelper {public static MissionHelper Instance=new();public Transform EffectsContainer;}
+

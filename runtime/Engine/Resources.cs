@@ -26,5 +26,7 @@ public static class Resources {
         var ammo=AmmunitionLoader.Load(packageText,assetPath,assetWorld);ammo.gameObject.assetObject=true;
         cache[path]=ammo.gameObject;return ammo.gameObject;
     }
+    public static Object Load(string path,Type type){var asset=Load(path);return asset!=null&&type.IsInstanceOfType(asset)?asset:null;}
     public static T Load<T>(string path) where T:Object=>Load(path) as T;
 }
+

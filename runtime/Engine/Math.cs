@@ -4,12 +4,19 @@ namespace UnityEngine;
 
 public struct Vector2 {
     public float x, y;
+    public static Vector2 zero=>new(0,0);
+    public static bool operator ==(Vector2 a,Vector2 b)=>(a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)<1e-10f;
+    public static bool operator !=(Vector2 a,Vector2 b)=>!(a==b);
+    public override bool Equals(object o)=>o is Vector2 b&&x.Equals(b.x)&&y.Equals(b.y);
+    public override int GetHashCode()=>HashCode.Combine(x,y);
     public Vector2(float x, float y) { this.x=x; this.y=y; }
+    public static implicit operator Vector2(Vector3 v)=>new(v.x,v.y);
     public static implicit operator Vector3(Vector2 v) => new(v.x,v.y,0);
     public static Vector2 operator *(Vector2 v,float n) => new(v.x*n,v.y*n);
 }
 public struct Vector3 {
     public float x,y,z;
+    public Vector3(float x,float y):this(x,y,0){}
     public Vector3(float x,float y,float z) { this.x=x;this.y=y;this.z=z; }
     internal N.Vector3 Native => new(x,y,z);
     internal static Vector3 From(N.Vector3 v) => new(v.X,v.Y,v.Z);
@@ -79,4 +86,5 @@ public static class Random {
  public static float Range(float a,float b)=>a+(b-a)*value;
  public static int Range(int a,int b)=>source.Next(a,b);
 }
-public static class Debug {public static void LogWarningFormat(string format,params object[] args)=>Console.Error.WriteLine(format,args);}
+public static class Debug {public static void Log(object message)=>Console.WriteLine(message);public static void LogError(object message)=>Console.Error.WriteLine(message);public static void LogWarning(object message)=>Console.Error.WriteLine(message);public static void LogWarningFormat(string format,params object[] args)=>Console.Error.WriteLine(format,args);}
+

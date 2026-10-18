@@ -49,4 +49,23 @@ public static class Physics {
     }
     public static bool Raycast(Ray ray,out RaycastHit hit,float maxDistance=float.PositiveInfinity,int layerMask=-5,QueryTriggerInteraction queryTriggerInteraction=QueryTriggerInteraction.UseGlobal){var hits=RaycastAll(ray,maxDistance,layerMask,queryTriggerInteraction);hit=hits.FirstOrDefault();return hits.Length>0;}
     public static bool Raycast(Vector3 origin,Vector3 direction,out RaycastHit hit,float distance,int mask)=>Raycast(new Ray(origin,direction),out hit,distance,mask);
+    public static Collider[] OverlapSphere(Vector3 position,float radius,int layerMask=-1,QueryTriggerInteraction queryTriggerInteraction=QueryTriggerInteraction.UseGlobal){
+        if(!float.IsFinite(radius)||radius<0)throw new ArgumentOutOfRangeException(nameof(radius));
+        if(RuntimeWorld.Current.OverlapSphereQuery is {} query)return query(position,radius,layerMask,queryTriggerInteraction);
+        bool triggers=queryTriggerInteraction==QueryTriggerInteraction.Collide||(queryTriggerInteraction==QueryTriggerInteraction.UseGlobal&&queriesHitTriggers);
+        var hits=new List<Collider>();
+        foreach(var collider in RuntimeWorld.Current.Objects.OfType<Collider>()){
+            if(!collider.isActiveAndEnabled||((1<<collider.gameObject.layer)&layerMask)==0||(!triggers&&collider.isTrigger))continue;
+            if(collider is CapsuleCollider capsule){var(a,b,r)=capsule.Geometry();if((position-CapsuleCollider.SegmentPoint(position,a,b)).sqrMagnitude<=(r+radius)*(r+radius))hits.Add(collider);}
+            else if(collider is BoxCollider box){
+                var axes=new[]{box.transform.TransformVector(Vector3.right),box.transform.TransformVector(Vector3.up),box.transform.TransformVector(Vector3.forward)};
+                for(int i=0;i<3;i++)for(int j=i+1;j<3;j++)if(MathF.Abs(Vector3.Dot(axes[i].normalized,axes[j].normalized))>1e-4f)throw new NotSupportedException("Sheared box overlap requires native PhysX queries");
+                var local=box.transform.InverseTransformPoint(position)-box.center;var half=box.size*.5f;
+                var closest=new Vector3(Math.Clamp(local.x,-MathF.Abs(half.x),MathF.Abs(half.x)),Math.Clamp(local.y,-MathF.Abs(half.y),MathF.Abs(half.y)),Math.Clamp(local.z,-MathF.Abs(half.z),MathF.Abs(half.z)));
+                if((position-box.transform.TransformPoint(closest+box.center)).sqrMagnitude<=radius*radius)hits.Add(collider);
+            }else throw new NotSupportedException($"Native PhysX overlap query is required for {collider.GetType().Name}");
+        }
+        return hits.ToArray();
+    }
 }
+

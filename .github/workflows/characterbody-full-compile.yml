@@ -11,10 +11,41 @@ on:
       - 'runtime/Original/Animation/ArmController.cs'
       - 'runtime/Engine/**'
       - 'runtime/Original/**'
+      - 'runtime/FoundationChecks/**'
+      - 'scripts/verify_foundation_sources.py'
+      - 'scripts/summarize_characterbody_compile.py'
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
+  foundation-contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: tools/wasm-compile/global.json
+      - name: Verify recovered foundation and plugin method identity
+        run: python3 scripts/verify_foundation_sources.py
+      - name: Execute original managed foundations and engine adapter contracts
+        run: |
+          set -o pipefail
+          cp tools/wasm-compile/global.json global.json
+          dotnet run --project runtime/FoundationChecks/Crisis.Runtime.FoundationChecks.csproj | tee foundation-contracts.log
+      - name: Preserve exact source and native evidence
+        if: always()
+        run: printf '%s\n' "$GITHUB_SHA" > foundation-source-sha.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: original-foundation-native-evidence
+          path: |
+            foundation-contracts.log
+            foundation-source-sha.txt
+          retention-days: 14
+  # This separate, REQUIRED probe still builds the whole original class.
+  # Foundation harness success must never mask its unresolved dependencies.
   compile-closure:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -32,11 +63,16 @@ jobs:
             cat characterbody-compile.log | tail -250
             exit 1
           }
+      - name: Classify exact full-source compiler diagnostics
+        if: always()
+        run: python3 scripts/summarize_characterbody_compile.py characterbody-compile.log --output characterbody-diagnostics.json
       - name: Record exact compiler diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: characterbody-full-compiler-diagnostics
-          path: characterbody-compile.log
+          path: |
+            characterbody-compile.log
+            characterbody-diagnostics.json
           retention-days: 14
           if-no-files-found: warn
