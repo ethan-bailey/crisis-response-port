@@ -179,6 +179,44 @@ These are explicit outstanding acceptance gates, not completed-test claims.
 The new tooling makes their order and proof requirements enforceable; it does
 not turn the present 144-error graph into a functioning original actor.
 
+## Original dependency continuation — 2026-10-18
+
+Live-state gate inspected `feature/full-source-characterbody-integration` at
+`f24f4dc6fbf12ae8a4fa6c85b090e5416fb97655`, `develop/wasm` at
+`2fc0a8e93be97c4d99123910fad4bd25798e71a8`, all four open PRs (#7/#42/#56/#57),
+recent merges #63–#67 and latest Actions results. Full compile evidence remains
+run `39091701268`; narrow remediation evidence remains run `39093133256`.
+The older 30-error graph is superseded. Next unmet gate is full original native
+compilation, followed by actor/IK/projectile ownership migration and two-actor tests.
+
+Recovered thirteen original sources from the pinned archive: the audio
+propagator/instigator/stimulus family, CommunicationLine, VitalFunctions, LimbLayer,
+three door-state enums and the complete three-class dialog data/tree family.
+`FullSource.AudioInstigator.Awake` binds the original actor component; original
+VitalFunctions retains organ probability, normalized hit position and trauma/
+announcement order. These are recovered dependencies, not proof that their gameplay
+consumers execute. Namespace wrapping and explicit Unity Random/Object aliases in
+VitalFunctions are the only adaptations; the dependency provenance manifest and
+existing verifier compare every recovered byte with the pinned archive.
+
+Corrected the newer actor guard's nonexistent `Weapons.Projectile` type reference
+to the actual global `Projectile`. Corrected the migration scanner to reject
+record/struct transport owners; its already-present regression test failed before
+this correction and passes afterward. No frozen transport gameplay file changed.
+
+Local SDK 8.0.426 validation: 13 isolated engine assertions, 90 foundation
+assertions/ten runtime groups, eight audit-tool tests, 97 source identity checks,
+ownership guards and refreshed inventory pass. Full compilation still exits 1:
+**117 diagnostics / 50 missing names**, with 27 baseline diagnostics resolved and
+zero introduced, compared with the same complete-graph baseline. Missing declarations
+still mask later method-body diagnostics; this is not a remaining-work estimate.
+One intervening SDK CLI invocation aborted on process-stat retrieval (exit 134);
+direct MSBuild execution produced the actual failing compiler result above.
+
+The two-character checkpoint remains incomplete. No consolidated WASM/Chromium/
+WebKit gameplay validation, merge to `develop/wasm` or preview update occurred.
+Retain PR #42 as the workstream; do not merge it as a finished combat checkpoint.
+
 ## Reproduce / maintain
 
 ```sh
@@ -214,3 +252,4 @@ restore old triggers; revert the paired engine host/extracted-file changes
 manifest, tests and narrow workflow should be reverted together if removing
 migration enforcement. Original assets require no restoration because this
 batch did not modify or remove them.
+

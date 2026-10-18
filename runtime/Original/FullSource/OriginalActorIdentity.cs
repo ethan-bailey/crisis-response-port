@@ -59,7 +59,7 @@ namespace Crisis.Runtime.FullSource
         // The caller must still execute RecordAttackInfo / OnWasAttacked /
         // OnWasHit in source order; this method intentionally dispatches none.
         public static CharacterBody RequireProjectileHitContext(CharacterBody victim,
-            Limb hitLimb, Crisis.Runtime.Weapons.Projectile projectile)
+            Limb hitLimb, global::Projectile projectile)
         {
             RequireLimb(victim, hitLimb);
             RequirePhysiology(victim, victim.Physiology);
@@ -69,3 +69,4 @@ namespace Crisis.Runtime.FullSource
         }
     }
 }
+

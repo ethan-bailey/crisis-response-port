@@ -839,12 +839,21 @@
     "runtime/Original/Foundation/UnityEventVoid.cs",
     "runtime/Original/Foundation/WeaponComponentSlotOrientation.cs",
     "runtime/Original/Foundation/WeaponComponentSlotType.cs",
+    "runtime/Original/FullSource/AudioInstigator.cs",
+    "runtime/Original/FullSource/AudioPropagator.cs",
+    "runtime/Original/FullSource/AudioStimuli.cs",
+    "runtime/Original/FullSource/AudioStimuliType.cs",
     "runtime/Original/FullSource/BallisticObstacle.cs",
     "runtime/Original/FullSource/CharacterAudio.cs",
     "runtime/Original/FullSource/CharacterDialog.cs",
     "runtime/Original/FullSource/CharacterScoreCard.cs",
     "runtime/Original/FullSource/Communication.cs",
+    "runtime/Original/FullSource/CommunicationLine.cs",
+    "runtime/Original/FullSource/DialogTree.cs",
     "runtime/Original/FullSource/DoorController.cs",
+    "runtime/Original/FullSource/DoorLockState.cs",
+    "runtime/Original/FullSource/DoorMechanismState.cs",
+    "runtime/Original/FullSource/DoorOpenState.cs",
     "runtime/Original/FullSource/DynamicInteractionMarker.cs",
     "runtime/Original/FullSource/Emitter.cs",
     "runtime/Original/FullSource/FloorStreakPainter.cs",
@@ -855,18 +864,23 @@
     "runtime/Original/FullSource/LimbArmor.cs",
     "runtime/Original/FullSource/LimbAttachment.cs",
     "runtime/Original/FullSource/LimbId.cs",
+    "runtime/Original/FullSource/LimbLayer.cs",
     "runtime/Original/FullSource/LimbMuscle.cs",
     "runtime/Original/FullSource/LimbPhysiology.cs",
     "runtime/Original/FullSource/LimbRenderer.cs",
     "runtime/Original/FullSource/LimbVitalFunction.cs",
     "runtime/Original/FullSource/Mission.cs",
     "runtime/Original/FullSource/MuscleControl.cs",
+    "runtime/Original/FullSource/OriginalActorIdentity.cs",
     "runtime/Original/FullSource/Physiology.cs",
     "runtime/Original/FullSource/Room.cs",
+    "runtime/Original/FullSource/SerializableDialogOption.cs",
+    "runtime/Original/FullSource/SerializableDialogState.cs",
     "runtime/Original/FullSource/SerializableExtraSettings.cs",
     "runtime/Original/FullSource/Settings.cs",
     "runtime/Original/FullSource/Target.cs",
     "runtime/Original/FullSource/TimeScaler.cs",
+    "runtime/Original/FullSource/VitalFunctions.cs",
     "runtime/Original/FullSource/WeaponAimer.cs",
     "runtime/Original/FullSource/WeaponMode.cs",
     "runtime/Original/FullSource/Wound.cs",
@@ -3662,6 +3676,63 @@
       ]
     },
     {
+      "path": "runtime/Original/FullSource/AudioInstigator.cs",
+      "sha256": "7a7f56565e7d03f532c8e609119405df1f0dff271d3fa008c7c246e92bf10717",
+      "declares": [
+        "AudioInstigator"
+      ],
+      "references": [
+        "CharacterBody",
+        "GetComponent",
+        "MonoBehaviour"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/AudioPropagator.cs",
+      "sha256": "777448e56bf229cd798bc44e16dd880402e72562453b2fee9c3f50149165e6e5",
+      "declares": [
+        "AudioPropagator"
+      ],
+      "references": [
+        "Angle",
+        "AudioInstigator",
+        "AudioStimuli",
+        "AudioStimuliType",
+        "CharacterBody",
+        "Clear",
+        "DoorController",
+        "Masks",
+        "Mathf",
+        "Room",
+        "Time",
+        "in"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/AudioStimuli.cs",
+      "sha256": "1986ef7aa6267d487cbf23d15038e1fc67b7d72aab87dfc3e14e53f938ce18c9",
+      "declares": [
+        "AudioStimuli"
+      ],
+      "references": [
+        "AudioInstigator",
+        "AudioStimuliType",
+        "Equipment"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/AudioStimuliType.cs",
+      "sha256": "8a1d2edaafeae458b0ec618c44f96ae42ef75b21e6726915bc3b80710117b4b2",
+      "declares": [
+        "AudioStimuliType"
+      ],
+      "references": [
+        "Equipment",
+        "Explosion",
+        "Firearm"
+      ]
+    },
+    {
       "path": "runtime/Original/FullSource/BallisticObstacle.cs",
       "sha256": "3e2b0718523ba1c972691c5b1a75fdf5606966b85b0afee55065f80fa376465d",
       "declares": [
@@ -3757,6 +3828,29 @@
       ]
     },
     {
+      "path": "runtime/Original/FullSource/CommunicationLine.cs",
+      "sha256": "c1c2bd0cb44f8343795a2391f2badf7ef7dfba431e8060c7ac95d6c8567c11e6",
+      "declares": [
+        "CommunicationLine"
+      ],
+      "references": [
+        "AudioClip"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/DialogTree.cs",
+      "sha256": "1dc193c302f6eee2e1e302418834bf94b4b32042597f46a2c0f29fbcb2b5f30f",
+      "declares": [
+        "DialogTree"
+      ],
+      "references": [
+        "MonoBehaviour",
+        "Replace",
+        "SerializableDialogOption",
+        "SerializableDialogState"
+      ]
+    },
+    {
       "path": "runtime/Original/FullSource/DoorController.cs",
       "sha256": "4de760fc51f8d468050873933c4fc66802d0fd53292694f12eae6174f964aaac",
       "declares": [
@@ -3806,6 +3900,30 @@
         "TutorialMode",
         "Vector3"
       ]
+    },
+    {
+      "path": "runtime/Original/FullSource/DoorLockState.cs",
+      "sha256": "3dbdcb56531f60820990016a63d8f0ba08343ee51bb26bd6ae3b76e2ecf1f46d",
+      "declares": [
+        "DoorLockState"
+      ],
+      "references": []
+    },
+    {
+      "path": "runtime/Original/FullSource/DoorMechanismState.cs",
+      "sha256": "f4f2f571f91b505ee9c5d0d5c17c621cf5ac253c2a92ad1ee2b938ed7ae7a76f",
+      "declares": [
+        "DoorMechanismState"
+      ],
+      "references": []
+    },
+    {
+      "path": "runtime/Original/FullSource/DoorOpenState.cs",
+      "sha256": "2e48af8cc207858be5d8370cc2eb6d6814df0d624a52912276a88d5654638ca4",
+      "declares": [
+        "DoorOpenState"
+      ],
+      "references": []
     },
     {
       "path": "runtime/Original/FullSource/DynamicInteractionMarker.cs",
@@ -3925,7 +4043,7 @@
     },
     {
       "path": "runtime/Original/FullSource/IKArmController.cs",
-      "sha256": "efdd89d39bc8619dfa7e9315aa680b446b85fbe97f798f6881a6fda0a2896f7f",
+      "sha256": "17dff2228e54805b5c891e9b167ec18af9dc3703edbfe51437d8cfac75de5454",
       "declares": [
         "IKArmController"
       ],
@@ -3948,6 +4066,7 @@
         "IsPlaying",
         "Mathf",
         "MonoBehaviour",
+        "OriginalActorIdentity",
         "Play",
         "Random",
         "Restrain",
@@ -3998,7 +4117,7 @@
     },
     {
       "path": "runtime/Original/FullSource/Limb.cs",
-      "sha256": "45d309cdc348e39f43b32e1642bf84858d67519e03d5ea0a71ceb875e2db11f9",
+      "sha256": "dc21f2f3191912c23a56d3d8d3938b481b4762e1b6f5575b6c6521805597c843",
       "declares": [
         "Limb"
       ],
@@ -4042,6 +4161,7 @@
         "MissionHelper",
         "Normalize",
         "Object",
+        "OriginalActorIdentity",
         "ParticleSystem",
         "Physiology",
         "Projectile",
@@ -4100,6 +4220,14 @@
       "sha256": "f8fe39f1ee3c6aac126d97eefd2b373b291665e0b7bd68de226e1de29011c0c9",
       "declares": [
         "LimbId"
+      ],
+      "references": []
+    },
+    {
+      "path": "runtime/Original/FullSource/LimbLayer.cs",
+      "sha256": "7b4910e2025f448a6ba44588b300234a1867cb307a81d4f6012f22dcc565cea6",
+      "declares": [
+        "LimbLayer"
       ],
       "references": []
     },
@@ -4311,6 +4439,21 @@
       ]
     },
     {
+      "path": "runtime/Original/FullSource/OriginalActorIdentity.cs",
+      "sha256": "7bcaf1a17a0ba953b863dfc008f456b3c4a49d3d83d171ee9153885417b97096",
+      "declares": [
+        "OriginalActorIdentity"
+      ],
+      "references": [
+        "CharacterBody",
+        "Equipment",
+        "IKArmController",
+        "Limb",
+        "Physiology",
+        "Projectile"
+      ]
+    },
+    {
       "path": "runtime/Original/FullSource/Physiology.cs",
       "sha256": "843353848cb881d04bc864d632bc7c43d07aa75d5412f6b2e64290261285708d",
       "declares": [
@@ -4384,6 +4527,29 @@
         "TutorialMode",
         "Vector2",
         "Vector3",
+        "in"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableDialogOption.cs",
+      "sha256": "0b5054fea92a3e3a790631847b5cdcc575a39e05eb2ba1fe14cb246a902f7b73",
+      "declares": [
+        "SerializableDialogOption"
+      ],
+      "references": [
+        "Replace"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableDialogState.cs",
+      "sha256": "a6b92711ff7e0dd33606470d36995bd2797b9dbb28cbb97d4431464926a35e08",
+      "declares": [
+        "SerializableDialogState"
+      ],
+      "references": [
+        "Clear",
+        "Replace",
+        "SerializableDialogOption",
         "in"
       ]
     },
@@ -4472,6 +4638,28 @@
         "Settings",
         "Time",
         "UIInteriorModeTextIndicator"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/VitalFunctions.cs",
+      "sha256": "621af972fec93f5a07159431c03279cf49996b22b4aaad417f92a1fca556416d",
+      "declares": [
+        "VitalFunctions"
+      ],
+      "references": [
+        "CapsuleCollider",
+        "Destroy",
+        "GetComponent",
+        "LimbPhysiology",
+        "LimbVitalFunction",
+        "Mathf",
+        "MonoBehaviour",
+        "Object",
+        "Physiology",
+        "Projectile",
+        "Random",
+        "Vector3",
+        "in"
       ]
     },
     {
@@ -7025,6 +7213,7 @@
         "runtime/Original/Ballistics/BallisticMaterial.cs",
         "runtime/Original/BodyPoseSlice.Methods.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/AudioPropagator.cs",
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/LimbMuscle.cs",
         "runtime/Original/FullSource/Room.cs",
@@ -7673,6 +7862,7 @@
         "runtime/Original/Foundation/AudioSurface.cs",
         "runtime/Original/Foundation/AudioSurfaceProperties.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
+        "runtime/Original/FullSource/CommunicationLine.cs",
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "source-reference/Original/CharacterDependencies/AudioSurface.cs",
@@ -7712,9 +7902,11 @@
     },
     {
       "name": "AudioInstigator",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/AudioInstigator.cs"
+      ],
       "engineSources": [
         "runtime/Engine/BallisticEngine.cs"
       ],
@@ -7730,6 +7922,8 @@
         "runtime/Original/Ballistics/BallisticMaterial.cs",
         "runtime/Original/Ballistics/ProjectileMaterial.Methods.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/AudioPropagator.cs",
+        "runtime/Original/FullSource/AudioStimuli.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/Grenade.cs",
@@ -7821,9 +8015,11 @@
     },
     {
       "name": "AudioPropagator",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/AudioPropagator.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -7895,22 +8091,28 @@
     },
     {
       "name": "AudioStimuli",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/AudioStimuli.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AudioStimuli.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Original/FullSource/AudioPropagator.cs"
+      ]
     },
     {
       "name": "AudioStimuliType",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/AudioStimuliType.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -7918,6 +8120,8 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Original/FullSource/AudioPropagator.cs",
+        "runtime/Original/FullSource/AudioStimuli.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/Grenade.cs",
@@ -10017,6 +10221,7 @@
         "runtime/Engine/Physics.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/LimbArmor.cs",
+        "runtime/Original/FullSource/VitalFunctions.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/CharacterBody.cs"
       ]
@@ -10336,6 +10541,8 @@
         "runtime/Engine/ProjectileMaterialHost.cs",
         "runtime/Original/Animation/ArmController.cs",
         "runtime/Original/Animation/ArmsControl.cs",
+        "runtime/Original/FullSource/AudioInstigator.cs",
+        "runtime/Original/FullSource/AudioPropagator.cs",
         "runtime/Original/FullSource/BallisticObstacle.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/CharacterDialog.cs",
@@ -10350,6 +10557,7 @@
         "runtime/Original/FullSource/LimbPhysiology.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/MuscleControl.cs",
+        "runtime/Original/FullSource/OriginalActorIdentity.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Target.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
@@ -10645,8 +10853,10 @@
         "runtime/Original/Foundation/SerializableItems.cs",
         "runtime/Original/Foundation/SerializableWeapon.cs",
         "runtime/Original/Foundation/SerializableWeaponComponentSlot.cs",
+        "runtime/Original/FullSource/AudioPropagator.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/Room.cs",
+        "runtime/Original/FullSource/SerializableDialogState.cs",
         "runtime/Original/InputMapping.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
@@ -10889,9 +11099,11 @@
     },
     {
       "name": "CommunicationLine",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/CommunicationLine.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -11803,6 +12015,7 @@
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/ObjectRemover.cs",
         "runtime/Original/Weapons/CharacterTrigger.Methods.cs",
         "runtime/Original/Weapons/CyclingBolt.cs",
@@ -11852,7 +12065,9 @@
       "name": "DialogTree",
       "category": "recovered source",
       "requiresAuthoredAssets": true,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/DialogTree.cs"
+      ],
       "engineSources": [],
       "referenceSources": [
         "source-reference/Original/CharacterDependencies/DialogTree.cs"
@@ -11997,6 +12212,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/AudioPropagator.cs",
         "runtime/Original/FullSource/Room.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
@@ -12020,9 +12236,11 @@
     },
     {
       "name": "DoorLockState",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/DoorLockState.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -12036,9 +12254,11 @@
     },
     {
       "name": "DoorMechanismState",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/DoorMechanismState.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -12052,9 +12272,11 @@
     },
     {
       "name": "DoorOpenState",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/DoorOpenState.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -12716,8 +12938,11 @@
       "referencedBy": [
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/AudioStimuli.cs",
+        "runtime/Original/FullSource/AudioStimuliType.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/Grenade.cs",
+        "runtime/Original/FullSource/OriginalActorIdentity.cs",
         "runtime/Original/Weapons/ChangeMagazine.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
@@ -12897,6 +13122,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Original/FullSource/AudioStimuliType.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "source-reference/Original/CharacterDependencies/Grenade.cs"
       ]
@@ -13321,6 +13547,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Original/FullSource/AudioStimuliType.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
         "source-reference/Original/CharacterDependencies/WeaponBase.cs"
       ]
@@ -14358,6 +14585,7 @@
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/SharedVariable.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/Task.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/AudioInstigator.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/CharacterDialog.cs",
         "runtime/Original/FullSource/Communication.cs",
@@ -14377,6 +14605,7 @@
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/Target.cs",
+        "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/InteriorCameraSlice.cs",
         "runtime/Original/Weapons/ArmTransition.cs",
@@ -16478,6 +16707,7 @@
       "referencedBy": [
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/IKArmSequencer.cs",
+        "runtime/Original/FullSource/OriginalActorIdentity.cs",
         "source-reference/Original/Animation/ArmIKSolver.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/Animation/IKArmSequencer.cs",
@@ -18123,6 +18353,7 @@
         "runtime/Original/FullSource/LimbMuscle.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
         "runtime/Original/FullSource/MuscleControl.cs",
+        "runtime/Original/FullSource/OriginalActorIdentity.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/FullSource/Wound.cs",
@@ -18258,9 +18489,11 @@
     },
     {
       "name": "LimbLayer",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/LimbLayer.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -18312,6 +18545,7 @@
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/Physiology.cs",
+        "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/FullSource/Wound.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
@@ -18394,7 +18628,8 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
-        "runtime/Original/FullSource/LimbPhysiology.cs"
+        "runtime/Original/FullSource/LimbPhysiology.cs",
+        "runtime/Original/FullSource/VitalFunctions.cs"
       ]
     },
     {
@@ -18855,6 +19090,7 @@
         "runtime/Engine/ProjectileMaterialHost.cs",
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/AudioPropagator.cs",
         "runtime/Original/FullSource/Communication.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/Mission.cs",
@@ -18955,6 +19191,7 @@
         "runtime/Original/Ballistics/StaticUtilities.cs",
         "runtime/Original/BodyPoseSlice.Methods.cs",
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/AudioPropagator.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/CharacterDialog.cs",
         "runtime/Original/FullSource/DoorController.cs",
@@ -18972,6 +19209,7 @@
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/TimeScaler.cs",
+        "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/FullSource/Wound.cs",
         "runtime/Original/InputHandler.cs",
@@ -19535,10 +19773,12 @@
         "runtime/Original/Foundation/AudioSurface.cs",
         "runtime/Original/Foundation/AudioSurfaceProperties.cs",
         "runtime/Original/Foundation/MissionMode.cs",
+        "runtime/Original/FullSource/AudioInstigator.cs",
         "runtime/Original/FullSource/BallisticObstacle.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/CharacterDialog.cs",
         "runtime/Original/FullSource/Communication.cs",
+        "runtime/Original/FullSource/DialogTree.cs",
         "runtime/Original/FullSource/DynamicInteractionMarker.cs",
         "runtime/Original/FullSource/Emitter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
@@ -19555,6 +19795,7 @@
         "runtime/Original/FullSource/Settings.cs",
         "runtime/Original/FullSource/Target.cs",
         "runtime/Original/FullSource/TimeScaler.cs",
+        "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/InputHandler.cs",
         "runtime/Original/InteriorCameraSlice.cs",
@@ -19959,6 +20200,7 @@
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/ObjectRemover.cs",
         "runtime/Original/Weapons/ArmTransition.cs",
         "runtime/Original/Weapons/ChangeMagazine.cs",
@@ -20290,6 +20532,22 @@
         "source-reference/Original/CharacterDependencies/Mission.cs",
         "source-reference/Original/CharacterDependencies/PlayerController.cs",
         "source-reference/Original/CharacterDependencies/TeamOperator.cs"
+      ]
+    },
+    {
+      "name": "OriginalActorIdentity",
+      "category": "recovered source",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [
+        "runtime/Original/FullSource/OriginalActorIdentity.cs"
+      ],
+      "engineSources": [],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Original/FullSource/IKArmController.cs",
+        "runtime/Original/FullSource/Limb.cs"
       ]
     },
     {
@@ -20750,6 +21008,8 @@
         "runtime/Original/FullSource/LimbMuscle.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
         "runtime/Original/FullSource/MuscleControl.cs",
+        "runtime/Original/FullSource/OriginalActorIdentity.cs",
+        "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
@@ -21127,7 +21387,9 @@
         "runtime/Original/FullSource/LimbArmor.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
         "runtime/Original/FullSource/Mission.cs",
+        "runtime/Original/FullSource/OriginalActorIdentity.cs",
         "runtime/Original/FullSource/Physiology.cs",
+        "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/Weapons/WeaponMechanism.Methods.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
@@ -21389,6 +21651,7 @@
         "runtime/Original/FullSource/MuscleControl.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Room.cs",
+        "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/FullSource/Wound.cs",
         "runtime/Original/Weapons/ArmTransition.cs",
@@ -21986,6 +22249,9 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/Resources.cs",
+        "runtime/Original/FullSource/DialogTree.cs",
+        "runtime/Original/FullSource/SerializableDialogOption.cs",
+        "runtime/Original/FullSource/SerializableDialogState.cs",
         "source-reference/Original/CharacterDependencies/DialogTree.cs"
       ]
     },
@@ -22357,6 +22623,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Original/CharacterBody.Full.cs",
+        "runtime/Original/FullSource/AudioPropagator.cs",
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Mission.cs",
@@ -22992,9 +23259,11 @@
     },
     {
       "name": "SerializableDialogOption",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/SerializableDialogOption.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -23003,15 +23272,19 @@
       "compilerMissing": true,
       "referencedBy": [
         "runtime/Original/FullSource/CharacterDialog.cs",
+        "runtime/Original/FullSource/DialogTree.cs",
+        "runtime/Original/FullSource/SerializableDialogState.cs",
         "source-reference/Original/CharacterDependencies/CharacterDialog.cs",
         "source-reference/Original/CharacterDependencies/DialogTree.cs"
       ]
     },
     {
       "name": "SerializableDialogState",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/SerializableDialogState.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -23020,6 +23293,7 @@
       "compilerMissing": true,
       "referencedBy": [
         "runtime/Original/FullSource/CharacterDialog.cs",
+        "runtime/Original/FullSource/DialogTree.cs",
         "source-reference/Original/CharacterDependencies/CharacterDialog.cs",
         "source-reference/Original/CharacterDependencies/DialogTree.cs"
       ]
@@ -27466,6 +27740,7 @@
         "runtime/Original/DecayingObject.cs",
         "runtime/Original/Foundation/ActionScheduler.cs",
         "runtime/Original/Foundation/BehaviorDesigner/Runtime/Tasks/Wait.cs",
+        "runtime/Original/FullSource/AudioPropagator.cs",
         "runtime/Original/FullSource/BallisticObstacle.cs",
         "runtime/Original/FullSource/CharacterAudio.cs",
         "runtime/Original/FullSource/Communication.cs",
@@ -30233,6 +30508,7 @@
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Room.cs",
+        "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/FullSource/Wound.cs",
         "runtime/Original/InteriorCameraSlice.cs",
@@ -30339,9 +30615,11 @@
     },
     {
       "name": "VitalFunctions",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/VitalFunctions.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -32140,6 +32418,7 @@
         "runtime/Original/Foundation/SerializableEquipment.cs",
         "runtime/Original/Foundation/SerializableItems.cs",
         "runtime/Original/Foundation/SerializableWeapon.cs",
+        "runtime/Original/FullSource/AudioPropagator.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
@@ -32147,6 +32426,8 @@
         "runtime/Original/FullSource/MuscleControl.cs",
         "runtime/Original/FullSource/Physiology.cs",
         "runtime/Original/FullSource/Room.cs",
+        "runtime/Original/FullSource/SerializableDialogState.cs",
+        "runtime/Original/FullSource/VitalFunctions.cs",
         "runtime/Original/FullSource/WeaponAimer.cs",
         "runtime/Original/InputHandler.cs",
         "runtime/Original/InputMapping.cs",
@@ -32195,6 +32476,10 @@
       "runtime/Original/Animation/ArmsControl.cs",
       "source-reference/Original/ArmDependencies/ArmsControl.cs",
       "source-reference/Original/CharacterDependencies/ArmsControl.cs"
+    ],
+    "AudioInstigator": [
+      "runtime/Engine/BallisticEngine.cs",
+      "runtime/Original/FullSource/AudioInstigator.cs"
     ],
     "AudioSurface": [
       "runtime/Original/Foundation/AudioSurface.cs",
@@ -32258,6 +32543,10 @@
     "Communication": [
       "runtime/Original/FullSource/Communication.cs",
       "source-reference/Original/CharacterDependencies/Communication.cs"
+    ],
+    "DialogTree": [
+      "runtime/Original/FullSource/DialogTree.cs",
+      "source-reference/Original/CharacterDependencies/DialogTree.cs"
     ],
     "DoorController": [
       "runtime/Original/FullSource/DoorController.cs",

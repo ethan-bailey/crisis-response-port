@@ -1,0 +1,83 @@
+{
+  "archiveSha256": "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
+  "scripts": {
+    "AudioInstigator.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AudioInstigator.cs",
+      "sha256": "a6ca29a1ad0a440f2d06e5739d52845636e5a70456a3f66b203defd0995a60e0",
+      "runtimeSha256": "7a7f56565e7d03f532c8e609119405df1f0dff271d3fa008c7c246e92bf10717",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "AudioPropagator.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AudioPropagator.cs",
+      "sha256": "2aa3cbe1f8d0589eaed24edf442dfba7a48560ed3f3cb64dc92c643c67ba6acf",
+      "runtimeSha256": "777448e56bf229cd798bc44e16dd880402e72562453b2fee9c3f50149165e6e5",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "AudioStimuli.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AudioStimuli.cs",
+      "sha256": "f76ce193e04a0bc163c5d73f76782af5f5b32c2cecba7e56c1b67c4f5b931be1",
+      "runtimeSha256": "1986ef7aa6267d487cbf23d15038e1fc67b7d72aab87dfc3e14e53f938ce18c9",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "AudioStimuliType.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AudioStimuliType.cs",
+      "sha256": "b81a23013bfd16c53e6cb47db2e0479b7da403500bf8936f2686c56a7683a550",
+      "runtimeSha256": "8a1d2edaafeae458b0ec618c44f96ae42ef75b21e6726915bc3b80710117b4b2",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "CommunicationLine.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CommunicationLine.cs",
+      "sha256": "46aa25702ba56b1e64bf2f95864d45cd9a2bf08b153805d8081d742d68017fb1",
+      "runtimeSha256": "c1c2bd0cb44f8343795a2391f2badf7ef7dfba431e8060c7ac95d6c8567c11e6",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "VitalFunctions.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/VitalFunctions.cs",
+      "sha256": "2d677971ac8db23154406da6d5b6c1bcb5a4fc5d93b1d08641750feb3dfaca99",
+      "runtimeSha256": "621af972fec93f5a07159431c03279cf49996b22b4aaad417f92a1fca556416d",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "LimbLayer.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/LimbLayer.cs",
+      "sha256": "86d3b58ea800d79f6c0c4e45bf0194bcf7d604e5718814d965ce30d37f71589e",
+      "runtimeSha256": "7b4910e2025f448a6ba44588b300234a1867cb307a81d4f6012f22dcc565cea6",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "DoorOpenState.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DoorOpenState.cs",
+      "sha256": "7c6791cadeefd4480b850f68d944ab4c73fc4734e973552049ba762bb384ca2f",
+      "runtimeSha256": "2e48af8cc207858be5d8370cc2eb6d6814df0d624a52912276a88d5654638ca4",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "DoorLockState.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DoorLockState.cs",
+      "sha256": "d975838c0e4a9fda251f6167ea3181f0d3a0aec1123b4a9675816a7a66ae6181",
+      "runtimeSha256": "3dbdcb56531f60820990016a63d8f0ba08343ee51bb26bd6ae3b76e2ecf1f46d",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "DoorMechanismState.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DoorMechanismState.cs",
+      "sha256": "d4fcaa32c3a7575ea1b67257fc5732f6072e93adebc6179b76cfd62157668d51",
+      "runtimeSha256": "f4f2f571f91b505ee9c5d0d5c17c621cf5ac253c2a92ad1ee2b938ed7ae7a76f",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "DialogTree.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DialogTree.cs",
+      "sha256": "7688d3d4ebb6cd6c2f9eec583c34cefb498b61a93395b6a5c8930241f77ab839",
+      "runtimeSha256": "1dc193c302f6eee2e1e302418834bf94b4b32042597f46a2c0f29fbcb2b5f30f",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SerializableDialogOption.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableDialogOption.cs",
+      "sha256": "9d187335593e196353eae31de630464495283633be56962e70ae17072c20e138",
+      "runtimeSha256": "0b5054fea92a3e3a790631847b5cdcc575a39e05eb2ba1fe14cb246a902f7b73",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SerializableDialogState.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableDialogState.cs",
+      "sha256": "00ce37001fdc4cadaf8541262e1bf477cea012a60cfb0e428710b3c14e622d77",
+      "runtimeSha256": "a6b92711ff7e0dd33606470d36995bd2797b9dbb28cbb97d4431464926a35e08",
+      "adaptation": "FullSource namespace wrapper only"
+    }
+  }
+}

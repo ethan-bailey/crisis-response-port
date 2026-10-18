@@ -42,6 +42,26 @@ def verify(archive_path=None):
                 assert data == archive.read(item["archiveEntry"]), name
             count += 1
 
+        full_source = ROOT / "runtime/Original/FullSource"
+        manifest = json.loads((full_source / "dependency-source-provenance.json").read_text())
+        assert manifest["archiveSha256"] == PIN
+        for name, item in manifest["scripts"].items():
+            data = (full_source / name).read_bytes()
+            assert sha(data) == item["runtimeSha256"], name
+            prefix, suffix = b"namespace Crisis.Runtime.FullSource\n{\n", b"\n}\n"
+            assert data.startswith(prefix) and data.endswith(suffix), name
+            original = data[len(prefix):-len(suffix)]
+            if item["adaptation"] == "FullSource namespace wrapper and Unity Random/Object aliases":
+                aliases = b"using Random = UnityEngine.Random;\nusing Object = UnityEngine.Object;\n"
+                assert original.startswith(aliases), name
+                original = original[len(aliases):]
+            else:
+                assert item["adaptation"] == "FullSource namespace wrapper only", name
+            assert sha(original) == item["sha256"], name
+            if archive:
+                assert original == archive.read(item["archiveEntry"]), name
+            count += 1
+
         plugin = ROOT / "runtime/Original/BehaviorDesigner"
         manifest = json.loads((plugin / "source-provenance.json").read_text())
         assert manifest["archiveSha256"] == PIN
