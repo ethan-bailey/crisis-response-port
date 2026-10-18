@@ -107,6 +107,20 @@ void Throws<T>(System.Action action,string label) where T:Exception {try{action(
  Check(((SharedInt)tree.GetVariable("skill")).Value==1&&((SharedInt)second.GetVariable("skill")).Value==2,"independent original blackboards");
  Check(tree.ExecutionStatus==Status.Success&&second.ExecutionStatus==Status.Success,"original Sequence Wait and Selector complete");
 }
+// Original scene APIs forward to a real world-bound transition driver.
+{
+ var first=new RuntimeWorld();first.MakeCurrent();
+ Throws<NotSupportedException>(()=>UnityEngine.SceneManagement.SceneManager.GetActiveScene(),"unbound scene transitions rejected");
+ var sceneDriver=new SceneTransitionProbe();
+ UnityEngine.SceneManagement.SceneManager.Bind(first,sceneDriver);
+ Check(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex==2,"original active scene index forwarded");
+ UnityEngine.SceneManagement.SceneManager.LoadScene(5);
+ Check(sceneDriver.LastIndex==5,"original scene load forwarded to host");
+ var secondWorld=new RuntimeWorld();secondWorld.MakeCurrent();
+ Throws<NotSupportedException>(()=>UnityEngine.SceneManagement.SceneManager.LoadScene(2),"scene transition driver isolated per world");
+ first.MakeCurrent();
+ Check(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name=="Original scene","source scene name preserved");
+}
 Console.WriteLine(Crisis.Runtime.RuntimeContracts.Run());
 Console.WriteLine($"PASS: {assertions} foundation assertions; original full CharacterBody build is a separate required gate.");
 
@@ -122,3 +136,9 @@ sealed class LifecycleTask:BehaviorDesigner.Runtime.Tasks.Action {
  public override void OnEnd()=>Events.Add("end");public override void OnPause(bool paused)=>Events.Add(paused?"pause":"resume");
 }
 sealed class AlwaysFail:BehaviorDesigner.Runtime.Tasks.Action {public override Status OnUpdate()=>Status.Failure;}
+
+sealed class SceneTransitionProbe:UnityEngine.SceneManagement.ISceneManagerDriver {
+ public int LastIndex=-1;
+ public UnityEngine.SceneManagement.Scene GetActiveScene()=>new(2,"Original scene");
+ public void LoadScene(int buildIndex)=>LastIndex=buildIndex;
+}
