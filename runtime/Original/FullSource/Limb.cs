@@ -266,6 +266,8 @@ public class Limb : BallisticMaterial
 
 	protected override Projectile HandleInterior(Projectile projectile, Vector3 normal, bool isEditor = false)
 	{
+		// Reject cross-actor limb/physiology identity before original tissue damage.
+		OriginalActorIdentity.RequireProjectileHitContext(Body, this, projectile);
 		float energy = projectile.Energy;
 		float diameter = projectile.Diameter;
 		float temporalCavityFactor = projectile.TemporalCavityFactor;
