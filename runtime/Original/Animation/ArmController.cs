@@ -36,7 +36,7 @@ public class ArmController
 
 	public bool isRightArm;
 
-	private Crisis.Runtime.Weapons.CharacterBody body;
+	private Crisis.Runtime.FullSource.CharacterBody body;
 
 	private ArmsControl controller;
 
@@ -74,7 +74,7 @@ public class ArmController
 
 	public bool TargetReached { get; private set; }
 
-	public void Initialize(ArmsControl controller, Crisis.Runtime.Weapons.CharacterBody body)
+	public void Initialize(ArmsControl controller, Crisis.Runtime.FullSource.CharacterBody body)
 	{
 		this.body = body;
 		this.controller = controller;
