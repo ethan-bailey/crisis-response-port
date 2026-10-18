@@ -184,6 +184,17 @@ void Throws<T>(System.Action action,string label) where T:Exception {try{action(
  var other=new RuntimeWorld();other.MakeCurrent();
  Throws<NotSupportedException>(()=>GL.End(),"GL renderer scoped to world");
 }
+// Original mission fragment meshes retain sourced vertices/triangles as data.
+{
+ var mesh=new Mesh();
+ mesh.vertices=[new Vector3(0,0,0),new Vector3(1,0,0),new Vector3(0,1,0)];
+ mesh.triangles=[0,1,2];
+ Check(mesh.vertexCount==3&&mesh.triangles.SequenceEqual(new[]{0,1,2}),"original mesh geometry retained");
+ var copy=mesh.vertices;copy[0]=new Vector3(99,0,0);
+ Near(mesh.vertices[0].x,0,"mesh source vertex data isolated from callers");
+ Throws<ArgumentException>(()=>mesh.triangles=[0,1,3],"out of range triangle rejected");
+ Throws<ArgumentException>(()=>mesh.vertices=[Vector3.zero],"triangle indices survive invalid mesh shrink");
+}
 Console.WriteLine(Crisis.Runtime.RuntimeContracts.Run());
 Console.WriteLine($"PASS: {assertions} foundation assertions; original full CharacterBody build is a separate required gate.");
 
