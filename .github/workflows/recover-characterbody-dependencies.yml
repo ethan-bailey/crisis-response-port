@@ -1,8 +1,7 @@
 name: Recover authentic CharacterBody dependency scripts
 on:
-  push:
-    branches: [feature/full-source-characterbody-integration]
-    paths: [.github/workflows/recover-characterbody-dependencies.yml]
+  workflow_dispatch:
+
 permissions:
   actions: read
   contents: write

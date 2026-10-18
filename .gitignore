@@ -1,0 +1,5 @@
+# Local .NET and Python build caches; original tracked assets remain tracked.
+**/bin/
+**/obj/
+**/__pycache__/
+/work/

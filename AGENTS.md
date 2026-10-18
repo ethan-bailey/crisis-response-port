@@ -51,3 +51,21 @@ Derived from the 2026-10-16 workflow audit. These rules keep the port moving fas
 - The owner explicitly permits **beneficial, well-scoped iPhone usability enhancements** even when they differ from exact original behavior. This does not permit recreating original gameplay with invented substitutes.
 - **Proportional movement-stick speed is an approved, intentional feature.** Preserve the dead zone and analog target-speed scaling through future original `CharacterBody`/`PlayerController` integrations; retain keyboard full-speed behavior and recovered original acceleration/physics. Do not silently replace this with digital-only left/right movement for a 1:1 parity claim.
 - The normative implementation details, test contract and provenance are in `docs/APPROVED_IPHONE_ANALOG_MOVEMENT.md`. Future deviations need explicit written rationale and user approval, plus new regression evidence.
+
+## 9. Dependency closure and actor migration checkpoints
+
+- Full original CharacterBody compilation is manual-only, after a cohesive
+  subsystem batch passes narrow contracts. Do not restore push-triggered full
+  builds for individual missing types. Preserve failed compiler exit status.
+- Before importing source, use `docs/audit/recovery-source-index.json` and
+  `scripts/inventory_source_dependencies.py`; review ambiguous type identities.
+  Regenerate the source inventory with source changes and keep `--check` passing.
+- `Crisis.Runtime.FullSource.CharacterBody` is the final actor authority. Do not
+  add gameplay to the frozen transport owner files without a documented,
+  reviewed exception in `docs/REPOSITORY_REMEDIATION_2026-10-18.md`.
+- Run actor boundary/source checks, isolated EngineChecks, and existing foundation
+  checks before a deliberate complete compiler checkpoint. Two-actor lifecycle
+  and consolidated WASM/browser evidence remain required before gameplay migration.
+- Keep compiler baselines pinned to exact source/run evidence. Use diagnostic
+  diffs to distinguish resolved, introduced and unchanged errors. Read the
+  remediation log for rollback instructions and cross-PR integration contracts.

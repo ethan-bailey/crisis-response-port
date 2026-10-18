@@ -1,11 +1,7 @@
 name: Verify original raw YAML normal-sign bits for particle meshes
 on:
-  push:
-    branches:
-      - codex/projectile-material-impacts
-    paths:
-      - .github/workflows/recover-original-particle-meshes.yml
   workflow_dispatch:
+
 permissions:
   contents: write
   actions: read

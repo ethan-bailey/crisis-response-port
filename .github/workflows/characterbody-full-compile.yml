@@ -3,25 +3,13 @@ name: Compile recovered full CharacterBody dependency closure
 # Missing dependencies are expected until the full graph is recovered;
 # a failed closure run is evidence, not a reason to substitute source methods.
 on:
-  push:
-    branches: [feature/full-source-characterbody-integration]
-    paths:
-      - '.github/workflows/characterbody-full-compile.yml'
-      - 'runtime/Original/CharacterBody.Full.cs'
-      - 'runtime/Original/Animation/ArmController.cs'
-      - 'runtime/Engine/**'
-      - 'runtime/Original/**'
-      - 'runtime/FoundationChecks/**'
-      - 'scripts/verify_foundation_sources.py'
-      - 'scripts/summarize_characterbody_compile.py'
-      - 'scripts/check_characterbody_ownership.py'
-      - 'scripts/verify_full_characterbody_enums.py'
   workflow_dispatch:
+
 permissions:
   contents: read
 concurrency:
-  group: characterbody-closure-${{ github.ref }}
-  cancel-in-progress: true
+  group: characterbody-closure
+  cancel-in-progress: false
 jobs:
   foundation-contracts:
     runs-on: ubuntu-24.04
@@ -33,6 +21,10 @@ jobs:
           global-json-file: tools/wasm-compile/global.json
       - name: Verify recovered foundation and plugin method identity
         run: python3 scripts/verify_foundation_sources.py
+      - name: Execute isolated graphics subsystem before original foundations
+        run: dotnet run --project runtime/EngineChecks/Crisis.Runtime.EngineChecks.csproj
+      - name: Enforce migration boundary
+        run: python3 scripts/check_actor_migration.py
       - name: Execute original managed foundations and engine adapter contracts
         run: |
           set -o pipefail
@@ -52,6 +44,7 @@ jobs:
   # This separate, REQUIRED probe still builds the whole original class.
   # Foundation harness success must never mask its unresolved dependencies.
   compile-closure:
+    needs: foundation-contracts
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -65,16 +58,23 @@ jobs:
         run: |
           set -o pipefail
           python3 scripts/check_characterbody_ownership.py --strict | tee characterbody-ownership.log
+      - name: Verify dependency inventory is current
+        run: python3 scripts/inventory_source_dependencies.py --check
       - name: Compile all source lines and preserve missing dependencies
+        id: compile
         run: |
           cp tools/wasm-compile/global.json global.json
-          dotnet build runtime/Crisis.Runtime.csproj -v:q -p:GenerateDocumentationFile=false > characterbody-compile.log 2>&1 || {
-            cat characterbody-compile.log | tail -250
-            exit 1
-          }
+          set +e
+          dotnet build runtime/Crisis.Runtime.csproj -v:q -p:GenerateDocumentationFile=false > characterbody-compile.log 2>&1
+          result=$?
+          echo "exit_code=$result" >> "$GITHUB_OUTPUT"
+          tail -250 characterbody-compile.log
+          exit "$result"
       - name: Classify exact full-source compiler diagnostics
         if: always()
-        run: python3 scripts/summarize_characterbody_compile.py characterbody-compile.log --output characterbody-diagnostics.json
+        run: python3 scripts/summarize_characterbody_compile.py characterbody-compile.log --output characterbody-diagnostics.json --baseline docs/audit/compiler-baseline.json --build-exit-code "$BUILD_EXIT_CODE"
+        env:
+          BUILD_EXIT_CODE: ${{ steps.compile.outputs.exit_code || 255 }}
       - name: Record exact compiler diagnostics
         if: always()
         uses: actions/upload-artifact@v4

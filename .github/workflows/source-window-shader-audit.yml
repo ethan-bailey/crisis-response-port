@@ -1,11 +1,7 @@
 name: Audit original window shader source once
 on:
-  push:
-    branches:
-      - codex/projectile-material-impacts
-    paths:
-      - .github/workflows/source-window-shader-audit.yml
   workflow_dispatch:
+
 permissions:
   contents: read
   actions: read
