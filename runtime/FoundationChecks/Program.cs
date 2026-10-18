@@ -160,6 +160,19 @@ void Throws<T>(System.Action action,string label) where T:Exception {try{action(
  var next=new RuntimeWorld();next.MakeCurrent();
  Throws<NotSupportedException>(()=>{var _=RenderTexture.active;},"render driver isolated across actor worlds");
 }
+// Recovered limb mesh material assignments must be routed to a graphics driver.
+{
+ var world=new RuntimeWorld();var go=new GameObject("original skin renderer",world);
+ var mesh=go.AddComponent<MeshRenderer>();
+ Check(mesh is Renderer,"mesh renderer retains source Renderer identity");
+ Throws<NotSupportedException>(()=>mesh.material.SetTexture("_DamageMask",null),"unbound source material cannot fake texture upload");
+ string property=null;Texture assigned=null;
+ mesh.material.OnTextureAssigned=(name,texture)=>{property=name;assigned=texture;};
+ var target=new RenderTexture();
+ mesh.material.SetTexture("_DamageMask",target);
+ Check(property=="_DamageMask"&&ReferenceEquals(assigned,target),"damage target forwarded to material driver");
+ Throws<ArgumentException>(()=>mesh.material.SetTexture("",target),"empty material parameter rejected");
+}
 Console.WriteLine(Crisis.Runtime.RuntimeContracts.Run());
 Console.WriteLine($"PASS: {assertions} foundation assertions; original full CharacterBody build is a separate required gate.");
 
