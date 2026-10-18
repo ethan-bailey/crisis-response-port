@@ -42,9 +42,23 @@ def main() -> int:
             errors.append(f"missing: {path.relative_to(ROOT)}")
             continue
         source = path.read_text(encoding="utf-8")
+        # The foundation harness deliberately compiles the legacy transport
+        # under CRISIS_FOUNDATION_TRANSPORT. Reject it in the full runtime,
+        # but do not report a false ownership conflict for that isolated target.
+        foundation_guard = False
         for line_number, line in enumerate(source.splitlines(), 1):
-            if TRANSPORT_TYPE in line:
-                errors.append(f"{path.relative_to(ROOT)}:{line_number}: transport CharacterBody referenced")
+            directive = line.strip()
+            if directive == "#if CRISIS_FOUNDATION_TRANSPORT":
+                foundation_guard = True
+                continue
+            if directive == "#else" and foundation_guard:
+                foundation_guard = False
+                continue
+            if directive == "#endif" and foundation_guard:
+                foundation_guard = False
+                continue
+            if TRANSPORT_TYPE in line and not foundation_guard:
+                errors.append(f"{path.relative_to(ROOT)}:{line_number}: transport CharacterBody referenced in full runtime")
         if label == "full character":
             if f"namespace {ORIGINAL_TYPE.rsplit('.', 1)[0]};" not in source:
                 errors.append("full character's namespace changed")
