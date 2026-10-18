@@ -1,0 +1,27 @@
+{
+  "sourceSha": "23e4cf0db8ca9a9aad09af44059f5939d70879c5",
+  "sourceTree": "8c3079c5b679f161b7b347675194e44876adb5f0",
+  "baselineSha": "8949d029e90d4700e2d7beaa2b4297ac4cdeb2be",
+  "sdk": "8.0.426",
+  "githubActionsRun": null,
+  "fullBuildExitCode": 1,
+  "files": {
+    "actor-migration.log": "036b09c0e11b401545aa8f63078d1ca9f466544051937ba79b05eb25e9db9b43",
+    "audit-tests.log": "818de62503af61a02194e1d6bf47aba5fe7aed9bdf1d844894a7e03790e6bf34",
+    "baseline-build.log": "8ffc064be81ab647da02ecf378f34c09125638b540d747fa3f9326d7f1478544",
+    "baseline-build.log.exit": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "baseline-diagnostics.json": "2ef2a2ee878d77e4834d6c9e71ddad07c79e5e30b97a97dccc6192ef82ecff9c",
+    "engine-build.log": "7ae9abacdf985baa4deab48f4a84550d49a8740420688686c19c9d25f92ddc64",
+    "engine-build.log.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "engine-tests.log": "d8361fd4c44a6e142ee572a91308ff15c54e8a2531f72a4c168bdcce3c48440d",
+    "foundation-build.log": "39c7e342c350d575ca2c2d2c5c45dc95744de56505cac1688de802bdf35ac977",
+    "foundation-build.log.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "foundation-tests.log": "bdd97e6906d2d3c9693b57c75806c9600c04989515952554ebdd016774b3057c",
+    "full-build.log": "a977a011256c22dbc2a7d8c180f55201d16ce447c5f543658ef2fc98155e71aa",
+    "full-build.log.exit": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "full-diagnostics.json": "23714a5064f7593404b2e8b97e5705afcf2e4b63b716a9ea4bbed7706f050cbe",
+    "inventory.log": "71005574f12b243fa5d2d71e3bea7797a074ed146885833c44eb5313c591ee21",
+    "ownership.log": "c55ba47ed5da19342b0fff9615db8dfbf94229edfad8771f836d6e84649dd634",
+    "source-identities.log": "ecd27841599cd8c3bb25ef9d65b5d15acc1ea938bca00dc9273f875940137d26"
+  }
+}

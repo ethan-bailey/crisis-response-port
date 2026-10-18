@@ -1,0 +1,971 @@
+{
+  "schemaVersion": 1,
+  "missingSymbolCallsites": {
+    "Benchmark": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 138,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "BloodStream": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 51,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "BloodStreamGenerator": [
+      {
+        "path": "runtime/Original/FullSource/Wound.cs",
+        "line": 27,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "CellPhone": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 134,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "DoorTrap": [
+      {
+        "path": "runtime/Original/FullSource/DoorController.cs",
+        "line": 67,
+        "column": 9,
+        "code": "CS0246"
+      },
+      {
+        "path": "runtime/Original/FullSource/DoorController.cs",
+        "line": 192,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "Doors": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 132,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "DynamicLimbDecalRenderer": [
+      {
+        "path": "runtime/Original/FullSource/Limb.cs",
+        "line": 104,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "DynamicLimbTexturePool": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 108,
+        "column": 10,
+        "code": "CS0246"
+      }
+    ],
+    "FireAlarm": [
+      {
+        "path": "runtime/Original/FullSource/Room.cs",
+        "line": 54,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "FloorPoolPainter": [
+      {
+        "path": "runtime/Original/FullSource/Limb.cs",
+        "line": 106,
+        "column": 9,
+        "code": "CS0246"
+      },
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 53,
+        "column": 9,
+        "code": "CS0246"
+      },
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 55,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "FogOfWarElement": [
+      {
+        "path": "runtime/Original/FullSource/Room.cs",
+        "line": 25,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "GrenadeSpoon": [
+      {
+        "path": "runtime/Original/FullSource/Grenade.cs",
+        "line": 35,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "Interactable": [
+      {
+        "path": "runtime/Original/FullSource/DoorController.cs",
+        "line": 7,
+        "column": 31,
+        "code": "CS0246"
+      }
+    ],
+    "InteriorMode": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 48,
+        "column": 9,
+        "code": "CS0246"
+      },
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 136,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "InteriorModeUI": [
+      {
+        "path": "runtime/Original/FullSource/Communication.cs",
+        "line": 37,
+        "column": 10,
+        "code": "CS0246"
+      }
+    ],
+    "LimbTextureData": [
+      {
+        "path": "runtime/Original/FullSource/LimbRenderer.cs",
+        "line": 52,
+        "column": 10,
+        "code": "CS0246"
+      }
+    ],
+    "Marksman": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 128,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "Marksmen": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 35,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "MissionUI": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 28,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "Mixer": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 124,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "NegotiationMode": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 39,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "Occupants": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 130,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "Operators": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 126,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "PaintableSurface": [
+      {
+        "path": "runtime/Original/FullSource/FloorStreakPainter.cs",
+        "line": 47,
+        "column": 9,
+        "code": "CS0246"
+      },
+      {
+        "path": "runtime/Original/FullSource/FloorStreakPainter.cs",
+        "line": 49,
+        "column": 25,
+        "code": "CS0246"
+      }
+    ],
+    "PoweredLight": [
+      {
+        "path": "runtime/Original/FullSource/Room.cs",
+        "line": 40,
+        "column": 14,
+        "code": "CS0246"
+      },
+      {
+        "path": "runtime/Original/FullSource/Room.cs",
+        "line": 92,
+        "column": 38,
+        "code": "CS0246"
+      }
+    ],
+    "ScoreKeeper": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 122,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "SerializableAudioSettings": [
+      {
+        "path": "runtime/Original/FullSource/Settings.cs",
+        "line": 17,
+        "column": 10,
+        "code": "CS0246"
+      },
+      {
+        "path": "runtime/Original/FullSource/Settings.cs",
+        "line": 40,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "SerializableBulletTimeEntry": [
+      {
+        "path": "runtime/Original/FullSource/TimeScaler.cs",
+        "line": 166,
+        "column": 25,
+        "code": "CS0246"
+      }
+    ],
+    "SerializableExtraSettings_0_0_9_4792": [
+      {
+        "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+        "line": 11,
+        "column": 45,
+        "code": "CS0246"
+      },
+      {
+        "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+        "line": 91,
+        "column": 35,
+        "code": "CS0246"
+      }
+    ],
+    "SerializableGeneralSettings": [
+      {
+        "path": "runtime/Original/FullSource/Settings.cs",
+        "line": 9,
+        "column": 10,
+        "code": "CS0246"
+      },
+      {
+        "path": "runtime/Original/FullSource/Settings.cs",
+        "line": 27,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "SerializableGraphicsSettings": [
+      {
+        "path": "runtime/Original/FullSource/Settings.cs",
+        "line": 15,
+        "column": 10,
+        "code": "CS0246"
+      },
+      {
+        "path": "runtime/Original/FullSource/Settings.cs",
+        "line": 87,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "SerializableLocationSettings": [
+      {
+        "path": "runtime/Original/FullSource/Settings.cs",
+        "line": 25,
+        "column": 10,
+        "code": "CS0246"
+      },
+      {
+        "path": "runtime/Original/FullSource/Settings.cs",
+        "line": 139,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "SerializableOccupantSettings": [
+      {
+        "path": "runtime/Original/FullSource/Settings.cs",
+        "line": 23,
+        "column": 10,
+        "code": "CS0246"
+      },
+      {
+        "path": "runtime/Original/FullSource/Settings.cs",
+        "line": 126,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "SerializablePerformanceSettings": [
+      {
+        "path": "runtime/Original/FullSource/Emitter.cs",
+        "line": 32,
+        "column": 43,
+        "code": "CS0246"
+      },
+      {
+        "path": "runtime/Original/FullSource/Settings.cs",
+        "line": 13,
+        "column": 10,
+        "code": "CS0246"
+      },
+      {
+        "path": "runtime/Original/FullSource/Settings.cs",
+        "line": 61,
+        "column": 9,
+        "code": "CS0246"
+      },
+      {
+        "path": "runtime/Original/FullSource/Settings.cs",
+        "line": 74,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "SerializableTimeSettings": [
+      {
+        "path": "runtime/Original/FullSource/DoorController.cs",
+        "line": 116,
+        "column": 10,
+        "code": "CS0246"
+      },
+      {
+        "path": "runtime/Original/FullSource/Settings.cs",
+        "line": 19,
+        "column": 10,
+        "code": "CS0246"
+      },
+      {
+        "path": "runtime/Original/FullSource/Settings.cs",
+        "line": 100,
+        "column": 9,
+        "code": "CS0246"
+      },
+      {
+        "path": "runtime/Original/FullSource/TimeScaler.cs",
+        "line": 26,
+        "column": 10,
+        "code": "CS0246"
+      }
+    ],
+    "ToggleElectricity": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 76,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "TutorialMode": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 144,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "UIGrenadeTimer": [
+      {
+        "path": "runtime/Original/FullSource/Grenade.cs",
+        "line": 39,
+        "column": 9,
+        "code": "CS0246"
+      },
+      {
+        "path": "runtime/Original/FullSource/Grenade.cs",
+        "line": 61,
+        "column": 10,
+        "code": "CS0246"
+      }
+    ],
+    "UIHitAnnouncements": [
+      {
+        "path": "runtime/Original/FullSource/Physiology.cs",
+        "line": 87,
+        "column": 10,
+        "code": "CS0246"
+      }
+    ],
+    "UIInteriorModeTextIndicator": [
+      {
+        "path": "runtime/Original/FullSource/TimeScaler.cs",
+        "line": 28,
+        "column": 10,
+        "code": "CS0246"
+      }
+    ],
+    "UIVocalizationText": [
+      {
+        "path": "runtime/Original/FullSource/Communication.cs",
+        "line": 39,
+        "column": 10,
+        "code": "CS0246"
+      }
+    ],
+    "UnityEventInt": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 82,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "Usage": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 6,
+        "column": 7,
+        "code": "CS0246"
+      }
+    ],
+    "WallStreakPainter": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 57,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ]
+  },
+  "sourceSha": "8949d029e90d4700e2d7beaa2b4297ac4cdeb2be",
+  "buildExitCode": 1,
+  "uniqueErrorCount": 64,
+  "missingSymbols": [
+    "Benchmark",
+    "BloodStream",
+    "BloodStreamGenerator",
+    "CellPhone",
+    "DoorTrap",
+    "Doors",
+    "DynamicLimbDecalRenderer",
+    "DynamicLimbTexturePool",
+    "FireAlarm",
+    "FloorPoolPainter",
+    "FogOfWarElement",
+    "GrenadeSpoon",
+    "Interactable",
+    "InteriorMode",
+    "InteriorModeUI",
+    "LimbTextureData",
+    "Marksman",
+    "Marksmen",
+    "MissionUI",
+    "Mixer",
+    "NegotiationMode",
+    "Occupants",
+    "Operators",
+    "PaintableSurface",
+    "PoweredLight",
+    "ScoreKeeper",
+    "SerializableAudioSettings",
+    "SerializableBulletTimeEntry",
+    "SerializableExtraSettings_0_0_9_4792",
+    "SerializableGeneralSettings",
+    "SerializableGraphicsSettings",
+    "SerializableLocationSettings",
+    "SerializableOccupantSettings",
+    "SerializablePerformanceSettings",
+    "SerializableTimeSettings",
+    "ToggleElectricity",
+    "TutorialMode",
+    "UIGrenadeTimer",
+    "UIHitAnnouncements",
+    "UIInteriorModeTextIndicator",
+    "UIVocalizationText",
+    "UnityEventInt",
+    "Usage",
+    "WallStreakPainter"
+  ],
+  "compilerDiagnostics": [
+    {
+      "path": "runtime/Original/FullSource/Communication.cs",
+      "line": 37,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'InteriorModeUI' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Communication.cs",
+      "line": 39,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'UIVocalizationText' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/DoorController.cs",
+      "line": 7,
+      "column": 31,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Interactable' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/DoorController.cs",
+      "line": 67,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'DoorTrap' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/DoorController.cs",
+      "line": 116,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableTimeSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/DoorController.cs",
+      "line": 192,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'DoorTrap' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Emitter.cs",
+      "line": 32,
+      "column": 43,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializablePerformanceSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/FloorStreakPainter.cs",
+      "line": 47,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'PaintableSurface' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/FloorStreakPainter.cs",
+      "line": 49,
+      "column": 25,
+      "code": "CS0246",
+      "message": "The type or namespace name 'PaintableSurface' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Grenade.cs",
+      "line": 35,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'GrenadeSpoon' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Grenade.cs",
+      "line": 39,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'UIGrenadeTimer' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Grenade.cs",
+      "line": 61,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'UIGrenadeTimer' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Limb.cs",
+      "line": 104,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'DynamicLimbDecalRenderer' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Limb.cs",
+      "line": 106,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'FloorPoolPainter' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/LimbRenderer.cs",
+      "line": 52,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'LimbTextureData' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 6,
+      "column": 7,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Usage' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 28,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'MissionUI' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 35,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Marksmen' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 39,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'NegotiationMode' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 48,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'InteriorMode' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 51,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'BloodStream' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 53,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'FloorPoolPainter' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 55,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'FloorPoolPainter' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 57,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'WallStreakPainter' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 76,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'ToggleElectricity' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 82,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'UnityEventInt' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 108,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'DynamicLimbTexturePool' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 122,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'ScoreKeeper' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 124,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Mixer' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 126,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Operators' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 128,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Marksman' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 130,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Occupants' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 132,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Doors' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 134,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'CellPhone' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 136,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'InteriorMode' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 138,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Benchmark' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 140,
+      "column": 9,
+      "code": "CS0722",
+      "message": "'MarksmanMode': static types cannot be used as return types"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 144,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'TutorialMode' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Physiology.cs",
+      "line": 87,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'UIHitAnnouncements' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Room.cs",
+      "line": 25,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'FogOfWarElement' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Room.cs",
+      "line": 40,
+      "column": 14,
+      "code": "CS0246",
+      "message": "The type or namespace name 'PoweredLight' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Room.cs",
+      "line": 54,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'FireAlarm' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Room.cs",
+      "line": 92,
+      "column": 38,
+      "code": "CS0246",
+      "message": "The type or namespace name 'PoweredLight' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 11,
+      "column": 45,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableExtraSettings_0_0_9_4792' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 91,
+      "column": 35,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableExtraSettings_0_0_9_4792' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 9,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableGeneralSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 13,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializablePerformanceSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 15,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableGraphicsSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 17,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableAudioSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 19,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableTimeSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 23,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableOccupantSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 25,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableLocationSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 27,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableGeneralSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 40,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableAudioSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 61,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializablePerformanceSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 74,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializablePerformanceSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 87,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableGraphicsSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 100,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableTimeSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 126,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableOccupantSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 139,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableLocationSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/TimeScaler.cs",
+      "line": 26,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableTimeSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/TimeScaler.cs",
+      "line": 28,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'UIInteriorModeTextIndicator' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/TimeScaler.cs",
+      "line": 166,
+      "column": 25,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableBulletTimeEntry' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Wound.cs",
+      "line": 27,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'BloodStreamGenerator' could not be found (are you missing a using directive or an assembly reference?)"
+    }
+  ],
+  "scope": "Reported diagnostics only; unresolved declarations can hide further errors. Build exit code, not parsed error count, determines compilation success."
+}
