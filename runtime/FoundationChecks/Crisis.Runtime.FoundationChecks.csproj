@@ -2,7 +2,7 @@
   <PropertyGroup><TargetFramework>net8.0</TargetFramework><OutputType>Exe</OutputType><ImplicitUsings>enable</ImplicitUsings><Nullable>disable</Nullable><EnableDefaultCompileItems>false</EnableDefaultCompileItems></PropertyGroup>
   <ItemGroup>
     <Compile Include="../Engine/**/*.cs" />
-    <Compile Include="../Original/**/*.cs" Exclude="../Original/CharacterBody.Full.cs" />
+    <Compile Include="../Original/**/*.cs" Exclude="../Original/CharacterBody.Full.cs;../Original/Animation/ArmController.cs;../Original/Animation/ArmsControl.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 </Project>
