@@ -23,6 +23,8 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           global-json-file: tools/wasm-compile/global.json
+      - name: Verify exact original CharacterBody enum identities
+        run: python3 scripts/verify_full_characterbody_enums.py
       - name: Compile all source lines and preserve missing dependencies
         run: |
           cp tools/wasm-compile/global.json global.json
