@@ -16,10 +16,14 @@ public class Joint:Component {
  public Vector3 anchor,connectedAnchor;
  public bool autoConfigureConnectedAnchor=true;
  public float breakForce=float.PositiveInfinity,breakTorque=float.PositiveInfinity;
+ public float massScale=1f,connectedMassScale=1f;
  public bool enableCollision,enablePreprocessing=true;
 }
+public struct JointMotor {public float targetVelocity,force;public bool freeSpin;}
 public sealed class FixedJoint:Joint { }
 public sealed class HingeJoint:Joint {
+ public JointMotor motor;
+ public bool useMotor;
  bool springEnabled;
  JointSpring currentSpring;
  JointLimits currentLimits;
