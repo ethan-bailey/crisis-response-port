@@ -41,14 +41,15 @@ class DiagnosticDiffTests(unittest.TestCase):
 
 class RuntimePackageInputTests(unittest.TestCase):
     def test_original_operator_and_occupant_prefabs_are_packaged(self):
-        seeds = set(runtime_scene.runtime_asset_seeds(runtime_scene.ROOT))
-        manifest_path = runtime_scene.ROOT / 'source-reference/Original/CharacterDependencies/ActorPrefabs/provenance.json'
+        root = Path(runtime_scene.__file__).resolve().parents[1]
+        seeds = set(runtime_scene.runtime_asset_seeds(root))
+        manifest_path = root / 'source-reference/Original/CharacterDependencies/ActorPrefabs/provenance.json'
         manifest = json.loads(manifest_path.read_text())
         for actor in ('Operator', 'Occupant'):
             prefab_path = f'Assets/Resources/characters/{actor}.prefab'
             self.assertIn(prefab_path, seeds)
             self.assertGreater(manifest['actorInventory'][actor]['serializedRecords'], 0)
-            self.assertTrue((runtime_scene.ROOT / 'source-reference/Original/CharacterDependencies/ActorPrefabs' / f'{actor}.prefab').is_file())
+            self.assertTrue((root / 'source-reference/Original/CharacterDependencies/ActorPrefabs' / f'{actor}.prefab').is_file())
 
 
 class BoundaryTests(unittest.TestCase):
