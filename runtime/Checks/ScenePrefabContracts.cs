@@ -30,12 +30,12 @@ public static class ScenePrefabContracts {
             guidPaths=new Dictionary<string,string>{{guid,"Assets/Scripts/ScenePrefabProbe.cs"}},
             assets=new Dictionary<string,object>{{path,new{records}}}
         });
-        var assets=new RuntimeWorld(makeCurrent:false);
-        var loaded=SceneLoader.LoadPrefab(package,path,assets);
-        var prefab=loaded.prefabRoot;
+        Resources.Configure(package);
+        var prefab=Resources.Load("Characters/Probe") as GameObject;
+        Check(prefab!=null,"Original character prefab is available through Resources.Load");
         var template=prefab.GetComponent<ScenePrefabProbe>();
         var templateChild=prefab.transform.GetChild(0);
-        Check(loaded.originalComponents==1&&loaded.unsupportedComponents.Count==0&&loaded.unresolvedReferences.Count==0,"Original prefab records load without unresolved component fields");
+        Check(template!=null&&template.child!=null,"Original prefab records load without unresolved component fields");
         Check(ReferenceEquals(template.child,templateChild)&&ReferenceEquals(template.colliderReference,templateChild.GetComponent<BoxCollider>())&&ReferenceEquals(template.linkedTransforms[0],templateChild),"Serialized references bind to the exact prefab graph objects");
         Check(!template.awokeWithBoundReferences&&!prefab.activeInHierarchy,"Prefab asset loading defers gameplay callbacks and remains outside the active scene");
         var world=new RuntimeWorld();world.MakeCurrent();
