@@ -50,6 +50,7 @@ public static class SceneLoader {
         var asset=package.GetProperty("assets").GetProperty(assetPath);
         var records=asset.GetProperty("records").EnumerateArray().Select(r=>r.Clone()).ToArray();
         var result=new SceneLoadResult{scene=assetPath,serializedRecords=records.Length,world=world};
+        var existingObjects=new HashSet<UObject>(world.Objects,ReferenceEqualityComparer.Instance);
         using var deferred=world.DeferActivation();
         try {
             var transformsByGO=records.Where(r=>r.GetProperty("classID").GetInt32() is 4 or 224)
@@ -90,16 +91,16 @@ public static class SceneLoader {
                 if(!result.objects.TryGetValue(Ref(goRef),out var goObj)||goObj is not GameObject go)throw new InvalidOperationException($"Component {id} has unresolved GameObject");
                 Component component=null;
                 switch(cls){
-                    case 23:component=go.AddComponent<MeshRenderer>();break;
-                    case 33:component=go.AddComponent<MeshFilter>();break;
-                    case 54:component=go.AddComponent<Rigidbody>();break;
-                    case 59:component=go.AddComponent<HingeJoint>();break;
-                    case 61:component=go.AddComponent<BoxCollider2D>();break;
+                    case 23 when prefab:component=go.AddComponent<MeshRenderer>();break;
+                    case 33 when prefab:component=go.AddComponent<MeshFilter>();break;
+                    case 54 when prefab:component=go.AddComponent<Rigidbody>();break;
+                    case 59 when prefab:component=go.AddComponent<HingeJoint>();break;
+                    case 61 when prefab:component=go.AddComponent<BoxCollider2D>();break;
                     case 65:{var box=go.AddComponent<BoxCollider>();box.center=Vector(fields.GetProperty("m_Center"));box.size=Vector(fields.GetProperty("m_Size"));box.isTrigger=Flag(fields,"m_IsTrigger",false);component=box;result.boxColliders++;break;}
-                    case 82:component=go.AddComponent<AudioSource>();break;
-                    case 95:component=go.AddComponent<Animator>();break;
-                    case 108:component=go.AddComponent<Light>();break;
-                    case 136:component=go.AddComponent<CapsuleCollider>();break;
+                    case 82 when prefab:component=go.AddComponent<AudioSource>();break;
+                    case 95 when prefab:component=go.AddComponent<Animator>();break;
+                    case 108:{var light=go.AddComponent<Light>();light.intensity=Number(fields,"m_Intensity",1);component=light;break;}
+                    case 136 when prefab:component=go.AddComponent<CapsuleCollider>();break;
                     case 114:{
                         string guid=fields.GetProperty("m_Script").GetProperty("guid").GetString();
                         label=package.GetProperty("guidPaths").TryGetProperty(guid,out var path)?Path.GetFileNameWithoutExtension(path.GetString()):$"Script:{guid}";
@@ -111,10 +112,10 @@ public static class SceneLoader {
                 if(component!=null){
                     result.objects[id]=component;
                     if(component is Behaviour b)b.enabled=Flag(fields,"m_Enabled");
-                    if(cls is not (65 or 114))builtinFields.Add((component,fields,id,cls));
+                    if(prefab&&cls!=114)builtinFields.Add((component,fields,id,cls));
                 } else result.unsupportedComponents[label]=result.unsupportedComponents.GetValueOrDefault(label)+1;
             }
-            foreach(var (component,fields,id,int classID) in builtinFields)AssignBuiltinFields(component,fields,result,id,classID);
+            foreach(var (component,fields,id,classID) in builtinFields)AssignBuiltinFields(component,fields,result,id,classID);
             foreach(var (component,fields,id) in scriptFields)AssignSerializedFields(component,fields,result,id);
             var roots=records.Where(r=>r.GetProperty("classID").GetInt32() is 4 or 224)
                 .Select(r=>(Transform)result.objects[r.GetProperty("fileID").GetString()])
@@ -132,8 +133,7 @@ public static class SceneLoader {
                 throw new NotSupportedException($"Incomplete original prefab {assetPath}: unsupported [{string.Join(", ",result.unsupportedComponents.Keys)}], unresolved [{string.Join(", ",result.unresolvedReferences.Take(8))}]");
             return result;
         }catch{
-            var root=world.Objects.OfType<GameObject>().FirstOrDefault(g=>g&&ReferenceEquals(g.world,world)&&g.transform.parent==null&&g.name==assetPath);
-            if(root!=null)world.DestroyNow(root);
+            foreach(var root in world.Objects.OfType<GameObject>().Where(g=>g&&!existingObjects.Contains(g)&&ReferenceEquals(g.world,world)&&g.transform.parent==null).ToArray())world.DestroyNow(root);
             throw;
         }
     }
@@ -195,6 +195,7 @@ public static class SceneLoader {
                 SetField("Loop","loop",typeof(bool));SetField("Mute","mute",typeof(bool));SetField("Priority","priority",typeof(int));External("OutputAudioMixerGroup");break;
             case 95:External("m_Avatar");External("m_Controller");break;
             case 108:SetField("m_Intensity","intensity",typeof(float));break;
+            case 65:External("m_Material");break;
             case 136:
                 SetField("m_Center","center",typeof(Vector3));SetField("m_Radius","radius",typeof(float));SetField("m_Height","height",typeof(float));SetField("m_Direction","direction",typeof(int));
                 SetField("m_IsTrigger","isTrigger",typeof(bool));External("m_Material");break;
