@@ -108,9 +108,11 @@ public static class SceneLoader {
             var roots=records.Where(r=>r.GetProperty("classID").GetInt32() is 4 or 224)
                 .Select(r=>(Transform)result.objects[r.GetProperty("fileID").GetString()])
                 .Where(t=>t.parent==null).ToArray();
-            if(roots.Length!=1)throw new InvalidOperationException($"Expected one root Transform in {assetPath}, found {roots.Length}");
-            result.prefabRoot=roots[0].gameObject;
-            if(prefab)foreach(var go in world.Objects.OfType<GameObject>().Where(g=>ReferenceEquals(g.world,world)&&g!=null&&IsWithin(g.transform,roots[0])))go.assetObject=true;
+            if(prefab&&roots.Length!=1)throw new InvalidOperationException($"Expected one root Transform in prefab {assetPath}, found {roots.Length}");
+            if(prefab){
+                result.prefabRoot=roots[0].gameObject;
+                foreach(var go in world.Objects.OfType<GameObject>().Where(g=>ReferenceEquals(g.world,world)&&g!=null&&IsWithin(g.transform,roots[0])))go.assetObject=true;
+            }
             if(!prefab&&package.GetProperty("assets").TryGetProperty("ProjectSettings/TimeManager.asset",out var timeAsset)){
                 var settings=timeAsset.GetProperty("records")[0].GetProperty("fields");
                 Time.fixedDeltaTime=Number(settings,"Fixed Timestep",.02f);Time.maximumDeltaTime=Number(settings,"Maximum Allowed Timestep",.33333334f);Time.timeScale=Number(settings,"m_TimeScale",1);
