@@ -30,6 +30,11 @@ public static class AmmunitionLoader {
             else if(field.FieldType==typeof(string))field.SetValue(ammo,value.ValueKind==JsonValueKind.Null?null:value.GetString());
             else if(field.FieldType.IsEnum)field.SetValue(ammo,Enum.ToObject(field.FieldType,value.GetInt32()));
             else if(field.FieldType==typeof(List<AmmunitionBase.FragmentationSpecification>)){field.SetValue(ammo,JsonSerializer.Deserialize<List<AmmunitionBase.FragmentationSpecification>>(value.GetRawText(),new JsonSerializerOptions{IncludeFields=true}));}
+            else if(field.FieldType==typeof(Utilities.Availability)){
+                var availability=JsonSerializer.Deserialize<Utilities.Availability>(value.GetRawText(),new JsonSerializerOptions{IncludeFields=true});
+                if(availability==null)throw new InvalidDataException($"Original ammunition field {field.Name} deserialized to null");
+                field.SetValue(ammo,availability);
+            }
             else if(field.FieldType==typeof(AnimationCurve)){
                 var keys=value.GetProperty("m_Curve").EnumerateArray().Select(k=>{
                     if(k.TryGetProperty("weightedMode",out var mode)&&mode.GetInt32()!=0)throw new NotSupportedException("Weighted original animation curve");
