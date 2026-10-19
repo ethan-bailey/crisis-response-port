@@ -195,7 +195,7 @@ public static class SceneLoader {
                 SetField("Loop","loop",typeof(bool));SetField("Mute","mute",typeof(bool));SetField("Priority","priority",typeof(int));External("OutputAudioMixerGroup");break;
             case 95:External("m_Avatar");External("m_Controller");break;
             case 108:SetField("m_Intensity","intensity",typeof(float));break;
-            case 65:External("m_Material");break;
+            case 65:SetField("m_Center","center",typeof(Vector3));SetField("m_Size","size",typeof(Vector3));SetField("m_IsTrigger","isTrigger",typeof(bool));External("m_Material");break;
             case 136:
                 SetField("m_Center","center",typeof(Vector3));SetField("m_Radius","radius",typeof(float));SetField("m_Height","height",typeof(float));SetField("m_Direction","direction",typeof(int));
                 SetField("m_IsTrigger","isTrigger",typeof(bool));External("m_Material");break;
