@@ -11,7 +11,15 @@ public struct JointSpring {
 public struct JointLimits {
  public float min,max,bounciness,bounceMinVelocity,contactDistance;
 }
-public sealed class HingeJoint:Component {
+public class Joint:Component {
+ public Rigidbody connectedBody;
+ public Vector3 anchor,connectedAnchor;
+ public bool autoConfigureConnectedAnchor=true;
+ public float breakForce=float.PositiveInfinity,breakTorque=float.PositiveInfinity;
+ public bool enableCollision,enablePreprocessing=true;
+}
+public sealed class FixedJoint:Joint { }
+public sealed class HingeJoint:Joint {
  bool springEnabled;
  JointSpring currentSpring;
  JointLimits currentLimits;

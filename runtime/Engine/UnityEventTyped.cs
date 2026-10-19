@@ -4,9 +4,9 @@ namespace UnityEngine.Events
 {
     public class UnityEvent<T,U>
     {
-        private event Action<T,U> listeners;
-        public void AddListener(Action<T,U> callback) { ArgumentNullException.ThrowIfNull(callback); listeners+=callback; }
-        public void RemoveListener(Action<T,U> callback) { listeners-=callback; }
+        private event UnityAction<T,U> listeners;
+        public void AddListener(UnityAction<T,U> callback) { ArgumentNullException.ThrowIfNull(callback); listeners+=callback; }
+        public void RemoveListener(UnityAction<T,U> callback) { listeners-=callback; }
         public void RemoveAllListeners() { listeners=null; }
         public void Invoke(T first,U second) { listeners?.Invoke(first,second); }
     }
@@ -15,15 +15,15 @@ namespace UnityEngine.Events
     // Persistent serialized UnityEvent listeners require scene importer binding.
     public class UnityEvent<T>
     {
-        private event Action<T> listeners;
+        private event UnityAction<T> listeners;
 
-        public void AddListener(Action<T> callback)
+        public void AddListener(UnityAction<T> callback)
         {
             ArgumentNullException.ThrowIfNull(callback);
             listeners += callback;
         }
 
-        public void RemoveListener(Action<T> callback)
+        public void RemoveListener(UnityAction<T> callback)
         {
             listeners -= callback;
         }

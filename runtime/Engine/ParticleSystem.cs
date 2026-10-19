@@ -7,10 +7,10 @@ namespace UnityEngine
     // authentic particle rendering and simulation.
     public sealed class ParticleSystem : Component
     {
-        public readonly struct MinMaxCurve
+        public struct MinMaxCurve
         {
-            public float constantMin { get; }
-            public float constantMax { get; }
+            public float constantMin { get; set; }
+            public float constantMax { get; set; }
             public MinMaxCurve(float constant) : this(constant, constant) { }
             public MinMaxCurve(float min, float max)
             {
@@ -38,6 +38,8 @@ namespace UnityEngine
                 get => owner.startSpeedValue;
                 set => owner.startSpeedValue = value;
             }
+            public MinMaxCurve startLifetime {get=>owner.startLifetimeValue;set=>owner.startLifetimeValue=value;}
+            public float startSizeMultiplier {get=>owner.startSizeMultiplierValue;set=>owner.startSizeMultiplierValue=value;}
         }
 
         public readonly struct ShapeModule
@@ -82,12 +84,17 @@ namespace UnityEngine
         public interface IParticleDriver
         {
             void Emit(ParticleSystem system, int count, EmissionState state);
+            void Simulate(ParticleSystem system,float time,bool withChildren,bool restart,bool fixedTimeStep)=>throw new NotSupportedException("Particle simulation requires a native particle driver");
+            void Play(ParticleSystem system)=>throw new NotSupportedException("Particle playback requires a native particle driver");
         }
 
         private int maximumParticles = 1000;
         private MinMaxCurve startSpeedValue = new MinMaxCurve(5f);
         private float shapeRadius = 1f;
         private float shapeAngle = 25f;
+        private MinMaxCurve startLifetimeValue=new(5f);
+        private float startSizeMultiplierValue=1f;
+        public uint randomSeed {get;set;}
         public IParticleDriver Driver { get; set; }
         public MainModule main => new MainModule(this);
         public ShapeModule shape => new ShapeModule(this);
@@ -99,5 +106,7 @@ namespace UnityEngine
                 throw new NotSupportedException("Original particle simulation and render driver is not bound");
             Driver.Emit(this, count, new EmissionState(maximumParticles, startSpeedValue, shapeRadius, shapeAngle));
         }
+        public void Simulate(float time,bool withChildren=true,bool restart=true,bool fixedTimeStep=true){if(!float.IsFinite(time)||time<0)throw new ArgumentOutOfRangeException(nameof(time));if(Driver==null)throw new NotSupportedException("Original particle simulation and render driver is not bound");Driver.Simulate(this,time,withChildren,restart,fixedTimeStep);}
+        public void Play(){if(Driver==null)throw new NotSupportedException("Original particle simulation and render driver is not bound");Driver.Play(this);}
     }
 }

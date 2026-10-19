@@ -45,8 +45,8 @@ first.MakeCurrent();Check(RenderTexture.active==null,"world target restored");
 // Verify new Unity-compatible API surfaces without claiming live rendering.
 var eventOrder=new List<int>();
 var typedEvent=new UnityEngine.Events.UnityEvent<int>();
-Action<int> firstListener=value=>eventOrder.Add(value);
-Action<int> secondListener=value=>eventOrder.Add(value+1);
+UnityEngine.Events.UnityAction<int> firstListener=value=>eventOrder.Add(value);
+UnityEngine.Events.UnityAction<int> secondListener=value=>eventOrder.Add(value+1);
 typedEvent.AddListener(firstListener);typedEvent.AddListener(secondListener);typedEvent.Invoke(3);
 Check(eventOrder.SequenceEqual(new[]{3,4}),"typed UnityEvent listeners execute in registration order");
 typedEvent.RemoveListener(firstListener);typedEvent.Invoke(5);

@@ -1,7 +1,8 @@
-using UnityEngine;
-
 namespace Crisis.Runtime.FullSource
 {
+using Random = UnityEngine.Random;
+using UnityEngine;
+
 public class MuscleControl : MonoBehaviour
 {
 	private CharacterBody body;

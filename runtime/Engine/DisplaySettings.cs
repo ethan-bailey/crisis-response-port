@@ -11,6 +11,7 @@ public enum ShadowmaskMode { Shadowmask, DistanceShadowmask }
 
 public interface IDisplaySettingsDriver {
     Resolution CurrentResolution { get; }
+    IReadOnlyList<Resolution> Resolutions=>new[]{CurrentResolution};
     bool FullScreen { get; }
     void SetResolution(int width,int height,bool fullScreen,int refreshRate);
 }
@@ -19,6 +20,7 @@ public static class Screen {
     public static void Bind(RuntimeWorld world,IDisplaySettingsDriver driver) { ArgumentNullException.ThrowIfNull(world);ArgumentNullException.ThrowIfNull(driver);drivers.Remove(world);drivers.Add(world,driver); }
     static IDisplaySettingsDriver Driver=>drivers.TryGetValue(RuntimeWorld.Current,out var value)?value:throw new NotSupportedException("Display settings driver is not bound");
     public static Resolution currentResolution=>Driver.CurrentResolution;
+    public static Resolution[] resolutions=>Driver.Resolutions.ToArray();
     public static bool fullScreen=>Driver.FullScreen;
     public static void SetResolution(int width,int height,bool fullscreen,int preferredRefreshRate=0) {
         if(width<=0||height<=0||preferredRefreshRate<0)throw new ArgumentOutOfRangeException(nameof(width));

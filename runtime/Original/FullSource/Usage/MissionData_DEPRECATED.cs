@@ -1,3 +1,4 @@
+using Crisis.Runtime.FullSource;
 namespace Usage
 {
 	public class MissionData_DEPRECATED

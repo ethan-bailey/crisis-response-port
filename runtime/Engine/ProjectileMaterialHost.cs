@@ -4,7 +4,8 @@ using Object=UnityEngine.Object;
 public partial class Projectile {
  public BallisticResult Status {get;set;} public bool HasExploded {get;set;} public float FragmentationTime {get;set;}
  public Component MarksmanOwner {get;set;}public bool FiredByMarksman=>MarksmanOwner!=null;
- public WeaponBase Weapon {get;set;} public CharacterBody Owner {get;set;} public AudioInstigator AudioInstigator {get;set;}
+ public WeaponBase Weapon {get;set;} public Crisis.Runtime.FullSource.CharacterBody Owner {get;set;}
+ public CharacterBody TransportOwner {get;set;} public AudioInstigator AudioInstigator {get;set;}
  public ProjectileTrace Trace {get;set;} public ProjectileTrace tracePrefab;public ProjectileEvent onInteraction=new();
  public Vector3 Position=>transform.position;float segmentLength;
  void CommonInitialize(){

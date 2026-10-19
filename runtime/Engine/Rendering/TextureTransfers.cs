@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 namespace UnityEngine;
 
-public enum RenderTextureFormat { ARGB32=0 }
+public enum RenderTextureFormat { ARGB32=0,Depth=1,ARGBHalf=2,RGHalf=15 }
 
 // Data transfers are distinct from GL rasterization. A backend must supply
 // actual target storage and readback, never an empty success callback.
@@ -11,6 +11,9 @@ public interface ITextureTransferDriver {
     void Release(RenderTexture target);
     void Blit(Texture source,RenderTexture destination);
     Color[] ReadPixels(RenderTexture source,int x,int y,int width,int height);
+}
+public interface ITexturePostProcessDriver:ITextureTransferDriver {
+    void Blit(Texture source,RenderTexture destination,Material material,int pass);
 }
 public static class Graphics {
     static readonly ConditionalWeakTable<RuntimeWorld,ITextureTransferDriver> drivers=new();
@@ -30,6 +33,18 @@ public static class Graphics {
         if(!destination.Create())throw new InvalidOperationException("Render target allocation failed");
         RequiredDriver(RuntimeWorld.Current).Blit(source,destination);
     }
+    public static void Blit(Texture source,RenderTexture destination,Material material,int pass){
+        RequireWorld(source);RequireWorld(destination);ArgumentNullException.ThrowIfNull(material);
+        if(pass<0||pass>=material.passCount)throw new ArgumentOutOfRangeException(nameof(pass));
+        if(!destination.Create())throw new InvalidOperationException("Render target allocation failed");
+        if(RequiredDriver(RuntimeWorld.Current) is not ITexturePostProcessDriver driver)
+            throw new NotSupportedException("Shader-backed texture blit driver is not bound");
+        driver.Blit(source,destination,material,pass);
+    }
+    public static void SetRenderTarget(RenderTexture target){RenderTexture.active=target;}
+    public static void SetRandomWriteTarget(int index,ComputeBuffer buffer)=>throw new NotSupportedException("Random write render targets require a GPU graphics driver");
+    public static void ClearRandomWriteTargets()=>throw new NotSupportedException("Random write render targets require a GPU graphics driver");
+    public static void DrawProceduralIndirect(MeshTopology topology,ComputeBuffer buffer,int argsOffset=0)=>throw new NotSupportedException("Indirect procedural rendering requires a GPU graphics driver");
     internal static Color[] ReadPixels(RenderTexture source,int x,int y,int width,int height) {
         RequireWorld(source);
         Texture2D.ValidateRegion(x,y,width,height,source.width,source.height);
@@ -54,6 +69,7 @@ public sealed class CpuTextureTransferDriver:IRenderTargetDriver,ITextureTransfe
     public bool Create(RenderTexture target) {
         RequireOwner(target);
         if(target.width<=0||target.height<=0)throw new ArgumentOutOfRangeException(nameof(target));
+        if(target.format!=RenderTextureFormat.ARGB32)throw new NotSupportedException($"CPU texture transfer does not support {target.format}");
         storage.GetValue(target,t=>new Storage(checked(t.width*t.height)));return true;
     }
     public void Release(RenderTexture target) {

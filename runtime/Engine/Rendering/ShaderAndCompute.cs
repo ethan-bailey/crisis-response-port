@@ -12,6 +12,7 @@ public sealed class RequireComponentAttribute : Attribute {
 }
 
 public enum FilterMode { Point, Bilinear, Trilinear }
+public enum MeshTopology { Triangles,Quads,Lines,LineStrip,Points }
 public enum ComputeBufferType { Default, Raw, Append, Counter, Constant, Structured, DrawIndirect, IndirectArguments }
 public enum HideFlags { None=0, HideInHierarchy=1, HideInInspector=2, DontSaveInEditor=4, NotEditable=8, DontSaveInBuild=16, DontUnloadUnusedAsset=32, DontSave=52, HideAndDontSave=61 }
 
@@ -39,6 +40,7 @@ public sealed class ComputeBuffer : IDisposable {
     Array data;
     bool released;
     public static IComputeBufferDriver Driver { get; set; }
+    public static void CopyCount(ComputeBuffer source,ComputeBuffer destination,int dstOffsetBytes)=>throw new NotSupportedException("GPU append counter readback requires a native compute driver");
     public int count { get; }
     public int stride { get; }
     public ComputeBufferType type { get; }

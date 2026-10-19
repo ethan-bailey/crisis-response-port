@@ -19,11 +19,17 @@ public sealed class RenderTexture : Texture {
     public RenderTexture(int width,int height,int depth,RenderTextureFormat format) {
         if(width<=0||height<=0)throw new ArgumentOutOfRangeException(nameof(width));
         if(depth is not (0 or 16 or 24))throw new NotSupportedException("Unsupported render texture depth");
-        if(format!=RenderTextureFormat.ARGB32)throw new NotSupportedException("Unsupported render texture color format");
         this.width=width;this.height=height;this.depth=depth;this.format=format;
         world=RuntimeWorld.Current;world.Register(this);
     }
+    public RenderTexture(int width,int height,int depth):this(width,height,depth,RenderTextureFormat.ARGB32) { }
     public bool IsCreated()=>allocationDriver!=null;
+    public static RenderTexture GetTemporary(int width,int height,int depth=0,RenderTextureFormat format=RenderTextureFormat.ARGB32){
+        var target=new RenderTexture(width,height,depth,format);
+        if(!target.Create())throw new InvalidOperationException("Temporary render texture allocation failed");
+        return target;
+    }
+    public static void ReleaseTemporary(RenderTexture target){if(target==null)return;target.Release();Object.Destroy(target);}
     public bool Create() {
         if(allocationDriver!=null)return true;
         if(width<=0||height<=0)throw new InvalidOperationException("Render texture dimensions are unset");
@@ -35,6 +41,7 @@ public sealed class RenderTexture : Texture {
         if(allocationDriver==null)return;
         allocationDriver.Release(this);allocationDriver=null;
     }
+    public void MarkRestoreExpected() { if(!IsCreated())throw new InvalidOperationException("Render texture has no allocated storage"); }
     private static readonly ConditionalWeakTable<RuntimeWorld, IRenderTargetDriver> drivers = new();
     public static void Bind(RuntimeWorld world, IRenderTargetDriver driver) {
         ArgumentNullException.ThrowIfNull(world);

@@ -17,6 +17,7 @@ public readonly struct Scene {
 public interface ISceneManagerDriver {
     Scene GetActiveScene();
     void LoadScene(int buildIndex);
+    void LoadScene(string sceneName)=>throw new NotSupportedException("Name-based scene loading is not implemented by this scene driver");
 }
 public static class SceneManager {
     private static readonly ConditionalWeakTable<RuntimeWorld, ISceneManagerDriver> drivers = new();
@@ -37,4 +38,5 @@ public static class SceneManager {
         if (buildIndex < 0) throw new ArgumentOutOfRangeException(nameof(buildIndex));
         Driver.LoadScene(buildIndex);
     }
+    public static void LoadScene(string sceneName){ArgumentException.ThrowIfNullOrWhiteSpace(sceneName);Driver.LoadScene(sceneName);}
 }

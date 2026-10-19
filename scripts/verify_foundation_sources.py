@@ -59,6 +59,20 @@ def verify(archive_path=None):
                 aliases = b"using Random = UnityEngine.Random;\nusing Object = UnityEngine.Object;\n"
                 assert original.startswith(aliases), name
                 original = original[len(aliases):]
+            elif item["adaptation"] == "FullSource namespace wrapper and Unity Object alias":
+                alias = b"using Object = UnityEngine.Object;\n"
+                assert original.startswith(alias), name
+                original = original[len(alias):]
+            elif item["adaptation"] == "FullSource namespace wrapper and Unity Random alias":
+                alias = b"using Random = UnityEngine.Random;\n"
+                assert original.startswith(alias), name
+                original = original[len(alias):]
+            elif item["adaptation"] == "FullSource namespace wrapper and armor bridge binding":
+                original = original.replace(
+                    b"FullSourceArmorBridge.PenetrationTest(type, damage, projectile)",
+                    b"ArmorClass.PenetrationTest(type, damage, projectile)",
+                )
+                assert original.count(b"ArmorClass.PenetrationTest(type, damage, projectile)") == 1, name
             else:
                 assert item["adaptation"] == "FullSource namespace wrapper only", name
             assert sha(original) == item["sha256"], name
@@ -71,10 +85,17 @@ def verify(archive_path=None):
         for name, item in manifest.get("plugins", {}).items():
             data = (ROOT / item["runtimePath"]).read_bytes()
             assert sha(data) == item["runtimeSha256"], name
-            assert item["adaptation"] == "Unity Standard Assets source and namespace preserved", name
-            assert sha(data) == item["sha256"], name
+            alias_prefixes = {
+                "Unity Standard Assets source and namespace preserved": b"",
+                "Unity Standard Assets source and namespace preserved with Unity alias": (b"using Random = UnityEngine.Random;\n" if name == "NoiseAndGrain.cs" else b"using Object = UnityEngine.Object;\n"),
+            }
+            assert item["adaptation"] in alias_prefixes, name
+            alias = alias_prefixes[item["adaptation"]]
+            assert data.startswith(alias), name
+            original = data[len(alias):]
+            assert sha(original) == item["sha256"], name
             if archive:
-                assert data == archive.read(item["archiveEntry"]), name
+                assert original == archive.read(item["archiveEntry"]), name
             count += 1
 
         # Some game dependencies live in their own original namespaces (for
@@ -82,7 +103,16 @@ def verify(archive_path=None):
         for name, item in manifest.get("namespaceSources", {}).items():
             data = (ROOT / item["runtimePath"]).read_bytes()
             assert sha(data) == item["runtimeSha256"], name
-            assert item["adaptation"] == "Original declared namespace preserved", name
+            if item["adaptation"] == "Original namespace preserved with FullSource import":
+                prefix = b"using Crisis.Runtime.FullSource;\n"
+                assert data.startswith(prefix), name
+                data = data[len(prefix):]
+            elif item["adaptation"] == "Original namespace preserved with FullSource Version alias":
+                prefix = b"using Version = Crisis.Runtime.FullSource.Version;\n"
+                assert data.startswith(prefix), name
+                data = data[len(prefix):]
+            else:
+                assert item["adaptation"] == "Original declared namespace preserved", name
             assert sha(data) == item["sha256"], name
             if archive:
                 assert data == archive.read(item["archiveEntry"]), name

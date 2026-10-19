@@ -1,3 +1,4 @@
+using Version = Crisis.Runtime.FullSource.Version;
 using Threading;
 using UnityEngine;
 using UnityEngine.Events;

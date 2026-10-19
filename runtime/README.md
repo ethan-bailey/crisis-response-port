@@ -232,3 +232,16 @@ the animation adapter. Procedural upper-body transforms persist between frames,
 as the original code expects; resetting the entire skeleton doubled parent/head
 rotations. The original listener-position method also executes, although audio
 playback is still unavailable.
+
+### Experimental WebGPU probe
+
+`Browser/wwwroot/webgpu-probe.html` is an opt-in diagnostic separate from the
+runtime page. Open it from a secure origin or localhost to request WebGPU, draw a
+textured triangle, resize the canvas, and observe device loss. Browsers without a
+WebGPU adapter report that result without changing the existing runtime path.
+The probe does not bind `IGLDriver`, render game content, or establish production
+renderer readiness or gameplay parity. Run its deterministic API-contract checks
+with `node scripts/webgpu_probe_test.mjs`.
+On 2026-10-18, a user-provided iPhone Sites preview screenshot confirmed the
+textured draw; the page reported resize and device-loss handlers active. The
+screenshot does not establish forced device-loss recovery or gameplay rendering.

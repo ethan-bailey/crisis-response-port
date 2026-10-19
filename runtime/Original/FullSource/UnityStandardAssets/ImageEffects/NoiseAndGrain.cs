@@ -1,3 +1,4 @@
+using Random = UnityEngine.Random;
 using UnityEngine;
 
 namespace UnityStandardAssets.ImageEffects

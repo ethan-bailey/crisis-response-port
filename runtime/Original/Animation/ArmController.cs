@@ -1,7 +1,8 @@
-using Grenade = Crisis.Runtime.Weapons.GrenadeReference;
 #if CRISIS_FOUNDATION_TRANSPORT
+using Grenade = Crisis.Runtime.Weapons.GrenadeReference;
 using CharacterBody = Crisis.Runtime.Weapons.CharacterBody;
 #else
+using Grenade = Crisis.Runtime.FullSource.Grenade;
 using CharacterBody = Crisis.Runtime.FullSource.CharacterBody;
 #endif
 using System;

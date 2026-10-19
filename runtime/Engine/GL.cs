@@ -12,6 +12,10 @@ public interface IGLDriver {
     void End();
     void Color(Color color);
     void Vertex3(float x,float y,float z);
+    void LoadOrtho()=>throw new NotSupportedException("GL.LoadOrtho is not implemented by the bound driver");
+    void TexCoord2(float x,float y)=>throw new NotSupportedException("GL.TexCoord2 is not implemented by the bound driver");
+    void MultiTexCoord2(int unit,float x,float y)=>throw new NotSupportedException("GL.MultiTexCoord2 is not implemented by the bound driver");
+    Matrix4x4 GetGPUProjectionMatrix(Matrix4x4 matrix,bool renderIntoTexture)=>throw new NotSupportedException("GPU projection conversion is not implemented by the bound driver");
 }
 public static class GL {
     private static readonly ConditionalWeakTable<RuntimeWorld, IGLDriver> drivers=new();
@@ -37,4 +41,8 @@ public static class GL {
     public static void End()=>Driver.End();
     public static void Color(Color value)=>Driver.Color(value);
     public static void Vertex3(float x,float y,float z)=>Driver.Vertex3(x,y,z);
+    public static void LoadOrtho()=>Driver.LoadOrtho();
+    public static void TexCoord2(float x,float y)=>Driver.TexCoord2(x,y);
+    public static void MultiTexCoord2(int unit,float x,float y)=>Driver.MultiTexCoord2(unit,x,y);
+    public static Matrix4x4 GetGPUProjectionMatrix(Matrix4x4 matrix,bool renderIntoTexture)=>Driver.GetGPUProjectionMatrix(matrix,renderIntoTexture);
 }

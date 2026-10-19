@@ -6,6 +6,7 @@ namespace UnityEngine.Audio;
 // Unbound mixers fail explicitly instead of reporting fictitious audio changes.
 public interface IAudioMixerDriver {
     bool SetFloat(string exposedParameter, float value);
+    void TransitionTo(AudioMixerSnapshot snapshot,float timeToReach) => throw new NotSupportedException("Original Unity AudioMixer snapshot driver is not bound");
 }
 public sealed class AudioMixer : UnityEngine.Object {
     private static readonly ConditionalWeakTable<UnityEngine.RuntimeWorld, IAudioMixerDriver> drivers = new();
@@ -23,4 +24,16 @@ public sealed class AudioMixer : UnityEngine.Object {
             throw new NotSupportedException("Original Unity AudioMixer driver is not bound");
         return driver.SetFloat(name, value);
     }
+    internal void TransitionTo(AudioMixerSnapshot snapshot,float timeToReach) {
+        if(snapshot==null)throw new ArgumentNullException(nameof(snapshot));
+        if(!float.IsFinite(timeToReach)||timeToReach<0)throw new ArgumentOutOfRangeException(nameof(timeToReach));
+        var current=world??UnityEngine.RuntimeWorld.Current;
+        if(!drivers.TryGetValue(current,out var driver))throw new NotSupportedException("Original Unity AudioMixer snapshot driver is not bound");
+        driver.TransitionTo(snapshot,timeToReach);
+    }
 }
+public sealed class AudioMixerSnapshot:UnityEngine.Object {
+    public AudioMixer audioMixer {get;set;}
+    public void TransitionTo(float timeToReach)=> (audioMixer??throw new NotSupportedException("AudioMixerSnapshot has no bound AudioMixer")).TransitionTo(this,timeToReach);
+}
+public sealed class AudioMixerGroup:UnityEngine.Object {public AudioMixer audioMixer {get;set;}}

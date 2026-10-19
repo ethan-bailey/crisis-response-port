@@ -1,7 +1,6 @@
 namespace UnityEngine;
 
 public enum TextureFormat { RGBA32=4 }
-public enum TextureWrapMode { Repeat=0, Clamp=1, Mirror=2, MirrorOnce=3 }
 
 // CPU texture data is bottom-left first. Rendering/upload observers remain
 // separate; no GPU completion is claimed by changing these pixels.
@@ -9,7 +8,6 @@ public sealed class Texture2D:Texture {
     public int width {get;}
     public int height {get;}
     readonly byte[] rgba;
-    public TextureWrapMode wrapMode {get;set;}=TextureWrapMode.Repeat;
     public string SourceID;
     public Action<Texture2D,int,int,int,int,byte[]> Changed;
 
@@ -22,6 +20,8 @@ public sealed class Texture2D:Texture {
         if(bytes.Length!=ByteCount(w,h))throw new ArgumentException("RGBA32 byte count does not match texture dimensions",nameof(bytes));
         world=owner??RuntimeWorld.Current;width=w;height=h;rgba=(byte[])bytes.Clone();world.Register(this);
     }
+    public Texture2D(int w,int h):this(w,h,TextureFormat.RGBA32,false) { }
+    public bool LoadImage(byte[] imageData,bool markNonReadable=false)=>throw new NotSupportedException("Image decoding requires the pinned asset decoder");
     static byte[] Allocate(int w,int h,TextureFormat format,bool mipChain) {
         if(format!=TextureFormat.RGBA32||mipChain)throw new NotSupportedException("This CPU texture adapter supports RGBA32 level-zero textures without mip chains");
         return new byte[ByteCount(w,h)];
@@ -51,6 +51,7 @@ public sealed class Texture2D:Texture {
         return result;
     }
     public void SetPixels(Color[] values)=>SetPixels(0,0,width,height,values);
+    public void SetPixel(int x,int y,Color value)=>SetPixels(x,y,1,1,new[]{value});
     public void SetPixels(int x,int y,int w,int h,Color[] values) {
         ArgumentNullException.ThrowIfNull(values);ValidateRegion(x,y,w,h,width,height);
         if(values.Length!=checked(w*h))throw new ArgumentException("Color count does not match the pixel region",nameof(values));

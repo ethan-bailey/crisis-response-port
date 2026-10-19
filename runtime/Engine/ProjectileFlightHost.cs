@@ -12,10 +12,14 @@ public partial class Projectile {
  int ballisticMask=>FlightMask;int limbMask=>0;
  public void InitializeXY(WeaponBase weapon,bool usePrecision,float segmentStart=0,float segmentLength=0,float velocityModifier=1){
   if(usePrecision)throw new NotSupportedException("Precision limb interactions unavailable");
-  Owner=weapon.Owner;Status=BallisticResult.Continue;Ammunition=weapon.ammunition;Mass=Ammunition.mass;diameter=Ammunition.diameter;
+  TransportOwner=weapon.Owner;Status=BallisticResult.Continue;Ammunition=weapon.ammunition;Mass=Ammunition.mass;diameter=Ammunition.diameter;
   InitializeVelocity(velocityModifier);SpawnTime=Time.time;freeFallTimestamp=Time.time;
   StartPosition=transform.position;InteractionPosition=transform.position;
   if(weapon.rifledBarrel){RiflingTwistRate=weapon.rifleTwistRate;AssignNewSpin();}
+ }
+ public void InitializeXY(Crisis.Runtime.FullSource.WeaponBase weapon,bool usePrecision,float segmentStart=0,float segmentLength=0,float velocityModifier=1){
+  ArgumentNullException.ThrowIfNull(weapon);
+  throw new NotSupportedException("Use the recovered FullSource Projectile initialization path for FullSource weapons");
  }
  BallisticResult HandleLimbHit(RaycastHit hit)=>throw new NotSupportedException("Limb ballistics unavailable");
 }

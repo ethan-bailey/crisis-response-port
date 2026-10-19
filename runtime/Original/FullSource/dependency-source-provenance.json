@@ -1,11 +1,65 @@
 {
   "archiveSha256": "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
   "scripts": {
+    "ActionSource.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ActionSource.cs",
+      "sha256": "c5064a0e6c50c7cef4050a7c2d3f655692a65cedd3e5b90eade90d0d87f4f6bf",
+      "runtimeSha256": "876fcf82af19f577c6f14728273f3dd04f7d8bd6c905db519ae25bc93572ebd2",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "AlternateCamera.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AlternateCamera.cs",
+      "sha256": "0a82e76b4f11e51259f8da20fa1de113b439706a8cb0bdaf1ad6199fc44e0ece",
+      "runtimeSha256": "64b9e09f88f7bcb2e79872fe5706b13aab0a9a42109f3c42e8745cb8f0e6644f",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "AmmunitionBase.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs",
+      "sha256": "c004ccd8df9ef4ec95aa7c7fe3f2bcd266bdae5def79efb772c438c9a55864bd",
+      "runtimeSha256": "1f06f0481af034470844e3a94069e03fb5e336ed1d0712cebc63e7c56d63a2b4",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "AmmunitionStack.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AmmunitionStack.cs",
+      "sha256": "320c7b9f70ea2d56e4009c9144a5e9072cf7e351c6827ec82d8f11781282c6f8",
+      "runtimeSha256": "760a340429529918f1ea8cb19db528d9aaabab25b88d1e057851cb73150566b0",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "ArmController.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ArmController.cs",
+      "sha256": "5b98da4624c609f57fe1ec59adbe49b5daecf8d6380a7617711aa764bb641b3c",
+      "runtimeSha256": "68e5f9b930fb6fa9ea72dfbe17043421865463e068830e722cf533987bb558bd",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "ArmIKSolver.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ArmIKSolver.cs",
+      "sha256": "ddc4291b1ab5f73e74ddb65b8df67232bff2afddd1a591403e8aceed13a9c5dc",
+      "runtimeSha256": "01de18fbad1f05ead526bf35c62afc76f8917e5ca7cecbba133324b05a9c81c5",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "ArmsControl.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ArmsControl.cs",
+      "sha256": "3e623b5568950ff4efe6ad280df84e41566af31e4a03dba08c30d6a7ce34162c",
+      "runtimeSha256": "574a067d9bbc376bfb28e55244158e675ae8194f92801f5aa7232b227c5a8d81",
+      "adaptation": "FullSource namespace wrapper only"
+    },
     "AudioInstigator.cs": {
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AudioInstigator.cs",
       "sha256": "a6ca29a1ad0a440f2d06e5739d52845636e5a70456a3f66b203defd0995a60e0",
       "runtimeSha256": "7a7f56565e7d03f532c8e609119405df1f0dff271d3fa008c7c246e92bf10717",
       "adaptation": "FullSource namespace wrapper only"
+    },
+    "AudioMeasure.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AudioMeasure.cs",
+      "sha256": "d0cc26b33bbd1a2371ff7cca178ec4cd0262d97169d87a32ced0b8850f481148",
+      "runtimeSha256": "1af0d7762e93e95af20b8683a4666cc51e703ad8ca0835f758c3ac0b6fb83bf4",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "AudioPlayer.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AudioPlayer.cs",
+      "sha256": "b490c93103ce7130385cb42a95ca8b12d5cb15e80d1a61d5e9f4dedb219f68e4",
+      "runtimeSha256": "195dc54dd6f85a10eca8d1a7508cfcd434b5870f27b19e02efbf9119a524cbb8",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
     },
     "AudioPropagator.cs": {
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AudioPropagator.cs",
@@ -25,28 +79,226 @@
       "runtimeSha256": "8a1d2edaafeae458b0ec618c44f96ae42ef75b21e6726915bc3b80710117b4b2",
       "adaptation": "FullSource namespace wrapper only"
     },
+    "BallisticHitEffect.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BallisticHitEffect.cs",
+      "sha256": "08cec568da142be4934c741d556895fe341b7077a5c64adae83152cff1838eb8",
+      "runtimeSha256": "73b82ab07202ad21e62ee9cbd4c072d35c24f486774e143d5d1eedcc3ffa6568",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "BallisticHitMeshEffect.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BallisticHitMeshEffect.cs",
+      "sha256": "3127f0290f54da2720bd90f71691a4f7b40146410bb83ed262e6a7a4ef139136",
+      "runtimeSha256": "0e1a5bc19004a6ff3cf3ba3ee33aba3f8a2121fab18abc7d66551d8418edee5f",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "BallisticMaterial.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BallisticMaterial.cs",
+      "sha256": "14ffa9bae6d2c52aedaccabc00091d32a51af67d38e72cda125ab99696940726",
+      "runtimeSha256": "c18485a12ee6e31897e51095f7eeab3def26bf28ea5dc10add7a02f82c6d2423",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "BallisticMaterialProperties.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BallisticMaterialProperties.cs",
+      "sha256": "bd95d3e5f78557cece03de8872ff81c487cc85f6f0408ea0fce342e8a3e8309c",
+      "runtimeSha256": "bf723cbe341eb95171c81ee2e1608bace164cecd64328f166396b1ed5ed12597",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "BallisticWindow.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BallisticWindow.cs",
+      "sha256": "8cb9d12b68599ce51cb3decce8812945effe588bad21a88b352e3f7d5ba59057",
+      "runtimeSha256": "abff05aff8440e976aca180cc86f419980d67d008171a751a01db3a6746cd475",
+      "adaptation": "FullSource namespace wrapper and Unity Object alias"
+    },
+    "Benchmark.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Benchmark.cs",
+      "sha256": "ff7133e9376ef792d8d5cbe94b60f85b138d07ca8aa1acc550ef5dfda4e360e6",
+      "runtimeSha256": "c7ab3ae1115af9937a00451fc0412f18a943b5b6be16d632d7832f98c86c2413",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Blackboard.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Blackboard.cs",
+      "sha256": "118eee97f78154aec222d93b75128e1a9c803d7f3cdf7b40e16ba1986bd1eacd",
+      "runtimeSha256": "eb342132de1c2b4b8896ce49aac7c11caa2cd1f8dacc2ef3e24de7bef8e61ac3",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "BloodStream.cs": {
+      "archiveEntry": "decompiled/BloodStream.cs",
+      "sha256": "05c03edfd36724f052350a8f16e9cd656d1e1a1fdc623f51a70b2378c61c7dce",
+      "runtimeSha256": "59555b29ce4bb4695ee5625115259dfb39c057b563b018fb5cf74fdd7a3d3cf0",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "BloodStreamGenerator.cs": {
+      "archiveEntry": "decompiled/BloodStreamGenerator.cs",
+      "sha256": "cb954d0d435c39d11a170049544f80690263ec40b65175e72014b824612feba0",
+      "runtimeSha256": "143030e869774a0716ea856b72962caf55a7bf7c4acdb9c38f7e50c0c90e6dcb",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "BodyHelpers.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BodyHelpers.cs",
+      "sha256": "3a520ed4e12d49dafe3e510d1a4a60c3c35e2c157c0041b3a43bcadb0e47cbf0",
+      "runtimeSha256": "db29c60ce6954c4a56e1926b46d306333bd6665b3de6d96bec728f4e45e1d337",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Calibre.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Calibre.cs",
+      "sha256": "0ab70871d45749ec7728ba9dc0c541b86b5cc3235ca8992e440716703833ba9d",
+      "runtimeSha256": "d30d54653e8d6e7e577100538529fa8a587dde762488808a92fbf43d01b5bccb",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Campaign.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Campaign.cs",
+      "sha256": "67273bbd551950ee2c055d88ce5526dd4beb9cfcd9c2c4125e3f0ce048090724",
+      "runtimeSha256": "9d16d1d9cb401c6448051fb1c7a82f8a6c095574755e49d9a7b62af8b3c522c8",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "CampaignFileInfo.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CampaignFileInfo.cs",
+      "sha256": "a9065a3c43c607b1559880036943132a9fecd5536bf5a85aa73a71ac33590aeb",
+      "runtimeSha256": "691a23c802632e9627b0d077e2f566ea545a0df913d64281f219adf8734a901f",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "CampaignManager.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CampaignManager.cs",
+      "sha256": "ec3cb92f30203ed960dcf2864ba87fd9aca12511640914f1fa8889717a89bc75",
+      "runtimeSha256": "625a024ecd59df6a9c1b9271ab71b8e5f5ce1659616aa82fc6c9491494bd2dfb",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "CampaignMenuLocation.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CampaignMenuLocation.cs",
+      "sha256": "3666efe68c8c24a282b15e53d4006e0c7a8067fbfeb5fbb600244e2a8d92004d",
+      "runtimeSha256": "957158a2d6861d6704d916e5c7004d80ff2037e43a838c2574f3d15349ba2ffb",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Casing.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Casing.cs",
+      "sha256": "eeed2cb0abbe5ea92ba50453b8a8a222e9983f02e81a7ff76649100b8aae81d8",
+      "runtimeSha256": "c4e1d228ee0905e8d340a9774a77bd01d75ea1c6cc6eae9cf36e44e80a8ddd7c",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "CellPhone.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CellPhone.cs",
+      "sha256": "273626005401bbbecd57896e621ca7e07ed7e2b47fabb7a43af6037331d30141",
+      "runtimeSha256": "9f9d56458e0bd276f4f15fe7b60934fe16316cd9388616390619e89297f41a39",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "CharacterComparer.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterComparer.cs",
+      "sha256": "fd86519dd50edf087b9ff35b8054fbf9636f115e5c97fa360c987066b2715763",
+      "runtimeSha256": "017def31c1a643844c5c499035ebb24f78bfeb525b75d6bb7766a27122b2bb5c",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "CharacterNameGenerator.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterNameGenerator.cs",
+      "sha256": "5bed7112dcaaf1618f037f17cc6b267f5753578a87478660f1750ce711544f5b",
+      "runtimeSha256": "a0c0afc317199ac5dd96afe6c355f27e5c8061eb900b01004d1508af0ec0fead",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "CharacterNames.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterNames.cs",
+      "sha256": "eac703f57e6b920509e8dd0e77b7c72602302933e10bdbcbce950933782c046b",
+      "runtimeSha256": "d4eb41a4b3e2c3a4aaa09549a4772aeb671c8f764e900c3cfba35a541261a1e3",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "CharacterPhysiologyVisualizer.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterPhysiologyVisualizer.cs",
+      "sha256": "0c03d10b04479d09c911679d7ab91432058264250019f3d142850d3e9b77e639",
+      "runtimeSha256": "047a3db6b7675ddad552e138ab447028a123e0b67cc00686ebc603aaaef75edc",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "CharacterPsychologyDriver.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterPsychologyDriver.cs",
+      "sha256": "193aacbd219712180ffe4e994bd2d9b4ece0004ea42873819779d0d926d850e7",
+      "runtimeSha256": "ba0a802d122ebda92e28959920703fc6a18a157a672d3af2132c622103f9a6a4",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "CharacterPsychologyMeasure.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterPsychologyMeasure.cs",
+      "sha256": "c7fafbed94974ad4833305af102561a421b93f60987ee9793e513624fe120e25",
+      "runtimeSha256": "a8d6f5cf900a6f3d133a7a1bb9eda1983afc239b700abee42dd2bd65f27b36d3",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "CharacterTemplate.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterTemplate.cs",
+      "sha256": "3ad5581717351c33826f903520cdf6d81052fc771d83e098b2bb0e70b80328c1",
+      "runtimeSha256": "3f57c2796efa8c01919d312ee405a68202c6744724c78193d9de4872713c13db",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "CharacterVocalization.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterVocalization.cs",
+      "sha256": "5a0b910712105da3245b7e2fe7788bc2b877451e41db58b5dd7eb23fa1f014c3",
+      "runtimeSha256": "2e58a1897f7121cd73ccae16a11261ec730ed2858c0042a16c391153e7740fec",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Command.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Command.cs",
+      "sha256": "5fa39ce79fbbd225ae983e35f696e840e6a69a64e7310bcf21fa239b82105614",
+      "runtimeSha256": "723ddab7e9d629f20189e39ef110def5c4aad52942fb0b94e281bf9bb9203aa2",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "CommandArgument.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CommandArgument.cs",
+      "sha256": "cb9ef1e4c0f01fecc5e96d08b1ce4a3bac75bc13b8567ad665b6ecd5425dbc79",
+      "runtimeSha256": "09ed5351591c33dfe83e7a1b975c77050769ad6b4000c7f88dc47b21d4dbef7c",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "CommandHandler.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CommandHandler.cs",
+      "sha256": "4e2a79a9df10e022d7beb5acb3c305949a2e4ec2aa5b276b37e829f7044c3622",
+      "runtimeSha256": "0d49efb8a5f6cce18dcb777241b501eba86e355e3f76d2e2a8e69ab4e9bc6f70",
+      "adaptation": "FullSource namespace wrapper only"
+    },
     "CommunicationLine.cs": {
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CommunicationLine.cs",
       "sha256": "46aa25702ba56b1e64bf2f95864d45cd9a2bf08b153805d8081d742d68017fb1",
       "runtimeSha256": "c1c2bd0cb44f8343795a2391f2badf7ef7dfba431e8060c7ac95d6c8567c11e6",
       "adaptation": "FullSource namespace wrapper only"
     },
-    "VitalFunctions.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/VitalFunctions.cs",
-      "sha256": "2d677971ac8db23154406da6d5b6c1bcb5a4fc5d93b1d08641750feb3dfaca99",
-      "runtimeSha256": "621af972fec93f5a07159431c03279cf49996b22b4aaad417f92a1fca556416d",
-      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
-    },
-    "LimbLayer.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/LimbLayer.cs",
-      "sha256": "86d3b58ea800d79f6c0c4e45bf0194bcf7d604e5718814d965ce30d37f71589e",
-      "runtimeSha256": "7b4910e2025f448a6ba44588b300234a1867cb307a81d4f6012f22dcc565cea6",
+    "ComplianceMeasure.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ComplianceMeasure.cs",
+      "sha256": "83a1754e287f27955cbdcb408b441a231333e15e521b7c1ed90115bfe6a3e2cc",
+      "runtimeSha256": "85d6a8d737763f7b69690a2301ec980f91b153840c395ebc0d9bc9a8c95e46fd",
       "adaptation": "FullSource namespace wrapper only"
     },
-    "DoorOpenState.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DoorOpenState.cs",
-      "sha256": "7c6791cadeefd4480b850f68d944ab4c73fc4734e973552049ba762bb384ca2f",
-      "runtimeSha256": "2e48af8cc207858be5d8370cc2eb6d6814df0d624a52912276a88d5654638ca4",
+    "ConcussionMeasure.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ConcussionMeasure.cs",
+      "sha256": "74702d9071d719a94812297ffaa03f24c669a695ddbfdd15506e1f36faa51423",
+      "runtimeSha256": "0cd59eb9b59f3614ce4d1a82021352eece8be75957786e9f0281fca6d734599d",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "ConsoleLog.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ConsoleLog.cs",
+      "sha256": "13208908979383baf0b7966a58a0080c1ec8142e1d0baa422c8327176b44da8e",
+      "runtimeSha256": "9f793cc19d4df9081d9a66a726801c928b5387529aa17ecab11228ae7806e7c6",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Coroutine.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Coroutine.cs",
+      "sha256": "be60b26733c6d1fa4a694d42435bc8fd880eb23f8ac3fc1054bfff96503e6216",
+      "runtimeSha256": "e2cf3abe34c34d002e1a4cba910225ef69f2ec7904b904a4846a07f31d8d771d",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "CrMath.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CrMath.cs",
+      "sha256": "83f423c39a30c65428057e2bf1764f447a0219be0121e734623597b0c5000fbd",
+      "runtimeSha256": "f122c1b2cb2b0bc34c89c63214e3fa94b5ee87b27f187feecb262e8e795d6fad",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "CyclingBolt.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CyclingBolt.cs",
+      "sha256": "e9d8793fe2c0d2b0259f1c58a18f2c85845d5e58f493ba168890be7b59a098aa",
+      "runtimeSha256": "924c9bc49cc5a8ca39ff97a5a040263c6443eaa104ffdaf98b14bab2f51d80f2",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "DelayedBallisticExit.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DelayedBallisticExit.cs",
+      "sha256": "fbf8b0194837d0b28bfece7d4167dd86b215546b1bbbb37711d991d30b0c59fb",
+      "runtimeSha256": "6aca3410e3f571e9cbc45e6a21eb185d869f64664304ea492cc9be71b9ec9b26",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "DialogTree.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DialogTree.cs",
+      "sha256": "7688d3d4ebb6cd6c2f9eec583c34cefb498b61a93395b6a5c8930241f77ab839",
+      "runtimeSha256": "1dc193c302f6eee2e1e302418834bf94b4b32042597f46a2c0f29fbcb2b5f30f",
       "adaptation": "FullSource namespace wrapper only"
     },
     "DoorLockState.cs": {
@@ -61,22 +313,58 @@
       "runtimeSha256": "f4f2f571f91b505ee9c5d0d5c17c621cf5ac253c2a92ad1ee2b938ed7ae7a76f",
       "adaptation": "FullSource namespace wrapper only"
     },
-    "DialogTree.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DialogTree.cs",
-      "sha256": "7688d3d4ebb6cd6c2f9eec583c34cefb498b61a93395b6a5c8930241f77ab839",
-      "runtimeSha256": "1dc193c302f6eee2e1e302418834bf94b4b32042597f46a2c0f29fbcb2b5f30f",
+    "DoorOpenState.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DoorOpenState.cs",
+      "sha256": "7c6791cadeefd4480b850f68d944ab4c73fc4734e973552049ba762bb384ca2f",
+      "runtimeSha256": "2e48af8cc207858be5d8370cc2eb6d6814df0d624a52912276a88d5654638ca4",
       "adaptation": "FullSource namespace wrapper only"
     },
-    "SerializableDialogOption.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableDialogOption.cs",
-      "sha256": "9d187335593e196353eae31de630464495283633be56962e70ae17072c20e138",
-      "runtimeSha256": "0b5054fea92a3e3a790631847b5cdcc575a39e05eb2ba1fe14cb246a902f7b73",
+    "DoorTrap.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DoorTrap.cs",
+      "sha256": "a30958e1c991d0c45da3e8fb1e5abcb322038cc41efb9d235deea86e3514be4d",
+      "runtimeSha256": "08c0741be66f994811226f05b28409725c253dfd1c28f19c1c7cfc6a00f109d5",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "Doors.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Doors.cs",
+      "sha256": "c3d1ba30b0fe26b91a02d9afc00336dffca34537854a5d08881638ff035ddfb5",
+      "runtimeSha256": "0e278f147957ed3f15f48d7e05e0b1c5d5e7beeea0277a42122280aacbe5878b",
       "adaptation": "FullSource namespace wrapper only"
     },
-    "SerializableDialogState.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableDialogState.cs",
-      "sha256": "00ce37001fdc4cadaf8541262e1bf477cea012a60cfb0e428710b3c14e622d77",
-      "runtimeSha256": "a6b92711ff7e0dd33606470d36995bd2797b9dbb28cbb97d4431464926a35e08",
+    "DroppedWeaponProxy.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DroppedWeaponProxy.cs",
+      "sha256": "405b7994182caba1734050565577ba98b938a0891b2e6007d25a5c4d347bc9ed",
+      "runtimeSha256": "3c76be862eabb83d886f5edd37c79c65868228109c67d49bafdea0045cd0bfae",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "DynamicLimbDecalRenderer.cs": {
+      "archiveEntry": "decompiled/DynamicLimbDecalRenderer.cs",
+      "sha256": "293d9b628856dc8a5dfaa20a8a9d1719f6eb21a74683b1b85f9a81b286637efa",
+      "runtimeSha256": "e9e80fb40e91dfddacd936d4e6a1b5c93ea058fb49f40626fe3be7283b246af1",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "DynamicLimbTextureData.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DynamicLimbTextureData.cs",
+      "sha256": "3b29909c33929716827f3b92baf245952beb9aeb8f242ab6c67a888dc95cf9a8",
+      "runtimeSha256": "d020cd6dca8d96840d45b92ec91f4ac19a107ccf40250b244010a4f8a6d43b61",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "DynamicLimbTexturePool.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DynamicLimbTexturePool.cs",
+      "sha256": "383f46c6d9ed88041c91b9107ffdf14202c097ae5d9dee46d8f8336e9d6b82e3",
+      "runtimeSha256": "8b10727365d7f584307f7b5868b887e0169acb10f4d4f82eec37f84c9fd035bc",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "EditorWeapon.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/EditorWeapon.cs",
+      "sha256": "8972a2b93c3e1d869ae64431772a9d6e3b97c47dff10b434cc3c7f0028473ec7",
+      "runtimeSha256": "bbbe0c9ceef9aa256565fe94aa42588c63211a6e2a0dd17feb829b610a7393bf",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "EditorWeaponComponent.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/EditorWeaponComponent.cs",
+      "sha256": "196bda5983e0546d149a9de9a27b2de23c62c721f56dd0ad16e5261023bf4c96",
+      "runtimeSha256": "884638c2a4544949f5059dfe11796524899731d5a89a656ea76e9713690f93f6",
       "adaptation": "FullSource namespace wrapper only"
     },
     "Encryption.cs": {
@@ -84,6 +372,570 @@
       "sha256": "0b4b1b529bc97e855dddebc5539bbfcf02cf28ce1cb8ef4853cea592e0d989ba",
       "runtimeSha256": "a365234e1ca0cc1006c63f42cdb026af4c4995db2a01e7c5328df93b4465a626",
       "adaptation": "FullSource namespace wrapper, weapon namespace import and Unity Random/Object aliases"
+    },
+    "EngagementRule.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/EngagementRule.cs",
+      "sha256": "4f65aee613acd84004793ebd28bab62c8820cbace6fe621bbd5e37b726eedd56",
+      "runtimeSha256": "80dc94a844a85d2a2cc84d3ab31710e197899a552446e39a7927dc24944dfc90",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "EngagementRules.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/EngagementRules.cs",
+      "sha256": "18d635b4254c222c30d0e48f3eb5873864b58638e69068130e5685359c006008",
+      "runtimeSha256": "a3165d647900e2baa19a44506cc542982c09d214a08f1d9d5b3548935593aaff",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "EnumHelper.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/EnumHelper.cs",
+      "sha256": "cfcf39779c2a61c30dddc669e12db45a265c8d88ffa045125ac8b93db2964513",
+      "runtimeSha256": "873ccb727487a5d44d489a606fd6612ecc42b4e9d3828e1db94a21bf08e6d94b",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Equipment.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Equipment.cs",
+      "sha256": "4f6dc9f6d83704d9ea8f760015015dedeae95788deee9248fdf7e79a40c05e7c",
+      "runtimeSha256": "026ae616b63ff5c41ec7731ee71fa34c073e5feae9e3ee0523c9058ba28c12f1",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "EquipmentHelper.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/EquipmentHelper.cs",
+      "sha256": "2b152472a2aa1b6fb9902ebf61ed65c68963893b0fd6e39e78c355ac8936d118",
+      "runtimeSha256": "9f80d140899d253dc7c75bd68cdfb9ba9d8589f8e44011cee74ddf3dc04da3d9",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "EquipmentList.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/EquipmentList.cs",
+      "sha256": "750850998f7472fcba15e614fd43c5650da8ab2b123d22e8c6afbe7f22d9192d",
+      "runtimeSha256": "3221ec765e5fb5da627bac2b09806fd25baed8eecdb204de66715890101af2f6",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Explosion.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Explosion.cs",
+      "sha256": "35af359c41db1835f6aeb12e71bad4e47940051faa5b29f3befb65ec42fc5757",
+      "runtimeSha256": "7be71c87b734904b5c364a453ad3fce3b69f024a640d0f4e9039989467c3446e",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Explosive.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Explosive.cs",
+      "sha256": "ffd10bd4a948c95d792fa174663b471341eda2f9706c7610ec42839d0dbd38a0",
+      "runtimeSha256": "c4c3f1d89948259645c434c243e1ace63e3579a771af8b189a3b8b88909f991c",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "FileBrowser.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FileBrowser.cs",
+      "sha256": "3832be5fbf0ad405d85eafadba94ee19b86e67a995e6b70372b36523e535567b",
+      "runtimeSha256": "47eda0bcaeada7e416cd8da3019b036b38fffa031a676c294d2a68e9a9a5c882",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "FileBrowserListItem.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FileBrowserListItem.cs",
+      "sha256": "d2c812ff42c2c6fc8dd34b85f4e1b2988a8d479816becb74e79de424291aef1e",
+      "runtimeSha256": "37f8989c77d4579b0901a16248f6965cfb931d277d502c901ae8105f95cbb7cc",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "FireAlarm.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FireAlarm.cs",
+      "sha256": "7655163a15723a4339b332746349fc8711e84f9ab69ff2222770512d005c2d43",
+      "runtimeSha256": "0e528a560501e4276e145edff6d6d1fe31deff15371f867fc88aca24009fb4ae",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Firearm.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Firearm.cs",
+      "sha256": "a3da87ec8db0114e486a247268d81af34cd3fe41456e6c67a5f837335753ca61",
+      "runtimeSha256": "d343f56763e2e66f52e9fb16dacf5d7d5f7e700bc3482f66690d2c9ddfa2680b",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "FirearmBarrel.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FirearmBarrel.cs",
+      "sha256": "fd63e1e9c4c039394bf81c814d7fdaf51a034f4bd2de05f037b77a62b68921fe",
+      "runtimeSha256": "c6d547d11247b7ab9cfc239a2388e9a61a02d0e9ca51ac3ecf6d9cc97715f98a",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "FirearmBolt.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FirearmBolt.cs",
+      "sha256": "0bfdb4571b58e081e18328808f18f78020ebcac85da3a9ff80df29676c7cb627",
+      "runtimeSha256": "62cb05079bd48cb90d0e0cc7a871c8f5f958d462fe3d62850dfaf2d43b7cbe65",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "FirearmFunction.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FirearmFunction.cs",
+      "sha256": "7637442cf34dbaad152ff941a118de09abe504426acc1907339f3b508ad03a26",
+      "runtimeSha256": "3b5070c90f43b5fdc11696118a17e8d5f62131966c3d49c5ea43c27199afc285",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "FirearmShortRecoil.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FirearmShortRecoil.cs",
+      "sha256": "07a6e89cf51adbfd13c5e20838ae19c0b02628314bfa9875e718f11f253a2541",
+      "runtimeSha256": "18902a99c37655a94a48a709c6cef8097725db6916c59f7b0749b108083a376c",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "FloorPoolPainter.cs": {
+      "archiveEntry": "decompiled/FloorPoolPainter.cs",
+      "sha256": "63d8cc3c1881276915f183ee16b89d1abbb329e33d33aeeea855ae150ea7b438",
+      "runtimeSha256": "bebf728ddb005a06de40ec1f052c905d8abdf12f6ccf514757b5264efeba565b",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "FogOfWarElement.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FogOfWarElement.cs",
+      "sha256": "1d0c4b0074da126de6f8989c32106e24b3bc5f0f219fb8f711186a6d1551c77b",
+      "runtimeSha256": "65176835cad29d72ace38950808bc45b4fc9c246aea8d4c7726e24990869fbc2",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "GetLatestVersion.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/GetLatestVersion.cs",
+      "sha256": "0b34a27fe8be6437af7adcf62a8ec46a6fd1d7b2defbe1753da81aca6cf49523",
+      "runtimeSha256": "dfe838327303cc64ee76b9f564b4d6be705161c5571e2307fb0bc2f78d665ed6",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Global.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Global.cs",
+      "sha256": "038ba038c6de0be2d3861630364551eb784af8e9b398395d08aa8eaf6cd77efb",
+      "runtimeSha256": "1f3b55cbfd4726b06490bf65356ea6e73445c80f5ac612fbfbb6811f5dc65424",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "GlobalContext.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/GlobalContext.cs",
+      "sha256": "da0f96b3382628ed6dc145d780d4453e8f45b8ced2f22affc9f41ea35ee6e537",
+      "runtimeSha256": "a74de3bab941a74ebf0914be5820df9bd38616cee1c5af915ea3b0a393fef297",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "GrenadeMeasure.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/GrenadeMeasure.cs",
+      "sha256": "4937f416118a97370d35b95710aaad3d63eaf507e5793a15293ba81175b23ae9",
+      "runtimeSha256": "ca3ef10266b8281f1d3f489255e9ec2e8b0c0b422ea2ccd93577ee1e7697dded",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "GrenadeSpoon.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/GrenadeSpoon.cs",
+      "sha256": "0c3dee64954d259cadfbb39929da832fa76982071be5e82f5d140b944559dc42",
+      "runtimeSha256": "d8d14bf297b72cc2edbde93dcc1272f406bfbf4c51c45efccaee8bfcbabd5e45",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "HTTPPost.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/HTTPPost.cs",
+      "sha256": "7836d87cdfd70d06a86c3326d80925d9d975c2b6e0ea908cf356acf0aabd8dfa",
+      "runtimeSha256": "ce7172be2178e92e6d3ab06d485cc5fee81635166bbd068419c869f9d4a2b47a",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Hand.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Hand.cs",
+      "sha256": "d5e6b25be76a184dc6b117ae35127018b0cb65eccaa69db9f6d8922434e76537",
+      "runtimeSha256": "68433919d30ee90f4bed2bbfebb19be7a4e9144c4827ee303ca435baacb3d201",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "HealthMeasure.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/HealthMeasure.cs",
+      "sha256": "5a75f2bded2117ca3f4afd6452eda14bc0d16b8cd898f6fb4db3d9b90cd0a7f3",
+      "runtimeSha256": "0df06a3bf8cb37a161b31aaf78db42657933e5ca3d435e9c387eb209756d1af3",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "ImageColorFlasher.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ImageColorFlasher.cs",
+      "sha256": "77cdc51bb54717421d298959622f132176b9818750734d63c98dc198077efc32",
+      "runtimeSha256": "fda26331ed38993d7a0dd62dfb6b19e9020ef12e9b96e7f9a2968228a7e86e51",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "IndicatorArrow.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/IndicatorArrow.cs",
+      "sha256": "5fb485c8c4121fcaa37d5e58c2027a335b97f96f4f9394b88738ebf8ea29abc4",
+      "runtimeSha256": "b21b2177b07372ddef4c0f969a7bcdb9282ebb70b5882d831a72e362e97c848e",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Interactable.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Interactable.cs",
+      "sha256": "85bd4b9bc94a43a2f73b3ed63ab765525949ef676e5ffb9d9cf76377b023f840",
+      "runtimeSha256": "fd567b19efe15702e3aa61d6911d54ed27e0d6c08164a22af6e6f0c2ede069c0",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Interaction.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Interaction.cs",
+      "sha256": "f62ca854a9d6091e9621e6cae6badd5bb66377f98f6775abe922417836d02eae",
+      "runtimeSha256": "e8101b18cdd50e948a46c344c6639fdb08d74c9f768c189fa8ff73fc13effcaf",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "InteriorCamera.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/InteriorCamera.cs",
+      "sha256": "c07b427aea583bc4eef882c275f87abfab5631305388af4b142bd8fb7869c76c",
+      "runtimeSha256": "a4d1141802155928828429b60287fe467fe1e99e95437889a393d55a9ee9a3a3",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "InteriorMode.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/InteriorMode.cs",
+      "sha256": "267dc28ca02079c8f9b1c236d2fc73065ffb5931fdf19f24d9042ef762a92db6",
+      "runtimeSha256": "f151abd08bc3dc8e0af70a22201a3d87a299c8f6ce8b49e97e85b267d9fb93e1",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "InteriorModeUI.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/InteriorModeUI.cs",
+      "sha256": "e0400b058c0e13cbb36c34686c1fc908820f91dd21264dd5bdfefd42e927780f",
+      "runtimeSha256": "5462f925bad20f7d4571f6c5f62527fb36ce8d856618dcc2a7af9a995af4091c",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Item.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Item.cs",
+      "sha256": "39ecfeb996570191a46f6be99f0a05eda9b6de171be639cf10f565c20a726499",
+      "runtimeSha256": "db57ab477773dacd36fc64c5b787dfe345ce5f662836240a5477ec442151ca45",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "ItemType.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ItemType.cs",
+      "sha256": "3314c0a79ebe343684886a5335ee05cd52b5e6f8f0b6ba774b155f8346c2dd21",
+      "runtimeSha256": "ef30ed7964628c42058e95753f8ca6c804d0b1025cf34e91a31965c70a9dabbb",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "LimbLayer.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/LimbLayer.cs",
+      "sha256": "86d3b58ea800d79f6c0c4e45bf0194bcf7d604e5718814d965ce30d37f71589e",
+      "runtimeSha256": "7b4910e2025f448a6ba44588b300234a1867cb307a81d4f6012f22dcc565cea6",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "LimbStreak.cs": {
+      "archiveEntry": "decompiled/LimbStreak.cs",
+      "sha256": "bb720e28909f86da246eddf7ba167e6e63e1dda2c1b9d6e01433313b408b7ddc",
+      "runtimeSha256": "16ebc6887c63fb16c64e2f0d55ad17747e700a67b4df7a8573c501d57d76cd48",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "LimbTextureData.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/LimbTextureData.cs",
+      "sha256": "6497989fda940321313bee655475cfae8e790ffaa75848c1fa08c49cac8afacc",
+      "runtimeSha256": "6f2cebc0fd528c084a7a66262a2221b901daa0d2564c3e9820d082cb99dc0295",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "Magazine.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Magazine.cs",
+      "sha256": "1e363c4ecb1529b819626bcd7cda30065bd70894d530799a9bf5cafe09481ec6",
+      "runtimeSha256": "e1ca1359f04877aba26e585eb0597e0653659fb087dbdb22224e6bc1feeb628d",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "MainMenu.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/MainMenu.cs",
+      "sha256": "b3eccde6dee018cbbc132a123596113c3b8facab968e9c4a846bd43c63f47cd5",
+      "runtimeSha256": "3399f7eaf724ac6a162248c9a3e9129a7b16a5cc6dc4a86034ff405a8c6062e9",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Marksman.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Marksman.cs",
+      "sha256": "1df6af5c4a35ba1626360ee6947e7856fc3de413103e531d9a99248dc21a3174",
+      "runtimeSha256": "c8360aa07c702f290406c3aa18d23b136fd0e6f28aad34e4b10c1f20e1dcba1f",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "MarksmanBoltActionVisualization.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/MarksmanBoltActionVisualization.cs",
+      "sha256": "7303f27ce8663ddf8a13d9d99a030be5d19826dadefd87640a5223a618efea96",
+      "runtimeSha256": "54aff473755df354f19327aaee26c632ce53058032254c99fee4097996fda630",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "MarksmanCamera.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/MarksmanCamera.cs",
+      "sha256": "14281995e3bb459ba806a523bac990a57b6474667c48161ae1a716bda59c7353",
+      "runtimeSha256": "9a69d7b780bea467383556521643f128d7246be8b425d802c1c5a92a79133da6",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "MarksmanMeasure.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/MarksmanMeasure.cs",
+      "sha256": "156711e1ee42bc6a734946321b7bcca25220411ce73468727485548a7e8066f2",
+      "runtimeSha256": "3042e491faa71b8e7769809f6e966887604f286c1e057dc159778edf664daac4",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "MarksmanMode.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/MarksmanMode.cs",
+      "sha256": "a78faed996db5114fd2cb9d7ab5da8019d00c4b8c9384020fa4ca465f1e15121",
+      "runtimeSha256": "789fe2db59fe80a0ad12abbdc1fc71ce8f17daa440331fa4aa94efe7e9c0cdf8",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "MarksmanRifle.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/MarksmanRifle.cs",
+      "sha256": "9bcf4b8818510d43eef281c369495d43d239168781535c208142d8245a3099ec",
+      "runtimeSha256": "68a8937be6ea6b6cf7321e669e730555fa5e3a59882a6b3dfa620f220175600d",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "MarksmanRound.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/MarksmanRound.cs",
+      "sha256": "46e45c0891ee9209ab875bfd6c21c5baaa11814c52c417125bd17d2f8462a6ba",
+      "runtimeSha256": "31720423de5a5ae50a1da8543e4b32194224ab3fd6bc26d2ca54caa1fb1bbdf4",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "MarksmanScope.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/MarksmanScope.cs",
+      "sha256": "9f8e51dd1130d183de9238cd0279b8a08e88b8077438c8c5d111593b02d28f98",
+      "runtimeSha256": "0ce3c6bc5573f960306205b5f0ccc62697a8d06d2c497d0afd1a2252ddbfbf08",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "MarksmanTargetIndicator.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/MarksmanTargetIndicator.cs",
+      "sha256": "da95462ba435dbda856d82cad07d3a49ae22763a7d7063b387fd053b4909978f",
+      "runtimeSha256": "6cfd23d02481480ecdffa3221a896d95ffcdcf74ef9e755a7393355d08ad9320",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Marksmen.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Marksmen.cs",
+      "sha256": "32fba1102a8faaed64adc8f327d40e59a442c8031e2b572015d2bb7344a554ad",
+      "runtimeSha256": "a5cce2c363557aa5a2008810804702d9de14ef1df36286e82b587a5585bb45d1",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Masks.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Masks.cs",
+      "sha256": "acba7ff4778a25f41682022e6c23599aa16d7cc8108cf649fb8c8e3e2d5d597a",
+      "runtimeSha256": "37caf1c083b015b47774b3591000898e503fccf35b4eeda8d23c733884c418a0",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "MessageBoxManager.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/MessageBoxManager.cs",
+      "sha256": "9b2f7f5a38a9fd3b228f21972e55debf5786b9f8f93ed1210d16c71666eec0bf",
+      "runtimeSha256": "4bf0f0135a999cb7b54e35dc3c66bda3e14497fdb2423b85dc4b33c80d6e79bc",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "MissionEndMenu.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/MissionEndMenu.cs",
+      "sha256": "e63574f11bfbaa11a305b425f86f12489431188ca6dd4d833367a5673f4bc14c",
+      "runtimeSha256": "7b3ce953f6e5932a2cd987068300acc3d61f26565cb6a148667aa822b39a6f81",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "MissionHelper.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/MissionHelper.cs",
+      "sha256": "474d4a5e0e122932754da0144b9b29341e444cfe324d53a6d8a4c68f4741b900",
+      "runtimeSha256": "ea8e394074bdebd827a6d014f095fd6dfa904dbef5b86640fc882f8bb94f6f0b",
+      "adaptation": "FullSource namespace wrapper and Unity Object alias"
+    },
+    "MissionList.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/MissionList.cs",
+      "sha256": "a3b9692d16b1f084d21849ee21c5f1b16a4952dabc744e73af51ae30cf766540",
+      "runtimeSha256": "0f65a764833178538407c6098f172fb27184366470a611a69a16e18acec4fac8",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "MissionMetaData.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/MissionMetaData.cs",
+      "sha256": "9ff29090cd6642c2ee972c9417dbfabc1566df8d5e5822ab89caba437e67c44c",
+      "runtimeSha256": "25d5bd647eb280bc9e1fc87689229d0b74a4ae2eb32e12a6a5265159a57a0d0e",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "MissionParameters.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/MissionParameters.cs",
+      "sha256": "a3cf81a65ad0195630c22510ddd62f51a17f8e5ba93c2adbb46a42e22f801b1d",
+      "runtimeSha256": "163b11a973a494fa8dc90167b74cd523fd713d95e1540fec8dc59164ed4d2135",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "MissionUI.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/MissionUI.cs",
+      "sha256": "23194553606605758dc7eb29d6a10ae013c953d0cf7cf08e78daf2832c86da6a",
+      "runtimeSha256": "75fa0e0e65d7c344bbb4f3121272de44349989da94f64db80baab4e48d92ce17",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Mixer.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Mixer.cs",
+      "sha256": "dfdecdcf5ca9a7674052650332dfed4f19dd773f535112a9cf4c4ee34204967b",
+      "runtimeSha256": "35da4e16f05b83f3e7a666dc86793496660c829dc59c0008a12be8eb04470b41",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "NegotiationMode.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/NegotiationMode.cs",
+      "sha256": "74137fb10664cda4f8e17a5376ba6c87820e33252209c82749c0b5c2ccd5a285",
+      "runtimeSha256": "fc016d91deba6bc01a9bed303c7d8f1bb9ec1e171d96967fb0f3831a5d9e36c2",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Occupant.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Occupant.cs",
+      "sha256": "b51fefe3f0ee309301c3e7479966f2f5ac4a017f6e82ddd48220e245d954872e",
+      "runtimeSha256": "6c1f873e6095666fa66f3bf63e08815f3dc59f6b027c0d0e9dca3221c75d5add",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "OccupantFear.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/OccupantFear.cs",
+      "sha256": "fcebce1bd13c1b38f3fc8272485f2c6194fde0e8a34cdf292cf003606c32fdb5",
+      "runtimeSha256": "2509484e4b9bc3202ac0ad10a3ddc4afece92d7dd75d25db6f399bd921b7a3fc",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "OccupantMorale.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/OccupantMorale.cs",
+      "sha256": "2b05f908cce7f7aaeaa8bb8f080e7d04b0310daec203f86876a6222a6f541ea5",
+      "runtimeSha256": "d83a527319240ad94c0a8a983e059beba792c67df37c66ada1a0b19082d087e1",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "OccupantSpawnData.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/OccupantSpawnData.cs",
+      "sha256": "f4ecbde10f06e1242487f86e9b8b1b4f3ca8b690b5057ba48f64a9c3a8c8ae28",
+      "runtimeSha256": "a1a094e1bf91df5baed3f52dfb77a8d6c45bfe984fab15a337150dff5e9f6bfe",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Occupants.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Occupants.cs",
+      "sha256": "11c05c1f9c7811bdb6911d71585fcb4139a837db29a2265baef9061a2ba5126e",
+      "runtimeSha256": "69a355b9c65f3ac6777904b4819003574c6e7d3aca6bb2bea720f58927503644",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "OperatorCommand.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/OperatorCommand.cs",
+      "sha256": "d77283601595c49b0d066debd692ef74bcceeb02f8a11af4619bb3daae21d069",
+      "runtimeSha256": "4e90dd886940d17406f9f56337f385c5644b9344d155e54994b9e25ace3539ce",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "OperatorSpawnData.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/OperatorSpawnData.cs",
+      "sha256": "a344fb38c290d001863747d918613bd37e9ee134ead71a6b4cf26b0463af1388",
+      "runtimeSha256": "c296014796309be2751325c62a66f64957b76a89fb288bf6c07072397c4d16cb",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Operators.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Operators.cs",
+      "sha256": "f1920b7540ed47ea19644f495e25daa98376de985b0040f60f0788925b15aff2",
+      "runtimeSha256": "abbad9ae79cb74bd2b7a5ab2e60972616db804ee479eaa94bd3785f5ba9c9392",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "PaintableSurface.cs": {
+      "archiveEntry": "decompiled/PaintableSurface.cs",
+      "sha256": "c00365995f0f818a2f3cb55ca11d160addac750ff66860bbaa89d69d12902110",
+      "runtimeSha256": "d4f6a4cb907038addb5bfbe29ca74d37119d8cd0093690b1dc6259dda015e00b",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "PauseMenu.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/PauseMenu.cs",
+      "sha256": "880d3e10844ee435e2422e4b40cec1e0b43369623f45f42c5f84b88f666ef397",
+      "runtimeSha256": "2e6f54b1cd91931adfe0d1609e2bbde695a11be452c48966f3ce1d52aa19d330",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "PerformanceCounter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/PerformanceCounter.cs",
+      "sha256": "5e9017edfde3a6c5faa31408459a485c27abba7957e795776ebc5d140b2f014a",
+      "runtimeSha256": "bd6d2594cdfce94ec1be2b661a8822d3da4008607a6c5f31f9b15339cf6b36ff",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "PerformanceManager.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/PerformanceManager.cs",
+      "sha256": "50d3469edd6e7181934b814a89169a9c84cb088d733610c36239de723307aaf1",
+      "runtimeSha256": "eec7d3a183ffcda5e0cb85349d6e70b2a2d09df2f0424897da387e7b906a3f43",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "PlayerController.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/PlayerController.cs",
+      "sha256": "9e8dd93b05c3b2424a780bfb99253ee24ed2a6e4a718375edce3337d5f70d615",
+      "runtimeSha256": "f7807541d51b701cd9265b4a328c1c72453af1e979346b8bd7af528f2bffb395",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "PostClient.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/PostClient.cs",
+      "sha256": "7674fb484936221505b9e5d9e2349a32aa725cea7ede0efdff497778b84f7013",
+      "runtimeSha256": "413baa461ef2908a625056d712b1a1b529bf94cc8df774186437b66d6bee3b70",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "PostClose.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/PostClose.cs",
+      "sha256": "30f4040ff0feb0a69ed1d113712224f17d0e23ca4d0e9320405e78f399fd7713",
+      "runtimeSha256": "08e637b6fe32fcd39f4fe86d53e0c0a053f90e6ec93db0341bd1d12eec17af7a",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "PostFeedback.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/PostFeedback.cs",
+      "sha256": "3dae7eb20db761511caa8c698fc8a8cefef46387338f41cdd61c50eddeced0cd",
+      "runtimeSha256": "24ff1e2b68d7eb3156c35905d73adef45fb3f2e5b8ae31ce596126f5ae409c9a",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "PostFeedbackQuery.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/PostFeedbackQuery.cs",
+      "sha256": "5491d0e77fda3c04376cc191d1985aba14b8a62fdc269b9542eea253fe8e0881",
+      "runtimeSha256": "c05f0d7278e7c4802a66e8f4b0601721d8f382769d44d08d54e3a3e545bfa4a2",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "PostSession.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/PostSession.cs",
+      "sha256": "ce8d70a0ec1784b86bf0f3c0d4454e43a26a14a584ad9cd43d8fb071b9a3f41c",
+      "runtimeSha256": "9183dc67f858ffa2d8c2f84c6d198935039fd3f4c2e3315b814782c04d2f875a",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "PostStaticInformation.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/PostStaticInformation.cs",
+      "sha256": "ef20b4a34a91e773af74f7e398d00ac55704163789f1dbffa32511d4c8c5744e",
+      "runtimeSha256": "e8e1a3b5a7e15356a06768d1a27b90076861bf540bb8bc456b16f54e4dca326d",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "PoweredLight.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/PoweredLight.cs",
+      "sha256": "422b99bafd4e29c3e34a3b780dccac43848d23d54b07d7f75b5d5a3071144b30",
+      "runtimeSha256": "940e6accb9f8fb14d223bf21d63dcd5cf50df8d12d920cffc9755ab07f30d4c3",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Projectile.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Projectile.cs",
+      "sha256": "ef6443c2d6fece6866526fa8c9d4262c31fbc26a2ed77da57e607d681a0302b2",
+      "runtimeSha256": "05a264f0810dcc25f898ed16901ac8d89823fa7cd6becca7744d14ee2d1618d8",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "ProjectileEvent.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ProjectileEvent.cs",
+      "sha256": "87e536b1478e8c5ae6c833748c176cb93dbd038b62f63debeff757225a1ce856",
+      "runtimeSha256": "c360aa9af9b777ae033952bef812796a35a6cc969536bf0cc493099881326620",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "ProjectileLimbEvent.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ProjectileLimbEvent.cs",
+      "sha256": "0742399ba7b68697dc22772adce4587ac3d666588d18324d58fbba76d423b514",
+      "runtimeSha256": "f83cbb4d072a355056dd12e81adc4d0019b9a7242a4782e54ce4923ee57f87bb",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "ProjectileTrace.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ProjectileTrace.cs",
+      "sha256": "05dee1e4e58a785a1ebd223d86b2ffa08e91d28daf2d0d01d0e0749f7b5e7859",
+      "runtimeSha256": "d991edec4421552b0a72bf988c8c80dc6830a598db4add7f5ca60544000f132e",
+      "adaptation": "FullSource namespace wrapper and Unity Object alias"
+    },
+    "PropagatingAudioSample.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/PropagatingAudioSample.cs",
+      "sha256": "dae070b5227aa54c1c6a3b421b9fbd28f8a01bbb495ec91e758bdfd980f6b1ee",
+      "runtimeSha256": "f6e358023b3714d96dfd76c25e8546b49d8fbfa3111ceca285ea75f474e48f1d",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "QualityLevels.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/QualityLevels.cs",
+      "sha256": "8bb7cf926799d32bf1f9da189a6d84c1e80abc07ac186d0dd9ae6af4ddf0e48e",
+      "runtimeSha256": "72a99f6e4f9758514837575713251c1b50428676d04e718f270ca80b44981ba4",
+      "adaptation": "FullSource namespace wrapper, weapon namespace import and Unity Random/Object aliases"
+    },
+    "Recoil.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Recoil.cs",
+      "sha256": "cc81cac1b313c6c838b0394edf2d38534c9f6a1130613144681961cd01d9c150",
+      "runtimeSha256": "c60ea6b9759aa649cf8f0d11c7b0494b54a68c4fa7a5013269236ccce0023f2f",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "RecoilManager.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/RecoilManager.cs",
+      "sha256": "6412919d89c1ec86457fea826b409e7fb4a29a77af17256ead90e0cfbfbd55b5",
+      "runtimeSha256": "2294169380cabc94d213a267a2f8855b71bef7e197c48a5f86f374b76a9c29b6",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "ResourceManager.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ResourceManager.cs",
+      "sha256": "5f370ff945ac341bcb37b0774ae5df22f35f80bfcf2c7010a8e17b0054267076",
+      "runtimeSha256": "c2ce98a8ffb2e336c31f26e677702f3b0f73c54a9bbcb02b95e64222d3e3284d",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "RoeCondition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/RoeCondition.cs",
+      "sha256": "b179ddd85d0b8bb626058a6fd53f899693e7dace528c0d9b36223caf92240e04",
+      "runtimeSha256": "3f09cd2ac82b331f0b85c16284488986b99e00ce31b71a9be6214c391f738ad2",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "RoePermission.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/RoePermission.cs",
+      "sha256": "c5f41579a0ce1cc2a19249b9a52644ada78ddb6c78fb463b8382e0ecd19cc9dd",
+      "runtimeSha256": "62ce6b3cbd24677aa8687e0a058c0a07972d17964036070d51a9ffe945b553bb",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SceneTransition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SceneTransition.cs",
+      "sha256": "9770028bfa6003c2d1e7ecce4a832fdda45b1b6f2606fbf308018c26434c77ea",
+      "runtimeSha256": "e541bcdca7ce22caf98babea52fa6b2611aacbf7095721f7c0e934af433b465c",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "ScoreKeeper.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ScoreKeeper.cs",
+      "sha256": "a36f04acd7f82cbc379334bcc19fd9c7906711066ff571bceeddbf5351c4c5da",
+      "runtimeSha256": "757638db0a37e4f17e579453b46f0f6469919b48ae4e4732138d02a63527e6ad",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SerializableActivity.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableActivity.cs",
+      "sha256": "16d37e6dd8b953182a6a901ede8b3ce81183b0dd3df4c4327ffb12920d722bca",
+      "runtimeSha256": "17ac80a7aadd467e90da8cbc50c89215bdf089a02fe7ca835abc2053fbd56bf2",
+      "adaptation": "FullSource namespace wrapper only"
     },
     "SerializableAudioSettings.cs": {
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableAudioSettings.cs",
@@ -108,6 +960,30 @@
       "sha256": "70a74ebda4eaec2cc23cd7ca35cbbca96f70ffaf3e99fc6e2bd0340e821be3e1",
       "runtimeSha256": "e26ce46071f296a6342a99b0897e96bfd6f555447b4c0577e099dac741b0545c",
       "adaptation": "FullSource namespace wrapper, weapon namespace import and Unity Random/Object aliases"
+    },
+    "SerializableCampaign.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableCampaign.cs",
+      "sha256": "beec0931a0e8e996d728612bac9fbc0f146986ca4ce574f0fe68d0665d6d7e01",
+      "runtimeSha256": "bcbcbe63d104b6f9aba94913b8316e0548d977b15b58c2b66a7737a50cc3a7c6",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SerializableDialogOption.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableDialogOption.cs",
+      "sha256": "9d187335593e196353eae31de630464495283633be56962e70ae17072c20e138",
+      "runtimeSha256": "0b5054fea92a3e3a790631847b5cdcc575a39e05eb2ba1fe14cb246a902f7b73",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SerializableDialogState.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableDialogState.cs",
+      "sha256": "00ce37001fdc4cadaf8541262e1bf477cea012a60cfb0e428710b3c14e622d77",
+      "runtimeSha256": "a6b92711ff7e0dd33606470d36995bd2797b9dbb28cbb97d4431464926a35e08",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SerializableEngagementRules.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableEngagementRules.cs",
+      "sha256": "4ee2440b5d646f2c77817afe4f07f2f01923378a841653a7ce61fb199bfd6b45",
+      "runtimeSha256": "5ea5696cef84d92744af3c098fccfabc9cd6d6fcd3c26fbc6d5c18e8864d6f05",
+      "adaptation": "FullSource namespace wrapper only"
     },
     "SerializableExtraSettings_0_0_9_4792.cs": {
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableExtraSettings_0_0_9_4792.cs",
@@ -193,11 +1069,65 @@
       "runtimeSha256": "77a910e84a29d0624d8c0e8277cfb1e5684d3d796c3f16c59da7f503eb3edc63",
       "adaptation": "FullSource namespace wrapper, weapon namespace import and Unity Random/Object aliases"
     },
+    "SerializableMarksman.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableMarksman.cs",
+      "sha256": "fb21f7dab24d8cdbb35f35152012b1001c50cbb7752af25522fba58213861294",
+      "runtimeSha256": "2425d78d720c2ac75e47ca12504e57e66f2f194257964759d3db4c9f7ebbe9f4",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SerializableMarksmanRifle.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableMarksmanRifle.cs",
+      "sha256": "546bb37a4d16b6dc258092a7ec1116e17094cddf7cc748bb7369e1df02ad989f",
+      "runtimeSha256": "e2891b6c9adfc42132879259f2d7b3419c7822b4e34a65dab6e44f8d413dd840",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SerializableOccupantRandomizedSpawnGroup.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableOccupantRandomizedSpawnGroup.cs",
+      "sha256": "f0ee44d30c5a5a846bffe540feebf1f247135e49e584717cf3988e01a7dad040",
+      "runtimeSha256": "ba8c42b330cfcd719ab9b32e8d8fbf93422dffeeca10e8889cc02e1b3cc9a509",
+      "adaptation": "FullSource namespace wrapper only"
+    },
     "SerializableOccupantSettings.cs": {
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableOccupantSettings.cs",
       "sha256": "18f18e9cdab39d1a0d5f7586fb1584bec7bffc3d077652beb94b767e5c1ba2a2",
       "runtimeSha256": "e51d96a335c176c7952a0f590210e7826b21a0a9ad19500be9aa2079990aaa14",
       "adaptation": "FullSource namespace wrapper, weapon namespace import and Unity Random/Object aliases"
+    },
+    "SerializableOccupantSpawn.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableOccupantSpawn.cs",
+      "sha256": "389069eb66ebbec7e014162cd516035f04cb22c2182065f5bef4ebf6071da3d0",
+      "runtimeSha256": "5ab5ad33c28a4045db286113e9508a89db39e8af51f384fb8e3a7fd5429d14e6",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SerializableOccupantSpawnData.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableOccupantSpawnData.cs",
+      "sha256": "c813f3fdad0186bc68d2d4fbedb248c2bd677e9b14e6b5d358fc58525527b009",
+      "runtimeSha256": "7275c233a235c735d523afcbb03d131dc7b7a77e0704aad737c50f0d0cca6f33",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SerializableOccupantSpecificSpawnGroup.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableOccupantSpecificSpawnGroup.cs",
+      "sha256": "097ae77fd19f8074227819dd45d0b8bed1057e79267a0261a6c979f082ad2e8b",
+      "runtimeSha256": "a8572886a11d1b897ee9c61a21ae52c13c08d2060ccff6fcb028c349d860b94d",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SerializableOperatorAttributes.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableOperatorAttributes.cs",
+      "sha256": "15708843da1de70e7d05e04cccf1fddf2c535489f52bb6f890f7c9f539c2df3e",
+      "runtimeSha256": "00ab9b63e332b4541b92b775e29fc3889909a4a4a300dc66f667275a6e8e0ed2",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SerializableOperatorSkill.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableOperatorSkill.cs",
+      "sha256": "daa0f76096020b1c3fced4ac66d3b044f8f7cdc9f0a1637f97788d4326eb4ed7",
+      "runtimeSha256": "7ac6529a87d567d1bf414eda2d61537e600e207236b501e66af0267b9140e852",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SerializableOperatorSkillTemplate.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableOperatorSkillTemplate.cs",
+      "sha256": "1a469fca387d78429152d24200b3815615ded9f28e1a6ecbed8b20bc99206c06",
+      "runtimeSha256": "481dc195addbe15103fdd6a9bd7fdbeb7de7b6af678dac6ed538de42ad758dbe",
+      "adaptation": "FullSource namespace wrapper only"
     },
     "SerializablePerformanceSettings.cs": {
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializablePerformanceSettings.cs",
@@ -211,17 +1141,551 @@
       "runtimeSha256": "f0e40e9388903ed7d57a6a062dfb4b55d7a1c3b43a96c7f2408131ac7689aecd",
       "adaptation": "FullSource namespace wrapper, weapon namespace import and Unity Random/Object aliases"
     },
+    "SerializableTeam.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableTeam.cs",
+      "sha256": "ee4a2e8424187b7809bd86cc7aba768795b50a0857df8a88279269c5213c7e1e",
+      "runtimeSha256": "caae0618ea103f47eb956235c683417ccb1116f775a5c5fe89e816e1b99960bd",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SerializableTeamBehavior.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableTeamBehavior.cs",
+      "sha256": "218a42fc18d61ee65b9d1b8a72ca6d8d746f2a0fff1e854cefe7fd33db78106d",
+      "runtimeSha256": "c7c6eba4d713cfc84a2f89614c978263ab12f66cf4b34a4424bfde41c9acd4e9",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SerializableTeamMember.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableTeamMember.cs",
+      "sha256": "99383e51e6c01e82ca3273ccc8886824c458df8c970a86b725020479a808990c",
+      "runtimeSha256": "30ab88d994317c16dea3061d8e89ba3a191d77465348a24263065c121caa445b",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SerializableTeamRoster.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableTeamRoster.cs",
+      "sha256": "c9c02c109ed49ed45a4ffd528013c7a451e97cdcacaa63c5ecc59ebefba8ef2c",
+      "runtimeSha256": "ba38c29b38446e25c2324c3c2a1b9d66ef4fd28e4d719a7d42bc11ca6a533b42",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SerializableTextureQuad.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableTextureQuad.cs",
+      "sha256": "00668a24124a1aab805e95229360dfeafb2a459c80c378919981eb1e39fb7780",
+      "runtimeSha256": "8d8c3909d7c59fdd3f25b59c6e088f9252247b47602bd34a4ad2bb52e8283f1d",
+      "adaptation": "FullSource namespace wrapper only"
+    },
     "SerializableTimeSettings.cs": {
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableTimeSettings.cs",
       "sha256": "4162e2d9c44bf55378470da5cf26dcd71c6cebdaabd8bef24e1853e5d57cd21c",
       "runtimeSha256": "601ecfbfe4ad04f99fdf004e24f37eb203468ba45c0091a37365e5a3eff82960",
       "adaptation": "FullSource namespace wrapper, weapon namespace import and Unity Random/Object aliases"
     },
+    "SerializableWeaponComponent.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableWeaponComponent.cs",
+      "sha256": "970e4fe4204a6d79ec22f0021ab52de2077727fcbbcaf244fb228780cdf01862",
+      "runtimeSha256": "deaa5b47174863bcebbaca01c1281f7b8e62dea14b7a9f1d460da246230ed24a",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SerializedVersion.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializedVersion.cs",
+      "sha256": "4d536721255fe2992ddb9eed03b3ba97a7b1f15f4119a90188c3af0223d572e5",
+      "runtimeSha256": "9371b6101cededd3870d9b26af9b93f125c7d9e46e4fb1a111e3cb338552139f",
+      "adaptation": "FullSource namespace wrapper only"
+    },
     "Serializer.cs": {
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Serializer.cs",
       "sha256": "b7367dc25d1ef27bb186223bb111be0f30cdcce3e4d26894792e8183ebab581d",
       "runtimeSha256": "1fe54f492260f75f48b2f97b5ad1825928690d183d18bce1469112877bcea76f",
       "adaptation": "FullSource namespace wrapper, weapon namespace import and Unity Random/Object aliases"
+    },
+    "ServerConnection.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ServerConnection.cs",
+      "sha256": "9c175f4bcfccf31218572b6e0fe34bc498ab7ca36d989ec719ecb8aaaf5bc0d4",
+      "runtimeSha256": "7ca0bcb7c373f861b27bbbdb4d81a5bd8063d2d0434ad47a7bc3acb0d8aa06da",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "ShockMeasure.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ShockMeasure.cs",
+      "sha256": "4c5e148ba58a0440ec19d0ae26ac434e3af4ae023ba89172b9b60ab489d99e2c",
+      "runtimeSha256": "588e78f78f91f8b3119dc324a5ac554f473784e8f923f104c73ced68395a1ad2",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SingleEmissionEffect.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SingleEmissionEffect.cs",
+      "sha256": "5129c27e3cd3112236d104b4301ff3e36e963937f5e98fb4fd2031d796ba84a9",
+      "runtimeSha256": "ad4f64374575995928feaf71469d3a23670910bd614b7994bb86fb23485f892a",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "StagingDebugUI.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/StagingDebugUI.cs",
+      "sha256": "cb11de91388df25ae627c3a7e5921b53956067a1d07660af31c0cc9c2d26618c",
+      "runtimeSha256": "dc9c61aaf0f43ce842fa586535ae0ce88e533da406d43242b092bad1b75b1ce9",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "StaticDebug.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/StaticDebug.cs",
+      "sha256": "35b0a79489c66a0e9570149229e19964806cf454058fef4f26922d05e28e65b0",
+      "runtimeSha256": "56da3518bd388834e3e3aa388f11b0ae49e0d31875bd30e9aa18750be676c660",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "StringHelper.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/StringHelper.cs",
+      "sha256": "0d3e6ef51ee904f1ee08918c4393c6a5aa59bcb2061158bdda218d8eb1b52b65",
+      "runtimeSha256": "d67d99f6835064542be4fc4bf8e43cdc323781cd0e319320a0908ff427e10d0f",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SuspectAction.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SuspectAction.cs",
+      "sha256": "7bb7a98acdbc0e582d4de182f8f67738c8761a88209bb25204abbf7e36732a74",
+      "runtimeSha256": "fbeb2171648322fa1899c77634c34cfcaae1628e86049bda64795239873d1c1a",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "TargetProximityMeasure.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/TargetProximityMeasure.cs",
+      "sha256": "1d2ec1d57cb39a8ca1ff04d17fea4dd4053f676829657f2c44f54b6a87bc19a9",
+      "runtimeSha256": "926b69b6a5b13052af3bffc3b5e9f09527e1f72589ad5ba5ec146cd5edbb430c",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "TargetWeaponMeasure.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/TargetWeaponMeasure.cs",
+      "sha256": "d27ef67a2af40b5f5ce0c0bc9036e231026c2e49574e8bae8ce655977bd0dfae",
+      "runtimeSha256": "056f5ab744656d2a0542339b46e86aaf6c9dd6c6401f4d0dcef153f03fb2a09f",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "TeamController.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/TeamController.cs",
+      "sha256": "2d7d9b7d2333f04732ade7be66ea884e997366c1547e2f422458224c84a98361",
+      "runtimeSha256": "e63b2e6291515c90747ad8e57c81c83c0a430b72d28d1492fc40da4a5d4c9fee",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "TeamOperator.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/TeamOperator.cs",
+      "sha256": "cbc91bfe42d2d5c5c3562e20e16fbf60348af13309697016c3f3d2c9476e7ba7",
+      "runtimeSha256": "91c44cdcd4159560ecc845a009fad6c255ccaad250b7aaeddd93123163464373",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "TeamTutorial.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/TeamTutorial.cs",
+      "sha256": "a78d42b94def6f72f314970344dae6922988ea131efae3b90ebfeee865ba568e",
+      "runtimeSha256": "1824c62c4aa775fd35566366026369cd15e4daa4c3100f6d5df7b6d5f901bf0b",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "TeamTutorialMarksmanTarget.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/TeamTutorialMarksmanTarget.cs",
+      "sha256": "dd383f408412d0895f89dddff5940a10a9a9b2d9937cedcb4242b98fa50b28c8",
+      "runtimeSha256": "fbd4e5cbd619f86bfb542db8017f301bd33ddeb61d329d1ecbf21207b6386fb4",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "TextFader.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/TextFader.cs",
+      "sha256": "23110a2cf83ae07b3ce73e045e73eb679c31699b66c593b06edcd7f7bd7c02c1",
+      "runtimeSha256": "73714e167b197a4165fe0e6ac3032577a0cf54dd4903f9a530ed290f0e70fa3a",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "TextScaler.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/TextScaler.cs",
+      "sha256": "6b05cddaf99504a73d562a193170b0d14736fa6de89d90fc9c91605847d342de",
+      "runtimeSha256": "80fd78c5f1d1fd86b6946fc52272d513cf0bfdcebb4c3dc761abbde569fcaf19",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "ToggleElectricity.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ToggleElectricity.cs",
+      "sha256": "34a433099eeb6c85b6127729a78be4fd4ae46a98a605f303f76c7b03a150b4f2",
+      "runtimeSha256": "7f8f11a009dca8c7e5851d9014fdea0e5535413ae2dd41924920ac42b1793635",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "Tutorial.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Tutorial.cs",
+      "sha256": "99a5f931200ed0ca8ef9a4a4bd44a051edca1bae13352a31f4147f95be1178c1",
+      "runtimeSha256": "9a810d6423e4df2712a820457e86e92f9da3ea0ad41e92c4925446ba8fbebad2",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "TutorialMode.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/TutorialMode.cs",
+      "sha256": "bc40848482db36d865b576ef98459ee695bce1381115ce78cbbb2f8412c964f6",
+      "runtimeSha256": "6ca7fa7e2369e712a1daab05e3a8c283bb2d479976805d2dee0a50b1621f47b1",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "TutorialTeamBehavior.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/TutorialTeamBehavior.cs",
+      "sha256": "344f94c1d4867e99c33f2adc0adf50e902bb438f0dd352f2d82742ff3649d78f",
+      "runtimeSha256": "60f400d8ab68970076bb755600ad81f77dab8b80dce914232935ca811ab7740a",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIAmmoRenderItem.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIAmmoRenderItem.cs",
+      "sha256": "ce6918d1aac780920deeea7c431172bedfe60d39f312d0d09f9f51ee3ec94b4a",
+      "runtimeSha256": "77001817aa32018fb6d57a6fea47caf624a1e3d8ee4198a8c06094c211be895b",
+      "adaptation": "FullSource namespace wrapper and Unity Object alias"
+    },
+    "UIAudioSettings.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIAudioSettings.cs",
+      "sha256": "4baf84d29e4383a0ea83411bc647b8f2d15bd52c909df2e9ab6a4246b1d235f2",
+      "runtimeSha256": "40bbc2f5cc1dd90ac91688a9f3da7852a0f6a1087a08305d79329e02735d156a",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIBenchmarkResult.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIBenchmarkResult.cs",
+      "sha256": "728659da442db5589ed4ac4a31aac1b91b4fad6298279960bd4ad70a158d26b6",
+      "runtimeSha256": "746196681183d9786b389007227c3a92e8901258f86f81dc65dd2bd48419ab23",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIBindingCategoryHeader.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIBindingCategoryHeader.cs",
+      "sha256": "b032cf16e0051b46f72cb3a0bbf4fd0e3f8612ef8e1e6396d49a21e2236bc74a",
+      "runtimeSha256": "4caca9c4cf36417a56b446cecaa40baa29cb61929a46da8573c7321268c2a021",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIBindingConflictDialog.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIBindingConflictDialog.cs",
+      "sha256": "ae73489feac88a0a1a3715bcfeb514570ef87b3192a2ff58a3458560d6c8b6ed",
+      "runtimeSha256": "5e8d5fac87246115e6b084920f1df32200c7019ed8aaa99116615064a6ece7ba",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIBindingItem.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIBindingItem.cs",
+      "sha256": "a25ab2f475866c8e88fab2f89f8b41008ace2486738b903c8548c1d75d02509e",
+      "runtimeSha256": "770a42715e1dffbe31b114611fab66d34753149680c1ac6108f203b86537906b",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIBindingOverlay.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIBindingOverlay.cs",
+      "sha256": "d5ea808190152642c356103185caf4cf27ce5f74ebe173dd0da5907028402eea",
+      "runtimeSha256": "d04457edea9e07672d48bfba500b4236c8f0efae0b0680072a0f8bd8ab79f680",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIBindingsTab.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIBindingsTab.cs",
+      "sha256": "c14faeeeb30cfda839f18ae95e12a1cdd967d4ff069d93bd9179a72915cef827",
+      "runtimeSha256": "e555c7e0959ea75086d914176d785e729cd88171bc7df5d67c8afd033a2a725b",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIBulletTimeEntry.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIBulletTimeEntry.cs",
+      "sha256": "e4dbbc04793b91bbdca8fb20b6a9a1d7e6403f1217f822335fc60db71be25e7f",
+      "runtimeSha256": "ee1dde7486492bd276a1ec43b2c23bfd6f09d487d0953520f183da575b90f555",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIButton.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIButton.cs",
+      "sha256": "42c8d2b1e54d1ffc73298e98a9b82ed4182bca3eb58005b43b7271838682078d",
+      "runtimeSha256": "821722c75d969a4ce41a30e07fa9362e02c62775edaea593ee12d8de0987ad15",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIButtonToggle.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIButtonToggle.cs",
+      "sha256": "1e571e5c35bd696e29484dbd84a973ce55b01f84afaf8e233cdf8f9584bacc1a",
+      "runtimeSha256": "fa40cc190768aa396d3fa371305a4fe4d5477908a7e92e4181dfb562e3ffc91a",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UICampaign.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UICampaign.cs",
+      "sha256": "eb3dac6c31a843dc0497acce2d7b232f2a2838bc280948cf986c94492d929bd6",
+      "runtimeSha256": "bb6873ed2c876f7bfa0dbe3aac68f57d6863dbfba96c7e05e80957b18b1e66f3",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UICampaignMenuLocation.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UICampaignMenuLocation.cs",
+      "sha256": "872146c2307e12ca76376b5ce86a1f3f40d85a6abac2254b1f918b673b3fa5cd",
+      "runtimeSha256": "2bbe7d8781bd49ce49ad9fa89906d8c8717d41c611cc379d326f1068288629b0",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UICampaignMenuLocationTemplate.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UICampaignMenuLocationTemplate.cs",
+      "sha256": "4ab12dc3f5f199e606a8aaddc68c6f053afd8bf85fe363b77beda4584fcd0a75",
+      "runtimeSha256": "7055251f22e9644c57ebf335ab466610ed6dede429240aefa797ed576953a09d",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIChildSequenceAnimator.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIChildSequenceAnimator.cs",
+      "sha256": "f7b6204152922efd0b07c7ea9ed39d14edbf5898de1d3bee583e7c2e168a73bc",
+      "runtimeSha256": "0b49d1f9b73e8146d3673e705eea368500717a38d3ad1d9d8a1f131fda216856",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIContinueCampaignEntry.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIContinueCampaignEntry.cs",
+      "sha256": "47c1c8c895ebe116fe9b7a775de24ffa60c17fb861304f1545f3cf34797dbceb",
+      "runtimeSha256": "21fd6de9457af91263086c63c3fb0bf1aa4fe99543c83d0ac943efd27fdea673",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIExtraSettings.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIExtraSettings.cs",
+      "sha256": "6c6dce74eb120337ed1f2f3ffa00310b9121edabe6d83848b5856024c8866327",
+      "runtimeSha256": "ef6f44fda1668854a9e8f59310c5f93df3b5577871b4442d593e579604862c1d",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIFeedbackForm.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIFeedbackForm.cs",
+      "sha256": "3832309fb689de682f5b5e7635ec0a558f7eadeafa45042b9cc8fce0d0b937c6",
+      "runtimeSha256": "844b59a4f132b79c7fc9adcbfcffa06541b213f45c08b42a78c00db50d6b7ca5",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIFeedbackWindow.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIFeedbackWindow.cs",
+      "sha256": "ba5348050ffd49ec6b2b63717032b50091cf11b6f770ee46a5cb6f501e38684a",
+      "runtimeSha256": "cd89b77d4711129a2e6daf42e8e59bc9ae86ccaa57bfacb7a59ba0ba316e1468",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIFireModeIndicator.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIFireModeIndicator.cs",
+      "sha256": "0464a93d7f5cc49b658d07ad82cae8f1c4a14355c3045bff0f4a5619df25f710",
+      "runtimeSha256": "6d459d163910842643297a8b1b4999a3ee952bd25acb38d93c86d88f6e7f8740",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIFrameRateDisplay.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIFrameRateDisplay.cs",
+      "sha256": "41c60ff9430ee6dbd4f6dd7ca0fc9d50fd3d709c266ebc0f845e1c9af6b6ee61",
+      "runtimeSha256": "7cf4b2786431ff314a052402c952f80a4ab61c49f63d42605700e8124537aee8",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIGeneralSettings.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIGeneralSettings.cs",
+      "sha256": "a16c30e645708e7472a99dec5b4831f98dcb41892b5d75f07f3a3b38c4a63465",
+      "runtimeSha256": "da2566e86652378fc168ba48476c3aaeb36060d8e62d7657595c92918dd7a8c1",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIGraphicsSettings.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIGraphicsSettings.cs",
+      "sha256": "109e67a55e74ec60a69e68edf9c3690f99c0c9f8192f0850c99d8ece46f94e84",
+      "runtimeSha256": "760792778723645255d41ae63ba3ef77328157c107cdd99f8c3f1a1fc891dbc5",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIGrenadeTimer.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIGrenadeTimer.cs",
+      "sha256": "163448f6bc3bee780641fe293262adcb85e2cf76c39da56c2175be895acff39d",
+      "runtimeSha256": "78f00aa1680fadee5986ab57aec071c10c6e8f55062b4dcb5cdcf046d2ef5291",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "UIHitAnnouncement.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIHitAnnouncement.cs",
+      "sha256": "9ab750d4afe40745ca6afc956cfeb9e70ca9e45804deb43402107e4869226250",
+      "runtimeSha256": "762b1ec96f5c1b67a0deb82e3a6eba8cf3a5b0473bb81ef60ff8d8e77be22c3b",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "UIHitAnnouncements.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIHitAnnouncements.cs",
+      "sha256": "2b23ec695ccbc238498b5c2accd5b7294c4e425726d61401c26795398697b072",
+      "runtimeSha256": "93e1d0da471672bfdac01ca53eb908a6d18b583afe820a29857dfa408dd894f7",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "UIHotkeysIndicator.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIHotkeysIndicator.cs",
+      "sha256": "851fc09b6c7db6460af42bc513c01f9fb55dede3c86c6b368b6575316e18e16b",
+      "runtimeSha256": "447abeef9cdfce7860c5071002580b9a7cec32ef81284ca3603450062981709b",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIInteractionMenu.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIInteractionMenu.cs",
+      "sha256": "8f5ef7db65c12e29d908421b66bb314d21244cff6fb961d45cbe827ff2966f07",
+      "runtimeSha256": "b012cdbff40b07d7c3ac32fff5055a1e61c35621b4c6a95ee6c6d494fbfe69c9",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIInteractionMenuItem.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIInteractionMenuItem.cs",
+      "sha256": "41a90de61786c4a84be2fd1761c4fbf7a4849bf18f30fc5cc25ac09cda8a866e",
+      "runtimeSha256": "831bab197466c4ba569d1ae07eda5a932ec5cca4d5bb882d1d2eb0849966e66e",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIInteriorModeInteractionIndicator.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIInteriorModeInteractionIndicator.cs",
+      "sha256": "8741da04ed2035363bc985ba8048da342c9abcbc304f4e62b3e7c56ec47978a1",
+      "runtimeSha256": "8d75762f1eaf937058c0d0dc86bdaa2f51ae024b636c94b5edadc98daabbedd1",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIInteriorModeTextIndicator.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIInteriorModeTextIndicator.cs",
+      "sha256": "6382b4036d29499972b802f0c9757e06dcd5c909496eb7d0a973139ce3da7ead",
+      "runtimeSha256": "07f851d7f7c383f84a3c6357ee0987cbe2c8c0f5e91684f92e897fcc988d217d",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    },
+    "UIMagazineIndicator.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIMagazineIndicator.cs",
+      "sha256": "8a02719bfac1e9f1b383b0d906dfe15e5f6b21eb4f83caf8b9127453746e3a86",
+      "runtimeSha256": "3a13c28db66ab350358ac98b37a1acb159063e159e201e805b0ecf851116e722",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIMarksmanIndicator.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIMarksmanIndicator.cs",
+      "sha256": "b67486cc514a5063c7f9f2e17566573e7ef5bee4b09bc9f0b74f8a282d08c726",
+      "runtimeSha256": "ac4f8c1d702374287b2cc8181d40d39de4a72895c3ff6c56916b6ce0b3351713",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIMessageBox.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIMessageBox.cs",
+      "sha256": "d5a3ee835347fd576f59d12cf09b70d789e8e138e410965351ee596d117c0132",
+      "runtimeSha256": "29d23aef8fcf66c9e3ab15f825924a95578977ff37a4ae130b634673ca6c2ce7",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIMissionConfirmDialog.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIMissionConfirmDialog.cs",
+      "sha256": "e70b3e0415a5bd4e4a5000b254fb54d3a29005ef2ef39a690e949eda69695904",
+      "runtimeSha256": "9c763ca0f1b7596947f117bf79bbc888270546f7703ddc0fd834e450f72354cf",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIMissionEndOverlay.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIMissionEndOverlay.cs",
+      "sha256": "0e90851df4467dadc8648e1b3eafa7cbe991e2331dbb7dd37724828db48f26da",
+      "runtimeSha256": "60e6f59db5f08185a8300b41844927e1d0b312b2cd9f98e75cf945c003e123ce",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIMissionStatus.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIMissionStatus.cs",
+      "sha256": "eeec358f34807c83680d747845ec95fa2083cc4fb008b8ed862aa4422f5c7279",
+      "runtimeSha256": "0fc543e614f8fa1542aaa5f6a2d8b55c77e2bbfc6987f612ac20da9b4cb9b289",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UINegotiation.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UINegotiation.cs",
+      "sha256": "64e00482c94d6755ebed3cdfc41b8bbd98d13557371ce58a9562da8d03a4c513",
+      "runtimeSha256": "8a836db6d6874c4bc554c1deab357972576134afae8bf23561b4093923e84d92",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UINegotiationDialog.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UINegotiationDialog.cs",
+      "sha256": "022c95d821e821b2b04a184e006f4b98fe0d8701862ae40cc4dd3124ae43528d",
+      "runtimeSha256": "739ce93f577b40ad5304a8048a1e2e316d13ef6c998f4cff2416386d6332b9cd",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UINegotiationOption.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UINegotiationOption.cs",
+      "sha256": "6e5aeefd93e55469ad35394b9910f86b9a17aeac165f1b7a1942ae8aeec202f4",
+      "runtimeSha256": "1200012ef5da5f8556b36e31710c1a1868ece732678d807470e8c9a157c43e82",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UINewVersionNotice.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UINewVersionNotice.cs",
+      "sha256": "a40c9c4eaf65a3d9c8c9936cf9c0760bc2339b3f5c16e91418e4147325480fd7",
+      "runtimeSha256": "e6bee5c9dd848b7d05b5a7f8d918990cfc44e98309bb7850f0958cf987ee62aa",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UINonLinearSlider.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UINonLinearSlider.cs",
+      "sha256": "86d00fedc46804b842f8ad288c2e4e3ce6ea9fafebf35319b123592beaa32fe8",
+      "runtimeSha256": "0cc10bac4eb3796dc7767c813b2029487df20c38c9105d18ed0d64c05e184279",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIPerformanceSettings.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIPerformanceSettings.cs",
+      "sha256": "977473a58e8141b089589cf8802ee5d695b60a315bbca5e895731791c173322d",
+      "runtimeSha256": "866911833e5dba5e63dce782beac4768c0d325d9302ce16a0dc02f95ee8d66bf",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIPerformanceSlider.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIPerformanceSlider.cs",
+      "sha256": "b19e571b90f275c11edb890116d7d1fb6cb6987bcfbd90ceea989977c9db495a",
+      "runtimeSha256": "5ecc5fdc16c0e994bc19d1fe2b8f110ea67bd2d9ed5baaa31b182d001b382d97",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIPhysiologyIndicator.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIPhysiologyIndicator.cs",
+      "sha256": "01c304e1a81e3cdfb5fd0add69663d16352f604e603501eaddc07a6b040bd987",
+      "runtimeSha256": "950891328e58b02ab5343fbebcd0c621a42bb814b6818949a2dc6dc202e28ccb",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIPhysiologyVisualizer.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIPhysiologyVisualizer.cs",
+      "sha256": "00c307dc80e2219a5c8473d47f58b96e7aa97c3fc5b5f54a6eb43f3ab3edae40",
+      "runtimeSha256": "52d24a1ea7d24823c366d077b4dee1cd0fe78fac77472701740f7a7d14fef0f8",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIPostMortem.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIPostMortem.cs",
+      "sha256": "d0bf00c6de522ecf561271315fd096da2063f5638eb644632894c1d2aefccfa2",
+      "runtimeSha256": "c2d6ac2af6eef4c5938225ff27cdd0f917ab4b06dab666141015dd81933e0888",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIPostMortemItem.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIPostMortemItem.cs",
+      "sha256": "18f826299950b93d48e8f62a38a1aeda38a6172d5848486b89421b214d34fa50",
+      "runtimeSha256": "9c65cfd25261c89be5c13fdead940a98bce19575006223a461b207395f8833b4",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIPreferencesMenu.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIPreferencesMenu.cs",
+      "sha256": "bcaa5400f46a60bdbd195d191ff54b00bee90acf70c44806d2b122fddce5a57f",
+      "runtimeSha256": "fae5188541a6b4aaa07923378a054f8f40621b54e42d54c004278992e2173bf1",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIRangeSlider.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIRangeSlider.cs",
+      "sha256": "623a543a20d6e3e346108a8c16ad8c2e9289a681064107e1cbfa705213a1b002",
+      "runtimeSha256": "edecbe03e3f5810aadbebda2f836ee241b7c6cf5d86f44e85a5c9f252df84e9f",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIResourceCounter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIResourceCounter.cs",
+      "sha256": "a0babe8058c618e10d3946fa670f13c8d520525c76cde138391aaf749068b70b",
+      "runtimeSha256": "453581c1a404300d41df64c392a094fae1b39436bd22b6d2c26bfce4ef550751",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIResourceCounterEntry.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIResourceCounterEntry.cs",
+      "sha256": "d21379792d6facf4ebc8078870ec514727ea3f76fdd22730f1ba0d281ce319a8",
+      "runtimeSha256": "0224781050426017e2a087364d873d3bc627154ed4413c824746685aee053ac3",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIResumeControlBanner.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIResumeControlBanner.cs",
+      "sha256": "6fd43e3419f476dfc56a9a010240d8766e9122d5e639129f46d0acf89c0e1669",
+      "runtimeSha256": "4bc9147019cf5170da4accf03ee121ee186915a1936fc2c9a6ee4c1c2c079169",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UISequenceAnimationChild.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UISequenceAnimationChild.cs",
+      "sha256": "8d63fa9eaba68bf499637c8cb96c71bc36b77032b7e7d020fd69c2af552675df",
+      "runtimeSha256": "be0f17b1ac87688b8d81fedcd469c867cdc3ca6fc26c383f6e8bf2d6fd0bb955",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UISettingsPanel.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UISettingsPanel.cs",
+      "sha256": "213016e7d8e372d6e7c18f1c54ff984bbb2b54324f5871fbf5d71cccc06b5258",
+      "runtimeSha256": "cb3bf2cf927b0e21e6bdc3a75baa7705d7c567c1a38a0043408dd872e535b5ea",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UISlowMotionSettings.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UISlowMotionSettings.cs",
+      "sha256": "7aa2eba476b2f66c9c6f551d36c6dbe4f6f0615386f1ce9dfbb463eba759205e",
+      "runtimeSha256": "000a1351d194561c71dc516c543ac1967ef891c52470e1fef9fd972f2d500192",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UITitleLetter.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UITitleLetter.cs",
+      "sha256": "8e0e4c67b2814acd102f64c0cbd08139e0725a2360dbf97f7f418cf0af7a5f5f",
+      "runtimeSha256": "bd63109ccbeb7b4c3a56ec770cf4e9ffe878722e6df78e4924f2058d548a747c",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UITitleSpriteFlasher.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UITitleSpriteFlasher.cs",
+      "sha256": "14fee91702b11878b3a3fdcd1d875e041a2e5c1925a41db2bc5bcb78899e3ea8",
+      "runtimeSha256": "ed45187d68d3f704cb898dac1c75a6cc3708b291e0fd6861e17cd8b388d7c554",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UITitleSpriteFlasherSequence.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UITitleSpriteFlasherSequence.cs",
+      "sha256": "050ea09b2112a5ba85369f64e30305b544d3bf0672251b6b4a95d23cbcacc248",
+      "runtimeSha256": "fe99c461579973b86f01a94305aedc97fbcd74ebc96bed276508eff0df6eec94",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UITitleTextAnimator.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UITitleTextAnimator.cs",
+      "sha256": "1bf35d285346a427ef99d88099a899fc6600a86cc1c11815f106ac3b56e254f2",
+      "runtimeSha256": "4a2b5167ff0bf2c4cea6905b394b792153e5c3c117a1b1c7457d571272d47d1f",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UITooltip.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UITooltip.cs",
+      "sha256": "f53247710ed7e86a9e5f720c18f3335fb7c4ff9c3390b0a7059a97817aaf7350",
+      "runtimeSha256": "79287869daed27eab3649c7cf54c20648046fbafa6fb28c05fcd0f26d7bf1d14",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UITooltipManager.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UITooltipManager.cs",
+      "sha256": "a3b30df9d3f846fcb5323648380f8fa648a1ae031ccf98ea97ba37f4d0c9f546",
+      "runtimeSha256": "8fe67841cd2601bd3a0919299f9532c8c4682d751ae753e7f861e916e8a5fa64",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "UIVocalizationText.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIVocalizationText.cs",
+      "sha256": "de6fc5fb43a058a123af4b160d953d7ae256e767fd186c480dd3a783bc4ffb1f",
+      "runtimeSha256": "153ba838ac9fb2e3f7c6a700595aa9393a6557597a8dd6c816e09878c79a22b6",
+      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
     },
     "UnityEventBool.cs": {
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UnityEventBool.cs",
@@ -241,154 +1705,34 @@
       "runtimeSha256": "cd4d389f86118bc92cff384fad1e2a9929acbad1855772ba324cc6ee53718fcf",
       "adaptation": "FullSource namespace wrapper, weapon namespace import and Unity Random/Object aliases"
     },
-    "UnityEventIntInt.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UnityEventIntInt.cs",
-      "sha256": "d04460d69395e1ed9a35a82aaf4c542fa5d6a91da0638182285a51c23b4a03d9",
-      "runtimeSha256": "fd7a2afd15b28a1e2444f5e778742c9e663fe9cce10ea54df40540624cbd73ce",
-      "adaptation": "FullSource namespace wrapper, weapon namespace import and Unity Random/Object aliases"
-    },
     "UnityEventInt.cs": {
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UnityEventInt.cs",
       "sha256": "62da7f5701ed26ca6f795d50077864627b09073692bd3d5d4fb3b19d0263db17",
       "runtimeSha256": "fd27abfef25a5356c5308354e625f3f976b6f12a28b8f8daa258238c464bbd76",
       "adaptation": "FullSource namespace wrapper, weapon namespace import and Unity Random/Object aliases"
     },
-    "QualityLevels.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/QualityLevels.cs",
-      "sha256": "8bb7cf926799d32bf1f9da189a6d84c1e80abc07ac186d0dd9ae6af4ddf0e48e",
-      "runtimeSha256": "72a99f6e4f9758514837575713251c1b50428676d04e718f270ca80b44981ba4",
+    "UnityEventIntInt.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UnityEventIntInt.cs",
+      "sha256": "d04460d69395e1ed9a35a82aaf4c542fa5d6a91da0638182285a51c23b4a03d9",
+      "runtimeSha256": "fd7a2afd15b28a1e2444f5e778742c9e663fe9cce10ea54df40540624cbd73ce",
       "adaptation": "FullSource namespace wrapper, weapon namespace import and Unity Random/Object aliases"
     },
-    "WeaponType.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WeaponType.cs",
-      "sha256": "b8b71fceaef0f80f49f97855013e229a94df6ae17637216346feaffece9d2894",
-      "runtimeSha256": "a38d3fdc112c35c2dfc0e97b8de2d11568d9995d42b6e9a65be07ec9db72dbcb",
-      "adaptation": "FullSource namespace wrapper, weapon namespace import and Unity Random/Object aliases"
-    },
-    "LimbTextureData.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/LimbTextureData.cs",
-      "sha256": "6497989fda940321313bee655475cfae8e790ffaa75848c1fa08c49cac8afacc",
-      "runtimeSha256": "6f2cebc0fd528c084a7a66262a2221b901daa0d2564c3e9820d082cb99dc0295",
-      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
-    },
-    "DynamicLimbTextureData.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DynamicLimbTextureData.cs",
-      "sha256": "3b29909c33929716827f3b92baf245952beb9aeb8f242ab6c67a888dc95cf9a8",
-      "runtimeSha256": "d020cd6dca8d96840d45b92ec91f4ac19a107ccf40250b244010a4f8a6d43b61",
-      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
-    },
-    "DynamicLimbTexturePool.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DynamicLimbTexturePool.cs",
-      "sha256": "383f46c6d9ed88041c91b9107ffdf14202c097ae5d9dee46d8f8336e9d6b82e3",
-      "runtimeSha256": "8b10727365d7f584307f7b5868b887e0169acb10f4d4f82eec37f84c9fd035bc",
-      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
-    },
-    "StaticDebug.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/StaticDebug.cs",
-      "sha256": "35b0a79489c66a0e9570149229e19964806cf454058fef4f26922d05e28e65b0",
-      "runtimeSha256": "56da3518bd388834e3e3aa388f11b0ae49e0d31875bd30e9aa18750be676c660",
-      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
-    },
-    "UIHitAnnouncements.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIHitAnnouncements.cs",
-      "sha256": "2b23ec695ccbc238498b5c2accd5b7294c4e425726d61401c26795398697b072",
-      "runtimeSha256": "93e1d0da471672bfdac01ca53eb908a6d18b583afe820a29857dfa408dd894f7",
-      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
-    },
-    "UIHitAnnouncement.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIHitAnnouncement.cs",
-      "sha256": "9ab750d4afe40745ca6afc956cfeb9e70ca9e45804deb43402107e4869226250",
-      "runtimeSha256": "762b1ec96f5c1b67a0deb82e3a6eba8cf3a5b0473bb81ef60ff8d8e77be22c3b",
-      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
-    },
-    "UIVocalizationText.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIVocalizationText.cs",
-      "sha256": "de6fc5fb43a058a123af4b160d953d7ae256e767fd186c480dd3a783bc4ffb1f",
-      "runtimeSha256": "153ba838ac9fb2e3f7c6a700595aa9393a6557597a8dd6c816e09878c79a22b6",
-      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
-    },
-    "UIInteriorModeTextIndicator.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIInteriorModeTextIndicator.cs",
-      "sha256": "6382b4036d29499972b802f0c9757e06dcd5c909496eb7d0a973139ce3da7ead",
-      "runtimeSha256": "07f851d7f7c383f84a3c6357ee0987cbe2c8c0f5e91684f92e897fcc988d217d",
-      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
-    },
-    "UIGrenadeTimer.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIGrenadeTimer.cs",
-      "sha256": "163448f6bc3bee780641fe293262adcb85e2cf76c39da56c2175be895acff39d",
-      "runtimeSha256": "78f00aa1680fadee5986ab57aec071c10c6e8f55062b4dcb5cdcf046d2ef5291",
-      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
-    },
-    "AudioPlayer.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AudioPlayer.cs",
-      "sha256": "b490c93103ce7130385cb42a95ca8b12d5cb15e80d1a61d5e9f4dedb219f68e4",
-      "runtimeSha256": "195dc54dd6f85a10eca8d1a7508cfcd434b5870f27b19e02efbf9119a524cbb8",
-      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
-    },
-    "Coroutine.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Coroutine.cs",
-      "sha256": "be60b26733c6d1fa4a694d42435bc8fd880eb23f8ac3fc1054bfff96503e6216",
-      "runtimeSha256": "e2cf3abe34c34d002e1a4cba910225ef69f2ec7904b904a4846a07f31d8d771d",
+    "UnityEventString.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UnityEventString.cs",
+      "sha256": "0e06e44ed7dd97f71f794b430c4eb5065cd75fff6078590b1edcc2728ec012f7",
+      "runtimeSha256": "c05de8248cefe393cfdab4acba01489e670037f7693e903e7f96291d3295d19d",
       "adaptation": "FullSource namespace wrapper only"
     },
-    "Interaction.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Interaction.cs",
-      "sha256": "f62ca854a9d6091e9621e6cae6badd5bb66377f98f6775abe922417836d02eae",
-      "runtimeSha256": "e8101b18cdd50e948a46c344c6639fdb08d74c9f768c189fa8ff73fc13effcaf",
+    "Version.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Version.cs",
+      "sha256": "0b0f4068bd81189b9b02541e77520f93e514f6727e94aa48f8c3e3e214864962",
+      "runtimeSha256": "844c14c23d007c099534b53d580e5787a85feaa26e1257da55123b3daa64f25f",
       "adaptation": "FullSource namespace wrapper only"
     },
-    "Interactable.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Interactable.cs",
-      "sha256": "85bd4b9bc94a43a2f73b3ed63ab765525949ef676e5ffb9d9cf76377b023f840",
-      "runtimeSha256": "fd567b19efe15702e3aa61d6911d54ed27e0d6c08164a22af6e6f0c2ede069c0",
-      "adaptation": "FullSource namespace wrapper only"
-    },
-    "ToggleElectricity.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ToggleElectricity.cs",
-      "sha256": "34a433099eeb6c85b6127729a78be4fd4ae46a98a605f303f76c7b03a150b4f2",
-      "runtimeSha256": "7f8f11a009dca8c7e5851d9014fdea0e5535413ae2dd41924920ac42b1793635",
-      "adaptation": "FullSource namespace wrapper only"
-    },
-    "Doors.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Doors.cs",
-      "sha256": "c3d1ba30b0fe26b91a02d9afc00336dffca34537854a5d08881638ff035ddfb5",
-      "runtimeSha256": "0e278f147957ed3f15f48d7e05e0b1c5d5e7beeea0277a42122280aacbe5878b",
-      "adaptation": "FullSource namespace wrapper only"
-    },
-    "FireAlarm.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FireAlarm.cs",
-      "sha256": "7655163a15723a4339b332746349fc8711e84f9ab69ff2222770512d005c2d43",
-      "runtimeSha256": "0e528a560501e4276e145edff6d6d1fe31deff15371f867fc88aca24009fb4ae",
-      "adaptation": "FullSource namespace wrapper only"
-    },
-    "PoweredLight.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/PoweredLight.cs",
-      "sha256": "422b99bafd4e29c3e34a3b780dccac43848d23d54b07d7f75b5d5a3071144b30",
-      "runtimeSha256": "940e6accb9f8fb14d223bf21d63dcd5cf50df8d12d920cffc9755ab07f30d4c3",
-      "adaptation": "FullSource namespace wrapper only"
-    },
-    "Explosive.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Explosive.cs",
-      "sha256": "ffd10bd4a948c95d792fa174663b471341eda2f9706c7610ec42839d0dbd38a0",
-      "runtimeSha256": "c4c3f1d89948259645c434c243e1ace63e3579a771af8b189a3b8b88909f991c",
-      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
-    },
-    "GrenadeSpoon.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/GrenadeSpoon.cs",
-      "sha256": "0c3dee64954d259cadfbb39929da832fa76982071be5e82f5d140b944559dc42",
-      "runtimeSha256": "d8d14bf297b72cc2edbde93dcc1272f406bfbf4c51c45efccaee8bfcbabd5e45",
-      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
-    },
-    "PaintableSurface.cs": {
-      "archiveEntry": "decompiled/PaintableSurface.cs",
-      "sha256": "c00365995f0f818a2f3cb55ca11d160addac750ff66860bbaa89d69d12902110",
-      "runtimeSha256": "d4f6a4cb907038addb5bfbe29ca74d37119d8cd0093690b1dc6259dda015e00b",
-      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
-    },
-    "FloorPoolPainter.cs": {
-      "archiveEntry": "decompiled/FloorPoolPainter.cs",
-      "sha256": "63d8cc3c1881276915f183ee16b89d1abbb329e33d33aeeea855ae150ea7b438",
-      "runtimeSha256": "bebf728ddb005a06de40ec1f052c905d8abdf12f6ccf514757b5264efeba565b",
+    "VitalFunctions.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/VitalFunctions.cs",
+      "sha256": "2d677971ac8db23154406da6d5b6c1bcb5a4fc5d93b1d08641750feb3dfaca99",
+      "runtimeSha256": "621af972fec93f5a07159431c03279cf49996b22b4aaad417f92a1fca556416d",
       "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
     },
     "WallStreakPainter.cs": {
@@ -397,47 +1741,155 @@
       "runtimeSha256": "3de1264c2f739c0adaf79f45f1ab641708bd159b6c0babf517a264ffca8d6bce",
       "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
     },
-    "DynamicLimbDecalRenderer.cs": {
-      "archiveEntry": "decompiled/DynamicLimbDecalRenderer.cs",
-      "sha256": "293d9b628856dc8a5dfaa20a8a9d1719f6eb21a74683b1b85f9a81b286637efa",
-      "runtimeSha256": "e9e80fb40e91dfddacd936d4e6a1b5c93ea058fb49f40626fe3be7283b246af1",
-      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
-    },
-    "BloodStream.cs": {
-      "archiveEntry": "decompiled/BloodStream.cs",
-      "sha256": "05c03edfd36724f052350a8f16e9cd656d1e1a1fdc623f51a70b2378c61c7dce",
-      "runtimeSha256": "59555b29ce4bb4695ee5625115259dfb39c057b563b018fb5cf74fdd7a3d3cf0",
-      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
-    },
-    "BloodStreamGenerator.cs": {
-      "archiveEntry": "decompiled/BloodStreamGenerator.cs",
-      "sha256": "cb954d0d435c39d11a170049544f80690263ec40b65175e72014b824612feba0",
-      "runtimeSha256": "143030e869774a0716ea856b72962caf55a7bf7c4acdb9c38f7e50c0c90e6dcb",
-      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
-    },
-    "LimbStreak.cs": {
-      "archiveEntry": "decompiled/LimbStreak.cs",
-      "sha256": "bb720e28909f86da246eddf7ba167e6e63e1dda2c1b9d6e01433313b408b7ddc",
-      "runtimeSha256": "16ebc6887c63fb16c64e2f0d55ad17747e700a67b4df7a8573c501d57d76cd48",
-      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
-    },
-    "FogOfWarElement.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FogOfWarElement.cs",
-      "sha256": "1d0c4b0074da126de6f8989c32106e24b3bc5f0f219fb8f711186a6d1551c77b",
-      "runtimeSha256": "65176835cad29d72ace38950808bc45b4fc9c246aea8d4c7726e24990869fbc2",
+    "WeaponArmConfiguration.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WeaponArmConfiguration.cs",
+      "sha256": "6ede75a5f683b3c8491e005cf4216fc0c43d00167d4bad34d2034ecbda79fa90",
+      "runtimeSha256": "b7b24fd25162739383e3f3200644df081b20fb8ae8db5db2b4dd97a1bfd0a15b",
       "adaptation": "FullSource namespace wrapper only"
     },
-    "InteriorCamera.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/InteriorCamera.cs",
-      "sha256": "c07b427aea583bc4eef882c275f87abfab5631305388af4b142bd8fb7869c76c",
-      "runtimeSha256": "a4d1141802155928828429b60287fe467fe1e99e95437889a393d55a9ee9a3a3",
-      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    "WeaponBarrel.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WeaponBarrel.cs",
+      "sha256": "b3c5ef49ee574368dd342f644c7526d7c34cabfedd576d6c7f17f3af0d99f6dc",
+      "runtimeSha256": "80f95d65fd58492610c99a96b2977581819d5596f1b8b10698757c39938c0adf",
+      "adaptation": "FullSource namespace wrapper only"
     },
-    "DoorTrap.cs": {
-      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DoorTrap.cs",
-      "sha256": "a30958e1c991d0c45da3e8fb1e5abcb322038cc41efb9d235deea86e3514be4d",
-      "runtimeSha256": "08c0741be66f994811226f05b28409725c253dfd1c28f19c1c7cfc6a00f109d5",
-      "adaptation": "FullSource namespace wrapper and Unity Random/Object aliases"
+    "WeaponBase.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WeaponBase.cs",
+      "sha256": "cc60b54d30225be4d0f770d4bdaaab1ebd32e805be98ba5704745c48ed1be979",
+      "runtimeSha256": "80fa5cc7cec3e68b475dca2a4b0eab695629a0f3c237e60f33656b7656b3fc2e",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "WeaponComponent.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WeaponComponent.cs",
+      "sha256": "410d017f33c294a8136b0c29bb6a132e9244eed4a81462b5c25f1333a9a7219e",
+      "runtimeSha256": "ee0b87b0e23882d4216995d1afe78d9763c4260496416b6b3c18ca979bc4b550",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "WeaponComponentFlashlight.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WeaponComponentFlashlight.cs",
+      "sha256": "e37de9e526737c2eba7a263437a3adc5dcbf302dde4d0108a4c19ed1fc9846f7",
+      "runtimeSha256": "1a6e064bb0c2f0c0c8f9183c2f274cc6672b8c0188dec940ebc5589c22d276ef",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "WeaponComponentLaser.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WeaponComponentLaser.cs",
+      "sha256": "e6696a0890e8eb825a6f2ca3b7faaead7cdbf8c80143366464ea2fb81c6f7632",
+      "runtimeSha256": "1cd1a8239369bd904c25988de07e963830a132d287cdeaadb5826c7a9a4e8592",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "WeaponComponentMagazine.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WeaponComponentMagazine.cs",
+      "sha256": "a4beec3601d5911b6e763d832d9bed3035412d92b94090a9fb0dee96656efe4a",
+      "runtimeSha256": "157dc009ada87b4ab84e5f41cb9683344654c5c38b2f8d7a10fc7b304391cd36",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "WeaponComponentSlot.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WeaponComponentSlot.cs",
+      "sha256": "75679fcb061995e7c0c90a6f8526d37515584c3803983987d485f2c30e2bc1cf",
+      "runtimeSha256": "03f4529ec6ade08b048653aea29c40162a72b07f9e7a74e489a71f1df7c29160",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "WeaponComponentSuppressor.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WeaponComponentSuppressor.cs",
+      "sha256": "ffc5d174325073db60036e55b04710f5aa9fe081752f6121b72bd7fe7bc16f6e",
+      "runtimeSha256": "e40312d16a42d5ad846fa348cc44ded352aaed113e38f353c82bc9603e074a22",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "WeaponFactory.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WeaponFactory.cs",
+      "sha256": "b000cd368a89e018a5745c68e97af66ee0b778c017ad52b85db9b1bb40e8d006",
+      "runtimeSha256": "be453157f427eee91aa6aabf3c48fc4cafbc7521ced3e51d8b2bae5038b03adc",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "WeaponHammer.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WeaponHammer.cs",
+      "sha256": "abfea1337f66c0f157224c157a5747caaa2e214a697b169ad5775aab47cfc006",
+      "runtimeSha256": "b2d0d862dc07b10218176170111b64d30130a5f19fd9e79e5ba4d2206d7d9332",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "WeaponPointer.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WeaponPointer.cs",
+      "sha256": "c24873a28dc255333d74bdeea29d95ea9802888f05f9dcd16c7ae145dd510bbe",
+      "runtimeSha256": "9f7c3f83815ca35e95aea58c5d702fdf8cfdc584da58704c9d821f0d8f4be79c",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "WeaponRenderer.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WeaponRenderer.cs",
+      "sha256": "4745ff2ca5b529b270abb0861663f89960c9428fc59a2332c0e92481e86fe56f",
+      "runtimeSha256": "46a86c48d777c9abc3af2b3e2fb0137b2b16ebcde5fdb47da0f2b6a780a22ca3",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "WeaponReticle.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WeaponReticle.cs",
+      "sha256": "bad514f970014dab0ea1c27d1256c92676d38ca0c36a18d49be904bcae353f46",
+      "runtimeSha256": "3150745cacbca6773347b5c2b0d11fd1d1763cefe7701f10f1430e56033cda82",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "WeaponType.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WeaponType.cs",
+      "sha256": "b8b71fceaef0f80f49f97855013e229a94df6ae17637216346feaffece9d2894",
+      "runtimeSha256": "a38d3fdc112c35c2dfc0e97b8de2d11568d9995d42b6e9a65be07ec9db72dbcb",
+      "adaptation": "FullSource namespace wrapper, weapon namespace import and Unity Random/Object aliases"
+    },
+    "WoundedAlliesMeasure.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WoundedAlliesMeasure.cs",
+      "sha256": "c6c64f3b3e82e931002d50e90c9dac8dfd6e7ab25cbb37b8be41d7ad92db13ad",
+      "runtimeSha256": "5d2e1571d6edd2d8c41adaf8a070850ceeda384411b62678cbaaf3ec785379a4",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "InputHandler.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/InputHandler.cs",
+      "sha256": "db16bfc942f816201d7c34215a4b0000aa27062f5a905aeb42042bc220cb780c",
+      "runtimeSha256": "cc8785cdf9b291692ad58e8196ea82fea855d4e38ee87bd4495b06adacca7aa7",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "InputMapping.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/InputMapping.cs",
+      "sha256": "dcfa60e3ac596cab635a3bc8f1179a25c80d9a4e86752934a1b02f4a28e732a8",
+      "runtimeSha256": "71f88fef033ebf67d8ddcfebf432da2b9752922812a21e2ff6f4c2cb5808d300",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "ControlBindEvent.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ControlBindEvent.cs",
+      "sha256": "b9963787babaca2376303875d3410c2d498738b4339001ffa99b893f7f9a4686",
+      "runtimeSha256": "4d669f0099de2a7d4aac855758de28c1c82449f608abdc38e2114249276be79f",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "InputMapping_NEXT_AFTER_1.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/InputMapping_NEXT_AFTER_1.cs",
+      "sha256": "597a6be34155ab4be2be6c4f56f9c0440d82457fc3507d3ca816035537d8d735",
+      "runtimeSha256": "606f07b024754b518f79ec0d51b5b084b3d79a5e9eef3edd8789f5b802e33fb1",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "InputMapping_1.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/InputMapping_1.cs",
+      "sha256": "ca069c949d55681ed6efbbc4d12fb99e461597913779c1e451220e46710c268b",
+      "runtimeSha256": "3be87ca670d94c57cf6761309f57a2c3d89192f9d509c3954954878ad2ee738f",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "OccupantSpawner.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/OccupantSpawner.cs",
+      "sha256": "69629afeca41e0128d9bec133ec4b0522ecd10bd89116fc81743f2acab069d79",
+      "runtimeSha256": "2c9b60f13c57575f0ce5d4f340ed9b5365228fd4a554368181f938fe001d8961",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "SpawnArea.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SpawnArea.cs",
+      "sha256": "2d42f463c7ae0770d5bc9b77e298d6eae3297fb5fdf7e79b2adb950a693bf08c",
+      "runtimeSha256": "4b6b86d2b0d890e8a8a740d1824956ccf8769ce52e54c439d4a9a4ea5d0931cd",
+      "adaptation": "FullSource namespace wrapper only"
+    },
+    "MuscleControl.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/MuscleControl.cs",
+      "sha256": "216421ba22297b856162f1cb3049dc239a80a1020010eaad5a0fbd5ec2bf3b1c",
+      "runtimeSha256": "94ddeb441bb0e8a794391cd28c2d4932a5bbd8574d36831af31c2057367ff9a6",
+      "adaptation": "FullSource namespace wrapper and Unity Random alias"
+    },
+    "LimbArmor.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/LimbArmor.cs",
+      "sha256": "c413d2b927f35858c2aeee7efa48e4f18de1026e9bce17f642f356eea828412b",
+      "runtimeSha256": "270efd92abd4b0594815343e022f3f3e14ed7167f61a137396170f45eb2cb49c",
+      "adaptation": "FullSource namespace wrapper and armor bridge binding"
     }
   },
   "plugins": {
@@ -452,29 +1904,29 @@
       "runtimePath": "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
       "archiveEntry": "export/ExportedProject/Assets/Plugins/Assembly-CSharp-firstpass/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
       "sha256": "ec42aad10020931be31cc3b847e242298dc48aa6c2bd25e18d949e5810d004f4",
-      "runtimeSha256": "ec42aad10020931be31cc3b847e242298dc48aa6c2bd25e18d949e5810d004f4",
-      "adaptation": "Unity Standard Assets source and namespace preserved"
+      "runtimeSha256": "2860f2bf36482573c2d2896bdce29640e35b5f92cd515141a4d010203b352e2e",
+      "adaptation": "Unity Standard Assets source and namespace preserved with Unity alias"
     },
     "BloomOptimized.cs": {
       "runtimePath": "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs",
       "archiveEntry": "export/ExportedProject/Assets/Plugins/Assembly-CSharp-firstpass/UnityStandardAssets/ImageEffects/BloomOptimized.cs",
       "sha256": "364564eecc0e6db47098c715068f98f61d82837e349de77080ed3c9194ebe5d6",
-      "runtimeSha256": "364564eecc0e6db47098c715068f98f61d82837e349de77080ed3c9194ebe5d6",
-      "adaptation": "Unity Standard Assets source and namespace preserved"
+      "runtimeSha256": "492f0508c7e100002e5770ff054de2ce4181dfd130c5ae18441f75470bb2feb5",
+      "adaptation": "Unity Standard Assets source and namespace preserved with Unity alias"
     },
     "CameraMotionBlur.cs": {
       "runtimePath": "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
       "archiveEntry": "export/ExportedProject/Assets/Plugins/Assembly-CSharp-firstpass/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
       "sha256": "4357f98ac7c90fec5961816ca7ed069307ba08cd17c8658355ce74cd1d1b4c29",
-      "runtimeSha256": "4357f98ac7c90fec5961816ca7ed069307ba08cd17c8658355ce74cd1d1b4c29",
-      "adaptation": "Unity Standard Assets source and namespace preserved"
+      "runtimeSha256": "4cbfbb5e2d6c366ad293774a220e682cd09e8b10d432cd8dba85a4bcc708e0ad",
+      "adaptation": "Unity Standard Assets source and namespace preserved with Unity alias"
     },
     "DepthOfField.cs": {
       "runtimePath": "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
       "archiveEntry": "export/ExportedProject/Assets/Plugins/Assembly-CSharp-firstpass/UnityStandardAssets/ImageEffects/DepthOfField.cs",
       "sha256": "40b165badf7f1c9872d59938baa86aaec0f82b2dee0ef441ed61ad2dad0f54ba",
-      "runtimeSha256": "40b165badf7f1c9872d59938baa86aaec0f82b2dee0ef441ed61ad2dad0f54ba",
-      "adaptation": "Unity Standard Assets source and namespace preserved"
+      "runtimeSha256": "daee1b9ce32898ce50f41f0d92cdb25d2c6be3dba83da1456931151b462531d4",
+      "adaptation": "Unity Standard Assets source and namespace preserved with Unity alias"
     }
   },
   "namespaceSources": {
@@ -482,36 +1934,36 @@
       "runtimePath": "runtime/Original/FullSource/Usage/MissionData_DEPRECATED.cs",
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Usage/MissionData_DEPRECATED.cs",
       "sha256": "fc44044676dd54ca1fb2200efc25699f04c20f22bc2867ea0cf2f265ddaf7e5e",
-      "runtimeSha256": "fc44044676dd54ca1fb2200efc25699f04c20f22bc2867ea0cf2f265ddaf7e5e",
-      "adaptation": "Original declared namespace preserved"
+      "runtimeSha256": "2488bb1215ac9e22554924b5e1cb7a82f8f92f8ed585a968de0157d59901c894",
+      "adaptation": "Original namespace preserved with FullSource import"
     },
     "SerializableClientData.cs": {
       "runtimePath": "runtime/Original/FullSource/Usage/SerializableClientData.cs",
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Usage/SerializableClientData.cs",
       "sha256": "ed5d1b39640d7a4c6149235384ab736d4edd6f27397c19e03e82dfdae8c10ccd",
-      "runtimeSha256": "ed5d1b39640d7a4c6149235384ab736d4edd6f27397c19e03e82dfdae8c10ccd",
-      "adaptation": "Original declared namespace preserved"
+      "runtimeSha256": "9c4d46fe6c42fbe0620b8065b7822aeb7f53f87e686e95ed657a7998323f4f91",
+      "adaptation": "Original namespace preserved with FullSource import"
     },
     "SerializableSessionData.cs": {
       "runtimePath": "runtime/Original/FullSource/Usage/SerializableSessionData.cs",
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Usage/SerializableSessionData.cs",
       "sha256": "af43a3accda36860271676762288b913f4b726bf0988343fe6d33c2a3addc1c7",
-      "runtimeSha256": "af43a3accda36860271676762288b913f4b726bf0988343fe6d33c2a3addc1c7",
-      "adaptation": "Original declared namespace preserved"
+      "runtimeSha256": "ab2c2d4e8b658c15d3c5f71d8e8fc4efb5af64245fc3c290e9b37ef42c95f71d",
+      "adaptation": "Original namespace preserved with FullSource import"
     },
     "Statistics.cs": {
       "runtimePath": "runtime/Original/FullSource/Usage/Statistics.cs",
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Usage/Statistics.cs",
       "sha256": "4667d48b437e32a462f0c133a0a24323f50ef43a7190a2ffafdd5154e92a53a2",
-      "runtimeSha256": "4667d48b437e32a462f0c133a0a24323f50ef43a7190a2ffafdd5154e92a53a2",
-      "adaptation": "Original declared namespace preserved"
+      "runtimeSha256": "d245893d8a48ce1c61d1c11c2eb1e1fae9da977bb47692f1ec5c3d08f8549675",
+      "adaptation": "Original namespace preserved with FullSource import"
     },
     "HTTPRequest.cs": {
       "runtimePath": "runtime/Original/FullSource/HTTPRequest.cs",
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/HTTPRequest.cs",
       "sha256": "1764b263c7e7458135b0c586d564eb6a35599c217b34f276e68a9dd2091e4141",
-      "runtimeSha256": "1764b263c7e7458135b0c586d564eb6a35599c217b34f276e68a9dd2091e4141",
-      "adaptation": "Original declared namespace preserved"
+      "runtimeSha256": "ead3a32d99eebfda84453c6c0ad5c239fed174499b66c31f2b39e2bc9de265ca",
+      "adaptation": "Original namespace preserved with FullSource Version alias"
     },
     "UnityEventBool.cs": {
       "runtimePath": "runtime/Original/FullSource/Global/UnityEventBool.cs",
@@ -525,6 +1977,55 @@
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Threading/ThreadedJob.cs",
       "sha256": "570b1aa9f9df685f38c677370d5e26885ab972561bb2b9caf934866d39619aa0",
       "runtimeSha256": "570b1aa9f9df685f38c677370d5e26885ab972561bb2b9caf934866d39619aa0",
+      "adaptation": "Original declared namespace preserved"
+    },
+    "Availability.cs": {
+      "runtimePath": "runtime/Original/FullSource/Utilities/Availability.cs",
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Utilities/Availability.cs",
+      "sha256": "4cfe29eb00d03d3695a00d24d7823b50e4156b84e4672293b7cb5cc222bac744",
+      "runtimeSha256": "787be78266c7906ef8e23885649b846b4a740e055b3752d929d849a19a809bf1",
+      "adaptation": "Original namespace preserved with FullSource import"
+    },
+    "AudioPriority.cs": {
+      "runtimePath": "runtime/Original/FullSource/Helpers/AudioPriority.cs",
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Helpers/AudioPriority.cs",
+      "sha256": "8b6c4232ef9ebcbc318729fd45e2a5191bdc24ef96aec5425417abfa03d07c03",
+      "runtimeSha256": "8b6c4232ef9ebcbc318729fd45e2a5191bdc24ef96aec5425417abfa03d07c03",
+      "adaptation": "Original declared namespace preserved"
+    },
+    "FileSystem.cs": {
+      "runtimePath": "runtime/Original/FullSource/Helpers/FileSystem.cs",
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Helpers/FileSystem.cs",
+      "sha256": "18432de604e037f7cabc7ba88df6386ecca4fecf96ae3886c762bfe2a612da5e",
+      "runtimeSha256": "18432de604e037f7cabc7ba88df6386ecca4fecf96ae3886c762bfe2a612da5e",
+      "adaptation": "Original declared namespace preserved"
+    },
+    "SceneHelper.cs": {
+      "runtimePath": "runtime/Original/FullSource/Helpers/SceneHelper.cs",
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Helpers/SceneHelper.cs",
+      "sha256": "b4eabd03ea76e7211e7d7579d96daf4f346084a9b72e9c3cd6960a718563d8ef",
+      "runtimeSha256": "b4eabd03ea76e7211e7d7579d96daf4f346084a9b72e9c3cd6960a718563d8ef",
+      "adaptation": "Original declared namespace preserved"
+    },
+    "BuildAvailability.cs": {
+      "runtimePath": "runtime/Original/FullSource/Utilities/BuildAvailability.cs",
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Utilities/BuildAvailability.cs",
+      "sha256": "dcb485c35d85b88bcea9a46c87d4c624056404afc86b9823a36500dc8d0c7a80",
+      "runtimeSha256": "dcb485c35d85b88bcea9a46c87d4c624056404afc86b9823a36500dc8d0c7a80",
+      "adaptation": "Original declared namespace preserved"
+    },
+    "ModeAvailability.cs": {
+      "runtimePath": "runtime/Original/FullSource/Utilities/ModeAvailability.cs",
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Utilities/ModeAvailability.cs",
+      "sha256": "c8d2b66f1f49535fb4900fbadac5e1d38820bfc4704fc982b3b2fa459de93d46",
+      "runtimeSha256": "c8d2b66f1f49535fb4900fbadac5e1d38820bfc4704fc982b3b2fa459de93d46",
+      "adaptation": "Original declared namespace preserved"
+    },
+    "TeamAvailability.cs": {
+      "runtimePath": "runtime/Original/FullSource/Utilities/TeamAvailability.cs",
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Utilities/TeamAvailability.cs",
+      "sha256": "f969895f0c8ae6c81105c6bfdf33a0cd09fec8ee22da09c6b07fdbbf42e1716c",
+      "runtimeSha256": "f969895f0c8ae6c81105c6bfdf33a0cd09fec8ee22da09c6b07fdbbf42e1716c",
       "adaptation": "Original declared namespace preserved"
     }
   }

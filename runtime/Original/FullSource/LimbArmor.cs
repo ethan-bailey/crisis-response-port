@@ -1,5 +1,3 @@
-using Crisis.Runtime.Weapons;
-
 namespace Crisis.Runtime.FullSource
 {
 using UnityEngine;
@@ -59,7 +57,7 @@ public class LimbArmor : MonoBehaviour
 		}
 		float damage = ((!flag) ? backDamage : frontDamage);
 		float energy = projectile.Energy;
-		bool flag2 = ArmorClass.PenetrationTest(type, damage, projectile);
+		bool flag2 = FullSourceArmorBridge.PenetrationTest(type, damage, projectile);
 		float num = energy - projectile.Energy;
 		if (flag)
 		{

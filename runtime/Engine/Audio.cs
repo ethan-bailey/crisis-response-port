@@ -18,8 +18,14 @@ public interface IAudioSourceDriver {
     void PlayOneShot(AudioClip clip,float volume,int priority);
     void Stop();
 }
+public interface IAudioClipPlaybackDriver:IAudioSourceDriver {
+    void Play(AudioClip clip,float volume,float pitch,bool loop,bool muted,int priority);
+}
 public sealed class AudioSource:Behaviour {
     public int priority {get;set;}=128;
+    public AudioClip clip;
+    public float volume=1f,pitch=1f;
+    public bool loop,mute;
     public IAudioSourceDriver Driver {get;set;}
     IAudioSourceDriver RequiredDriver=>Driver??throw new NotSupportedException("Decoded original audio playback driver is not bound");
     public bool isPlaying=>RequiredDriver.IsPlaying;
@@ -27,6 +33,12 @@ public sealed class AudioSource:Behaviour {
         ArgumentNullException.ThrowIfNull(clip);
         if(clip.loadState!=AudioDataLoadState.Loaded)throw new InvalidOperationException($"Audio sample {clip.SourceID} is not decoded");
         RequiredDriver.PlayOneShot(clip,volumeScale,priority);
+    }
+    public void Play(){
+        ArgumentNullException.ThrowIfNull(clip);
+        if(clip.loadState!=AudioDataLoadState.Loaded)throw new InvalidOperationException($"Audio sample {clip.SourceID} is not decoded");
+        if(RequiredDriver is not IAudioClipPlaybackDriver playback)throw new NotSupportedException("Audio clip playback driver is not bound");
+        playback.Play(clip,volume,pitch,loop,mute,priority);
     }
     public void Stop()=>RequiredDriver.Stop();
 }

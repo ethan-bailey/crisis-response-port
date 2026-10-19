@@ -1,6 +1,13 @@
 using UnityEngine;
 namespace UnityEngine {
- public struct Color {public static Color black=>new(0,0,0,1);public static Color white=>new(1,1,1,1);public static Color clear=>new(0,0,0,0);public float r,g,b,a;public Color(float r,float g,float b,float a=1){this.r=r;this.g=g;this.b=b;this.a=a;}}
+ public struct Color {
+  public static Color black=>new(0,0,0,1);public static Color white=>new(1,1,1,1);public static Color clear=>new(0,0,0,0);
+  public static Color red=>new(1,0,0,1);public static Color green=>new(0,1,0,1);public static Color blue=>new(0,0,1,1);
+  public static Color yellow=>new(1,0.9215686f,0.01568628f,1);public static Color cyan=>new(0,1,1,1);public static Color magenta=>new(1,0,1,1);public static Color gray=>new(0.5f,0.5f,0.5f,1);public static Color grey=>gray;
+  public float r,g,b,a;public Color(float r,float g,float b,float a=1){this.r=r;this.g=g;this.b=b;this.a=a;}
+  public static Color Lerp(Color from,Color to,float t)=>LerpUnclamped(from,to,Mathf.Clamp01(t));
+  public static Color LerpUnclamped(Color from,Color to,float t)=>new(Mathf.LerpUnclamped(from.r,to.r,t),Mathf.LerpUnclamped(from.g,to.g,t),Mathf.LerpUnclamped(from.b,to.b,t),Mathf.LerpUnclamped(from.a,to.a,t));
+ }
  public struct Rect {
   public float x,y,width,height;
   public Rect(float x,float y,float w,float h){this.x=x;this.y=y;width=w;height=h;}
@@ -8,6 +15,8 @@ namespace UnityEngine {
   public float yMin {get=>y;set{float end=yMax;y=value;height=end-y;}}
   public float xMax {get=>x+width;set=>width=value-x;}
   public float yMax {get=>y+height;set=>height=value-y;}
+  public Vector2 center {get=>new(x+width*0.5f,y+height*0.5f);set{x=value.x-width*0.5f;y=value.y-height*0.5f;}}
+  public Vector2 size {get=>new(width,height);set{width=value.x;height=value.y;}}
   public Vector2 min=>new(x,y);public Vector2 max=>new(x+width,y+height);
  }
  // Read/write CPU texture adapter for the original glass alpha decisions. Pixels
@@ -21,6 +30,9 @@ namespace UnityEngine {
   public bool SetPass(int pass){if(pass<0||pass>=passCount)throw new ArgumentOutOfRangeException(nameof(pass));return false;}
   Texture2D texture;
   readonly Dictionary<string,Color> colors=new();
+  readonly Dictionary<string,float> floats=new();
+  readonly Dictionary<string,Vector4> vectors=new();
+  readonly Dictionary<string,Matrix4x4> matrices=new();
   // Presentation observer only: source BallisticWindow.Reset assigns mainTexture
   // on a freshly cloned original CPU texture. Rebind browser stamp forwarding
   // without changing the recovered source Reset or StampAlpha algorithms.
@@ -43,12 +55,20 @@ namespace UnityEngine {
   public Action<string,Color> OnColorAssigned;
   public void SetColor(string property,Color value){ArgumentException.ThrowIfNullOrEmpty(property);colors[property]=value;OnColorAssigned?.Invoke(property,value);}
   public Color GetColor(string property){ArgumentException.ThrowIfNullOrEmpty(property);return colors.GetValueOrDefault(property);}
+  public Color color {get=>GetColor("_Color");set=>SetColor("_Color",value);}
+  public void SetFloat(string property,float value){ArgumentException.ThrowIfNullOrEmpty(property);floats[property]=value;}
+  public float GetFloat(string property){ArgumentException.ThrowIfNullOrEmpty(property);return floats.GetValueOrDefault(property);}
+  public void SetVector(string property,Vector4 value){ArgumentException.ThrowIfNullOrEmpty(property);vectors[property]=value;}
+  public Vector4 GetVector(string property){ArgumentException.ThrowIfNullOrEmpty(property);return vectors.GetValueOrDefault(property);}
+  public void SetMatrix(string property,Matrix4x4 value){ArgumentException.ThrowIfNullOrEmpty(property);matrices[property]=value;}
+  public void SetBuffer(string property,ComputeBuffer value){ArgumentException.ThrowIfNullOrEmpty(property);ArgumentNullException.ThrowIfNull(value);throw new NotSupportedException("Shader buffer binding requires a GPU graphics driver");}
+  public Matrix4x4 GetMatrix(string property){ArgumentException.ThrowIfNullOrEmpty(property);return matrices.GetValueOrDefault(property);}
   public Texture2D mainTexture {
    get=>texture;
    set {texture=value;OnMainTextureAssigned?.Invoke(value);}
   }
  }
- public class Renderer:Component {
+ public class Renderer:Behaviour {
   Material singleMaterial=new();Material[] materialInstances;
   public Action<Material[]> OnMaterialsAssigned;
   public Material material {
