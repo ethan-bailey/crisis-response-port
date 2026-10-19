@@ -39,7 +39,7 @@ public static class ScenePrefabContracts {
         Check(ReferenceEquals(template.child,templateChild)&&ReferenceEquals(template.colliderReference,templateChild.GetComponent<BoxCollider>())&&ReferenceEquals(template.linkedTransforms[0],templateChild),"Serialized references bind to the exact prefab graph objects");
         Check(!template.awokeWithBoundReferences&&!prefab.activeInHierarchy,"Prefab asset loading defers gameplay callbacks and remains outside the active scene");
         var world=new RuntimeWorld();world.MakeCurrent();
-        var first=UnityEngine.Object.Instantiate(prefab);var second=UnityEngine.Object.Instantiate(prefab);
+        var first=UnityEngine.Object.Instantiate(prefab);var second=UnityEngine.Object.Instantiate(prefab);world.Tick(0);
         var a=first.GetComponent<ScenePrefabProbe>();var b=second.GetComponent<ScenePrefabProbe>();
         Check(a.awokeWithBoundReferences&&b.awokeWithBoundReferences,"Cloned actors enter Awake only after serialized references bind");
         Check(!ReferenceEquals(a.child,b.child)&&!ReferenceEquals(a.colliderReference,b.colliderReference),"Cloned actors own independent child and collider components");
