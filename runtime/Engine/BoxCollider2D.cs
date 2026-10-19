@@ -5,6 +5,8 @@ namespace UnityEngine;
 public sealed class BoxCollider2D : Collider2D {
     Vector2 boundsSize=new(1f,1f);
     Vector2 boundsOffset=Vector2.zero;
+    public float density=1f,edgeRadius;
+    public bool isTrigger,usedByEffector,usedByComposite,autoTiling;
     public Vector2 size {
         get=>boundsSize;
         set {
