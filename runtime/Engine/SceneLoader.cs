@@ -82,28 +82,39 @@ public static class SceneLoader {
                 }
             }
             var scriptFields=new List<(Component component,JsonElement fields,string id)>();
+            var builtinFields=new List<(Component component,JsonElement fields,string id,int classID)>();
             foreach(var record in records){
-                int cls=record.GetProperty("classID").GetInt32();if(cls is 1 or 4 or 224)continue;
+                int cls=record.GetProperty("classID").GetInt32();if(cls is 1 or 4 or 224 or 1001)continue;
                 var fields=record.GetProperty("fields");var id=record.GetProperty("fileID").GetString();string label=record.GetProperty("className").GetString();
                 if(!fields.TryGetProperty("m_GameObject",out var goRef))continue;
                 if(!result.objects.TryGetValue(Ref(goRef),out var goObj)||goObj is not GameObject go)throw new InvalidOperationException($"Component {id} has unresolved GameObject");
                 Component component=null;
-                if(cls==65){var box=go.AddComponent<BoxCollider>();box.center=Vector(fields.GetProperty("m_Center"));box.size=Vector(fields.GetProperty("m_Size"));box.isTrigger=Flag(fields,"m_IsTrigger",false);component=box;result.boxColliders++;}
-                else if(cls==54){component=go.AddComponent<Rigidbody>();}
-                else if(cls==136){component=go.AddComponent<CapsuleCollider>();}
-                else if(cls==108){component=go.AddComponent<Light>();}
-                else if(cls==114){
-                    string guid=fields.GetProperty("m_Script").GetProperty("guid").GetString();
-                    label=package.GetProperty("guidPaths").TryGetProperty(guid,out var path)?Path.GetFileNameWithoutExtension(path.GetString()):$"Script:{guid}";
-                    var type=ResolveScriptType(package,guid);
-                    if(type!=null){component=go.AddComponent(type);scriptFields.Add((component,fields,id));result.originalComponents++;}
+                switch(cls){
+                    case 23:component=go.AddComponent<MeshRenderer>();break;
+                    case 33:component=go.AddComponent<MeshFilter>();break;
+                    case 54:component=go.AddComponent<Rigidbody>();break;
+                    case 59:component=go.AddComponent<HingeJoint>();break;
+                    case 61:component=go.AddComponent<BoxCollider2D>();break;
+                    case 65:{var box=go.AddComponent<BoxCollider>();box.center=Vector(fields.GetProperty("m_Center"));box.size=Vector(fields.GetProperty("m_Size"));box.isTrigger=Flag(fields,"m_IsTrigger",false);component=box;result.boxColliders++;break;}
+                    case 82:component=go.AddComponent<AudioSource>();break;
+                    case 95:component=go.AddComponent<Animator>();break;
+                    case 108:component=go.AddComponent<Light>();break;
+                    case 136:component=go.AddComponent<CapsuleCollider>();break;
+                    case 114:{
+                        string guid=fields.GetProperty("m_Script").GetProperty("guid").GetString();
+                        label=package.GetProperty("guidPaths").TryGetProperty(guid,out var path)?Path.GetFileNameWithoutExtension(path.GetString()):$"Script:{guid}";
+                        var type=ResolveScriptType(package,guid);
+                        if(type!=null){component=go.AddComponent(type);scriptFields.Add((component,fields,id));result.originalComponents++;}
+                        break;
+                    }
                 }
                 if(component!=null){
                     result.objects[id]=component;
                     if(component is Behaviour b)b.enabled=Flag(fields,"m_Enabled");
-                    if(cls is 54 or 108 or 136)AssignSerializedFields(component,fields,result,id);
+                    if(cls is not (65 or 114))builtinFields.Add((component,fields,id,cls));
                 } else result.unsupportedComponents[label]=result.unsupportedComponents.GetValueOrDefault(label)+1;
             }
+            foreach(var (component,fields,id,int classID) in builtinFields)AssignBuiltinFields(component,fields,result,id,classID);
             foreach(var (component,fields,id) in scriptFields)AssignSerializedFields(component,fields,result,id);
             var roots=records.Where(r=>r.GetProperty("classID").GetInt32() is 4 or 224)
                 .Select(r=>(Transform)result.objects[r.GetProperty("fileID").GetString()])
@@ -143,6 +154,54 @@ public static class SceneLoader {
         for(var t=type;t!=null&&t!=typeof(UObject)&&t!=typeof(Component)&&t!=typeof(Behaviour)&&t!=typeof(MonoBehaviour);t=t.BaseType)
             foreach(var field in t.GetFields(BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.DeclaredOnly))
                 if(!field.IsStatic&&!field.IsInitOnly&&field.GetCustomAttribute<NonSerializedAttribute>()==null&&(field.IsPublic||field.GetCustomAttribute<SerializeField>()!=null))yield return field;
+    }
+    static void AssignBuiltinFields(Component component,JsonElement fields,SceneLoadResult result,string id,int classID){
+        var consumed=new HashSet<string>(StringComparer.Ordinal){"serializedVersion","m_ObjectHideFlags","m_PrefabParentObject","m_PrefabInternal","m_GameObject","m_Enabled"};
+        void SetField(string source,string target,Type type){
+            if(!fields.TryGetProperty(source,out var value))return;
+            consumed.Add(source);
+            var member=(MemberInfo)component.GetType().GetField(target,BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic)
+                ??component.GetType().GetProperty(target,BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
+            if(member is FieldInfo f)f.SetValue(component,ReadValue(value,type,result));
+            else if(member is PropertyInfo p&&p.CanWrite)p.SetValue(component,ReadValue(value,type,result));
+            else result.unresolvedReferences.Add($"Unsupported built-in member {component.GetType().Name}.{target}");
+        }
+        void External(string source){
+            if(!fields.TryGetProperty(source,out var value))return;
+            consumed.Add(source);
+            if(value.ValueKind==JsonValueKind.Object&&value.TryGetProperty("fileID",out var file)&&file.ToString()!="0")
+                result.unresolvedReferences.Add($"Unresolved external asset {component.GetType().Name}.{source}");
+            else if(value.ValueKind==JsonValueKind.Array&&value.EnumerateArray().Any(v=>v.ValueKind==JsonValueKind.Object&&v.TryGetProperty("fileID",out var f)&&f.ToString()!="0"))
+                result.unresolvedReferences.Add($"Unresolved external assets {component.GetType().Name}.{source}");
+        }
+        switch(classID){
+            case 23:External("m_Materials");External("m_ProbeAnchor");External("m_LightProbeVolumeOverride");External("m_LightmapParameters");break;
+            case 33:External("m_Mesh");break;
+            case 54:
+                SetField("m_Mass","mass",typeof(float));SetField("m_Drag","drag",typeof(float));SetField("m_AngularDrag","angularDrag",typeof(float));
+                SetField("m_UseGravity","useGravity",typeof(bool));SetField("m_IsKinematic","isKinematic",typeof(bool));SetField("m_Interpolate","interpolation",typeof(RigidbodyInterpolation));
+                SetField("m_Constraints","constraints",typeof(RigidbodyConstraints));SetField("m_CollisionDetection","collisionDetectionMode",typeof(CollisionDetectionMode));break;
+            case 59:
+                SetField("m_ConnectedBody","connectedBody",typeof(Rigidbody));SetField("m_Anchor","anchor",typeof(Vector3));SetField("m_ConnectedAnchor","connectedAnchor",typeof(Vector3));
+                SetField("m_AutoConfigureConnectedAnchor","autoConfigureConnectedAnchor",typeof(bool));SetField("m_BreakForce","breakForce",typeof(float));SetField("m_BreakTorque","breakTorque",typeof(float));
+                SetField("m_EnableCollision","enableCollision",typeof(bool));SetField("m_EnablePreprocessing","enablePreprocessing",typeof(bool));
+                SetField("m_UseSpring","useSpring",typeof(bool));SetField("m_Spring","spring",typeof(JointSpring));SetField("m_UseLimits","useLimits",typeof(bool));SetField("m_Limits","limits",typeof(JointLimits));
+                SetField("m_MassScale","massScale",typeof(float));SetField("m_ConnectedMassScale","connectedMassScale",typeof(float));
+                External("m_Motor");break;
+            case 61:
+                SetField("m_Offset","offset",typeof(Vector2));SetField("m_Size","size",typeof(Vector2));SetField("m_IsTrigger","isTrigger",typeof(bool));External("m_Material");break;
+            case 82:
+                SetField("m_audioClip","clip",typeof(AudioClip));SetField("m_Volume","volume",typeof(float));SetField("m_Pitch","pitch",typeof(float));
+                SetField("Loop","loop",typeof(bool));SetField("Mute","mute",typeof(bool));SetField("Priority","priority",typeof(int));External("OutputAudioMixerGroup");break;
+            case 95:External("m_Avatar");External("m_Controller");break;
+            case 108:SetField("m_Intensity","intensity",typeof(float));break;
+            case 136:
+                SetField("m_Center","center",typeof(Vector3));SetField("m_Radius","radius",typeof(float));SetField("m_Height","height",typeof(float));SetField("m_Direction","direction",typeof(int));
+                SetField("m_IsTrigger","isTrigger",typeof(bool));External("m_Material");break;
+        }
+        foreach(var property in fields.EnumerateObject())
+            if(!consumed.Contains(property.Name)&&!property.Name.StartsWith("m_Prefab",StringComparison.Ordinal))
+                result.unresolvedReferences.Add($"Unsupported built-in field {component.GetType().Name}.{property.Name}");
     }
     static void AssignSerializedFields(Component component,JsonElement fields,SceneLoadResult result,string id){
         foreach(var property in fields.EnumerateObject()){
