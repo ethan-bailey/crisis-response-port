@@ -24,10 +24,11 @@ public sealed class FixedJoint:Joint { }
 public sealed class HingeJoint:Joint {
  public JointMotor motor;
  public bool useMotor;
- bool springEnabled;
- JointSpring currentSpring;
- JointLimits currentLimits;
- bool limitsEnabled;
+ public Vector3 axis=Vector3.forward;
+ [SerializeField] bool springEnabled;
+ [SerializeField] JointSpring currentSpring;
+ [SerializeField] JointLimits currentLimits;
+ [SerializeField] bool limitsEnabled;
  public Action<JointSpring,bool> SpringChanged;
  public Action<JointLimits,bool> LimitsChanged;
  public JointLimits limits {
