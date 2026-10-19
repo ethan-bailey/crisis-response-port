@@ -5,10 +5,10 @@ public sealed class RangeAttribute(float minimum,float maximum):Attribute {
  public float min=minimum,max=maximum;
 }
 public enum ForceMode {Force=0,Acceleration=5,Impulse=1,VelocityChange=2}
-public struct JointSpring {
+[Serializable] public struct JointSpring {
  public float spring,damper,targetPosition;
 }
-public struct JointLimits {
+[Serializable] public struct JointLimits {
  public float min,max,bounciness,bounceMinVelocity,contactDistance;
 }
 public class Joint:Component {
@@ -19,7 +19,7 @@ public class Joint:Component {
  public float massScale=1f,connectedMassScale=1f;
  public bool enableCollision,enablePreprocessing=true;
 }
-public struct JointMotor {public float targetVelocity,force;public bool freeSpin;}
+[Serializable] public struct JointMotor {public float targetVelocity,force;public bool freeSpin;}
 public sealed class FixedJoint:Joint { }
 public sealed class HingeJoint:Joint {
  public JointMotor motor;
