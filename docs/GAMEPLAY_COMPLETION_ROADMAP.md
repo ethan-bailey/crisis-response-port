@@ -17,7 +17,7 @@ actions must stay explicit until their original behavior is connected.
 
 | Priority | Work | Completion evidence | Status |
 |---:|---|---|---|
-| 1 | Reconcile and checkpoint the current CharacterBody dependency batch. Preserve the exact branch state, review all staged and recovered files, refresh source inventories, and run narrow source/ownership checks. | A reversible checkpoint commit or hash-checked patch/archive; inventory, provenance, migration-boundary and audit tests pass. Record any build limitation without converting it into a pass. | Complete as a local checkpoint bundle. Git commit/push is blocked by missing unchanged Git objects and no configured remote. |
+| 1 | Reconcile and checkpoint the current CharacterBody dependency batch. Preserve the exact branch state, review all staged and recovered files, refresh source inventories, and run narrow source/ownership checks. | A reversible checkpoint commit or hash-checked patch/archive; inventory, provenance, migration-boundary and audit tests pass. Record any build limitation without converting it into a pass. | Committed to PR #42 as `af56508d832125ce655fa705d62fda23795c1492`; all 312 staged paths match the preserved per-file hashes, with no deletions. Inventory, provenance, migration-boundary and audit checks pass. Compile remains unverified. |
 | 2 | Make `Crisis.Runtime.FullSource.CharacterBody` the sole gameplay actor owner. Connect original Awake/lifecycle, limbs, physiology, blackboard, equipment, weapons, projectile callbacks and IK to the same source actor instances. Keep the transport actor out of authoritative gameplay. | Full original-source compile; actor host instantiates the source actor with its authored components and all 19 registered limbs; no live gameplay caller creates or mutates a second CharacterBody; exact source and ownership checks pass. | In progress. Original Operator/Occupant prefab graphs are recovered verbatim and source-verified. `runtime/Engine/WeaponHost.cs` still creates `Crisis.Runtime.Weapons.CharacterBody`; no runtime prefab loader or two-actor test is connected. |
 | 3 | Prove the actor lifecycle with two independent original actors. Exercise spawn, equipment, movement, projectile hit, source callback order, wound and physiology progression, unconsciousness/death, ragdoll and destruction. | Native actor tests prove shared per-actor component identities, independent vitals, no self-hits and original event order. | Not started; blocked by priority 2. |
 | 4 | Connect player controls and movement to the original actor update path. Preserve keyboard behavior, touch gestures, proportional joystick speed, dead zone and original acceleration. | Native/input tests plus browser checks for movement, aiming, sprinting, firing intent, pause and focus cancellation. | Existing source-backed input work is not sufficient evidence for the integrated original actor path. |
@@ -34,21 +34,22 @@ actions must stay explicit until their original behavior is connected.
 
 - Repository: `ethan-bailey/crisis-response-port`, private.
 - Active branch: `feature/full-source-characterbody-integration`.
-- Branch head inspected on GitHub: `1077c79ae1aa919b17b17b4007bdf777fba41db1`.
+- Source checkpoint commit: `af56508d832125ce655fa705d62fda23795c1492` (parent `1077c79ae1aa919b17b17b4007bdf777fba41db1`).
 - Target `develop/wasm` inspected on GitHub: `2fc0a8e93be97c4d99123910fad4bd25798e71a8`.
 - Open overlapping lanes: #7 (historical input/movement), #56 (projectile/limb),
   #57 (IK) and #42 (full CharacterBody). Keep their ownership boundaries intact.
-- No Actions run is attached to the exact #42 head `1077c79`. The latest full
-  source compile evidence documented on #42 remains a failing older checkpoint;
-  it must not be reported as a pass for the current source batch. The successful
-  #56 WASM/browser run is from a different branch and does not validate this
-  CharacterBody integration.
-- The checkpoint bundle preserves every staged path against parent
-  `1077c79ae1aa919b17b17b4007bdf777fba41db1`; its companion manifest records
-  exact path and SHA-256 lists. A Git commit cannot be written because the local
-  object database is missing 820 unchanged blobs; the checkout also has no
-  configured Git remote. It has no .NET SDK, so a fresh C# or WASM build is
-  unavailable here.
+- No Actions run or status check is attached to source checkpoint `af56508`. The
+  latest documented full-source compile is a local failure at executable SHA
+  `517ce292` (19 errors / 15 missing names); the older Actions failure at
+  `407c66d` (run `39091701268`, 144 errors / 60 names) is from a different source
+  graph and is not a comparable count. The successful #56 WASM/browser run is a
+  different branch and does not validate this CharacterBody integration.
+- The source checkpoint commit adds/modifies exactly 312 files against parent
+  `1077c79ae1aa919b17b17b4007bdf777fba41db1`; a recursive Git tree comparison
+  confirms all 312 paths and zero removals. The preserved patch and archive hashes
+  and every per-file SHA-256 were reverified. This environment has no .NET SDK,
+  and no Actions run is attached to this source commit, so compilation is
+  unverified.
 - Current local checks: inventory freshness passes (646 sources, 1,680 symbols,
   1,326 conservatively reachable files, 116 ambiguous names); actor migration
   boundary and strict ownership scan pass; 477 recovered-source identities pass;
@@ -66,15 +67,18 @@ actions must stay explicit until their original behavior is connected.
 
 ## Immediate next work
 
-1. Hydrate a complete Git checkout or restore its missing base objects, then
-   commit and push the preserved source checkpoint to PR #42.
+1. Run the one deliberate full-source compile on the current PR #42 source. The
+   repository workflow is dispatch-only; retain the actual exit code and compare
+   diagnostics only against a matching source graph.
 2. Build the runtime importer for the recovered actor prefab component graph,
    including local component references and source lifecycle ordering. Do not
    manufacture substitute gameplay state. Replace the weapon fixture's transport
    actor only after its source actor dependencies can be constructed and tested
    together.
-3. Run the isolated C# checks and one deliberate full original-source build in an
-   environment with the repository's .NET 8 toolchain. Keep the real exit code.
+3. Run isolated C# checks and one deliberate full original-source build with the
+   repository's .NET 8 toolchain. Keep the real exit code; this environment has no
+   local `dotnet` executable and the GitHub connector has no workflow-dispatch
+   operation.
 4. Continue the two-actor acceptance sequence before broad mission/NPC work or a
    new public game preview.
 
