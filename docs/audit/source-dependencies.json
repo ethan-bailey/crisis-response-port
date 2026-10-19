@@ -55,7 +55,6 @@
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/Restrain.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/SecureWeapon.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/AudioInstigator.cs",
-    "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/AudioMaterial.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/AudioMeasure.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/AudioPlayer.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/AudioPropagator.cs",
@@ -211,7 +210,6 @@
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BloodStream.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BloodStreamGenerator.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BodyHelpers.cs",
-    "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BuildingController.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/Calibre.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/Campaign.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/CampaignFileInfo.cs",
@@ -331,7 +329,6 @@
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/Coroutine.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/CrMath.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/CyclingBolt.cs",
-    "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/DecayingObject.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/DelayedBallisticExit.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/DialogTree.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/Direction.cs",
@@ -511,7 +508,6 @@
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/MuscleControl.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/MuscleState.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/NegotiationMode.cs",
-    "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/ObjectRemover.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/Occupant.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/OccupantFear.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/OccupantMorale.cs",
@@ -546,6 +542,7 @@
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/RoeCondition.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/RoePermission.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/Room.cs",
+    "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/SceneLoader.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/SceneTransition.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/ScoreKeeper.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableActivity.cs",
@@ -788,7 +785,6 @@
     "runtime/Original/Animation/IKArmTarget.cs",
     "runtime/Original/Animation/IKArmType.cs",
     "runtime/Original/Animation/IKControllerInvoke.cs",
-    "runtime/Original/AudioMaterial.cs",
     "runtime/Original/Ballistics/AmmunitionFragments.cs",
     "runtime/Original/Ballistics/BallisticHitMeshEffect.cs",
     "runtime/Original/Ballistics/BallisticMaterial.cs",
@@ -837,9 +833,7 @@
     "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/VariableSerializationData.cs",
     "runtime/Original/BehaviorDesigner/BinaryDeserialization.cs",
     "runtime/Original/BehaviorDesigner/BinaryDeserializationDeprecated.cs",
-    "runtime/Original/BuildingController.cs",
     "runtime/Original/CharacterBody.Full.cs",
-    "runtime/Original/DecayingObject.cs",
     "runtime/Original/Foundation/ActionScheduler.cs",
     "runtime/Original/Foundation/ArmorClass.cs",
     "runtime/Original/Foundation/AudioSurface.cs",
@@ -1285,7 +1279,6 @@
     "runtime/Original/InputMapping.cs",
     "runtime/Original/InverseKinematics2D.cs",
     "runtime/Original/KeyCode.cs",
-    "runtime/Original/ObjectRemover.cs",
     "runtime/Original/Projectile.cs",
     "runtime/Original/WeaponBrace.cs",
     "runtime/Original/Weapons/ArmTransition.cs",
@@ -1400,13 +1393,14 @@
     },
     {
       "path": "runtime/Engine/ArmPhysicsComponents.cs",
-      "sha256": "da4c72e1b130a9962de4540d307c81772dbce8f0c2c874248698c52c4fb9e2b4",
+      "sha256": "2c8aed07b57ff17cef04225b7da4f072ddc63387c1c5babded7b34c420ad6d32",
       "declares": [
         "FixedJoint",
         "ForceMode",
         "HingeJoint",
         "Joint",
         "JointLimits",
+        "JointMotor",
         "JointSpring",
         "OriginalArmTransformOverloads",
         "RangeAttribute"
@@ -1415,6 +1409,7 @@
         "Action",
         "Component",
         "Rigidbody",
+        "SerializeField",
         "Transform",
         "Vector3"
       ]
@@ -1570,18 +1565,19 @@
     },
     {
       "path": "runtime/Engine/BoxCollider2D.cs",
-      "sha256": "6f8b689f9f15225db4c29210168273fa49d0772a6c66e55e2b6eeb6dc697050b",
+      "sha256": "12ec0e08ae199f40aaeca60c8b4abcc81b81d9dff5d9e425219537e500d7b1ec",
       "declares": [
         "BoxCollider2D"
       ],
       "references": [
         "Collider2D",
+        "SerializeField",
         "Vector2"
       ]
     },
     {
       "path": "runtime/Engine/CharacterPhysics.cs",
-      "sha256": "2c90c4ae77ba3601cb338dd629e7b2610ae84820e21aec186cccb523d68f6159",
+      "sha256": "384fd5643d732b448f504c9e1c237d54e8aa9c28b2bf3d63d97097d5535b022e",
       "declares": [
         "CapsuleCollider",
         "Collision",
@@ -1595,6 +1591,7 @@
         "Raycast",
         "RaycastHit",
         "Rigidbody",
+        "SerializeField",
         "Transform",
         "Vector3",
         "in"
@@ -2242,7 +2239,7 @@
     },
     {
       "path": "runtime/Engine/Resources.cs",
-      "sha256": "0fadc1530bd3301c592fd5e659d199fd6988d1c37d58c6bdaee768fdf63f3e91",
+      "sha256": "8ea40b46dbb16ec353837740dabd8f583dd7e2feb0be659c27fcf6b1b0e9d715",
       "declares": [
         "Resources"
       ],
@@ -2252,6 +2249,7 @@
         "Object",
         "Replace",
         "RuntimeWorld",
+        "SceneLoader",
         "Text",
         "Type",
         "in"
@@ -2300,31 +2298,45 @@
     },
     {
       "path": "runtime/Engine/SceneLoader.cs",
-      "sha256": "a03dfc8e7725e88f73d7cb22f21d5fb5b94f91d7a52087f91722a2cf95dacb5a",
+      "sha256": "2fa8db87b4719fea0524a3ccffa171b05b396cb1073398f1181710ef542ab8af",
       "declares": [
         "SceneLoadResult",
         "SceneLoader",
         "in"
       ],
       "references": [
-        "AudioMaterial",
+        "Animator",
+        "AudioClip",
+        "AudioSource",
         "Behaviour",
         "BoxCollider",
-        "BuildingController",
+        "BoxCollider2D",
+        "CapsuleCollider",
         "Clear",
+        "CollisionDetectionMode",
         "Component",
-        "DecayingObject",
+        "Enum",
         "GameObject",
         "GetString",
+        "HingeJoint",
+        "JointLimits",
+        "JointMotor",
+        "JointSpring",
         "Light",
+        "MeshFilter",
+        "MeshRenderer",
+        "MonoBehaviour",
         "Object",
-        "ObjectRemover",
         "Physics",
         "Quaternion",
         "QueryTriggerInteraction",
         "Ray",
         "Raycast",
+        "Rigidbody",
+        "RigidbodyConstraints",
+        "RigidbodyInterpolation",
         "RuntimeWorld",
+        "SerializeField",
         "SetActive",
         "SetParent",
         "SetValue",
@@ -2332,6 +2344,7 @@
         "Time",
         "Transform",
         "Type",
+        "Vector2",
         "Vector3"
       ]
     },
@@ -15813,6 +15826,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/VariableSynchronizer.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
@@ -16385,6 +16399,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/LegacyWWW.cs",
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Original/Foundation/AudioSurface.cs",
         "runtime/Original/Foundation/AudioSurfaceProperties.cs",
         "runtime/Original/FullSource/AudioPlayer.cs",
@@ -16503,9 +16518,7 @@
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AudioMaterial.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": [
-        "runtime/Engine/SceneLoader.cs"
-      ]
+      "referencedBy": []
     },
     {
       "name": "AudioMeasure",
@@ -16664,6 +16677,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Original/FullSource/AudioPlayer.cs",
         "runtime/Original/FullSource/BallisticHitEffect.cs",
         "runtime/Original/FullSource/Casing.cs",
@@ -18764,6 +18778,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Original/FullSource/LimbRenderer.cs"
       ]
     },
@@ -18825,9 +18840,7 @@
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BuildingController.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": [
-        "runtime/Engine/SceneLoader.cs"
-      ]
+      "referencedBy": []
     },
     {
       "name": "Button",
@@ -19167,6 +19180,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/Physics.cs",
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/LimbArmor.cs",
         "runtime/Original/FullSource/VitalFunctions.cs",
@@ -20133,6 +20147,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Original/FullSource/Casing.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "source-reference/Original/CharacterDependencies/Grenade.cs"
@@ -21302,8 +21317,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
-        "runtime/Engine/RuntimeContracts.cs",
-        "runtime/Engine/SceneLoader.cs"
+        "runtime/Engine/RuntimeContracts.cs"
       ]
     },
     {
@@ -22543,6 +22557,7 @@
         "runtime/Engine/AmmunitionLoader.cs",
         "runtime/Engine/Objects.cs",
         "runtime/Engine/OriginalArmSequences.cs",
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserialization.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserializationDeprecated.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/VariableSynchronizer.cs",
@@ -27078,6 +27093,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/OriginalArmPhysicsHost.cs",
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Original/Animation/ArmController.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/ArmController.cs",
@@ -29109,9 +29125,25 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/CharacterBody.cs"
+      ]
+    },
+    {
+      "name": "JointMotor",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/ArmPhysicsComponents.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Engine/SceneLoader.cs"
       ]
     },
     {
@@ -29127,6 +29159,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/OriginalArmPhysicsHost.cs",
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Original/Animation/ArmController.cs",
         "runtime/Original/FullSource/ArmController.cs",
         "runtime/Original/FullSource/LimbMuscle.cs",
@@ -30893,6 +30926,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/EditorWeaponComponent.cs",
         "runtime/Original/FullSource/Projectile.cs",
@@ -30924,6 +30958,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Original/FullSource/EditorWeaponComponent.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
         "runtime/Original/FullSource/PaintableSurface.cs",
@@ -31451,6 +31486,7 @@
         "runtime/Engine/ClockInput.cs",
         "runtime/Engine/PrefabCloner.cs",
         "runtime/Engine/RuntimeContracts.cs",
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Engine/SpringJoint.cs",
         "runtime/Engine/UI.cs",
         "runtime/Original/AmmunitionBase.cs",
@@ -32353,8 +32389,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
-        "runtime/Engine/RuntimeContracts.cs",
-        "runtime/Engine/SceneLoader.cs"
+        "runtime/Engine/RuntimeContracts.cs"
       ]
     },
     {
@@ -35278,6 +35313,7 @@
         "runtime/Engine/OriginalArmPhysicsHost.cs",
         "runtime/Engine/Physics.cs",
         "runtime/Engine/PresentationHost.cs",
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Engine/SpringJoint.cs",
         "runtime/Original/Animation/ArmController.cs",
         "runtime/Original/Ballistics/ProjectileMaterial.Methods.cs",
@@ -35328,6 +35364,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/WeaponComponentMagazine.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
@@ -35346,6 +35383,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Original/FullSource/Casing.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
@@ -35758,7 +35796,8 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
-        "runtime/Engine/PresentationHost.cs"
+        "runtime/Engine/PresentationHost.cs",
+        "runtime/Engine/Resources.cs"
       ]
     },
     {
@@ -37095,7 +37134,11 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/ArmPhysicsComponents.cs",
+        "runtime/Engine/BoxCollider2D.cs",
+        "runtime/Engine/CharacterPhysics.cs",
         "runtime/Engine/PrefabCloner.cs",
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Engine/UI.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/Behavior.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/BehaviorManager.cs",
@@ -45039,6 +45082,7 @@
         "runtime/Engine/RectTransformUtility.cs",
         "runtime/Engine/Rendering/GraphicsPrimitives.cs",
         "runtime/Engine/Rendering/SpriteComponents.cs",
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Engine/SerializationTypes.cs",
         "runtime/Engine/SerializedEngineTypes.cs",
         "runtime/Engine/UnityEventSystems.cs",
