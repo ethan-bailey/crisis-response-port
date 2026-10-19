@@ -182,14 +182,14 @@ public static class SceneLoader {
                 SetField("m_UseGravity","useGravity",typeof(bool));SetField("m_IsKinematic","isKinematic",typeof(bool));SetField("m_Interpolate","interpolation",typeof(RigidbodyInterpolation));
                 SetField("m_Constraints","constraints",typeof(RigidbodyConstraints));SetField("m_CollisionDetection","collisionDetectionMode",typeof(CollisionDetectionMode));break;
             case 59:
-                SetField("m_ConnectedBody","connectedBody",typeof(Rigidbody));SetField("m_Anchor","anchor",typeof(Vector3));SetField("m_ConnectedAnchor","connectedAnchor",typeof(Vector3));
+                SetField("m_ConnectedBody","connectedBody",typeof(Rigidbody));SetField("m_Anchor","anchor",typeof(Vector3));SetField("m_Axis","axis",typeof(Vector3));SetField("m_ConnectedAnchor","connectedAnchor",typeof(Vector3));
                 SetField("m_AutoConfigureConnectedAnchor","autoConfigureConnectedAnchor",typeof(bool));SetField("m_BreakForce","breakForce",typeof(float));SetField("m_BreakTorque","breakTorque",typeof(float));
                 SetField("m_EnableCollision","enableCollision",typeof(bool));SetField("m_EnablePreprocessing","enablePreprocessing",typeof(bool));
                 SetField("m_UseSpring","useSpring",typeof(bool));SetField("m_Spring","spring",typeof(JointSpring));SetField("m_UseLimits","useLimits",typeof(bool));SetField("m_Limits","limits",typeof(JointLimits));
                 SetField("m_UseMotor","useMotor",typeof(bool));SetField("m_Motor","motor",typeof(JointMotor));
                 SetField("m_MassScale","massScale",typeof(float));SetField("m_ConnectedMassScale","connectedMassScale",typeof(float));break;
             case 61:
-                SetField("m_Offset","offset",typeof(Vector2));SetField("m_Size","size",typeof(Vector2));SetField("m_IsTrigger","isTrigger",typeof(bool));External("m_Material");break;
+                SetField("m_Density","density",typeof(float));SetField("m_Offset","offset",typeof(Vector2));SetField("m_Size","size",typeof(Vector2));SetField("m_IsTrigger","isTrigger",typeof(bool));SetField("m_UsedByEffector","usedByEffector",typeof(bool));SetField("m_UsedByComposite","usedByComposite",typeof(bool));SetField("m_AutoTiling","autoTiling",typeof(bool));SetField("m_EdgeRadius","edgeRadius",typeof(float));External("m_Material");break;
             case 82:
                 SetField("m_audioClip","clip",typeof(AudioClip));SetField("m_Volume","volume",typeof(float));SetField("m_Pitch","pitch",typeof(float));
                 SetField("Loop","loop",typeof(bool));SetField("Mute","mute",typeof(bool));SetField("Priority","priority",typeof(int));External("OutputAudioMixerGroup");break;
