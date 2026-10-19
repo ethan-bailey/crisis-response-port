@@ -1,6 +1,7 @@
 using Crisis.Runtime;
 using System.Text.Json;
 
+if(args.Contains("--prefab-only")){Console.WriteLine(ScenePrefabContracts.Run());return;}
 Console.WriteLine(RuntimeContracts.Run());
 Console.WriteLine(ScenePrefabContracts.Run());
 Console.WriteLine(ArmSequenceContracts.Run("game/assets/original-arm-sequences.json"));
