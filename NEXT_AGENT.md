@@ -5,7 +5,7 @@
 ## Live state and validation
 
 - `develop/wasm`: `2fc0a8e93be97c4d99123910fad4bd25798e71a8`.
-- PR #42 / `feature/full-source-characterbody-integration`: `6625789d7ede07e3be414e0bc7da4ee3df74b090` (draft, open; recorded base SHA `5d83c4ef627baa6dc9009ef9a585c0b70e0d9435`).
+- PR #42 / `feature/full-source-characterbody-integration` was at `bb8775ef2b625c1d4b88abedebb89295627299a6` before this handoff-only update (draft, open; recorded base SHA `5d83c4ef627baa6dc9009ef9a585c0b70e0d9435`). Re-query PR #42 for the resulting live head before any further edit.
 - Other open lanes: #7 `ff2eed647e4eeb3446453b304bb4cbc4b6d31349`, #56 `fb96e92a848409014b85f6e094d995a9376fb731`, #57 `2b73044c107b875d8545d03541bf6b2d35f64654`. Keep these ownership boundaries separate.
 - The latest source checkpoint is commit `af56508d832125ce655fa705d62fda23795c1492`; `6625789` only refreshed the roadmap. The source batch changes 312 paths with zero removals, and exact blobs match preserved per-file hashes.
 - Narrow source/provenance checks recorded for the checkpoint pass: 646-source inventory freshness, 477 source identities, actor migration and strict ownership scans, eight audit tests, original prefab integrity, and whitespace checks. **No full compile or Actions run is attached to the source checkpoint or current head.**
