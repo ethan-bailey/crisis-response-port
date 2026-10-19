@@ -1337,7 +1337,7 @@
   "sources": [
     {
       "path": "runtime/Engine/AmmunitionLoader.cs",
-      "sha256": "5c3db51cc49110fbb2471bdaaa1da155dcd26676439c6bbbba5ad6d933725747",
+      "sha256": "ce4a397340e1cde28d4b37519b26baa1cbdf3f9b27b0808fe0dcd44415947fce",
       "declares": [
         "AmmunitionLoader",
         "in"
@@ -1345,6 +1345,7 @@
       "references": [
         "AmmunitionBase",
         "AnimationCurve",
+        "Availability",
         "Enum",
         "FragmentationSpecification",
         "GameObject",
@@ -1360,6 +1361,7 @@
         "SetValue",
         "Text",
         "Time",
+        "Utilities",
         "Vector3"
       ]
     },
@@ -16857,6 +16859,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/AmmunitionLoader.cs",
         "runtime/Original/AmmunitionBase.cs",
         "runtime/Original/FullSource/AmmunitionBase.cs",
         "runtime/Original/FullSource/WeaponBase.cs",
@@ -45004,6 +45007,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/AmmunitionLoader.cs",
         "runtime/Original/AmmunitionBase.cs",
         "runtime/Original/FullSource/AmmunitionBase.cs",
         "runtime/Original/FullSource/Command.cs",
