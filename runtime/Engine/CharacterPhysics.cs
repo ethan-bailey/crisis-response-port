@@ -7,7 +7,7 @@ public sealed class CapsuleCollider:Collider {
     public Vector3 center {get;set;}
     public float radius {get;set;}=.5f;
     public float height {get;set;}=2f;
-    int axisIndex=1;
+    [SerializeField] int axisIndex=1;
     public int direction {get=>axisIndex;set{if(value<0||value>2)throw new ArgumentOutOfRangeException(nameof(value));axisIndex=value;}}
     internal (Vector3 a,Vector3 b,float radius) Geometry(){
         if(!float.IsFinite(radius)||!float.IsFinite(height)||radius<0||height<0)throw new InvalidOperationException("Invalid capsule dimensions");
