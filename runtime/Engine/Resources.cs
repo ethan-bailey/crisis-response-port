@@ -11,7 +11,7 @@ public static class Resources {
     public static void Configure(string executionPackage){
         using var document=JsonDocument.Parse(executionPackage);paths.Clear();cache.Clear();packageText=executionPackage;
         foreach(var property in document.RootElement.GetProperty("assets").EnumerateObject()){
-            const string prefix="Assets/Resources/";var path=property.Name;if(!path.StartsWith(prefix,StringComparison.Ordinal))continue;
+            const string prefix="Assets/Resources/";var path=property.Name;if(!path.StartsWith(prefix,StringComparison.OrdinalIgnoreCase))continue;
             var key=Path.ChangeExtension(path[prefix.Length..],null).Replace('\\','/');
             if(!paths.TryAdd(key,path))throw new InvalidOperationException($"Ambiguous resource path {key}");
         }
@@ -21,6 +21,10 @@ public static class Resources {
         if(packageText==null)throw new InvalidOperationException("Original resource package is not configured");
         path=path.Replace('\\','/');if(cache.TryGetValue(path,out var cached)&&cached)return cached;
         if(!paths.TryGetValue(path,out var assetPath))return null;
+        if(assetPath.StartsWith("Assets/Resources/characters/",StringComparison.OrdinalIgnoreCase)&&assetPath.EndsWith(".prefab",StringComparison.OrdinalIgnoreCase)){
+            var loaded=SceneLoader.LoadPrefab(packageText,assetPath,assetWorld,requireComplete:true);
+            cache[path]=loaded.prefabRoot;return loaded.prefabRoot;
+        }
         if(!assetPath.StartsWith("Assets/Resources/weapons/ammunition/",StringComparison.OrdinalIgnoreCase))
             throw new NotSupportedException($"Resource dependency closure for {assetPath} is not executable yet");
         var ammo=AmmunitionLoader.Load(packageText,assetPath,assetWorld);ammo.gameObject.assetObject=true;
@@ -29,4 +33,3 @@ public static class Resources {
     public static Object Load(string path,Type type){var asset=Load(path);return asset!=null&&type.IsInstanceOfType(asset)?asset:null;}
     public static T Load<T>(string path) where T:Object=>Load(path) as T;
 }
-
