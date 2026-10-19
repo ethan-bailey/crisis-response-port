@@ -1,36 +1,23 @@
 # CURRENT HANDOFF — Crisis Response Port
 
-**Prepared:** 2026-10-17 (America/New_York; 2026-10-18 UTC). **Worktree:** `feature/full-source-characterbody-integration` (PR #42). **Canonical game integration:** `develop/wasm`. This file replaces, rather than appends to, earlier handoffs. It is branch-local; do not mistake it for the handoff on `develop/wasm`.
+**Prepared:** 2026-10-19 UTC. **Workstream:** original source actor integration, PR #42. **Repository:** private `ethan-bailey/crisis-response-port`.
 
-## First action: verify LIVE repo state before editing
+## Live state and validation
 
-Read `AGENTS.md` §0 and `docs/REPOSITORY_REMEDIATION_2026-10-18.md` on this branch. Re-query the exact heads of `develop/wasm`, PR #42, #56 and #57; recent merged PRs (especially #63–#66); and relevant CI. Check whether the target branch moved after this handoff. Do not select tasks from a dated audit or the largest-numbered PR without comparing merges, source state, and acceptance gates. The current handoff itself is not proof of recency.
+- `develop/wasm`: `2fc0a8e93be97c4d99123910fad4bd25798e71a8`.
+- PR #42 / `feature/full-source-characterbody-integration`: `6625789d7ede07e3be414e0bc7da4ee3df74b090` (draft, open; recorded base SHA `5d83c4ef627baa6dc9009ef9a585c0b70e0d9435`).
+- Other open lanes: #7 `ff2eed647e4eeb3446453b304bb4cbc4b6d31349`, #56 `fb96e92a848409014b85f6e094d995a9376fb731`, #57 `2b73044c107b875d8545d03541bf6b2d35f64654`. Keep these ownership boundaries separate.
+- The latest source checkpoint is commit `af56508d832125ce655fa705d62fda23795c1492`; `6625789` only refreshed the roadmap. The source batch changes 312 paths with zero removals, and exact blobs match preserved per-file hashes.
+- Narrow source/provenance checks recorded for the checkpoint pass: 646-source inventory freshness, 477 source identities, actor migration and strict ownership scans, eight audit tests, original prefab integrity, and whitespace checks. **No full compile or Actions run is attached to the source checkpoint or current head.**
+- The previous full compile at `517ce292cf2c668a9555cfa342e8d382e02b70d8` failed with 19 error occurrences / 15 missing names on a different graph, before the 312-path checkpoint. The older 144-error run `39091701268` is another graph. Neither count describes the current checkpoint; do not compare them.
+- The full compile workflow is manual-only. This environment has no .NET SDK and the GitHub connector has no workflow-dispatch operation. No passing compile, browser boot or gameplay parity is claimed.
 
-**Do not revive the obsolete 30-error / 21-name compiler checkpoint.** The more complete graph yielded **144 errors / 60 unresolved names** at SHA `407c66d026784b72c96490eabae6085dd87c22e6`, full compile run [39091701268](https://github.com/ethan-bailey/crisis-response-port/actions/runs/39091701268). Different graph scopes make naive count comparison invalid. PR #66 remediation merged into PR #42 as `6c4415e62cef53646818c8c08412d5604282a740`; narrow CI [39093133256](https://github.com/ethan-bailey/crisis-response-port/actions/runs/39093133256) passed at `389d8e8dcc3cc49d4327cc55588d874271dc4271`. Verify fresher evidence before claiming these are still latest.
+## Immediate next gate
 
-## What the restructure did — not gameplay parity
+Run the deliberate full .NET 8 compile on the current source checkpoint and preserve its exact exit code and diagnostics. Then close the resulting original dependency graph without stubs. The current runtime gap is clear: `runtime/Engine/WeaponHost.cs` constructs transport `Crisis.Runtime.Weapons.CharacterBody`; there is no runtime loader for the recovered Operator/Occupant prefab component graph and no two-actor lifecycle test.
 
-PR #66 made the expensive full-closure and historical recovery workflows manual-only; installed repeatable diagnostic diffs and a fixed compiler baseline; indexed 1,384 original exported C# files and classified all 60 unresolved names; guarded the seven legacy transport-owner files and prohibited new split actor ownership; extracted Unity engine primitives without rewriting rule bodies; and added 13 isolated engine assertions, 90 original foundation assertions and narrow CI. **Full original CharacterBody still does not compile, and live NPC AI is not done.** Source recovery and fixture tests are not automatic mission startup or playable character verification.
+After compilation, implement and test source prefab component/reference loading and original lifecycle on shared actor-owned components. Prove two independent actors through spawn, equipment, movement, hit callbacks, injury/physiology and destruction before expanding NPC gameplay or publishing a new preview.
 
-## Current boundaries
+## Preservation
 
-- **PR #42:** original full actor and foundation compiler/engine dependencies. Actor destination is `Crisis.Runtime.FullSource.CharacterBody`; do not add alternate mutable actor owners.
-- **PR #56:** source projectile/limb injuries, physiology, Occupant bridge and mission spawning; draft, live source actor/NPC collision integration unfinished. Preserve 19 disabled NPC limb query colliders until production hit preflight and two-actor tests pass.
-- **PR #57:** source IKArmController callbacks; transport-character constructor must be migrated to the unified original actor. Do not merge as complete IK parity.
-- **PR #63–#65:** reviewed extractions of original mission/audio/settings/Occupant sources and independently testable spawner slices; check merged status/head before duplicating them.
-- **PR #7:** historical alternative Unity workstream, not the active original C#→WASM dependency path.
-- **`develop/wasm`:** current game/preview baseline, separate from PR #42. Read its latest commit; do not overwrite game input or auto-deploy.
-
-## Actual next development sequence
-
-1. Read `docs/audit/compiler-baseline.json`, indexed original source inventory and `docs/REPOSITORY_REMEDIATION_2026-10-18.md`. Start from a **complete transitive original dependency family**, inspecting 72 ambiguous names and archive hashes; do not add class stubs to force a green compile.
-2. Finish cohesive missing Unity engine graphics/physics service contracts through isolated native tests. Avoid duplicate compiler-reporting tooling: the remediation has already added a baseline and stable diagnostic diffs.
-3. Consolidate original actor/limb/blackboard/equipment/weapon identity across PR #42, #56, #57; preserve original source method order, non-owner hit accounting, and single mutable physiology owner.
-4. Bind original mission/world/audio/scoring services without invented gameplay. After a significant batch, run one explicit full closure build and compare diagnostics against fixed baseline.
-5. Once full source graph compiles, validate two real actors with original equipment, injury, events, state and destruction; only then run exact-SHA .NET WASM, PhysX, Chromium/WebKit integration and manual protected preview gate.
-
-## Preservation, evidence and rollback
-
-Original proprietary source and recovery ZIP remain private. No invented NPC AI, fabricated gameplay actor, shadow vitals, placeholder equipment or source-effect substitutions. Preserve approved circular analog iPhone joystick (16% dead zone, 65% walk→sprint breakpoint), keyboard speed, icon controls, and chamber-inclusive magazine count **without** separate chamber widget. No automatic Vercel deployment or bulk merge of unfinished PRs. Existing protected preview is not evidence of the newest feature changes or physical Safari acceptance.
-
-For a handoff, re-read live heads, tested SHA, failures and preview manifest. **Replace this entire file** with the new compact current state. Historical steps belong in Git/docs, not appended here.
+Keep PR #42 separate from #56 projectile injury, #57 IK callbacks and #7 historical Unity/mobile work. Do not merge, deploy or alter the stable preview until exact-source compile, native/WASM/browser and required iPhone Safari gates pass. Preserve original serialized prefab/source provenance and the approved analog iPhone movement controls.
