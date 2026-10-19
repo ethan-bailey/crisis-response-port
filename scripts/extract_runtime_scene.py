@@ -6,7 +6,6 @@ import re
 import sys
 from collections import deque
 from pathlib import Path
-import yaml
 
 HEADER = re.compile(r'^--- !u!(\d+) &(-?\d+)(?: stripped)?\s*$', re.M)
 GUID = re.compile(r'guid: ([0-9a-f]{32})')
@@ -22,6 +21,7 @@ def execution_value(value, key=None):
 
 
 def parse_asset(path, relative):
+    import yaml
     data = path.read_bytes()
     try: text = data.decode('utf-8')
     except UnicodeDecodeError: return {'path':relative, 'sha256':hashlib.sha256(data).hexdigest(), 'binary':True}
@@ -39,16 +39,23 @@ def parse_asset(path, relative):
         'records':records, 'externalGuids':sorted(set(GUID.findall(text)))}
 
 
+def runtime_asset_seeds(project):
+    project = Path(project).resolve()
+    seeds = ['Assets/Scenes/Marksman range.unity', 'Assets/Scenes/Mission 01.unity',
+        'Assets/Resources/characters/Operator.prefab', 'Assets/Resources/characters/Occupant.prefab',
+        'ProjectSettings/TimeManager.asset', 'ProjectSettings/TagManager.asset']
+    # Resources.Load paths are runtime strings, not serialized GUID edges.
+    seeds.extend(str(p.relative_to(project)) for p in sorted((project/'Assets/Resources/weapons/ammunition').glob('*.prefab')))
+    return seeds
+
+
 def main():
     project = Path(sys.argv[1]).resolve(); output = Path(sys.argv[2])
     index = {}
     for meta in (project/'Assets').rglob('*.meta'):
         m = re.search(r'^guid: ([0-9a-f]{32})$', meta.read_text(errors='strict'), re.M)
         if m: index[m.group(1)] = str(meta.with_suffix('').relative_to(project))
-    seeds = ['Assets/Scenes/Marksman range.unity', 'Assets/Scenes/Mission 01.unity',
-        'Assets/Resources/characters/Operator.prefab', 'ProjectSettings/TimeManager.asset', 'ProjectSettings/TagManager.asset']
-    # Resources.Load paths are runtime strings, not serialized GUID edges.
-    seeds.extend(str(p.relative_to(project)) for p in sorted((project/'Assets/Resources/weapons/ammunition').glob('*.prefab')))
+    seeds = runtime_asset_seeds(project)
     queue = deque(seeds); assets = {}; missing = []
     while queue:
         relative = queue.popleft()

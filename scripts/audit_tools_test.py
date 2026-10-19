@@ -9,6 +9,7 @@ import check_actor_migration as actor
 import inventory_source_dependencies as inventory
 from check_characterbody_ownership import active_full_runtime_lines
 from summarize_characterbody_compile import summarize, compare
+import extract_runtime_scene as runtime_scene
 
 
 class DiagnosticDiffTests(unittest.TestCase):
@@ -36,6 +37,18 @@ class DiagnosticDiffTests(unittest.TestCase):
         report=summarize('MSBUILD : error MSB1009: Project file does not exist.', 'head',1)
         self.assertEqual(report['uniqueErrorCount'],1)
         self.assertEqual(report['compilerDiagnostics'][0]['code'],'MSB1009')
+
+
+class RuntimePackageInputTests(unittest.TestCase):
+    def test_original_operator_and_occupant_prefabs_are_packaged(self):
+        seeds = set(runtime_scene.runtime_asset_seeds(runtime_scene.ROOT))
+        manifest_path = runtime_scene.ROOT / 'source-reference/Original/CharacterDependencies/ActorPrefabs/provenance.json'
+        manifest = json.loads(manifest_path.read_text())
+        for actor in ('Operator', 'Occupant'):
+            prefab_path = f'Assets/Resources/characters/{actor}.prefab'
+            self.assertIn(prefab_path, seeds)
+            self.assertGreater(manifest['actorInventory'][actor]['serializedRecords'], 0)
+            self.assertTrue((runtime_scene.ROOT / 'source-reference/Original/CharacterDependencies/ActorPrefabs' / f'{actor}.prefab').is_file())
 
 
 class BoundaryTests(unittest.TestCase):
