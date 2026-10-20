@@ -1,51 +1,57 @@
 # Live continuation handoff — October 20, 2026
 
-## Observed state
+## Observed branch and live checkpoint
 
-- Local Codespaces: `feature/full-source-characterbody-integration`, HEAD `b5ac90849b5140fe96d49bb21c3e85af9b5b7a23`, 13 pre-existing pending changes. All were preserved; no pull, reset, clean, or discard.
-- PR #42: open/draft, remote head before this documentation refresh `3faccc61db48cb733304bf0626c7a9781a08638d`.
-- Live `develop/wasm` before this documentation refresh: `2fc0a8e93be97c4d99123910fad4bd25798e71a8`. PR metadata still reports a different base SHA `5d83c4ef627baa6dc9009ef9a585c0b70e0d9435`; recompute before eventual integration.
-- Other open PRs inspected: #56 projectile-limb combat, #57 IK arm callbacks, #7 iPhone movement/camera. Keep the overlapping workstreams separate.
+- Repository: `ethan-bailey/crisis-response-port`.
+- Codespace branch: `feature/full-source-characterbody-integration`; clean local HEAD `3979faa642053d0f584d2f91982c1b88cbe0eb62` (the exact source SHA tested below).
+- Remote branch now has evidence-only commit `548b4cd9dd003b2f9e2dc07078b0eca2f2caf49a` adding `docs/evidence/REA-full-source-texture-gate-2026-10-20.md`; no runtime/source files changed in that commit. Update this file will be the next documentation-only branch commit.
+- PR #42 remains open/draft, targeting `develop/wasm`; no merge to base occurred.
+- Fresh `git ls-remote origin refs/heads/develop/wasm`: `2fc0a8e93be97c4d99123910fad4bd25798e71a8`. Current PR metadata reports a different base snapshot `5d83c4ef627baa6dc9009ef9a585c0b70e0d9435`. Reconcile immediately before the eventual normal merge.
+- Inspected all open PRs: #42, #56 projectile/limb and #57 IK; keep the related workstreams separate. PR API returns `mergeable:false` for #42 at present.
+- No PR Actions workflow run exists for tested SHA `3979faa...`; there is no workflow ID/artifact for this checkpoint. Do not confuse unrelated remediation run 39093133256 with this source SHA.
+- Latest validated code checkpoint this run is `3979faa...`. PR body still cited older SHA `8d734e1...` before its pending refresh.
 
-## Latest verified checkpoint
+## Verified checks on exact code SHA `3979faa642053d0f584d2f91982c1b88cbe0eb62`
 
-Pinned recovery asset `crisis-response-recovery-direct-v3-1.zip` checksum and exact Operator/Occupant prefab+metadata provenance check pass. Original `black pelvis.png` and its TextureImporter .meta are recovered and hash-verified.
+Passed:
+- `python3 scripts/inventory_source_dependencies.py --check`
+- `python3 scripts/check_actor_migration.py` — zero violations.
+- `python3 scripts/check_characterbody_ownership.py --strict`
+- `python3 scripts/verify_full_characterbody_enums.py` — exact original WeaponMode and LimbId identities.
+- `python3 scripts/recover_character_actor_prefabs.py --archive /tmp/crisis-recovery-release/crisis-response-recovery-direct-v3-1.zip --check` — 4 verbatim actor assets and metadata match pinned archive.
+- `python3 -m unittest discover -s scripts -p audit_tools_test.py -v` — 9 tests.
+- `dotnet run --project runtime/EngineChecks/Crisis.Runtime.EngineChecks.csproj --no-restore -v:q` — 69 isolated assertions.
+- `dotnet run --project runtime/FoundationChecks/Crisis.Runtime.FoundationChecks.csproj --no-restore -v:q` — 120 assertions.
+- `dotnet build runtime/Checks/Crisis.Runtime.Checks.csproj --no-incremental -v:q -p:GenerateDocumentationFile=false` — exit 0, 0 errors (44 warnings).
+- `python3 scripts/verify_runtime_package.py /tmp/crisis-original-project-v3/export/ExportedProject /tmp/cpr-runtime-package/scene-package.json` — exit 0; Operator and Occupant file/meta dependency closure has zero unresolved GUIDs.
+- `git diff --check` — pass.
 
-Actor-root package closure passed the verifier against the original extracted project. Saved summary: `/tmp/run2-package-final.json`.
+Evidence/run logs in the Codespaces session: `/tmp/cpr-oct20-texture/focused-gates.log`, `dotnet-gates.log`, `package-closure.log`, `runtime-contracts.log`, and `/tmp/cpr-prefab-latest.log`. Durable evidence summary is `docs/evidence/REA-full-source-texture-gate-2026-10-20.md`. Session logs are ephemeral; no Actions artifact is claimed.
 
-| Root | Reachable assets | Bytes | Records | Unresolved refs | Unsupported built-ins |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Operator | 238 | 12,892,908 | 998 | 0 | 0 |
-| Occupant | 190 | 8,149,372 | 905 | 0 | 0 |
+## Failed gates and exact boundaries
 
-The 11 unresolved references in the package-wide report are outside the two actor-root graphs. The verifier checks bytes/meta and GUID-to-path closure, not runtime object records. Actual prefab construction still fails closed: `KeyNotFoundException` for `Assets/Texture2D/black pelvis.png` at original fileID `2800000`. The exact prefab contains this reference; the original .meta has an empty `fileIDToRecycleName` map and no explicit internal-ID table. The current resolver omits Texture2D class mapping and the current `Texture2D.LoadImage` throws pending a pinned decoder. This is an implementation gap; do not guess IDs or substitute behavior.
+- Actual prefab full-lifecycle gate is still blocked in implementation. Run:
+  `dotnet runtime/Checks/bin/Debug/net8.0/Crisis.Runtime.Checks.dll --prefab-only /tmp/cpr-runtime-package/scene-package.json`
+  Fails closed resolving an original Texture2D field for `Assets/Texture2D/head 5.png`; exact importer metadata says `textureFormat: 12`. Resolver lacks a source-proven imported Texture2D object record/local fileID mapping; current CPU decoder only handles RGBA32 PNG and cannot claim equivalence to the original imported result. Do not invent IDs or substitute raw pixels. See `/tmp/cpr-prefab-latest.log`.
+- Full native runtime contract command:
+  `dotnet runtime/Checks/bin/Debug/net8.0/Crisis.Runtime.Checks.dll`
+  Exited 134. Stack reaches `AmmunitionLoader.Load` → `WeaponHost.ctor` → `WeaponContracts.Run`; original unsupported ammo enum `Calibre` remains. See `/tmp/cpr-oct20-texture/runtime-contracts.log`.
+- Actual actor activation/lifecycle, two-actor independent gameplay, WASM build, Chromium and WebKit checks against that build, and local HTTP smoke remain unpassed. No deploy or preview change occurred.
+- The earlier black-pelvis fileID gap is no longer the first failing edge: package resolution advances to the next source texture, but this is not proof the whole prefab passes.
 
-Freshly rerun checks on the dirty local worktree (not an exact-clean-SHA build):
-- `python3 scripts/recover_character_actor_prefabs.py --archive /tmp/crisis-recovery-release/crisis-response-recovery-direct-v3-1.zip --check` — exit 0.
-- `python3 scripts/verify_original_arm_sequences.py` — exit 0.
-- Actor package closure verifier — exit 0; metrics above.
-- `dotnet run --project runtime/EngineChecks/Crisis.Runtime.EngineChecks.csproj --no-restore` — exit 0 (69 isolated assertions).
-- `dotnet run --project runtime/FoundationChecks/Crisis.Runtime.FoundationChecks.csproj --no-restore` — exit 0 (120 assertions).
-- `dotnet build runtime/Checks/Crisis.Runtime.Checks.csproj --no-incremental -v:q -p:GenerateDocumentationFile=false` — exit 0, 0 errors (13.16 sec).
-- Original arm-controller/physics/hand probes exit 0 but explicitly report unimplemented playback/native parity; diagnostics only.
-- `dotnet runtime/Checks/bin/Debug/net8.0/Crisis.Runtime.Checks.dll --prefab-only /tmp/runtime-package-oct20/scene-package.json` — fails on missing Texture2D fileID record.
-- `dotnet runtime/Checks/bin/Debug/net8.0/Crisis.Runtime.Checks.dll` — fails in original ammunition/weapon contract on `System.NotSupportedException: Calibre` through AmmunitionLoader → WeaponHost → WeaponContracts; log `/tmp/run2-runtimecontracts.log`.
+## Next ordered implementation and verification gates
 
-Logs: `/tmp/run2-prefab-provenance.log`, `/tmp/run2-armseq.log`, `/tmp/run2-armcontroller.log`, `/tmp/run2-armphysics.log`, `/tmp/run2-handruntime.log`, `/tmp/run2-enginechecks.log`, `/tmp/run2-foundation.log`, `/tmp/run2-build.log`, `/tmp/run2-prefab.log`, `/tmp/run2-package-final.json`, `/tmp/run2-runtimecontracts.log`. No workflow run/artifact, browser gameplay, local HTTP smoke, or exact-clean-SHA result is claimed.
-
-## Ordered next gates
-
-1. Implement source-faithful binary Texture2D object loading: preserve exact PNG bytes, original GUID, prefab fileID `2800000`, importer settings, and orientation; use a pinned/tested decoder.
-2. Add import/resolver tests for source hash, identity, dimensions, pixels, orientation, and unsupported formats/settings.
-3. Pass actual Operator prefab `requireComplete:true`, serialized fields, assets, activation/lifecycle, and component ownership.
-4. Pass actual Occupant prefab and prove independent object/component/limb/equipment/physiology ownership.
-5. Resolve original `Calibre` serialization through the correct source-backed ammo/weapon mapping; rerun native contract suite without substituting a synthetic value.
-6. Verify two-actor spawn, equipment, movement, hit callbacks, physiology, and destruction, preserving original ordering.
-7. Run actor ownership/source inventory checks plus EngineChecks/FoundationChecks for the cohesive implementation batch; inspect #56/#57 interfaces without duplicating scope.
-8. When implementation is ready, recheck all open PRs and current `develop/wasm`, then integrate with a normal merge commit only immediately before final verification.
-9. Build from an exact recorded source SHA; retain logs/artifact/workflow ID where available.
-10. Run Chromium and WebKit gameplay checks on that build, then local HTTP smoke; refresh REA and PR prose with exact outcomes. Keep PR #42 open/draft.
+1. Obtain source-backed imported pixels and importer semantics for each actor Texture2D, retaining exact asset bytes, GUID, serialized fileID, importer text/settings, dimensions and orientation; fail closed on unsupported source formats.
+2. Resolve Texture2D object/fileID identity from original source records or other authoritative provenance, then add identity/hash/importer/pixel/orientation/negative-format tests.
+3. Run the actual Operator prefab with complete fields/references required; verify serialized values, component ownership, activation and lifecycle.
+4. Run the actual Occupant prefab equivalently and prove independent object, limb, equipment and physiology ownership.
+5. Recover original `Calibre` enum and ammunition serialization from source, then rerun full native contracts without synthetic fallbacks.
+6. Implement and verify the original independent two-actor lifecycle and spawn/equip/movement/hit/physiology/destruction flow in original callback order.
+7. Re-run provenance, source inventory, identity, strict ownership, dependency closure, EngineChecks, FoundationChecks, native contracts and build on one clean exact source SHA.
+8. Only once ready for final verification, recheck all open PRs and `develop/wasm`; integrate the base using a normal merge commit immediately before final verification.
+9. Build WASM from and record the exact post-merge tested SHA, command, workflow/run ID if applicable, logs and artifacts.
+10. Run Chromium and WebKit gameplay against that build and local HTTP smoke; refresh REA, `NEXT_AGENT.md`, and PR #42 description with exact outcomes. Keep PR #42 open/draft.
 
 ## Guardrails
 
-Read `AGENTS.md`, current handoff, live remediation evidence, current PRs and target ref before edits. The local core loader/resolver has pending changes; inspect/preserve them before any source changes. Keep unknown original fields/assets visible and fail closed. Separate compile, load, lifecycle, gameplay, browser, and HTTP evidence. Do not merge early, deploy, change preview, reset, clean, or discard work.
+Preserve user/Codespace changes. Unknown original fields, components, assets, IDs and formats remain visible and fail closed. Separate compile, dependency, load, lifecycle, gameplay, browser and HTTP evidence. Do not deploy, alter preview, merge early, reset, clean or discard work.
