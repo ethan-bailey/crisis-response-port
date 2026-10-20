@@ -1,31 +1,36 @@
-# Current handoff — original actor prefab loading
+# Current handoff — actual original actor prefab loading
 
-**Observed branch:** `feature/full-source-characterbody-integration`  
-**Current head:** `cff49da6172bffeaf2cec781da3f59669abf4d`  
-**PR:** [#42](https://github.com/ethan-bailey/crisis-response-port/pull/42), open draft, base `develop/wasm`, mergeable=false.  
-**Live base:** `develop/wasm` at `2fc0a8e93be97c4d99123910fad4bd25798e71a8`.
+**Observed at 2026-10-20:**
+- Full-source branch: feature/full-source-characterbody-integration, head 9b0065a37c696e23c5e5ebe0ef8ec60c94a21c8d. This is a documentation-only REA evidence commit atop executable source head bd2a945e3193e374d176369978476ce5ebe1aeda.
+- PR: #42, open draft, base develop/wasm, mergeable=false.
+- Live base: develop/wasm at 2fc0a8e93be97c4d99123910fad4bd25798e71a8.
+- Other open workstreams: #7 Unity, #56 projectile/limb, #57 IK. Keep them separate through actor migration.
+- Exact-SHA workflow lookup returned no PR-triggered runs for current source head bd2a945, manual compile checkpoint 5ed26d8, or current base 2fc0a8e. Do not present another graph's CI as verification for #42.
 
-## Latest validated checkpoint
+## Current validated checkpoint
 
-The latest executable source checkpoint is `5ed26d87ddb66eb6841f72cbfeed8ebcf3e6690d`. The current head adds only the regenerated dependency inventory.
+Per the prior branch handoff, executable source checkpoint 5ed26d87ddb66eb6841f72cbfeed8ebcf3e6690d passed manual .NET 8 build, EngineChecks (60), FoundationChecks (120), actor ownership and migration gates, source inventory and provenance checks. No workflow run is attached to that manual compile. Current source head bd2a945 is later and must not inherit that compile claim without revalidation.
 
-- .NET SDK 10.0.401 built the net8.0 runtime at the executable checkpoint: `dotnet build runtime/Crisis.Runtime.csproj --no-incremental -v:q -p:GenerateDocumentationFile=false`, exit 0. No GitHub Actions run is attached to this SHA.
-- `dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --prefab-only`: PASS. The fixture loads through `Resources.Load`, binds serialized GameObject/Transform/BoxCollider/Rigidbody/HingeJoint references, delays Awake until cloned references are bound, preserves hinge values, and verifies two independent cloned graphs. This uses a controlled fixture; it does not execute original CharacterBody or Limb lifecycle.
-- `EngineChecks`: 60 assertions pass. `FoundationChecks`: 120 assertions pass.
-- Actor migration boundary and strict CharacterBody ownership pass. Dependency inventory is fresh at 646 source files, 1,681 symbols, 1,319 reachable files and 116 ambiguous names. Original WeaponMode/LimbId identity checks pass. All eight audit-tool tests pass.
-- The broader `runtime/Checks` invocation was attempted but stops in `WeaponContracts` with `AmmunitionLoader.Load: Availability`. Do not report that full suite as passing; investigate its package/asset input separately.
+Focused runtime/Checks/Crisis.Runtime.Checks.csproj -- --prefab-only passes only a synthetic fixture: local serialized references, delayed Awake after binding, preserved collider/joint values, and two independent clones. It does not load original actor prefabs or execute original CharacterBody/Limb lifecycle. The broader Checks run stops at WeaponContracts: AmmunitionLoader.Load: Availability; it did not pass as a whole.
 
-## Work completed
+The original recovery artifact also contains an untracked Assembly-CSharp.dll; this was established by REA static analysis in this session. See docs/REA_ACTOR_PREFAB_STATIC_EVIDENCE_2026-10-20.md. The earlier handoff statement that no assembly was available to inspect is superseded. The assembly is in the recovery artifact, not tracked in the repo; REA does not execute it.
 
-- Reviewed `morluto/rea` and recorded the bounded workflow in [`docs/REA_PARITY_EVIDENCE_WORKFLOW.md`](docs/REA_PARITY_EVIDENCE_WORKFLOW.md). REA can provide static managed-code and WASM module/interface evidence. It does not execute gameplay. No tracked Assembly-CSharp DLL or built WASM artifact is available to inspect yet.
-- Added `SceneLoader.LoadPrefab` and routed original character `Resources.Load` calls through it. The loader resolves GUID-backed original MonoBehaviour classes, local object references, supported serialized fields and actor hierarchy order while keeping prefab assets outside the active scene.
-- Added prefab component identities for MeshRenderer, MeshFilter, Rigidbody, HingeJoint, BoxCollider2D, BoxCollider, AudioSource, Animator, Light and CapsuleCollider. Serialized Rigidbody/hinge/collider state is retained where mapped. `Resources.Load` requires a complete graph; unsupported fields and external assets fail visibly instead of spawning a partial actor.
-- Added focused source-prefab contracts and regenerated `docs/audit/source-dependencies.json` in commit `cff49da`.
+## REA evidence and actual-prefab gaps
+
+REA 6.7.0 reports complete metadata/CIL coverage for Unity Mono assembly SHA-256 f5b73879f976e082ce91c238fd3443675ecc18dda00e51e6046b75303656a0cd, MVID 277b46fb-f585-4670-973c-6eedbc68ece9. The preserved Operator and Occupant prefabs reference missing FullSource scripts ControlRenderOrder (Operator 2 components) and LimbAudio (Operator 18, Occupant 16). The original recovered source copies exist in the archive. Integrate them as source, preserving original behaviors and inventory/GUID identity; do not substitute stubs.
+
+Static field-binding comparison identifies unconsumed serialized fields for MeshRenderer (20), Animator (7), BoxCollider2D (1: m_SpriteTilingProperty) and AudioSource (15). The real prefabs also reference package assets through serialized cross-asset references; the loader currently resolves local prefab fileIDs only. External asset GUID paths resolve in the recovery archive, but runtime mesh/material/texture/audio/controller/prefab instantiation is not established. Thus the current requireComplete:true actual-prefab gate is expected to fail until built-in fields and asset references are handled.
 
 ## Next acceptance gate
 
-Load the actual preserved Operator and Occupant prefab records through the generated execution package. Report and close each missing GUID/type, serialized built-in field, mesh/material/audio/animator asset reference, and prefab dependency. Then prove one complete original actor graph before wiring spawning: original CharacterBody and Limb references, body/limb/physiology ownership, and lifecycle after Mission, Masks, audio and presentation services are bound. The current synthetic clone test is not that proof.
+1. Extend the generated package/runtime loader for the actual preserved Operator and Occupant records. Resolve all external assets and serialized built-in fields, report every unsupported field/type/reference, and fail closed on leftovers.
+2. Add the exact recovered LimbAudio and ControlRenderOrder source to the FullSource closure. Refresh the dependency inventory and run existing source identity and ownership checks. Preserve audio/collision and render-order destruction behavior; no placeholder component.
+3. Load one complete actor and verify original CharacterBody/Limb/physiology ownership and lifecycle after mission, mask, audio, and presentation services are bound.
+4. Only after a complete one-actor graph, test two independently loaded actors and complete spawn/equipment/movement/hit/physiology/destruction flows. Then run the consolidated WASM, Chromium/WebKit, and local HTTP smoke gate at the exact source SHA. Keep the current preview unchanged until those checks pass; do not merge #42 or claim iPhone gameplay parity before required evidence.
 
-After the actual actor load passes, continue the ordered closure in `docs/REPOSITORY_REMEDIATION_2026-10-18.md`: shared original actor ownership with PRs #56/#57, complete spawn/equipment/movement/hit/physiology/destruction tests for two actors, then one consolidated WASM build and Chromium/WebKit gameplay checks. Keep the #56 projectile and #57 IK workstreams separate during migration.
+## Constraints and stale status
 
-Other open lanes observed: #7 `ff2eed647e4eeb3446453b304bb4cbc4b6d31349`; #56 `fb96e92a848409014b85f6e094d995a9376fb731`; #57 `2b73044c107b875d8545d03541bf6b2d35f64654`. No merge, preview or deployment change was made. Do not claim WASM, browser boot, original gameplay, or iPhone parity from the current compile and fixture checks.
+- The repository remediation instructions require live-state checks before any edit; on this pass, current base, all open PRs, #42 head, exact-SHA workflow lookups and docs/REPOSITORY_REMEDIATION_2026-10-18.md were re-read.
+- PR #42's description still carries older checkpoint SHAs and reports its synthetic prefab test as newer than the actual current runtime head. Treat this handoff and the code at the observed SHA as authoritative; refresh PR prose separately after the next validated source checkpoint.
+- Earlier failed compiler counts (including the 144-error run) belong to different source graphs and are superseded for this branch. Never compare counts without matching exact source graphs.
+- No runtime code, generated WASM, preview, deployment, or merge changed in this update. This session only added the REA evidence record and refreshed this handoff.
