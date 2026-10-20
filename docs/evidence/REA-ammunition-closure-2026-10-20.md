@@ -40,3 +40,17 @@ This later section supersedes the earlier statement above that no WASM publish, 
 - Compact command/result record: docs/evidence/logs/checkpoint-26b07b-verification.txt. Raw Codespaces logs are under /tmp/cpr-*-26b07b.log for this session.
 
 The recorded source SHA is a pre-merge implementation checkpoint. Do not merge develop/wasm or report acceptance complete until full source-faithful asset resolution, actual Operator/Occupant lifecycle, two-actor gameplay, and post-merge exact-SHA checks pass.
+
+
+## Fresh Codespaces validation and asset closure — 2026-10-20
+
+- Full suite ran from Codespaces local HEAD `5833ab50742e8103cc1e2db4c80dfb59cd2c797c` (`bash /tmp/pr42-local-scan.sh`). The implementation sources are from `26b07b660e892b9e97025bf2b8ebe700b7753764`; no runtime source files were modified in the worktree.
+- Summary: 16 of 17 commands exited 0. `dependency_inventory --check`, actor/source audits, Python and JavaScript tests, 69 isolated engine assertions, 120 foundation assertions, runtime checks build, and `git diff --check` passed. The controller audit exits 0 but reports `controllerPlaybackImplemented: false`. `runtime_contracts` fails closed with exit 134 on the next Projectile after the Calibre PASS.
+- Calibre output: `PASS: original Calibre GUID, fileID, type, path, serialized name, and prefab lifetime`.
+- Projectile failure: `Unity built-in object 0000000000000000f000000000000000:10303 has no source-faithful runtime mapping for expected Material; refusing a synthetic substitute`.
+- Per-gate logs: `/tmp/pr42-local-scan-20261020/*.log`; summary `/tmp/pr42-local-scan-20261020/summary.txt`.
+- Scene audit command: `python3 scripts/scene_dependency_audit.py /tmp/cpr-recovery-artifact-11903811738/export/ExportedProject /tmp/pr42-original-scene-dependencies.md`; output: 417 assets, 708 edges, one unresolved GUID (`b4b69dc6c74eeb54cbd22d28e37f9a19`, Mesh fileID 4300000).
+- Package command: `python3 scripts/extract_runtime_scene.py /tmp/cpr-recovery-artifact-11903811738/export/ExportedProject /tmp/pr42-scene-package.json`; output: 1,382 assets, 21,366 records, 14,249 object references, 508 binary assets, 19,016,011 bytes, 11 unresolved GUID references. Five missing GUID identities come from `Master mixer.mixer`; six references are to the missing .308 Mesh GUID.
+- The refreshed dependency inventory contains 659 sources (up from 654) and passes its check locally. Its five new source-reference paths are `AmmunitionBase.cs`, `Calibre.cs`, `Casing.cs`, `Projectile.cs`, and `UIAmmoRenderItem.cs`; ownership ambiguity for `Calibre` and `UIAmmoRenderItem` remains visibly flagged.
+- This does not establish actual Operator/Occupant lifecycle, controller playback, full two-actor gameplay, or browser gameplay. Existing browser startup/input results remain limited to the prior pre-merge build.
+- Artifact provenance: workflow run 38582072502, artifact 11903811738, SHA-256 `cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d`.

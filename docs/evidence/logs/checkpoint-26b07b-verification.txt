@@ -21,3 +21,17 @@ Full runtime contracts: FAIL/CLOSED, exit 134 after source prefab/deferred Awake
 Operator/Occupant original prefab lifecycle, full two-actor flow, and final post-merge verification remain incomplete.
 Recovery workflow 38582072502; artifact 11903811738; archive SHA-256 cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d.
 GitHub PR workflow lookup for tested SHA returned no workflow runs.
+
+
+Fresh Codespaces full local scan — 2026-10-20
+Tested checkout HEAD: 5833ab50742e8103cc1e2db4c80dfb59cd2c797c.
+Runtime implementation source: 26b07b660e892b9e97025bf2b8ebe700b7753764.
+Full suite command: bash /tmp/pr42-local-scan.sh
+Full suite summary: /tmp/pr42-local-scan-20261020/summary.txt; per-gate logs: /tmp/pr42-local-scan-20261020/*.log.
+Results: 16 of 17 commands exit 0; dependency inventory, actor/source audits, Python/JavaScript tests, engine checks (69), foundation checks (120), checks project build, and pending diff check pass. Runtime contracts fail with exit 134.
+Calibre result: PASS: original Calibre GUID, fileID, type, path, serialized name, and prefab lifetime.
+First runtime-contract failure after Calibre: Projectile fragmentMeshes needs Material; Unity built-in GUID 0000000000000000f000000000000000, fileID 10303, has no source-faithful runtime mapping. No synthetic substitute.
+Scene dependency audit: 417 assets, 708 edges, 1 unresolved GUID after 1,910 direct serialized occurrences. Missing Mesh GUID b4b69dc6c74eeb54cbd22d28e37f9a19, fileID 4300000.
+Runtime package extraction: 1,382 assets, 21,366 records, 14,249 object references, 508 binary assets, 19,016,011 bytes, 11 unresolved GUID references (five mixer GUIDs, six references to the missing Mesh GUID).
+Recovery source: workflow run 38582072502, artifact 11903811738, SHA-256 cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d.
+Actual Operator/Occupant lifecycle, controller playback, full two-actor gameplay, final exact-SHA Chromium/WebKit gameplay and HTTP checks remain incomplete. The older texture failure at SHA 3979faa was not rerun.
