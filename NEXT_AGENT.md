@@ -38,7 +38,7 @@ Evidence/run logs in the Codespaces session: `/tmp/cpr-oct20-texture/focused-gat
   Fails closed resolving an original Texture2D field for `Assets/Texture2D/head 5.png`; exact importer metadata says `textureFormat: 12`. Resolver lacks a source-proven imported Texture2D object record/local fileID mapping; current CPU decoder only handles RGBA32 PNG and cannot claim equivalence to the original imported result. Do not invent IDs or substitute raw pixels. See `/tmp/cpr-prefab-latest.log`.
 - Full native runtime contract command:
   `dotnet runtime/Checks/bin/Debug/net8.0/Crisis.Runtime.Checks.dll`
-  Exited 134. Stack reaches `AmmunitionLoader.Load` → `WeaponHost.ctor` → `WeaponContracts.Run`; original unsupported ammo enum `Calibre` remains. See `/tmp/cpr-oct20-texture/runtime-contracts.log`.
+  Exited 134 with `System.NotSupportedException: Calibre` in `AmmunitionLoader.Load` line 46, followed by `WeaponHost.ctor` → `WeaponContracts.Run`. `runtime/Original/FullSource/Calibre.cs` confirms `Calibre` is a `MonoBehaviour` class, not an enum; its source field is `public string calibreName = "Unnamed calibre";`. Compare the failing loader branch with original serialized ammunition/component data before implementing a mapping. See `/tmp/cpr-oct20-texture/runtime-contracts.log`.
 - Actual actor activation/lifecycle, two-actor independent gameplay, WASM build, Chromium and WebKit checks against that build, and local HTTP smoke remain unpassed. No deploy or preview change occurred.
 - The earlier black-pelvis fileID gap is no longer the first failing edge: package resolution advances to the next source texture, but this is not proof the whole prefab passes.
 
@@ -48,7 +48,7 @@ Evidence/run logs in the Codespaces session: `/tmp/cpr-oct20-texture/focused-gat
 2. Resolve Texture2D object/fileID identity from original source records or other authoritative provenance, then add identity/hash/importer/pixel/orientation/negative-format tests.
 3. Run the actual Operator prefab with complete fields/references required; verify serialized values, component ownership, activation and lifecycle.
 4. Run the actual Occupant prefab equivalently and prove independent object, limb, equipment and physiology ownership.
-5. Recover original `Calibre` enum and ammunition serialization from source, then rerun full native contracts without synthetic fallbacks.
+5. Trace the `NotSupportedException: Calibre` branch in `AmmunitionLoader.Load` against original serialized ammunition and `Calibre` component references; implement source-backed coverage and rerun full native contracts.
 6. Implement and verify the original independent two-actor lifecycle and spawn/equip/movement/hit/physiology/destruction flow in original callback order.
 7. Re-run provenance, source inventory, identity, strict ownership, dependency closure, EngineChecks, FoundationChecks, native contracts and build on one clean exact source SHA.
 8. Only once ready for final verification, recheck all open PRs and `develop/wasm`; integrate the base using a normal merge commit immediately before final verification.
