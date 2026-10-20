@@ -69,6 +69,12 @@ namespace UnityEngine {
   }
  }
  public class Renderer:Behaviour {
+  public bool castShadows=true,receiveShadows=true,dynamicOccludee=true,preserveUVs,ignoreNormalsForChartDetection,importantGI,stitchLightmapSeams;
+  public int motionVectors,lightProbeUsage,reflectionProbeUsage,selectedEditorRenderState,minimumChartSize,sortingLayerID,sortingLayer,sortingOrder;
+  public float scaleInLightmap=1,autoUVMaxDistance,autoUVMaxAngle;
+  public StaticBatchInfo staticBatchInfo;
+  public Transform staticBatchRoot,probeAnchor,lightProbeVolumeOverride;
+  public Object lightmapParameters;
   Material singleMaterial=new();Material[] materialInstances;
   public Action<Material[]> OnMaterialsAssigned;
   public Material material {
@@ -87,6 +93,7 @@ namespace UnityEngine {
   }
  }
  public sealed class MeshRenderer:Renderer {}
+ public struct StaticBatchInfo { public uint firstSubMesh,subMeshCount; }
  // Imported source vertices. Convex planes are the hull of those vertices; this
  // is not a claim about matching Unity's PhysX cooking/reduction algorithm.
  public sealed class MeshCollider:Collider {

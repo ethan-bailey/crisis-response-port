@@ -11,6 +11,7 @@ public struct RaycastHit {
 }
 public enum QueryTriggerInteraction {UseGlobal,Ignore,Collide}
 public abstract class Collider:Behaviour {
+    public PhysicMaterial sharedMaterial {get;set;}
     public Rigidbody attachedRigidbody=>GetComponentInParent<Rigidbody>();
     public bool isTrigger {get;set;}
     public Bounds bounds {

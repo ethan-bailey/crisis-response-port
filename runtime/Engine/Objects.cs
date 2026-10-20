@@ -12,6 +12,10 @@ public class Object {
     public HideFlags hideFlags {get;set;}
     readonly int instanceID=Interlocked.Increment(ref nextID);
     public virtual string name { get; set; }
+    public Dictionary<string,JsonElement> OriginalSerializedFields {get;}=new(StringComparer.Ordinal);
+    public string OriginalAssetGuid {get;internal set;}
+    public string OriginalAssetFileID {get;internal set;}
+    public string OriginalAssetPath {get;internal set;}
     public int GetInstanceID() => instanceID;
     public static implicit operator bool(Object o) => !ReferenceEquals(o,null)&&!o.destroyed;
     public static bool operator ==(Object a,Object b) {

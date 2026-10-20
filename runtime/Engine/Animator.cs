@@ -11,6 +11,8 @@ public interface IAnimatorDriver {
 public enum AnimatorCullingMode { AlwaysAnimate=0, CullUpdateTransforms=1, CullCompletely=2 }
 public enum AnimatorUpdateMode { Normal=0, AnimatePhysics=1, UnscaledTime=2 }
 public sealed class Animator:Behaviour {
+    public Object avatar {get;set;}
+    public RuntimeAnimatorController runtimeController {get;set;}
     static readonly Dictionary<string,int> ids=new(StringComparer.Ordinal);
     static readonly Dictionary<int,string> names=[];
     readonly Dictionary<int,AnimatorParameter> parameters=[];

@@ -16,6 +16,8 @@ public sealed class SceneLoadResult {
     public Dictionary<string,int> unsupportedComponents {get;set;}=[];
     public List<string> unresolvedReferences {get;set;}=[];
     public Dictionary<string,UObject> objects {get;}=[];
+    internal JsonElement package;
+    internal string packageJson;
     public RuntimeWorld world {get;set;}
     public GameObject prefabRoot {get;set;}
     public object Report()=>new {scene,serializedRecords,gameObjects,transforms,boxColliders,originalComponents,unsupportedComponents,unresolvedReferences};
@@ -50,6 +52,8 @@ public static class SceneLoader {
         var asset=package.GetProperty("assets").GetProperty(assetPath);
         var records=asset.GetProperty("records").EnumerateArray().Select(r=>r.Clone()).ToArray();
         var result=new SceneLoadResult{scene=assetPath,serializedRecords=records.Length,world=world};
+        result.package=package.Clone();
+        result.packageJson=json;
         var existingObjects=new HashSet<UObject>(world.Objects,ReferenceEqualityComparer.Instance);
         using var deferred=world.DeferActivation();
         try {
@@ -180,6 +184,12 @@ public static class SceneLoader {
             else result.unresolvedReferences.Add($"Unsupported built-in member {component.GetType().Name}.{target}");
         }
         void External(string source){
+            var target=(classID,source) switch {
+                (23,"m_Materials")=>("materials",typeof(Material[])),(23,"m_StaticBatchRoot")=>("staticBatchRoot",typeof(Transform)),(23,"m_ProbeAnchor")=>("probeAnchor",typeof(Transform)),(23,"m_LightProbeVolumeOverride")=>("lightProbeVolumeOverride",typeof(Transform)),(23,"m_LightmapParameters")=>("lightmapParameters",typeof(UObject)),
+                (33,"m_Mesh")=>("sharedMesh",typeof(Mesh)),(61,"m_Material")=>("sharedMaterial",typeof(PhysicMaterial)),(65,"m_Material")=>("sharedMaterial",typeof(PhysicMaterial)),(136,"m_Material")=>("sharedMaterial",typeof(PhysicMaterial)),
+                (82,"OutputAudioMixerGroup")=>("outputAudioMixerGroup",typeof(UnityEngine.Audio.AudioMixerGroup)),(95,"m_Avatar")=>("avatar",typeof(UObject)),(95,"m_Controller")=>("runtimeController",typeof(RuntimeAnimatorController)),_=>default
+            };
+            if(target!=default){SetField(source,target.Item1,target.Item2);return;}
             if(!fields.TryGetProperty(source,out var value))return;
             consumed.Add(source);
             component.OriginalSerializedFields[source]=value.Clone();
@@ -191,6 +201,15 @@ public static class SceneLoader {
             if(value.ValueKind==JsonValueKind.Object)Add(value);
             else if(value.ValueKind==JsonValueKind.Array)foreach(var reference in value.EnumerateArray())Add(reference);
         }
+        if(classID==23){
+            SetField("m_CastShadows","castShadows",typeof(bool));SetField("m_ReceiveShadows","receiveShadows",typeof(bool));SetField("m_DynamicOccludee","dynamicOccludee",typeof(bool));
+            SetField("m_MotionVectors","motionVectors",typeof(int));SetField("m_LightProbeUsage","lightProbeUsage",typeof(int));SetField("m_ReflectionProbeUsage","reflectionProbeUsage",typeof(int));
+            SetField("m_StaticBatchInfo","staticBatchInfo",typeof(StaticBatchInfo));SetField("m_ScaleInLightmap","scaleInLightmap",typeof(float));SetField("m_PreserveUVs","preserveUVs",typeof(bool));
+            SetField("m_IgnoreNormalsForChartDetection","ignoreNormalsForChartDetection",typeof(bool));SetField("m_ImportantGI","importantGI",typeof(bool));SetField("m_StitchLightmapSeams","stitchLightmapSeams",typeof(bool));
+            SetField("m_SelectedEditorRenderState","selectedEditorRenderState",typeof(int));SetField("m_MinimumChartSize","minimumChartSize",typeof(int));SetField("m_AutoUVMaxDistance","autoUVMaxDistance",typeof(float));SetField("m_AutoUVMaxAngle","autoUVMaxAngle",typeof(float));
+            SetField("m_SortingLayerID","sortingLayerID",typeof(int));SetField("m_SortingLayer","sortingLayer",typeof(int));SetField("m_SortingOrder","sortingOrder",typeof(int));
+        }
+        if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("Spatialize","spatialize",typeof(bool));SetField("SpatializePostEffects","spatializePostEffects",typeof(bool));SetField("DopplerLevel","dopplerLevel",typeof(float));SetField("MinDistance","minDistance",typeof(float));SetField("MaxDistance","maxDistance",typeof(float));SetField("Pan2D","pan2D",typeof(float));SetField("rolloffMode","rolloffMode",typeof(int));SetField("BypassEffects","bypassEffects",typeof(bool));SetField("BypassListenerEffects","bypassListenerEffects",typeof(bool));SetField("BypassReverbZones","bypassReverbZones",typeof(bool));SetField("rolloffCustomCurve","rolloffCustomCurve",typeof(AnimationCurve));SetField("panLevelCustomCurve","panLevelCustomCurve",typeof(AnimationCurve));SetField("spreadCustomCurve","spreadCustomCurve",typeof(AnimationCurve));SetField("reverbZoneMixCustomCurve","reverbZoneMixCustomCurve",typeof(AnimationCurve));}
         switch(classID){
             case 23:External("m_Materials");External("m_ProbeAnchor");External("m_LightProbeVolumeOverride");External("m_LightmapParameters");break;
             case 33:External("m_Mesh");break;
@@ -246,6 +265,7 @@ public static class SceneLoader {
             if(value.ValueKind!=JsonValueKind.Object||!value.TryGetProperty("fileID",out var fileId))throw new NotSupportedException($"External {type.Name} asset reference is not mapped");
             var key=fileId.ToString();if(key=="0")return null;
             if(result.objects.TryGetValue(key,out var found)&&type.IsInstanceOfType(found))return found;
+            if(value.TryGetProperty("guid",out var referenceGuid))return SerializedAssetResolver.Resolve(result.package,referenceGuid.GetString(),key,result.world,type);
             string guid=value.TryGetProperty("guid",out var externalGuid)?externalGuid.GetString():"local";
             result.unresolvedReferences.Add($"Unresolved {type.Name} reference {guid}:{key}");return null;
         }
