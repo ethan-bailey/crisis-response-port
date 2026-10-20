@@ -64,3 +64,26 @@ Codespaces-session logs listed above are ephemeral; no workflow ID/artifact is c
 - Re-ran Actions lookup for source SHA `3979faa...`: empty workflow_runs list; no workflow ID/artifact.
 - Codespace probe `command -v Unity || command -v unity` returned no executable. The extracted project Assets tree contains 315 `.asset` files, but the probe does not show an authoritative serialized/imported Texture2D object for the failing references. This is not evidence to synthesize imported texture data or IDs.
 - No new runtime/build/browser checks were run after the documentation-only fast-forward; prior code check results above remain bound to `3979faa...`. Prefab and native contract failures remain unchanged; browser/WASM/HTTP gates remain unpassed.
+
+
+## Follow-up source diagnostic checkpoint — 2026-10-20
+
+- Source commit under test: `318fc92b87f6a2138e680e6f016ec636ceb8299a` (pushed to the PR branch). A following documentation-only commit updated `NEXT_AGENT.md`; this does not alter the tested runtime tree.
+- `git diff --check` passed. `dotnet build runtime/Checks/Crisis.Runtime.Checks.csproj --no-incremental -v:q -p:GenerateDocumentationFile=false` exited successfully on net8.0 after the source diagnostic change, with zero reported errors.
+- `dotnet runtime/Checks/bin/Debug/net8.0/Crisis.Runtime.Checks.dll` was rerun and exited 134. It remains a failing native contract gate. The unsupported-field diagnostic now names the original ammunition field and runtime type and preserves the serialized GUID:fileID in the error.
+- Package trace: `game/assets/weapon-runtime.json.gz` has 1 asset / 1 guidPath, for 5.56-FMJ; it includes no Calibre path/asset. In the actual 5.56-FMJ prefab record, `calibre` references GUID `57cfc851e0e4734d98dbd083b39cddf`, fileID `114724804207875695`. Original source identity is `Calibre : MonoBehaviour`, with `public string calibreName = "Unnamed calibre";` in `runtime/Original/FullSource/Calibre.cs`. The missing serialized Calibre source object record is a concrete packaging/provenance gap. No behavior or object identity was synthesized.
+- Diagnostic runtime log: `/tmp/cpr-oct20-texture/runtime-contracts-diagnostic.log` in Codespaces session; ephemeral. Build and source inventory check results were visible in terminal, but no durable logs or Actions artifact were produced.
+- GitHub Actions lookup for `318fc92b87f6a2138e680e6f016ec636ceb8299a` returned an empty workflow_runs list; workflow ID: none; artifact: none. Planned EngineChecks/FoundationChecks rerun did not complete because the Codespace environment disconnected. The prior 69/120 assertion passes and other source/package checks remain evidence only for SHA `3979faa642053d0f584d2f91982c1b88cbe0eb62`.
+- PR #42 remains open/draft. Live source branch head was `318fc92b87f6a2138e680e6f016ec636ceb8299a` before this REA-only update. No base merge, deployment, preview change or browser run occurred.
+- Remaining unpassed acceptance: authoritative Calibre record/package closure; imported Texture2D object/fileID and format 12 semantics; actual Operator and Occupant prefab lifecycle; complete independent two-actor flow; final source verification; post-merge WASM build; Chromium, WebKit, local HTTP. Do not label these passed.
+
+### Run commands
+
+```sh
+git status --short --branch
+git rev-parse HEAD
+git diff --check
+dotnet build runtime/Checks/Crisis.Runtime.Checks.csproj --no-incremental -v:q -p:GenerateDocumentationFile=false
+dotnet runtime/Checks/bin/Debug/net8.0/Crisis.Runtime.Checks.dll
+```
+
