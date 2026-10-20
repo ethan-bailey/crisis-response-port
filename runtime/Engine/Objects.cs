@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Reflection;
+using System.Text.Json;
 using N = System.Numerics;
 
 namespace UnityEngine;
@@ -81,6 +82,9 @@ public class GameObject:Object {
     public void SetActive(bool value){if(active==value)return;active=value;world.RefreshActivation();}
 }
 public class Component:Object {
+    // Original Unity YAML members unsupported by the current CPU adapter remain
+    // attached to their source component for inspection and fail-closed loading.
+    public Dictionary<string,JsonElement> OriginalSerializedFields {get;}=new(StringComparer.Ordinal);
     public GameObject gameObject {get;internal set;}
     public Transform transform => gameObject.transform;
     public override string name {get=>gameObject?.name;set {if(gameObject!=null)gameObject.name=value;}}

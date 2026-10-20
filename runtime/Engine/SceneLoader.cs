@@ -102,9 +102,11 @@ public static class SceneLoader {
                     case 108:{var light=go.AddComponent<Light>();light.intensity=Number(fields,"m_Intensity",1);component=light;break;}
                     case 136 when prefab:component=go.AddComponent<CapsuleCollider>();break;
                     case 114:{
-                        string guid=fields.GetProperty("m_Script").GetProperty("guid").GetString();
-                        label=package.GetProperty("guidPaths").TryGetProperty(guid,out var path)?Path.GetFileNameWithoutExtension(path.GetString()):$"Script:{guid}";
-                        var type=ResolveScriptType(package,guid);
+                        var script=fields.GetProperty("m_Script");
+                        string guid=script.GetProperty("guid").GetString();
+                        string fileID=script.GetProperty("fileID").ToString();
+                        label=ResolveScriptName(package,guid,fileID);
+                        var type=ResolveScriptType(package,guid,fileID);
                         if(type!=null){component=go.AddComponent(type);scriptFields.Add((component,fields,id));result.originalComponents++;}
                         break;
                     }
@@ -144,9 +146,14 @@ public static class SceneLoader {
         }
     }
     static bool IsWithin(Transform value,Transform root){for(var t=value;t!=null;t=t.parent)if(ReferenceEquals(t,root))return true;return false;}
-    static Type ResolveScriptType(JsonElement package,string guid){
-        if(!package.GetProperty("guidPaths").TryGetProperty(guid,out var source))return null;
-        string name=Path.GetFileNameWithoutExtension(source.GetString());
+    static string ResolveScriptName(JsonElement package,string guid,string fileID){
+        if(package.TryGetProperty("scriptTypes",out var bindings)&&bindings.TryGetProperty(guid,out var types)&&types.TryGetProperty(fileID,out var mapped))return mapped.GetString();
+        if(package.GetProperty("guidPaths").TryGetProperty(guid,out var source))return Path.GetFileNameWithoutExtension(source.GetString());
+        return $"Script:{guid}:{fileID}";
+    }
+    static Type ResolveScriptType(JsonElement package,string guid,string fileID){
+        string name=ResolveScriptName(package,guid,fileID);
+        if(name.StartsWith("Script:",StringComparison.Ordinal))return null;
         var candidates=AppDomain.CurrentDomain.GetAssemblies().SelectMany(SafeTypes)
             .Where(t=>!t.IsAbstract&&typeof(Component).IsAssignableFrom(t)&&t.Name==name).ToArray();
         var fullSource=candidates.Where(t=>t.Namespace=="Crisis.Runtime.FullSource").ToArray();
@@ -175,10 +182,14 @@ public static class SceneLoader {
         void External(string source){
             if(!fields.TryGetProperty(source,out var value))return;
             consumed.Add(source);
-            if(value.ValueKind==JsonValueKind.Object&&value.TryGetProperty("fileID",out var file)&&file.ToString()!="0")
-                result.unresolvedReferences.Add($"Unresolved external asset {component.GetType().Name}.{source}");
-            else if(value.ValueKind==JsonValueKind.Array&&value.EnumerateArray().Any(v=>v.ValueKind==JsonValueKind.Object&&v.TryGetProperty("fileID",out var f)&&f.ToString()!="0"))
-                result.unresolvedReferences.Add($"Unresolved external assets {component.GetType().Name}.{source}");
+            component.OriginalSerializedFields[source]=value.Clone();
+            void Add(JsonElement reference){
+                if(reference.ValueKind!=JsonValueKind.Object||!reference.TryGetProperty("fileID",out var file)||file.ToString()=="0")return;
+                string guid=reference.TryGetProperty("guid",out var g)?g.GetString():"local";
+                result.unresolvedReferences.Add($"Unresolved external asset {component.GetType().Name}.{source} {guid}:{file}");
+            }
+            if(value.ValueKind==JsonValueKind.Object)Add(value);
+            else if(value.ValueKind==JsonValueKind.Array)foreach(var reference in value.EnumerateArray())Add(reference);
         }
         switch(classID){
             case 23:External("m_Materials");External("m_ProbeAnchor");External("m_LightProbeVolumeOverride");External("m_LightmapParameters");break;
@@ -213,11 +224,15 @@ public static class SceneLoader {
         }
         foreach(var property in fields.EnumerateObject())
             if(!consumed.Contains(property.Name)&&!property.Name.StartsWith("m_Prefab",StringComparison.Ordinal))
+            {
+                component.OriginalSerializedFields[property.Name]=property.Value.Clone();
                 result.unresolvedReferences.Add($"Unsupported built-in field {component.GetType().Name}.{property.Name}");
+            }
     }
     static void AssignSerializedFields(Component component,JsonElement fields,SceneLoadResult result,string id){
         foreach(var property in fields.EnumerateObject()){
             if(property.Name.StartsWith("m_",StringComparison.Ordinal))continue;
+            component.OriginalSerializedFields[property.Name]=property.Value.Clone();
             var field=SerializedFields(component.GetType()).FirstOrDefault(f=>f.Name==property.Name);
             if(field==null){result.unresolvedReferences.Add($"Unsupported serialized field {component.GetType().Name}.{property.Name}");continue;}
             try{field.SetValue(component,ReadValue(property.Value,field.FieldType,result));}
@@ -231,7 +246,8 @@ public static class SceneLoader {
             if(value.ValueKind!=JsonValueKind.Object||!value.TryGetProperty("fileID",out var fileId))throw new NotSupportedException($"External {type.Name} asset reference is not mapped");
             var key=fileId.ToString();if(key=="0")return null;
             if(result.objects.TryGetValue(key,out var found)&&type.IsInstanceOfType(found))return found;
-            result.unresolvedReferences.Add($"Unresolved {type.Name} reference {key}");return null;
+            string guid=value.TryGetProperty("guid",out var externalGuid)?externalGuid.GetString():"local";
+            result.unresolvedReferences.Add($"Unresolved {type.Name} reference {guid}:{key}");return null;
         }
         if(type.IsEnum)return value.ValueKind==JsonValueKind.String?Enum.Parse(type,value.GetString(),true):Enum.ToObject(type,value.GetInt32());
         if(type==typeof(string))return value.GetString();
@@ -255,5 +271,4 @@ public static class SceneLoader {
             else if(member is PropertyInfo p&&p.CanWrite)try{p.SetValue(instance,ReadValue(property.Value,p.PropertyType,result));}catch(Exception ex){throw new InvalidOperationException($"Failed serialized member {type.FullName}.{p.Name} ({p.PropertyType.FullName}) from {property.Value.GetRawText()}",ex);}
         }
         return instance;
-if(type==typeof(float))return float.Parse(value.ValueKind==JsonValueKind.String?value.GetString()!:value.GetRawText(),System.Globalization.NumberStyles.Float,System.Globalization.CultureInfo.InvariantCulture);    }
 }

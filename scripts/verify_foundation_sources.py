@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import re
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -78,6 +79,14 @@ def verify(archive_path=None):
             assert sha(original) == item["sha256"], name
             if archive:
                 assert original == archive.read(item["archiveEntry"]), name
+            if "guid" in item or "metaSha256" in item:
+                meta_path = full_source / (name + ".meta")
+                meta = meta_path.read_bytes()
+                assert sha(meta) == item["metaSha256"], f"{name}.meta"
+                match = re.search(rb"(?m)^guid: ([0-9a-f]{32})\s*$", meta)
+                assert match and match.group(1).decode("ascii") == item["guid"], f"{name}.meta GUID"
+                if archive:
+                    assert meta == archive.read(item["archiveEntry"] + ".meta"), f"{name}.meta"
             count += 1
 
         # Unity Standard Assets retain their original assembly namespace and

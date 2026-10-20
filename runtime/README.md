@@ -60,20 +60,31 @@ they do not execute firing, flight, collision, fragmentation spawning or damage.
 
 ## Original data extraction
 
-`scripts/extract_runtime_scene.py` follows serialized references starting from
-Marksman range, Mission 01, the Operator prefab, project time/layer settings, and
-all 50 ammunition resource prefabs. It produces:
+`scripts/extract_runtime_scene.py` follows serialized references from Marksman
+range, Mission 01, both original actor prefabs, project time/layer settings, and
+all 50 ammunition resource prefabs. It follows every referenced non-source asset
+type, including binary audio/textures, animation clips, shaders, mixers and
+physics materials. Each asset keeps its source bytes, SHA-256, size and Unity
+GUID/fileID edges; every indexed `.meta` retains a hash. Unity built-in IDs and
+the recovered Unity UI script GUID/fileID identities are explicitly classified.
+`scripts/verify_runtime_package.py` checks those bytes and transitive closures.
+It produces:
 
 - `scene-package.json`: full source text, raw YAML records, parsed fields, original
   fileIDs/GUIDs, hashes and a dependency index.
-- `scene-execution.json`: the same parsed fields and identifiers without duplicate
-  raw text, for execution. The browser verification sends only the requested asset.
+- `scene-execution.json`: parsed fields, identifiers and exact binary/text asset
+  content for execution. This package is larger because referenced media is kept.
 - `scene-package.report.json`: extraction counts and unresolved GUID count.
 
-The expanded extraction contains **818 assets and 20,952 serialized records**.
-All 55 seed asset source texts were checked against the recovered source bytes.
-31 unresolved GUID *references* are reported; this is not 31 distinct missing assets.
-Serialized dependencies outside the current executable scope remain inventoried.
+The full source extraction currently contains **1,382 assets and 21,366 serialized
+records**, including the transitive audio, texture, shader, animation, mixer and
+physics-material dependencies. A current source package has 11 unresolved GUID
+references elsewhere in its seeds; they remain visible and are not silently
+resolved. `verify_runtime_package.py` passed the actual actor closures: Operator
+238 assets / 998 records / 12,892,908 bytes; Occupant 190 assets / 905 records /
+8,149,372 bytes. Both closures have zero unresolved GUID edges and zero unknown
+built-in IDs. This verifies packaged source identity only; it does not establish
+that `SceneLoader` instantiates those assets or runs their original lifecycles.
 All serialized reference fileIDs are decimal strings in the execution view so
 large Unity prefab identifiers survive JavaScript without integer rounding.
 

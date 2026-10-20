@@ -1890,6 +1890,22 @@
       "sha256": "c413d2b927f35858c2aeee7efa48e4f18de1026e9bce17f642f356eea828412b",
       "runtimeSha256": "270efd92abd4b0594815343e022f3f3e14ed7167f61a137396170f45eb2cb49c",
       "adaptation": "FullSource namespace wrapper and armor bridge binding"
+    },
+    "ControlRenderOrder.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ControlRenderOrder.cs",
+      "sha256": "c890c3c271dc45af942f8d9d65cd1e07f64770f0f8ab05ffb6de90a1668e792d",
+      "runtimeSha256": "119c369a698edcc9d014f6113ec5009af8c38d33ce8d7600249b47587313840a",
+      "adaptation": "FullSource namespace wrapper only",
+      "guid": "64b7b44a6d8a556f689e2a9dcfb79ed5",
+      "metaSha256": "41abd24c973a1f27b1096c1f65282b7a9aaf9c8b2bfdad05aedd69afc49bbec5"
+    },
+    "LimbAudio.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/LimbAudio.cs",
+      "sha256": "2a5ebe98de3afc9155d6c99ca82eccf5d528cabfd306175bcf4796c560a5820e",
+      "runtimeSha256": "15f36a84352c8794398deb86e0d8bede0faf9b99910131a60a75eb02a491c54b",
+      "adaptation": "FullSource namespace wrapper only",
+      "guid": "b7bc07d16f703334b84ae52f02709339",
+      "metaSha256": "e9605a1aec50a96364fceed7c920cb0f38bf7d910932cf6414e6fc71e94f47ab"
     }
   },
   "plugins": {
