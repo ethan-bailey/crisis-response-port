@@ -100,3 +100,65 @@ The next package edge is now identified precisely:
 - **Gate result: blocked at acquisition of the original editable asset/source record.** Available independent steps done: repository/PR/head inspection; exact type and field declaration inspection; source archive inventory inspection; package and directory path inspection. To proceed, restore access to the pinned recovery export/source archive containing the exact referenced Calibre object record, or recover another authoritative original Unity asset database/export. Then verify GUID, fileID, serialized field values, object type and all transitive refs before implementing.
 
 The next code gate remains package closure for this Calibre edge. Do not treat the known default `calibreName` initializer as proof of the serialized value or use it to synthesize a missing prefab.
+
+
+## Recovery artifact follow-up — Calibre reference verified, runtime gate still open (2026-10-20)
+
+This section supersedes the earlier Calibre note that said the recovered export was inaccessible. The Codespaces browser session is still unavailable, but the pinned recovery artifact itself was accessible through the GitHub Actions connector.
+
+### Recovery provenance
+
+- GitHub Actions recovery run: [38582072502](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38582072502).
+- Artifact ID: `11903811738`, downloaded as `crisis-response-recovery-original-source.zip`.
+- Command after connector download: `curl --fail --location --silent --show-error <temporary artifact URL> --output /tmp/cpr-recovery-artifact.zip`.
+- Checksum command: `sha256sum /tmp/cpr-recovery-artifact.zip`.
+- Observed SHA-256: `cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d` (matched the pinned hash in the recovery workflow).
+- The artifact's `RECOVERY_SUMMARY.md` says the decompiled Assembly-CSharp matches the supplied archive: expected EXE MD5 `9e00a2b43b7140aaac57c828bd6566ce`; recovered DLL SHA-256 `482f8bd6ef4546965b060463377470fc2da2db996de7ec16f29eb88f56a021b3`. It contains a 7,231-file, 169 MB AssetRipper export. Treat serialized YAML and generated .meta files as recovered-export evidence; this is not proof that the compiled distribution itself included the original editable Unity project or original editor .meta files.
+
+### Calibre identity and package edge
+
+- `unzip -q /tmp/cpr-recovery-artifact.zip -d /tmp/cpr-recovery-authoritative` completed.
+- The PR-head `game/assets/weapon-runtime.json.gz` was fetched with GitHub `fetch_file` using base64 encoding; decoded and decompressed for read-only inspection. Its compressed SHA-256 is `786e7ad6764058e59138d12e2631618da807596b510515317a1a544c35de2211`.
+- The nested package has one asset (`Assets/Resources/weapons/ammunition/5.56-FMJ.prefab`) and one guidPath (AmmunitionBase script). The 5.56-FMJ component's `calibre` field references GUID `57cfc851e0e47374d98db0383b39cddf`, fileID `114724804207875695`.
+- Export file `Assets/Resources/weapons/calibers/Caliber 5.56x45mm.prefab.meta` has that exact GUID. The prefab contains the component record with the exact fileID, script GUID `8e75328a0c323b110b577a2dbfddf164`, and serialized `calibreName: 5.56x45mm`. The package currently contains neither this prefab record nor a guidPath for its Calibre script.
+- This validates a Calibre edge inside the recovered export and matches the serialized GUID/fileID in the runtime package. The earlier handoff miscopied the GUID; the exact value is the one recorded above.
+- Four more direct non-null refs on the same ammo component are missing from the small package: Projectile `cf5bca2bd1c0369439bb8fbe00c9320d:114703437598541787`; Casing `9413de22ed594c44e8586fede9f5a355:114243736805655561`; high-poly UI model `1b3dc24381623284e82335a132ad5dad:114243736805655561`; Sprite `8464cbc48daa246479808d64b86fb8c2:21300000`. Recovered paths are `Assets/Resources/weapons/ammunition/projectiles/Projectile 5.56mm FMJ.prefab`, `Assets/Resources/weapons/ammunition/casings/Casing 5.56x45mm.prefab`, `Assets/Resources/weapons/ammunition/ui models/5.56x45mm FMJ.prefab`, and `Assets/Sprite/Icon 556 FMJ.asset`. Their transitive edges must also be followed.
+- Source inspection: `runtime/Engine/AmmunitionLoader.cs` currently throws on non-primitive reference fields. `runtime/Engine/SerializedAssetResolver.cs` can load a packaged prefab component when its GUID path and records are present. The Sprite type/class mapping remains unsupported/unknown until a source-faithful record/importer object mapping is verified.
+
+### Gate result and execution boundary
+
+- **Passed:** recovered-artifact download/checksum; source archive report inspection; reference-to-prefab GUID/fileID match; exact Calibre script identity and serialized name match; confirmation that the current runtime package omits Calibre and the other four direct refs.
+- **Not passed:** no runtime loader change, no package asset change, no Calibre native lifecycle test, no full transitive closure. No code was edited in this execution.
+- Runtime source checkpoint remains `318fc92b87f6a2138e680e6f016ec636ceb8299a`; the prior check at that SHA built the checks project and passed `git diff --check`, but the full runtime contracts still exited 134 on unresolved Calibre. This run did not rerun those checks. GitHub Actions lookup for that source SHA returned an empty `workflow_runs` list; no workflow ID/artifact exists for the runtime test.
+- The execution workspace `/workspace/scratch/483f9f6eb178` contains no Git repository. Browser state reports Chrome with no tabs; the previous Codespace tab cannot be reacquired here. A direct `git ls-remote https://github.com/ethan-bailey/crisis-response-port.git ...` failed because the private GitHub remote required credentials that are not present in this environment. The connected GitHub API permits inspection and file edits but does not expose a repository checkout or the base tree needed for a safe binary package commit. The correct next action is resume in an authenticated Codespaces/repo checkout; do not substitute a textual/base64 package for the existing gzip or make untested source edits.
+- PR #42 remains open, draft, unmerged. Its latest source-code tests are still bound to `318fc92...`; docs-only updates do not change that test status. The next implementation gate is to add the recovered Calibre prefab record and script GUID path to the existing package, resolve Unity-object fields source-faithfully, add a focused exact-identity test, and run it. Then continue all other direct and transitive refs; do not claim the package closure is complete after Calibre alone.
+
+### Commands used for this follow-up
+
+```sh
+sha256sum /tmp/cpr-recovery-artifact.zip
+unzip -l /tmp/cpr-recovery-artifact.zip
+unzip -q /tmp/cpr-recovery-artifact.zip -d /tmp/cpr-recovery-authoritative
+gzip -dc /tmp/cpr-weapon-runtime.json.gz > /tmp/cpr-weapon-runtime.json
+python3 - <<'PY'
+# Read the nested ammoPackage; map GUIDs using exported Assets/**/*.meta;
+# verify the Calibre GUID resolves to a prefab with fileID 114724804207875695;
+# inspect the serialized MonoBehaviour record and enumerate other non-null refs.
+PY
+rg -n -C 6 'calibreName|m_Name: Caliber' '/tmp/cpr-recovery-authoritative/export/ExportedProject/Assets/Resources/weapons/calibers/Caliber 5.56x45mm.prefab'
+```
+
+Temporary logs and extracted files are local-only and not Actions artifacts. No runtime test workflow ID exists for this follow-up.
+
+### New gate order
+
+1. Restore authenticated checkout/Codespaces and inspect live worktree/ref state.
+2. Package Calibre prefab and exact script GUID path; add field-type-safe resolver behavior.
+3. Run a focused exact GUID/fileID/type/value/lifecycle test and full runtime contract to identify next missing ref.
+4. Package Projectile, Casing, UI model, Sprite, and the complete recursive dependency closure; implement supported source-derived deserialization and negative tests.
+5. Resolve the imported Sprite/Texture2D identity and format without synthetic mappings.
+6. Pass actual Operator and Occupant prefab lifecycle and independent ownership checks.
+7. Pass independent two-actor gameplay lifecycle.
+8. Re-run all focused source/provenance/identity/ownership/dependency and native builds/tests on one exact SHA.
+9. Only at final verification, reconcile develop/wasm and integrate it with a normal merge commit.
+10. Build and test the exact merged SHA in Chromium and WebKit and via local HTTP; record logs, workflow IDs and artifacts; refresh closeout while keeping PR #42 open/draft.
