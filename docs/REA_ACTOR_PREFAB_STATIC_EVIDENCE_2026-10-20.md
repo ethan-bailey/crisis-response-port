@@ -81,6 +81,31 @@ Some referenced prefabs contain further components and assets, so a complete act
 
 These are not merely the four builtin-field gaps. The runtime must also decode or load the referenced mesh/material/texture/audio/controller/prefab/physics-material/mixer assets and preserve fileID identity. External GUID paths exist in the recovered archive, but runtime instantiation/type binding is not established. Therefore neither actual actor currently passes `requireComplete:true`.
 
+## Transitive execution-package closure
+
+A second static traversal followed external references through every serialized YAML asset currently present in the generated scene execution package, stopping at files absent from that package. It excludes MonoBehaviour script references from asset-path counts and separates Unity builtin IDs:
+
+| Traversed root | Included YAML assets / records | External refs encountered | Script refs | Unmapped script GUID refs | Builtin refs (e000 / f000) | References to asset paths absent from execution package |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Operator | 81 / 943 | 799 | 170 (34 paths) | 87 | 40 / 10 | 346 (157 paths) |
+| Occupant | 64 / 850 | 717 | 159 (34 paths) | 87 | 34 / 6 | 306 (126 paths) |
+
+The repeated unmapped script GUID is `f5f67c52d1564df4a8936ccd202a3bd8`. It appears in nested assets in both actor closures and is not one of the direct actor prefab script GUIDs. Identify its exact component/type from the source project or matching Unity package before deciding whether it can be mapped. Do not treat it as unrelated merely because direct prefab script GUIDs resolve.
+
+The extractor at `scripts/extract_runtime_scene.py` only queues referenced assets with extensions `.asset`, `.prefab`, `.unity`, `.mat`, `.controller`, or `.overrideController`. It records a GUID-to-path index for the other targets, but does not add those targets' bytes/records to `scene-execution.json`. Thus their paths can resolve while the actual runtime package still lacks them. Among referenced paths absent from the package:
+
+| Asset extension | Operator refs / distinct paths | Occupant refs / distinct paths |
+| --- | ---: | ---: |
+| .wav | 196 / 94 | 168 / 78 |
+| .ogg | 0 / 0 | 3 / 3 |
+| .png | 86 / 35 | 76 / 32 |
+| .shader | 29 / 4 | 25 / 4 |
+| .anim | 6 / 6 | 6 / 6 |
+| .physicMaterial | 21 / 2 | 20 / 2 |
+| .mixer | 8 / 1 | 8 / 1 |
+
+(The counts are reference occurrences found while traversing included YAML assets, not file byte counts.) This means package generation is an explicit gate before runtime asset loading: merely teaching `SceneLoader.ReadValue` how to instantiate assets cannot resolve data that the execution package never carries. Update extraction/package integrity checks to include these assets or a verified external asset bundle, preserve GUID + fileID identity, and keep size/hash provenance for the binary files.
+
 ## Next implementation gate
 
 1. Build and preserve a transitive asset/component inventory from the actual Operator and Occupant records. Explicitly classify direct external reference type, target path/fileID, builtin GUID handling, and nested prefab dependencies.
