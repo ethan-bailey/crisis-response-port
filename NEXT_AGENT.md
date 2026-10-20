@@ -1,3 +1,30 @@
+# Live continuation update — 2026-10-20
+
+**This update supersedes dated workspace snapshots below where they conflict.**
+
+- PR #42 was rechecked before work: open, draft, base `develop/wasm`. At test time its executable/source HEAD was `b5ac90849b5140fe96d49bb21c3e85af9b5b7a23`; the Codespaces working tree had 13 pre-existing dirty paths, all preserved. The `docs/REA_ACTOR_PREFAB_STATIC_EVIDENCE_2026-10-20.md` continuation records exact commands, results, and Codespaces log paths.
+- Local native checks passed on that dirty tree: runtime checks project build (44 warnings, zero errors); EngineChecks (69 isolated graphics/source API assertions); FoundationChecks (120 assertions); original arm sequence/source, arm-controller source, arm physics, and hand-runtime scripts (each exit 0). These do not establish full gameplay. Probe output explicitly reports full IK/ArmController playback and native shared parity false.
+- `git diff --check` failed (exit 2) on an EOF blank line at `runtime/Engine/SerializedAssetResolver.cs:76`; it was not modified or cleaned.
+- Actual `--prefab-only` loading failed closed on missing serialized `fileID 2800000` for `Assets/Texture2D/black pelvis.png`; available package image bytes lack the corresponding serialized Texture2D/importer record. One bounded search found no other copy under `/workspaces` or in repository GitHub code search. Do not fabricate the missing object or import settings.
+- No GitHub Actions workflow ran, so there is no workflow ID. The build was from the dirty working tree and is not exact-commit reproducibility evidence.
+- The PR description and REA evidence were refreshed with this checkpoint. The REA update is a documentation-only commit; no runtime code was pushed by that action. The Codespaces worktree was not synchronized, reset, or discarded.
+
+## Ordered next gates
+
+1. Recover the original serialized Texture2D object/import metadata and any other missing transitive actor asset records from the authoritative recovery source; preserve GUID/fileID and source provenance.
+2. Resolve the full transitive asset closure for the actual Operator and Occupant prefabs, retaining all unknown values and failing closed.
+3. Pass actual Operator prefab construction and lifecycle/ownership checks.
+4. Pass actual Occupant prefab construction and prove two independently owned actor graphs.
+5. Verify original spawn, equipment, movement, hit, physiology and destruction flow for both actors.
+6. Recheck open PRs and live `develop/wasm`; only once implementation is ready for final verification, integrate with a normal merge commit (no rebase/cherry-pick).
+7. Build from a recorded exact source SHA and record any workflow ID/artifact.
+8. Run Chromium and WebKit gameplay checks against that build, then local HTTP smoke.
+9. Refresh REA evidence and this handoff with exact tested SHA, commands, logs and results; refresh PR #42 description while keeping it open/draft.
+
+Do not advance past gate 1 by substituting synthetic assets. Preserve all existing pending Codespaces changes and leave the preview untouched.
+
+---
+
 # Current handoff — original actor prefab dependency closure
 
 **Observed on 2026-10-20, before this handoff update**
