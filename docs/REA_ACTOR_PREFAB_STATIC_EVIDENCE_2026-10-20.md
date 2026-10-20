@@ -247,3 +247,24 @@ Current branch/PR source remains open and draft; actual Operator/Occupant
 lifecycle, dependency-complete package loading, independent two-actor gameplay,
 clean exact-SHA WASM build, Chromium/WebKit gameplay, and local HTTP smoke are
 still unverified.
+
+## Recovery-archive and package follow-up — October 20, 2026
+
+A second independently published recovery archive was downloaded from release `recovery-preservation-2026-10-15` (asset `crisis-response-recovery-direct-v3-1.zip`). Its SHA-256, `cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d`, matches the pinned published digest. `python3 scripts/recover_character_actor_prefabs.py --archive <archive> --check` passed: the 4 original Operator/Occupant prefab and metadata files match the pinned archive verbatim. The archive also contains the previously missing original texture and importer metadata:
+
+| Asset | SHA-256 | Identity |
+| --- | --- | --- |
+| `Assets/Texture2D/black pelvis.png` | `80a395d3a90e9566e438ac9a09b98be29e38be27274dd36677b023efd6b2a19c` | PNG |
+| `Assets/Texture2D/black pelvis.png.meta` | `0859109e8a7cd6d6c6048d4089e909e98ea51ff5d6b73ebabf1d81811707d773` | GUID `38b42807fa7576a44a0d6ea90b08db63`, TextureImporter |
+
+This corrects the earlier statement that this texture/import metadata was unavailable. The source identity is now established; it does not yet establish that the runtime can consume the asset reference. The Operator prefab references the texture at fileID `2800000`.
+
+An execution package was regenerated from the extracted, checksum-pinned project under `/tmp/crisis-original-project-v3/export/ExportedProject` into `/tmp/runtime-package-oct20/scene-package.json`. Its generated report lists 1,382 assets, 21,366 records, 14,249 object-reference occurrences, 508 binary assets, and 11 unresolved GUIDs. This is a regeneration result, not a dependency-closure pass.
+
+The actual-prefab check was attempted against that generated package:
+`dotnet runtime/Checks/bin/Debug/net8.0/Crisis.Runtime.Checks.dll --prefab-only /tmp/runtime-package-oct20/scene-package.json`.
+It failed closed with `KeyNotFoundException: Package asset Assets/Texture2D/black pelvis.png has no serialized fileID 2800000` (log `/tmp/run-actual-prefab.log`). Do not synthesize the fileID or mark the actors complete; package asset identity/import interpretation and full transitive closure remain implementation gates. The package-verifier output is retained at `/tmp/run-package-verification.log`; its report includes the unresolved inventory.
+
+Other checks observed this run: exact actor provenance script passed; original arm sequence/source, arm physics, and hand runtime probes exited 0 but report controller playback/native parity as incomplete; native Checks build exited 0 (44 warnings, 0 errors); EngineChecks passed 69 isolated assertions; FoundationChecks passed 120 assertions. All were run from dirty Codespaces HEAD `b5ac90849b5140fe96d49bb21c3e85af9b5b7a23` with 13 pre-existing worktree changes, so none is an exact clean-SHA acceptance result. No GitHub Actions workflow ID or browser/gameplay/HTTP result was produced. Logs: `/tmp/continue-run-build.log`, `/tmp/run-enginechecks.log`, `/tmp/run-foundation.log`, `/tmp/run-armseq.log`, `/tmp/run-armcontroller.log`, `/tmp/run-armphysics.log`, `/tmp/run-handruntime.log`, `/tmp/run-prefab-provenance.log`.
+
+**Current gate status:** provenance of the actor prefabs and referenced texture is verified; actual prefab loading, full asset closure, original actor lifecycle, two-actor gameplay, exact-SHA build, Chromium/WebKit, and HTTP smoke test remain unpassed.
