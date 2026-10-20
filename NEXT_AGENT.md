@@ -1,10 +1,10 @@
 # Current handoff — original actor prefab dependency closure
 
-**Observed on 2026-10-20, immediately before this handoff refresh**
-- Full-source branch: feature/full-source-characterbody-integration at e27d7fc442a2d14cfdde1ffbdac636b47c12cf00. This is documentation/evidence only after executable source head bd2a945e3193e374d176369978476ce5ebe1aeda.
-- PR #42 remains open, draft, mergeable=false. Live target develop/wasm is 2fc0a8e93be97c4d99123910fad4bd25798e71a8.
-- Other open PRs: #7, #56 and #57; keep their workstreams separate from the real actor loader.
-- Exact-SHA Actions lookup has no PR-triggered runs on bd2a945, current docs head e27d7fc, prior manual compile checkpoint 5ed26d8, or current base 2fc0a8e.
+**Observed on 2026-10-20, before this handoff update**
+- Full-source branch: feature/full-source-characterbody-integration at 4842fe3c1e47336d6db016cf4af00ab6c019d5b5. This commit updates documentation/evidence only after executable source head bd2a945e3193e374d176369978476ce5ebe1aeda.
+- PR #42 remains open and draft; its recorded base snapshot is 5d83c4ef627baa6dc9009ef9a585c0b70e0d9435, while live develop/wasm is 2fc0a8e93be97c4d99123910fad4bd25798e71a8. The branches diverge: 141 commits ahead, 226 behind, mergeable=false (observed comparison; refresh before integration).
+- Other open PRs: #7, #56 and #57; keep their workstreams separate from the real actor loader until identity/ownership conflicts are resolved.
+- Exact-SHA Actions lookup has no PR-triggered runs on executable source bd2a945, current docs head 4842fe3, prior manual compile checkpoint 5ed26d8, or current base 2fc0a8e.
 
 ## Milestone completed this session: actor dependency closure audited
 
@@ -35,6 +35,16 @@ The original recovery ZIP contains Assembly-CSharp.dll; the earlier handoff clai
 3. Restore exact ControlRenderOrder and LimbAudio source with GUID mapping. Regenerate/review docs/audit/source-dependencies.json and pass source identity/ownership checks.
 4. Load the actual Operator prefab completely and verify original CharacterBody/Limb/physiology ownership and lifecycle with mission, mask, audio and presentation services bound.
 5. Then load Occupant and prove two independent original actor graphs and ordered spawn/equipment/movement/hit/physiology/destruction flows. Run consolidated WASM, Chromium/WebKit, and local HTTP smoke tests at the exact source SHA before changing the preview or merging.
+
+## Integrate the live target branch before final verification
+
+Do not integrate develop/wasm into PR #42 during the actual-prefab implementation phase. First complete the package/reference/serialized-field path, load the real Operator and Occupant prefabs, and finish their original two-actor lifecycle flow. Then, immediately before the final verification phase, refresh the live target head, PR heads/open PRs, relevant workflow evidence, and local worktree status. Preserve all existing uncommitted work; do not discard or overwrite it.
+
+Integrate the then-current develop/wasm into feature/full-source-characterbody-integration with a normal merge commit so the published feature history is preserved. Do not rebase or cherry-pick only the latest documentation commit. Resolve conflicts against original source identity, serialized values, and the single FullSource actor ownership graph; if a conflict cannot be resolved without weakening those constraints, stop and document it. This is a branch integration step, not a merge of PR #42 into develop/wasm.
+
+After integration, record the exact resulting source SHA, then run the complete requested verification phase once on that SHA: focused source/provenance and real-prefab checks, full runtime checks, exact-SHA WASM build, Chromium/WebKit gameplay checks, and local HTTP smoke test. Update evidence and PR prose with the tested SHA and actual results. Do not change the preview or merge PR #42 until all required gates pass.
+
+The 141-ahead/226-behind comparison above is a dated snapshot, not a permanent command. Always recompute the relationship at the time of integration.
 
 ## Guardrails
 
