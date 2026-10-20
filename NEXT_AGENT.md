@@ -1,11 +1,11 @@
 # Current handoff — actual original actor prefab loading
 
-**Observed at 2026-10-20:**
-- Full-source branch: feature/full-source-characterbody-integration, head 9b0065a37c696e23c5e5ebe0ef8ec60c94a21c8d. This is a documentation-only REA evidence commit atop executable source head bd2a945e3193e374d176369978476ce5ebe1aeda.
+**Observed at 2026-10-20, immediately before this handoff refresh:**
+- Full-source branch: feature/full-source-characterbody-integration, head f1898971cc90043b74874346dcaa04f60353c97a. This head contains only documentation updates after executable source head bd2a945e3193e374d176369978476ce5ebe1aeda.
 - PR: #42, open draft, base develop/wasm, mergeable=false.
 - Live base: develop/wasm at 2fc0a8e93be97c4d99123910fad4bd25798e71a8.
 - Other open workstreams: #7 Unity, #56 projectile/limb, #57 IK. Keep them separate through actor migration.
-- Exact-SHA workflow lookup returned no PR-triggered runs for current source head bd2a945, manual compile checkpoint 5ed26d8, or current base 2fc0a8e. Do not present another graph's CI as verification for #42.
+- Exact-SHA workflow lookup returned no PR-triggered runs for executable head bd2a945, manual compile checkpoint 5ed26d8, or current base 2fc0a8e. Do not present another graph's CI as verification for #42.
 
 ## Current validated checkpoint
 
@@ -30,7 +30,7 @@ Static field-binding comparison identifies unconsumed serialized fields for Mesh
 
 ## Constraints and stale status
 
-- The repository remediation instructions require live-state checks before any edit; on this pass, current base, all open PRs, #42 head, exact-SHA workflow lookups and docs/REPOSITORY_REMEDIATION_2026-10-18.md were re-read.
-- PR #42's description still carries older checkpoint SHAs and reports its synthetic prefab test as newer than the actual current runtime head. Treat this handoff and the code at the observed SHA as authoritative; refresh PR prose separately after the next validated source checkpoint.
+- Repository remediation instructions require live-state checks before edits; on this pass, current base, all open PRs, #42 head, exact-SHA workflow lookups and docs/REPOSITORY_REMEDIATION_2026-10-18.md were re-read.
+- PR #42's description still carries older checkpoint SHAs and reports its synthetic prefab test as newer than the actual current runtime head. Treat this handoff and code at the observed SHA as authoritative; refresh PR prose separately after the next validated source checkpoint.
 - Earlier failed compiler counts (including the 144-error run) belong to different source graphs and are superseded for this branch. Never compare counts without matching exact source graphs.
 - No runtime code, generated WASM, preview, deployment, or merge changed in this update. This session only added the REA evidence record and refreshed this handoff.
