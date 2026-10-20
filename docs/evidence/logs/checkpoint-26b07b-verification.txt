@@ -1,0 +1,23 @@
+Crisis Response WASM checkpoint verification
+Date: 2026-10-20
+Tested source SHA: 26b07b660e892b9e97025bf2b8ebe700b7753764
+
+Runtime check build: PASS, exit 0.
+Command: dotnet build runtime/Checks/Crisis.Runtime.Checks.csproj --no-incremental -v:q -p:GenerateDocumentationFile=false
+
+WASM publish: PASS, exit 0, 194 WASM files and index.html present.
+Command: dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release --no-restore -o /tmp/cpr-published-26b07b-canonical
+The workflow-mandated game/browser-input.mjs copy was temporary; the destination did not exist before this run and the temporary copy was removed after publish.
+
+Browser input clock tests: PASS, 3/3; command: node --test scripts/source_effect_clock_test.mjs
+Original source checks: PASS; verify_full_characterbody_enums.py; verify_original_arm_controller_references.py (audit says controllerPlaybackImplemented=false); verify_foundation_sources.py (479 source identities); git diff --check.
+Local HTTP smoke against canonical build: PASS; index 200/3110 bytes; blazor.webassembly.js 200/60300 bytes; first WASM 200/17173 bytes.
+Chromium 156.0.8078.4 Playwright check: PASS; HTTP 200; WASM ready; 8 controls; 10 runtime contracts; left.Pressed true while held, false on release; no page errors.
+WebKit 27.2 Playwright check: PASS; HTTP 200; WASM ready; 8 controls; 10 runtime contracts; left.Pressed true while held, false on release; no page errors.
+Browser harness: /tmp/cpr_browser_check.cjs. Browser log: /tmp/cpr-browser-26b07b.log. Playwright CLI version: 1.64.1.
+
+Important limit: the published app itself says “Full gameplay is still incomplete.” Browser checks cover WASM startup and input adapter only, not two-actor gameplay.
+Full runtime contracts: FAIL/CLOSED, exit 134 after source prefab/deferred Awake/two independent clones and Calibre identity PASS lines. Fails on Unity built-in Material 0000000000000000f000000000000000:fileID 10303, which has no source-faithful runtime mapping; no synthetic substitute was created. Built-in Shader fileID 46 and imported Sprite resolution also remain unresolved.
+Operator/Occupant original prefab lifecycle, full two-actor flow, and final post-merge verification remain incomplete.
+Recovery workflow 38582072502; artifact 11903811738; archive SHA-256 cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d.
+GitHub PR workflow lookup for tested SHA returned no workflow runs.

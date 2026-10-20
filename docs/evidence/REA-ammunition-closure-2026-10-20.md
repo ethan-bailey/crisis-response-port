@@ -25,3 +25,18 @@
 - ScenePrefabContracts reports only source record references, deferred Awake, and independent actor clones; it does not establish full original Operator or Occupant lifecycle acceptance.
 - No full two-actor gameplay flow, final WASM build, Chromium/WebKit test, or local HTTP smoke test was run in this checkpoint.
 - At execution time the feature checkout base was a04f7f58f9ae9b7e202af814a4fabd85976e17da and the implementation changes were still uncommitted; do not treat that base SHA as the tested implementation SHA. The PR head remains the prior remote head until the work is committed and pushed.
+
+## Later verification on committed source SHA 26b07b660e892b9e97025bf2b8ebe700b7753764
+
+This later section supersedes the earlier statement above that no WASM publish, browser check, or local HTTP smoke had run. Those pre-merge checks have since run against the committed checkpoint SHA. They do not pass the missing two-actor gameplay gate.
+
+- Source SHA: 26b07b660e892b9e97025bf2b8ebe700b7753764; commit pushed to the existing feature branch. GitHub reports the PR open, draft, unmerged, and mergeable=false. The PR-workflow lookup returned no runs for this SHA.
+- Runtime checks build: exit 0. Full contract run: exit 134 after the exact Calibre and partial actor-clone checks pass; fails closed at builtin Material fileID 10303. Builtin Shader fileID 46 and Sprite imported-object mapping still unresolved.
+- Browser WASM publish: dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release --no-restore -o /tmp/cpr-published-26b07b-canonical; exit 0, 194 WASM files and index.html. To match the workflow, game/browser-input.mjs was copied temporarily to runtime/Browser/wwwroot/browser-input.mjs; that destination was absent before the operation, and the temporary file was removed after publish. git status remained clean.
+- The canonical output passed local HTTP smoke: index 200 (3110 bytes), blazor.webassembly.js 200 (60300 bytes), and a WASM file 200 (17173 bytes).
+- Playwright 1.64.1 checks passed on Chromium 156.0.8078.4 and WebKit 27.2. Each engine loaded the WASM app (HTTP 200), reached its input-ready state, saw 8 controls and “PASS · 10 verified runtime contracts”; the LEFT control set original input left.Pressed=true while held and false after release. No page errors were reported.
+- The app explicitly displays “Full gameplay is still incomplete.” These tests validate WASM startup and the browser input adapter only. They are not Chromium/WebKit gameplay acceptance; full actor spawn/equip/movement/hit/physiology/destruction flow remains unimplemented/unverified.
+- Source-effect clock tests passed 3/3. Original WeaponMode/LimbId and source/controller checks passed; the controller audit still reports controllerPlaybackImplemented=false. The 479-source identity audit passed.
+- Compact command/result record: docs/evidence/logs/checkpoint-26b07b-verification.txt. Raw Codespaces logs are under /tmp/cpr-*-26b07b.log for this session.
+
+The recorded source SHA is a pre-merge implementation checkpoint. Do not merge develop/wasm or report acceptance complete until full source-faithful asset resolution, actual Operator/Occupant lifecycle, two-actor gameplay, and post-merge exact-SHA checks pass.
