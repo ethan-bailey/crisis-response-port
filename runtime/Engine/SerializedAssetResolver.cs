@@ -24,6 +24,8 @@ internal static class SerializedAssetResolver {
         string path=pathValue.GetString();
         if(!package.GetProperty("assets").TryGetProperty(path,out var asset))throw new KeyNotFoundException($"Package GUID {guid} points to missing asset {path}");
         var assetRecords=asset.GetProperty("records");
+        if(assetRecords.GetArrayLength()==0&&expectedType==typeof(Texture2D)&&asset.TryGetProperty("dataBase64",out var encodedTexture))
+            return ResolvePngTexture(package,asset,guid,fileID,path,Convert.FromBase64String(encodedTexture.GetString()),world,cache);
         if(assetRecords.GetArrayLength()==0&&expectedType==typeof(AudioClip)&&asset.TryGetProperty("dataBase64",out var encodedAudio)){
             var bytes=Convert.FromBase64String(encodedAudio.GetString());float duration=WavDuration(bytes);var clip=new AudioClip(path,duration){SourceData=bytes,OriginalAssetGuid=guid,OriginalAssetFileID=fileID,OriginalAssetPath=path};world.Register(clip);cache[key]=clip;return clip;
         }
@@ -43,6 +45,38 @@ internal static class SerializedAssetResolver {
         created.OriginalAssetGuid=guid;created.OriginalAssetFileID=fileID;created.OriginalAssetPath=path;
         foreach(var property in fields.EnumerateObject())created.OriginalSerializedFields[property.Name]=property.Value.Clone();
         world.Register(created);cache[key]=created;return created;
+    }
+    static Texture2D ResolvePngTexture(JsonElement package,JsonElement asset,string guid,string fileID,string path,byte[] bytes,RuntimeWorld world,Dictionary<string,Object> cache) {
+        if(!path.EndsWith(".png",StringComparison.OrdinalIgnoreCase))throw new NotSupportedException($"Binary Texture2D format is unsupported: {path}");
+        string sourceHash=Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(bytes)).ToLowerInvariant();
+        if(!asset.TryGetProperty("sha256",out var sourceHashValue)||sourceHashValue.GetString()!=sourceHash)
+            throw new InvalidDataException($"Packaged texture source hash does not match {path}");
+        if(!package.TryGetProperty("guidMetadata",out var metadata)||!metadata.TryGetProperty(guid,out var metaEntry)||
+           !metaEntry.TryGetProperty("importerSourceText",out var importerValue))
+            throw new InvalidDataException($"Original TextureImporter metadata is missing for {path}");
+        string importer=importerValue.GetString()??throw new InvalidDataException($"Original TextureImporter metadata is empty for {path}");
+        string metaHash=Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(importer))).ToLowerInvariant();
+        if(!metaEntry.TryGetProperty("metaSha256",out var metaHashValue)||metaHashValue.GetString()!=metaHash)
+            throw new InvalidDataException($"Original TextureImporter metadata hash does not match {path}");
+        if(!System.Text.RegularExpressions.Regex.IsMatch(importer,$@"(?m)^guid:\\s*{System.Text.RegularExpressions.Regex.Escape(guid)}\\s*$")||
+           !System.Text.RegularExpressions.Regex.IsMatch(importer,@"(?m)^\\s*fileIDToRecycleName:\\s*\\{\\}\\s*$")||
+           !System.Text.RegularExpressions.Regex.IsMatch(importer,@"(?m)^\\s*isReadable:\\s*1\\s*$")||
+           !System.Text.RegularExpressions.Regex.IsMatch(importer,@"(?m)^\\s*textureFormat:\\s*4\\s*$")||
+           !System.Text.RegularExpressions.Regex.IsMatch(importer,@"(?m)^\\s*textureType:\\s*0\\s*$")||
+           !System.Text.RegularExpressions.Regex.IsMatch(importer,@"(?m)^\\s*maxTextureSize:\\s*2048\\s*$"))
+            throw new NotSupportedException($"Original TextureImporter identity or settings are unknown or unsupported for {path}");
+        if(!package.TryGetProperty("objectReferences",out var references))
+            throw new InvalidDataException("Package has no serialized object reference provenance for binary texture");
+        var referencedIDs=references.EnumerateArray()
+            .Where(r=>r.TryGetProperty("guid",out var g)&&g.GetString()==guid)
+            .Select(r=>r.TryGetProperty("fileID",out var id)&&id.ValueKind!=JsonValueKind.Null?id.ToString():null)
+            .Where(id=>id!=null).Distinct(StringComparer.Ordinal).ToArray();
+        if(referencedIDs.Length!=1||referencedIDs[0]!=fileID)
+            throw new InvalidDataException($"Texture {path} original fileID is ambiguous or differs from serialized references; requested {fileID}, observed [{string.Join(",",referencedIDs)}]");
+        var texture=new Texture2D(1,1,new byte[4],world);
+        texture.LoadImage(bytes);
+        texture.name=path;texture.OriginalAssetGuid=guid;texture.OriginalAssetFileID=fileID;texture.OriginalAssetPath=path;
+        texture.ImporterSourceText=importer;cache[guid+":"+fileID]=texture;return texture;
     }
     static float WavDuration(byte[] bytes){
         if(bytes.Length<44||System.Text.Encoding.ASCII.GetString(bytes,0,4)!="RIFF"||System.Text.Encoding.ASCII.GetString(bytes,8,4)!="WAVE")throw new InvalidDataException("Packaged AudioClip is not a supported RIFF/WAVE asset");
