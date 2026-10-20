@@ -1,9 +1,9 @@
-# Current branch: `feature/full-source-characterbody-integration` | latest validated source SHA: `3979faa642053d0f584d2f91982c1b88cbe0eb62` | October 20, 2026
+# Current branch: `feature/full-source-characterbody-integration` | latest source checkpoint: `318fc92b87f6a2138e680e6f016ec636ceb8299a` | October 20, 2026
 
 ## Observed branch and live checkpoint
 
 - Repository: `ethan-bailey/crisis-response-port`.
-- Codespace branch: `feature/full-source-characterbody-integration`; after fetching and fast-forwarding documentation-only changes, worktree was clean. Runtime/source code tested below is still exactly `3979faa642053d0f584d2f91982c1b88cbe0eb62`; updates since then touch only this handoff/evidence markdown.
+- Codespace branch: `feature/full-source-characterbody-integration`; source commit `318fc92b87f6a2138e680e6f016ec636ceb8299a` adds fail-closed ammunition loader diagnostics. It was pushed successfully. The runtime check project compiled after this source change; the full contracts then fail closed with the original unresolved `Calibre` component reference. Earlier broad passing checks below remain bound to `3979faa642053d0f584d2f91982c1b88cbe0eb62`.
 - Feature remote and local were fast-forward-synchronized after the source checkpoint; subsequent commits only update evidence/handoff Markdown. `git diff --check` passed after synchronization.
 - PR #42 remains open/draft, targeting `develop/wasm`; no merge to base occurred.
 - Fresh `git ls-remote origin refs/heads/develop/wasm`: `2fc0a8e93be97c4d99123910fad4bd25798e71a8`. Current PR metadata reports a different base snapshot `5d83c4ef627baa6dc9009ef9a585c0b70e0d9435`. Reconcile immediately before the eventual normal merge.
@@ -12,7 +12,7 @@
 - Follow-up verified the live `develop/wasm` ref again at `2fc0a8e93be97c4d99123910fad4bd25798e71a8`; PR metadata still shows base snapshot `5d83c4ef627baa6dc9009ef9a585c0b70e0d9435`. Do not merge until the refs are reconciled at the final-acceptance boundary.
 - Codespace has no `Unity`/`unity` executable on PATH. The extracted Assets tree contains 315 `.asset` files, but none has yet been established as an authoritative imported Texture2D object for the failing serialized refs. No import output/fileID is inferred from that count.
 
-- Latest validated code checkpoint remains `3979faa...` (source unchanged by documentation commits). PR #42 description was refreshed through GitHub issue metadata and now cites the tested source SHA, current branch tip, evidence, and blockers; PR state remains open/draft.
+- Latest source checkpoint is `318fc92b87f6a2138e680e6f016ec636ceb8299a`; PR #42 description was refreshed through GitHub issue metadata and now cites the tested source SHA, current branch tip, evidence, and blockers; PR state remains open/draft.
 
 ## Verified checks on exact code SHA `3979faa642053d0f584d2f91982c1b88cbe0eb62`
 
@@ -58,3 +58,26 @@ Evidence/run logs in the Codespaces session: `/tmp/cpr-oct20-texture/focused-gat
 ## Guardrails
 
 Preserve user/Codespace changes. Unknown original fields, components, assets, IDs and formats remain visible and fail closed. Separate compile, dependency, load, lifecycle, gameplay, browser and HTTP evidence. Do not deploy, alter preview, merge early, reset, clean or discard work.
+
+
+## Latest source checkpoint — 2026-10-20
+
+- Source commit: `318fc92b87f6a2138e680e6f016ec636ceb8299a`, message `diagnose unresolved original ammo references`; branch push to `origin/feature/full-source-characterbody-integration` succeeded. The exact branch ref was verified from GitHub at `318fc92b87f6a2138e680e6f016ec636ceb8299a`. PR #42 remains open/draft and targets `develop/wasm`; no merge or preview/deployment change.
+- Commands after the loader change: `git status --short --branch`; `git rev-parse HEAD`; `git diff --check`; `dotnet build runtime/Checks/Crisis.Runtime.Checks.csproj --no-incremental -v:q -p:GenerateDocumentationFile=false`. Build exited successfully (net8.0, zero reported errors); diff check passed.
+- Full runtime command `dotnet runtime/Checks/bin/Debug/net8.0/Crisis.Runtime.Checks.dll` was rerun. It exits 134 as expected from the unresolved original ammunition reference, but now fails with field/type and serialized GUID:fileID in the message. This is a diagnostic improvement, not a passed contract gate. Codespace terminal log: `/tmp/cpr-oct20-texture/runtime-contracts-diagnostic.log` (ephemeral).
+- Exact source provenance: packaged `game/assets/weapon-runtime.json.gz` contains one ammunition asset and one guidPath (5.56-FMJ only); the prefab's `calibre` reference is GUID `57cfc851e0e4734d98dbd083b39cddf`, fileID `114724804207875695`; the package has no Calibre path/record. Original `runtime/Original/FullSource/Calibre.cs` defines `Calibre : MonoBehaviour` and `public string calibreName = "Unnamed calibre";`. Therefore the source object/component identity is known, but the required serialized prefab record is absent from the runtime package. No synthetic component mapping was added.
+- GitHub Actions lookup for this SHA returned `workflow_runs: []`; no workflow ID or Actions artifact exists. Chromium, WebKit, WASM, local HTTP and actual prefab lifecycle remain not passed. The Codespace environment disconnected before the planned rerun of EngineChecks/FoundationChecks; their prior successful evidence remains tied to SHA `3979faa...`, not this new source SHA.
+- Next action: trace/recover the authoritative Calibre serialized source record and package it with all transitive references; add focused source-reference tests, then rerun native contracts. Keep the importer-format Texture2D blocker (format 12, missing authoritative imported object/fileID mapping) separate and fail closed. Do not merge `develop/wasm` until the pre-final-acceptance merge boundary.
+
+### Current gate ordering
+
+1. Recover authoritative Calibre object/prefab serialized record and prove GUID/fileID identity.
+2. Package Calibre and every transitive dependency; verify closure and explicit missing-reference failures.
+3. Add source-faithful Calibre deserialization tests; rerun complete runtime contracts.
+4. Recover imported Texture2D source object identity and import semantics for each original actor texture.
+5. Pass actual Operator prefab load/lifecycle against preserved fields and source assets.
+6. Pass actual Occupant prefab load/lifecycle and independently verify ownership/physiology.
+7. Pass original independent two-actor spawn/equip/movement/hit/physiology/destruction sequence.
+8. Rerun provenance, identity, ownership, dependency, focused suites and build on one recorded SHA.
+9. At the final-acceptance boundary only, reconcile and merge current `develop/wasm` with a normal merge commit.
+10. Build exact post-merge SHA; pass Chromium, WebKit and local HTTP smoke; record logs/artifacts; update REA, handoff and PR description while leaving PR open/draft.
