@@ -52,24 +52,28 @@ internal static class SerializedAssetResolver {
         if(!asset.TryGetProperty("sha256",out var sourceHashValue)||sourceHashValue.GetString()!=sourceHash)
             throw new InvalidDataException($"Packaged texture source hash does not match {path}");
         if(!package.TryGetProperty("guidMetadata",out var metadata)||!metadata.TryGetProperty(guid,out var metaEntry)||
-           !metaEntry.TryGetProperty("importerSourceText",out var importerValue))
+           !metaEntry.TryGetProperty("importerSourceText",out var importerValue)||
+           !metaEntry.TryGetProperty("importerSourceBase64",out var importerBytesValue))
             throw new InvalidDataException($"Original TextureImporter metadata is missing for {path}");
         string importer=importerValue.GetString()??throw new InvalidDataException($"Original TextureImporter metadata is empty for {path}");
-        string metaHash=Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(importer))).ToLowerInvariant();
+        byte[] importerBytes=Convert.FromBase64String(importerBytesValue.GetString());
+        if(!System.Text.Encoding.UTF8.GetString(importerBytes).Equals(importer,StringComparison.Ordinal))
+            throw new InvalidDataException($"Original TextureImporter text differs from its preserved bytes for {path}");
+        string metaHash=Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(importerBytes)).ToLowerInvariant();
         if(!metaEntry.TryGetProperty("metaSha256",out var metaHashValue)||metaHashValue.GetString()!=metaHash)
             throw new InvalidDataException($"Original TextureImporter metadata hash does not match {path}");
-        if(!System.Text.RegularExpressions.Regex.IsMatch(importer,$@"(?m)^guid:\\s*{System.Text.RegularExpressions.Regex.Escape(guid)}\\s*$")||
-           !System.Text.RegularExpressions.Regex.IsMatch(importer,@"(?m)^\\s*fileIDToRecycleName:\\s*\\{\\}\\s*$")||
-           !System.Text.RegularExpressions.Regex.IsMatch(importer,@"(?m)^\\s*isReadable:\\s*1\\s*$")||
-           !System.Text.RegularExpressions.Regex.IsMatch(importer,@"(?m)^\\s*textureFormat:\\s*4\\s*$")||
-           !System.Text.RegularExpressions.Regex.IsMatch(importer,@"(?m)^\\s*textureType:\\s*0\\s*$")||
-           !System.Text.RegularExpressions.Regex.IsMatch(importer,@"(?m)^\\s*maxTextureSize:\\s*2048\\s*$"))
+        if(!System.Text.RegularExpressions.Regex.IsMatch(importer,$@"(?m)^guid:\s*{System.Text.RegularExpressions.Regex.Escape(guid)}\s*$")||
+           !System.Text.RegularExpressions.Regex.IsMatch(importer,@"(?m)^\s*fileIDToRecycleName:\s*\{\}\s*$")||
+           !System.Text.RegularExpressions.Regex.IsMatch(importer,@"(?m)^\s*isReadable:\s*1\s*$")||
+           !System.Text.RegularExpressions.Regex.IsMatch(importer,@"(?m)^\s*textureFormat:\s*4\s*$")||
+           !System.Text.RegularExpressions.Regex.IsMatch(importer,@"(?m)^\s*textureType:\s*0\s*$")||
+           !System.Text.RegularExpressions.Regex.IsMatch(importer,@"(?m)^\s*maxTextureSize:\s*2048\s*$"))
             throw new NotSupportedException($"Original TextureImporter identity or settings are unknown or unsupported for {path}");
         if(!package.TryGetProperty("objectReferences",out var references))
             throw new InvalidDataException("Package has no serialized object reference provenance for binary texture");
         var referencedIDs=references.EnumerateArray()
             .Where(r=>r.TryGetProperty("guid",out var g)&&g.GetString()==guid)
-            .Select(r=>r.TryGetProperty("fileID",out var id)&&id.ValueKind!=JsonValueKind.Null?id.ToString():null)
+            .Select(r=>r.TryGetProperty("fileID",out var id)&&id.ValueKind!=JsonValueKind.Null?(id.ValueKind==JsonValueKind.String?id.GetString():id.ToString()):null)
             .Where(id=>id!=null).Distinct(StringComparer.Ordinal).ToArray();
         if(referencedIDs.Length!=1||referencedIDs[0]!=fileID)
             throw new InvalidDataException($"Texture {path} original fileID is ambiguous or differs from serialized references; requested {fileID}, observed [{string.Join(",",referencedIDs)}]");
