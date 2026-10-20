@@ -272,3 +272,4 @@ public static class SceneLoader {
         }
         return instance;
 }
+}

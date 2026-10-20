@@ -1,7 +1,19 @@
 using Crisis.Runtime;
+using UnityEngine;
 using System.Text.Json;
 
-if(args.Contains("--prefab-only")){Console.WriteLine(ScenePrefabContracts.Run());return;}
+if(args.Contains("--prefab-only")){
+    if(args.Length!=2)throw new ArgumentException("--prefab-only requires the generated scene-package.json path and loads the preserved Operator and Occupant prefabs");
+    var package=File.ReadAllText(args[1]);
+    foreach(var name in new[]{"Operator","Occupant"}){
+        var path=$"Assets/Resources/characters/{name}.prefab";
+        var world=new RuntimeWorld();
+        var loaded=SceneLoader.LoadPrefab(package,path,world,requireComplete:true);
+        Console.WriteLine(JsonSerializer.Serialize(loaded.Report()));
+        UnityEngine.Object.DestroyImmediate(loaded.prefabRoot);
+    }
+    return;
+}
 Console.WriteLine(RuntimeContracts.Run());
 Console.WriteLine(ScenePrefabContracts.Run());
 Console.WriteLine(ArmSequenceContracts.Run("game/assets/original-arm-sequences.json"));

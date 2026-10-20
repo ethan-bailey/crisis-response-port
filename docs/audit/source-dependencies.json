@@ -95,6 +95,7 @@
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityAnimation/Play.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityAnimation/Stop.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityAnimator/Play.cs",
+    "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityAnimator/SetTrigger.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityAudioSource/GetPriority.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityAudioSource/IsPlaying.cs",
     "archive:export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityAudioSource/Pause.cs",
@@ -1377,11 +1378,13 @@
     },
     {
       "path": "runtime/Engine/Animator.cs",
-      "sha256": "6bb41d797c4f3e7c2e02f69a1162a513c1387610cb3d6e1ea4af11b0a3e79927",
+      "sha256": "8350be3f6670dc1c82c96b64fa43da9a39ffc4892e08d3e9514c563e7c5084d4",
       "declares": [
         "Animator",
         "AnimatorControllerParameterType",
+        "AnimatorCullingMode",
         "AnimatorParameter",
+        "AnimatorUpdateMode",
         "IAnimatorDriver"
       ],
       "references": [
@@ -1389,6 +1392,28 @@
         "GetFloat",
         "SetBool",
         "SetFloat",
+        "SetTrigger",
+        "Type",
+        "in"
+      ]
+    },
+    {
+      "path": "runtime/Engine/AnimatorGraphDriver.cs",
+      "sha256": "9c9859391de1ae69d171dbf1b2601ec117e8a38c839690a6749a26a7e99f43d4",
+      "declares": [
+        "AnimatorGraphCondition",
+        "AnimatorGraphDriver",
+        "AnimatorGraphTransition"
+      ],
+      "references": [
+        "Action",
+        "AnimatorControllerParameterType",
+        "AnimatorParameter",
+        "IAnimatorDriver",
+        "Mode",
+        "SetBool",
+        "SetFloat",
+        "SetTrigger",
         "Type",
         "in"
       ]
@@ -1718,7 +1743,7 @@
     },
     {
       "path": "runtime/Engine/Objects.cs",
-      "sha256": "0aeb281292ce8e823dad10fefb1c7317d7baa0b30e569cb2454b8ca13604fa0a",
+      "sha256": "963c4e047d23c56a192512043559ceda51230f77af4bf9c8e42f8e1310a33c2e",
       "declares": [
         "ActivationScope",
         "Axis",
@@ -1771,6 +1796,7 @@
         "SetShadows",
         "Space",
         "SpringJoint",
+        "Text",
         "Time",
         "Type",
         "Vector2",
@@ -2300,14 +2326,17 @@
     },
     {
       "path": "runtime/Engine/SceneLoader.cs",
-      "sha256": "2fa8db87b4719fea0524a3ccffa171b05b396cb1073398f1181710ef542ab8af",
+      "sha256": "169d8341dfe323a655d846d500d0d79ec85071532ca11c9ddf9f72492e22aded",
       "declares": [
         "SceneLoadResult",
         "SceneLoader",
         "in"
       ],
       "references": [
+        "AnimationCurve",
         "Animator",
+        "AnimatorCullingMode",
+        "AnimatorUpdateMode",
         "AudioClip",
         "AudioSource",
         "Behaviour",
@@ -6400,6 +6429,18 @@
       ]
     },
     {
+      "path": "runtime/Original/FullSource/ControlRenderOrder.cs",
+      "sha256": "119c369a698edcc9d014f6113ec5009af8c38d33ce8d7600249b47587313840a",
+      "declares": [
+        "ControlRenderOrder"
+      ],
+      "references": [
+        "Destroy",
+        "MonoBehaviour",
+        "Object"
+      ]
+    },
+    {
       "path": "runtime/Original/FullSource/Coroutine.cs",
       "sha256": "e2cf3abe34c34d002e1a4cba910225ef69f2ec7904b904a4846a07f31d8d771d",
       "declares": [
@@ -7973,6 +8014,32 @@
       ],
       "references": [
         "Transform"
+      ]
+    },
+    {
+      "path": "runtime/Original/FullSource/LimbAudio.cs",
+      "sha256": "15f36a84352c8794398deb86e0d8bede0faf9b99910131a60a75eb02a491c54b",
+      "declares": [
+        "LimbAudio"
+      ],
+      "references": [
+        "AudioClip",
+        "AudioInstigator",
+        "AudioPropagator",
+        "AudioSource",
+        "AudioStimuliType",
+        "Collision",
+        "Equipment",
+        "GetComponent",
+        "Lerp",
+        "Limb",
+        "Mathf",
+        "MonoBehaviour",
+        "PlayOneShot",
+        "Random",
+        "Time",
+        "Transform",
+        "Vector2"
       ]
     },
     {
@@ -15213,6 +15280,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/AnimatorGraphDriver.cs",
         "runtime/Engine/ArmPhysicsComponents.cs",
         "runtime/Engine/BallisticEngine.cs",
         "runtime/Engine/BallisticRuntimeHost.cs",
@@ -15735,6 +15803,7 @@
         "runtime/Engine/AmmunitionLoader.cs",
         "runtime/Engine/PrefabCloner.cs",
         "runtime/Engine/RuntimeContracts.cs",
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/AmmunitionBase.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserialization.cs",
@@ -15846,6 +15915,62 @@
       "referenceSources": [],
       "archiveEntries": [],
       "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Engine/AnimatorGraphDriver.cs"
+      ]
+    },
+    {
+      "name": "AnimatorCullingMode",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/Animator.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Engine/SceneLoader.cs"
+      ]
+    },
+    {
+      "name": "AnimatorGraphCondition",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/AnimatorGraphDriver.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
+    },
+    {
+      "name": "AnimatorGraphDriver",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/AnimatorGraphDriver.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
+    },
+    {
+      "name": "AnimatorGraphTransition",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/AnimatorGraphDriver.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
       "referencedBy": []
     },
     {
@@ -15859,7 +15984,9 @@
       "referenceSources": [],
       "archiveEntries": [],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Engine/AnimatorGraphDriver.cs"
+      ]
     },
     {
       "name": "AnimatorParameterType",
@@ -15873,6 +16000,21 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": []
+    },
+    {
+      "name": "AnimatorUpdateMode",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/Animator.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Engine/SceneLoader.cs"
+      ]
     },
     {
       "name": "AnisotropicFiltering",
@@ -16416,6 +16558,7 @@
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
         "runtime/Original/FullSource/InteriorMode.cs",
+        "runtime/Original/FullSource/LimbAudio.cs",
         "runtime/Original/FullSource/Marksman.cs",
         "runtime/Original/FullSource/MarksmanRound.cs",
         "runtime/Original/FullSource/Mixer.cs",
@@ -16490,6 +16633,7 @@
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Limb.cs",
+        "runtime/Original/FullSource/LimbAudio.cs",
         "runtime/Original/FullSource/Marksman.cs",
         "runtime/Original/FullSource/Projectile.cs",
         "runtime/Original/FullSource/PropagatingAudioSample.cs",
@@ -16644,6 +16788,7 @@
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/Grenade.cs",
+        "runtime/Original/FullSource/LimbAudio.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/PropagatingAudioSample.cs",
         "source-reference/Original/CharacterDependencies/CharacterAudio.cs",
@@ -16693,6 +16838,7 @@
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
         "runtime/Original/FullSource/InteriorMode.cs",
+        "runtime/Original/FullSource/LimbAudio.cs",
         "runtime/Original/FullSource/Marksman.cs",
         "runtime/Original/FullSource/MarksmanRound.cs",
         "runtime/Original/FullSource/Mixer.cs",
@@ -16767,6 +16913,7 @@
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/Grenade.cs",
+        "runtime/Original/FullSource/LimbAudio.cs",
         "runtime/Original/FullSource/PropagatingAudioSample.cs",
         "runtime/Original/FullSource/WeaponBase.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
@@ -20113,6 +20260,7 @@
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
         "runtime/Original/FullSource/Limb.cs",
+        "runtime/Original/FullSource/LimbAudio.cs",
         "runtime/Original/FullSource/MarksmanRound.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
@@ -20945,9 +21093,11 @@
     },
     {
       "name": "ControlRenderOrder",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/ControlRenderOrder.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -21476,6 +21626,7 @@
         "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/Casing.cs",
         "runtime/Original/FullSource/CharacterPhysiologyVisualizer.cs",
+        "runtime/Original/FullSource/ControlRenderOrder.cs",
         "runtime/Original/FullSource/DoorTrap.cs",
         "runtime/Original/FullSource/DroppedWeaponProxy.cs",
         "runtime/Original/FullSource/DynamicLimbTextureData.cs",
@@ -22610,6 +22761,7 @@
         "runtime/Original/FullSource/EquipmentHelper.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Helpers/AudioPriority.cs",
+        "runtime/Original/FullSource/LimbAudio.cs",
         "runtime/Original/FullSource/OriginalActorIdentity.cs",
         "runtime/Original/FullSource/PlayerController.cs",
         "runtime/Original/FullSource/PropagatingAudioSample.cs",
@@ -24777,6 +24929,7 @@
         "runtime/Original/FullSource/InteriorModeUI.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbArmor.cs",
+        "runtime/Original/FullSource/LimbAudio.cs",
         "runtime/Original/FullSource/LimbMuscle.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
@@ -27134,7 +27287,9 @@
       "referenceSources": [],
       "archiveEntries": [],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Engine/AnimatorGraphDriver.cs"
+      ]
     },
     {
       "name": "IAudioClipPlaybackDriver",
@@ -29379,6 +29534,7 @@
         "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
         "runtime/Original/FullSource/InteriorCamera.cs",
+        "runtime/Original/FullSource/LimbAudio.cs",
         "runtime/Original/FullSource/Marksman.cs",
         "runtime/Original/FullSource/Mixer.cs",
         "runtime/Original/FullSource/Physiology.cs",
@@ -29578,6 +29734,7 @@
         "runtime/Original/FullSource/DynamicLimbDecalRenderer.cs",
         "runtime/Original/FullSource/Explosion.cs",
         "runtime/Original/FullSource/LimbArmor.cs",
+        "runtime/Original/FullSource/LimbAudio.cs",
         "runtime/Original/FullSource/LimbMuscle.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
         "runtime/Original/FullSource/Marksman.cs",
@@ -29666,9 +29823,11 @@
     },
     {
       "name": "LimbAudio",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/LimbAudio.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -30684,6 +30843,7 @@
         "runtime/Original/FullSource/InteriorMode.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbArmor.cs",
+        "runtime/Original/FullSource/LimbAudio.cs",
         "runtime/Original/FullSource/LimbMuscle.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
@@ -31435,6 +31595,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/AnimatorGraphDriver.cs",
         "runtime/Engine/OriginalArmPhysicsHost.cs",
         "runtime/Engine/OriginalHandModes.cs",
         "runtime/Engine/WeaponHost.cs",
@@ -31539,6 +31700,7 @@
         "runtime/Original/FullSource/Command.cs",
         "runtime/Original/FullSource/CommandHandler.cs",
         "runtime/Original/FullSource/Communication.cs",
+        "runtime/Original/FullSource/ControlRenderOrder.cs",
         "runtime/Original/FullSource/Coroutine.cs",
         "runtime/Original/FullSource/CyclingBolt.cs",
         "runtime/Original/FullSource/DialogTree.cs",
@@ -31577,6 +31739,7 @@
         "runtime/Original/FullSource/InteriorModeUI.cs",
         "runtime/Original/FullSource/Item.cs",
         "runtime/Original/FullSource/LimbArmor.cs",
+        "runtime/Original/FullSource/LimbAudio.cs",
         "runtime/Original/FullSource/LimbMuscle.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
@@ -32170,6 +32333,7 @@
         "runtime/Original/FullSource/Casing.cs",
         "runtime/Original/FullSource/CharacterPhysiologyVisualizer.cs",
         "runtime/Original/FullSource/CommandHandler.cs",
+        "runtime/Original/FullSource/ControlRenderOrder.cs",
         "runtime/Original/FullSource/CyclingBolt.cs",
         "runtime/Original/FullSource/DoorController.cs",
         "runtime/Original/FullSource/DoorTrap.cs",
@@ -33362,6 +33526,7 @@
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/GrenadeSpoon.cs",
         "runtime/Original/FullSource/InteriorMode.cs",
+        "runtime/Original/FullSource/LimbAudio.cs",
         "runtime/Original/FullSource/Marksman.cs",
         "runtime/Original/FullSource/MarksmanRound.cs",
         "runtime/Original/FullSource/Mixer.cs",
@@ -34110,6 +34275,7 @@
         "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/InteriorMode.cs",
         "runtime/Original/FullSource/Limb.cs",
+        "runtime/Original/FullSource/LimbAudio.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
         "runtime/Original/FullSource/LimbStreak.cs",
@@ -37469,6 +37635,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/Animator.cs",
+        "runtime/Engine/AnimatorGraphDriver.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/VariableSynchronizer.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
@@ -37705,6 +37872,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/Animator.cs",
+        "runtime/Engine/AnimatorGraphDriver.cs",
         "runtime/Engine/AudioMixer.cs",
         "runtime/Engine/PlayerPrefs.cs",
         "runtime/Engine/Rendering/GraphicsPrimitives.cs",
@@ -38876,7 +39044,10 @@
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/Basic/UnityAnimator/SetTrigger.cs"
       ],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Engine/Animator.cs",
+        "runtime/Engine/AnimatorGraphDriver.cs"
+      ]
     },
     {
       "name": "SetType",
@@ -41278,6 +41449,7 @@
         "runtime/Engine/AmmunitionLoader.cs",
         "runtime/Engine/BallisticEngine.cs",
         "runtime/Engine/BallisticRuntimeHost.cs",
+        "runtime/Engine/Objects.cs",
         "runtime/Engine/OriginalArmPhysicsHost.cs",
         "runtime/Engine/OriginalArmSequences.cs",
         "runtime/Engine/OriginalHandModes.cs",
@@ -41747,6 +41919,7 @@
         "runtime/Original/FullSource/InputMapping_NEXT_AFTER_1.cs",
         "runtime/Original/FullSource/InteriorCamera.cs",
         "runtime/Original/FullSource/Limb.cs",
+        "runtime/Original/FullSource/LimbAudio.cs",
         "runtime/Original/FullSource/LimbMuscle.cs",
         "runtime/Original/FullSource/LimbPhysiology.cs",
         "runtime/Original/FullSource/LimbStreak.cs",
@@ -42102,6 +42275,7 @@
         "runtime/Original/FullSource/InteriorModeUI.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbAttachment.cs",
+        "runtime/Original/FullSource/LimbAudio.cs",
         "runtime/Original/FullSource/LimbStreak.cs",
         "runtime/Original/FullSource/MainMenu.cs",
         "runtime/Original/FullSource/Marksman.cs",
@@ -42374,6 +42548,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/Animator.cs",
+        "runtime/Engine/AnimatorGraphDriver.cs",
         "runtime/Engine/Objects.cs",
         "runtime/Engine/PrefabCloner.cs",
         "runtime/Engine/Rendering/ShaderAndCompute.cs",
@@ -45112,6 +45287,7 @@
         "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/LimbArmor.cs",
+        "runtime/Original/FullSource/LimbAudio.cs",
         "runtime/Original/FullSource/LimbRenderer.cs",
         "runtime/Original/FullSource/LimbTextureData.cs",
         "runtime/Original/FullSource/MuscleControl.cs",
@@ -47704,6 +47880,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/Animator.cs",
+        "runtime/Engine/AnimatorGraphDriver.cs",
         "runtime/Engine/CharacterPhysics.cs",
         "runtime/Engine/Objects.cs",
         "runtime/Engine/OriginalArmPhysicsHost.cs",
