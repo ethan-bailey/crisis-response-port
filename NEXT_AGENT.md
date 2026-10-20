@@ -81,3 +81,16 @@ Preserve user/Codespace changes. Unknown original fields, components, assets, ID
 8. Rerun provenance, identity, ownership, dependency, focused suites and build on one recorded SHA.
 9. At the final-acceptance boundary only, reconcile and merge current `develop/wasm` with a normal merge commit.
 10. Build exact post-merge SHA; pass Chromium, WebKit and local HTTP smoke; record logs/artifacts; update REA, handoff and PR description while leaving PR open/draft.
+
+
+## Calibre source-data gate — 2026-10-20
+
+The next package edge is now identified precisely:
+
+- Original source field type: `AmmunitionBase.calibre` is declared as `Calibre` in `runtime/Original/FullSource/AmmunitionBase.cs`. Original source defines `Calibre : MonoBehaviour` with `calibreName = "Unnamed calibre"`. This is a Unity object reference/component, not a primitive, enum, or synthetic string label.
+- Exact serialized edge from the packaged 5.56-FMJ prefab: GUID `57cfc851e0e4734d98dbd083b39cddf`, fileID `114724804207875695`. The current `weapon-runtime.json.gz` has one asset and one guidPath (5.56-FMJ); neither the compressed package nor the committed `game/assets/weapon-runtime/` directory supplies the referenced Calibre object record.
+- The repository's `docs/ARCHIVE_INVENTORY.md` confirms that `Crisis Response.rar` is a compiled Windows/Mono Unity build and contains no editable Unity `Assets/` project or original source files. The committed `source-reference/Original` tree has no Calibre serialized asset. This repository therefore does not provide source-authoritative component fields/object identity for that GUID:fileID.
+- The earlier Codespace export location `/tmp/crisis-original-project-v3/export/ExportedProject` and source recovery archive were in the disconnected environment. A current Codespace tab is unavailable (`Tab not found in browser 1`), and this workspace contains no project checkout or archive. I have not tried to fabricate missing fields or IDs, nor altered the loader beyond its diagnostic.
+- **Gate result: blocked at acquisition of the original editable asset/source record.** Available independent steps done: repository/PR/head inspection; exact type and field declaration inspection; source archive inventory inspection; package and directory path inspection. To proceed, restore access to the pinned recovery export/source archive containing the exact referenced Calibre object record, or recover another authoritative original Unity asset database/export. Then verify GUID, fileID, serialized field values, object type and all transitive refs before implementing.
+
+The next code gate remains package closure for this Calibre edge. Do not treat the known default `calibreName` initializer as proof of the serialized value or use it to synthesize a missing prefab.
