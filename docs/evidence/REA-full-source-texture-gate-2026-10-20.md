@@ -162,3 +162,50 @@ Temporary logs and extracted files are local-only and not Actions artifacts. No 
 8. Re-run all focused source/provenance/identity/ownership/dependency and native builds/tests on one exact SHA.
 9. Only at final verification, reconcile develop/wasm and integrate it with a normal merge commit.
 10. Build and test the exact merged SHA in Chromium and WebKit and via local HTTP; record logs, workflow IDs and artifacts; refresh closeout while keeping PR #42 open/draft.
+
+
+## Actor prefab byte identity and recursive reference scan — 2026-10-20
+
+### Preserved actor assets and GUID metadata
+
+The committed `source-reference/Original/CharacterDependencies/ActorPrefabs` files were fetched from the current PR branch and compared with the checksum-verified recovered AssetRipper export.
+
+| File | Preserved source SHA-256 | Recovered export SHA-256 | Result |
+| --- | --- | --- | --- |
+| `Operator.prefab` | `94bcda5de74f45d83f4bbf88e80874b8f77bf0339d307294187b085c03170536` | same | `cmp -s` exit 0 |
+| `Occupant.prefab` | `9094b840c49d6c53ffa077c274561ab5cbeedb202f85dbaade023ad67cb8c419` | same | `cmp -s` exit 0 |
+| `Operator.prefab.meta` | `8d01cf639201add925686afbe85b7b1fd8a7bd8ec6c41b6749d76b568ef63b0d` | same | SHA match |
+| `Occupant.prefab.meta` | `3e39f95ea92613c4c4eb1c2c2c82775b9ed075cdf7a925d980ef5b3eca9c5737` | same | SHA match |
+
+Preserved/export GUIDs: Operator `2e00922aa35d9a8438c52fec69254605`; Occupant `8363ad318a650364ebdaa8c237f65bfe`. These are byte-identity/provenance checks against the pinned recovered export; no runtime lifecycle was executed by this comparison.
+
+Commands executed:
+
+```sh
+sha256sum /tmp/repo-Operator-fromgh.prefab /tmp/repo-Occupant-fromgh.prefab \
+  '/tmp/cpr-recovery-authoritative/export/ExportedProject/Assets/Resources/characters/Operator.prefab' \
+  '/tmp/cpr-recovery-authoritative/export/ExportedProject/Assets/Resources/characters/Occupant.prefab'
+cmp -s /tmp/repo-Operator-fromgh.prefab \
+  '/tmp/cpr-recovery-authoritative/export/ExportedProject/Assets/Resources/characters/Operator.prefab'
+cmp -s /tmp/repo-Occupant-fromgh.prefab \
+  '/tmp/cpr-recovery-authoritative/export/ExportedProject/Assets/Resources/characters/Occupant.prefab'
+sha256sum /tmp/repo-Operator.prefab.meta-fromgh /tmp/repo-Occupant.prefab.meta-fromgh \
+  '/tmp/cpr-recovery-authoritative/export/ExportedProject/Assets/Resources/characters/Operator.prefab.meta' \
+  '/tmp/cpr-recovery-authoritative/export/ExportedProject/Assets/Resources/characters/Occupant.prefab.meta'
+```
+
+### Recursive reference scan (partial, not closure acceptance)
+
+A read-only Python walk started at the recovered Operator and Occupant prefabs, indexed `Assets/**/*.meta` GUIDs, recursively followed serialized `{fileID, guid}` PPtrs, and checked IDs against YAML target record headers where available. Observed:
+
+- 252 reachable non-script/project assets and 37 referenced C# scripts.
+- 1,200 non-null serialized PPtr references.
+- Zero unmapped PPtr GUIDs (the known external uGUI script IDs are accounted for by the export extraction script's explicit TypeDef map).
+- Zero missing fileIDs for text Unity YAML targets.
+- 452 references target audio/image binaries with no serialized Unity object record in the export; these remain unverified, including Texture2D fileID `2800000` for `head 5.png`.
+
+The simple GUID-only scan also surfaced five GUID strings inside `Master mixer.mixer`; inspection shows these are `m_ExposedParameters` / mixer parameter identifiers rather than PPtr tuples. They are not counted as external asset references. The recursive traversal confirms file/path presence for the text-asset portion; it **does not** pass transitive asset closure because binary imported object identities/formats are unresolved and the runtime package does not include this graph.
+
+For `head 5.png`, the recovered export provides PNG bytes (SHA-256 `f2b00675b758baa62300b9e3c9e941c891211da335aef1598d76de2c0b7f0c6b`, 128×128 RGBA) and matching meta GUID `d701c84638d2d934080508b9fb88f6ce`. Both actor prefabs refer to that GUID with fileID `2800000`; its TextureImporter has `fileIDToRecycleName: {}`, `textureFormat: 12`, `isReadable: 1`, and `textureType: 0`. These facts tighten the importer evidence but do not prove format-12 runtime pixel semantics or an authoritative imported-object mapping. Keep the existing fail-closed texture resolver behavior until those semantics are tested.
+
+No code changes or runtime checks occurred in this follow-up. The local extracted files and comparison outputs are temporary; only this evidence record and linked Actions artifact/run are durable.
