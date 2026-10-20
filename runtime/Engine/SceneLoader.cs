@@ -22,8 +22,8 @@ public sealed class SceneLoadResult {
 }
 public static class SceneLoader {
     static string Ref(JsonElement value)=>value.GetProperty("fileID").ToString();
-    static bool Flag(JsonElement fields,string name,bool fallback=true)=>fields.TryGetProperty(name,out var v) ? v.ValueKind==JsonValueKind.True||(v.ValueKind==JsonValueKind.Number&&v.GetInt32()!=0) : fallback;
-    static float Number(JsonElement fields,string name,float fallback=0)=>fields.TryGetProperty(name,out var v)?v.GetSingle():fallback;
+    static bool Flag(JsonElement fields,string name,bool fallback=true)=>fields.TryGetProperty(name,out var v) ? v.ValueKind==JsonValueKind.True||(v.ValueKind==JsonValueKind.False?false:v.ValueKind==JsonValueKind.String?int.Parse(v.GetString()!,System.Globalization.CultureInfo.InvariantCulture)!=0:v.GetInt32()!=0) : fallback;
+    static float Number(JsonElement fields,string name,float fallback=0)=>fields.TryGetProperty(name,out var v)?float.Parse(v.ValueKind==JsonValueKind.String?v.GetString()!:v.GetRawText(),System.Globalization.NumberStyles.Float,System.Globalization.CultureInfo.InvariantCulture):fallback;
     static Vector3 Vector(JsonElement value)=>new(Number(value,"x"),Number(value,"y"),Number(value,"z"));
     static Quaternion Rotation(JsonElement value)=>new(Number(value,"x"),Number(value,"y"),Number(value,"z"),Number(value,"w",1));
     public static object VerifyImportedRay(SceneLoadResult result){
@@ -115,8 +115,14 @@ public static class SceneLoader {
                     if(prefab&&cls!=114)builtinFields.Add((component,fields,id,cls));
                 } else result.unsupportedComponents[label]=result.unsupportedComponents.GetValueOrDefault(label)+1;
             }
-            foreach(var (component,fields,id,classID) in builtinFields)AssignBuiltinFields(component,fields,result,id,classID);
-            foreach(var (component,fields,id) in scriptFields)AssignSerializedFields(component,fields,result,id);
+            foreach(var (component,fields,id,classID) in builtinFields){
+                try{AssignBuiltinFields(component,fields,result,id,classID);}
+                catch(Exception ex){throw new InvalidOperationException($"Prefab {assetPath}: built-in {component.GetType().Name} fileID {id} classID {classID}, fields [{string.Join(",",fields.EnumerateObject().Select(p=>p.Name))}]",ex);}
+            }
+            foreach(var (component,fields,id) in scriptFields){
+                try{AssignSerializedFields(component,fields,result,id);}
+                catch(Exception ex){throw new InvalidOperationException($"Prefab {assetPath}: script {component.GetType().Name} fileID {id}, fields [{string.Join(",",fields.EnumerateObject().Select(p=>p.Name))}]",ex);}
+            }
             var roots=records.Where(r=>r.GetProperty("classID").GetInt32() is 4 or 224)
                 .Select(r=>(Transform)result.objects[r.GetProperty("fileID").GetString()])
                 .Where(t=>t.parent==null).ToArray();
@@ -193,7 +199,12 @@ public static class SceneLoader {
             case 82:
                 SetField("m_audioClip","clip",typeof(AudioClip));SetField("m_Volume","volume",typeof(float));SetField("m_Pitch","pitch",typeof(float));
                 SetField("Loop","loop",typeof(bool));SetField("Mute","mute",typeof(bool));SetField("Priority","priority",typeof(int));External("OutputAudioMixerGroup");break;
-            case 95:External("m_Avatar");External("m_Controller");break;
+            case 95:
+                SetField("m_CullingMode","cullingMode",typeof(AnimatorCullingMode));SetField("m_UpdateMode","updateMode",typeof(AnimatorUpdateMode));
+                SetField("m_ApplyRootMotion","applyRootMotion",typeof(bool));SetField("m_LinearVelocityBlending","linearVelocityBlending",typeof(bool));
+                SetField("m_WarningMessage","warningMessage",typeof(string));SetField("m_HasTransformHierarchy","hasTransformHierarchy",typeof(bool));
+                SetField("m_AllowConstantClipSamplingOptimization","allowConstantClipSamplingOptimization",typeof(bool));
+                External("m_Avatar");External("m_Controller");break;
             case 108:SetField("m_Intensity","intensity",typeof(float));break;
             case 65:SetField("m_Center","center",typeof(Vector3));SetField("m_Size","size",typeof(Vector3));SetField("m_IsTrigger","isTrigger",typeof(bool));External("m_Material");break;
             case 136:
@@ -225,24 +236,24 @@ public static class SceneLoader {
         if(type.IsEnum)return value.ValueKind==JsonValueKind.String?Enum.Parse(type,value.GetString(),true):Enum.ToObject(type,value.GetInt32());
         if(type==typeof(string))return value.GetString();
         if(type==typeof(bool))return value.ValueKind==JsonValueKind.True||(value.ValueKind==JsonValueKind.Number&&value.GetInt32()!=0);
-        if(type==typeof(float))return value.GetSingle();
+        if(type==typeof(float))return float.Parse(value.ValueKind==JsonValueKind.String?value.GetString()!:value.GetRawText(),System.Globalization.NumberStyles.Float,System.Globalization.CultureInfo.InvariantCulture);
         if(type==typeof(double))return value.GetDouble();
-        if(type==typeof(int))return value.GetInt32();
+        if(type==typeof(int))return value.ValueKind==JsonValueKind.String?int.Parse(value.GetString()!,System.Globalization.CultureInfo.InvariantCulture):value.GetInt32();
         if(type==typeof(long))return value.GetInt64();
         if(type==typeof(uint))return value.GetUInt32();
-        if(type==typeof(byte))return value.GetByte();
-        if(type.IsArray){var items=value.EnumerateArray().Select(v=>ReadValue(v,type.GetElementType(),result)).ToArray();var array=Array.CreateInstance(type.GetElementType(),items.Length);for(int i=0;i<items.Length;i++)array.SetValue(items[i],i);return array;}
-        if(type.IsGenericType&&typeof(IList).IsAssignableFrom(type)){
+        if(type==typeof(byte))return value.ValueKind==JsonValueKind.String?byte.Parse(value.GetString()!,System.Globalization.CultureInfo.InvariantCulture):value.GetByte();
+        if(type==typeof(byte[])&&value.ValueKind==JsonValueKind.String)return Convert.FromHexString(value.GetString()!);if(type.IsArray){if(value.ValueKind!=JsonValueKind.Array)throw new NotSupportedException($"Cannot load serialized array {type.FullName} from {value.GetRawText()}");var items=value.EnumerateArray().Select(v=>ReadValue(v,type.GetElementType(),result)).ToArray();var array=Array.CreateInstance(type.GetElementType(),items.Length);for(int i=0;i<items.Length;i++)array.SetValue(items[i],i);return array;}
+        if(type.IsGenericType&&typeof(IList).IsAssignableFrom(type)){if(type.GetGenericArguments()[0]==typeof(byte)&&value.ValueKind==JsonValueKind.String){var raw=Convert.FromHexString(value.GetString()!);var decoded=(IList)Activator.CreateInstance(type)!;foreach(var b in raw)decoded.Add(b);return decoded;}if(type.GetGenericArguments()[0]==typeof(int)&&value.ValueKind==JsonValueKind.String){var raw=Convert.FromHexString(value.GetString()!);if(raw.Length%4!=0)throw new FormatException($"Invalid serialized int list length: {raw.Length}");var decoded=(IList)Activator.CreateInstance(type)!;for(var offset=0;offset<raw.Length;offset+=4)decoded.Add(System.Buffers.Binary.BinaryPrimitives.ReadInt32LittleEndian(raw.AsSpan(offset,4)));return decoded;}if(value.ValueKind!=JsonValueKind.Array)throw new NotSupportedException($"Cannot load serialized list {type.FullName} from {value.GetRawText()}");
             var list=(IList)Activator.CreateInstance(type);var element=type.GetGenericArguments()[0];foreach(var item in value.EnumerateArray())list.Add(ReadValue(item,element,result));return list;
         }
         if(value.ValueKind!=JsonValueKind.Object)throw new NotSupportedException($"Expected serialized object for {type.FullName}");
-        object instance=Activator.CreateInstance(type,true);
+        object instance=type==typeof(AnimationCurve)?System.Runtime.CompilerServices.RuntimeHelpers.GetUninitializedObject(type):Activator.CreateInstance(type,true)!;
         foreach(var property in value.EnumerateObject()){
             var member=type.GetField(property.Name,BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic) as MemberInfo
                 ??type.GetProperty(property.Name,BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
-            if(member is FieldInfo f&&!f.IsInitOnly)f.SetValue(instance,ReadValue(property.Value,f.FieldType,result));
-            else if(member is PropertyInfo p&&p.CanWrite)p.SetValue(instance,ReadValue(property.Value,p.PropertyType,result));
+            if(member is FieldInfo f&&!f.IsInitOnly)try{f.SetValue(instance,ReadValue(property.Value,f.FieldType,result));}catch(Exception ex){throw new InvalidOperationException($"Failed serialized member {type.FullName}.{f.Name} ({f.FieldType.FullName}) from {property.Value.GetRawText()}",ex);}
+            else if(member is PropertyInfo p&&p.CanWrite)try{p.SetValue(instance,ReadValue(property.Value,p.PropertyType,result));}catch(Exception ex){throw new InvalidOperationException($"Failed serialized member {type.FullName}.{p.Name} ({p.PropertyType.FullName}) from {property.Value.GetRawText()}",ex);}
         }
         return instance;
-    }
+if(type==typeof(float))return float.Parse(value.ValueKind==JsonValueKind.String?value.GetString()!:value.GetRawText(),System.Globalization.NumberStyles.Float,System.Globalization.CultureInfo.InvariantCulture);    }
 }

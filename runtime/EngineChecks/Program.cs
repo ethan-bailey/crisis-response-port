@@ -75,6 +75,47 @@ Check(targetValues.SequenceEqual(sourceValues),"compute buffer CPU transfer pres
 Throws<ObjectDisposedException>(()=>compute.SetData(sourceValues));
 Check(typeof(MetadataProbe).GetCustomAttributes(typeof(RequireComponentAttribute),true).Length==1,
       "Unity required component metadata is retained");
+var movingGraph = new AnimatorGraphDriver("Idle", new[] {
+    new AnimatorGraphTransition("Idle", "Run", new[] { new AnimatorGraphCondition("Moving", 3, 0.01f) })
+});
+movingGraph.SetFloat("Moving", 1f);
+movingGraph.Evaluate(1f / 60f, 1f);
+Check(movingGraph.CurrentState == "Run", "Animator graph takes a condition-matched transition");
+var timedGraph = new AnimatorGraphDriver("Run", new[] {
+    new AnimatorGraphTransition("Run", "Idle", Array.Empty<AnimatorGraphCondition>(), true, 0.5f)
+}, new Dictionary<string, float> { ["Run"] = 0.5f });
+timedGraph.Evaluate(0.2f, 1f);
+Check(timedGraph.CurrentState == "Run", "Animator graph waits for normalized exit time");
+timedGraph.Evaluate(0.05f, 2f);
+Check(timedGraph.CurrentState == "Idle", "Animator graph applies playback speed to exit-time progression");
+var triggerGraph = new AnimatorGraphDriver("Idle", new[] {
+    new AnimatorGraphTransition("Idle", "Run", new[] { new AnimatorGraphCondition("Fire", 1, 0f) }),
+    new AnimatorGraphTransition("Run", "Idle", new[] { new AnimatorGraphCondition("Fire", 1, 0f) })
+});
+triggerGraph.SetTrigger("Fire");
+triggerGraph.Evaluate(1f / 60f, 1f);
+triggerGraph.Evaluate(1f / 60f, 1f);
+Check(triggerGraph.CurrentState == "Run", "Animator graph consumes trigger parameters once");
+var componentGraph = new AnimatorGraphDriver("Idle", new[] {
+    new AnimatorGraphTransition("Idle", "Run", new[] { new AnimatorGraphCondition("Fire", 1, 0f) }),
+    new AnimatorGraphTransition("Run", "Idle", new[] { new AnimatorGraphCondition("Fire", 1, 0f) })
+});
+var animatorOwner = new GameObject("source animator trigger api", first);
+var sourceAnimator = animatorOwner.AddComponent<Animator>();
+sourceAnimator.Driver = componentGraph;
+sourceAnimator.SetTrigger("Fire");
+sourceAnimator.Update(1f / 60f);
+Check(componentGraph.CurrentState == "Run", "Animator.SetTrigger forwards original named trigger to the graph driver");
+sourceAnimator.Update(1f / 60f);
+Check(componentGraph.CurrentState == "Run", "Animator trigger remains one-shot through component update");
+sourceAnimator.SetTrigger("Fire");
+sourceAnimator.Update(1f / 60f);
+Check(componentGraph.CurrentState == "Idle", "Animator.SetTrigger can trigger the next graph edge");
+sourceAnimator.SetTrigger("Fire");
+sourceAnimator.ResetTrigger("Fire");
+sourceAnimator.Update(1f / 60f);
+Check(componentGraph.CurrentState == "Idle", "Animator.ResetTrigger cancels a pending trigger");
+Throws<InvalidOperationException>(() => sourceAnimator.GetBool("Fire"));
 assertions+=TextureTransferContracts.Run();
 Console.WriteLine($"PASS: {assertions} isolated engine graphics and source API assertions; no gameplay or full CharacterBody compiled.");
 
