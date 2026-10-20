@@ -31,7 +31,7 @@ Focused gate output is in the Codespaces session at `/tmp/cpr-oct20-texture/focu
 ## Failed / incomplete acceptance gates
 
 - **Actual prefab lifecycle: FAIL CLOSED.** `dotnet runtime/Checks/bin/Debug/net8.0/Crisis.Runtime.Checks.dll --prefab-only /tmp/cpr-runtime-package/scene-package.json` fails while resolving the preserved Operator's Texture2D field for `Assets/Texture2D/head 5.png`. Its exact Unity importer metadata contains `textureFormat: 12`. Current CPU decoder only accepts RGBA32 PNG input and the serialized package does not have the original imported Texture2D object record for the referenced fileID. The resolver raises `NotSupportedException` rather than inventing a local ID or pretending the imported pixels/settings are known. Log: `/tmp/cpr-prefab-latest.log`.
-- **Full runtime contracts: FAIL.** `dotnet runtime/Checks/bin/Debug/net8.0/Crisis.Runtime.Checks.dll` exits 134. The stack reaches `AmmunitionLoader.Load` → `WeaponHost.ctor` → `WeaponContracts.Run`; the existing source blocker is unsupported original ammunition enum `Calibre`. Log: `/tmp/cpr-oct20-texture/runtime-contracts.log`.
+- **Full runtime contracts: FAIL.** `dotnet runtime/Checks/bin/Debug/net8.0/Crisis.Runtime.Checks.dll` exits 134. The stack reaches `AmmunitionLoader.Load` → `WeaponHost.ctor` → `WeaponContracts.Run`; the observed exception is `System.NotSupportedException: Calibre` at `AmmunitionLoader.Load` line 46, followed by `WeaponHost.ctor` and `WeaponContracts.Run`. `Calibre` is confirmed in `runtime/Original/FullSource/Calibre.cs` as a `MonoBehaviour` class, not an enum; its source field is `public string calibreName = "Unnamed calibre";`. Compare the failing loader branch with original serialized ammunition/component data before implementing a mapping. Log: `/tmp/cpr-oct20-texture/runtime-contracts.log`.
 - **Not run / not passed:** actual Operator/Occupant lifecycle, two-actor gameplay, WASM output build, Chromium gameplay, WebKit gameplay and local HTTP smoke test. No deployed preview was changed.
 
 ## Next ordered implementation/acceptance gates
@@ -40,7 +40,7 @@ Focused gate output is in the Codespaces session at `/tmp/cpr-oct20-texture/focu
 2. Resolve the importer/object-to-serialized-fileID mapping from source-backed evidence and add tests for hashes, GUID, fileID, importer settings, dimensions, pixel values/orientation and all unsupported formats.
 3. Run actual Operator prefab with complete-field/reference enforcement; verify serialized values, activation and original component ownership.
 4. Run actual Occupant prefab under the same checks; prove independence of object, limb, equipment and physiology ownership.
-5. Recover and test the exact original `Calibre` mapping and ammunition serialization; rerun native contracts and preserve any further unsupported cases.
+5. Trace the `NotSupportedException: Calibre` branch in `AmmunitionLoader.Load` against original serialized ammunition and `Calibre` component references; implement source-backed coverage and rerun native contracts.
 6. Complete source actor lifecycle and independent two-actor spawn/equip/movement/hit/physiology/destruction flow with original callback order.
 7. Re-run focused identity/provenance/ownership/dependency gates, EngineChecks, FoundationChecks, full runtime contracts/build and package closure on a single clean recorded SHA.
 8. Once implementation gates pass, re-check open PRs and live `develop/wasm`, then merge the base with a normal merge commit immediately before final verification.
