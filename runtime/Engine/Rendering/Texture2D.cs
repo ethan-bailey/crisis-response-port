@@ -70,6 +70,7 @@ public sealed class Texture2D:Texture {
     byte[] rgba;
     public byte[] OriginalImageBytes {get;private set;}
     public string ImporterSourceText {get;internal set;}
+    public string ImporterRuntimeDisposition {get;internal set;}
     public string SourceID;
     public Action<Texture2D,int,int,int,int,byte[]> Changed;
 
@@ -92,7 +93,7 @@ public sealed class Texture2D:Texture {
         return new byte[ByteCount(w,h)];
     }
     public Texture2D(int w,int h,TextureFormat format,bool mipChain):this(w,h,Allocate(w,h,format,mipChain)) { }
-    public Texture2D CloneTexture(RuntimeWorld owner)=>new(width,height,rgba,owner){SourceID=SourceID,Changed=Changed,wrapMode=wrapMode,OriginalImageBytes=OriginalImageBytes is null?null:(byte[])OriginalImageBytes.Clone(),ImporterSourceText=ImporterSourceText};
+    public Texture2D CloneTexture(RuntimeWorld owner)=>new(width,height,rgba,owner){SourceID=SourceID,Changed=Changed,wrapMode=wrapMode,OriginalImageBytes=OriginalImageBytes is null?null:(byte[])OriginalImageBytes.Clone(),ImporterSourceText=ImporterSourceText,ImporterRuntimeDisposition=ImporterRuntimeDisposition};
     static int Address(int value,int size,TextureWrapMode mode) => mode switch {
         TextureWrapMode.Clamp=>Math.Clamp(value,0,size-1),
         TextureWrapMode.Repeat=>((value%size)+size)%size,

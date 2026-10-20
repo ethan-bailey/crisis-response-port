@@ -256,7 +256,7 @@ if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("S
                 SetField("m_IsTrigger","isTrigger",typeof(bool));External("m_Material");break;
         }
         foreach(var candidate in fields.EnumerateObject()){if(consumed.Contains(candidate.Name)||candidate.Name.StartsWith("m_",StringComparison.Ordinal))continue;var property=component.GetType().GetProperty(candidate.Name,BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);if(property!=null&&property.CanWrite){consumed.Add(candidate.Name);try{property.SetValue(component,ReadValue(candidate.Value,property.PropertyType,result));}catch(Exception error){throw new NotSupportedException($"Cannot load original built-in field {component.GetType().Name}.{candidate.Name}",error);}}}foreach(var property in fields.EnumerateObject())
-            if(!consumed.Contains(property.Name)&&!property.Name.StartsWith("m_Prefab",StringComparison.Ordinal))
+            if(!consumed.Contains(property.Name)&&!property.Name.StartsWith("m_Prefab",StringComparison.Ordinal)&&!SerializedFields(component.GetType()).Any(field=>field.Name==property.Name))
             {
                 component.OriginalSerializedFields[property.Name]=property.Value.Clone();
                 result.unresolvedReferences.Add($"Unsupported built-in field {component.GetType().Name}.{property.Name}");
@@ -272,8 +272,8 @@ if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("S
             catch(Exception error){throw new NotSupportedException($"Cannot load original field {id}:{property.Name} ({field.FieldType.FullName})",error);}
         }
     }
-    static object ReadValue(JsonElement value,Type type,SceneLoadResult result){
-        if(value.ValueKind==JsonValueKind.Null)return null;
+    static object ReadValue(JsonElement value,Type type,SceneLoadResult result){if(type==typeof(JsonElement))return value.Clone();
+        if(type==typeof(JsonElement))return value.Clone();if(value.ValueKind==JsonValueKind.Null)return null;
         var nullable=Nullable.GetUnderlyingType(type);if(nullable!=null)return ReadValue(value,nullable,result);
         if(typeof(UObject).IsAssignableFrom(type)){
             if(value.ValueKind!=JsonValueKind.Object||!value.TryGetProperty("fileID",out var fileId))throw new NotSupportedException($"External {type.Name} asset reference is not mapped");

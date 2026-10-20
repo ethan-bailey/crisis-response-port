@@ -29,7 +29,7 @@ internal static class SerializedAssetResolver {
         if(assetRecords.GetArrayLength()==0&&expectedType==typeof(Texture2D)&&asset.TryGetProperty("dataBase64",out var encodedTexture))
             return ResolvePngTexture(package,asset,guid,fileID,path,Convert.FromBase64String(encodedTexture.GetString()),world,cache);
         if(assetRecords.GetArrayLength()==0&&expectedType==typeof(AudioClip)&&asset.TryGetProperty("dataBase64",out var encodedAudio)){
-            var bytes=Convert.FromBase64String(encodedAudio.GetString());float duration=WavDuration(bytes);var clip=new AudioClip(path,duration){SourceData=bytes,OriginalAssetGuid=guid,OriginalAssetFileID=fileID,OriginalAssetPath=path};world.Register(clip);cache[key]=clip;return clip;
+            var bytes=Convert.FromBase64String(encodedAudio.GetString());float duration=AudioDuration(path,bytes);var clip=new AudioClip(path,duration){SourceData=bytes,OriginalAssetGuid=guid,OriginalAssetFileID=fileID,OriginalAssetPath=path};world.Register(clip);cache[key]=clip;return clip;
         }
         var record=assetRecords.EnumerateArray().FirstOrDefault(r=>r.GetProperty("fileID").GetString()==fileID);
         if(record.ValueKind==JsonValueKind.Undefined)throw new KeyNotFoundException($"Package asset {path} has no serialized fileID {fileID}");
@@ -65,12 +65,15 @@ internal static class SerializedAssetResolver {
         string metaHash=Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(importerBytes)).ToLowerInvariant();
         if(!metaEntry.TryGetProperty("metaSha256",out var metaHashValue)||metaHashValue.GetString()!=metaHash)
             throw new InvalidDataException($"Original TextureImporter metadata hash does not match {path}");
+        bool HasImporterField(string field,string value)=>System.Text.RegularExpressions.Regex.IsMatch(importer,$@"(?m)^  {System.Text.RegularExpressions.Regex.Escape(field)}:\s*{System.Text.RegularExpressions.Regex.Escape(value)}\s*$");
+        bool supportedSourceFormat=HasImporterField("textureFormat","4")||HasImporterField("textureFormat","12");
         if(!System.Text.RegularExpressions.Regex.IsMatch(importer,$@"(?m)^guid:\s*{System.Text.RegularExpressions.Regex.Escape(guid)}\s*$")||
-           !System.Text.RegularExpressions.Regex.IsMatch(importer,@"(?m)^\s*fileIDToRecycleName:\s*\{\}\s*$")||
-           !System.Text.RegularExpressions.Regex.IsMatch(importer,@"(?m)^\s*isReadable:\s*1\s*$")||
-           !System.Text.RegularExpressions.Regex.IsMatch(importer,@"(?m)^\s*textureFormat:\s*4\s*$")||
-           !System.Text.RegularExpressions.Regex.IsMatch(importer,@"(?m)^\s*textureType:\s*0\s*$")||
-           !System.Text.RegularExpressions.Regex.IsMatch(importer,@"(?m)^\s*maxTextureSize:\s*2048\s*$"))
+           !HasImporterField("fileIDToRecycleName","{}")||
+           !HasImporterField("isReadable","1")||
+           !supportedSourceFormat||
+           !HasImporterField("textureType","0")||
+           !HasImporterField("textureShape","1")||
+           !HasImporterField("maxTextureSize","2048"))
             throw new NotSupportedException($"Original TextureImporter identity or settings are unknown or unsupported for {path}");
         if(!package.TryGetProperty("objectReferences",out var references))
             throw new InvalidDataException("Package has no serialized object reference provenance for binary texture");
@@ -83,7 +86,69 @@ internal static class SerializedAssetResolver {
         var texture=new Texture2D(1,1,new byte[4],world);
         texture.LoadImage(bytes);
         texture.name=path;texture.OriginalAssetGuid=guid;texture.OriginalAssetFileID=fileID;texture.OriginalAssetPath=path;
-        texture.ImporterSourceText=importer;cache[guid+":"+fileID]=texture;return texture;
+        texture.ImporterSourceText=importer;texture.ImporterRuntimeDisposition="Decoded verified original PNG source to CPU RGBA32; original importer YAML and hashes are retained verbatim; Unity platform compression/import output is not emulated.";cache[guid+":"+fileID]=texture;return texture;
+    }
+    static float AudioDuration(string path,byte[] bytes){
+        string extension=System.IO.Path.GetExtension(path);
+        if(extension.Equals(".wav",StringComparison.OrdinalIgnoreCase))return WavDuration(bytes);
+        if(extension.Equals(".ogg",StringComparison.OrdinalIgnoreCase))return OggVorbisDuration(bytes);
+        throw new NotSupportedException("Packaged AudioClip '"+path+"' uses unsupported source extension '"+extension+"'");
+    }
+    static float OggVorbisDuration(byte[] bytes){
+        int offset=0;
+        uint streamSerial=0,expectedSequence=0,sampleRate=0;
+        bool firstPage=true,endOfStream=false,packetContinues=false,identificationComplete=false;
+        ulong finalGranule=ulong.MaxValue;
+        var identification=new System.Collections.Generic.List<byte>();
+        while(offset<bytes.Length){
+            if(endOfStream||bytes.Length-offset<27)throw new InvalidDataException("Packaged Ogg AudioClip has trailing data or a truncated page header");
+            if(System.Text.Encoding.ASCII.GetString(bytes,offset,4)!="OggS"||bytes[offset+4]!=0)throw new InvalidDataException("Packaged AudioClip has an invalid Ogg page header");
+            byte flags=bytes[offset+5];
+            if((flags&~7)!=0)throw new InvalidDataException("Packaged Ogg AudioClip uses reserved page flags");
+            bool continued=(flags&1)!=0,beginning=(flags&2)!=0,ending=(flags&4)!=0;
+            if((firstPage&&!beginning)||(!firstPage&&beginning)||continued!=packetContinues)throw new InvalidDataException("Packaged Ogg AudioClip has invalid BOS or packet continuation flags");
+            ulong granule=System.Buffers.Binary.BinaryPrimitives.ReadUInt64LittleEndian(bytes.AsSpan(offset+6,8));
+            uint serial=System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan(offset+14,4));
+            uint sequence=System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan(offset+18,4));
+            if(sequence!=expectedSequence)throw new InvalidDataException("Packaged Ogg AudioClip has a discontinuous page sequence");
+            if(firstPage){streamSerial=serial;firstPage=false;}
+            else if(serial!=streamSerial)throw new InvalidDataException("Packaged Ogg AudioClip contains multiple logical streams");
+            expectedSequence=checked(sequence+1);
+            int count=bytes[offset+26],table=offset+27;
+            if(bytes.Length-table<count)throw new InvalidDataException("Packaged Ogg AudioClip has a truncated lacing table");
+            int body=table+count,length=0;
+            for(int i=0;i<count;i++)length=checked(length+bytes[table+i]);
+            if(length>bytes.Length-body)throw new InvalidDataException("Packaged Ogg AudioClip has a truncated page body");
+            int cursor=body;bool continues=packetContinues;
+            for(int i=0;i<count;i++){
+                int segment=bytes[table+i];
+                if(!identificationComplete){
+                    for(int j=0;j<segment;j++)identification.Add(bytes[cursor+j]);
+                    if(segment<255){
+                        identificationComplete=true;
+                        if(identification.Count!=30)throw new InvalidDataException("Packaged Ogg AudioClip has an invalid Vorbis identification header length");
+                        byte[] h=identification.ToArray();
+                        if(h[0]!=1||System.Text.Encoding.ASCII.GetString(h,1,6)!="vorbis"||System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(h.AsSpan(7,4))!=0)throw new InvalidDataException("Packaged Ogg AudioClip uses an unsupported Vorbis identification header");
+                        if(h[11]==0)throw new InvalidDataException("Packaged Vorbis AudioClip has zero channels");
+                        sampleRate=System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(h.AsSpan(12,4));
+                        if(sampleRate==0||(h[28]&15)<6||(h[28]>>4)<(h[28]&15)||(h[28]>>4)>13||(h[29]&1)==0)throw new InvalidDataException("Packaged Vorbis AudioClip has invalid identification metadata");
+                    }
+                }
+                cursor+=segment;continues=segment==255;
+            }
+            packetContinues=continues;
+            if(granule!=ulong.MaxValue)finalGranule=granule;
+            offset=body+length;
+            if(ending){
+                if(offset!=bytes.Length||packetContinues)throw new InvalidDataException("Packaged Ogg AudioClip has an invalid EOS page");
+                endOfStream=true;
+            }
+        }
+        if(firstPage||!endOfStream||!identificationComplete||sampleRate==0)throw new InvalidDataException("Packaged Ogg AudioClip is incomplete");
+        if(finalGranule==ulong.MaxValue||finalGranule==0)throw new InvalidDataException("Packaged Ogg AudioClip has no valid final granule position");
+        double duration=(double)finalGranule/sampleRate;
+        if(double.IsInfinity(duration)||duration<=0||duration>float.MaxValue)throw new InvalidDataException("Packaged Ogg AudioClip has an invalid duration");
+        return (float)duration;
     }
     static float WavDuration(byte[] bytes){
         if(bytes.Length<44||System.Text.Encoding.ASCII.GetString(bytes,0,4)!="RIFF"||System.Text.Encoding.ASCII.GetString(bytes,8,4)!="WAVE")throw new InvalidDataException("Packaged AudioClip is not a supported RIFF/WAVE asset");
