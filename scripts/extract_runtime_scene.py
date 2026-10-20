@@ -91,7 +91,7 @@ def main():
             metadata[guid]={'path':target,'metaSha256':hashlib.sha256(meta.read_bytes()).hexdigest()}
             if Path(target).suffix.lower() in {'.png','.jpg','.jpeg','.tga','.bmp'}:
                 # Preserve the recovered import contract alongside the source bytes.
-                metadata[guid]['importerSourceText']=meta.read_text(errors='strict')
+                metadata[guid]['importerSourceText']=meta.open('r', encoding='utf-8', errors='strict', newline='').read()
                 metadata[guid]['importerSourceBase64']=base64.b64encode(meta.read_bytes()).decode('ascii')
     seeds = runtime_asset_seeds(project)
     queue = deque(seeds); assets = {}; missing = []
