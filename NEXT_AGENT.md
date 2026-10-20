@@ -25,6 +25,21 @@ In that export:
 - The same 5.56-FMJ component has other unresolved object edges: Projectile `cf5bca2bd1c0369439bb8fbe00c9320d:114703437598541787`, Casing `9413de22ed594c44e8586fede9f5a355:114243736805655561`, UI ammo model `1b3dc24381623284e82335a132ad5dad:114243736805655561`, and Sprite `8464cbc48daa246479808d64b86fb8c2:21300000`. Recovered export paths are respectively `Assets/Resources/weapons/ammunition/projectiles/Projectile 5.56mm FMJ.prefab`, `Assets/Resources/weapons/ammunition/casings/Casing 5.56x45mm.prefab`, `Assets/Resources/weapons/ammunition/ui models/5.56x45mm FMJ.prefab`, and `Assets/Sprite/Icon 556 FMJ.asset`. Package the complete transitive closure; do not stop after adding Calibre.
 - `AmmunitionLoader.Load` currently handles scalar, list, enum, and AnimationCurve fields, then fails closed for object references. `SerializedAssetResolver` can load a nested prefab component when its asset records and script guidPath are present. Sprite and all transitive records still require actual support and tests.
 
+## Additional source and actor-asset verification — 2026-10-20
+
+The recovered actor prefabs and metadata were compared byte-for-byte with the preserved feature-branch source-reference copies:
+
+| Asset | SHA-256 | Export meta GUID | Result |
+| --- | --- | --- | --- |
+| Operator.prefab | `94bcda5de74f45d83f4bbf88e80874b8f77bf0339d307294187b085c03170536` | `2e00922aa35d9a8438c52fec69254605` | `cmp` exact match |
+| Occupant.prefab | `9094b840c49d6c53ffa077c274561ab5cbeedb202f85dbaade023ad67cb8c419` | `8363ad318a650364ebdaa8c237f65bfe` | `cmp` exact match |
+| Operator.prefab.meta | `8d01cf639201add925686afbe85b7b1fd8a7bd8ec6c41b6749d76b568ef63b0d` | same as above | exact SHA match |
+| Occupant.prefab.meta | `3e39f95ea92613c4c4eb1c2c2c82775b9ed075cdf7a925d980ef5b3eca9c5737` | same as above | exact SHA match |
+
+Commands: `sha256sum <preserved files> <recovered export files>` and `cmp -s <preserved prefab> <recovered export prefab>` for Operator and Occupant; both comparisons exited 0. This confirms the committed asset bytes and metadata match the checksum-pinned recovered export. It does not execute either prefab's lifecycle.
+
+A read-only recursive GUID/PPtr traversal from the recovered Operator and Occupant exports found 252 reachable non-script/project assets plus 37 source scripts, and examined 1,200 non-null serialized object references. No PPtr GUID mapped to a missing asset/script path; no fileID mismatch was found when the target was a text Unity YAML asset. This is only partial closure evidence: 452 referenced audio/image binary objects do not expose an object record in the exported YAML and remain unverified by the walker, including textures with format-12 importer settings. Do not label the full dependency closure passed. The traversal is documented in the REA follow-up; it also distinguishes known external uGUI script IDs and AudioMixer exposed-parameter IDs from asset object PPtrs.
+
 ## Evidence and limits
 
 - Recovery artifact acquisition and checksum passed. The repository package was fetched from PR head and decompressed for inspection; its exact compressed SHA-256 was `786e7ad6764058e59138d12e2631618da807596b510515317a1a544c35de2211`.
