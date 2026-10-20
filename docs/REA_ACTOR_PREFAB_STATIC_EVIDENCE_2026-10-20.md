@@ -268,3 +268,33 @@ It failed closed with `KeyNotFoundException: Package asset Assets/Texture2D/blac
 Other checks observed this run: exact actor provenance script passed; original arm sequence/source, arm physics, and hand runtime probes exited 0 but report controller playback/native parity as incomplete; native Checks build exited 0 (44 warnings, 0 errors); EngineChecks passed 69 isolated assertions; FoundationChecks passed 120 assertions. All were run from dirty Codespaces HEAD `b5ac90849b5140fe96d49bb21c3e85af9b5b7a23` with 13 pre-existing worktree changes, so none is an exact clean-SHA acceptance result. No GitHub Actions workflow ID or browser/gameplay/HTTP result was produced. Logs: `/tmp/continue-run-build.log`, `/tmp/run-enginechecks.log`, `/tmp/run-foundation.log`, `/tmp/run-armseq.log`, `/tmp/run-armcontroller.log`, `/tmp/run-armphysics.log`, `/tmp/run-handruntime.log`, `/tmp/run-prefab-provenance.log`.
 
 **Current gate status:** provenance of the actor prefabs and referenced texture is verified; actual prefab loading, full asset closure, original actor lifecycle, two-actor gameplay, exact-SHA build, Chromium/WebKit, and HTTP smoke test remain unpassed.
+
+
+## Actor-root object-closure verification — October 20, 2026, 15:46 UTC
+
+The regenerated archive-backed package was rechecked with:
+`python3 -c "import sys;sys.path.insert(0,'scripts');from verify_runtime_package import verify;r=verify('/tmp/crisis-original-project-v3/export/ExportedProject','/tmp/runtime-package-oct20/scene-package.json');print(...)"`.
+Result: **PASS** for file/meta SHA integrity and transitive GUID-to-path closure of both actor roots. The compact report is `/tmp/run2-package-closure-summary.json`; verifier stderr log is `/tmp/run2-package-closure.log`.
+
+| Actor root | Reachable assets | Bytes | Serialized records | Unresolved refs in root closure | Unsupported built-ins |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Operator | 238 | 12,892,908 | 998 | 0 | 0 |
+| Occupant | 190 | 8,149,372 | 905 | 0 | 0 |
+
+This corrects the coarse package-wide count: the package report lists 11 unresolved GUID edges elsewhere, but this verifier traversal found none reachable from Operator or Occupant. Asset-path closure is therefore verified for the two actor roots; **object-level resolution and actual prefab construction are not**. The verifier currently validates binary payload hashes and GUID paths but not that every referenced `fileID` has a runtime object record.
+
+The actual-prefab command was rerun:
+`dotnet runtime/Checks/bin/Debug/net8.0/Crisis.Runtime.Checks.dll --prefab-only /tmp/runtime-package-oct20/scene-package.json`.
+It still fails closed at `Assets/Texture2D/black pelvis.png`, missing serialized fileID `2800000` (log `/tmp/run2-prefab.log`). The exact original prefab edge supplies this ID; the recovered PNG .meta has `fileIDToRecycleName: {}` and importer settings but no explicit internal-ID table. In the current runtime resolver, the Texture2D class is not in the serialized asset class mapping, and `Texture2D.LoadImage` throws `NotSupportedException` pending a pinned image decoder. This is an implementation gap, not an inaccessible source artifact. Do not insert a guessed object mapping or synthetic decoder.
+
+Fresh gates rerun on Codespaces branch `feature/full-source-characterbody-integration`, local HEAD `b5ac90849b5140fe96d49bb21c3e85af9b5b7a23`, with the same 13 pre-existing pending changes:
+- `python3 scripts/recover_character_actor_prefabs.py --archive /tmp/crisis-recovery-release/crisis-response-recovery-direct-v3-1.zip --check` — exit 0.
+- `python3 scripts/verify_original_arm_sequences.py` — exit 0.
+- `python3 scripts/verify_original_armcontroller_source.py`, `python3 scripts/verify_original_arm_physics.py`, and `python3 scripts/verify_original_hand_runtime.py` — exit 0, but their reports continue to mark controller playback/native parity incomplete; they are not gameplay acceptance.
+- `dotnet run --project runtime/EngineChecks/Crisis.Runtime.EngineChecks.csproj --no-restore` — exit 0.
+- `dotnet run --project runtime/FoundationChecks/Crisis.Runtime.FoundationChecks.csproj --no-restore` — exit 0.
+- `dotnet build runtime/Checks/Crisis.Runtime.Checks.csproj --no-incremental -v:q -p:GenerateDocumentationFile=false` — exit 0, 0 errors; log reports 13.16 seconds. This remains a dirty-worktree build, not exact-clean-SHA reproduction.
+
+Logs: `/tmp/run2-prefab-provenance.log`, `/tmp/run2-armseq.log`, `/tmp/run2-armcontroller.log`, `/tmp/run2-armphysics.log`, `/tmp/run2-handruntime.log`, `/tmp/run2-enginechecks.log`, `/tmp/run2-foundation.log`, `/tmp/run2-build.log`, `/tmp/run2-prefab.log`, `/tmp/run2-package-closure-summary.json`.
+
+Live GitHub state at this refresh: PR #42 remains draft/open; remote head `f763ebf7ef5da4861a3f508161ef5b3f072b5ae6`. The live `develop/wasm` ref is `2fc0a8e93be97c4d99123910fad4bd25798e71a8`; PR metadata still reports base SHA `5d83c4ef627baa6dc9009ef9a585c0b70e0d9435`, so recompute before the eventual final integration. No PR workflow runs were returned for the tested local SHA, PR docs head, or current target ref. Chromium/WebKit gameplay and local HTTP smoke remain unrun.
