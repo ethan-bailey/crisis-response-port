@@ -124,7 +124,8 @@ public class InputHandler : MonoBehaviour {
     report['excludedFeatures'].extend(['Projectile flight/collision/damage/effect lifecycle is not selected',
         'Ammunition UI, availability, resource lookup and fragmentation spawning are not selected'])
 
-    keys = sorted(set(re.findall(r'KeyCode\.(\w+)', mapping + handler)))
+    all_source_text = chr(10).join(path.read_text() for path in out.rglob('*.cs') if path.name != 'KeyCode.cs')
+    keys = sorted(set(re.findall(r'KeyCode\.(\w+)', all_source_text + mapping + handler)))
     # Enum names are extracted, not used as invented Unity numeric key values.
     save('KeyCode.cs', 'namespace UnityEngine { public enum KeyCode { ' + ','.join(keys) + ' } }\n')
     report['keyCodeNames'] = keys

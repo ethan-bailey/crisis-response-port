@@ -29,6 +29,7 @@ jobs:
           python3 scripts/extract_weapon_runtime.py work/recovery/export/ExportedProject game/assets/weapon-runtime.json.gz runtime/Original/Weapons
           python3 scripts/extract_ballistic_runtime.py work/recovery/export/ExportedProject game/assets/ballistics.json.gz runtime/Original/Ballistics
           python3 scripts/extract_runtime_scene.py work/recovery/export/ExportedProject work/runtime/scene-package.json
+          python3 scripts/package_ammunition_closure.py game/assets/weapon-runtime.json.gz work/runtime/scene-package.json --allow-unresolved
       - name: Compile and test runtime against original components and scenes
         run: dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- work/runtime/scene-package.json > work/runtime/contracts-and-scenes.jsonl
       - name: Build original-code browser runtime
@@ -57,3 +58,6 @@ jobs:
             runtime-webkit.png
           retention-days: 30
           if-no-files-found: warn
+      - name: Verify original ammunition dependency closure
+        if: always()
+        run: python3 scripts/package_ammunition_closure.py game/assets/weapon-runtime.json.gz work/runtime/scene-package.json --check

@@ -1379,7 +1379,7 @@
     },
     {
       "path": "runtime/Engine/AnimationCurve.cs",
-      "sha256": "40b9a6d6b09c18357cf3f6dd405def33eda8b970f983f608d55b81af3857bd8a",
+      "sha256": "97609ae7df7eb024c7c9d574f072ffc428f20b453ad00d7098b355539c833d4d",
       "declares": [
         "AnimationCurve",
         "Keyframe",
@@ -1607,13 +1607,14 @@
     },
     {
       "path": "runtime/Engine/BoxCollider2D.cs",
-      "sha256": "12ec0e08ae199f40aaeca60c8b4abcc81b81d9dff5d9e425219537e500d7b1ec",
+      "sha256": "ba598eb7ef8034f9080a18ab24210d4a0c4dd6a852d8dd10794a4af521064da3",
       "declares": [
         "BoxCollider2D"
       ],
       "references": [
         "Collider2D",
         "SerializeField",
+        "Text",
         "Vector2"
       ]
     },
@@ -2033,7 +2034,7 @@
     },
     {
       "path": "runtime/Engine/PrefabCloner.cs",
-      "sha256": "425b235f503df94d797a1a020aeffb11ee6e18e7fb351e1b0a942c74dc96c14f",
+      "sha256": "befc4b2c6963b021f37b87672229dbada56e8f269b2bfb5f489cdda5deb4e993",
       "declares": [
         "PrefabCloner"
       ],
@@ -2280,7 +2281,7 @@
     },
     {
       "path": "runtime/Engine/Rendering/Texture2D.cs",
-      "sha256": "b8d4b0d10f565e778e89b9d8922d501cbf7e5e1def84963dcde5bea7c79a77c9",
+      "sha256": "4c207852da53d06db9a114cd175132701c6275f870d1d8730c9f71bbbd0d3e88",
       "declares": [
         "PngTextureDecoder",
         "Texture2D",
@@ -2385,7 +2386,7 @@
     },
     {
       "path": "runtime/Engine/SceneLoader.cs",
-      "sha256": "10e96ecc534d4b704ef7b273e04d4bf12eca86131ea645814801b97b5c768a8c",
+      "sha256": "8d891c11705a50f7d811002ddc54acf3ff8eddf47109334467f7073cb2f7a139",
       "declares": [
         "SceneLoadResult",
         "SceneLoader",
@@ -2413,6 +2414,7 @@
         "JointLimits",
         "JointMotor",
         "JointSpring",
+        "Keyframe",
         "Light",
         "Material",
         "Mesh",
@@ -2445,7 +2447,8 @@
         "Transform",
         "Type",
         "Vector2",
-        "Vector3"
+        "Vector3",
+        "WrapMode"
       ]
     },
     {
@@ -2494,7 +2497,7 @@
     },
     {
       "path": "runtime/Engine/SerializedAssetResolver.cs",
-      "sha256": "4396579748df4801d78efa341113c82c452833cb929712ba95555e196d37a6aa",
+      "sha256": "dca40c4023c82c661f494abdf91417e8cf916e785adf15fbc9cd87bf23d4e280",
       "declares": [
         "SerializedAssetIdentity",
         "SerializedAssetResolver"
@@ -13357,7 +13360,7 @@
     },
     {
       "path": "runtime/Original/KeyCode.cs",
-      "sha256": "be3f35816514aeb9629a34cf98c1b0ba6f58901f913cac603ffb49578a38cb96",
+      "sha256": "536561a9b04c22ad826e0c7c15735a8421203805f24c1747e0b535aca59ff97b",
       "declares": [
         "KeyCode"
       ],
@@ -29739,6 +29742,7 @@
         "runtime/Engine/AmmunitionLoader.cs",
         "runtime/Engine/PrefabCloner.cs",
         "runtime/Engine/RuntimeContracts.cs",
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserialization.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserializationDeprecated.cs",
@@ -41989,6 +41993,7 @@
         "runtime/Engine/AmmunitionLoader.cs",
         "runtime/Engine/BallisticEngine.cs",
         "runtime/Engine/BallisticRuntimeHost.cs",
+        "runtime/Engine/BoxCollider2D.cs",
         "runtime/Engine/Objects.cs",
         "runtime/Engine/OriginalArmPhysicsHost.cs",
         "runtime/Engine/OriginalArmSequences.cs",
@@ -47300,6 +47305,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserialization.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserializationDeprecated.cs",
         "runtime/Original/BehaviorDesigner/BinaryDeserialization.cs",
