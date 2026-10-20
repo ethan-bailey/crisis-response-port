@@ -298,3 +298,10 @@ Fresh gates rerun on Codespaces branch `feature/full-source-characterbody-integr
 Logs: `/tmp/run2-prefab-provenance.log`, `/tmp/run2-armseq.log`, `/tmp/run2-armcontroller.log`, `/tmp/run2-armphysics.log`, `/tmp/run2-handruntime.log`, `/tmp/run2-enginechecks.log`, `/tmp/run2-foundation.log`, `/tmp/run2-build.log`, `/tmp/run2-prefab.log`, `/tmp/run2-package-closure-summary.json`.
 
 Live GitHub state at this refresh: PR #42 remains draft/open; remote head `f763ebf7ef5da4861a3f508161ef5b3f072b5ae6`. The live `develop/wasm` ref is `2fc0a8e93be97c4d99123910fad4bd25798e71a8`; PR metadata still reports base SHA `5d83c4ef627baa6dc9009ef9a585c0b70e0d9435`, so recompute before the eventual final integration. No PR workflow runs were returned for the tested local SHA, PR docs head, or current target ref. Chromium/WebKit gameplay and local HTTP smoke remain unrun.
+
+
+## Native end-to-end contract run — October 20, 2026, 15:49 UTC
+
+Additional command:
+`dotnet runtime/Checks/bin/Debug/net8.0/Crisis.Runtime.Checks.dll`.
+It **failed** (log `/tmp/run2-runtimecontracts.log`) before completing the suite. The first surfaced exception is `System.NotSupportedException: Calibre`, through `AmmunitionLoader.Load` → `WeaponHost` → `WeaponContracts.Run` (Program.cs line 21). This identifies a separate original ammunition/weapon contract gap after the earlier contract calls; it is not a passing runtime acceptance result. Do not infer the contracts suite passed from the native project build or isolated EngineChecks/FoundationChecks.
