@@ -96,9 +96,9 @@ The extractor at `scripts/extract_runtime_scene.py` only queues referenced asset
 
 | Asset extension | Operator refs / distinct paths | Occupant refs / distinct paths |
 | --- | ---: | ---: |
-| .wav | 196 / 94 | 168 / 78 |
+| .wav | 196 / 106 | 168 / 78 |
 | .ogg | 0 / 0 | 3 / 3 |
-| .png | 86 / 35 | 76 / 32 |
+| .png | 86 / 38 | 76 / 32 |
 | .shader | 29 / 4 | 25 / 4 |
 | .anim | 6 / 6 | 6 / 6 |
 | .physicMaterial | 21 / 2 | 20 / 2 |
