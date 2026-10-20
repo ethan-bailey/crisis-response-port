@@ -31,7 +31,7 @@ internal static class SerializedAssetResolver {
         if(record.ValueKind==JsonValueKind.Undefined)throw new KeyNotFoundException($"Package asset {path} has no serialized fileID {fileID}");
         var fields=record.GetProperty("fields");int classID=record.GetProperty("classID").GetInt32();
         if(classID==114&&path.EndsWith(".prefab",StringComparison.OrdinalIgnoreCase)){
-            var nested=SceneLoader.LoadPrefab(package.GetRawText(),path,world,requireComplete:true);
+            var nested=SceneLoader.LoadPrefab(package,path,world,requireComplete:true);
             foreach(var gameObject in nested.objects.Values.OfType<GameObject>())gameObject.assetObject=true;
             if(!nested.objects.TryGetValue(fileID,out var component))throw new KeyNotFoundException($"Nested prefab {path} has no object {fileID}");
             if(!expectedType.IsInstanceOfType(component))throw new InvalidCastException($"Nested prefab component {path}:{fileID} is {component.GetType().Name}, expected {expectedType.Name}");
@@ -73,12 +73,3 @@ public static class SerializedAssetIdentity {
     public static string FileID(Object value)=>value?.OriginalAssetFileID;
     public static string Path(Object value)=>value?.OriginalAssetPath;
 }
-
-public sealed class PhysicMaterial:Object {
-    public float dynamicFriction {get;set;}
-    public float staticFriction {get;set;}
-    public float bounciness {get;set;}
-    public int frictionCombine {get;set;}
-    public int bounceCombine {get;set;}
-}
-public class RuntimeAnimatorController:Object { }

@@ -17,7 +17,6 @@ public sealed class SceneLoadResult {
     public List<string> unresolvedReferences {get;set;}=[];
     public Dictionary<string,UObject> objects {get;}=[];
     internal JsonElement package;
-    internal string packageJson;
     public RuntimeWorld world {get;set;}
     public GameObject prefabRoot {get;set;}
     public object Report()=>new {scene,serializedRecords,gameObjects,transforms,boxColliders,originalComponents,unsupportedComponents,unresolvedReferences};
@@ -40,20 +39,28 @@ public static class SceneLoader {
         return new {sourceColliderFileID=result.objects.First(p=>ReferenceEquals(p.Value,box)).Key,
             sourceObject=box.name,directDistance=direct.distance,nearestObject=nearest.collider.name,nearestDistance=nearest.distance};
     }
-    public static SceneLoadResult Load(string json,string scene,bool resetClock=true)=>
-        LoadRecords(json,scene,new RuntimeWorld(resetClock:resetClock),false,false);
-    public static SceneLoadResult LoadPrefab(string json,string prefabPath,RuntimeWorld world,bool requireComplete=true)=>
-        LoadRecords(json,prefabPath,world,true,requireComplete);
-
-    static SceneLoadResult LoadRecords(string json,string assetPath,RuntimeWorld world,bool prefab,bool requireComplete){
-        ArgumentNullException.ThrowIfNull(world);
+    public static SceneLoadResult Load(string json,string scene,bool resetClock=true){
         using var document=JsonDocument.Parse(json);
-        var package=document.RootElement;
+        return LoadRecords(document.RootElement,scene,new RuntimeWorld(resetClock:resetClock),false,false);
+    }
+    static readonly System.Threading.AsyncLocal<HashSet<string>> prefabLoadStack=new();
+    public static SceneLoadResult LoadPrefab(string json,string prefabPath,RuntimeWorld world,bool requireComplete=true){
+        using var document=JsonDocument.Parse(json);
+        return LoadPrefab(document.RootElement,prefabPath,world,requireComplete);
+    }
+    internal static SceneLoadResult LoadPrefab(JsonElement package,string prefabPath,RuntimeWorld world,bool requireComplete=true){
+        var stack=prefabLoadStack.Value??=new HashSet<string>(StringComparer.Ordinal);
+        if(!stack.Add(prefabPath))throw new InvalidOperationException($"Cyclic prefab asset dependency: {string.Join(" -> ",stack)} -> {prefabPath}");
+        try{return LoadRecords(package,prefabPath,world,true,requireComplete);}
+        finally{stack.Remove(prefabPath);if(stack.Count==0)prefabLoadStack.Value=null;}
+    }
+
+    static SceneLoadResult LoadRecords(JsonElement package,string assetPath,RuntimeWorld world,bool prefab,bool requireComplete){
+        ArgumentNullException.ThrowIfNull(world);
         var asset=package.GetProperty("assets").GetProperty(assetPath);
         var records=asset.GetProperty("records").EnumerateArray().Select(r=>r.Clone()).ToArray();
         var result=new SceneLoadResult{scene=assetPath,serializedRecords=records.Length,world=world};
-        result.package=package.Clone();
-        result.packageJson=json;
+        result.package=package;
         var existingObjects=new HashSet<UObject>(world.Objects,ReferenceEqualityComparer.Instance);
         using var deferred=world.DeferActivation();
         try {
@@ -101,7 +108,7 @@ public static class SceneLoader {
                     case 59 when prefab:component=go.AddComponent<HingeJoint>();break;
                     case 61 when prefab:component=go.AddComponent<BoxCollider2D>();break;
                     case 65:{var box=go.AddComponent<BoxCollider>();box.center=Vector(fields.GetProperty("m_Center"));box.size=Vector(fields.GetProperty("m_Size"));box.isTrigger=Flag(fields,"m_IsTrigger",false);component=box;result.boxColliders++;break;}
-                    case 82 when prefab:component=go.AddComponent<AudioSource>();break;
+                    case 82 when prefab:component=go.AddComponent<AudioSource>();break;case 198 when prefab:component=go.AddComponent<ParticleSystem>();break;case 199 when prefab:component=go.AddComponent<ParticleSystemRenderer>();break;
                     case 95 when prefab:component=go.AddComponent<Animator>();break;
                     case 108:{var light=go.AddComponent<Light>();light.intensity=Number(fields,"m_Intensity",1);component=light;break;}
                     case 136 when prefab:component=go.AddComponent<CapsuleCollider>();break;
@@ -183,11 +190,11 @@ public static class SceneLoader {
             else if(member is PropertyInfo p&&p.CanWrite)p.SetValue(component,ReadValue(value,type,result));
             else result.unresolvedReferences.Add($"Unsupported built-in member {component.GetType().Name}.{target}");
         }
-        void External(string source){
+        if(classID==198){SetField("simulationSpeed","simulationSpeed",typeof(float));SetField("stopAction","stopAction",typeof(int));SetField("looping","looping",typeof(bool));SetField("startDelay","startDelay",typeof(JsonElement));SetField("m_LengthInSec","lengthInSec",typeof(float));SetField("prewarm","prewarm",typeof(bool));SetField("playOnAwake","playOnAwake",typeof(bool));SetField("useUnscaledTime","useUnscaledTime",typeof(bool));SetField("autoRandomSeed","autoRandomSeed",typeof(bool));SetField("useRigidbodyForVelocity","useRigidbodyForVelocity",typeof(bool));SetField("moveWithTransform","moveWithTransform",typeof(bool));SetField("moveWithCustomTransform","moveWithCustomTransform",typeof(Transform));SetField("scalingMode","scalingMode",typeof(int));SetField("randomSeed","randomSeed",typeof(uint));SetField("InitialModule","initialModuleData",typeof(JsonElement));SetField("ShapeModule","shapeModuleData",typeof(JsonElement));SetField("EmissionModule","emissionModuleData",typeof(JsonElement));SetField("SizeModule","sizeModuleData",typeof(JsonElement));SetField("RotationModule","rotationModuleData",typeof(JsonElement));SetField("ColorModule","colorModuleData",typeof(JsonElement));SetField("UVModule","uvModuleData",typeof(JsonElement));SetField("VelocityModule","velocityModuleData",typeof(JsonElement));SetField("InheritVelocityModule","inheritVelocityModuleData",typeof(JsonElement));SetField("ForceModule","forceModuleData",typeof(JsonElement));SetField("ExternalForcesModule","externalForcesModuleData",typeof(JsonElement));SetField("ClampVelocityModule","clampVelocityModuleData",typeof(JsonElement));SetField("NoiseModule","noiseModuleData",typeof(JsonElement));SetField("SizeBySpeedModule","sizeBySpeedModuleData",typeof(JsonElement));SetField("RotationBySpeedModule","rotationBySpeedModuleData",typeof(JsonElement));SetField("ColorBySpeedModule","colorBySpeedModuleData",typeof(JsonElement));SetField("CollisionModule","collisionModuleData",typeof(JsonElement));SetField("TriggerModule","triggerModuleData",typeof(JsonElement));SetField("SubModule","subModuleData",typeof(JsonElement));SetField("LightsModule","lightsModuleData",typeof(JsonElement));SetField("TrailModule","trailModuleData",typeof(JsonElement));SetField("CustomDataModule","customDataModuleData",typeof(JsonElement));}if(classID==199){SetField("m_LengthInSec","lengthScale",typeof(float));SetField("m_NormalDirection","normalDirection",typeof(int));}void External(string source){
             var target=(classID,source) switch {
-                (23,"m_Materials")=>("materials",typeof(Material[])),(23,"m_StaticBatchRoot")=>("staticBatchRoot",typeof(Transform)),(23,"m_ProbeAnchor")=>("probeAnchor",typeof(Transform)),(23,"m_LightProbeVolumeOverride")=>("lightProbeVolumeOverride",typeof(Transform)),(23,"m_LightmapParameters")=>("lightmapParameters",typeof(UObject)),
+                (23,"m_Materials")=>("materials",typeof(Material[])), (199,"m_Materials")=>("materials",typeof(Material[])),(199,"m_StaticBatchRoot")=>("staticBatchRoot",typeof(Transform)), (199,"m_Mesh")=>("mesh",typeof(Mesh)),(23,"m_StaticBatchRoot")=>("staticBatchRoot",typeof(Transform)),(23,"m_ProbeAnchor")=>("probeAnchor",typeof(Transform)),(23,"m_LightProbeVolumeOverride")=>("lightProbeVolumeOverride",typeof(Transform)),(23,"m_LightmapParameters")=>("lightmapParameters",typeof(UObject)),
                 (33,"m_Mesh")=>("sharedMesh",typeof(Mesh)),(61,"m_Material")=>("sharedMaterial",typeof(PhysicMaterial)),(65,"m_Material")=>("sharedMaterial",typeof(PhysicMaterial)),(136,"m_Material")=>("sharedMaterial",typeof(PhysicMaterial)),
-                (82,"OutputAudioMixerGroup")=>("outputAudioMixerGroup",typeof(UnityEngine.Audio.AudioMixerGroup)),(95,"m_Avatar")=>("avatar",typeof(UObject)),(95,"m_Controller")=>("runtimeController",typeof(RuntimeAnimatorController)),_=>default
+                (82,"OutputAudioMixerGroup")=>("outputAudioMixerGroup",typeof(UnityEngine.Audio.AudioMixerGroup)),(95,"m_Avatar")=>("avatar",typeof(UObject)),(95,"m_Controller")=>("runtimeController",typeof(RuntimeAnimatorController)),(198,"stopAction")=>("stopAction",typeof(int)),_=>default
             };
             if(target!=default){SetField(source,target.Item1,target.Item2);return;}
             if(!fields.TryGetProperty(source,out var value))return;
@@ -201,7 +208,7 @@ public static class SceneLoader {
             if(value.ValueKind==JsonValueKind.Object)Add(value);
             else if(value.ValueKind==JsonValueKind.Array)foreach(var reference in value.EnumerateArray())Add(reference);
         }
-        if(classID==23){
+        if(classID==23||classID==199){
             SetField("m_CastShadows","castShadows",typeof(bool));SetField("m_ReceiveShadows","receiveShadows",typeof(bool));SetField("m_DynamicOccludee","dynamicOccludee",typeof(bool));
             SetField("m_MotionVectors","motionVectors",typeof(int));SetField("m_LightProbeUsage","lightProbeUsage",typeof(int));SetField("m_ReflectionProbeUsage","reflectionProbeUsage",typeof(int));
             SetField("m_StaticBatchInfo","staticBatchInfo",typeof(StaticBatchInfo));SetField("m_ScaleInLightmap","scaleInLightmap",typeof(float));SetField("m_PreserveUVs","preserveUVs",typeof(bool));
@@ -209,9 +216,10 @@ public static class SceneLoader {
             SetField("m_SelectedEditorRenderState","selectedEditorRenderState",typeof(int));SetField("m_MinimumChartSize","minimumChartSize",typeof(int));SetField("m_AutoUVMaxDistance","autoUVMaxDistance",typeof(float));SetField("m_AutoUVMaxAngle","autoUVMaxAngle",typeof(float));
             SetField("m_SortingLayerID","sortingLayerID",typeof(int));SetField("m_SortingLayer","sortingLayer",typeof(int));SetField("m_SortingOrder","sortingOrder",typeof(int));
         }
-        if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("Spatialize","spatialize",typeof(bool));SetField("SpatializePostEffects","spatializePostEffects",typeof(bool));SetField("DopplerLevel","dopplerLevel",typeof(float));SetField("MinDistance","minDistance",typeof(float));SetField("MaxDistance","maxDistance",typeof(float));SetField("Pan2D","pan2D",typeof(float));SetField("rolloffMode","rolloffMode",typeof(int));SetField("BypassEffects","bypassEffects",typeof(bool));SetField("BypassListenerEffects","bypassListenerEffects",typeof(bool));SetField("BypassReverbZones","bypassReverbZones",typeof(bool));SetField("rolloffCustomCurve","rolloffCustomCurve",typeof(AnimationCurve));SetField("panLevelCustomCurve","panLevelCustomCurve",typeof(AnimationCurve));SetField("spreadCustomCurve","spreadCustomCurve",typeof(AnimationCurve));SetField("reverbZoneMixCustomCurve","reverbZoneMixCustomCurve",typeof(AnimationCurve));}
+        if(classID==199){SetField("m_RenderMode","renderMode",typeof(int));SetField("m_SortMode","sortMode",typeof(int));SetField("m_LengthScale","lengthScale",typeof(float));SetField("m_RenderAlignment","renderAlignment",typeof(int));SetField("m_UseCustomVertexStreams","useCustomVertexStreams",typeof(bool));SetField("m_VertexStreams","vertexStreams",typeof(int));SetField("m_Pivot","pivot",typeof(Vector3));SetField("m_Flip","flip",typeof(Vector3));SetField("m_CameraVelocityScale","cameraVelocityScale",typeof(float));SetField("m_VelocityScale","velocityScale",typeof(float));SetField("m_SortingFudge","sortingFudge",typeof(float));SetField("m_MinParticleSize","minParticleSize",typeof(float));SetField("m_MaxParticleSize","maxParticleSize",typeof(float));SetField("m_MaskInteraction","maskInteraction",typeof(int));External("m_Mesh");External("m_Mesh1");External("m_Mesh2");External("m_Mesh3");}
+if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("Spatialize","spatialize",typeof(bool));SetField("SpatializePostEffects","spatializePostEffects",typeof(bool));SetField("DopplerLevel","dopplerLevel",typeof(float));SetField("MinDistance","minDistance",typeof(float));SetField("MaxDistance","maxDistance",typeof(float));SetField("Pan2D","pan2D",typeof(float));SetField("rolloffMode","rolloffMode",typeof(int));SetField("BypassEffects","bypassEffects",typeof(bool));SetField("BypassListenerEffects","bypassListenerEffects",typeof(bool));SetField("BypassReverbZones","bypassReverbZones",typeof(bool));SetField("rolloffCustomCurve","rolloffCustomCurve",typeof(AnimationCurve));SetField("panLevelCustomCurve","panLevelCustomCurve",typeof(AnimationCurve));SetField("spreadCustomCurve","spreadCustomCurve",typeof(AnimationCurve));SetField("reverbZoneMixCustomCurve","reverbZoneMixCustomCurve",typeof(AnimationCurve));}
         switch(classID){
-            case 23:External("m_Materials");External("m_ProbeAnchor");External("m_LightProbeVolumeOverride");External("m_LightmapParameters");break;
+            case 23:case 199:External("m_Materials");External("m_StaticBatchRoot");External("m_Mesh");External("m_ProbeAnchor");External("m_LightProbeVolumeOverride");External("m_LightmapParameters");break;
             case 33:External("m_Mesh");break;
             case 54:
                 SetField("m_Mass","mass",typeof(float));SetField("m_Drag","drag",typeof(float));SetField("m_AngularDrag","angularDrag",typeof(float));
@@ -241,7 +249,7 @@ public static class SceneLoader {
                 SetField("m_Center","center",typeof(Vector3));SetField("m_Radius","radius",typeof(float));SetField("m_Height","height",typeof(float));SetField("m_Direction","direction",typeof(int));
                 SetField("m_IsTrigger","isTrigger",typeof(bool));External("m_Material");break;
         }
-        foreach(var property in fields.EnumerateObject())
+        foreach(var candidate in fields.EnumerateObject()){if(consumed.Contains(candidate.Name)||candidate.Name.StartsWith("m_",StringComparison.Ordinal))continue;var property=component.GetType().GetProperty(candidate.Name,BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);if(property!=null&&property.CanWrite){consumed.Add(candidate.Name);try{property.SetValue(component,ReadValue(candidate.Value,property.PropertyType,result));}catch(Exception error){throw new NotSupportedException($"Cannot load original built-in field {component.GetType().Name}.{candidate.Name}",error);}}}foreach(var property in fields.EnumerateObject())
             if(!consumed.Contains(property.Name)&&!property.Name.StartsWith("m_Prefab",StringComparison.Ordinal))
             {
                 component.OriginalSerializedFields[property.Name]=property.Value.Clone();
@@ -276,7 +284,7 @@ public static class SceneLoader {
         if(type==typeof(double))return value.GetDouble();
         if(type==typeof(int))return value.ValueKind==JsonValueKind.String?int.Parse(value.GetString()!,System.Globalization.CultureInfo.InvariantCulture):value.GetInt32();
         if(type==typeof(long))return value.GetInt64();
-        if(type==typeof(uint))return value.GetUInt32();
+        if(type==typeof(uint)){if(value.ValueKind==JsonValueKind.String)return uint.Parse(value.GetString()!,System.Globalization.CultureInfo.InvariantCulture);if(value.TryGetUInt32(out var unsignedValue))return unsignedValue;if(value.TryGetInt32(out var signedValue)&&signedValue<0)return unchecked((uint)signedValue);throw new FormatException($"Serialized UInt32 value is {value.ValueKind}: {value.GetRawText()}");}
         if(type==typeof(byte))return value.ValueKind==JsonValueKind.String?byte.Parse(value.GetString()!,System.Globalization.CultureInfo.InvariantCulture):value.GetByte();
         if(type==typeof(byte[])&&value.ValueKind==JsonValueKind.String)return Convert.FromHexString(value.GetString()!);if(type.IsArray){if(value.ValueKind!=JsonValueKind.Array)throw new NotSupportedException($"Cannot load serialized array {type.FullName} from {value.GetRawText()}");var items=value.EnumerateArray().Select(v=>ReadValue(v,type.GetElementType(),result)).ToArray();var array=Array.CreateInstance(type.GetElementType(),items.Length);for(int i=0;i<items.Length;i++)array.SetValue(items[i],i);return array;}
         if(type.IsGenericType&&typeof(IList).IsAssignableFrom(type)){if(type.GetGenericArguments()[0]==typeof(byte)&&value.ValueKind==JsonValueKind.String){var raw=Convert.FromHexString(value.GetString()!);var decoded=(IList)Activator.CreateInstance(type)!;foreach(var b in raw)decoded.Add(b);return decoded;}if(type.GetGenericArguments()[0]==typeof(int)&&value.ValueKind==JsonValueKind.String){var raw=Convert.FromHexString(value.GetString()!);if(raw.Length%4!=0)throw new FormatException($"Invalid serialized int list length: {raw.Length}");var decoded=(IList)Activator.CreateInstance(type)!;for(var offset=0;offset<raw.Length;offset+=4)decoded.Add(System.Buffers.Binary.BinaryPrimitives.ReadInt32LittleEndian(raw.AsSpan(offset,4)));return decoded;}if(value.ValueKind!=JsonValueKind.Array)throw new NotSupportedException($"Cannot load serialized list {type.FullName} from {value.GetRawText()}");

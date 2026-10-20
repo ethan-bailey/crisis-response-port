@@ -743,6 +743,7 @@
     "runtime/Engine/BoxCollider2D.cs",
     "runtime/Engine/CharacterPhysics.cs",
     "runtime/Engine/ClockInput.cs",
+    "runtime/Engine/CoreSerializedAssetTypes.cs",
     "runtime/Engine/DisplaySettings.cs",
     "runtime/Engine/GL.cs",
     "runtime/Engine/LegacyWWW.cs",
@@ -750,6 +751,8 @@
     "runtime/Engine/Mesh.cs",
     "runtime/Engine/Objects.cs",
     "runtime/Engine/OriginalArmPhysicsHost.cs",
+    "runtime/Engine/ParticleSystem.OriginalSerializedFields.cs",
+    "runtime/Engine/ParticleSystem.SerializedState.cs",
     "runtime/Engine/ParticleSystem.cs",
     "runtime/Engine/Physics.cs",
     "runtime/Engine/PhysicsComponents.cs",
@@ -769,6 +772,7 @@
     "runtime/Engine/SceneLoader.cs",
     "runtime/Engine/SceneManagement.cs",
     "runtime/Engine/SerializationTypes.cs",
+    "runtime/Engine/SerializedAssetResolver.cs",
     "runtime/Engine/SerializedEngineTypes.cs",
     "runtime/Engine/SpringJoint.cs",
     "runtime/Engine/UI.cs",
@@ -1378,7 +1382,7 @@
     },
     {
       "path": "runtime/Engine/Animator.cs",
-      "sha256": "8350be3f6670dc1c82c96b64fa43da9a39ffc4892e08d3e9514c563e7c5084d4",
+      "sha256": "9381e57288917ebd973ac6f2a358b5ce4f9ebf337a0c76ba94d309e53d591d40",
       "declares": [
         "Animator",
         "AnimatorControllerParameterType",
@@ -1390,6 +1394,8 @@
       "references": [
         "Behaviour",
         "GetFloat",
+        "Object",
+        "RuntimeAnimatorController",
         "SetBool",
         "SetFloat",
         "SetTrigger",
@@ -1399,7 +1405,7 @@
     },
     {
       "path": "runtime/Engine/AnimatorGraphDriver.cs",
-      "sha256": "9c9859391de1ae69d171dbf1b2601ec117e8a38c839690a6749a26a7e99f43d4",
+      "sha256": "1ec13392da18fc758e797315063d8ab3b51c48ac3e4c20d55393a905d342895d",
       "declares": [
         "AnimatorGraphCondition",
         "AnimatorGraphDriver",
@@ -1443,7 +1449,7 @@
     },
     {
       "path": "runtime/Engine/Audio.cs",
-      "sha256": "36c4ab61832aaff886e652870fde6ecb5e52cd633e5c556b273de6523030bb68",
+      "sha256": "16760527a3fbb4ce8f67761c4c2b9d6b8546fa6bdfeb7c8720710d00bfc4e599",
       "declares": [
         "AudioClip",
         "AudioDataLoadState",
@@ -1452,6 +1458,8 @@
         "IAudioSourceDriver"
       ],
       "references": [
+        "AnimationCurve",
+        "AudioMixerGroup",
         "Behaviour",
         "IsPlaying",
         "Object",
@@ -1645,6 +1653,17 @@
       ]
     },
     {
+      "path": "runtime/Engine/CoreSerializedAssetTypes.cs",
+      "sha256": "acf12d2ea5caa6ee5fa7d88e1af9979f87380ce3015413995acd154b19be9335",
+      "declares": [
+        "PhysicMaterial",
+        "RuntimeAnimatorController"
+      ],
+      "references": [
+        "Object"
+      ]
+    },
+    {
       "path": "runtime/Engine/DisplaySettings.cs",
       "sha256": "12ae01331c9e8a1530e7aca841aebd889983263d5a0b93978c668bd499052f37",
       "declares": [
@@ -1743,7 +1762,7 @@
     },
     {
       "path": "runtime/Engine/Objects.cs",
-      "sha256": "963c4e047d23c56a192512043559ceda51230f77af4bf9c8e42f8e1310a33c2e",
+      "sha256": "2863b888a69da3548e091829c64464d6cf0594ec48461d39bd7121ab3002a839",
       "declares": [
         "ActivationScope",
         "Axis",
@@ -1886,25 +1905,49 @@
       ]
     },
     {
+      "path": "runtime/Engine/ParticleSystem.OriginalSerializedFields.cs",
+      "sha256": "95e521c5ac526435dd315372976df43bbd6cb121779e3ba6f71ec35aa7afe2f5",
+      "declares": [
+        "ParticleSystem"
+      ],
+      "references": [
+        "Transform"
+      ]
+    },
+    {
+      "path": "runtime/Engine/ParticleSystem.SerializedState.cs",
+      "sha256": "f996961fa9e3dfda335a747f93f5247a9689f22798ccb1567c0db1f0f71296c0",
+      "declares": [
+        "ParticleSystem"
+      ],
+      "references": [
+        "Text"
+      ]
+    },
+    {
       "path": "runtime/Engine/ParticleSystem.cs",
-      "sha256": "0e3b1fed10434cc2ba0451315780f9dffb35a885e48840ffae5debda1928bcf0",
+      "sha256": "a2007cd573aaaf9caecc34f4f0ffb6c29cf01eba0b4a795176a23bd629f935b1",
       "declares": [
         "EmissionState",
+        "IParticleCollisionDriver",
         "IParticleDriver",
         "MainModule",
         "MinMaxCurve",
+        "ParticleCollisionEvent",
         "ParticleSystem",
         "ShapeModule"
       ],
       "references": [
         "Component",
+        "GameObject",
         "Play",
-        "Simulate"
+        "Simulate",
+        "Vector3"
       ]
     },
     {
       "path": "runtime/Engine/Physics.cs",
-      "sha256": "d4cdc16e27480e561ccd9beea544c2d4cd3ccd39c00d2a224d8db2507f856f1d",
+      "sha256": "d3847aa535af35d72924045f6800ca6bb7ff06525e426fb0d879386316db97a9",
       "declares": [
         "BoxCollider",
         "Collider",
@@ -1919,6 +1962,7 @@
         "CapsuleCollider",
         "Dot",
         "MeshCollider",
+        "PhysicMaterial",
         "Raycast",
         "Rigidbody",
         "RuntimeWorld",
@@ -2144,14 +2188,16 @@
     },
     {
       "path": "runtime/Engine/Rendering/GraphicsPrimitives.cs",
-      "sha256": "215ff72f5dfc768ec1d962d80e166b29b6da4d06ea4b352ba5e210f39e60a284",
+      "sha256": "a2b93b0d743de7ac8caec3755e6d4234555f066acb3ab509179a440770b48351",
       "declares": [
         "Color",
         "Material",
         "MeshCollider",
         "MeshRenderer",
+        "ParticleSystemRenderer",
         "Rect",
-        "Renderer"
+        "Renderer",
+        "StaticBatchInfo"
       ],
       "references": [
         "Action",
@@ -2165,6 +2211,7 @@
         "Lerp",
         "Mathf",
         "Matrix4x4",
+        "Mesh",
         "Object",
         "Ray",
         "Raycast",
@@ -2174,6 +2221,7 @@
         "Shader",
         "Texture",
         "Texture2D",
+        "Transform",
         "Vector2",
         "Vector3",
         "Vector4",
@@ -2204,7 +2252,7 @@
     },
     {
       "path": "runtime/Engine/Rendering/SpriteComponents.cs",
-      "sha256": "420934708e7de8d977904a0b198c1a54eacfafe3399aaf477510550df0a9f260",
+      "sha256": "6225db6c89ef2383c61ee4a6732de1cfad974ee26dd60f5616bc3451d14c4aeb",
       "declares": [
         "LineRenderer",
         "Sprite",
@@ -2326,7 +2374,7 @@
     },
     {
       "path": "runtime/Engine/SceneLoader.cs",
-      "sha256": "169d8341dfe323a655d846d500d0d79ec85071532ca11c9ddf9f72492e22aded",
+      "sha256": "c5fbe50d0cbf2a48038428b4a044f2c4ad1ef71c2b689ebc039247978f603a2c",
       "declares": [
         "SceneLoadResult",
         "SceneLoader",
@@ -2338,6 +2386,7 @@
         "AnimatorCullingMode",
         "AnimatorUpdateMode",
         "AudioClip",
+        "AudioMixerGroup",
         "AudioSource",
         "Behaviour",
         "BoxCollider",
@@ -2354,10 +2403,15 @@
         "JointMotor",
         "JointSpring",
         "Light",
+        "Material",
+        "Mesh",
         "MeshFilter",
         "MeshRenderer",
         "MonoBehaviour",
         "Object",
+        "ParticleSystem",
+        "ParticleSystemRenderer",
+        "PhysicMaterial",
         "Physics",
         "Quaternion",
         "QueryTriggerInteraction",
@@ -2366,12 +2420,16 @@
         "Rigidbody",
         "RigidbodyConstraints",
         "RigidbodyInterpolation",
+        "RuntimeAnimatorController",
         "RuntimeWorld",
         "SerializeField",
+        "SerializedAssetResolver",
         "SetActive",
         "SetParent",
         "SetValue",
+        "StaticBatchInfo",
         "Text",
+        "Threading",
         "Time",
         "Transform",
         "Type",
@@ -2421,6 +2479,32 @@
         "Type",
         "Vector2",
         "Vector3"
+      ]
+    },
+    {
+      "path": "runtime/Engine/SerializedAssetResolver.cs",
+      "sha256": "d651862619f337b668f28435df58e9bc03dd0abfcd594851a864afab4d816e73",
+      "declares": [
+        "SerializedAssetIdentity",
+        "SerializedAssetResolver"
+      ],
+      "references": [
+        "AudioClip",
+        "AudioMixerGroup",
+        "Font",
+        "GameObject",
+        "GetString",
+        "Material",
+        "Mesh",
+        "Object",
+        "PhysicMaterial",
+        "RuntimeAnimatorController",
+        "RuntimeWorld",
+        "SceneLoader",
+        "Shader",
+        "Text",
+        "Type",
+        "in"
       ]
     },
     {
@@ -10581,6 +10665,29 @@
       ]
     },
     {
+      "path": "runtime/Original/FullSource/SurfacePainter.cs",
+      "sha256": "1f81969ab6678f5c0244d5894ca04b51197a58fd54ce97172096c00da27edbf5",
+      "declares": [
+        "SurfacePainter"
+      ],
+      "references": [
+        "FloorPoolPainter",
+        "GameObject",
+        "GetComponent",
+        "Global",
+        "MonoBehaviour",
+        "PaintableSurface",
+        "ParticleCollisionEvent",
+        "ParticleSystem",
+        "PerformanceManager",
+        "Random",
+        "Rigidbody",
+        "Settings",
+        "Vector3",
+        "in"
+      ]
+    },
+    {
       "path": "runtime/Original/FullSource/SuspectAction.cs",
       "sha256": "fbeb2171648322fa1899c77634c34cfcaae1628e86049bda64795239873d1c1a",
       "declares": [
@@ -15801,6 +15908,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/AmmunitionLoader.cs",
+        "runtime/Engine/Audio.cs",
         "runtime/Engine/PrefabCloner.cs",
         "runtime/Engine/RuntimeContracts.cs",
         "runtime/Engine/SceneLoader.cs",
@@ -16544,6 +16652,7 @@
       "referencedBy": [
         "runtime/Engine/LegacyWWW.cs",
         "runtime/Engine/SceneLoader.cs",
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Original/Foundation/AudioSurface.cs",
         "runtime/Original/Foundation/AudioSurfaceProperties.cs",
         "runtime/Original/FullSource/AudioPlayer.cs",
@@ -16713,6 +16822,9 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/Audio.cs",
+        "runtime/Engine/SceneLoader.cs",
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Original/FullSource/WeaponBase.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
         "source-reference/Original/CharacterDependencies/WeaponBase.cs"
@@ -23729,6 +23841,7 @@
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/MissionHelper.cs",
         "runtime/Original/FullSource/PerformanceManager.cs",
+        "runtime/Original/FullSource/SurfacePainter.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/CharacterDependencies/Limb.cs",
         "source-reference/Original/CharacterDependencies/Mission.cs"
@@ -23879,6 +23992,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Original/Foundation/FullSerializer/Internal/DirectConverters/GUIStyle_DirectConverter.cs"
       ]
     },
@@ -24468,10 +24582,12 @@
         "runtime/Engine/OriginalArmSequences.cs",
         "runtime/Engine/OriginalHandModes.cs",
         "runtime/Engine/OriginalInputHost.cs",
+        "runtime/Engine/ParticleSystem.cs",
         "runtime/Engine/PrefabCloner.cs",
         "runtime/Engine/PresentationHost.cs",
         "runtime/Engine/RuntimeContracts.cs",
         "runtime/Engine/SceneLoader.cs",
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Engine/SerializedEngineTypes.cs",
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/AmmunitionBase.cs",
@@ -24520,6 +24636,7 @@
         "runtime/Original/FullSource/PauseMenu.cs",
         "runtime/Original/FullSource/PerformanceManager.cs",
         "runtime/Original/FullSource/ProjectileTrace.cs",
+        "runtime/Original/FullSource/SurfacePainter.cs",
         "runtime/Original/FullSource/TeamOperator.cs",
         "runtime/Original/FullSource/TeamTutorial.cs",
         "runtime/Original/FullSource/UIAmmoRenderItem.cs",
@@ -24957,6 +25074,7 @@
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/ScoreKeeper.cs",
         "runtime/Original/FullSource/SingleEmissionEffect.cs",
+        "runtime/Original/FullSource/SurfacePainter.cs",
         "runtime/Original/FullSource/Target.cs",
         "runtime/Original/FullSource/TeamController.cs",
         "runtime/Original/FullSource/TeamOperator.cs",
@@ -25966,6 +26084,7 @@
         "runtime/Engine/PlayerPrefs.cs",
         "runtime/Engine/PresentationHost.cs",
         "runtime/Engine/SceneLoader.cs",
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/BehaviorDesigner/BinaryDeserialization.cs",
         "runtime/Original/BehaviorDesigner/BinaryDeserializationDeprecated.cs",
@@ -26283,6 +26402,7 @@
         "runtime/Original/FullSource/SerializablePerformanceSettings.cs",
         "runtime/Original/FullSource/SerializableTimeSettings.cs",
         "runtime/Original/FullSource/SingleEmissionEffect.cs",
+        "runtime/Original/FullSource/SurfacePainter.cs",
         "runtime/Original/FullSource/TeamController.cs",
         "runtime/Original/FullSource/TeamOperator.cs",
         "runtime/Original/FullSource/TeamTutorial.cs",
@@ -27655,6 +27775,19 @@
       "runtimeSources": [],
       "engineSources": [
         "runtime/Engine/Objects.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
+    },
+    {
+      "name": "IParticleCollisionDriver",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/ParticleSystem.cs"
       ],
       "referenceSources": [],
       "archiveEntries": [],
@@ -30731,6 +30864,8 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/Rendering/TextureTransfers.cs",
+        "runtime/Engine/SceneLoader.cs",
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Engine/UI.cs",
         "runtime/Original/FullSource/EditorWeapon.cs",
         "runtime/Original/FullSource/EditorWeaponComponent.cs",
@@ -31052,6 +31187,9 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/Rendering/GraphicsPrimitives.cs",
+        "runtime/Engine/SceneLoader.cs",
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/EditorWeaponComponent.cs",
         "runtime/Original/FullSource/Mission.cs",
@@ -31784,6 +31922,7 @@
         "runtime/Original/FullSource/Settings.cs",
         "runtime/Original/FullSource/SingleEmissionEffect.cs",
         "runtime/Original/FullSource/StagingDebugUI.cs",
+        "runtime/Original/FullSource/SurfacePainter.cs",
         "runtime/Original/FullSource/Target.cs",
         "runtime/Original/FullSource/TeamController.cs",
         "runtime/Original/FullSource/TeamOperator.cs",
@@ -32229,10 +32368,12 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/AmmunitionLoader.cs",
+        "runtime/Engine/Animator.cs",
         "runtime/Engine/Audio.cs",
         "runtime/Engine/AudioMixer.cs",
         "runtime/Engine/BallisticEffects.cs",
         "runtime/Engine/BallisticRuntimeHost.cs",
+        "runtime/Engine/CoreSerializedAssetTypes.cs",
         "runtime/Engine/Math.cs",
         "runtime/Engine/Mesh.cs",
         "runtime/Engine/PrefabCloner.cs",
@@ -32245,6 +32386,7 @@
         "runtime/Engine/RuntimeContracts.cs",
         "runtime/Engine/SceneLoader.cs",
         "runtime/Engine/SerializationTypes.cs",
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Engine/SerializedEngineTypes.cs",
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/AmmunitionBase.cs",
@@ -33011,6 +33153,7 @@
         "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/FloorPoolPainter.cs",
         "runtime/Original/FullSource/FloorStreakPainter.cs",
+        "runtime/Original/FullSource/SurfacePainter.cs",
         "runtime/Original/FullSource/WallStreakPainter.cs",
         "source-reference/Original/CharacterDependencies/FloorStreakPainter.cs"
       ]
@@ -33121,7 +33264,7 @@
       "referencedBy": []
     },
     {
-      "name": "ParticleSystem",
+      "name": "ParticleCollisionEvent",
       "category": "native Unity adapter",
       "requiresAuthoredAssets": false,
       "runtimeSources": [],
@@ -33130,14 +33273,33 @@
       ],
       "referenceSources": [],
       "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Original/FullSource/SurfacePainter.cs"
+      ]
+    },
+    {
+      "name": "ParticleSystem",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/ParticleSystem.OriginalSerializedFields.cs",
+        "runtime/Engine/ParticleSystem.SerializedState.cs",
+        "runtime/Engine/ParticleSystem.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
       "compilerMissing": true,
       "referencedBy": [
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Original/FullSource/Emitter.cs",
         "runtime/Original/FullSource/Limb.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/MissionHelper.cs",
         "runtime/Original/FullSource/ProjectileTrace.cs",
         "runtime/Original/FullSource/SingleEmissionEffect.cs",
+        "runtime/Original/FullSource/SurfacePainter.cs",
         "runtime/Original/FullSource/WeaponBase.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
@@ -33145,6 +33307,21 @@
         "source-reference/Original/CharacterDependencies/Limb.cs",
         "source-reference/Original/CharacterDependencies/Mission.cs",
         "source-reference/Original/CharacterDependencies/WeaponBase.cs"
+      ]
+    },
+    {
+      "name": "ParticleSystemRenderer",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/Rendering/GraphicsPrimitives.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Engine/SceneLoader.cs"
       ]
     },
     {
@@ -33274,6 +33451,7 @@
         "runtime/Original/FullSource/Emitter.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/PaintableSurface.cs",
+        "runtime/Original/FullSource/SurfacePainter.cs",
         "runtime/Original/FullSource/UIResourceCounter.cs",
         "source-reference/Original/CharacterDependencies/Emitter.cs",
         "source-reference/Original/CharacterDependencies/Mission.cs"
@@ -33306,6 +33484,23 @@
       ],
       "compilerMissing": false,
       "referencedBy": []
+    },
+    {
+      "name": "PhysicMaterial",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/CoreSerializedAssetTypes.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Engine/Physics.cs",
+        "runtime/Engine/SceneLoader.cs",
+        "runtime/Engine/SerializedAssetResolver.cs"
+      ]
     },
     {
       "name": "Physics",
@@ -34324,6 +34519,7 @@
         "runtime/Original/FullSource/SingleEmissionEffect.cs",
         "runtime/Original/FullSource/SpawnArea.cs",
         "runtime/Original/FullSource/StaticDebug.cs",
+        "runtime/Original/FullSource/SurfacePainter.cs",
         "runtime/Original/FullSource/TeamController.cs",
         "runtime/Original/FullSource/TeamOperator.cs",
         "runtime/Original/FullSource/UIGrenadeTimer.cs",
@@ -35503,6 +35699,7 @@
         "runtime/Original/FullSource/PerformanceManager.cs",
         "runtime/Original/FullSource/Projectile.cs",
         "runtime/Original/FullSource/SingleEmissionEffect.cs",
+        "runtime/Original/FullSource/SurfacePainter.cs",
         "runtime/Original/FullSource/TeamOperator.cs",
         "runtime/Original/FullSource/WeaponBase.cs",
         "runtime/Original/FullSource/WeaponComponentMagazine.cs",
@@ -35787,6 +35984,23 @@
       "referencedBy": []
     },
     {
+      "name": "RuntimeAnimatorController",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/CoreSerializedAssetTypes.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Engine/Animator.cs",
+        "runtime/Engine/SceneLoader.cs",
+        "runtime/Engine/SerializedAssetResolver.cs"
+      ]
+    },
+    {
       "name": "RuntimeContracts",
       "category": "native Unity adapter",
       "requiresAuthoredAssets": false,
@@ -35834,6 +36048,7 @@
         "runtime/Engine/SceneLoader.cs",
         "runtime/Engine/SceneManagement.cs",
         "runtime/Engine/SerializationTypes.cs",
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Engine/SerializedEngineTypes.cs",
         "runtime/Engine/WeaponHost.cs"
       ]
@@ -35966,7 +36181,8 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/PresentationHost.cs",
-        "runtime/Engine/Resources.cs"
+        "runtime/Engine/Resources.cs",
+        "runtime/Engine/SerializedAssetResolver.cs"
       ]
     },
     {
@@ -37328,6 +37544,34 @@
         "runtime/Original/BehaviorDesigner/BinaryDeserialization.cs",
         "runtime/Original/BehaviorDesigner/BinaryDeserializationDeprecated.cs",
         "runtime/Original/Foundation/FullSerializer/fsConfig.cs"
+      ]
+    },
+    {
+      "name": "SerializedAssetIdentity",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/SerializedAssetResolver.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
+    },
+    {
+      "name": "SerializedAssetResolver",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/SerializedAssetResolver.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Engine/SceneLoader.cs"
       ]
     },
     {
@@ -39277,6 +39521,7 @@
         "runtime/Original/FullSource/PlayerController.cs",
         "runtime/Original/FullSource/Room.cs",
         "runtime/Original/FullSource/SingleEmissionEffect.cs",
+        "runtime/Original/FullSource/SurfacePainter.cs",
         "runtime/Original/FullSource/TimeScaler.cs",
         "runtime/Original/FullSource/UIAudioSettings.cs",
         "runtime/Original/FullSource/UIBindingsTab.cs",
@@ -39331,6 +39576,7 @@
       "referencedBy": [
         "runtime/Engine/PhysicsComponents.cs",
         "runtime/Engine/Rendering/GraphicsPrimitives.cs",
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Original/FullSource/MissionHelper.cs",
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs",
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
@@ -40332,6 +40578,21 @@
       "referencedBy": []
     },
     {
+      "name": "StaticBatchInfo",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/Rendering/GraphicsPrimitives.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Engine/SceneLoader.cs"
+      ]
+    },
+    {
       "name": "StaticBehavior",
       "category": "recoverable source",
       "requiresAuthoredAssets": false,
@@ -40616,9 +40877,11 @@
     },
     {
       "name": "SurfacePainter",
-      "category": "recoverable source",
+      "category": "recovered source",
       "requiresAuthoredAssets": false,
-      "runtimeSources": [],
+      "runtimeSources": [
+        "runtime/Original/FullSource/SurfacePainter.cs"
+      ],
       "engineSources": [],
       "referenceSources": [],
       "archiveEntries": [
@@ -41453,10 +41716,12 @@
         "runtime/Engine/OriginalArmPhysicsHost.cs",
         "runtime/Engine/OriginalArmSequences.cs",
         "runtime/Engine/OriginalHandModes.cs",
+        "runtime/Engine/ParticleSystem.SerializedState.cs",
         "runtime/Engine/PresentationHost.cs",
         "runtime/Engine/Resources.cs",
         "runtime/Engine/RuntimeContracts.cs",
         "runtime/Engine/SceneLoader.cs",
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/MiniJSON.cs",
         "runtime/Original/BehaviorDesigner/BinaryDeserialization.cs",
@@ -41817,6 +42082,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Original/FullSource/HTTPRequest.cs",
         "runtime/Original/FullSource/Threading/ThreadedJob.cs"
       ]
@@ -42224,10 +42490,12 @@
         "runtime/Engine/CharacterPhysics.cs",
         "runtime/Engine/Math.cs",
         "runtime/Engine/OriginalArmPhysicsHost.cs",
+        "runtime/Engine/ParticleSystem.OriginalSerializedFields.cs",
         "runtime/Engine/Physics.cs",
         "runtime/Engine/PhysicsComponents.cs",
         "runtime/Engine/PrefabCloner.cs",
         "runtime/Engine/PresentationHost.cs",
+        "runtime/Engine/Rendering/GraphicsPrimitives.cs",
         "runtime/Engine/RuntimeContracts.cs",
         "runtime/Engine/SceneLoader.cs",
         "runtime/Engine/SerializedEngineTypes.cs",
@@ -42555,6 +42823,7 @@
         "runtime/Engine/Resources.cs",
         "runtime/Engine/SceneLoader.cs",
         "runtime/Engine/SerializationTypes.cs",
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Engine/SerializedEngineTypes.cs",
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/Animation/ArmController.cs",
@@ -45340,6 +45609,7 @@
         "runtime/Engine/Objects.cs",
         "runtime/Engine/OriginalArmPhysicsHost.cs",
         "runtime/Engine/OriginalArmSequences.cs",
+        "runtime/Engine/ParticleSystem.cs",
         "runtime/Engine/Physics.cs",
         "runtime/Engine/PhysicsComponents.cs",
         "runtime/Engine/PrefabCloner.cs",
@@ -45432,6 +45702,7 @@
         "runtime/Original/FullSource/SerializableTextureQuad.cs",
         "runtime/Original/FullSource/SingleEmissionEffect.cs",
         "runtime/Original/FullSource/SpawnArea.cs",
+        "runtime/Original/FullSource/SurfacePainter.cs",
         "runtime/Original/FullSource/TeamOperator.cs",
         "runtime/Original/FullSource/TeamTutorial.cs",
         "runtime/Original/FullSource/TextScaler.cs",
@@ -47891,6 +48162,7 @@
         "runtime/Engine/PresentationHost.cs",
         "runtime/Engine/Rendering/GraphicsPrimitives.cs",
         "runtime/Engine/Resources.cs",
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Engine/SerializedEngineTypes.cs",
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/Behavior.cs",
@@ -47963,6 +48235,7 @@
         "runtime/Original/FullSource/SerializableTeam.cs",
         "runtime/Original/FullSource/SerializableTeamRoster.cs",
         "runtime/Original/FullSource/StringHelper.cs",
+        "runtime/Original/FullSource/SurfacePainter.cs",
         "runtime/Original/FullSource/TeamController.cs",
         "runtime/Original/FullSource/TeamTutorial.cs",
         "runtime/Original/FullSource/ToggleElectricity.cs",
@@ -48351,6 +48624,11 @@
     "PaintTextureResolution": [
       "runtime/Original/FullSource/SerializableGraphicsSettings_v1.cs",
       "runtime/Original/FullSource/SerializableGraphicsSettings_v_0_0_7_008.cs"
+    ],
+    "ParticleSystem": [
+      "runtime/Engine/ParticleSystem.OriginalSerializedFields.cs",
+      "runtime/Engine/ParticleSystem.SerializedState.cs",
+      "runtime/Engine/ParticleSystem.cs"
     ],
     "ParticlesLifetime": [
       "runtime/Original/FullSource/SerializableGraphicsSettings_0_0_8_005.cs",

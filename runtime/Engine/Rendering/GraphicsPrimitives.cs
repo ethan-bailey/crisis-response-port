@@ -73,7 +73,7 @@ namespace UnityEngine {
   public int motionVectors,lightProbeUsage,reflectionProbeUsage,selectedEditorRenderState,minimumChartSize,sortingLayerID,sortingLayer,sortingOrder;
   public float scaleInLightmap=1,autoUVMaxDistance,autoUVMaxAngle;
   public StaticBatchInfo staticBatchInfo;
-  public Transform staticBatchRoot,probeAnchor,lightProbeVolumeOverride;
+  public new Transform staticBatchRoot,probeAnchor,lightProbeVolumeOverride;
   public Object lightmapParameters;
   Material singleMaterial=new();Material[] materialInstances;
   public Action<Material[]> OnMaterialsAssigned;
@@ -85,7 +85,7 @@ namespace UnityEngine {
    get=>materialInstances is null?new[]{singleMaterial}:(Material[])materialInstances.Clone();
    set {
     ArgumentNullException.ThrowIfNull(value);
-    if(Array.Exists(value,item=>item==null))throw new ArgumentException("Renderer materials cannot contain null",nameof(value));
+
     materialInstances=(Material[])value.Clone();
     if(materialInstances.Length>0)singleMaterial=materialInstances[0];
     OnMaterialsAssigned?.Invoke((Material[])materialInstances.Clone());
@@ -93,6 +93,29 @@ namespace UnityEngine {
   }
  }
  public sealed class MeshRenderer:Renderer {}
+public sealed class ParticleSystemRenderer:Renderer {
+    public int renderMode { get; set; }
+    public int sortMode { get; set; }
+    public float lengthScale { get; set; }
+    public int renderAlignment { get; set; }
+    public bool useCustomVertexStreams { get; set; }
+    public int vertexStreams { get; set; }
+    public Vector3 pivot { get; set; }
+    public Vector3 flip { get; set; }
+    public float cameraVelocityScale { get; set; }
+    public float velocityScale { get; set; }
+    public float sortingFudge { get; set; }
+    public float minParticleSize { get; set; }
+    public float maxParticleSize { get; set; }
+    public Mesh mesh { get; set; }
+    public Mesh mesh1 { get; set; }
+    public Mesh mesh2 { get; set; }
+    public Mesh mesh3 { get; set; }
+    public int maskInteraction { get; set; }
+    public int normalDirection { get; set; }
+    public Transform? staticBatchRoot { get; set; }
+}
+
  public struct StaticBatchInfo { public uint firstSubMesh,subMeshCount; }
  // Imported source vertices. Convex planes are the hull of those vertices; this
  // is not a claim about matching Unity's PhysX cooking/reduction algorithm.

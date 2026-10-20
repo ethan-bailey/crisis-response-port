@@ -11,7 +11,7 @@ public sealed class SpriteRenderer:Renderer {
     public Color color {get;set;}=Color.white;
     public bool flipX {get;set;}
     public bool flipY {get;set;}
-    public int sortingOrder {get;set;}
+    public new int sortingOrder {get;set;}
 }
 
 public sealed class LineRenderer:Renderer {
