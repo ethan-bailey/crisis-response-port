@@ -43,7 +43,12 @@ public static class AmmunitionLoader {
                 // Explicit endpoint-clamp adapter, matching the existing weapon curve boundary.
                 // Native serialized-infinity mapping still requires a Unity comparison.
                 field.SetValue(ammo,new AnimationCurve(keys){clampOutside=value.GetProperty("m_PreInfinity").GetInt32()==2&&value.GetProperty("m_PostInfinity").GetInt32()==2,serializedPreInfinity=value.GetProperty("m_PreInfinity").GetInt32(),serializedPostInfinity=value.GetProperty("m_PostInfinity").GetInt32()});
-            }else throw new NotSupportedException(field.FieldType.Name);
+            }else{
+                string serializedValue=value.ValueKind==JsonValueKind.Object&&value.TryGetProperty("guid",out var unsupportedGuid)
+                    ? $"{unsupportedGuid.GetString()}:{(value.TryGetProperty("fileID",out var unsupportedFileID)?unsupportedFileID.ToString():"?")}"
+                    : value.GetRawText();
+                throw new NotSupportedException($"Original ammunition field '{field.Name}' ({field.FieldType.FullName}) is unsupported; serialized value: {serializedValue}");
+            }
         }
         return ammo;
     }
