@@ -89,6 +89,9 @@ def main():
             if guid in index and index[guid]!=target: raise ValueError(f'Duplicate Unity GUID {guid}: {index[guid]} and {target}')
             index[guid]=target
             metadata[guid]={'path':target,'metaSha256':hashlib.sha256(meta.read_bytes()).hexdigest()}
+            if Path(target).suffix.lower() in {'.png','.jpg','.jpeg','.tga','.bmp'}:
+                # Preserve the recovered import contract alongside the source bytes.
+                metadata[guid]['importerSourceText']=meta.read_text(errors='strict')
     seeds = runtime_asset_seeds(project)
     queue = deque(seeds); assets = {}; missing = []
     while queue:
