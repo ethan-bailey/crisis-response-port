@@ -1,10 +1,10 @@
-# Current branch: `feature/full-source-characterbody-integration` at `5e592630131a9e81d316fb604ded2e402fc9c929` | latest validated source SHA: `3979faa642053d0f584d2f91982c1b88cbe0eb62` | October 20, 2026
+# Current branch: `feature/full-source-characterbody-integration` | latest validated source SHA: `3979faa642053d0f584d2f91982c1b88cbe0eb62` | October 20, 2026
 
 ## Observed branch and live checkpoint
 
 - Repository: `ethan-bailey/crisis-response-port`.
-- Codespace branch: `feature/full-source-characterbody-integration`; local HEAD `5e592630131a9e81d316fb604ded2e402fc9c929` after a clean fast-forward of documentation-only commits. The runtime/source code tested below is still exactly `3979faa642053d0f584d2f91982c1b88cbe0eb62`; worktree is clean.
-- Feature remote and local HEAD are synchronized at `5e592630131a9e81d316fb604ded2e402fc9c929`; commits after tested source SHA only updated evidence/handoff Markdown. `git diff --check` passed on the synchronized tip.
+- Codespace branch: `feature/full-source-characterbody-integration`; after fetching and fast-forwarding documentation-only changes, worktree was clean. Runtime/source code tested below is still exactly `3979faa642053d0f584d2f91982c1b88cbe0eb62`; updates since then touch only this handoff/evidence markdown.
+- Feature remote and local were fast-forward-synchronized after the source checkpoint; subsequent commits only update evidence/handoff Markdown. `git diff --check` passed after synchronization.
 - PR #42 remains open/draft, targeting `develop/wasm`; no merge to base occurred.
 - Fresh `git ls-remote origin refs/heads/develop/wasm`: `2fc0a8e93be97c4d99123910fad4bd25798e71a8`. Current PR metadata reports a different base snapshot `5d83c4ef627baa6dc9009ef9a585c0b70e0d9435`. Reconcile immediately before the eventual normal merge.
 - Inspected all open PRs: #42, #56 projectile/limb and #57 IK; keep the related workstreams separate. PR API returns `mergeable:false` for #42 at present.
