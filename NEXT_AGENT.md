@@ -1,54 +1,51 @@
-# Current handoff — original actor prefab dependency closure
+# Live continuation handoff — October 20, 2026
 
-**Observed on 2026-10-20, before this handoff update**
-- Full-source branch: feature/full-source-characterbody-integration at 4842fe3c1e47336d6db016cf4af00ab6c019d5b5. This commit updates documentation/evidence only after executable source head bd2a945e3193e374d176369978476ce5ebe1aeda.
-- PR #42 remains open and draft; its recorded base snapshot is 5d83c4ef627baa6dc9009ef9a585c0b70e0d9435, while live develop/wasm is 2fc0a8e93be97c4d99123910fad4bd25798e71a8. The branches diverge: 141 commits ahead, 226 behind, mergeable=false (observed comparison; refresh before integration).
-- Other open PRs: #7, #56 and #57; keep their workstreams separate from the real actor loader until identity/ownership conflicts are resolved.
-- Exact-SHA Actions lookup has no PR-triggered runs on executable source bd2a945, current docs head 4842fe3, prior manual compile checkpoint 5ed26d8, or current base 2fc0a8e.
+## Observed state
 
-## Milestone completed this session: actor dependency closure audited
+- Local Codespaces: `feature/full-source-characterbody-integration`, HEAD `b5ac90849b5140fe96d49bb21c3e85af9b5b7a23`, 13 pre-existing pending changes. All were preserved; no pull, reset, clean, or discard.
+- PR #42: open/draft, remote head before this documentation refresh `3faccc61db48cb733304bf0626c7a9781a08638d`.
+- Live `develop/wasm` before this documentation refresh: `2fc0a8e93be97c4d99123910fad4bd25798e71a8`. PR metadata still reports a different base SHA `5d83c4ef627baa6dc9009ef9a585c0b70e0d9435`; recompute before eventual integration.
+- Other open PRs inspected: #56 projectile-limb combat, #57 IK arm callbacks, #7 iPhone movement/camera. Keep the overlapping workstreams separate.
 
-See docs/REA_ACTOR_PREFAB_STATIC_EVIDENCE_2026-10-20.md for the exact artifact provenance, REA method evidence, source hashes/GUIDs, unsupported serialized fields, and transitive reference tables.
+## Latest verified checkpoint
 
-A recursive static scan over serialized YAML assets currently present in scene-execution.json reached 81 assets / 943 records for Operator and 64 / 850 for Occupant. Within those records, 346 Operator and 306 Occupant asset references point to paths that are indexed by GUID but absent from the generated execution package. Missing packaged targets include WAV/OGG audio, PNG textures, shaders, animation clips, physics materials and mixers. The extractor scripts/extract_runtime_scene.py only queues .asset/.prefab/.unity/.mat/.controller/.overrideController targets; it records GUID-to-path for other targets without carrying those assets into scene-execution.json.
+Pinned recovery asset `crisis-response-recovery-direct-v3-1.zip` checksum and exact Operator/Occupant prefab+metadata provenance check pass. Original `black pelvis.png` and its TextureImporter .meta are recovered and hash-verified.
 
-The nested asset records also contain 87 references per actor to unresolved script GUID f5f67c52d1564df4a8936ccd202a3bd8. This is not a direct actor script GUID; identify its component and source/package from the original project or Unity package metadata before mapping it. Unity built-in GUID references e000... and f000... appear separately.
+Actor-root package closure passed the verifier against the original extracted project. Saved summary: `/tmp/run2-package-final.json`.
 
-Direct actor components also reference missing original FullSource scripts:
-- ControlRenderOrder: 2 on Operator, 0 on Occupant; original source hash c890c3c271dc45af942f8d9d65cd1e07f64770f0f8ab05ffb6de90a1668e792d; Unity GUID 64b7b44a6d8a556f689e2a9dcfb79ed5.
-- LimbAudio: 18 on Operator, 16 on Occupant; source hash 2a5ebe98de3afc9155d6c99ca82eccf5d528cabfd306175bcf4796c560a5820e; Unity GUID b7bc07d16f703334b84ae52f02709339.
+| Root | Reachable assets | Bytes | Records | Unresolved refs | Unsupported built-ins |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Operator | 238 | 12,892,908 | 998 | 0 | 0 |
+| Occupant | 190 | 8,149,372 | 905 | 0 | 0 |
 
-Keep exact recovered component behavior and identity. No stubs.
+The 11 unresolved references in the package-wide report are outside the two actor-root graphs. The verifier checks bytes/meta and GUID-to-path closure, not runtime object records. Actual prefab construction still fails closed: `KeyNotFoundException` for `Assets/Texture2D/black pelvis.png` at original fileID `2800000`. The exact prefab contains this reference; the original .meta has an empty `fileIDToRecycleName` map and no explicit internal-ID table. The current resolver omits Texture2D class mapping and the current `Texture2D.LoadImage` throws pending a pinned decoder. This is an implementation gap; do not guess IDs or substitute behavior.
 
-## Validation state and superseded evidence
+Freshly rerun checks on the dirty local worktree (not an exact-clean-SHA build):
+- `python3 scripts/recover_character_actor_prefabs.py --archive /tmp/crisis-recovery-release/crisis-response-recovery-direct-v3-1.zip --check` — exit 0.
+- `python3 scripts/verify_original_arm_sequences.py` — exit 0.
+- Actor package closure verifier — exit 0; metrics above.
+- `dotnet run --project runtime/EngineChecks/Crisis.Runtime.EngineChecks.csproj --no-restore` — exit 0 (69 isolated assertions).
+- `dotnet run --project runtime/FoundationChecks/Crisis.Runtime.FoundationChecks.csproj --no-restore` — exit 0 (120 assertions).
+- `dotnet build runtime/Checks/Crisis.Runtime.Checks.csproj --no-incremental -v:q -p:GenerateDocumentationFile=false` — exit 0, 0 errors (13.16 sec).
+- Original arm-controller/physics/hand probes exit 0 but explicitly report unimplemented playback/native parity; diagnostics only.
+- `dotnet runtime/Checks/bin/Debug/net8.0/Crisis.Runtime.Checks.dll --prefab-only /tmp/runtime-package-oct20/scene-package.json` — fails on missing Texture2D fileID record.
+- `dotnet runtime/Checks/bin/Debug/net8.0/Crisis.Runtime.Checks.dll` — fails in original ammunition/weapon contract on `System.NotSupportedException: Calibre` through AmmunitionLoader → WeaponHost → WeaponContracts; log `/tmp/run2-runtimecontracts.log`.
 
-Prior handoff records manual .NET 8 build of source SHA 5ed26d87ddb66eb6841f72cbfeed8ebcf3e6690d, EngineChecks 60, FoundationChecks 120, ownership/migration, source inventory and provenance passing. No Actions run is attached. These results do not validate later executable source SHA bd2a945.
+Logs: `/tmp/run2-prefab-provenance.log`, `/tmp/run2-armseq.log`, `/tmp/run2-armcontroller.log`, `/tmp/run2-armphysics.log`, `/tmp/run2-handruntime.log`, `/tmp/run2-enginechecks.log`, `/tmp/run2-foundation.log`, `/tmp/run2-build.log`, `/tmp/run2-prefab.log`, `/tmp/run2-package-final.json`, `/tmp/run2-runtimecontracts.log`. No workflow run/artifact, browser gameplay, local HTTP smoke, or exact-clean-SHA result is claimed.
 
-The --prefab-only runtime check passes only a synthetic local-reference fixture. It is not an original actor load. The broader Checks run stops at WeaponContracts with AmmunitionLoader.Load: Availability. No complete test suite pass is established.
+## Ordered next gates
 
-The original recovery ZIP contains Assembly-CSharp.dll; the earlier handoff claim that there was no assembly to inspect is superseded. REA 6.7.0 statically analyzed that binary with complete metadata/CIL coverage, but did not execute it.
-
-## Required next implementation sequence
-
-1. Update package generation so the generated execution package carries every referenced asset needed by the transitive actor graph, or a verified external asset bundle with integrity and stable GUID/fileID identity. Include audio, textures, shaders, animations, physics materials and mixers. Map the nested unresolved script GUID and builtin Unity IDs explicitly; fail closed on unknown references.
-2. Extend SceneLoader for the complete required set of serialized built-in fields and external asset object types. Preserve the Unity serialized values; do not silently discard unsupported renderer, animator, collider or audio fields.
-3. Restore exact ControlRenderOrder and LimbAudio source with GUID mapping. Regenerate/review docs/audit/source-dependencies.json and pass source identity/ownership checks.
-4. Load the actual Operator prefab completely and verify original CharacterBody/Limb/physiology ownership and lifecycle with mission, mask, audio and presentation services bound.
-5. Then load Occupant and prove two independent original actor graphs and ordered spawn/equipment/movement/hit/physiology/destruction flows. Run consolidated WASM, Chromium/WebKit, and local HTTP smoke tests at the exact source SHA before changing the preview or merging.
-
-## Integrate the live target branch before final verification
-
-Do not integrate develop/wasm into PR #42 during the actual-prefab implementation phase. First complete the package/reference/serialized-field path, load the real Operator and Occupant prefabs, and finish their original two-actor lifecycle flow. Then, immediately before the final verification phase, refresh the live target head, PR heads/open PRs, relevant workflow evidence, and local worktree status. Preserve all existing uncommitted work; do not discard or overwrite it.
-
-Integrate the then-current develop/wasm into feature/full-source-characterbody-integration with a normal merge commit so the published feature history is preserved. Do not rebase or cherry-pick only the latest documentation commit. Resolve conflicts against original source identity, serialized values, and the single FullSource actor ownership graph; if a conflict cannot be resolved without weakening those constraints, stop and document it. This is a branch integration step, not a merge of PR #42 into develop/wasm.
-
-After integration, record the exact resulting source SHA, then run the complete requested verification phase once on that SHA: focused source/provenance and real-prefab checks, full runtime checks, exact-SHA WASM build, Chromium/WebKit gameplay checks, and local HTTP smoke test. Update evidence and PR prose with the tested SHA and actual results. Do not change the preview or merge PR #42 until all required gates pass.
-
-The 141-ahead/226-behind comparison above is a dated snapshot, not a permanent command. Always recompute the relationship at the time of integration.
+1. Implement source-faithful binary Texture2D object loading: preserve exact PNG bytes, original GUID, prefab fileID `2800000`, importer settings, and orientation; use a pinned/tested decoder.
+2. Add import/resolver tests for source hash, identity, dimensions, pixels, orientation, and unsupported formats/settings.
+3. Pass actual Operator prefab `requireComplete:true`, serialized fields, assets, activation/lifecycle, and component ownership.
+4. Pass actual Occupant prefab and prove independent object/component/limb/equipment/physiology ownership.
+5. Resolve original `Calibre` serialization through the correct source-backed ammo/weapon mapping; rerun native contract suite without substituting a synthetic value.
+6. Verify two-actor spawn, equipment, movement, hit callbacks, physiology, and destruction, preserving original ordering.
+7. Run actor ownership/source inventory checks plus EngineChecks/FoundationChecks for the cohesive implementation batch; inspect #56/#57 interfaces without duplicating scope.
+8. When implementation is ready, recheck all open PRs and current `develop/wasm`, then integrate with a normal merge commit only immediately before final verification.
+9. Build from an exact recorded source SHA; retain logs/artifact/workflow ID where available.
+10. Run Chromium and WebKit gameplay checks on that build, then local HTTP smoke; refresh REA and PR prose with exact outcomes. Keep PR #42 open/draft.
 
 ## Guardrails
 
-- Recheck live develop/wasm, all open PRs, target head, comparable CI and docs/REPOSITORY_REMEDIATION_2026-10-18.md before any code or doc edit.
-- PR #42 description still contains stale checkpoint SHAs; use this handoff, repository files and exact source evidence, then refresh PR prose only after a validated executable checkpoint.
-- Compiler error totals from different source graphs cannot be compared as progress/regression.
-- This session changed documentation only. Runtime code, generated WASM, preview, deployment and merge are unchanged.
+Read `AGENTS.md`, current handoff, live remediation evidence, current PRs and target ref before edits. The local core loader/resolver has pending changes; inspect/preserve them before any source changes. Keep unknown original fields/assets visible and fail closed. Separate compile, load, lifecycle, gameplay, browser, and HTTP evidence. Do not merge early, deploy, change preview, reset, clean, or discard work.
