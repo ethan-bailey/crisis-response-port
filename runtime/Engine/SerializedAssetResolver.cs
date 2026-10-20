@@ -19,6 +19,8 @@ internal static class SerializedAssetResolver {
             if(!expectedType.IsInstanceOfType(builtinCreated))throw new InvalidCastException($"Built-in reference {key} is {builtinCreated.GetType().Name}, expected {expectedType.Name}");
             builtinCreated.OriginalAssetGuid=guid;builtinCreated.OriginalAssetFileID=fileID;cache[key]=builtinCreated;return builtinCreated;
         }
+        if(guid=="0000000000000000f000000000000000")
+            throw new NotSupportedException($"Unity built-in object {guid}:{fileID} has no source-faithful runtime mapping for expected {expectedType.Name}; refusing a synthetic substitute");
         if(!package.TryGetProperty("guidPaths",out var paths)||!paths.TryGetProperty(guid,out var pathValue))
             throw new KeyNotFoundException($"Package has no asset for GUID {guid} ({fileID})");
         string path=pathValue.GetString();
@@ -32,11 +34,12 @@ internal static class SerializedAssetResolver {
         var record=assetRecords.EnumerateArray().FirstOrDefault(r=>r.GetProperty("fileID").GetString()==fileID);
         if(record.ValueKind==JsonValueKind.Undefined)throw new KeyNotFoundException($"Package asset {path} has no serialized fileID {fileID}");
         var fields=record.GetProperty("fields");int classID=record.GetProperty("classID").GetInt32();
-        if(classID==114&&path.EndsWith(".prefab",StringComparison.OrdinalIgnoreCase)){
+        if((typeof(Component).IsAssignableFrom(expectedType)||expectedType==typeof(GameObject))&&path.EndsWith(".prefab",StringComparison.OrdinalIgnoreCase)){
             var nested=SceneLoader.LoadPrefab(package,path,world,requireComplete:true);
             foreach(var gameObject in nested.objects.Values.OfType<GameObject>())gameObject.assetObject=true;
             if(!nested.objects.TryGetValue(fileID,out var component))throw new KeyNotFoundException($"Nested prefab {path} has no object {fileID}");
             if(!expectedType.IsInstanceOfType(component))throw new InvalidCastException($"Nested prefab component {path}:{fileID} is {component.GetType().Name}, expected {expectedType.Name}");
+            component.OriginalAssetGuid=guid;component.OriginalAssetFileID=fileID;component.OriginalAssetPath=path;
             cache[key]=component;return component;
         }
         var created=CreateAsset(classID,fields,world);

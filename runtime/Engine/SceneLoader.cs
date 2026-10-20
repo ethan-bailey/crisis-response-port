@@ -63,6 +63,7 @@ public static class SceneLoader {
         result.package=package;
         var existingObjects=new HashSet<UObject>(world.Objects,ReferenceEqualityComparer.Instance);
         using var deferred=world.DeferActivation();
+        string loadStage="indexing transforms";
         try {
             var transformsByGO=records.Where(r=>r.GetProperty("classID").GetInt32() is 4 or 224)
                 .ToDictionary(r=>Ref(r.GetProperty("fields").GetProperty("m_GameObject")));
@@ -75,6 +76,7 @@ public static class SceneLoader {
                 go.SetActive(Flag(f,"m_IsActive"));result.objects[id]=go;
                 result.objects[tr.GetProperty("fileID").GetString()]=go.transform;result.gameObjects++;result.transforms++;
             }
+            loadStage="assigning transform values";
             foreach(var record in transformsByGO.Values){
                 var t=(Transform)result.objects[record.GetProperty("fileID").GetString()];var f=record.GetProperty("fields");
                 t.localPosition=Vector(f.GetProperty("m_LocalPosition"));t.localScale=Vector(f.GetProperty("m_LocalScale"));t.localRotation=Rotation(f.GetProperty("m_LocalRotation"));
@@ -132,6 +134,7 @@ public static class SceneLoader {
                 try{AssignBuiltinFields(component,fields,result,id,classID);}
                 catch(Exception ex){throw new InvalidOperationException($"Prefab {assetPath}: built-in {component.GetType().Name} fileID {id} classID {classID}, fields [{string.Join(",",fields.EnumerateObject().Select(p=>p.Name))}]",ex);}
             }
+            loadStage="assigning script fields";
             foreach(var (component,fields,id) in scriptFields){
                 try{AssignSerializedFields(component,fields,result,id);}
                 catch(Exception ex){throw new InvalidOperationException($"Prefab {assetPath}: script {component.GetType().Name} fileID {id}, fields [{string.Join(",",fields.EnumerateObject().Select(p=>p.Name))}]",ex);}
@@ -151,6 +154,9 @@ public static class SceneLoader {
             if(requireComplete&&(result.unsupportedComponents.Count>0||result.unresolvedReferences.Count>0))
                 throw new NotSupportedException($"Incomplete original prefab {assetPath}: unsupported [{string.Join(", ",result.unsupportedComponents.Keys)}], unresolved [{string.Join(", ",result.unresolvedReferences.Take(8))}]");
             return result;
+        }catch(KeyNotFoundException ex){
+            foreach(var root in world.Objects.OfType<GameObject>().Where(g=>g&&!existingObjects.Contains(g)&&ReferenceEquals(g.world,world)&&g.transform.parent==null).ToArray())world.DestroyNow(root);
+            throw new KeyNotFoundException($"Original prefab {assetPath} failed during {loadStage}: {ex.Message}",ex);
         }catch{
             foreach(var root in world.Objects.OfType<GameObject>().Where(g=>g&&!existingObjects.Contains(g)&&ReferenceEquals(g.world,world)&&g.transform.parent==null).ToArray())world.DestroyNow(root);
             throw;

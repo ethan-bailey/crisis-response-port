@@ -62,3 +62,7 @@ A read-only recursive GUID/PPtr traversal from the recovered Operator and Occupa
 8. Only after implementation acceptance passes, reconcile the live `develop/wasm` ref and integrate it with a normal merge commit immediately before final verification.
 9. Build from the exact post-merge source SHA; run Chromium, WebKit, and local HTTP gameplay smoke checks against that build. Record exact commands, workflow IDs, logs, artifacts, and outcomes.
 10. Refresh REA evidence, this handoff, and PR #42 description; confirm PR remains open and draft. Do not claim acceptance complete unless every required gate passed at the exact tested SHA.
+
+## Latest continuation — 2026-10-20
+
+See [ammunition closure evidence](docs/evidence/REA-ammunition-closure-2026-10-20.md). Recovery package closure advanced to 29 exact source assets / 33 GUID paths; byte and meta comparisons against the pinned recovery export passed. Added focused Calibre nested-reference identity coverage and confirmed it passes. The contract suite still exits 134 at original Unity built-in Material 0000000000000000f000000000000000:10303; built-in Shader ID 46 and imported Sprite resolution remain unverified. The check intentionally refuses to synthesize these objects. Continue with these exact unresolved runtime mappings, then original actual-prefab lifecycle, two-actor gameplay, final source-SHA build, Chromium/WebKit, and HTTP smoke. Do not merge develop/wasm yet. The current local work is not yet a recorded implementation SHA; record and rerun after commit.

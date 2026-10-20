@@ -1,0 +1,148 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1709254077376921
+GameObject:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_Component:
+  - component: {fileID: 4730242686860875}
+  - component: {fileID: 114724804207875695}
+  m_Layer: 0
+  m_Name: 5.56-FMJ
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4730242686860875
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1709254077376921}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: -0, z: -0}
+--- !u!114 &114724804207875695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1709254077376921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44feb0871254f36de35f0ab99eff3794, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  availability:
+    build: 0
+    team: 0
+  ammoName: Full metal jacket
+  shortName:
+  designation: M855
+  tooltip: Good penetration.
+  type: 1
+  roundWeight: 10
+  recoil: 1
+  applyMuzzleBlastForces: 1
+  cyclesAction: 1
+  muzzleBlastRangeModifier: 0.35
+  muzzleBlastForce:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0.0018184378
+      outSlope: 0.0018184378
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  calibre: {fileID: 114724804207875695, guid: 57cfc851e0e47374d98db0383b39cddf, type: 2}
+  projectile: {fileID: 114703437598541787, guid: cf5bca2bd1c0369439bb8fbe00c9320d, type: 2}
+  casing: {fileID: 114243736805655561, guid: 9413de22ed594c44e8586fede9f5a355, type: 2}
+  highPolyModel: {fileID: 114243736805655561, guid: 1b3dc24381623284e82335a132ad5dad, type: 2}
+  marksmanRound: {fileID: 0}
+  sprite: {fileID: 21300000, guid: 8464cbc48daa246479808d64b86fb8c2, type: 2}
+  mass: 4
+  diameter: 5.56
+  length: 17.9
+  elasticity: 0.2
+  bounceThreshold: 0.1
+  projectileCount: 1
+  spatialDispersion: 0
+  velocity: 910
+  ballisticCoefficient: 0.2
+  flightDrag: 1
+  frictionFactor: 0.5
+  shockModifier: 1
+  expansionFunction:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0.70135635
+      outSlope: 0.70135635
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 1.5
+      inSlope: 0.021018133
+      outSlope: 0.021018133
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  temporalCavityFactor: 1.5
+  permanentCavityFactor: 1.5
+  fragmentationMode: 2
+  fragmentMainBodyMass: 0
+  fragmentMassMin: 0.25
+  fragmentMassMax: 2
+  fragmentDiameterMin: 1
+  fragmentDiameterMax: 3
+  fragmentDeflectionMin: 0
+  fragmentDeflectionMax: 10
+  fragmentationThreshold: 250
+  fragmentEvenPattern: 1
+  specificFragmentation:
+  - mass: 1
+    diameter: 4
+    deflection: 0
+  explosionMode: 0
+  explosionPrefab: {fileID: 0}
+  explosionTime: 0
+  inaccuracy: 0.065
+  velocityModifier: 0.025
+  audioPowerModifier: 1
+  suppressedAudioPitch: 1.1
+  depthModifier: 1
+  entryHoleModifier: 0.5
+  exitHoleModifier: 1
+  headExitHoleModifier: 1.5
+  burnModifier: 1
+--- !u!1001 &100100000
+Prefab:
+  serializedVersion: 2
+  m_ObjectHideFlags: 1
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1709254077376921}
+  m_IsPrefabParent: 1
