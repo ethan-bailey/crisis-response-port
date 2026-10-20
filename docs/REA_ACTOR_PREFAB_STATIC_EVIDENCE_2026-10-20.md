@@ -220,3 +220,30 @@ returned HTTP 404 and stated that the authenticated credential lacks the
 (failure at old SHA `407c66d…`). PR #42's live check rollup at head
 `000451383f321ae58e6f5dc4896102977c3dd3b8` was empty. No hosted build or
 browser run was started or claimed.
+
+
+## Live Codespaces continuation — 2026-10-20
+
+This continuation was run on the live Codespaces worktree at branch
+`feature/full-source-characterbody-integration`, HEAD
+`b5ac90849b5140fe96d49bb21c3e85af9b5b7a23`, with 13 pre-existing pending
+changes preserved. These local checks were on the dirty worktree, not a clean
+exact-SHA acceptance build. No workflow was triggered; there is no workflow ID
+for this execution.
+
+- `dotnet build runtime/Checks/Crisis.Runtime.Checks.csproj --no-incremental -v:q -p:GenerateDocumentationFile=false` — exit 0, 44 warnings, 0 errors.
+- `dotnet run --project runtime/EngineChecks/Crisis.Runtime.EngineChecks.csproj --no-restore` — exit 0, 69 isolated engine graphics/source API assertions. It explicitly does not compile gameplay or full CharacterBody.
+- `dotnet run --project runtime/FoundationChecks/Crisis.Runtime.FoundationChecks.csproj --no-restore` — exit 0, 120 foundation assertions. Original full CharacterBody remains a separate gate.
+- `python3 scripts/verify_original_arm_sequences.py`, `python3 scripts/verify_original_armcontroller_source.py`, `python3 scripts/verify_original_arm_physics.py`, and `python3 scripts/verify_original_hand_runtime.py` — each returned 0. The emitted reports still mark full IK/ArmController playback and native shared parity false; these source probes are not actor lifecycle tests.
+- `git diff --check` — exit 2, reporting a new blank line at EOF at `runtime/Engine/SerializedAssetResolver.cs:76`. No cleanup was attempted.
+- `timeout 180s dotnet runtime/Checks/bin/Debug/net8.0/Crisis.Runtime.Checks.dll --prefab-only /tmp/runtime-package-current/scene-package.json` — did not pass. `/tmp/run-prefab.log` records `KeyNotFoundException`: missing serialized fileID `2800000` for `Assets/Texture2D/black pelvis.png`. The package contains image bytes but no serialized Texture2D record/import metadata. One recovery search found no other `black pelvis.png` under `/workspaces`, and repository GitHub code search found no copy. Unknown object/importer fields remain fail-closed; no synthetic data was added.
+
+Codespaces logs: `/tmp/run-build.log`, `/tmp/run-enginechecks.log`,
+`/tmp/run-foundation.log`, `/tmp/run-armseq.log`,
+`/tmp/run-armcontroller.log`, `/tmp/run-armphysics.log`,
+`/tmp/run-handruntime.log`, and `/tmp/run-prefab.log`.
+
+Current branch/PR source remains open and draft; actual Operator/Occupant
+lifecycle, dependency-complete package loading, independent two-actor gameplay,
+clean exact-SHA WASM build, Chromium/WebKit gameplay, and local HTTP smoke are
+still unverified.
