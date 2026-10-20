@@ -1306,6 +1306,11 @@
     "source-reference/Original/ArmDependencies/Limb.cs",
     "source-reference/Original/ArmDependencies/TeamOperator.cs",
     "source-reference/Original/ArmDependencies/WeaponBase.cs",
+    "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs",
+    "source-reference/Original/Assets/Scripts/Assembly-CSharp/Calibre.cs",
+    "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
+    "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
+    "source-reference/Original/Assets/Scripts/Assembly-CSharp/UIAmmoRenderItem.cs",
     "source-reference/Original/CharacterBody.cs",
     "source-reference/Original/CharacterDependencies/ArmorClass.cs",
     "source-reference/Original/CharacterDependencies/ArmsControl.cs",
@@ -1342,7 +1347,7 @@
   "sources": [
     {
       "path": "runtime/Engine/AmmunitionLoader.cs",
-      "sha256": "ce4a397340e1cde28d4b37519b26baa1cbdf3f9b27b0808fe0dcd44415947fce",
+      "sha256": "9a22017e1493fe3e623e87bd1800ac3c709a35eebd628e9ddf1ce15613a21631",
       "declares": [
         "AmmunitionLoader",
         "in"
@@ -1351,6 +1356,7 @@
         "AmmunitionBase",
         "AnimationCurve",
         "Availability",
+        "Calibre",
         "Enum",
         "FragmentationSpecification",
         "GameObject",
@@ -1362,6 +1368,7 @@
         "Projectile",
         "Resources",
         "RuntimeWorld",
+        "SerializedAssetResolver",
         "SetActive",
         "SetValue",
         "Text",
@@ -2273,20 +2280,24 @@
     },
     {
       "path": "runtime/Engine/Rendering/Texture2D.cs",
-      "sha256": "16fe3cbb3c4c04a3041df9cf797489f2fb9a69c9ac48d845bdd188e00739fc89",
+      "sha256": "b8d4b0d10f565e778e89b9d8922d501cbf7e5e1def84963dcde5bea7c79a77c9",
       "declares": [
+        "PngTextureDecoder",
         "Texture2D",
         "TextureFormat"
       ],
       "references": [
         "Action",
         "Color",
+        "GetString",
         "Graphics",
         "Rect",
         "RenderTexture",
         "RuntimeWorld",
+        "Text",
         "Texture",
-        "TextureWrapMode"
+        "TextureWrapMode",
+        "in"
       ]
     },
     {
@@ -2374,7 +2385,7 @@
     },
     {
       "path": "runtime/Engine/SceneLoader.cs",
-      "sha256": "c5fbe50d0cbf2a48038428b4a044f2c4ad1ef71c2b689ebc039247978f603a2c",
+      "sha256": "10e96ecc534d4b704ef7b273e04d4bf12eca86131ea645814801b97b5c768a8c",
       "declares": [
         "SceneLoadResult",
         "SceneLoader",
@@ -2483,7 +2494,7 @@
     },
     {
       "path": "runtime/Engine/SerializedAssetResolver.cs",
-      "sha256": "d651862619f337b668f28435df58e9bc03dd0abfcd594851a864afab4d816e73",
+      "sha256": "4396579748df4801d78efa341113c82c452833cb929712ba95555e196d37a6aa",
       "declares": [
         "SerializedAssetIdentity",
         "SerializedAssetResolver"
@@ -2491,6 +2502,7 @@
       "references": [
         "AudioClip",
         "AudioMixerGroup",
+        "Component",
         "Font",
         "GameObject",
         "GetString",
@@ -2503,6 +2515,7 @@
         "SceneLoader",
         "Shader",
         "Text",
+        "Texture2D",
         "Type",
         "in"
       ]
@@ -14167,6 +14180,152 @@
       ]
     },
     {
+      "path": "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs",
+      "sha256": "c004ccd8df9ef4ec95aa7c7fe3f2bcd266bdae5def79efb772c438c9a55864bd",
+      "declares": [
+        "AmmunitionBase",
+        "ExplosionMode",
+        "FragmentationMode",
+        "FragmentationSpecification",
+        "Type"
+      ],
+      "references": [
+        "AnimationCurve",
+        "Availability",
+        "Calibre",
+        "Casing",
+        "Explosion",
+        "GameObject",
+        "GetComponent",
+        "MarksmanRound",
+        "Mathf",
+        "MonoBehaviour",
+        "Object",
+        "Projectile",
+        "Resources",
+        "Sprite",
+        "UIAmmoRenderItem",
+        "Utilities"
+      ]
+    },
+    {
+      "path": "source-reference/Original/Assets/Scripts/Assembly-CSharp/Calibre.cs",
+      "sha256": "0ab70871d45749ec7728ba9dc0c541b86b5cc3235ca8992e440716703833ba9d",
+      "declares": [
+        "Calibre"
+      ],
+      "references": [
+        "MonoBehaviour"
+      ]
+    },
+    {
+      "path": "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
+      "sha256": "eeed2cb0abbe5ea92ba50453b8a8a222e9983f02e81a7ff76649100b8aae81d8",
+      "declares": [
+        "Casing"
+      ],
+      "references": [
+        "AddForce",
+        "AddTorque",
+        "AudioClip",
+        "AudioSource",
+        "BoxCollider",
+        "Collider",
+        "Collision",
+        "CollisionDetectionMode",
+        "Debug",
+        "Destroy",
+        "ForceMode",
+        "GetChild",
+        "GetComponent",
+        "MonoBehaviour",
+        "Object",
+        "PlayOneShot",
+        "Random",
+        "Rigidbody",
+        "RigidbodyInterpolation",
+        "Vector3"
+      ]
+    },
+    {
+      "path": "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
+      "sha256": "ef6443c2d6fece6866526fa8c9d4262c31fbc26a2ed77da57e607d681a0302b2",
+      "declares": [
+        "Projectile"
+      ],
+      "references": [
+        "AddForceAtPosition",
+        "AmmunitionBase",
+        "AudioInstigator",
+        "BallisticMaterial",
+        "BallisticResult",
+        "CharacterBody",
+        "Color",
+        "Debug",
+        "Destroy",
+        "Distance",
+        "Dot",
+        "DrawLine",
+        "Explosion",
+        "ExplosionMode",
+        "FragmentationMode",
+        "FragmentationSpecification",
+        "GetChild",
+        "GetComponent",
+        "Id",
+        "Instantiate",
+        "Lerp",
+        "Limb",
+        "LookRotation",
+        "Marksman",
+        "Masks",
+        "Material",
+        "Mathf",
+        "MeshFilter",
+        "MeshRenderer",
+        "MonoBehaviour",
+        "Object",
+        "Physics",
+        "ProjectileEvent",
+        "ProjectileLimbEvent",
+        "ProjectileTrace",
+        "Quaternion",
+        "Random",
+        "Ray",
+        "Raycast",
+        "RaycastHit",
+        "Rigidbody",
+        "Rotate",
+        "SetActive",
+        "SetParent",
+        "Status",
+        "Stop",
+        "Time",
+        "Transform",
+        "TutorialSoftTarget",
+        "Vector3",
+        "WeaponBase"
+      ]
+    },
+    {
+      "path": "source-reference/Original/Assets/Scripts/Assembly-CSharp/UIAmmoRenderItem.cs",
+      "sha256": "ce6918d1aac780920deeea7c431172bedfe60d39f312d0d09f9f51ee3ec94b4a",
+      "declares": [
+        "UIAmmoRenderItem"
+      ],
+      "references": [
+        "Destroy",
+        "GameObject",
+        "Instantiate",
+        "MonoBehaviour",
+        "Object",
+        "SetActive",
+        "SetParent",
+        "Transform",
+        "Vector3"
+      ]
+    },
+    {
       "path": "source-reference/Original/BehaviorDesigner/BehaviorGameGUI.cs",
       "sha256": "04754b10409f38338b8c4bdb3b17cc9e9f5eb1ee1104ba5396149414abe38852",
       "declares": [
@@ -15554,6 +15713,7 @@
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/Grenade.cs",
         "source-reference/Original/CharacterDependencies/Limb.cs",
@@ -15586,6 +15746,7 @@
         "source-reference/Original/Animation/ArmController.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterDependencies/Grenade.cs",
         "source-reference/Original/CharacterDependencies/Limb.cs",
         "source-reference/Original/CharacterDependencies/WeaponBase.cs"
@@ -15634,6 +15795,7 @@
         "runtime/Original/FullSource/Casing.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/MarksmanRound.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
         "source-reference/Original/CharacterDependencies/Grenade.cs"
       ]
     },
@@ -15751,7 +15913,9 @@
         "runtime/Original/FullSource/AmmunitionBase.cs"
       ],
       "engineSources": [],
-      "referenceSources": [],
+      "referenceSources": [
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs"
+      ],
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs"
       ],
@@ -15776,6 +15940,7 @@
         "runtime/Original/Projectile.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/Mission.cs",
         "source-reference/Original/CharacterDependencies/WeaponBase.cs"
@@ -15955,6 +16120,7 @@
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/Animation/IKArmController.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/FloorStreakPainter.cs",
         "source-reference/Original/CharacterDependencies/IKArmController.cs",
@@ -16675,6 +16841,7 @@
         "runtime/Original/FullSource/ResourceManager.cs",
         "runtime/Original/FullSource/UIInteriorModeTextIndicator.cs",
         "runtime/Original/FullSource/UINegotiation.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
         "source-reference/Original/CharacterDependencies/AudioSurface.cs",
         "source-reference/Original/CharacterDependencies/CharacterAudio.cs",
         "source-reference/Original/CharacterDependencies/DoorController.cs",
@@ -16752,6 +16919,7 @@
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/CharacterAudio.cs",
         "source-reference/Original/CharacterDependencies/DoorController.cs",
@@ -16964,6 +17132,7 @@
         "runtime/Original/FullSource/WeaponComponentFlashlight.cs",
         "runtime/Original/FullSource/WeaponComponentLaser.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
         "source-reference/Original/CharacterDependencies/CharacterAudio.cs",
         "source-reference/Original/CharacterDependencies/Communication.cs",
         "source-reference/Original/CharacterDependencies/DoorController.cs",
@@ -17123,6 +17292,7 @@
         "runtime/Original/FullSource/AmmunitionBase.cs",
         "runtime/Original/FullSource/WeaponBase.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs",
         "source-reference/Original/CharacterDependencies/WeaponBase.cs"
       ]
     },
@@ -17234,6 +17404,7 @@
         "runtime/Original/FullSource/Projectile.cs",
         "runtime/Original/FullSource/TeamTutorialMarksmanTarget.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterDependencies/Limb.cs"
       ]
     },
@@ -17302,6 +17473,7 @@
         "runtime/Original/FullSource/Projectile.cs",
         "runtime/Original/Weapons/ProjectileFlight.Methods.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterDependencies/Limb.cs"
       ]
     },
@@ -19024,6 +19196,7 @@
         "runtime/Original/FullSource/DroppedWeaponProxy.cs",
         "runtime/Original/FullSource/Room.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/Room.cs"
       ]
@@ -19155,12 +19328,15 @@
         "runtime/Original/FullSource/Calibre.cs"
       ],
       "engineSources": [],
-      "referenceSources": [],
+      "referenceSources": [
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Calibre.cs"
+      ],
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Calibre.cs"
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/AmmunitionLoader.cs",
         "runtime/Original/AmmunitionBase.cs",
         "runtime/Original/FullSource/AmmunitionBase.cs",
         "runtime/Original/FullSource/AmmunitionStack.cs",
@@ -19170,6 +19346,7 @@
         "runtime/Original/FullSource/MarksmanRifle.cs",
         "runtime/Original/FullSource/WeaponBase.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs",
         "source-reference/Original/CharacterDependencies/WeaponBase.cs"
       ]
     },
@@ -19460,7 +19637,9 @@
       "engineSources": [
         "runtime/Engine/WeaponHost.cs"
       ],
-      "referenceSources": [],
+      "referenceSources": [
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs"
+      ],
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Casing.cs"
       ],
@@ -19473,6 +19652,7 @@
         "runtime/Original/Weapons/CyclingBolt.cs",
         "runtime/Original/Weapons/WeaponMechanism.Methods.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs",
         "source-reference/Original/CharacterDependencies/WeaponBase.cs"
       ]
     },
@@ -19885,6 +20065,7 @@
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterDependencies/ArmsControl.cs",
         "source-reference/Original/CharacterDependencies/BallisticObstacle.cs",
         "source-reference/Original/CharacterDependencies/CharacterAudio.cs",
@@ -20327,6 +20508,7 @@
         "runtime/Original/FullSource/WeaponComponent.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/DoorController.cs",
         "source-reference/Original/CharacterDependencies/Grenade.cs",
@@ -20376,6 +20558,7 @@
         "runtime/Original/FullSource/MarksmanRound.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/Grenade.cs",
         "source-reference/Original/CharacterDependencies/Limb.cs"
@@ -20413,6 +20596,7 @@
         "runtime/Engine/SceneLoader.cs",
         "runtime/Original/FullSource/Casing.cs",
         "runtime/Original/FullSource/Grenade.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
         "source-reference/Original/CharacterDependencies/Grenade.cs"
       ]
     },
@@ -20475,7 +20659,8 @@
         "runtime/Original/FullSource/WeaponComponentLaser.cs",
         "runtime/Original/FullSource/WeaponPointer.cs",
         "runtime/Original/FullSource/WeaponReticle.cs",
-        "source-reference/Original/Animation/ArmIKSolver.cs"
+        "source-reference/Original/Animation/ArmIKSolver.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs"
       ]
     },
     {
@@ -20912,6 +21097,7 @@
         "runtime/Engine/ProjectileFlightHost.cs",
         "runtime/Engine/ProjectileMaterialHost.cs",
         "runtime/Engine/SceneLoader.cs",
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/SharedVariable.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/VariableSynchronizer.cs",
@@ -21561,6 +21747,8 @@
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/Limb.cs",
         "source-reference/Original/CharacterDependencies/SerializableExtraSettings.cs",
@@ -21792,6 +21980,9 @@
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/UIAmmoRenderItem.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/BallisticObstacle.cs",
         "source-reference/Original/CharacterDependencies/FloorStreakPainter.cs",
@@ -21974,6 +22165,7 @@
         "runtime/Original/Projectile.cs",
         "runtime/Original/Weapons/ProjectileFlight.Methods.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterDependencies/FloorStreakPainter.cs",
         "source-reference/Original/CharacterDependencies/Limb.cs"
       ]
@@ -22209,6 +22401,7 @@
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
         "runtime/Original/Projectile.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterDependencies/Limb.cs"
       ]
     },
@@ -22228,7 +22421,8 @@
         "runtime/Original/FullSource/ArmIKSolver.cs",
         "runtime/Original/FullSource/MarksmanRound.cs",
         "runtime/Original/FullSource/Projectile.cs",
-        "source-reference/Original/Animation/ArmIKSolver.cs"
+        "source-reference/Original/Animation/ArmIKSolver.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs"
       ]
     },
     {
@@ -23097,6 +23291,8 @@
         "runtime/Original/FullSource/Explosive.cs",
         "runtime/Original/FullSource/Grenade.cs",
         "runtime/Original/FullSource/Projectile.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterDependencies/Grenade.cs"
       ]
     },
@@ -23109,14 +23305,17 @@
         "runtime/Original/FullSource/AmmunitionBase.cs"
       ],
       "engineSources": [],
-      "referenceSources": [],
+      "referenceSources": [
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs"
+      ],
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs"
       ],
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Original/Ballistics/ProjectileMaterial.Methods.cs",
-        "runtime/Original/FullSource/Projectile.cs"
+        "runtime/Original/FullSource/Projectile.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs"
       ]
     },
     {
@@ -24040,6 +24239,7 @@
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/Grenade.cs",
         "source-reference/Original/CharacterDependencies/Limb.cs",
@@ -24163,7 +24363,9 @@
         "runtime/Original/FullSource/AmmunitionBase.cs"
       ],
       "engineSources": [],
-      "referenceSources": [],
+      "referenceSources": [
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs"
+      ],
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs"
       ],
@@ -24171,7 +24373,8 @@
       "referencedBy": [
         "runtime/Original/Ballistics/BallisticMaterial.cs",
         "runtime/Original/FullSource/BallisticMaterial.cs",
-        "runtime/Original/FullSource/Projectile.cs"
+        "runtime/Original/FullSource/Projectile.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs"
       ]
     },
     {
@@ -24183,7 +24386,9 @@
         "runtime/Original/FullSource/AmmunitionBase.cs"
       ],
       "engineSources": [],
-      "referenceSources": [],
+      "referenceSources": [
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs"
+      ],
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs"
       ],
@@ -24193,7 +24398,8 @@
         "runtime/Original/Ballistics/BallisticMaterial.cs",
         "runtime/Original/Ballistics/ProjectileMaterial.Methods.cs",
         "runtime/Original/FullSource/BallisticMaterial.cs",
-        "runtime/Original/FullSource/Projectile.cs"
+        "runtime/Original/FullSource/Projectile.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs"
       ]
     },
     {
@@ -24673,6 +24879,8 @@
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/UIAmmoRenderItem.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/DoorController.cs",
         "source-reference/Original/CharacterDependencies/Grenade.cs",
@@ -24943,6 +25151,8 @@
         "runtime/Original/Weapons/WeaponMechanism.Methods.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/WeaponBase.cs"
       ]
@@ -25129,6 +25339,9 @@
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/ArmsControl.cs",
         "source-reference/Original/CharacterDependencies/CharacterAudio.cs",
@@ -26083,6 +26296,7 @@
         "runtime/Engine/OriginalArmSequences.cs",
         "runtime/Engine/PlayerPrefs.cs",
         "runtime/Engine/PresentationHost.cs",
+        "runtime/Engine/Rendering/Texture2D.cs",
         "runtime/Engine/SceneLoader.cs",
         "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Engine/WeaponHost.cs",
@@ -28040,6 +28254,7 @@
         "runtime/Original/FullSource/WeaponBase.cs",
         "runtime/Original/Weapons/WeaponMechanism.Methods.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterDependencies/WeaponBase.cs"
       ]
     },
@@ -28478,6 +28693,8 @@
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/UIAmmoRenderItem.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/DoorController.cs",
         "source-reference/Original/CharacterDependencies/Grenade.cs",
@@ -29687,6 +29904,7 @@
         "source-reference/Original/Animation/ArmIKSolver.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/Emitter.cs",
         "source-reference/Original/CharacterDependencies/FloorStreakPainter.cs",
@@ -29883,6 +30101,7 @@
         "runtime/Original/Weapons/ProjectileFlight.Methods.cs",
         "source-reference/Original/Animation/ArmIKSolver.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/MuscleControl.cs",
         "source-reference/Original/CharacterDependencies/Physiology.cs",
@@ -30378,6 +30597,7 @@
         "runtime/Original/Weapons/WeaponMechanism.Methods.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterDependencies/Emitter.cs",
         "source-reference/Original/CharacterDependencies/Limb.cs",
         "source-reference/Original/CharacterDependencies/WeaponBase.cs"
@@ -30584,6 +30804,7 @@
         "runtime/Original/FullSource/UIMarksmanIndicator.cs",
         "runtime/Original/InputKey.cs",
         "runtime/Original/InputMapping.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterDependencies/Mission.cs"
       ]
     },
@@ -30698,7 +30919,8 @@
       "referencedBy": [
         "runtime/Original/AmmunitionBase.cs",
         "runtime/Original/FullSource/AmmunitionBase.cs",
-        "runtime/Original/FullSource/MarksmanBoltActionVisualization.cs"
+        "runtime/Original/FullSource/MarksmanBoltActionVisualization.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs"
       ]
     },
     {
@@ -30826,6 +31048,7 @@
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/Communication.cs",
         "source-reference/Original/CharacterDependencies/FloorStreakPainter.cs",
@@ -30883,7 +31106,8 @@
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs",
-        "runtime/Original/FullSource/WeaponFactory.cs"
+        "runtime/Original/FullSource/WeaponFactory.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs"
       ]
     },
     {
@@ -31050,6 +31274,8 @@
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/CharacterAudio.cs",
         "source-reference/Original/CharacterDependencies/CharacterDialog.cs",
@@ -31231,7 +31457,8 @@
         "runtime/Original/FullSource/BloodStream.cs",
         "runtime/Original/FullSource/EditorWeaponComponent.cs",
         "runtime/Original/FullSource/Projectile.cs",
-        "runtime/Original/FullSource/WeaponFactory.cs"
+        "runtime/Original/FullSource/WeaponFactory.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs"
       ]
     },
     {
@@ -31264,7 +31491,8 @@
         "runtime/Original/FullSource/LimbRenderer.cs",
         "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/Projectile.cs",
-        "runtime/Original/FullSource/WeaponFactory.cs"
+        "runtime/Original/FullSource/WeaponFactory.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs"
       ]
     },
     {
@@ -32024,6 +32252,11 @@
         "source-reference/Original/ArmDependencies/ArmsControl.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Calibre.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/UIAmmoRenderItem.cs",
         "source-reference/Original/BehaviorDesigner/BehaviorGameGUI.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/ArmsControl.cs",
@@ -32597,6 +32830,10 @@
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/UIAmmoRenderItem.cs",
         "source-reference/Original/BehaviorDesigner/BehaviorGameGUI.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/BallisticObstacle.cs",
@@ -33544,6 +33781,7 @@
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/FloorStreakPainter.cs",
         "source-reference/Original/CharacterDependencies/Mission.cs",
@@ -33727,6 +33965,7 @@
         "runtime/Original/FullSource/Mixer.cs",
         "runtime/Original/FullSource/PropagatingAudioSample.cs",
         "runtime/Original/FullSource/UINegotiation.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
         "source-reference/Original/CharacterDependencies/CharacterAudio.cs",
         "source-reference/Original/CharacterDependencies/Communication.cs",
         "source-reference/Original/CharacterDependencies/DoorController.cs",
@@ -33814,6 +34053,19 @@
       "referencedBy": [
         "runtime/Original/FullSource/GlobalContext.cs"
       ]
+    },
+    {
+      "name": "PngTextureDecoder",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/Rendering/Texture2D.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
     },
     {
       "name": "PointerEventData",
@@ -34080,7 +34332,9 @@
         "runtime/Engine/ProjectileFlightHost.cs",
         "runtime/Engine/ProjectileMaterialHost.cs"
       ],
-      "referenceSources": [],
+      "referenceSources": [
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs"
+      ],
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Projectile.cs"
       ],
@@ -34130,6 +34384,7 @@
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/ArmorClass.cs",
         "source-reference/Original/CharacterDependencies/CharacterScoreCard.cs",
@@ -34162,6 +34417,7 @@
         "runtime/Original/FullSource/Projectile.cs",
         "runtime/Original/FullSource/WeaponBase.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterDependencies/WeaponBase.cs"
       ]
     },
@@ -34179,7 +34435,8 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
-        "runtime/Original/FullSource/Projectile.cs"
+        "runtime/Original/FullSource/Projectile.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs"
       ]
     },
     {
@@ -34199,7 +34456,8 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/ProjectileMaterialHost.cs",
-        "runtime/Original/FullSource/Projectile.cs"
+        "runtime/Original/FullSource/Projectile.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs"
       ]
     },
     {
@@ -34344,6 +34602,7 @@
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/DoorController.cs",
         "source-reference/Original/CharacterDependencies/Emitter.cs",
@@ -34556,6 +34815,8 @@
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/ArmorClass.cs",
         "source-reference/Original/CharacterDependencies/CharacterAudio.cs",
@@ -34730,6 +34991,7 @@
         "runtime/Original/FullSource/WeaponComponentLaser.cs",
         "runtime/Original/FullSource/WeaponPointer.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/FloorStreakPainter.cs",
         "source-reference/Original/CharacterDependencies/Physiology.cs",
@@ -34782,6 +35044,7 @@
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/FloorStreakPainter.cs",
         "source-reference/Original/CharacterDependencies/Mission.cs",
@@ -34830,6 +35093,7 @@
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/FloorStreakPainter.cs",
         "source-reference/Original/CharacterDependencies/Mission.cs",
@@ -35532,6 +35796,7 @@
         "runtime/Original/FullSource/WeaponBase.cs",
         "runtime/Original/FullSource/WeaponComponentSlot.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs",
         "source-reference/Original/CharacterDependencies/WeaponBase.cs"
       ]
     },
@@ -35710,6 +35975,8 @@
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/Emitter.cs",
         "source-reference/Original/CharacterDependencies/Grenade.cs",
@@ -35760,6 +36027,7 @@
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
         "source-reference/Original/CharacterDependencies/Grenade.cs",
         "source-reference/Original/CharacterDependencies/Limb.cs",
         "source-reference/Original/CharacterDependencies/TeamOperator.cs",
@@ -35939,6 +36207,7 @@
         "runtime/Original/FullSource/WeaponBase.cs",
         "runtime/Original/Weapons/WeaponMechanism.Methods.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterDependencies/DoorController.cs",
         "source-reference/Original/CharacterDependencies/WeaponBase.cs"
       ]
@@ -37571,6 +37840,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/AmmunitionLoader.cs",
         "runtime/Engine/SceneLoader.cs"
       ]
     },
@@ -37764,6 +38034,8 @@
         "runtime/Original/Weapons/CharacterTrigger.Methods.cs",
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/UIAmmoRenderItem.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/Grenade.cs",
         "source-reference/Original/CharacterDependencies/Mission.cs",
@@ -38606,6 +38878,8 @@
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/UIAmmoRenderItem.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/Grenade.cs",
         "source-reference/Original/CharacterDependencies/IKArmController.cs",
@@ -40409,7 +40683,8 @@
         "runtime/Original/FullSource/Item.cs",
         "runtime/Original/FullSource/MarksmanTargetIndicator.cs",
         "runtime/Original/FullSource/UICampaignMenuLocation.cs",
-        "runtime/Original/FullSource/UIMarksmanIndicator.cs"
+        "runtime/Original/FullSource/UIMarksmanIndicator.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs"
       ]
     },
     {
@@ -40700,6 +40975,7 @@
         "source-reference/Original/Animation/CharacterBody.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/Limb.cs",
         "source-reference/Original/CharacterDependencies/WeaponBase.cs"
@@ -40787,6 +41063,7 @@
         "runtime/Original/FullSource/Threading/ThreadedJob.cs",
         "runtime/Original/FullSource/UINegotiation.cs",
         "runtime/Original/Weapons/ProjectileFlight.Methods.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterDependencies/CharacterAudio.cs",
         "source-reference/Original/CharacterDependencies/Communication.cs"
       ]
@@ -41718,6 +41995,7 @@
         "runtime/Engine/OriginalHandModes.cs",
         "runtime/Engine/ParticleSystem.SerializedState.cs",
         "runtime/Engine/PresentationHost.cs",
+        "runtime/Engine/Rendering/Texture2D.cs",
         "runtime/Engine/Resources.cs",
         "runtime/Engine/RuntimeContracts.cs",
         "runtime/Engine/SceneLoader.cs",
@@ -41913,6 +42191,7 @@
         "runtime/Engine/Rendering/GraphicsPrimitives.cs",
         "runtime/Engine/Rendering/TextureTransfers.cs",
         "runtime/Engine/SerializationTypes.cs",
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Original/Ballistics/BallisticWindow.cs",
         "runtime/Original/Foundation/FullSerializer/Internal/DirectConverters/GUIStyleState_DirectConverter.cs",
         "runtime/Original/FullSource/BallisticWindow.cs",
@@ -42259,6 +42538,7 @@
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/BallisticObstacle.cs",
         "source-reference/Original/CharacterDependencies/CharacterAudio.cs",
@@ -42605,6 +42885,8 @@
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/UIAmmoRenderItem.cs",
         "source-reference/Original/BehaviorDesigner/BehaviorGameGUI.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/ArmsControl.cs",
@@ -42750,7 +43032,8 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Original/FullSource/Projectile.cs",
-        "runtime/Original/Weapons/ProjectileFlight.Methods.cs"
+        "runtime/Original/Weapons/ProjectileFlight.Methods.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs"
       ]
     },
     {
@@ -42792,6 +43075,7 @@
         "runtime/Engine/OriginalArmPhysicsHost.cs"
       ],
       "referenceSources": [
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs",
         "source-reference/Original/CharacterDependencies/ArmorClass.cs",
         "source-reference/Original/CharacterDependencies/Grenade.cs"
       ],
@@ -43067,14 +43351,17 @@
         "runtime/Original/FullSource/UIAmmoRenderItem.cs"
       ],
       "engineSources": [],
-      "referenceSources": [],
+      "referenceSources": [
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/UIAmmoRenderItem.cs"
+      ],
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/UIAmmoRenderItem.cs"
       ],
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Original/AmmunitionBase.cs",
-        "runtime/Original/FullSource/AmmunitionBase.cs"
+        "runtime/Original/FullSource/AmmunitionBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs"
       ]
     },
     {
@@ -45462,6 +45749,7 @@
         "runtime/Original/FullSource/Utilities/TeamAvailability.cs",
         "runtime/Original/FullSource/WeaponBase.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs",
         "source-reference/Original/CharacterDependencies/WeaponBase.cs"
       ]
     },
@@ -45756,6 +46044,9 @@
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/UIAmmoRenderItem.cs",
         "source-reference/Original/BehaviorDesigner/BehaviorGameGUI.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/DoorController.cs",
@@ -46228,6 +46519,7 @@
         "source-reference/Original/Animation/IKArmController.cs",
         "source-reference/Original/Animation/IKArmSequencer.cs",
         "source-reference/Original/ArmDependencies/TeamOperator.cs",
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/IKArmController.cs",
         "source-reference/Original/CharacterDependencies/PlayerController.cs",
@@ -48161,6 +48453,7 @@
         "runtime/Engine/PrefabCloner.cs",
         "runtime/Engine/PresentationHost.cs",
         "runtime/Engine/Rendering/GraphicsPrimitives.cs",
+        "runtime/Engine/Rendering/Texture2D.cs",
         "runtime/Engine/Resources.cs",
         "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Engine/SerializedEngineTypes.cs",
@@ -48292,7 +48585,8 @@
     "AmmunitionBase": [
       "runtime/Original/AmmunitionBase.cs",
       "runtime/Original/Ballistics/AmmunitionFragments.cs",
-      "runtime/Original/FullSource/AmmunitionBase.cs"
+      "runtime/Original/FullSource/AmmunitionBase.cs",
+      "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs"
     ],
     "AmmunitionStack": [
       "runtime/Engine/WeaponHost.cs",
@@ -48378,6 +48672,10 @@
       "source-reference/Original/ArmDependencies/WeaponBase.cs",
       "source-reference/Original/CharacterDependencies/WeaponBase.cs"
     ],
+    "Calibre": [
+      "runtime/Original/FullSource/Calibre.cs",
+      "source-reference/Original/Assets/Scripts/Assembly-CSharp/Calibre.cs"
+    ],
     "CameraFieldOfViewMode": [
       "runtime/Original/FullSource/SerializableGraphicsSettings.cs",
       "runtime/Original/FullSource/SerializableGraphicsSettings_0_0_8_005.cs",
@@ -48387,7 +48685,8 @@
     ],
     "Casing": [
       "runtime/Engine/WeaponHost.cs",
-      "runtime/Original/FullSource/Casing.cs"
+      "runtime/Original/FullSource/Casing.cs",
+      "source-reference/Original/Assets/Scripts/Assembly-CSharp/Casing.cs"
     ],
     "ChamberState": [
       "runtime/Engine/WeaponHost.cs",
@@ -48476,7 +48775,8 @@
     ],
     "ExplosionMode": [
       "runtime/Original/Ballistics/AmmunitionFragments.cs",
-      "runtime/Original/FullSource/AmmunitionBase.cs"
+      "runtime/Original/FullSource/AmmunitionBase.cs",
+      "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs"
     ],
     "ExtraSettingsChangedEvent": [
       "runtime/Original/FullSource/SerializableExtraSettings.cs",
@@ -48498,11 +48798,13 @@
     ],
     "FragmentationMode": [
       "runtime/Original/AmmunitionBase.cs",
-      "runtime/Original/FullSource/AmmunitionBase.cs"
+      "runtime/Original/FullSource/AmmunitionBase.cs",
+      "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs"
     ],
     "FragmentationSpecification": [
       "runtime/Original/Ballistics/AmmunitionFragments.cs",
-      "runtime/Original/FullSource/AmmunitionBase.cs"
+      "runtime/Original/FullSource/AmmunitionBase.cs",
+      "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs"
     ],
     "Global": [
       "runtime/Engine/WeaponHost.cs",
@@ -48656,7 +48958,8 @@
       "runtime/Original/Ballistics/ProjectileMaterial.Methods.cs",
       "runtime/Original/FullSource/Projectile.cs",
       "runtime/Original/Projectile.cs",
-      "runtime/Original/Weapons/ProjectileFlight.Methods.cs"
+      "runtime/Original/Weapons/ProjectileFlight.Methods.cs",
+      "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs"
     ],
     "ProjectileEvent": [
       "runtime/Engine/BallisticEngine.cs",
@@ -48773,8 +49076,13 @@
       "runtime/Original/FullSource/HTTPRequest.cs",
       "runtime/Original/FullSource/LimbVitalFunction.cs",
       "runtime/Original/FullSource/UIMessageBox.cs",
+      "source-reference/Original/Assets/Scripts/Assembly-CSharp/AmmunitionBase.cs",
       "source-reference/Original/CharacterDependencies/ArmorClass.cs",
       "source-reference/Original/CharacterDependencies/Grenade.cs"
+    ],
+    "UIAmmoRenderItem": [
+      "runtime/Original/FullSource/UIAmmoRenderItem.cs",
+      "source-reference/Original/Assets/Scripts/Assembly-CSharp/UIAmmoRenderItem.cs"
     ],
     "UnityEvent": [
       "runtime/Engine/UnityEventTyped.cs",
