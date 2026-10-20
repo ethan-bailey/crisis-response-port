@@ -272,6 +272,50 @@ if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("S
             catch(Exception error){throw new NotSupportedException($"Cannot load original field {id}:{property.Name} ({field.FieldType.FullName})",error);}
         }
     }
+    static object ReadAnimationCurve(JsonElement value,SceneLoadResult result){
+        if(value.ValueKind!=JsonValueKind.Object)throw new NotSupportedException("Expected serialized AnimationCurve object");
+        var seen=new HashSet<string>(StringComparer.Ordinal);var keysElement=default(JsonElement);var hasKeys=false;var version=0;var pre=0;var post=0;var rotation=0;var hasVersion=false;var hasPre=false;var hasPost=false;var hasRotation=false;
+        foreach(var field in value.EnumerateObject()){
+            if(!seen.Add(field.Name))throw new NotSupportedException($"Duplicate serialized AnimationCurve field {field.Name}");
+            switch(field.Name){
+                case "serializedVersion":version=field.Value.GetInt32();hasVersion=true;break;
+                case "m_Curve":if(field.Value.ValueKind!=JsonValueKind.Array)throw new NotSupportedException("AnimationCurve m_Curve must be an array");keysElement=field.Value;hasKeys=true;break;
+                case "m_PreInfinity":pre=field.Value.GetInt32();hasPre=true;break;
+                case "m_PostInfinity":post=field.Value.GetInt32();hasPost=true;break;
+                case "m_RotationOrder":rotation=field.Value.GetInt32();hasRotation=true;break;
+                default:throw new NotSupportedException($"Unsupported serialized AnimationCurve field {field.Name}");
+            }
+        }
+        if(!hasVersion||!hasKeys||!hasPre||!hasPost||!hasRotation)throw new NotSupportedException("Serialized AnimationCurve is missing version, keys, wrap, or rotation metadata");
+        if(version!=2)throw new NotSupportedException($"Unsupported AnimationCurve serializedVersion {version}");
+        if(!Enum.IsDefined(typeof(WrapMode),pre)||!Enum.IsDefined(typeof(WrapMode),post))throw new NotSupportedException("Unsupported AnimationCurve wrap mode");
+        var keys=new List<Keyframe>();
+        foreach(var element in keysElement.EnumerateArray()){
+            if(element.ValueKind!=JsonValueKind.Object)throw new NotSupportedException("AnimationCurve key must be an object");
+            var fields=new HashSet<string>(StringComparer.Ordinal);var keyVersion=0;var tangentMode=0;var time=0f;var valueAtTime=0f;var inSlope=0f;var outSlope=0f;var hasKeyVersion=false;var hasTangent=false;var hasTime=false;var hasValue=false;var hasIn=false;var hasOut=false;
+            foreach(var field in element.EnumerateObject()){
+                if(!fields.Add(field.Name))throw new NotSupportedException($"Duplicate serialized AnimationCurve key field {field.Name}");
+                switch(field.Name){
+                    case "serializedVersion":keyVersion=field.Value.GetInt32();hasKeyVersion=true;break;
+                    case "time":time=ReadAnimationFloat(field.Value,"time");hasTime=true;break;
+                    case "value":valueAtTime=ReadAnimationFloat(field.Value,"value");hasValue=true;break;
+                    case "inSlope":inSlope=ReadAnimationFloat(field.Value,"inSlope");hasIn=true;break;
+                    case "outSlope":outSlope=ReadAnimationFloat(field.Value,"outSlope");hasOut=true;break;
+                    case "tangentMode":tangentMode=field.Value.GetInt32();hasTangent=true;break;
+                    default:throw new NotSupportedException($"Unsupported serialized AnimationCurve key field {field.Name}");
+                }
+            }
+            if(!hasKeyVersion||!hasTime||!hasValue||!hasIn||!hasOut||!hasTangent)throw new NotSupportedException("Serialized AnimationCurve key is missing authored metadata");
+            if(keyVersion!=2)throw new NotSupportedException($"Unsupported AnimationCurve key serializedVersion {keyVersion}");
+            keys.Add(new Keyframe(time,valueAtTime,inSlope,outSlope){tangentMode=tangentMode,serializedVersion=keyVersion});
+        }
+        return new AnimationCurve(keys.ToArray()){preWrapMode=(WrapMode)pre,postWrapMode=(WrapMode)post,serializedPreInfinity=pre,serializedPostInfinity=post,serializedVersion=version,serializedRotationOrder=rotation};
+    }
+    static float ReadAnimationFloat(JsonElement value,string field){
+        if(value.ValueKind==JsonValueKind.Number)return value.GetSingle();
+        if(value.ValueKind==JsonValueKind.String)return float.Parse(value.GetString()!,System.Globalization.CultureInfo.InvariantCulture);
+        throw new NotSupportedException($"AnimationCurve {field} must be a number or serialized float string");
+    }
     static object ReadValue(JsonElement value,Type type,SceneLoadResult result){if(type==typeof(JsonElement))return value.Clone();
         if(type==typeof(JsonElement))return value.Clone();if(value.ValueKind==JsonValueKind.Null)return null;
         var nullable=Nullable.GetUnderlyingType(type);if(nullable!=null)return ReadValue(value,nullable,result);
@@ -296,6 +340,7 @@ if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("S
         if(type.IsGenericType&&typeof(IList).IsAssignableFrom(type)){if(type.GetGenericArguments()[0]==typeof(byte)&&value.ValueKind==JsonValueKind.String){var raw=Convert.FromHexString(value.GetString()!);var decoded=(IList)Activator.CreateInstance(type)!;foreach(var b in raw)decoded.Add(b);return decoded;}if(type.GetGenericArguments()[0]==typeof(int)&&value.ValueKind==JsonValueKind.String){var raw=Convert.FromHexString(value.GetString()!);if(raw.Length%4!=0)throw new FormatException($"Invalid serialized int list length: {raw.Length}");var decoded=(IList)Activator.CreateInstance(type)!;for(var offset=0;offset<raw.Length;offset+=4)decoded.Add(System.Buffers.Binary.BinaryPrimitives.ReadInt32LittleEndian(raw.AsSpan(offset,4)));return decoded;}if(value.ValueKind!=JsonValueKind.Array)throw new NotSupportedException($"Cannot load serialized list {type.FullName} from {value.GetRawText()}");
             var list=(IList)Activator.CreateInstance(type);var element=type.GetGenericArguments()[0];foreach(var item in value.EnumerateArray())list.Add(ReadValue(item,element,result));return list;
         }
+        if(type==typeof(AnimationCurve))return ReadAnimationCurve(value,result);
         if(value.ValueKind!=JsonValueKind.Object)throw new NotSupportedException($"Expected serialized object for {type.FullName}");
         object instance=type==typeof(AnimationCurve)?System.Runtime.CompilerServices.RuntimeHelpers.GetUninitializedObject(type):Activator.CreateInstance(type,true)!;
         foreach(var property in value.EnumerateObject()){

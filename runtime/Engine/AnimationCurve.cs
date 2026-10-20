@@ -2,7 +2,7 @@ namespace UnityEngine;
 
 public struct Keyframe(float time,float value,float inTangent,float outTangent) {
     public float time=time,value=value,inTangent=inTangent,outTangent=outTangent;
-    public int tangentMode;
+    public int tangentMode;public int serializedVersion;
 }
 public sealed class AnimationCurve {
     Keyframe[] values;
@@ -24,7 +24,7 @@ public sealed class AnimationCurve {
     public int length=>values.Length;
     public bool clampOutside {get;init;}
     public int serializedPreInfinity {get;init;}
-    public int serializedPostInfinity {get;init;}
+    public int serializedPostInfinity {get;init;}public int serializedVersion {get;init;}public int serializedRotationOrder {get;init;}
     public AnimationCurve(params Keyframe[] keys){values=keys.OrderBy(k=>k.time).ToArray();
         for(int i=1;i<values.Length;i++)if(values[i].time<=values[i-1].time)throw new NotSupportedException("Duplicate curve key time");}
     public float Evaluate(float time){
