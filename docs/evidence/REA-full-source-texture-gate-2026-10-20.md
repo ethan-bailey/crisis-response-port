@@ -54,3 +54,13 @@ The run used the commands in the passed-gates table plus:
 - `dotnet runtime/Checks/bin/Debug/net8.0/Crisis.Runtime.Checks.dll`
 
 Codespaces-session logs listed above are ephemeral; no workflow ID/artifact is claimed. The current test SHA is the code checkpoint SHA, not a claim that the blocked browser/gameplay acceptance passed.
+
+
+## Follow-up branch synchronization and PR closeout (October 20, 2026)
+
+- Codespace began clean at source-tested SHA `3979faa642053d0f584d2f91982c1b88cbe0eb62`. Fetched the feature ref and fast-forwarded only (no reset/rebase): `git merge --ff-only origin/feature/full-source-characterbody-integration` succeeded, applying the two documentation commits. New local HEAD is `5e592630131a9e81d316fb604ded2e402fc9c929`; worktree is clean and `git diff --check` passed. Runtime/source files are unchanged, so `3979faa...` remains the tested code SHA.
+- Fresh `git ls-remote origin refs/heads/develop/wasm` confirmed `2fc0a8e93be97c4d99123910fad4bd25798e71a8`. PR metadata still reports base snapshot `5d83c4ef627baa6dc9009ef9a585c0b70e0d9435`; no base merge was attempted.
+- Updated PR #42 description through GitHub issue metadata; result reports state open. The description now cites code SHA `3979faa...`, branch tip `5e59263...`, links the evidence/handoff, distinguishes pass/fail/not-run gates, and keeps the PR in draft (confirmed in PR metadata before update).
+- Re-ran Actions lookup for source SHA `3979faa...`: empty workflow_runs list; no workflow ID/artifact.
+- Codespace probe `command -v Unity || command -v unity` returned no executable. The extracted project Assets tree contains 315 `.asset` files, but the probe does not show an authoritative serialized/imported Texture2D object for the failing references. This is not evidence to synthesize imported texture data or IDs.
+- No new runtime/build/browser checks were run after the documentation-only fast-forward; prior code check results above remain bound to `3979faa...`. Prefab and native contract failures remain unchanged; browser/WASM/HTTP gates remain unpassed.
