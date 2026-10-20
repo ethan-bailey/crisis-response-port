@@ -1,47 +1,54 @@
 # NEXT AGENT — Crisis Response WASM port
 
-Updated 2026-10-20 after the fresh Codespaces validation and asset-closure scan.
+Updated 2026-10-20 after the PR #42 local verification and Actions-usage review.
 
-## PR and tested source
+## Current repository state
 
-- PR #42 targets `develop/wasm`; it remains open, draft, unmerged, and GitHub reports `mergeable: false`.
-- Feature branch: `feature/full-source-characterbody-integration`. Remote head before this final handoff commit: `b6596649614a38601bca6c95d75f3aae1b748655`.
-- Full Codespaces scan ran at local HEAD `5833ab50742e8103cc1e2db4c80dfb59cd2c797c`; runtime implementation source is `26b07b660e892b9e97025bf2b8ebe700b7753764` (“Package recovered ammunition dependency closure”). The worktree had four modified tracked documentation/audit files and no runtime source changes.
-- The full test output and dependency audit were written under `/tmp/pr42-local-scan-20261020/`, `/tmp/pr42-original-scene-dependencies.md`, and `/tmp/pr42-scene-package.json`.
-- Recovery provenance: workflow run `38582072502`, artifact `11903811738`, SHA-256 `cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d`.
-- The Codespaces checkout started at `5833ab5` while the remote feature branch was two commits ahead. The new remote triage and handoff commits advance it further. Preserve the four local changes, then synchronize by fast-forward and reconcile overlapping documentation; do not reset, clean, or discard them.
+- PR #42 targets develop/wasm and remains open, draft, unmerged, and not mergeable. Keep it draft/open. Do not merge until all local acceptance gates pass and required CI is available.
+- Feature branch: feature/full-source-characterbody-integration. At the start of this final handoff refresh, Codespaces HEAD and remote feature head were 61e64b27f010204fb1cb0e29e0e27000bc11b959. The working tree was clean. The current fetched origin/develop/wasm SHA was 2fc0a8e93be97c4d99123910fad4bd25798e71a8.
+- No merge, rebase, deploy, preview change, reset, or clean was performed. PR #7, #56, and #57 were not touched.
+- The runtime and original-source trees are unchanged from implementation SHA 26b07b660e892b9e97025bf2b8ebe700b7753764 through 61e64b27; that was confirmed with git diff --quiet over runtime, game, and source-reference/Original. The inventory commit adds source identities only.
+- The original Codespaces stashes remain untouched: stash@{0} preserves the staged inventory before fast-forward; stash@{1} preserves the earlier pending Codespaces edits. The source inventory in stash@{1} is byte-identical to the committed 659-source inventory. Do not drop either stash while reconciling user changes.
 
-## Verified this session
+## Gates verified in this continuation
 
-- Calibre contract passes. Exact Codespaces output:
+- Dependency inventory: python3 scripts/inventory_source_dependencies.py --check passed. Output: 659 sources, 1,695 symbols, 1,329 reachable files, 119 ambiguous names requiring ownership review. The five recovered ammunition source identities are in commit 61e64b27; Calibre and UIAmmoRenderItem remain visibly flagged for ambiguous ownership.
+- Runtime project compilation: at source SHA 61e64b27f010204fb1cb0e29e0e27000bc11b959, command dotnet build runtime/Crisis.Runtime.csproj -v:q exited 0; Build succeeded and compiler_error_count=0. Log: /tmp/pr42-runtime-build-61e64b2.log; SHA-256 c8f868835dc96319240f92812e2ef7832455120bae6c8a8d56a04ab771b97cb. This is a .NET runtime compile only, not a WASM gameplay build.
+- Actor prefab provenance: source-reference/Original/CharacterDependencies/ActorPrefabs/Operator.prefab and its .meta match the recovered export byte-for-byte. Prefab SHA-256 94bcda5de74f45d83f4bbf88e80874b8f77bf0339d307294187b085c03170536; meta SHA-256 8d01cf639201add925686afbe85b7b1fd8a7bd8ec6c41b6749d76b568ef63b0d; GUID 2e00922aa35d9a8438c52f1ec69254605.
+- source-reference/Original/CharacterDependencies/ActorPrefabs/Occupant.prefab and its .meta match the recovered export byte-for-byte. Prefab SHA-256 9094b840c49d6c53f1fa077c274561ab5cbeedb20f85bdaae023ad67cb8c419; meta SHA-256 3e39f95ea92613c4c4eb1c2c2c82775b9ed075cdf7a925d980ef5b3eca9c5737; GUID 8363ad318a650364ebdaa8c237f65bfe.
+- Provenance comparison command used the preserved source-reference prefabs against /tmp/cpr-recovery-artifact-11903811738/export/ExportedProject/Assets/Resources/characters/{Operator,Occupant}.prefab and corresponding .meta files; all four cmp checks passed. This proves source identity and serialized bytes, not Unity lifecycle or runtime ownership.
+- The earlier focused Calibre contract passed with exact output: PASS: original Calibre GUID, fileID, type, path, serialized name, and prefab lifetime. That pass came from the full scan at local HEAD 5833ab50742e8103cc1e2db4c80dfb59cd2c797c, using implementation SHA 26b07b660e892b9e97025bf2b8ebe700b7753764. Runtime/original-source files have not changed since that implementation SHA.
 
-```text
-PASS: original Calibre GUID, fileID, type, path, serialized name, and prefab lifetime
-```
+## Full scan and remaining blockers
 
-- `bash /tmp/pr42-local-scan.sh`: 17 gates; 16 commands exited 0 and `runtime_contracts` exited 134. `dependency_inventory --check` passes with the locally refreshed inventory.
-- `scene_dependency_audit.py` reports 417 assets, 708 edges, and 1 unresolved GUID after 1,910 serialized reference occurrences.
-- `extract_runtime_scene.py` reports 1,382 assets, 21,366 records, 14,249 object references, 508 binary assets, 19,016,011 bytes, and 11 unresolved GUID references.
-- Full gate list, evidence, classifications, and human dispositions: [consolidated PR #42 triage](docs/evidence/logs/triage-2026-10-20-pr42.md).
-- Fresh Codespaces logs are in `/tmp/pr42-local-scan-20261020/*.log`; they were not copied into the repository. The checked-in checkpoint and REA documents now include the run summary and exact paths.
+The one consolidated Codespaces scan was bash /tmp/pr42-local-scan.sh at 5833ab50742e8103cc1e2db4c80dfb59cd2c797c. Sixteen of 17 gate commands exited 0; runtime_contracts exited 134 after the Calibre pass. Logs are in /tmp/pr42-local-scan-20261020/*.log and the summary is /tmp/pr42-local-scan-20261020/summary.txt. The committed complete triage is docs/evidence/logs/triage-2026-10-20-pr42.md.
 
-## Remaining blockers and dispositions
+Runtime contract failure:
 
-| Gate | Current evidence | Human input or disposition |
+System.NotSupportedException: Unity built-in object 0000000000000000f000000000000000:10303 has no source-faithful runtime mapping for expected Material; refusing a synthetic substitute.
+
+Other unresolved source/dependency gates from the consolidated scan:
+
+| Gate | Evidence | Required source or disposition |
 | --- | --- | --- |
-| Projectile built-in Material | Runtime contract fails closed on built-in GUID `0000000000000000f000000000000000`, fileID `10303`; no source-faithful mapping exists. Calibre passed immediately before it. | Provide authoritative mapping from the exact Unity editor version or defer the affected projectile/material feature. |
-| .308 Mesh | GUID `b4b69dc6c74eeb54cbd22d28e37f9a19`, Mesh fileID `4300000`, absent from the recovered export and repository metadata. | Provide the original Mesh and matching `.meta`, or defer the affected .308 ammunition/casing feature. |
-| Mixer dependencies | Five missing GUID identities referenced from `Assets/AudioMixerController/Master mixer.mixer`; no matching metadata in available sources. | Provide the original mixer sub-assets and metadata, or defer mixer integration. |
-| Shader, Sprite, and texture imports | Built-in Shader fileID `46`, imported Sprite GUID `8464cbc48daa246479808d64b86fb8c2` fileID `21300000`, and earlier Operator texture failure (`head 5.png`, fileID `2800000`, `textureFormat: 12`, SHA `3979faa...`) still lack verified exact Unity import mappings. The texture failure was not rerun in this scan. | Provide authoritative exact-version Unity importer/object data or defer the affected visual/lifecycle gates; no synthetic mappings or raw-PNG substitute. |
-| Binary import object records | Earlier SHA `3979faa...` scan found 452 audio/image binary references without serialized object records. The current 508 binary assets prove file presence only. | Recover the original Unity object records in one batch, then rerun closure; otherwise defer or approve a documented exception. |
-| Original actor lifecycle and ownership | Actor/source audits pass, but actual Operator/Occupant lifecycle and independent physiology ownership have not passed; foundation output says `fullGameParity: false`. | Defer until original imports and unknown fields/components resolve; preserve original prefabs and ownership. |
-| Controller playback and two-actor flow | Controller audit exits 0 but reports `controllerPlaybackImplemented: false`. No full original spawn/equip/movement/hit/physiology/destruction flow has passed. | Implement from original source and test before browser gameplay acceptance; no synthetic actor behavior. |
-| Browser gameplay and final build | Prior Chromium/WebKit runs cover WASM startup/input only. No final exact-SHA gameplay or post-merge HTTP verification exists. | Run after local source and gameplay gates pass. |
+| Built-in Material and Shader | Material fileID 10303 stops the runtime contract; Shader fileID 46 is also unresolved. | Exact-version Unity built-in mappings, or human-approved deferment. Never synthesize. |
+| Imported Sprite and texture objects | Sprite GUID 8464cbc48daa246479808d64b86fb8c2, fileID 21300000 lacks a demonstrated imported-object mapping. Earlier Operator texture failure was at SHA 3979faa642053d0f584d2f91982c1b88cbe0eb62, head 5.png, Texture2D fileID 2800000, textureFormat 12; it was not rerun in the latest full scan. | Exact Unity importer/object records, or human-approved deferment. Do not substitute PNG pixels. |
+| .308 Mesh | GUID b4b69dc6c74eeb54cbd22d28e37f9a19, Mesh fileID 4300000, absent from the recovered export and repository metadata. | Original Mesh and matching .meta, or human-approved deferment. |
+| Mixer sub-assets | Five GUID identities referenced by Master mixer.mixer are absent from the recovered export and repository metadata. | Original mixer dependencies and metadata, or human-approved deferment. |
+| Binary object records | Earlier scan found 452 audio/image binary references without serialized object records; file presence alone is not proof of Unity object identity. | Recover original Unity records, or human-approved exception/deferment. |
+| Actor lifecycle and ownership | Actual Operator/Occupant lifecycle, unknown serialized fields/components, and independent physiology ownership have not passed runtime checks. | Resolve original components/imports and test actual prefabs; keep unknowns visible and fail closed. |
+| Controller playback | Audit reports controllerPlaybackImplemented=false. | Implement original callback playback from source and verify. |
+| Two-actor gameplay | No full original spawn/equip/movement/hit/physiology/destruction flow has passed. | Complete after source-faithful actor lifecycle/controller work. No synthetic actors. |
+| Browser/game acceptance | Previous Chromium/WebKit evidence tested startup and input only. No full gameplay test on the exact current source, final WASM build, or final local HTTP smoke exists. | Run only after source, lifecycle, and two-actor gates pass; integrate develop/wasm with a normal merge commit immediately before final verification. |
 
-## Closeout
+PR #42 is not merge-ready: the local runtime contract still fails and the actor/controller/gameplay/browser gates remain incomplete. Full counts and proposed human dispositions are in the consolidated triage and the refreshed REA evidence.
 
-PR #42 is **not merge-ready**: the runtime contract fails, reference closure is incomplete, actor/controller/gameplay gates remain incomplete, and browser gameplay is unverified. No workflow was started, no merge/rebase/deploy/preview change occurred, and PR #7, #56, and #57 were not changed.
+## Actions usage
 
-CI is waiting on Actions restore.
+The owner reports Actions credits will not return for roughly one month from 2026-10-20. No workflow was dispatched during this continuation. For commit 61e64b27, the GitHub workflow-run lookup returned an empty list and combined status returned no checks; this is limited to the PR head and does not enumerate unrelated repository runs. Nothing on this PR head was available to cancel. Deleting artifacts would reclaim storage, not minutes. Do not touch billing, enable paid usage, or cancel unrelated workflows.
 
-Next: obtain the exact Unity source/import data or have a human defer/waive the listed assets; finish original controller and actor lifecycle work; rerun full validation and actual two-actor gameplay; only then make a normal merge commit immediately before exact-SHA build, Chromium/WebKit gameplay, and HTTP smoke verification. Keep PR #42 draft/open.
+## Recovery provenance and next steps
+
+- Original recovery workflow run 38582072502; artifact 11903811738; archive SHA-256 cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d.
+- Next, continue with source-faithful Unity dependency and actor lifecycle work in batches. Run the focused contract after a genuine source-backed fix; keep unrecoverable dependencies explicit for human disposition.
+- Once local gates pass and Actions credits return, integrate the then-current develop/wasm using a normal merge commit immediately before the exact-source WASM build, full Chromium and WebKit gameplay checks, and local HTTP smoke. Keep PR #42 open/draft and do not claim merge readiness before that evidence exists.
