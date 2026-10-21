@@ -1,7 +1,7 @@
 using System.IO.Compression;using System.Text.Json;using Crisis.Runtime;using Crisis.Runtime.Weapons;using UnityEngine;
 public static class WeaponContracts {
  public static string Run(string path){
-  using var stream=new GZipStream(File.OpenRead(path),CompressionMode.Decompress);string config=new StreamReader(stream).ReadToEnd();
+  using var stream=new GZipStream(File.OpenRead(path),CompressionMode.Decompress);var configRoot=System.Text.Json.Nodes.JsonNode.Parse(new StreamReader(stream).ReadToEnd())!.AsObject();configRoot["armPhysics"]=System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(Path.Combine(Path.GetDirectoryName(path)!,"original-arm-physics.json")));string config=configRoot.ToJsonString();
   using var serializedPackage=JsonDocument.Parse(config);var packageRoot=serializedPackage.RootElement;
   var ammoPackage=packageRoot.GetProperty("ammoPackage");
   var resolvedCalibre=AmmunitionLoader.ResolveOriginalCalibreReference(ammoPackage,"57cfc851e0e47374d98db0383b39cddf","114724804207875695",new RuntimeWorld()) as Crisis.Runtime.FullSource.Calibre ?? throw new Exception("Original Calibre reference did not resolve to the source Calibre type");
