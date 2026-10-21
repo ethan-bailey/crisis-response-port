@@ -46,8 +46,8 @@ namespace Crisis.Runtime.FullSource
             return controller;
         }
 
-        public static Crisis.Runtime.Weapons.Equipment RequireEquipment(
-            CharacterBody actor, Crisis.Runtime.Weapons.Equipment equipment)
+        public static Crisis.Runtime.FullSource.Equipment RequireEquipment(
+            CharacterBody actor, Crisis.Runtime.FullSource.Equipment equipment)
         {
             RequireActor(actor);
             if (equipment == null || !object.ReferenceEquals(actor.Equipment, equipment))
