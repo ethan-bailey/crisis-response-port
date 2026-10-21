@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "sourceArchive": "crisis-response-recovery-original-source.zip",
+  "sourceArchiveSha256": "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
+  "sourcePrefab": "Assets/Resources/characters/Operator.prefab",
+  "records": [
+    {
+      "path": "Assets/Texture2D/head 1.png",
+      "metaPath": "Assets/Texture2D/head 1.png.meta",
+      "guid": "7b0292089147ec442a3161d62c0470e9",
+      "fileID": "2800000",
+      "className": "Texture2D",
+      "bytes": 24831,
+      "sha256": "697287c9f935c44f26f7cf371e450190dff30ad7130f1215aed08bf77d504e4a",
+      "metaBytes": 2015,
+      "metaSha256": "5ef959e30973299b9fc98f4ead3bc90620c14a325cdda9a362f168b501a7a96a",
+      "width": 128,
+      "height": 128,
+      "importer": {
+        "fileIDToRecycleName": "{}",
+        "isReadable": 1,
+        "textureFormat": 4,
+        "maxTextureSize": 2048,
+        "textureType": 0,
+        "textureShape": 1
+      },
+      "runtimeDisposition": "Original PNG decoded to CPU RGBA32; exact source GUID/fileID/importer bytes are retained. Unity platform-compressed output is not claimed."
+    },
+    {
+      "path": "Assets/Texture2D/head 2.png",
+      "metaPath": "Assets/Texture2D/head 2.png.meta",
+      "guid": "dc8bececa667dc347998e6dd8e283f71",
+      "fileID": "2800000",
+      "className": "Texture2D",
+      "bytes": 23505,
+      "sha256": "960c66ae50ee08f4db00726c1cd1047c55c3389bef5b1ca71bf63e3dab5d0e2a",
+      "metaBytes": 2015,
+      "metaSha256": "1581e80bde4a4821a63effc520acc41843ba3c376bbaf19c306261c64ecf9468",
+      "width": 128,
+      "height": 128,
+      "importer": {
+        "fileIDToRecycleName": "{}",
+        "isReadable": 1,
+        "textureFormat": 4,
+        "maxTextureSize": 2048,
+        "textureType": 0,
+        "textureShape": 1
+      },
+      "runtimeDisposition": "Original PNG decoded to CPU RGBA32; exact source GUID/fileID/importer bytes are retained. Unity platform-compressed output is not claimed."
+    },
+    {
+      "path": "Assets/Texture2D/head 3.png",
+      "metaPath": "Assets/Texture2D/head 3.png.meta",
+      "guid": "3fc8ffd8d01921d4facd66216f545b69",
+      "fileID": "2800000",
+      "className": "Texture2D",
+      "bytes": 22623,
+      "sha256": "873816d96dbc040026ebeae2168b5793f2dbf99fa68d558ebbb9540a47e79e48",
+      "metaBytes": 2014,
+      "metaSha256": "66e4f593c2a6af0e28a1f05a9f9b834574b9a551af448a8e5096483e44b66046",
+      "width": 128,
+      "height": 128,
+      "importer": {
+        "fileIDToRecycleName": "{}",
+        "isReadable": 1,
+        "textureFormat": 4,
+        "maxTextureSize": 2048,
+        "textureType": 0,
+        "textureShape": 1
+      },
+      "runtimeDisposition": "Original PNG decoded to CPU RGBA32; exact source GUID/fileID/importer bytes are retained. Unity platform-compressed output is not claimed."
+    },
+    {
+      "path": "Assets/Texture2D/head 4.png",
+      "metaPath": "Assets/Texture2D/head 4.png.meta",
+      "guid": "19e41141a5e7d8840aa0ea0a1ef95fa1",
+      "fileID": "2800000",
+      "className": "Texture2D",
+      "bytes": 24823,
+      "sha256": "7667e423920985a3d2bf3eee4f2c20e6fa55c6ba32ce31a5c7d9e0d960cf6b02",
+      "metaBytes": 2014,
+      "metaSha256": "6e601d137daa39a85a4c8143d042872b8eda6acc17dde2be1bf1407622dd2fd5",
+      "width": 128,
+      "height": 128,
+      "importer": {
+        "fileIDToRecycleName": "{}",
+        "isReadable": 1,
+        "textureFormat": 4,
+        "maxTextureSize": 2048,
+        "textureType": 0,
+        "textureShape": 1
+      },
+      "runtimeDisposition": "Original PNG decoded to CPU RGBA32; exact source GUID/fileID/importer bytes are retained. Unity platform-compressed output is not claimed."
+    },
+    {
+      "path": "Assets/Texture2D/head 5.png",
+      "metaPath": "Assets/Texture2D/head 5.png.meta",
+      "guid": "d701c84638d2d934080508b9fb88f6ce",
+      "fileID": "2800000",
+      "className": "Texture2D",
+      "bytes": 17847,
+      "sha256": "f2b00675b758baa62300b9e3c9e941c891211da335aef1598d76de2c0b7f0c6b",
+      "metaBytes": 2015,
+      "metaSha256": "778492cae10beb0f6d20fb129240ff0be57dd17cee00334421c17328bcd6d78e",
+      "width": 128,
+      "height": 128,
+      "importer": {
+        "fileIDToRecycleName": "{}",
+        "isReadable": 1,
+        "textureFormat": 12,
+        "maxTextureSize": 2048,
+        "textureType": 0,
+        "textureShape": 1
+      },
+      "runtimeDisposition": "Original PNG decoded to CPU RGBA32; exact source GUID/fileID/importer bytes are retained. Unity platform-compressed output is not claimed."
+    }
+  ],
+  "runtimeCopy": {
+    "path": "game/assets/operator/skins/skin_004.png",
+    "sha256": "697287c9f935c44f26f7cf371e450190dff30ad7130f1215aed08bf77d504e4a",
+    "matchesOriginalHeadTexture": "head 1.png"
+  }
+}
