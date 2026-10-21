@@ -51,6 +51,99 @@ public static class ArmSequenceContracts {
         Check(result.RootElement.GetProperty("right").GetArrayLength() == 3 && !result.RootElement.GetProperty("playbackImplemented").GetBoolean(), "Browser transport keeps scope explicit");
         try { OriginalArmSequences.Load(json.Replace("\"action\": 0", "\"action\": 999")); throw new Exception("Invalid enum accepted"); }
         catch (InvalidDataException) { }
-        return JsonSerializer.Serialize(new {status = "pass", originalClasses = 6, originalPrefabs = 7, originalFrames = 21, playbackImplemented = false, originalHandModeExecuted = true});
+        using var controllerProof = JsonDocument.Parse(FullSourceControllerPlaybackContracts.Run(world));
+        var controllerRoot = controllerProof.RootElement;
+        Check(controllerRoot.GetProperty("status").GetString() == "pass" &&
+              controllerRoot.GetProperty("callbackObserved").GetBoolean() &&
+              controllerRoot.GetProperty("actorIsolation").GetBoolean(),
+              "Original IKArmController sequencer must play on FullSource.CharacterBody and dispatch callbacks to its owning actor");
+        return JsonSerializer.Serialize(new {
+            status = "pass", originalClasses = 6, originalPrefabs = 7, originalFrames = 21,
+            fullSourceControllerPlaybackImplemented = true,
+            browserSequenceCompositionPlaybackImplemented = false,
+            originalHandModeExecuted = true
+        });
+    }
+}
+
+
+public static class FullSourceControllerPlaybackContracts {
+    public sealed class PlaybackBodyFixture : Crisis.Runtime.FullSource.CharacterBody {
+        public PlaybackBodyFixture() { }
+        public override void Awake() { }
+    }
+
+    private static (GameObject root, PlaybackBodyFixture body, Crisis.Runtime.FullSource.IKArmController controller)
+        CreateActor(RuntimeWorld world, string name) {
+        var root = new GameObject(name, world);
+        root.SetActive(false);
+
+        var body = root.AddComponent<PlaybackBodyFixture>();
+        body.enabled = false;
+
+        // The Wait frame exercises only the original sequencer's timing and
+        // callback path. Solver instances are deliberately not scene components
+        // so unrelated physical rig initialization is outside this contract.
+        body.rightArm = (Crisis.Runtime.FullSource.ArmIKSolver)
+            System.Runtime.CompilerServices.RuntimeHelpers.GetUninitializedObject(
+                typeof(Crisis.Runtime.FullSource.ArmIKSolver));
+        body.leftArm = (Crisis.Runtime.FullSource.ArmIKSolver)
+            System.Runtime.CompilerServices.RuntimeHelpers.GetUninitializedObject(
+                typeof(Crisis.Runtime.FullSource.ArmIKSolver));
+
+        var controller = root.AddComponent<Crisis.Runtime.FullSource.IKArmController>();
+        body.armController = controller;
+        root.SetActive(true);
+        world.Tick(0.01f);
+
+        if (controller.RightSequencer == null || controller.LeftSequencer == null)
+            throw new InvalidOperationException("Original IKArmController did not initialize both sequencers on its FullSource actor");
+        return (root, body, controller);
+    }
+
+    public static string Run(RuntimeWorld world) {
+        var first = CreateActor(world, "FullSource playback actor A");
+        var second = CreateActor(world, "FullSource playback actor B");
+        try {
+            if (ReferenceEquals(first.controller, second.controller) ||
+                ReferenceEquals(first.controller.RightSequencer, second.controller.RightSequencer) ||
+                !ReferenceEquals(first.body.armController, first.controller) ||
+                !ReferenceEquals(second.body.armController, second.controller))
+                throw new InvalidOperationException("FullSource actors do not own independent original IK controllers and sequencers");
+
+            var sequence = new IKArmSequenceRuntime();
+            sequence.right.Add(new IKArmAnimationFrame {
+                action = IKArmAction.Wait,
+                time = 0.01f,
+                callback = IKControllerInvoke.LowerWeapon
+            });
+            first.controller.Play(sequence);
+
+            // The first tick completes the Wait frame; the next invokes its
+            // source callback and advances the sequencer to completion.
+            world.Tick(0.05f);
+            world.Tick(0.05f);
+
+            var callbackObserved = first.body.IsLoweringWeapon &&
+                first.controller.RightSequencer.IsReady;
+            var actorIsolation = !second.body.IsLoweringWeapon &&
+                second.controller.RightSequencer.IsReady;
+            if (!callbackObserved || !actorIsolation)
+                throw new InvalidOperationException("Original LowerWeapon callback did not play on, and remain isolated to, its FullSource actor");
+
+            return JsonSerializer.Serialize(new {
+                status = "pass",
+                authoritativeActorType = typeof(Crisis.Runtime.FullSource.CharacterBody).FullName,
+                callback = nameof(IKControllerInvoke.LowerWeapon),
+                callbackObserved,
+                actorIsolation,
+                independentControllers = true,
+                sequencerAdvancedToCompletion = true
+            });
+        }
+        finally {
+            UnityEngine.Object.DestroyImmediate(first.root);
+            UnityEngine.Object.DestroyImmediate(second.root);
+        }
     }
 }
