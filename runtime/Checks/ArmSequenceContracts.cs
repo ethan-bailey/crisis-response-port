@@ -56,6 +56,7 @@ public static class ArmSequenceContracts {
         Check(controllerRoot.GetProperty("status").GetString() == "pass" &&
               controllerRoot.GetProperty("callbackObserved").GetBoolean() &&
               controllerRoot.GetProperty("actorIsolation").GetBoolean(),
+              controllerRoot.GetProperty("triggerCallbackObserved").GetBoolean(),
               "Original IKArmController sequencer must play on FullSource.CharacterBody and dispatch callbacks to its owning actor");
         return JsonSerializer.Serialize(new {
             status = "pass", originalClasses = 6, originalPrefabs = 7, originalFrames = 21,
@@ -131,12 +132,33 @@ public static class FullSourceControllerPlaybackContracts {
             if (!callbackObserved || !actorIsolation)
                 throw new InvalidOperationException("Original LowerWeapon callback did not play on, and remain isolated to, its FullSource actor");
 
+            var onTarget = typeof(Crisis.Runtime.FullSource.ArmIKSolver)
+                .GetProperty(nameof(Crisis.Runtime.FullSource.ArmIKSolver.OnTarget))!
+                .GetSetMethod(true)!;
+            onTarget.Invoke(first.body.rightArm, new object[] { true });
+            var triggerSequence = new IKArmSequenceRuntime();
+            triggerSequence.right.Add(new IKArmAnimationFrame {
+                action = IKArmAction.Wait,
+                time = 0.01f,
+                callback = IKControllerInvoke.FireWeapon
+            });
+            first.controller.Play(triggerSequence);
+            world.Tick(0.05f);
+            world.Tick(0.05f);
+
+            var triggerCallbackObserved = first.body.QueryTrigger();
+            var triggerActorIsolation = !second.body.QueryTrigger();
+            if (!triggerCallbackObserved || !triggerActorIsolation ||
+                !first.controller.RightSequencer.IsReady || !second.controller.RightSequencer.IsReady)
+                throw new InvalidOperationException("Original FireWeapon callback did not dispatch through the actor's original arm solver");
+
             return JsonSerializer.Serialize(new {
                 status = "pass",
                 authoritativeActorType = typeof(Crisis.Runtime.FullSource.CharacterBody).FullName,
-                callback = nameof(IKControllerInvoke.LowerWeapon),
+                callbacks = new[] { nameof(IKControllerInvoke.LowerWeapon), nameof(IKControllerInvoke.FireWeapon) },
                 callbackObserved,
-                actorIsolation,
+                triggerCallbackObserved,
+                actorIsolation = actorIsolation && triggerActorIsolation,
                 independentControllers = true,
                 sequencerAdvancedToCompletion = true
             });
