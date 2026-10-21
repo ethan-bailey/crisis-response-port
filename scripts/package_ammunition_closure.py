@@ -19,6 +19,28 @@ def load_gzip_json(path: Path) -> dict:
         return json.load(stream)
 
 
+def merge_builtin_resource_data(ammo: dict, scene: dict) -> None:
+    """Carry the exact-version source records into the standalone ammo package."""
+    source_builtins = scene.get("builtinObjects", {})
+    if source_builtins:
+        merged_builtins = copy.deepcopy(ammo.get("builtinObjects", {}))
+        for guid, objects in source_builtins.items():
+            merged_builtins.setdefault(guid, {}).update(objects)
+        ammo["builtinObjects"] = merged_builtins
+
+    resource_pack = scene.get("builtinResourceRecords")
+    material_required = source_builtins.get(UNITY_BUILTIN_RESOURCE_GUID, {}).get("10303") == "Material"
+    if material_required and not isinstance(resource_pack, dict):
+        raise ValueError("scene package maps built-in Material 10303 without its recovered source records")
+    if resource_pack is not None:
+        records = resource_pack.get("records", {})
+        if resource_pack.get("unityVersion") != "2017.2.0f3" or resource_pack.get("revision") != "46dda1414e51":
+            raise ValueError("scene package built-in resource records have an unexpected Unity version or revision")
+        if records.get("10303", {}).get("type") != "Material" or records.get("46", {}).get("type") != "Shader":
+            raise ValueError("scene package is missing the source-backed Material 10303 or Shader 46 record")
+        ammo["builtinResourceRecords"] = copy.deepcopy(resource_pack)
+
+
 def closure(scene: dict, ammo_package: dict) -> tuple[dict, set, set, set, set, dict, list, set]:
     source_assets = scene.get("assets", {})
     source_guid_paths = {str(guid).lower(): path for guid, path in scene.get("guidPaths", {}).items()}
@@ -114,12 +136,20 @@ def main() -> int:
         source_metadata = scene.get("guidMetadata", {})
         package_metadata = ammo.get("guidMetadata", {})
         missing_metadata = sorted(g for g in used_guids if g in source_metadata and package_metadata.get(g) != source_metadata[g])
+        expected_builtin_package = copy.deepcopy(ammo)
+        merge_builtin_resource_data(expected_builtin_package, scene)
+        stale_builtin_data = (ammo.get("builtinObjects", {}) != expected_builtin_package.get("builtinObjects", {}) or
+                              ammo.get("builtinResourceRecords") != expected_builtin_package.get("builtinResourceRecords"))
+        expected_builtin_pack_sha = (scene.get("builtinResourceRecords") or {}).get("packSha256")
         complete = (not unresolved and not missing_paths and not any(stale_script_maps.values())
-                        and not missing_metadata and audit.get("complete") is True)
+                        and not missing_metadata and not stale_builtin_data
+                        and audit.get("builtinResourcePackSha256") == expected_builtin_pack_sha
+                        and audit.get("complete") is True)
         print(json.dumps({"complete": complete, "rootAssets": roots,
                           "resolvedAssets": sorted(existing_asset_paths),
                           "missingPackageAssets": missing_paths,
                               "staleScriptMaps": stale_script_maps,
+                          "staleBuiltinData": stale_builtin_data,
                               "missingGuidMetadata": missing_metadata,
                           "unresolved": unresolved, "sourceSha256": source_sha256}, indent=2))
         return 0 if complete else 1
@@ -140,17 +170,14 @@ def main() -> int:
         if guid in source_metadata:
             ammo_metadata[guid] = copy.deepcopy(source_metadata[guid])
     ammo["guidMetadata"] = ammo_metadata
-    source_builtins = scene.get("builtinObjects", {})
-    if source_builtins:
-        merged_builtins = copy.deepcopy(ammo.get("builtinObjects", {}))
-        merged_builtins.update(source_builtins)
-        ammo["builtinObjects"] = merged_builtins
+    merge_builtin_resource_data(ammo, scene)
     ammo["closureAudit"] = {
         "sourceSceneSha256": source_sha256,
         "rootAssets": roots,
         "resolvedAssets": sorted(assets),
         "resolvedSourceScripts": sorted(source_scripts),
         "builtinGuids": sorted(builtin_guids),
+        "builtinResourcePackSha256": (scene.get("builtinResourceRecords") or {}).get("packSha256"),
         "unresolved": [{"asset": asset, "guid": guid, "reason": reason}
                        for asset, guid, reason in unresolved],
         "complete": not unresolved,

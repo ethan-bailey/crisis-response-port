@@ -10,6 +10,7 @@ import inventory_source_dependencies as inventory
 from check_characterbody_ownership import active_full_runtime_lines
 from summarize_characterbody_compile import summarize, compare
 import extract_runtime_scene as runtime_scene
+import package_ammunition_closure as ammo_closure
 
 
 class DiagnosticDiffTests(unittest.TestCase):
@@ -81,6 +82,21 @@ class RuntimePackageInputTests(unittest.TestCase):
         self.assertEqual(shader['fields']['m_ParsedForm']['m_Name'], 'Standard')
         self.assertEqual(len(__import__('base64').b64decode(material['rawBase64'])), material['rawBytes'])
         self.assertEqual(len(__import__('base64').b64decode(shader['rawBase64'])), shader['rawBytes'])
+
+    def test_builtin_resource_records_flow_into_standalone_ammunition_package(self):
+        guid = ammo_closure.UNITY_BUILTIN_RESOURCE_GUID
+        pack = {
+            'packSha256': 'pinned-pack', 'revision': '46dda1414e51', 'unityVersion': '2017.2.0f3',
+            'records': {'46': {'type': 'Shader'}, '10303': {'type': 'Material'}},
+        }
+        ammo = {'builtinObjects': {guid: {'45': 'Shader'}}}
+        scene = {'builtinObjects': {guid: {'46': 'Shader', '10303': 'Material'}},
+                 'builtinResourceRecords': pack}
+        ammo_closure.merge_builtin_resource_data(ammo, scene)
+        self.assertEqual(ammo['builtinObjects'][guid], {'45': 'Shader', '46': 'Shader', '10303': 'Material'})
+        self.assertEqual(ammo['builtinResourceRecords'], pack)
+        with self.assertRaisesRegex(ValueError, 'without its recovered source records'):
+            ammo_closure.merge_builtin_resource_data({}, {'builtinObjects': {guid: {'10303': 'Material'}}})
 
     def test_original_operator_and_occupant_prefabs_are_packaged(self):
         root = Path(runtime_scene.__file__).resolve().parents[1]
