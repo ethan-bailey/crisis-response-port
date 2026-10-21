@@ -68,3 +68,31 @@ PR #42 remains open/draft. Read-only check on code SHA 1cd7294287021c0c5e5cb7b24
 - Owner authorized an alternative if the exact source could not be found. The recovered project contains Assets/Material/Projectile chunks.mat (GUID f20eaaaec00f311469b053da1a02332f, fileID 2100000) and its authored Shader Forge_Lit (Basic).shader (GUID 58809839c7f61d54f8933d60fa11e0a9, fileID 4800000). Exact files and matching .meta files are preserved under source-reference/Original/Assets/{Material,Shader}; byte comparisons against the recovery artifact passed.
 - The scoped compatibility disposition is source-reference/Compatibility/Projectile-fragments-material-replacement.json. It records source artifact identity and hashes, the original unresolved pointer, the candidate pointer, and the prefab scope. The original prefab remains unchanged. This candidate is not identity-equivalent evidence for built-in Material 10303 and does not establish Shader 46.
 - Source-discovery/disposition is complete; runtime replacement is not wired. The next actionable step is a strictly scoped runtime/package overlay for only the original fragment prefab renderer references, retaining the original serialized pointer and candidate provenance, then run the focused runtime contract. Until that passes, the material runtime gate remains open. Other actor/controller/gameplay/browser/CI gates remain open; keep PR #42 draft and do not merge.
+
+
+## Loop-breaker continuation — 2026-10-21
+
+Verified the live PR #42 head in the existing Codespace: `17b00cecdbea65c98af6705a4ab7e389b9b7c7c7`. The tracked worktree was clean; the sole pre-existing untracked file remains `runtime/Browser/wwwroot/browser-input.mjs` (+197 lines). It was preserved.
+
+One consolidated local scan was run against that head. Observed results:
+- Original enum check passed.
+- Foundation source verification passed: 479 original/decompiled source identities, pinned plugin assembly, no recovered rule-body edits.
+- Original arm-controller reference audit exited pass but reports `controllerPlaybackImplemented: false`; playback acceptance remains open.
+- Isolated EngineChecks passed: 69 graphics/source API assertions.
+- FoundationChecks passed: 120 assertions; output confirms the full original CharacterBody build is a separate gate.
+- Runtime checks project built successfully (warnings only).
+- Full runtime contract exited 134 after the prefab reference/clone and original Calibre identity checks passed. It fails while loading `Assets/GameObject/Projectile fragments.prefab` because built-in Material GUID `0000000000000000f000000000000000`, fileID `10303`, has no runtime mapping.
+- `git diff --check` passed. No Actions workflow was dispatched. GitHub reports no workflow runs or status checks for the exact PR head.
+
+The current consolidated gap list is:
+1. Material 10303 and Shader fileID 46 lack exact Unity 2017.2.0f3 resource records. A project-authored material candidate is documented in `source-reference/Compatibility/Projectile-fragments-material-replacement.json`, but it has not been wired. Its referenced Shader Forge export contains AssetRipper's `DummyShaderTextExporter` body, so do not treat it as original shader behavior. Any compatibility integration must retain the original pointer/provenance and be restricted to the two MeshRenderer records in the fragment prefab.
+2. Imported Sprite and texture object identities/importer behavior remain unverified. Earlier binary import records are not proven by file presence alone.
+3. Actual Operator/Occupant lifecycle and independent physiology ownership have not passed.
+4. Original controller playback remains unimplemented.
+5. Independent two-actor spawn/equip/movement/hit/physiology/destruction gameplay has not passed.
+6. Final exact-source WASM gameplay, Chromium/WebKit gameplay, and local HTTP acceptance remain open; prior browser evidence covers startup/input only.
+7. Required CI is unavailable on this head; no current GitHub status checks exist.
+
+Already dispositioned: five mixer GUID false positives were fixed by parsing only serialized PPtrs; the owner-approved .308 casing Mesh mapping was applied only to the casing root and is explicitly an approximation, not identity recovery.
+
+Next entry point: resolve the fragment material gate as a narrowly scoped compatibility overlay only if the candidate and its shader can be loaded without manufacturing Unity identities or claiming shader parity. Otherwise keep the exact resource gate fail-closed and defer it pending original Unity resource data or an explicit waiver of the visual/material fidelity requirement. Continue with the other source-backed gates independently. Keep PR #42 open and draft; do not merge.
