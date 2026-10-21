@@ -93,3 +93,15 @@ The earlier 2026-10-14 report correctly recorded that this candidate was then un
 ## Unity 2017.2 built-in resource records — resolution path
 
 The remaining record failure is a different issue: `Projectile fragments.prefab` refers to Unity built-in Material GUID `0000000000000000f000000000000000`, fileID `10303`, and built-in Shader fileID `46`. These records are Editor-provided and are absent from the recovered game-content export. Resolve them from the exact Unity `2017.2.0f3` Editor resources (the version recorded for the original player): recover `Resources/unity default resources` and `Resources/unity_builtin_extra`, parse the serialized object tables, and add the real Material/Shader records and dependencies to the runtime source-resource resolver. Preserve each resource's original fileID, class/type, shader pointer, defaults, and asset provenance. Then test Material 10303 and Shader 46 by exact ID and type, plus the existing projectile contract. Do not synthesize a Material or assume a modern Unity built-in has the same serialized record.
+
+
+## Applied approved .308 casing mapping — 2026-10-21
+
+- Downloaded the original recovery artifact from run 38582072502 into the existing Codespace recovery directory; left the archived ZIP and export provenance intact. Applied `scripts/replace_missing_308_casing_mesh.py --write` to the extracted working copy.
+- The script changed only the casing root MeshFilter in `Assets/Resources/weapons/ammunition/casings/Casing .308.prefab`, from missing GUID `b4b69dc6c74eeb54cbd22d28e37f9a19` to recovered candidate GUID `cd74722033652fb409431b2947740490`. It verified the candidate .meta and reported `identity_verified: false`; the Projectile child was left unchanged. The script wrote `reports/308-casing-mesh-substitution.json` in the extracted working copy.
+- Re-extracted the runtime scene package from the patched export: 1,382 assets, 21,366 records, 14,249 object references, 508 binary assets, 19,015,302 bytes.
+- Regenerated `game/assets/weapon-runtime.json.gz` with `scripts/package_ammunition_closure.py`. Result: 29 assets, 5 source scripts, 1 built-in GUID, and zero unresolved GUID dependencies. The follow-up `--check` reports no stale script maps, no missing GUID metadata, and no unresolved dependencies.
+- Updated bundle SHA-256: `d60c4d786643ac0d07faef93c6ffad9190997a5b93d09241276e8c4602e57a3`. `git diff --check` passed.
+- Post-change runtime contract run: source prefab-reference/deferred-Awake/independent-clone check passed; exact Calibre identity check passed; then the contract still fails closed with `System.NotSupportedException` at Unity built-in Material GUID `0000000000000000f000000000000000`, fileID `10303`. The casing mapping removes the unresolved .308 source mesh dependency from the recovered ammunition closure; it does not provide built-in Unity resource records.
+
+The owner-approved compatibility mapping is now applied and packaged. Do not describe the replacement mesh as an identity recovery. The separate built-in Material/Shader resolver work remains open.
