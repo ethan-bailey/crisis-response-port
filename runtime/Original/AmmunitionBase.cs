@@ -69,7 +69,7 @@ public Availability availability;
 public Type type = Type.FMJ;
 public AnimationCurve muzzleBlastForce;
 public Calibre calibre;
-public Projectile projectile;
+public Crisis.Runtime.FullSource.Projectile projectile;
 public Casing casing;
 public UIAmmoRenderItem highPolyModel;
 public MarksmanRound marksmanRound;
