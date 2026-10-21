@@ -72,7 +72,7 @@ var runLifecycle=args.Contains("--prefab-lifecycle");if(runLifecycle||args.Conta
             }
             if(equipment!=null){
                 Crisis.Runtime.FullSource.OriginalActorIdentity.RequireEquipment(fullBody,equipment);
-                if(!ReferenceEquals(equipment,actor.Item3.GetComponentInChildren<Crisis.Runtime.FullSource.Equipment>(true)))
+                if(!behaviours.Any(component=>ReferenceEquals(component,equipment)))
                     throw new InvalidOperationException($"{actor.Item1} CharacterBody equipment is not owned by its own prefab graph");
             }
         }
