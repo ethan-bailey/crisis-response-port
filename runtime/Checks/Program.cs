@@ -26,6 +26,11 @@ var runLifecycle=args.Contains("--prefab-lifecycle");if(runLifecycle||args.Conta
     if(runLifecycle)world.Tick(1f/60f);
     if(runLifecycle)world.Tick(1f/60f);
     var bodies=new System.Collections.Generic.List<UnityEngine.MonoBehaviour>();var curves=new System.Collections.Generic.List<UnityEngine.AnimationCurve>();
+    var physiologies=new System.Collections.Generic.List<Crisis.Runtime.FullSource.Physiology>();
+    var controllers=new System.Collections.Generic.List<Crisis.Runtime.FullSource.IKArmController>();
+    var rightSolvers=new System.Collections.Generic.List<Crisis.Runtime.FullSource.ArmIKSolver>();
+    var leftSolvers=new System.Collections.Generic.List<Crisis.Runtime.FullSource.ArmIKSolver>();
+    var equipmentRefs=new System.Collections.Generic.List<Crisis.Runtime.Weapons.Equipment>();
     foreach(var actor in actors){
         var behaviours=actor.Item3.GetComponentsInChildren<UnityEngine.MonoBehaviour>(true);
         var active=behaviours.Where(component=>component.isActiveAndEnabled).ToArray();
@@ -36,6 +41,29 @@ var runLifecycle=args.Contains("--prefab-lifecycle");if(runLifecycle||args.Conta
         if(!actor.Item3.activeInHierarchy||actorBodies.Length!=1||active.Length==0||(runLifecycle&&(awoken!=active.Length||enabled!=active.Length||started!=active.Length))||(!runLifecycle&&(awoken!=0||enabled!=0||started!=0)))
             throw new InvalidOperationException($"{actor.Item1} actual prefab lifecycle failed: active={actor.Item3.activeInHierarchy}, bodies={actorBodies.Length}, behaviours={active.Length}, Awake={awoken}, OnEnable={enabled}, Start={started}");
         bodies.Add(actorBodies[0]);
+        var fullBody=(Crisis.Runtime.FullSource.CharacterBody)actorBodies[0];
+        var physiology=runLifecycle?fullBody.Physiology:null;
+        var controller=runLifecycle?fullBody.armController:null;
+        var rightSolver=runLifecycle?fullBody.rightArm:null;
+        var leftSolver=runLifecycle?fullBody.leftArm:null;
+        var equipment=runLifecycle?fullBody.Equipment:null;
+        if(runLifecycle){
+            if(physiology==null||controller==null||rightSolver==null||leftSolver==null)
+                throw new InvalidOperationException($"{actor.Item1} Awake did not bind its original physiology, IK controller, and both arm solvers");
+            Crisis.Runtime.FullSource.OriginalActorIdentity.RequirePhysiology(fullBody,physiology);
+            Crisis.Runtime.FullSource.OriginalActorIdentity.RequireController(fullBody,controller);
+            if(!behaviours.Any(component=>ReferenceEquals(component,physiology))||
+               !behaviours.Any(component=>ReferenceEquals(component,controller))||
+               !behaviours.Any(component=>ReferenceEquals(component,rightSolver))||
+               !behaviours.Any(component=>ReferenceEquals(component,leftSolver)))
+                throw new InvalidOperationException($"{actor.Item1} original CharacterBody references components outside its cloned prefab graph");
+            if(equipment!=null){
+                Crisis.Runtime.FullSource.OriginalActorIdentity.RequireEquipment(fullBody,equipment);
+                if(!ReferenceEquals(equipment,actor.Item3.GetComponentInChildren<Crisis.Runtime.Weapons.Equipment>(true)))
+                    throw new InvalidOperationException($"{actor.Item1} CharacterBody equipment is not owned by its own prefab graph");
+            }
+        }
+        physiologies.Add(physiology);controllers.Add(controller);rightSolvers.Add(rightSolver);leftSolvers.Add(leftSolver);equipmentRefs.Add(equipment);
             var originalBody=actor.Item2.GetComponentsInChildren<UnityEngine.MonoBehaviour>(true).Single(component=>component.GetType().Name=="CharacterBody");
             var curveField=originalBody.GetType().GetField("hitRecoveryCurve",flags)??throw new MissingFieldException(originalBody.GetType().FullName,"hitRecoveryCurve");
             var authoredCurve=curveField.GetValue(originalBody) as UnityEngine.AnimationCurve??throw new InvalidOperationException($"{actor.Item1} source prefab has no authored hitRecoveryCurve");
@@ -44,9 +72,11 @@ var runLifecycle=args.Contains("--prefab-lifecycle");if(runLifecycle||args.Conta
             if(ReferenceEquals(authoredCurve,clonedCurve)||authoredCurve.preWrapMode!=clonedCurve.preWrapMode||authoredCurve.postWrapMode!=clonedCurve.postWrapMode||authoredCurve.clampOutside!=clonedCurve.clampOutside||authoredCurve.serializedPreInfinity!=clonedCurve.serializedPreInfinity||authoredCurve.serializedPostInfinity!=clonedCurve.serializedPostInfinity||authoredCurve.serializedVersion!=clonedCurve.serializedVersion||authoredCurve.serializedRotationOrder!=clonedCurve.serializedRotationOrder||authoredKeys.Length!=clonedKeys.Length)throw new InvalidOperationException($"{actor.Item1} clone changed authored hitRecoveryCurve metadata");
             for(var keyIndex=0;keyIndex<authoredKeys.Length;keyIndex++){var sourceKey=authoredKeys[keyIndex];var cloneKey=clonedKeys[keyIndex];if(!sourceKey.time.Equals(cloneKey.time)||!sourceKey.value.Equals(cloneKey.value)||!sourceKey.inTangent.Equals(cloneKey.inTangent)||!sourceKey.outTangent.Equals(cloneKey.outTangent)||sourceKey.tangentMode!=cloneKey.tangentMode||sourceKey.serializedVersion!=cloneKey.serializedVersion)throw new InvalidOperationException($"{actor.Item1} clone changed authored hitRecoveryCurve key {keyIndex}");}
             curves.Add(clonedCurve);
-        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(new{mode=runLifecycle?"lifecycle":"instantiation",prefab=actor.Item1,instantiatedFromOriginalPrefab=true,activeBehaviours=active.Length,awake=awoken,onEnable=enabled,start=started,characterBody=actorBodies.Length,hitRecoveryCurveKeys=clonedCurve.keys.Length}));
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(new{mode=runLifecycle?"lifecycle":"instantiation",prefab=actor.Item1,instantiatedFromOriginalPrefab=true,activeBehaviours=active.Length,awake=awoken,onEnable=enabled,start=started,characterBody=actorBodies.Length,originalIKController=controller!=null,originalPhysiology=physiology!=null,initializedEquipment=equipment!=null,hitRecoveryCurveKeys=clonedCurve.keys.Length}));
     }
     if(ReferenceEquals(bodies[0],bodies[1])||ReferenceEquals(bodies[0].gameObject,bodies[1].gameObject)||ReferenceEquals(curves[0],curves[1]))throw new InvalidOperationException("Operator and Occupant share a CharacterBody or authored AnimationCurve instance");
+    if(runLifecycle&&(ReferenceEquals(physiologies[0],physiologies[1])||ReferenceEquals(controllers[0],controllers[1])||ReferenceEquals(rightSolvers[0],rightSolvers[1])||ReferenceEquals(leftSolvers[0],leftSolvers[1])||(equipmentRefs[0]!=null&&ReferenceEquals(equipmentRefs[0],equipmentRefs[1]))))
+        throw new InvalidOperationException("Operator and Occupant share physiology, IK controller, arm solvers, or initialized equipment");
     Console.WriteLine(runLifecycle?"Operator and Occupant lifecycle and component ownership passed in one RuntimeWorld.":"Operator and Occupant prefab instantiation and component ownership passed in one RuntimeWorld.");
     foreach(var actor in actors){UnityEngine.Object.DestroyImmediate(actor.Item3);UnityEngine.Object.DestroyImmediate(actor.Item2);}
     return;
