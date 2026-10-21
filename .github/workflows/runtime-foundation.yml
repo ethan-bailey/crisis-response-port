@@ -1,5 +1,8 @@
 name: Execute recovered original code with runtime services
 on:
+  pull_request:
+    branches: [develop/wasm]
+    paths: ['runtime/**', 'game/assets/**', 'scripts/**', '.github/workflows/runtime-foundation.yml']
   workflow_dispatch:
 
 permissions:
