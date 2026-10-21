@@ -39,6 +39,31 @@ class DiagnosticDiffTests(unittest.TestCase):
         self.assertEqual(report['compilerDiagnostics'][0]['code'],'MSB1009')
 
 
+class UnitySerializedDependencyTests(unittest.TestCase):
+    def test_mixer_parameter_guids_are_not_external_asset_edges(self):
+        internal = (
+            'a6cad62f53b20d3498b1e4290043d6e5',
+            'afbac48e663910a4ab80259dd0827f74',
+            'c97d77ee9defe194781c1ac0e6b4f82e1',
+            'd8f6aa80b67e5ed42aab0244cabd47bc',
+            'fb85821311eb68d46bcb1281a048b8a3',
+        )
+        external = '1234567890abcdef1234567890abcdef'
+        text = chr(10).join([
+            '--- !u!241 &24100000',
+            'AudioMixerController:',
+            '  m_FloatValues:',
+            *[f'    {guid}: 1' for guid in internal],
+            f'  m_OutputAudioMixerGroup: {{fileID: 24300000, guid: {external}, type: 2}}',
+        ])
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'Master mixer.mixer'
+            path.write_text(text)
+            asset = runtime_scene.parse_asset(path, 'Assets/AudioMixerController/Master mixer.mixer')
+        self.assertEqual(asset['externalGuids'], [external])
+        self.assertTrue(all(guid not in asset['externalGuids'] for guid in internal))
+
+
 class RuntimePackageInputTests(unittest.TestCase):
     def test_original_operator_and_occupant_prefabs_are_packaged(self):
         root = Path(runtime_scene.__file__).resolve().parents[1]

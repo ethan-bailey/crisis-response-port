@@ -47,6 +47,27 @@ def execution_value(value, key=None):
     return value
 
 
+def pptr_guids(records):
+    """Return GUIDs from Unity object pointers, not GUID-shaped data keys."""
+    found = set()
+
+    def walk(value):
+        if isinstance(value, dict):
+            if 'fileID' in value and 'guid' in value:
+                guid = value.get('guid')
+                if isinstance(guid, str) and re.fullmatch(r'[0-9a-f]{32}', guid.lower()):
+                    found.add(guid.lower())
+            for child in value.values():
+                walk(child)
+        elif isinstance(value, list):
+            for child in value:
+                walk(child)
+
+    for record in records:
+        walk(record.get('fields', {}))
+    return sorted(found)
+
+
 def parse_asset(path, relative):
     import yaml
     data = path.read_bytes()
@@ -65,8 +86,15 @@ def parse_asset(path, relative):
         kind, fields = next(iter(parsed.items()))
         records.append({'fileID':match.group(2), 'classID':int(match.group(1)), 'className':kind,
             'fields':execution_value(fields), 'rawYaml':raw})
+    external_guids = sorted(set(GUID.findall(text)))
+    if Path(relative).suffix.lower() == '.mixer':
+        # AudioMixer snapshots store internal parameter IDs as GUID-keyed scalar
+        # maps. Only serialized fileID+guid pointers in the parsed records are
+        # dependencies; treating every GUID-shaped map key as an asset edge
+        # invents missing source assets.
+        external_guids = pptr_guids(records)
     return {'path':relative, 'sha256':digest,'size':len(data),'sourceText':text,
-        'records':records, 'externalGuids':sorted(set(GUID.findall(text)))}
+        'records':records, 'externalGuids':external_guids}
 
 
 def runtime_asset_seeds(project):
