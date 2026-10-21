@@ -238,7 +238,8 @@ internal static class SerializedAssetResolver {
         48=>new Shader(),
         91=>new RuntimeAnimatorController(),
         134=>new PhysicMaterial(),
-        243=>new AudioMixerGroup(),
+        213=>new Sprite(),
+   243=>new AudioMixerGroup(),
         _=>throw new NotSupportedException($"Unity package asset classID {classID} ({fields.GetProperty("m_Name").GetString()}) has no runtime mapping")
     };
 }
