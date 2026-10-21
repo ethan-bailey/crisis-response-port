@@ -135,7 +135,6 @@ public static class FullSourceControllerPlaybackContracts {
             var onTarget = typeof(Crisis.Runtime.FullSource.ArmIKSolver)
                 .GetProperty(nameof(Crisis.Runtime.FullSource.ArmIKSolver.OnTarget))!
                 .GetSetMethod(true)!;
-            onTarget.Invoke(first.body.rightArm, new object[] { true });
             var triggerSequence = new IKArmSequenceRuntime();
             triggerSequence.right.Add(new IKArmAnimationFrame {
                 action = IKArmAction.Wait,
@@ -143,6 +142,7 @@ public static class FullSourceControllerPlaybackContracts {
                 callback = IKControllerInvoke.FireWeapon
             });
             first.controller.Play(triggerSequence);
+            onTarget.Invoke(first.body.rightArm, new object[] { true });
             world.Tick(0.05f);
             world.Tick(0.05f);
 
