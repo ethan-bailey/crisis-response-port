@@ -171,8 +171,10 @@ public static class SceneLoader {
     static Type ResolveScriptType(JsonElement package,string guid,string fileID){
         string name=ResolveScriptName(package,guid,fileID);
         if(name.StartsWith("Script:",StringComparison.Ordinal))return null;
+        bool explicitlyGlobal=name.StartsWith("global::",StringComparison.Ordinal);
+        if(explicitlyGlobal)name=name["global::".Length..];
         var candidates=AppDomain.CurrentDomain.GetAssemblies().SelectMany(SafeTypes)
-            .Where(t=>!t.IsAbstract&&typeof(Component).IsAssignableFrom(t)&&t.Name==name).ToArray();
+            .Where(t=>!t.IsAbstract&&typeof(Component).IsAssignableFrom(t)&&t.Name==name&&(!explicitlyGlobal||string.IsNullOrEmpty(t.Namespace))).ToArray();
         var fullSource=candidates.Where(t=>t.Namespace=="Crisis.Runtime.FullSource").ToArray();
         if(fullSource.Length==1)return fullSource[0];
         if(candidates.Length==1)return candidates[0];
