@@ -65,6 +65,23 @@ class UnitySerializedDependencyTests(unittest.TestCase):
 
 
 class RuntimePackageInputTests(unittest.TestCase):
+    def test_builtin_material_and_standard_shader_records_are_pinned_for_runtime(self):
+        root = Path(runtime_scene.__file__).resolve().parents[1]
+        pack = runtime_scene.load_builtin_resource_records(root)
+        self.assertEqual(pack['unityVersion'], '2017.2.0f3')
+        self.assertEqual(pack['revision'], '46dda1414e51')
+        self.assertEqual(pack['packSha256'], runtime_scene.BUILTIN_RESOURCE_PACK_SHA256)
+        self.assertEqual(set(pack['records']), {'46', '10303'})
+        material = pack['records']['10303']
+        shader = pack['records']['46']
+        self.assertEqual(material['type'], 'Material')
+        self.assertEqual(material['fields']['m_Name'], 'Default-Material')
+        self.assertEqual(material['fields']['m_Shader'], {'m_FileID': 0, 'm_PathID': 46})
+        self.assertEqual(shader['type'], 'Shader')
+        self.assertEqual(shader['fields']['m_ParsedForm']['m_Name'], 'Standard')
+        self.assertEqual(len(__import__('base64').b64decode(material['rawBase64'])), material['rawBytes'])
+        self.assertEqual(len(__import__('base64').b64decode(shader['rawBase64'])), shader['rawBytes'])
+
     def test_original_operator_and_occupant_prefabs_are_packaged(self):
         root = Path(runtime_scene.__file__).resolve().parents[1]
         seeds = set(runtime_scene.runtime_asset_seeds(root))

@@ -33,9 +33,39 @@ BUILTIN_OBJECTS = {
         '10102':'Font', '10210':'Mesh',
     },
     '0000000000000000f000000000000000': {
-        '45':'Shader', '46':'Shader', '208':'Shader',
+        '45':'Shader', '46':'Shader', '208':'Shader', '10303':'Material',
     },
 }
+BUILTIN_RESOURCE_PACK_SHA256 = '9e2015f94ab41aa19a4304104f9f24723809e71ab4b061313b67995954751ac8'
+
+
+def load_builtin_resource_records(repository_root=None):
+    """Load only the exact-version built-in records used by serialized references."""
+    root = Path(repository_root) if repository_root else Path(__file__).resolve().parents[1]
+    path = root / 'source-reference/Unity/2017.2.0f3/builtin-resource-records.json'
+    data = path.read_bytes()
+    digest = hashlib.sha256(data).hexdigest()
+    if digest != BUILTIN_RESOURCE_PACK_SHA256:
+        raise ValueError(f'Unity built-in resource pack SHA-256 mismatch: {digest}')
+    pack = json.loads(data)
+    if pack.get('unityVersion') != '2017.2.0f3' or pack.get('revision') != '46dda1414e51':
+        raise ValueError('Unity built-in resource pack version or revision is unexpected')
+    records = {record['fileID']: record for record in pack.get('records', [])}
+    material = records.get('10303')
+    shader = records.get('46')
+    if not material or material.get('type') != 'Material' or material.get('fields', {}).get('m_Name') != 'Default-Material':
+        raise ValueError('Unity built-in Material 10303 source record is missing or invalid')
+    if not shader or shader.get('type') != 'Shader' or shader.get('fields', {}).get('m_ParsedForm', {}).get('m_Name') != 'Standard':
+        raise ValueError('Unity built-in Shader 46 source record is missing or invalid')
+    pointer = material['fields'].get('m_Shader', {})
+    if pointer.get('m_FileID') != 0 or pointer.get('m_PathID') != 46:
+        raise ValueError('Unity built-in Material 10303 no longer points to Shader 46')
+    return {
+        'packSha256': digest,
+        'revision': pack['revision'],
+        'unityVersion': pack['unityVersion'],
+        'records': {'46': shader, '10303': material},
+    }
 
 
 def execution_value(value, key=None):
@@ -109,6 +139,7 @@ def runtime_asset_seeds(project):
 
 def main():
     project = Path(sys.argv[1]).resolve(); output = Path(sys.argv[2])
+    builtin_resource_records = load_builtin_resource_records()
     index = {}; metadata={}
     for meta in (project/'Assets').rglob('*.meta'):
         m = re.search(r'^guid: ([0-9a-f]{32})$', meta.read_text(errors='strict'), re.M)
@@ -179,13 +210,13 @@ def main():
             ref['resolution']='unresolved'
     payload = {'format':'crisis-unity-records-v2','seeds':seeds,'guidPaths':index,
         'guidMetadata':metadata,'scriptTypes':SCRIPT_GUIDS,'scriptAssemblies':SCRIPT_ASSEMBLIES,
-        'builtinObjects':BUILTIN_OBJECTS,'assets':assets,
+        'builtinObjects':BUILTIN_OBJECTS,'builtinResourceRecords':builtin_resource_records,'assets':assets,
         'objectReferences':references,'unresolvedGuids':missing,
         'sourceOfTruth':'sourceText/rawYaml or dataBase64 preserve original bytes; parsed fields are an execution view'}
     output.parent.mkdir(parents=True, exist_ok=True); output.write_text(json.dumps(payload, separators=(',',':')))
     execution = {'format':payload['format'],'guidPaths':index,'guidMetadata':metadata,
         'scriptTypes':SCRIPT_GUIDS,'scriptAssemblies':SCRIPT_ASSEMBLIES,
-        'builtinObjects':BUILTIN_OBJECTS,
+        'builtinObjects':BUILTIN_OBJECTS,'builtinResourceRecords':builtin_resource_records,
         'objectReferences':references,'assets':{
         path:{'path':a['path'],'sha256':a['sha256'],'size':a['size'],
             **({'dataBase64':a['dataBase64']} if a.get('binary') else {'sourceText':a.get('sourceText','')}),

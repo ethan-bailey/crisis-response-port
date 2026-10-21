@@ -25,6 +25,10 @@ namespace UnityEngine {
   public Material(){}
   public Material(Shader shader){this.shader=shader??throw new ArgumentNullException(nameof(shader));}
   public Shader shader {get;set;}
+  public int renderQueue {get;set;}=-1;
+  public bool enableInstancing {get;set;}
+  public bool doubleSidedGI {get;set;}
+  public int lightmapFlags {get;set;}
   public HideFlags hideFlags {get;set;}
   public int passCount {get;set;}
   public bool SetPass(int pass){if(pass<0||pass>=passCount)throw new ArgumentOutOfRangeException(nameof(pass));return false;}

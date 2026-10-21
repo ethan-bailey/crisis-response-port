@@ -2,6 +2,11 @@ using Crisis.Runtime;
 using UnityEngine;
 using System.Text.Json;
 
+if(args.Length==2&&args[0]=="--builtin-resource-contract"){
+    using var builtinPackage=JsonDocument.Parse(File.ReadAllText(args[1]));
+    Console.WriteLine(RuntimeContracts.RunBuiltinResource(builtinPackage.RootElement));
+    return;
+}
 var runLifecycle=args.Contains("--prefab-lifecycle");if(runLifecycle||args.Contains("--prefab-instantiate")){
     if(args.Length!=2)throw new ArgumentException("--prefab-lifecycle and --prefab-instantiate require the generated scene-package.json path");
     var package=File.ReadAllText(args[1]);

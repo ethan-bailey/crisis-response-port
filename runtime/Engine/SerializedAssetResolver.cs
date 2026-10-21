@@ -15,7 +15,7 @@ internal static class SerializedAssetResolver {
         if(cache.TryGetValue(key,out var cached))return expectedType.IsInstanceOfType(cached)?cached:
             throw new InvalidCastException($"Serialized reference {key} is {cached.GetType().Name}, expected {expectedType.Name}");
         if(package.TryGetProperty("builtinObjects",out var builtins)&&builtins.TryGetProperty(guid,out var builtinGuid)&&builtinGuid.TryGetProperty(fileID,out var builtinType)) {
-            var builtinCreated=CreateBuiltin(guid,fileID,builtinType.GetString(),world);
+            var builtinCreated=CreateBuiltin(package,guid,fileID,builtinType.GetString(),world,cache);
             if(!expectedType.IsInstanceOfType(builtinCreated))throw new InvalidCastException($"Built-in reference {key} is {builtinCreated.GetType().Name}, expected {expectedType.Name}");
             builtinCreated.OriginalAssetGuid=guid;builtinCreated.OriginalAssetFileID=fileID;cache[key]=builtinCreated;return builtinCreated;
         }
@@ -156,12 +156,65 @@ internal static class SerializedAssetResolver {
         for(int i=12;i+8<=bytes.Length;){string chunk=System.Text.Encoding.ASCII.GetString(bytes,i,4);uint size=System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan(i+4,4));if(chunk=="data")return (float)size/byteRate;i=checked(i+8+(int)size+(int)(size&1));}
         throw new InvalidDataException("Packaged WAVE AudioClip has no data chunk");
     }
-    static Object CreateBuiltin(string guid,string fileID,string kind,RuntimeWorld world) => kind switch {
-        "Mesh"=>new Mesh {name=$"builtin:{guid}:{fileID}"},
-        "Font"=>new Font {name=$"builtin:{guid}:{fileID}"},
-        "Shader"=>new Shader {name=$"builtin:{guid}:{fileID}"},
-        _=>throw new NotSupportedException($"Built-in Unity object {guid}:{fileID} of type {kind} is not supported")
-    };
+    static Object CreateBuiltin(JsonElement package,string guid,string fileID,string kind,RuntimeWorld world,Dictionary<string,Object> cache) {
+        if(package.TryGetProperty("builtinResourceRecords",out var resourcePack)&&
+           resourcePack.TryGetProperty("records",out var records)&&records.TryGetProperty(fileID,out var record))
+            return CreateRecoveredBuiltin(package,guid,fileID,kind,record,world,cache);
+        if(kind=="Material"||(kind=="Shader"&&fileID=="46"))
+            throw new NotSupportedException($"Unity built-in {kind} {guid}:{fileID} has no recovered source record in the execution package");
+        return kind switch {
+            "Mesh"=>new Mesh {name=$"builtin:{guid}:{fileID}"},
+            "Font"=>new Font {name=$"builtin:{guid}:{fileID}"},
+            "Shader"=>new Shader {name=$"builtin:{guid}:{fileID}"},
+            _=>throw new NotSupportedException($"Built-in Unity object {guid}:{fileID} of type {kind} is not supported")
+        };
+    }
+    static Object CreateRecoveredBuiltin(JsonElement package,string guid,string fileID,string expectedKind,JsonElement record,RuntimeWorld world,Dictionary<string,Object> cache) {
+        string recordKind=record.GetProperty("type").GetString();
+        if(recordKind!=expectedKind||record.GetProperty("fileID").GetString()!=fileID)
+            throw new InvalidDataException($"Recovered built-in record {guid}:{fileID} has type/ID {recordKind}:{record.GetProperty("fileID").GetString()}, expected {expectedKind}:{fileID}");
+        byte[] raw=Convert.FromBase64String(record.GetProperty("rawBase64").GetString());
+        string rawHash=Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(raw)).ToLowerInvariant();
+        if(raw.Length!=record.GetProperty("rawBytes").GetInt32()||rawHash!=record.GetProperty("rawSha256").GetString())
+            throw new InvalidDataException($"Recovered built-in {expectedKind} {fileID} raw record failed its length or SHA-256 check");
+        var fields=record.GetProperty("fields");
+        Object created;
+        if(expectedKind=="Shader") {
+            if(fileID!="46")throw new NotSupportedException($"Source-backed built-in Shader {fileID} is not in the runtime record set");
+            string shaderName=fields.GetProperty("m_ParsedForm").GetProperty("m_Name").GetString();
+            created=new Shader {name=shaderName,isSupported=false};
+        } else if(expectedKind=="Material") {
+            if(fileID!="10303")throw new NotSupportedException($"Source-backed built-in Material {fileID} is not in the runtime record set");
+            var material=new Material {
+                name=fields.GetProperty("m_Name").GetString(),
+                hideFlags=(HideFlags)fields.GetProperty("m_ObjectHideFlags").GetInt32(),
+                renderQueue=fields.GetProperty("m_CustomRenderQueue").GetInt32(),
+                enableInstancing=fields.GetProperty("m_EnableInstancingVariants").GetBoolean(),
+                doubleSidedGI=fields.GetProperty("m_DoubleSidedGI").GetBoolean(),
+                lightmapFlags=fields.GetProperty("m_LightmapFlags").GetInt32()
+            };
+            ApplyRecoveredMaterialProperties(material,fields.GetProperty("m_SavedProperties"));
+            var shaderPointer=fields.GetProperty("m_Shader");
+            if(shaderPointer.GetProperty("m_FileID").GetInt32()!=0)
+                throw new InvalidDataException("Recovered built-in Material 10303 has an unexpected external shader fileID");
+            string shaderID=shaderPointer.GetProperty("m_PathID").GetInt64().ToString(System.Globalization.CultureInfo.InvariantCulture);
+            material.shader=(Shader)CreateBuiltin(package,guid,shaderID,"Shader",world,cache);
+            created=material;
+        } else throw new NotSupportedException($"Recovered built-in type {expectedKind} is not supported");
+        created.OriginalAssetGuid=guid;created.OriginalAssetFileID=fileID;
+        created.OriginalAssetPath=record.GetProperty("sourceFile").GetString();
+        created.OriginalSerializedBytes=raw;created.OriginalSerializedSha256=rawHash;
+        foreach(var property in fields.EnumerateObject())created.OriginalSerializedFields[property.Name]=property.Value.Clone();
+        world.Register(created);cache[guid+":"+fileID]=created;return created;
+    }
+    static void ApplyRecoveredMaterialProperties(Material material,JsonElement saved) {
+        if(saved.TryGetProperty("m_Colors",out var colors))foreach(var pair in colors.EnumerateArray()) {
+            string name=pair[0].GetString();var value=pair[1];
+            material.SetColor(name,new Color(value.GetProperty("r").GetSingle(),value.GetProperty("g").GetSingle(),value.GetProperty("b").GetSingle(),value.GetProperty("a").GetSingle()));
+        }
+        if(saved.TryGetProperty("m_Floats",out var floats))foreach(var pair in floats.EnumerateArray())
+            material.SetFloat(pair[0].GetString(),pair[1].GetSingle());
+    }
     static Object CreateAsset(int classID,JsonElement fields,RuntimeWorld world) => classID switch {
         21=>new Material(),
         43=>new Mesh(),

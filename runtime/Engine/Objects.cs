@@ -13,6 +13,8 @@ public class Object {
     readonly int instanceID=Interlocked.Increment(ref nextID);
     public virtual string name { get; set; }
     public Dictionary<string,JsonElement> OriginalSerializedFields {get;}=new(StringComparer.Ordinal);
+    public byte[] OriginalSerializedBytes {get;internal set;}
+    public string OriginalSerializedSha256 {get;internal set;}
     public string OriginalAssetGuid {get;internal set;}
     public string OriginalAssetFileID {get;internal set;}
     public string OriginalAssetPath {get;internal set;}
