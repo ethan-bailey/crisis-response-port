@@ -57,6 +57,10 @@ var runLifecycle=args.Contains("--prefab-lifecycle");if(runLifecycle||args.Conta
                !behaviours.Any(component=>ReferenceEquals(component,rightSolver))||
                !behaviours.Any(component=>ReferenceEquals(component,leftSolver)))
                 throw new InvalidOperationException($"{actor.Item1} original CharacterBody references components outside its cloned prefab graph");
+            if(behaviours.OfType<Crisis.Runtime.FullSource.Physiology>().Count()!=1||
+               behaviours.OfType<Crisis.Runtime.FullSource.IKArmController>().Count()!=1||
+               behaviours.OfType<Crisis.Runtime.FullSource.ArmIKSolver>().Count()!=2)
+                throw new InvalidOperationException($"{actor.Item1} cloned prefab has duplicate or missing original physiology/controller/solver components");
             if(fullBody.limbs==null||fullBody.limbMap==null||fullBody.limbs.Count!=fullBody.limbMap.Count||fullBody.limbs.Count<19)
                 throw new InvalidOperationException($"{actor.Item1} original CharacterBody limb registry is incomplete");
             foreach(var limb in fullBody.limbs){
