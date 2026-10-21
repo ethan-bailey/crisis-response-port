@@ -40,6 +40,12 @@ public sealed class Mesh : Object {
         }
     }
     public Vector3[] normals => (Vector3[])surfaceNormals.Clone();
+    internal void SetImportedNormals(Vector3[] value){
+        ArgumentNullException.ThrowIfNull(value);
+        if(value.Length!=points.Length || value.Any(v=>!float.IsFinite(v.x)||!float.IsFinite(v.y)||!float.IsFinite(v.z)))
+            throw new ArgumentException("Imported mesh normals must be finite and match the vertex count",nameof(value));
+        surfaceNormals=(Vector3[])value.Clone();
+    }
     public void Clear(){points=Array.Empty<Vector3>();indices=Array.Empty<int>();coordinates=Array.Empty<Vector2>();surfaceNormals=Array.Empty<Vector3>();}
     public void RecalculateNormals(){
         var accumulated=new Vector3[points.Length];

@@ -40,6 +40,22 @@ def merge_builtin_resource_data(ammo: dict, scene: dict) -> None:
             raise ValueError("scene package is missing the source-backed Material 10303 or Shader 46 record")
         ammo["builtinResourceRecords"] = copy.deepcopy(resource_pack)
 
+    player_pack = scene.get("builtinPlayerResourceRecords")
+    cylinder_required = any(objects.get("10206") == "Mesh" for objects in source_builtins.values())
+    if cylinder_required and not isinstance(player_pack, dict):
+        raise ValueError("scene package maps Windows x86 Mono Mesh 10206 without its recovered source record")
+    if player_pack is not None:
+        if (player_pack.get("unityVersion") != "2017.2.0b11" or player_pack.get("targetPlatform") != 5
+                or player_pack.get("sourceSha256") != "b809e16256c643c6ac8b5e6d0af164a9c9ec07e0e5bd49460939c39da5fafb40"):
+            raise ValueError("Windows x86 Mono built-in resource record provenance is invalid")
+        cylinder = player_pack.get("records", {}).get("10206", {})
+        geometry = cylinder.get("runtimeGeometry", {})
+        if (cylinder.get("type") != "Mesh" or cylinder.get("fields", {}).get("m_Name") != "Cylinder"
+                or cylinder.get("rawSha256") != "1aea642b2ab9c4fe2458206b6d95c956788b91fa854b2bbc6daa95e3c23886a7"
+                or len(geometry.get("vertices", [])) != 88 or len(geometry.get("triangles", [])) != 240):
+            raise ValueError("Windows x86 Mono Mesh 10206 source record is missing or invalid")
+        ammo["builtinPlayerResourceRecords"] = copy.deepcopy(player_pack)
+
 
 def closure(scene: dict, ammo_package: dict) -> tuple[dict, set, set, set, set, dict, list, set]:
     source_assets = scene.get("assets", {})
@@ -139,11 +155,13 @@ def main() -> int:
         expected_builtin_package = copy.deepcopy(ammo)
         merge_builtin_resource_data(expected_builtin_package, scene)
         stale_builtin_data = (ammo.get("builtinObjects", {}) != expected_builtin_package.get("builtinObjects", {}) or
-                              ammo.get("builtinResourceRecords") != expected_builtin_package.get("builtinResourceRecords"))
+                              ammo.get("builtinResourceRecords") != expected_builtin_package.get("builtinResourceRecords") or
+                              ammo.get("builtinPlayerResourceRecords") != expected_builtin_package.get("builtinPlayerResourceRecords"))
         expected_builtin_pack_sha = (scene.get("builtinResourceRecords") or {}).get("packSha256")
         complete = (not unresolved and not missing_paths and not any(stale_script_maps.values())
                         and not missing_metadata and not stale_builtin_data
                         and audit.get("builtinResourcePackSha256") == expected_builtin_pack_sha
+                        and audit.get("builtinPlayerResourceSha256") == (scene.get("builtinPlayerResourceRecords") or {}).get("sourceSha256")
                         and audit.get("complete") is True)
         print(json.dumps({"complete": complete, "rootAssets": roots,
                           "resolvedAssets": sorted(existing_asset_paths),
@@ -178,6 +196,7 @@ def main() -> int:
         "resolvedSourceScripts": sorted(source_scripts),
         "builtinGuids": sorted(builtin_guids),
         "builtinResourcePackSha256": (scene.get("builtinResourceRecords") or {}).get("packSha256"),
+        "builtinPlayerResourceSha256": (scene.get("builtinPlayerResourceRecords") or {}).get("sourceSha256"),
         "unresolved": [{"asset": asset, "guid": guid, "reason": reason}
                        for asset, guid, reason in unresolved],
         "complete": not unresolved,

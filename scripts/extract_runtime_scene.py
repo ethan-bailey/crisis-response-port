@@ -29,14 +29,17 @@ SCRIPT_ASSEMBLIES = {
     }
 }
 BUILTIN_OBJECTS = {
+    '00000000000000000000000000000000': {
+        '10206':'Mesh',
+    },
     '0000000000000000e000000000000000': {
-        '10102':'Font', '10210':'Mesh',
+        '10102':'Font', '10206':'Mesh', '10210':'Mesh',
     },
     '0000000000000000f000000000000000': {
         '45':'Shader', '46':'Shader', '208':'Shader', '10303':'Material',
     },
 }
-BUILTIN_RESOURCE_PACK_SHA256 = '9e2015f94ab41aa19a4304104f9f24723809e71ab4b061313b67995954751ac8'
+BUILTIN_RESOURCE_PACK_SHA256 = '5ff3293b8b239f1efdb51f0685d9deac31f26111b11a76a35aa0767ff1328e05'
 
 
 def load_builtin_resource_records(repository_root=None):
@@ -60,11 +63,33 @@ def load_builtin_resource_records(repository_root=None):
     pointer = material['fields'].get('m_Shader', {})
     if pointer.get('m_FileID') != 0 or pointer.get('m_PathID') != 46:
         raise ValueError('Unity built-in Material 10303 no longer points to Shader 46')
+    player = pack.get('playerResources')
+    if (not isinstance(player, dict) or player.get('unityVersion') != '2017.2.0b11'
+            or player.get('targetPlatform') != 5
+            or player.get('sourceSha256') != 'b809e16256c643c6ac8b5e6d0af164a9c9ec07e0e5bd49460939c39da5fafb40'):
+        raise ValueError('Windows x86 Mono resource provenance is missing or changed')
+    cylinder = player.get('records', {}).get('10206', {})
+    if (cylinder.get('type') != 'Mesh' or cylinder.get('fields', {}).get('m_Name') != 'Cylinder'
+            or cylinder.get('rawSha256') != '1aea642b2ab9c4fe2458206b6d95c956788b91fa854b2bbc6daa95e3c23886a7'):
+        raise ValueError('Windows x86 Mono Mesh 10206 source record is missing or changed')
+    geometry = cylinder.get('runtimeGeometry', {})
+    if (len(geometry.get('vertices', [])) != 88 or len(geometry.get('normals', [])) != 88
+            or len(geometry.get('uv', [])) != 88 or len(geometry.get('triangles', [])) != 240):
+        raise ValueError('Windows x86 Mono Cylinder runtime geometry is incomplete')
     return {
         'packSha256': digest,
         'revision': pack['revision'],
         'unityVersion': pack['unityVersion'],
         'records': {'46': shader, '10303': material},
+        'playerResourceRecords': {
+            'unityVersion': player['unityVersion'],
+            'targetPlatform': player['targetPlatform'],
+            'sourceFile': player['sourceFile'],
+            'sourceSha256': player['sourceSha256'],
+            'sourceBytes': player['sourceBytes'],
+            'parser': player['parser'],
+            'records': player['records'],
+        },
     }
 
 
@@ -210,13 +235,15 @@ def main():
             ref['resolution']='unresolved'
     payload = {'format':'crisis-unity-records-v2','seeds':seeds,'guidPaths':index,
         'guidMetadata':metadata,'scriptTypes':SCRIPT_GUIDS,'scriptAssemblies':SCRIPT_ASSEMBLIES,
-        'builtinObjects':BUILTIN_OBJECTS,'builtinResourceRecords':builtin_resource_records,'assets':assets,
+        'builtinObjects':BUILTIN_OBJECTS,'builtinResourceRecords':builtin_resource_records,
+        'builtinPlayerResourceRecords':builtin_resource_records['playerResourceRecords'],'assets':assets,
         'objectReferences':references,'unresolvedGuids':missing,
         'sourceOfTruth':'sourceText/rawYaml or dataBase64 preserve original bytes; parsed fields are an execution view'}
     output.parent.mkdir(parents=True, exist_ok=True); output.write_text(json.dumps(payload, separators=(',',':')))
     execution = {'format':payload['format'],'guidPaths':index,'guidMetadata':metadata,
         'scriptTypes':SCRIPT_GUIDS,'scriptAssemblies':SCRIPT_ASSEMBLIES,
         'builtinObjects':BUILTIN_OBJECTS,'builtinResourceRecords':builtin_resource_records,
+        'builtinPlayerResourceRecords':builtin_resource_records['playerResourceRecords'],
         'objectReferences':references,'assets':{
         path:{'path':a['path'],'sha256':a['sha256'],'size':a['size'],
             **({'dataBase64':a['dataBase64']} if a.get('binary') else {'sourceText':a.get('sourceText','')}),

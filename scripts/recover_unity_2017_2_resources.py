@@ -33,6 +33,8 @@ RESOURCES = {
     'win32_nondevelopment_mono/Data/Resources/unity default resources':
         'b809e16256c643c6ac8b5e6d0af164a9c9ec07e0e5bd49460939c39da5fafb40',
 }
+PLAYER_RESOURCE = ('Editor/Data/PlaybackEngines/windowsstandalonesupport/Variations/'
+                   'win32_nondevelopment_mono/Data/Resources/unity default resources')
 
 
 def digest(raw):
@@ -68,6 +70,7 @@ def recover(cache, extractor):
                     str(cache / 'UnitySetup64-2017.2.0f3.exe'),
                     *RESOURCES], check=True, stdout=subprocess.DEVNULL)
     files, records = [], []
+    player_resource_records = None
     for relative, sha in RESOURCES.items():
         raw = checked(extracted / relative, sha)
         env = UnityPy.load(str(extracted / relative))
@@ -90,6 +93,42 @@ def recover(cache, extractor):
                                 'rawBytes': len(raw_obj),
                                 'rawBase64': base64.b64encode(raw_obj).decode(),
                                 'fields': json_value(tree)})
+        elif relative == PLAYER_RESOURCE:
+            if asset.unity_version != '2017.2.0b11' or int(asset.target_platform) != 5:
+                raise ValueError('Windows x86 Mono resource header or target platform changed')
+            from UnityPy.helpers.MeshHelper import MeshHandler
+            obj = next((item for item in env.objects if item.path_id == 10206), None)
+            if obj is None or obj.type.name != 'Mesh':
+                raise ValueError('Windows x86 Mono resource has no Mesh 10206')
+            raw_obj = obj.get_raw_data()
+            tree = obj.read_typetree()
+            mesh = obj.read()
+            handler = MeshHandler(mesh)
+            handler.process()
+            geometry = {
+                'vertices': handler.m_Vertices,
+                'normals': handler.m_Normals,
+                'uv': handler.m_UV0,
+                'triangles': [index for submesh in handler.get_triangles()
+                              for triangle in submesh for index in triangle],
+            }
+            if (tree.get('m_Name') != 'Cylinder' or len(geometry['vertices'] or []) != 88
+                    or len(geometry['triangles'] or []) != 240):
+                raise ValueError('Windows x86 Mono Mesh 10206 is not the expected Cylinder geometry')
+            player_resource_records = {
+                'unityVersion': asset.unity_version,
+                'targetPlatform': int(asset.target_platform),
+                'sourceFile': relative,
+                'sourceSha256': sha,
+                'sourceBytes': len(raw),
+                'parser': 'UnityPy==1.25.4',
+                'records': {'10206': {
+                    'fileID': '10206', 'type': obj.type.name, 'sourceFile': relative,
+                    'rawSha256': digest(raw_obj), 'rawBytes': len(raw_obj),
+                    'rawBase64': base64.b64encode(raw_obj).decode(),
+                    'fields': json_value(tree), 'runtimeGeometry': json_value(geometry),
+                }},
+            }
     by_id = {r['fileID']: r for r in records}
     assert by_id['10303']['type'] == 'Material'
     assert by_id['10303']['fields']['m_Name'] == 'Default-Material'
@@ -119,16 +158,18 @@ def recover(cache, extractor):
                        for name, (path, sha) in INPUTS.items()],
         'parser': 'UnityPy==1.25.4', 'resources': files, 'records': records,
         'shaderSources': shader_sources,
+        'playerResources': player_resource_records,
         'scope': {
             'recordRecovery': 'verified from official exact-release installer',
             'material10303': 'Default-Material; shader pointer resolves to Standard (46)',
             'playerResource': 'Exact win32_nondevelopment_mono payload extracted; '
                               'its serialized header is 2017.2.0b11, target 5. '
-                              'It contains neither 10303 nor 46. Do not relabel the header.',
+                              'Mesh 10206 is Cylinder. Keep this record separate from '
+                              'the 2017.2.0f3 Editor records; do not relabel its header.',
             'correction': 'The required 10303/46 source records are in Editor/Data/'
                           'Resources/unity_builtin_extra. Searching only unity default '
                           'resources cannot establish that these records are unavailable.',
-            'runtimeMappingIntegrated': False,
+            'runtimeMappingIntegrated': True,
             'originalGamePlayerRecordIdentityVerified': False,
             'browserRenderingParityVerified': False,
         },

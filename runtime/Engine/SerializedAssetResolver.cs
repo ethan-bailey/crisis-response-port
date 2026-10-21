@@ -160,6 +160,9 @@ internal static class SerializedAssetResolver {
         if(package.TryGetProperty("builtinResourceRecords",out var resourcePack)&&
            resourcePack.TryGetProperty("records",out var records)&&records.TryGetProperty(fileID,out var record))
             return CreateRecoveredBuiltin(package,guid,fileID,kind,record,world,cache);
+        if(package.TryGetProperty("builtinPlayerResourceRecords",out var playerPack)&&
+           playerPack.TryGetProperty("records",out var playerRecords)&&playerRecords.TryGetProperty(fileID,out var playerRecord))
+            return CreateRecoveredBuiltin(package,guid,fileID,kind,playerRecord,world,cache);
         if(kind=="Material"||(kind=="Shader"&&fileID=="46"))
             throw new NotSupportedException($"Unity built-in {kind} {guid}:{fileID} has no recovered source record in the execution package");
         return kind switch {
@@ -200,6 +203,18 @@ internal static class SerializedAssetResolver {
             string shaderID=shaderPointer.GetProperty("m_PathID").GetInt64().ToString(System.Globalization.CultureInfo.InvariantCulture);
             material.shader=(Shader)CreateBuiltin(package,guid,shaderID,"Shader",world,cache);
             created=material;
+        } else if(expectedKind=="Mesh") {
+            if(fileID!="10206"||fields.GetProperty("m_Name").GetString()!="Cylinder")
+                throw new NotSupportedException($"Source-backed built-in Mesh {fileID} is not in the recovered player resource record set");
+            var geometry=record.GetProperty("runtimeGeometry");
+            var mesh=new Mesh {name=fields.GetProperty("m_Name").GetString()};
+            mesh.vertices=ReadVector3Array(geometry.GetProperty("vertices"));
+            mesh.triangles=geometry.GetProperty("triangles").EnumerateArray().Select(index=>index.GetInt32()).ToArray();
+            mesh.uv=ReadVector2Array(geometry.GetProperty("uv"));
+            mesh.SetImportedNormals(ReadVector3Array(geometry.GetProperty("normals")));
+            if(mesh.vertexCount!=88||mesh.triangles.Length!=240||mesh.uv.Length!=88||mesh.normals.Length!=88)
+                throw new InvalidDataException("Recovered Windows x86 Mono Cylinder geometry has unexpected vertex, index, UV, or normal counts");
+            created=mesh;
         } else throw new NotSupportedException($"Recovered built-in type {expectedKind} is not supported");
         created.OriginalAssetGuid=guid;created.OriginalAssetFileID=fileID;
         created.OriginalAssetPath=record.GetProperty("sourceFile").GetString();
@@ -207,6 +222,8 @@ internal static class SerializedAssetResolver {
         foreach(var property in fields.EnumerateObject())created.OriginalSerializedFields[property.Name]=property.Value.Clone();
         world.Register(created);cache[guid+":"+fileID]=created;return created;
     }
+    static Vector3[] ReadVector3Array(JsonElement values)=>values.EnumerateArray().Select(value=>new Vector3(value[0].GetSingle(),value[1].GetSingle(),value[2].GetSingle())).ToArray();
+    static Vector2[] ReadVector2Array(JsonElement values)=>values.EnumerateArray().Select(value=>new Vector2(value[0].GetSingle(),value[1].GetSingle())).ToArray();
     static void ApplyRecoveredMaterialProperties(Material material,JsonElement saved) {
         if(saved.TryGetProperty("m_Colors",out var colors))foreach(var pair in colors.EnumerateArray()) {
             string name=pair[0].GetString();var value=pair[1];
