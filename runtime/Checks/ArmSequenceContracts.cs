@@ -146,11 +146,12 @@ public static class FullSourceControllerPlaybackContracts {
             world.Tick(0.05f);
             world.Tick(0.05f);
 
+            var armOnTarget = first.body.rightArm.OnTarget;
             var triggerCallbackObserved = first.body.QueryTrigger();
             var triggerActorIsolation = !second.body.QueryTrigger();
             if (!triggerCallbackObserved || !triggerActorIsolation ||
                 !first.controller.RightSequencer.IsReady || !second.controller.RightSequencer.IsReady)
-                throw new InvalidOperationException("Original FireWeapon callback did not dispatch through the actor's original arm solver");
+                throw new InvalidOperationException($"Original FireWeapon callback did not dispatch through the actor's original arm solver (onTarget={armOnTarget}, firstTrigger={triggerCallbackObserved}, secondIsolated={triggerActorIsolation}, firstReady={first.controller.RightSequencer.IsReady}, secondReady={second.controller.RightSequencer.IsReady})");
 
             return JsonSerializer.Serialize(new {
                 status = "pass",
