@@ -52,3 +52,11 @@ The owner reports Actions credits will not return for roughly one month from 202
 - Original recovery workflow run 38582072502; artifact 11903811738; archive SHA-256 cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d.
 - Next, continue with source-faithful Unity dependency and actor lifecycle work in batches. Run the focused contract after a genuine source-backed fix; keep unrecoverable dependencies explicit for human disposition.
 - Once local gates pass and Actions credits return, integrate the then-current develop/wasm using a normal merge commit immediately before the exact-source WASM build, full Chromium and WebKit gameplay checks, and local HTTP smoke. Keep PR #42 open/draft and do not claim merge readiness before that evidence exists.
+
+## Latest continuation — 2026-10-21
+
+The next source-package gate is closed: mixer parameter GUIDs are no longer misclassified as asset edges, and the original ammunition package was regenerated. Code commit 1cd7294287021c0c5e5cb7b2410932108b9a83a5 is pushed. Focused evidence and exact commands are in the 2026-10-21 continuation section of docs/evidence/logs/triage-2026-10-20-pr42.md and docs/evidence/REA-ammunition-closure-2026-10-20.md.
+
+The recovered export still lacks source-faithful Unity built-in Material 0000000000000000f000000000000000:10303, so the full runtime contract stops at the original Projectile fragments prefab. Keep that gate fail-closed. Actor lifecycle still needs the authored Mission context; independent two-actor gameplay, source-backed controller playback, final WASM build, Chromium/WebKit gameplay, and HTTP smoke checks remain open. The animation audit's controllerPlaybackImplemented:false is a real implementation gap, not a passing check.
+
+PR #42 remains open/draft. Read-only check on code SHA 1cd7294287021c0c5e5cb7b2410932108b9a83a5 found no workflow run or combined status; Actions were not dispatched. develop/wasm was observed at 2fc0a8e93be97c4d99123910fad4bd25798e71a8. Preserve the user's untracked runtime/Browser/wwwroot/browser-input.mjs. Do not integrate develop until immediately before final verification.
