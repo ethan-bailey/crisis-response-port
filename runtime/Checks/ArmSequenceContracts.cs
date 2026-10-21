@@ -55,7 +55,7 @@ public static class ArmSequenceContracts {
         var controllerRoot = controllerProof.RootElement;
         Check(controllerRoot.GetProperty("status").GetString() == "pass" &&
               controllerRoot.GetProperty("callbackObserved").GetBoolean() &&
-              controllerRoot.GetProperty("actorIsolation").GetBoolean(),
+              controllerRoot.GetProperty("actorIsolation").GetBoolean() &&
               controllerRoot.GetProperty("triggerCallbackObserved").GetBoolean(),
               "Original IKArmController sequencer must play on FullSource.CharacterBody and dispatch callbacks to its owning actor");
         return JsonSerializer.Serialize(new {
