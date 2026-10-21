@@ -49,7 +49,15 @@
       "guid": "0000000000000000f000000000000000",
       "fileID": "10303"
     },
-    "ownerAuthorization": "User requested an alternative if the exact source was unavailable on 2026-10-21",
-    "identityStatement": "This source-authored projectile material is an approved compatibility candidate. It is not verified as the same asset or rendering behavior as Unity built-in Material 10303. Preserve the original prefab unchanged; apply only through a separately scoped runtime/package overlay and retain the original pointer."
+    "ownerAuthorization": "On 2026-10-21 the owner authorized scoped substitutes only when tests demonstrate identical in-game behavior for the affected feature. This authorization does not waive equivalence tests or permit an identity claim.",
+    "identityStatement": "This source-authored projectile material is a compatibility candidate, not the same asset as Unity built-in Material 10303, and its rendering behavior is unverified. Its referenced exported shader is a dummy shader body, so this candidate does not currently satisfy the functional-equivalence condition. Preserve the original prefab unchanged; any future mapping must use a separately scoped runtime/package overlay and retain the original pointer.",
+    "equivalenceGate": {
+      "status": "not demonstrated; do not integrate",
+      "requiredEvidence": [
+        "The original projectile-fragment feature and candidate overlay produce equivalent fragment lifecycle, physics, collision, and gameplay effects.",
+        "Rendering behavior is compared against a source-backed original-game reference at representative runtime conditions.",
+        "The test exercises the exact package and code SHA proposed for integration and reports any differences."
+      ]
+    }
   }
 }

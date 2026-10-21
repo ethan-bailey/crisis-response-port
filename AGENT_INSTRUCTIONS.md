@@ -25,7 +25,7 @@ Stop and report the end state when any of these is true:
 
 ## Standing rules
 
-- **Genuine material only.** Use real source data, original assets, and verified records. No synthetic substitutes, placeholders, or invented identities unless the owner explicitly approves them. When required material is genuinely absent, fail closed and disposition the item under step 6.
+- **Genuine material and verified substitutes.** Prefer real source data, original assets, and verified records. The owner permits a scoped substitute for missing material only when tests demonstrate identical in-game behavior for the affected feature against its original acceptance contract. Preserve the original pointer and provenance, record the substitute's own identity, and never claim source identity. If equivalence cannot be exercised or proven, leave the gate open and disposition it under step 6; do not present an unverified substitute as equivalent.
 - **Evidence over claims.** Report only what was actually run, observed, or committed. Distinguish verified facts from assumptions.
 - **Stay in scope.** Work only the assigned branch, PR, or task. Do not expand into unrelated work without an instruction to do so.
 - **External blockers are stated once.** If progress depends on something outside the repo (quota, access, a service, the owner), name it once, clearly, and keep working on everything that does not depend on it.
