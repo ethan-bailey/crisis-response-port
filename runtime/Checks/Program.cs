@@ -57,6 +57,15 @@ var runLifecycle=args.Contains("--prefab-lifecycle");if(runLifecycle||args.Conta
                !behaviours.Any(component=>ReferenceEquals(component,rightSolver))||
                !behaviours.Any(component=>ReferenceEquals(component,leftSolver)))
                 throw new InvalidOperationException($"{actor.Item1} original CharacterBody references components outside its cloned prefab graph");
+            if(fullBody.limbs==null||fullBody.limbMap==null||fullBody.limbs.Count!=fullBody.limbMap.Count||fullBody.limbs.Count<19)
+                throw new InvalidOperationException($"{actor.Item1} original CharacterBody limb registry is incomplete");
+            foreach(var limb in fullBody.limbs){
+                Crisis.Runtime.FullSource.OriginalActorIdentity.RequireLimb(fullBody,limb);
+                if(!behaviours.Any(component=>ReferenceEquals(component,limb))||
+                   limb.LimbPhysiology==null||!ReferenceEquals(limb.GetComponent<Crisis.Runtime.FullSource.LimbPhysiology>(),limb.LimbPhysiology)||
+                   limb.LimbMuscle==null||!ReferenceEquals(limb.GetComponent<Crisis.Runtime.FullSource.LimbMuscle>(),limb.LimbMuscle))
+                    throw new InvalidOperationException($"{actor.Item1} limb {limb.id} is not bound to its actor-owned physiology and muscle components");
+            }
             if(equipment!=null){
                 Crisis.Runtime.FullSource.OriginalActorIdentity.RequireEquipment(fullBody,equipment);
                 if(!ReferenceEquals(equipment,actor.Item3.GetComponentInChildren<Crisis.Runtime.Weapons.Equipment>(true)))
