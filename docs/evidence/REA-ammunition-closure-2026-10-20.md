@@ -75,3 +75,21 @@ python3 scripts/package_ammunition_closure.py game/assets/weapon-runtime.json.gz
 Result: 29 assets resolved, 5 source scripts, 1 built-in GUID, and no unresolved ammunition references. Supporting checks passed: Python syntax compilation and all 10 audit_tools_test.py tests. The change is pushed in 1cd7294287021c0c5e5cb7b2410932108b9a83a5.
 
 This does not resolve the separate source-faithful Material mapping failure. The runtime contract still stops at Assets/GameObject/Projectile fragments.prefab because built-in Material 0000000000000000f000000000000000:10303 is absent from the recovered source package. The contract log is retained locally at work/pr42-session/mixer-guid-fix/full-contract.log; no material substitute was introduced.
+
+
+## Owner-approved .308 casing mesh replacement — 2026-10-21
+
+The repository owner explicitly approved using the recovered `308 Winchester casing hi.asset` as a compatibility replacement for the missing .308 casing mesh, and asked that the substitution be documented. This is a disposition decision, not evidence that the replacement has the missing asset's identity.
+
+- Missing source mesh GUID: `b4b69dc6c74eeb54cbd22d28e37f9a19` (Mesh fileID `4300000`).
+- Approved candidate: `Assets/Mesh/308 Winchester casing hi.asset`, whose own .meta GUID is `cd74722033652fb409431b2947740490` (fileID `4300000`).
+- Recovered asset SHA-256: `a31736991aa6345f4d9dffa4a5532681a184ac88520867a79fa7cbef859392b6`; .meta SHA-256: `c0e0dd3b07baa024a0d07ec04bb16ffbb9a60a5d91bd173b237f8717a170c24c`.
+- Candidate bounds extents: approximately `0.0060008 × 0.0060008 × 0.0255900 m`. It has 494 vertices and 494 triangles. These values describe the recovered candidate only.
+- Apply the mapping only to the casing root MeshFilter in `Assets/Resources/weapons/ammunition/casings/Casing .308.prefab`. Leave the child Projectile mesh and projectile-round prefabs untouched unless their individual geometry is separately verified and approved.
+- The existing `scripts/replace_missing_308_casing_mesh.py` scopes the GUID change to that root MeshFilter, verifies the candidate .meta GUID, and emits a JSON disposition record. Run it with `--write` against the recovered AssetRipper ExportedProject, then regenerate and test the runtime closure from that patched project. Retain the original export unchanged.
+
+The earlier 2026-10-14 report correctly recorded that this candidate was then unapproved. This owner decision supersedes that pending-disposition statement. The substitution is an accepted approximation for the casing prefab, not a source-faithful identity recovery, and does not resolve the Unity built-in Material/Shader records.
+
+## Unity 2017.2 built-in resource records — resolution path
+
+The remaining record failure is a different issue: `Projectile fragments.prefab` refers to Unity built-in Material GUID `0000000000000000f000000000000000`, fileID `10303`, and built-in Shader fileID `46`. These records are Editor-provided and are absent from the recovered game-content export. Resolve them from the exact Unity `2017.2.0f3` Editor resources (the version recorded for the original player): recover `Resources/unity default resources` and `Resources/unity_builtin_extra`, parse the serialized object tables, and add the real Material/Shader records and dependencies to the runtime source-resource resolver. Preserve each resource's original fileID, class/type, shader pointer, defaults, and asset provenance. Then test Material 10303 and Shader 46 by exact ID and type, plus the existing projectile contract. Do not synthesize a Material or assume a modern Unity built-in has the same serialized record.
