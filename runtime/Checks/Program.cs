@@ -30,7 +30,7 @@ var runLifecycle=args.Contains("--prefab-lifecycle");if(runLifecycle||args.Conta
     var controllers=new System.Collections.Generic.List<Crisis.Runtime.FullSource.IKArmController>();
     var rightSolvers=new System.Collections.Generic.List<Crisis.Runtime.FullSource.ArmIKSolver>();
     var leftSolvers=new System.Collections.Generic.List<Crisis.Runtime.FullSource.ArmIKSolver>();
-    var equipmentRefs=new System.Collections.Generic.List<Crisis.Runtime.Weapons.Equipment>();
+    var equipmentRefs=new System.Collections.Generic.List<Crisis.Runtime.FullSource.Equipment>();
     foreach(var actor in actors){
         var behaviours=actor.Item3.GetComponentsInChildren<UnityEngine.MonoBehaviour>(true);
         var active=behaviours.Where(component=>component.isActiveAndEnabled).ToArray();
@@ -72,7 +72,7 @@ var runLifecycle=args.Contains("--prefab-lifecycle");if(runLifecycle||args.Conta
             }
             if(equipment!=null){
                 Crisis.Runtime.FullSource.OriginalActorIdentity.RequireEquipment(fullBody,equipment);
-                if(!ReferenceEquals(equipment,actor.Item3.GetComponentInChildren<Crisis.Runtime.Weapons.Equipment>(true)))
+                if(!ReferenceEquals(equipment,actor.Item3.GetComponentInChildren<Crisis.Runtime.FullSource.Equipment>(true)))
                     throw new InvalidOperationException($"{actor.Item1} CharacterBody equipment is not owned by its own prefab graph");
             }
         }
