@@ -183,11 +183,10 @@ internal static class SerializedAssetResolver {
         var fields=record.GetProperty("fields");
         Object created;
         if(expectedKind=="Shader") {
-            if(fileID!="46")throw new NotSupportedException($"Source-backed built-in Shader {fileID} is not in the runtime record set");
             string shaderName=fields.GetProperty("m_ParsedForm").GetProperty("m_Name").GetString();
             created=new Shader {name=shaderName,isSupported=false};
         } else if(expectedKind=="Material") {
-            if(fileID!="10303")throw new NotSupportedException($"Source-backed built-in Material {fileID} is not in the runtime record set");
+            if(fileID!="10303"&&fileID!="10754")throw new NotSupportedException($"Source-backed built-in Material {fileID} is not in the runtime record set");
             var material=new Material {
                 name=fields.GetProperty("m_Name").GetString(),
                 hideFlags=(HideFlags)fields.GetProperty("m_ObjectHideFlags").GetInt32(),
@@ -199,7 +198,7 @@ internal static class SerializedAssetResolver {
             ApplyRecoveredMaterialProperties(material,fields.GetProperty("m_SavedProperties"));
             var shaderPointer=fields.GetProperty("m_Shader");
             if(shaderPointer.GetProperty("m_FileID").GetInt32()!=0)
-                throw new InvalidDataException("Recovered built-in Material 10303 has an unexpected external shader fileID");
+                throw new InvalidDataException($"Recovered built-in Material {fileID} has an unexpected external shader fileID");
             string shaderID=shaderPointer.GetProperty("m_PathID").GetInt64().ToString(System.Globalization.CultureInfo.InvariantCulture);
             material.shader=(Shader)CreateBuiltin(package,guid,shaderID,"Shader",world,cache);
             created=material;
