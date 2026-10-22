@@ -43,7 +43,7 @@ public static class SpawnerGameplayContracts
             var input = contextObject.AddComponent<InputHandler>();
             input.SetMapping(new InputMapping());
             var equipmentList = contextObject.AddComponent<EquipmentList>();
-            equipmentList.randomItem = new GameObject("Random item", world).AddComponent<Item>();
+            var randomItemObject = new GameObject("Random item", world);\n            randomItemObject.transform.SetParent(contextObject.transform, false);\n            equipmentList.randomItem = randomItemObject.AddComponent<Item>();
             var campaignManager = contextObject.AddComponent<CampaignManager>();
             var sceneTransition = contextObject.AddComponent<SceneTransition>();
             SetProperty(context, nameof(GlobalContext.Settings), settings);
