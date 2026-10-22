@@ -104,24 +104,36 @@ def recover(cache, extractor):
             if asset.unity_version != '2017.2.0b11' or int(asset.target_platform) != 5:
                 raise ValueError('Windows x86 Mono resource header or target platform changed')
             from UnityPy.helpers.MeshHelper import MeshHandler
-            obj = next((item for item in env.objects if item.path_id == 10206), None)
-            if obj is None or obj.type.name != 'Mesh':
-                raise ValueError('Windows x86 Mono resource has no Mesh 10206')
-            raw_obj = obj.get_raw_data()
-            tree = obj.read_typetree()
-            mesh = obj.read()
-            handler = MeshHandler(mesh)
-            handler.process()
-            geometry = {
-                'vertices': handler.m_Vertices,
-                'normals': handler.m_Normals,
-                'uv': handler.m_UV0,
-                'triangles': [index for submesh in handler.get_triangles()
-                              for triangle in submesh for index in triangle],
-            }
-            if (tree.get('m_Name') != 'Cylinder' or len(geometry['vertices'] or []) != 88
-                    or len(geometry['triangles'] or []) != 240):
-                raise ValueError('Windows x86 Mono Mesh 10206 is not the expected Cylinder geometry')
+            player_mesh_records = {}
+            for mesh_id in (10206, 10210):
+                obj = next((item for item in env.objects if item.path_id == mesh_id), None)
+                if obj is None or obj.type.name != 'Mesh':
+                    raise ValueError(f'Windows x86 Mono resource has no Mesh {mesh_id}')
+                raw_obj = obj.get_raw_data()
+                tree = obj.read_typetree()
+                mesh = obj.read()
+                handler = MeshHandler(mesh)
+                handler.process()
+                geometry = {
+                    'vertices': handler.m_Vertices,
+                    'normals': handler.m_Normals,
+                    'uv': handler.m_UV0,
+                    'triangles': [index for submesh in handler.get_triangles()
+                                  for triangle in submesh for index in triangle],
+                }
+                vertices = geometry['vertices'] or []
+                triangles = geometry['triangles'] or []
+                if not vertices or not triangles or len(triangles) % 3:
+                    raise ValueError(f'Windows x86 Mono Mesh {mesh_id} has incomplete original geometry')
+                if mesh_id == 10206 and (tree.get('m_Name') != 'Cylinder' or
+                                         len(vertices) != 88 or len(triangles) != 240):
+                    raise ValueError('Windows x86 Mono Mesh 10206 is not the expected Cylinder geometry')
+                player_mesh_records[str(mesh_id)] = {
+                    'fileID': str(mesh_id), 'type': obj.type.name, 'sourceFile': relative,
+                    'rawSha256': digest(raw_obj), 'rawBytes': len(raw_obj),
+                    'rawBase64': base64.b64encode(raw_obj).decode(),
+                    'fields': json_value(tree), 'runtimeGeometry': json_value(geometry),
+                }
             player_resource_records = {
                 'unityVersion': asset.unity_version,
                 'targetPlatform': int(asset.target_platform),
@@ -129,12 +141,7 @@ def recover(cache, extractor):
                 'sourceSha256': sha,
                 'sourceBytes': len(raw),
                 'parser': 'UnityPy==1.25.4',
-                'records': {'10206': {
-                    'fileID': '10206', 'type': obj.type.name, 'sourceFile': relative,
-                    'rawSha256': digest(raw_obj), 'rawBytes': len(raw_obj),
-                    'rawBase64': base64.b64encode(raw_obj).decode(),
-                    'fields': json_value(tree), 'runtimeGeometry': json_value(geometry),
-                }},
+                'records': player_mesh_records,
             }
     by_id = {r['fileID']: r for r in records}
     assert by_id['10303']['type'] == 'Material'
