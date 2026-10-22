@@ -203,15 +203,22 @@ internal static class SerializedAssetResolver {
             material.shader=(Shader)CreateBuiltin(package,guid,shaderID,"Shader",world,cache);
             created=material;
         } else if(expectedKind=="Mesh") {
-            if(fileID!="10206"||fields.GetProperty("m_Name").GetString()!="Cylinder")
+            if(fileID!="10206"&&fileID!="10210")
                 throw new NotSupportedException($"Source-backed built-in Mesh {fileID} is not in the recovered player resource record set");
+            if(fileID=="10206"&&fields.GetProperty("m_Name").GetString()!="Cylinder")
+                throw new InvalidDataException("Recovered Windows x86 Mono Mesh 10206 is not the source Cylinder");
             var geometry=record.GetProperty("runtimeGeometry");
             var mesh=new Mesh {name=fields.GetProperty("m_Name").GetString()};
             mesh.vertices=ReadVector3Array(geometry.GetProperty("vertices"));
             mesh.triangles=geometry.GetProperty("triangles").EnumerateArray().Select(index=>index.GetInt32()).ToArray();
             mesh.uv=ReadVector2Array(geometry.GetProperty("uv"));
-            mesh.SetImportedNormals(ReadVector3Array(geometry.GetProperty("normals")));
-            if(mesh.vertexCount!=88||mesh.triangles.Length!=240||mesh.uv.Length!=88||mesh.normals.Length!=88)
+            var sourceNormals=ReadVector3Array(geometry.GetProperty("normals"));
+            if(sourceNormals.Length>0)mesh.SetImportedNormals(sourceNormals);
+            if(mesh.vertexCount==0||mesh.triangles.Length==0||mesh.triangles.Length%3!=0||
+               (mesh.uv.Length!=0&&mesh.uv.Length!=mesh.vertexCount)||
+               (sourceNormals.Length!=0&&sourceNormals.Length!=mesh.vertexCount))
+                throw new InvalidDataException($"Recovered Windows x86 Mono Mesh {fileID} geometry has inconsistent source channels");
+            if(fileID=="10206"&&(mesh.vertexCount!=88||mesh.triangles.Length!=240||mesh.uv.Length!=88||sourceNormals.Length!=88))
                 throw new InvalidDataException("Recovered Windows x86 Mono Cylinder geometry has unexpected vertex, index, UV, or normal counts");
             created=mesh;
         } else throw new NotSupportedException($"Recovered built-in type {expectedKind} is not supported");
