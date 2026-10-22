@@ -1,8 +1,10 @@
 # Crisis Response — iPhone Web Port Research
 
-> **Repository status (2026-10-17):** Read the [audited repository operations board](docs/REPOSITORY_OPERATIONS_2026-10-17.md) **before** historic workspaces and handoffs. The current WASM integration branch is `develop/wasm`; active draft gameplay work is [projectile injuries #56](https://github.com/ethan-bailey/crisis-response-port/pull/56), [IK callbacks #57](https://github.com/ethan-bailey/crisis-response-port/pull/57), and the blocked [full CharacterBody #42](https://github.com/ethan-bailey/crisis-response-port/pull/42). The staged iPhone snapshot predates these changes; no full-game or device parity is claimed. This is a status index, not a code or release change.
+> **Current status (2026-10-22):** develop/wasm is the integrated C#→WebAssembly branch. PR #42 is merged. Open draft work remains in PR #56 and #57 against develop/wasm, and PR #7 against main. The latest hosting attempt compiled source SHA 35f077f293305694f5a279bc073f23e159aba0fe but failed the local browser smoke; no new Site was published. See NEXT_AGENT.md for exact evidence and next steps.
 
-> **Current collaboration setup (October 16, 2026):** `main` is the stable repository baseline, **[`develop/wasm`](https://github.com/ethan-bailey/crisis-response-port/tree/develop/wasm)** is the sole integrated C#→WebAssembly game branch, and new work uses short-lived feature PRs targeting `develop/wasm`. The game is still incomplete. The older project notes below describe historical milestones, not the current code integration branch.
+> **Owner policy:** GitHub Actions is disabled. Local builds, contracts, and provenance checks are the standing verification gate. ChatGPT Sites is the primary host; a manual Vercel deployment is fallback only, with automatic Vercel deployments kept off.
+
+## Work here
 
 ## Work here
 
@@ -10,9 +12,9 @@
 - **[Current next-agent handoff](https://github.com/ethan-bailey/crisis-response-port/blob/develop/wasm/NEXT_AGENT.md)** and **[workspace](https://github.com/ethan-bailey/crisis-response-port/blob/develop/wasm/WORKSPACE.md)** — what is integrated/tested, who owns what, and the next bounded original-code task.
 - **[Issue #22: original arm-controller playback](https://github.com/ethan-bailey/crisis-response-port/issues/22)** — ongoing dependency group; current partial callback work is [draft PR #57](https://github.com/ethan-bailey/crisis-response-port/pull/57), not a completed integration.
 - **[Source-backed test milestone](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38901664939)** — combined original C#/WASM/Chromium/WebKit tests passed at SHA `1264c0b4579076b82e1b6b21955469313779fe39` (selected source slice only).
-- **[Manual private Vercel release protocol](https://github.com/ethan-bailey/crisis-response-port/blob/develop/wasm/docs/VERCEL_MANUAL_DEPLOYMENTS.md)** — Git commits no longer trigger Vercel deployments.
+- **[Hosting and manual Vercel fallback policy](docs/VERCEL_MANUAL_DEPLOYMENTS.md)** — ChatGPT Sites is primary; Vercel is manual fallback only; automatic Vercel deployments remain disabled.
 
-Original recovered developer code and assets remain private. No invented gameplay, fake placeholders, public asset deployment, or 1:1 parity claims without source verification.
+Recovered source and the repository remain private. Public hosting is limited to an owner-authorized, byte-verified package that passes the local and live smoke gates. Do not expose repository source or recovery archives, invent gameplay, or claim parity without source verification.
 
 ---
 

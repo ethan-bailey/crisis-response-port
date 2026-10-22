@@ -21,12 +21,13 @@ Derived from the 2026-10-16 workflow audit. These rules keep the port moving fas
 
 GitHub Actions is disabled by owner decision for this project. Do not restore minutes, trigger workflows, or treat Actions checks as a gate. For landing work, run local verification on the exact candidate tree: a fresh full-source build, relevant contracts, and provenance checks. Record commands, results, and the exact tested source SHA in the handoff or evidence docs. Gameplay and browser behavior still require their applicable local/live smoke tests; a successful compile alone is not a gameplay or browser pass.
 
-## 1. Deployments: on-demand only
+## 1. Deployments: ChatGPT Sites primary, manual Vercel fallback
 
-- **No automatic Vercel deployments on push.** Validate on localhost in CI; deploy to Vercel only when you need a public, device-testable URL (e.g., real iPhone Safari testing — localhost can't reach the phone).
-- **Gate every public deploy on a passing localhost smoke test.** Never deploy a commit that hasn't booted locally.
-- **Use each branch's stable preview alias** for testing, not per-deployment URLs. One URL per branch, always pointing at its latest deploy.
-- If usage starts climbing again, say so in the branch docs before it becomes a problem — don't wait to be asked.
+- **ChatGPT Sites is the primary host** for an owner-authorized public build. Build the compiled runtime and required game assets from the exact develop/wasm source SHA, generate and verify an integrity manifest, and preserve the package byte-for-byte through Site creation.
+- **Local smoke is a hard gate.** Before publishing, use a real browser to confirm the page loads, the WebAssembly runtime boots, the Marksman scene loads, and input responds. A failed or incomplete check means no publish. After publishing, repeat those checks in a fresh browser session against the live Site.
+- Check that Sites accepts the verified package size and file count, serves .wasm for execution, and loads required audio and asset files. If Sites cannot host a locally passing package, allow one repackaging-only attempt; then use the manual Vercel fallback and record the exact Sites failure and resulting URL.
+- **Vercel is manual fallback only.** Automatic Git deployments remain disabled by the committed vercel.json setting. Do not re-enable automatic deployment. Use the same already verified package for fallback.
+- Keep the repository and raw recovered sources private. Public Sites hosting is limited to the exact package authorized by the owner; do not publish repository source or recovery archives.
 
 ## 2. Branch and PR hygiene - single-line workflow
 
@@ -61,7 +62,7 @@ Owner rule (2026-10-22): one agent works this repo at a time, so there is **one 
 
 ## 7. Housekeeping
 
-- The repo stays **private**. No public forks, no public build artifacts, no secrets in logs or docs.
+- The repository and raw recovered materials stay **private**. No public forks, raw source, recovery archives, or secrets in logs/docs. An owner-authorized compiled package may be hosted publicly on ChatGPT Sites only after the required local and live smoke gates; Vercel remains a manual fallback and automatic deployments stay disabled.
 - Heavy operations (full Unity rebuilds, IL2CPP, large uploads) get **one controlled run at a time** with cached outputs reused — never parallel redundant builds.
 
 ## 8. Owner-approved mobile enhancements must survive source integration

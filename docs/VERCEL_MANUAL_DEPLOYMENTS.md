@@ -1,53 +1,32 @@
-# Vercel deploy policy — manual iPhone-test releases only
+# Hosting policy — ChatGPT Sites primary, manual Vercel fallback
 
-Updated October 16, 2026. This is the active deployment policy for the **existing private** `ethan-bailey/crisis-response-port` repository and its Vercel `crisis-response-port` project (ID `prj_EgsDBXSKhvina2fDecbdMf6ylTKE`). It is NOT permission to make recovered game source/assets public.
+Updated 2026-10-22 for the owner-authorized hosting plan. The repository and raw recovered code/assets remain private. ChatGPT Sites is the primary host for an explicitly authorized compiled package. Vercel is a manual fallback only. Automatic Vercel deployments remain disabled by vercel.json.
 
-## Automatic deployments disabled
+## Required local verification
 
-The Vercel project was confirmed to create new Git-source deployments for ordinary `codex/*` commits. Vercel's Pro/Enterprise-only `deploymentPolicy` API was rejected by Vercel with `403 pro_plan_required`, so **do not retry that paid-only policy or upgrade billing**.
+On the exact develop/wasm source SHA:
 
-Instead, official supported Hobby-compatible configuration is committed as `vercel.json` to **every currently existing branch**, including default `main`:
+1. Run a fresh full-source build, relevant contracts, and provenance checks; record commands, results, warnings, and the exact SHA.
+2. Build the compiled browser runtime and required game assets into a package with a SHA-256 integrity manifest. Record file count, total bytes, and manifest verification.
+3. Serve that exact package locally and use a real browser to confirm the page loads, WebAssembly boots, the Marksman scene loads, and input responds. Do not publish a package that fails this gate.
 
-```json
-{
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "git": {
-    "deploymentEnabled": false
-  }
-}
-```
+## ChatGPT Sites — primary
 
-Original documentation: https://vercel.com/docs/project-configuration/git-configuration .
+Create the Site from the verified package without rewriting, regenerating, or substituting any game files. Set access to public only when explicitly authorized. Confirm the package size and file count are accepted, .wasm is served with an executable media type, and audio/assets load. In a fresh browser session, repeat the local smoke checks against the live URL. A URL alone is not a live smoke pass.
 
-This explicitly prevents **automatic Git-triggered Vercel deployments** of future commits when Vercel reads that branch's configuration, for both production and previews. The existing Vercel project, branch aliases, deployment history, access controls and the previously owner-private hosted game remain unchanged; GitHub CI workflows remain enabled. The file is deliberately present on `main` so new branches normally inherit the rule. **Any branch created from an older ref lacking this file must add it before pushing to Vercel**. Do not introduce `github.enabled:false` (deprecated, and blocks deploy hooks).
+If Sites cannot host a package that passed local smoke, make one bounded repackaging-only attempt. If it still fails, record the exact failure and deploy the same verified package through the Vercel fallback.
 
-Initial application commit log:
+## Vercel — manual fallback only
 
-| Branch | Configuration commit |
-| --- | --- |
-| `main` | `37a83b82503b83ae4f247d65c5c198f45d765ae6` |
-| `codex/full-source-closure-audit` | `e888d2938c6ac6b12c28381a4aa06e79cd7bfa5d` |
-| `codex/iphone-input-parity-foundation` | `ff2eed647e4eeb3446453b304bb4cbc4b6d31349` |
-| `codex/native-marksman-webgl-runtime-validation` | `796f164eb8f37bf1ef43c4489a0ee490dd84eff6` |
-| `codex/projectile-material-impacts` | `52c5f05f166ca61b053178907fa0874132917bbc` |
-| `codex/wasm-compile-package` | `d67d446bd062466a4ec62fcf24bf49818825a5c9` |
-| `codex/wasm-original-arm-sequences` | `097f1dfed194c670e736d7a4234c56a79766d16d` |
-| `codex/weapon-actions-checkpoint` | `a824915c08b2d945a77de7c33297453680ef8034` |
+The Vercel project is ethan-bailey/crisis-response-port (project ID prj_EgsDBXSKhvina2fDecbdMf6ylTKE). Automatic Git-source deployments are disabled with:
 
-## Standard branch layout (2026-10-16)
+    {
+      "$schema": "https://openapi.vercel.sh/vercel.json",
+      "git": { "deploymentEnabled": false }
+    }
 
-The repository now uses **`main`** for stable repository baselines and **`develop/wasm`** for the integrated game. `develop/wasm` was created from the latest validated original-code PR #9 tree and **inherits** root `vercel.json` with `git.deploymentEnabled=false`. New feature branches should be cut from `develop/wasm` so they inherit this rule; research/experiment branches must do the same or explicitly add the policy before creating Git-triggered deploys. Existing branch-alias URLs still point to the last **actual deployed build**. Manual device-test releases require a matching verified package and access protection. Contributor rules: [branch policy](BRANCHING_AND_COLLABORATION.md).
+Do not enable automatic deployments or change billing. Use Vercel only after a Sites hosting failure for a package that already passed local smoke. Deploy the same verified package manually, retain access protection unless the owner directs otherwise, verify the resulting URL with the same live smoke, and record its deployment ID and URL. Git commits alone do not advance existing Vercel aliases.
 
-## Explicit device-test deployment protocol
+## Verification record for 2026-10-22
 
-1. First run the original C#/WASM CI tests and verify the exact intended code SHA, private built artifact, original asset hashes, scene/weapon input, browser tests and WebKit smoke evidence. A green documentation/source audit does not establish a playable build.
-2. Confirm `crisis-response-port` is the intended Vercel project, team/account scope, and that deployment protection remains enforced. Do not release unreviewed proprietary assets to an openly accessible Vercel domain.
-3. **Only when an actual iPhone Safari test URL is required**, explicitly deploy the selected **verified** commit/package using Vercel's manual deployment UI (Project → Deployments → Create Deployment → enter branch or exact commit SHA) or an authenticated Vercel deployment tool / CLI / deploy hook. Git integration stays connected; there is no need to toggle auto-deploy back on. A deployment from the raw repository may not package the verified CI WASM `/game/` + `/runtime-web/` output; verify the uploaded content matches the tested source/artifact before declaring success.
-4. Inspect deployment status; confirm HTTPS, required WebAssembly MIME/base paths, actual protected Safari login/access, touch behavior, version and gameplay. Update `NEXT_AGENT.md` with tested SHA, deployment ID/URL, known limitations and rollback ID.
-5. Existing **branch alias URLs point to their latest actual deployment, not to the latest Git commit**. Disabling automatic deployment means commits alone do not advance those URLs. Manual deployment can create a new preview URL or reassign branch aliases according to its source; verify the actual resulting alias rather than assuming a CLI-created preview takes the usual Git branch alias.
-
-## Rollback
-
-To restore the previous automatic Vercel Git behavior for a specific branch, remove `vercel.json` from that branch in a reviewed commit (or explicitly change `git.deploymentEnabled` back to `true`). Do not reset whole branch history, merge unpublished gameplay, change the repo privacy or disable GitHub Actions. Because the policy is repeated per branch, keep the rule on other branches until they deliberately opt back in.
-
-Verification on October 16, 2026: all eight branch configurations were re-read from GitHub and each reported `git.deploymentEnabled=false`. A subsequent Vercel deployment-list inspection found the most recent completed deployment still sourced from a pre-policy Git commit `f0c9330fe0c5156d54f53c89c5f6817a465881f8`; no policy-commit deployment had appeared at that time. This is configuration and snapshot evidence, not a guarantee that an older queued job will never finish. Do not launch an unwanted test deployment just to validate the gate.
+At develop/wasm source SHA 35f077f293305694f5a279bc073f23e159aba0fe, the fresh full-source build and browser-runtime publish succeeded, but the local browser smoke failed: the page displayed “Runtime error. Reload to reset.” and requested browser-input.mjs with HTTP 404. The Marksman scene did not load and input did not update. No Sites or Vercel deployment was attempted. See NEXT_AGENT.md for the package manifest, exact results, and next action.
