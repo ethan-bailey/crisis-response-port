@@ -124,7 +124,7 @@ public sealed class ParticleSystemRenderer:Renderer {
  // Imported source vertices. Convex planes are the hull of those vertices; this
  // is not a claim about matching Unity's PhysX cooking/reduction algorithm.
  public sealed class MeshCollider:Collider {
-  public Vector3[] vertices;public int[][] triangles;public float[][] planes;public bool convex;
+  public Vector3[] vertices;public int[][] triangles;public float[][] planes;public bool convex;public Mesh sharedMesh {get;set;} public bool inflateMesh {get;set;} public float skinWidth {get;set;}
   public override bool Raycast(Ray ray,out RaycastHit hit,float distance){
    hit=default;if(!isActiveAndEnabled)return false;var o=transform.InverseTransformPoint(ray.origin);var d=transform.InverseTransformVector(ray.direction);
    float near=0,far=distance;Vector3 normal=Vector3.zero;
