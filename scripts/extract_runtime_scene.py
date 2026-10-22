@@ -37,9 +37,10 @@ BUILTIN_OBJECTS = {
     },
     '0000000000000000f000000000000000': {
         '45':'Shader', '46':'Shader', '208':'Shader', '10303':'Material', '10753':'Shader', '10754':'Material',
+            '10907': 'Sprite', '10913': 'Sprite',
     },
 }
-BUILTIN_RESOURCE_PACK_SHA256 = '5261d5a304b29fdae52723b8a4c91a5fcb36afba7ac0034edba6fb1be6a13d27'
+BUILTIN_RESOURCE_PACK_SHA256 = 'ad613f8d50a4d58be86781e0b332f8410727c8b2a77306d100ee3bc162e5272e'
 
 
 def load_builtin_resource_records(repository_root=None):
@@ -96,7 +97,7 @@ def load_builtin_resource_records(repository_root=None):
         'packSha256': digest,
         'revision': pack['revision'],
         'unityVersion': pack['unityVersion'],
-        'records': {'46': shader, '10303': material, '10753': sprite_shader, '10754': sprite_material},
+        'records': {'46': shader, '10303': material, '10753': sprite_shader, '10754': sprite_material, '10907': records['10907'], '10913': records['10913']},
         'playerResourceRecords': {
             'unityVersion': player['unityVersion'],
             'targetPlatform': player['targetPlatform'],

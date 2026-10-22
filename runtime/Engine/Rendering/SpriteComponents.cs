@@ -17,6 +17,7 @@ public sealed class SpriteRenderer:Renderer {
     public float adaptiveModeThreshold {get;set;}
     public int spriteTileMode {get;set;}
     public int spriteSortPoint {get;set;}
+    public int maskInteraction {get;set;}
 }
 
 public sealed class LineRenderer:Renderer {

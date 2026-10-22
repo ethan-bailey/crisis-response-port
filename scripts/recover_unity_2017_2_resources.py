@@ -89,7 +89,7 @@ def recover(cache, extractor):
                 raise ValueError('Exact-release editor unity_builtin_extra has no Material 10754')
             sprite_fields = sprite_material.read_typetree()
             sprite_shader_id = int(sprite_fields['m_Shader']['m_PathID'])
-            wanted_ids = {46, 10303, 10754, sprite_shader_id}
+            wanted_ids = {46, 10303, 10754, sprite_shader_id, 10907, 10913}
             for obj in sorted(env.objects, key=lambda o: o.path_id):
                 if obj.path_id not in wanted_ids:
                     continue
