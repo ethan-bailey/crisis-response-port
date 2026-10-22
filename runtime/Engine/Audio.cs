@@ -1,0 +1,50 @@
+namespace UnityEngine;
+
+public enum AudioDataLoadState {Unloaded=0,Loading=1,Loaded=2,Failed=3}
+public sealed class AudioClip:Object {
+    public string SourceID {get;}
+    public byte[] SourceData {get;internal set;}=Array.Empty<byte>();
+    public float length {get;}
+    public AudioDataLoadState loadState {get;private set;}=AudioDataLoadState.Unloaded;
+    public AudioClip(string sourceID,float length){
+        ArgumentException.ThrowIfNullOrEmpty(sourceID);if(!float.IsFinite(length)||length<0)throw new ArgumentOutOfRangeException(nameof(length));
+        SourceID=sourceID;this.length=length;world=RuntimeWorld.Current;world.Register(this);
+    }
+    // The browser/native decoder reports this; a source declaration alone is
+    // not evidence that a sample was decoded or played on the audio device.
+    public void ReportLoadState(AudioDataLoadState state)=>loadState=state;
+}
+public interface IAudioSourceDriver {
+    bool IsPlaying {get;}
+    void PlayOneShot(AudioClip clip,float volume,int priority);
+    void Stop();
+}
+public interface IAudioClipPlaybackDriver:IAudioSourceDriver {
+    void Play(AudioClip clip,float volume,float pitch,bool loop,bool muted,int priority);
+}
+public sealed class AudioSource:Behaviour {
+    public UnityEngine.Audio.AudioMixerGroup outputAudioMixerGroup {get;set;}
+    public bool playOnAwake=true,spatialize,spatializePostEffects,bypassEffects,bypassListenerEffects,bypassReverbZones;
+    public float dopplerLevel=1,minDistance=1,maxDistance=500,pan2D,reverbZoneMix=1;
+    public int rolloffMode,spread;
+    public AnimationCurve rolloffCustomCurve,panLevelCustomCurve,spreadCustomCurve,reverbZoneMixCustomCurve;
+    public int priority {get;set;}=128;
+    public AudioClip clip;
+    public float volume=1f,pitch=1f;
+    public bool loop,mute;
+    public IAudioSourceDriver Driver {get;set;}
+    IAudioSourceDriver RequiredDriver=>Driver??throw new NotSupportedException("Decoded original audio playback driver is not bound");
+    public bool isPlaying=>RequiredDriver.IsPlaying;
+    public void PlayOneShot(AudioClip clip,float volumeScale=1){
+        ArgumentNullException.ThrowIfNull(clip);
+        if(clip.loadState!=AudioDataLoadState.Loaded)throw new InvalidOperationException($"Audio sample {clip.SourceID} is not decoded");
+        RequiredDriver.PlayOneShot(clip,volumeScale,priority);
+    }
+    public void Play(){
+        ArgumentNullException.ThrowIfNull(clip);
+        if(clip.loadState!=AudioDataLoadState.Loaded)throw new InvalidOperationException($"Audio sample {clip.SourceID} is not decoded");
+        if(RequiredDriver is not IAudioClipPlaybackDriver playback)throw new NotSupportedException("Audio clip playback driver is not bound");
+        playback.Play(clip,volume,pitch,loop,mute,priority);
+    }
+    public void Stop()=>RequiredDriver.Stop();
+}

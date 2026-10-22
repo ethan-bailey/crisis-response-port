@@ -5,13 +5,40 @@ public sealed class RangeAttribute(float minimum,float maximum):Attribute {
  public float min=minimum,max=maximum;
 }
 public enum ForceMode {Force=0,Acceleration=5,Impulse=1,VelocityChange=2}
-public struct JointSpring {
+[Serializable] public struct JointSpring {
  public float spring,damper,targetPosition;
 }
-public sealed class HingeJoint:Component {
- bool springEnabled;
- JointSpring currentSpring;
+[Serializable] public struct JointLimits {
+ public float min,max,bounciness,bounceMinVelocity,contactDistance;
+}
+public class Joint:Component {
+ public Rigidbody connectedBody;
+ public Vector3 anchor,connectedAnchor;
+ public bool autoConfigureConnectedAnchor=true;
+ public float breakForce=float.PositiveInfinity,breakTorque=float.PositiveInfinity;
+ public float massScale=1f,connectedMassScale=1f;
+ public bool enableCollision,enablePreprocessing=true;
+}
+[Serializable] public struct JointMotor {public float targetVelocity,force;public bool freeSpin;}
+public sealed class FixedJoint:Joint { }
+public sealed class HingeJoint:Joint {
+ public JointMotor motor;
+ public bool useMotor;
+ public Vector3 axis=Vector3.forward;
+ [SerializeField] bool springEnabled;
+ [SerializeField] JointSpring currentSpring;
+ [SerializeField] JointLimits currentLimits;
+ [SerializeField] bool limitsEnabled;
  public Action<JointSpring,bool> SpringChanged;
+ public Action<JointLimits,bool> LimitsChanged;
+ public JointLimits limits {
+  get=>currentLimits;
+  set {currentLimits=value;LimitsChanged?.Invoke(currentLimits,limitsEnabled);}
+ }
+ public bool useLimits {
+  get=>limitsEnabled;
+  set {limitsEnabled=value;LimitsChanged?.Invoke(currentLimits,limitsEnabled);}
+ }
  public bool useSpring {
   get=>springEnabled;
   set {springEnabled=value;SpringChanged?.Invoke(currentSpring,springEnabled);}

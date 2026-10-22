@@ -1,11 +1,7 @@
 name: Recover source-original particle material properties for private WASM
 on:
-  push:
-    branches:
-      - codex/projectile-material-impacts
-    paths:
-      - .github/workflows/recover-original-particle-materials.yml
   workflow_dispatch:
+
 permissions:
   contents: write
   actions: read

@@ -18,6 +18,15 @@
 
 **Starting code:** `develop/wasm` was created at original PR #9 branch commit `2e23cd20813f6bf3e4d2077146edb8daebb06ed4`, containing its gameplay history and the integrated arm-sequence batch from former PR #21. Latest matching compiled/browser-tested *gameplay* source at restructuring is `1264c0b4579076b82e1b6b21955469313779fe39`, [Actions #38901664939](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38901664939), private site artifact `12046137813` and evidence `12046012744`. Governance commits after that are not a new test run. Controller animation playback, other original systems and physical iPhone parity are **not** complete.
 
+## Single-agent policy (owner, effective 2026-10-22)
+
+Work in this repository is done by one agent at a time, so branching is organised as a single line of development rather than parallel workstreams:
+
+- There is **one active feature workstream at a time**. Additional scoped work is recorded as issues or in `NEXT_AGENT.md`, not started as parallel branches.
+- Feature branches are **short-lived**: branch from current `develop/wasm`, land one reviewable slice, merge, retire.
+- A branch that must live beyond one session **merges current `develop/wasm` into itself at the start of each session**, resolving overlaps while they are small - the repeated PR #42 merge probes of October 2026 are the failure mode this rule exists to prevent.
+- An externally blocked merge gate (for example exhausted CI quota) does not justify stockpiling work on a long-lived branch: verified slices stay small and mergeable, with local verification as the temporary gate, and the blockage is recorded in the handoff.
+
 ## Legacy transition
 
 - **PRs #8 and #9** contain the historical gameplay commits now reachable on `develop/wasm`; preserve those source branches and Git history as rollback/provenance references. Close them as **superseded by an equivalent new integration branch**, not falsely marked as GitHub-merged.

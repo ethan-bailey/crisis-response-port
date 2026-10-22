@@ -1,0 +1,336 @@
+{
+  "archiveSha256": "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
+  "assemblyEntry": "export/AuxiliaryFiles/GameAssemblies/BehaviorDesignerRuntime.dll",
+  "assemblySha256": "7811c39c5039dfd9604eab9a1426856e70cead5aa42b60a7aee2cc19cee57b7a",
+  "decompiler": "ilspycmd 9.1.0.7988",
+  "sources": {
+    "AOTLinker.cs": {
+      "decompiledSha256": "021636f212c28052a62c9ae131d10050770f938256a751afda28042033dea67d",
+      "runtimeSha256": "98639891bfdcca8da6b031090f92be7b16529fb610ba7c6aabb79d394499b676",
+      "runtimePath": "runtime/Original/BehaviorDesigner/AOTLinker.cs",
+      "compiled": true
+    },
+    "BinaryDeserializationDeprecated.cs": {
+      "decompiledSha256": "9db24328b37ee5bf9011af1b1aa12030ec3181c50254857a5c717a417defa2fe",
+      "runtimeSha256": "6091fb6ac732633fb1cb4f83a3bc1000631f70758326f9312749f399017df855",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BinaryDeserializationDeprecated.cs",
+      "compiled": true
+    },
+    "BinaryDeserialization.cs": {
+      "decompiledSha256": "2ffa0b8f7119120579b17d0e4a71a2ca5dc98adce9d5de3d2545e51ab698c02e",
+      "runtimeSha256": "661b86ad61a6306eaa93eedd6659f4c0a5800ce1762d16a942fb928342e7bb3c",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BinaryDeserialization.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/TaskNameAttribute.cs": {
+      "decompiledSha256": "08771a3368984b487896078e7752050a5bacc6a3935aeb5ff0e0e0994a3137b6",
+      "runtimeSha256": "686d95476804fcdd5e8908e636166a5949b9740e9e7b103be7c2a9558db9b243",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/TaskNameAttribute.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/UnknownParentTask.cs": {
+      "decompiledSha256": "f8e3ab594a3ac298bd254ad7acc32460675b606dab98b3d0f08b8e2cda996e34",
+      "runtimeSha256": "7bd27d0ecf7ee6972a87fe124e566ab578d94db4afa49c92d913adb8c62b489a",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/UnknownParentTask.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/Conditional.cs": {
+      "decompiledSha256": "eb3bd594596b0e2ed186ea212a73f16ee61d86085eafcfabbd174f507910a583",
+      "runtimeSha256": "01f004ad8289b51836f7a60a7329dc7b5e80771eaaa6d5675537718cb10b773d",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/Conditional.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/LinkedTaskAttribute.cs": {
+      "decompiledSha256": "8af17173bfacf4faac74169429ebcb7a8fb8c1ce0675d1477610a7293fe57e4c",
+      "runtimeSha256": "19e2b420723aca93d88da7929e6d7601022004599b6474766dc6269a399faf30",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/LinkedTaskAttribute.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/TaskStatus.cs": {
+      "decompiledSha256": "2eb7c5f006c6c98c7f29817e0255b68cf7cf29760a4a047c089cf65ef0874a0f",
+      "runtimeSha256": "c006040513a033247a05850470566c46f8767456f5b4e5a9841b74f0698dbb1c",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/TaskStatus.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/SkipErrorCheckAttribute.cs": {
+      "decompiledSha256": "331e0e5426421414cdb4ae3fcc682c582be4eca5f5478da27d159603945be6ce",
+      "runtimeSha256": "1e9151a7e10e69e9f2bc0f3b376dad805800aea615ecf28eec490104500191d1",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/SkipErrorCheckAttribute.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/TooltipAttribute.cs": {
+      "decompiledSha256": "5ac5d54990a1b61ccd1ada0ef071046be4450535006ffcef6244cde44ff37262",
+      "runtimeSha256": "b06051363aecdefd5e7fbe141482b933e9fd19e62897947f753d13253f670652",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/TooltipAttribute.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/BehaviorReference.cs": {
+      "decompiledSha256": "b2086cd06ab2c64afea8a0152fc434cee083a5cd127d73ff72207e19ae74425a",
+      "runtimeSha256": "d8b5ace1cba0887d4b1b27c8eab7f5eee08928f8adce8a024ba9724cde765049",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/BehaviorReference.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/RequiredComponentAttribute.cs": {
+      "decompiledSha256": "b9b4cc1dd4f3c66236fc681352bbbed5e7b1e1551a7f2f239abdd4f15a28d4cb",
+      "runtimeSha256": "0c11674707d5c9f1e1b93a63902841676a40f178c08bc4c99e9e60ec9e4cb795",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/RequiredComponentAttribute.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/SharedRequiredAttribute.cs": {
+      "decompiledSha256": "1806d0e572fd4384593df11a3cc6ec9b730f8faf76b9c902b5fabb2b714ac08d",
+      "runtimeSha256": "3bc62fba5161ac6601840bc23982e8cd3ae2af5504c4a836e49180162ea29047",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/SharedRequiredAttribute.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/UnknownTask.cs": {
+      "decompiledSha256": "0b95b9891301667e70969922d01e241f4101cc590f5639a5a5bfad310a5e2c9b",
+      "runtimeSha256": "7fd0660a0b588691999c42690454a2dd6bdb79d5366383cd642db32dcdf94e5e",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/UnknownTask.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/RequiredFieldAttribute.cs": {
+      "decompiledSha256": "6239f9d7a586936447386658302accbaccada7089a02e30bb56be0464f1bd29d",
+      "runtimeSha256": "913eff7765f069a7da6e29bebf4a8e608196d30c8fce432b05f41e27d7fc2ff4",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/RequiredFieldAttribute.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/AbortType.cs": {
+      "decompiledSha256": "c7944ce3bca65a86a8cd69b810d882714e7f3190dbfbff1ff3462a8433d280c8",
+      "runtimeSha256": "eb1cd234bbf5d784841ce8ad855db5b47f61d5f4642375c39e13c8e0b2ea1d58",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/AbortType.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/Action.cs": {
+      "decompiledSha256": "fbd75ce3fb443d2846f65cd395fe963409929afe4076bfd614ac330511c3839b",
+      "runtimeSha256": "c6b020c684fc2d4f9547205636a6401b39926bcc60662d3e29a12092e70c2797",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/Action.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/TaskCategoryAttribute.cs": {
+      "decompiledSha256": "5d11a3fb243b7df06d014b8488dd62b5cf93dc4923d631e1f84104c89236fad4",
+      "runtimeSha256": "9c093c4d5368ead787e515fd7e0e50642e099efa06594df5957f3761ab0a707a",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/TaskCategoryAttribute.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/HelpURLAttribute.cs": {
+      "decompiledSha256": "1e3bd0ae67a47d32937ddb621cefb533f1c273af88b632ab2b9e7c4db9f9e1e4",
+      "runtimeSha256": "adb972c7255e398b676ed29978207e6c35a719ee0fdc2bea3e7ab009ab6037fa",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/HelpURLAttribute.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/InspectTaskAttribute.cs": {
+      "decompiledSha256": "3ad4c4ff4d8cfec3404ea78ac30ed9779bf1de27dd2de7d645f28a39aa63eec6",
+      "runtimeSha256": "b8fbaecbc1b1225150d2769ad01ce3a75b61ebfc2b90e28c562274bcfe9d883f",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/InspectTaskAttribute.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/TaskDescriptionAttribute.cs": {
+      "decompiledSha256": "d868c0a5d4a6a16c71dcd0993e6387911b652d2ee5dd0d44a76f50e53eed284c",
+      "runtimeSha256": "588f9fdfb031c2b80479339effdf73e589cb701fd1891b0482754538106f15cd",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/TaskDescriptionAttribute.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/ObjectDrawerAttribute.cs": {
+      "decompiledSha256": "4169bce300355f8fa12aba4c281e835c7731e81bd2bb88b7340a4614e895f091",
+      "runtimeSha256": "b3634a2434395386a7172c30376167bb4fd770c4b08ca43bb42856a133b2dd55",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/ObjectDrawerAttribute.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/Composite.cs": {
+      "decompiledSha256": "fca7a6b7242790195f8c2e5bba0db310630e283e08661949e655ab3a739158d9",
+      "runtimeSha256": "da3fb1ac8d4b8f0a1ea308d0ab38b7080450663b34d2f9f9c81bdf7d9b9ea1b4",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/Composite.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/TaskIconAttribute.cs": {
+      "decompiledSha256": "c6686808ae49ccca4ce2757227375aabc60be3d707e55c4e0fd6d5166717bc23",
+      "runtimeSha256": "03750dfac9eab1d2dce0633509950df01013aeb7fb155be0f13c861b144e9cfa",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/TaskIconAttribute.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/Decorator.cs": {
+      "decompiledSha256": "dece7d34ace5180c15f4e239a1af00deb33ef0ea9f3991c342583f2670d37d67",
+      "runtimeSha256": "2efeb52899fffde91ea88b0e72a6a356e881ce4d6a8f0f86c71243cad139c24d",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/Decorator.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/Task.cs": {
+      "decompiledSha256": "4db7db9b33467350f2ff81fc86ee01c8e2c59bf62cb4c526ca06eb08aaf08167",
+      "runtimeSha256": "acb4672b12da2264d6f1d012b8a34ab9c62b5b51a119de43c80c06e89d56d149",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/Task.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/ParentTask.cs": {
+      "decompiledSha256": "599695b82280d68beaa63e7d594d46288d34b65ec3158d7a2d75e69470ebd059",
+      "runtimeSha256": "e4061e06b433a49a450f9c0894e1dc8b112ecdfe27e511a3fee32cf3331d600f",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/ParentTask.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/MiniJSON.cs": {
+      "decompiledSha256": "e5e61c2e186a53bec6e3ac82c0a8b17492bedf29ab383d5cc3825dcd8db9e1ba",
+      "runtimeSha256": "d521745f9a5f253846d7e02f658ae5cae7960fafc3c40c1ef5693a3d25414bbb",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/MiniJSON.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/SharedGenericVariable.cs": {
+      "decompiledSha256": "754ba55e3b6b99a7c2bc9c1a3346698601060ff3c2f10b87bb031ec35352ae43",
+      "runtimeSha256": "471dbc8a1633a1ccbe7d878cac154c75fe8c94361f6d6b297d4962f188c5aece",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/SharedGenericVariable.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/ExternalBehavior.cs": {
+      "decompiledSha256": "2832ee5c5494b456715572a5ece12e884b2dd93c4cb66394ba84530c56428cb3",
+      "runtimeSha256": "c0b2348b6f66357abf8d55d355d2e2748918eb9235d4713c9010a4f99b82f72a",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/ExternalBehavior.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/Behavior.cs": {
+      "decompiledSha256": "3d979552fcb871c3f65003d635aab8bad2567c793a7a38a0d8c305121c1e09d0",
+      "runtimeSha256": "7b1da8ad4e4b75d1ecaa6ca5dee958ef8659ed37c82c70f5d736be43001cd03c",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/Behavior.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/JSONDeserialization.cs": {
+      "decompiledSha256": "776a991e2ecee23897f8127bbf680bd7795b95eda273ee8f2a8dc4963bcfd453",
+      "runtimeSha256": "37346da040001ce06bb288dcff5b5aa7f6d1486740e16ac27b2dfef0ec06662d",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserialization.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/GenericVariable.cs": {
+      "decompiledSha256": "4c576f9c24048c95f15e6fc9d4b656e348a321fa264f544951ea278a8474db96",
+      "runtimeSha256": "df437c6890ed7f7c88bc2ae96d04b4958b1ad08a92c9779e19bfbbe81cadabd4",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/GenericVariable.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/JSONDeserializationDeprecated.cs": {
+      "decompiledSha256": "fd3fe3dc2cc1ecd05bb5f4372e369313eb0843b1a7625a85f909c5c815c4bb45",
+      "runtimeSha256": "aee8435d9450c62dd64f083add9a9bb39e3d9f5ea0e524096c0c584f1c70bd8e",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserializationDeprecated.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/IBehavior.cs": {
+      "decompiledSha256": "fe0f14fcd48d785cca62c19fd8f3ba502e38a44fb49eca4dd53a69bbd0f8ca6b",
+      "runtimeSha256": "754b085df73c9d890403f1a161514c8bbe281315fc18ca0036fa295ddd4e104c",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/IBehavior.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/UpdateIntervalType.cs": {
+      "decompiledSha256": "e5d9b0b33e35f22bad3daea908e44a807a4d556a7fd3a19a0433efa780ad09ce",
+      "runtimeSha256": "127643d07d5e16ec0c5d4d8ebe97a1eefb9bf917b06c47da9c18e92f29e1877f",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/UpdateIntervalType.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/SharedVariable.cs": {
+      "decompiledSha256": "9ed932b55906e14903b587f170c48588872586ecf39268378769622d89a396b5",
+      "runtimeSha256": "bf94f4b67978e215e142a489a0e977cde812c4529d24147d3da72044a3c9f69c",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/SharedVariable.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/NodeData.cs": {
+      "decompiledSha256": "e601dd4e2c4946e50ce1cfc57005fb4eaa62ac08e9dccbeb0c393e3c9ac38e11",
+      "runtimeSha256": "8387a19da9ef3bde2c0e57b5b8894d170a030febe1ea0fa868d610d8e515dd0c",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/NodeData.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/TaskCoroutine.cs": {
+      "decompiledSha256": "077415e88282b418d7c25053238d97e92f1dacf4acb646f7528f3e313cacf7b1",
+      "runtimeSha256": "5319f52d324768f5671b08257f2e71b44afa96f0e1027db73012a3fd60d6f06c",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/TaskCoroutine.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/NamedVariable.cs": {
+      "decompiledSha256": "4960bb674af5583a38c7d27f2277af496e1fe1e3cb011f438800d040273a55f2",
+      "runtimeSha256": "d3929a96f7a7a2c9c769a002286f49bacb89fee32f9e7caafb3f5dd48e8ba75e",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/NamedVariable.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/VariableSynchronizer.cs": {
+      "decompiledSha256": "2759f9741dcad018f041b398a3893100711d21558b762800bc366c7664f7c991",
+      "runtimeSha256": "61c890281344372f9f971f8eb7b430a5c075de7dcf1937191941783c47110969",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/VariableSynchronizer.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/ObjectPool.cs": {
+      "decompiledSha256": "c356c4576414685c94b22b6d8b237728bf51171cbf083c5ef9e180de03e7e43d",
+      "runtimeSha256": "c97a0b6defa3ec6b1e8020339df7ace1c76f498b885b1bafe063aeb814e3c5a0",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/ObjectPool.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/TaskUtility.cs": {
+      "decompiledSha256": "abdfc2e8e6c56fc7c80c2d844d9e82fc4968839f7d518ff7182dc54c308e2440",
+      "runtimeSha256": "89e290e2b782e8a425e39c51352e6b676177a7b00986b660dd2787f1d528c39b",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/TaskUtility.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/BehaviorSource.cs": {
+      "decompiledSha256": "87e19ff99e66b5f08ccd36c57aa10bd8b05dc556e778762da8750c341b19c415",
+      "runtimeSha256": "0e954362b043fa4e371ad4d4c5556d039e3540af9c9f2ea5289bb86abbdd631c",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/BehaviorSource.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/FieldSerializationData.cs": {
+      "decompiledSha256": "21fe8868e518730f55f936e0e6bcd42805f6fd49c6a5f76e01efaaa0383439cc",
+      "runtimeSha256": "09db95cbf20c345385fa87a7a23c0b9996885133010069455447ce290dc30252",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/FieldSerializationData.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/VariableSerializationData.cs": {
+      "decompiledSha256": "ad997b61f505d07b697fdf2e5e74073fb68c5714a3967405dcbf2d500b3b7cb6",
+      "runtimeSha256": "f2921db7bd9cd8d3f9fac90f018099033a48a78fb9f2b201b600a446b31df93f",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/VariableSerializationData.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/GlobalVariables.cs": {
+      "decompiledSha256": "34e6421d5ec3bbbbbbcbef0d09cea480d6b1e1b75bf1952aebaef6aa46665462",
+      "runtimeSha256": "1f290ebad0fbcb1813ab5975e9c30fb35b5979618914feba2b2baa58c4094e64",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/GlobalVariables.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/IVariableSource.cs": {
+      "decompiledSha256": "f89e7f6cb6492eefe371bd9454999b07576ca8103d8c91cfbac1101880d35c86",
+      "runtimeSha256": "33b3313cb2d752602c24670c64f0d200d6e239a8f3351350155b885c7bdee42f",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/IVariableSource.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/BehaviorManager.cs": {
+      "decompiledSha256": "ffab268df04712caa73986006e38bb753df47888e4a5dfca28efc35283cd470a",
+      "runtimeSha256": "1b50b2787b7c1719432db3244395ef3648893f2132e39a95978d7bc928d196d3",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/BehaviorManager.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/SharedNamedVariable.cs": {
+      "decompiledSha256": "55a16f8323300afc4fd430daf17c7a13aa80fb27204dcec35fbe67a7f113b0aa",
+      "runtimeSha256": "873c1f2435cb7c522806c15d3bd32a74fa688fbf3c5a2116e6d73600adb3d132",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/SharedNamedVariable.cs",
+      "compiled": true
+    },
+    "BehaviorDesigner.Runtime/BehaviorGameGUI.cs": {
+      "decompiledSha256": "6b5ec30a400da35dbefd64966687fff3dccb7780d23982b6996f5b0f5c170d7e",
+      "runtimeSha256": "04754b10409f38338b8c4bdb3b17cc9e9f5eb1ee1104ba5396149414abe38852",
+      "runtimePath": "source-reference/Original/BehaviorDesigner/BehaviorGameGUI.cs",
+      "compiled": false
+    },
+    "BehaviorDesigner.Runtime/TaskSerializationData.cs": {
+      "decompiledSha256": "dc6d5d5361adc9e19b1dbeb70093bb410239f1eb3f1c3c08a3e409d4ac847be8",
+      "runtimeSha256": "458196edb433b93f6aa64519b9be563eaf8e1572afb4bb0df9a08d2fe4e651bd",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/TaskSerializationData.cs",
+      "compiled": true
+    }
+  },
+  "adaptationRules": [
+    "prefix aliases for Unity Object and Behavior Designer Task/TaskStatus identity",
+    "remove illegal decompiler virtual modifier from explicit IBehavior.GetInstanceID implementation (Behavior.cs and ExternalBehavior.cs only)"
+  ],
+  "exportedWrappers": {
+    "BehaviorTree": {
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/BehaviorTree.cs",
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/BehaviorTree.cs",
+      "sha256": "6a6f6e4e09db64f4e0494042f5274ec3f1b66db29c241b7ebf5a6111f92ad0e1"
+    },
+    "ExternalBehaviorTree": {
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/ExternalBehaviorTree.cs",
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/ExternalBehaviorTree.cs",
+      "sha256": "9ad23196c825c579b95f70612c8f93e908d61a04fd34feff0588c5dc63e6f686"
+    }
+  }
+}

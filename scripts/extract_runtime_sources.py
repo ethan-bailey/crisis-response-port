@@ -91,8 +91,17 @@ public class InputHandler : MonoBehaviour {
     methods = [block(ammunition, sig) for sig in signatures]
     getters = [member(ammunition, name) for name in ['MetricMass','DiameterInMeters','MetricLength','MuzzleEnergy',
         'MuzzleEnergyTotal','Subsonic','MuzzleBlastRange','DetonationAudioPower']]
-    save('AmmunitionBase.cs', 'using UnityEngine;\npublic partial class AmmunitionBase : MonoBehaviour {\n' +
-        block(ammunition, 'public enum FragmentationMode') + '\n' + '\n'.join(declarations) + '\n' +
+    extra_declarations = [member(ammunition, name) for name in ['availability', 'type', 'muzzleBlastForce', 'calibre', 'projectile', 'casing', 'highPolyModel', 'marksmanRound', 'sprite']]
+    # The recovered projectile prefab's selected serialized contract is the full
+    # namespaced original component, which owns fragmentMeshes/material/scaler.
+    projectile_index = ['availability', 'type', 'muzzleBlastForce', 'calibre', 'projectile', 'casing', 'highPolyModel', 'marksmanRound', 'sprite'].index('projectile')
+    if extra_declarations[projectile_index].strip() != 'public Projectile projectile;':
+        raise ValueError('Unexpected recovered AmmunitionBase.projectile declaration')
+    extra_declarations[projectile_index] = 'public Crisis.Runtime.FullSource.Projectile projectile;'
+    report['runtimeAdapters'] = {'AmmunitionBase.projectile': 'Crisis.Runtime.FullSource.Projectile preserves the recovered projectile prefab serialized fields.'}
+    save('AmmunitionBase.cs', 'using UnityEngine;\nusing Crisis.Runtime.FullSource;\nusing Utilities;\npublic partial class AmmunitionBase : MonoBehaviour {\n' +
+        block(ammunition, 'public enum Type') + '\n' + block(ammunition, 'public enum FragmentationMode') + '\n' + '\n'.join(declarations) + '\n' +
+        '\n'.join(extra_declarations) + '\n' +
         re.search(r'public AnimationCurve expansionFunction;', ammunition).group() + '\n' +
         re.search(r'public FragmentationMode fragmentationMode;', ammunition).group() + '\n' +
         '\n'.join(getters + methods) + '\n}\n')
@@ -122,7 +131,8 @@ public class InputHandler : MonoBehaviour {
     report['excludedFeatures'].extend(['Projectile flight/collision/damage/effect lifecycle is not selected',
         'Ammunition UI, availability, resource lookup and fragmentation spawning are not selected'])
 
-    keys = sorted(set(re.findall(r'KeyCode\.(\w+)', mapping + handler)))
+    all_source_text = chr(10).join(path.read_text() for path in out.rglob('*.cs') if path.name != 'KeyCode.cs')
+    keys = sorted(set(re.findall(r'KeyCode\.(\w+)', all_source_text + mapping + handler)))
     # Enum names are extracted, not used as invented Unity numeric key values.
     save('KeyCode.cs', 'namespace UnityEngine { public enum KeyCode { ' + ','.join(keys) + ' } }\n')
     report['keyCodeNames'] = keys

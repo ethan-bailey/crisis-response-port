@@ -11,8 +11,20 @@ public struct RaycastHit {
 }
 public enum QueryTriggerInteraction {UseGlobal,Ignore,Collide}
 public abstract class Collider:Behaviour {
+    public PhysicMaterial sharedMaterial {get;set;}
     public Rigidbody attachedRigidbody=>GetComponentInParent<Rigidbody>();
     public bool isTrigger {get;set;}
+    public Bounds bounds {
+        get {
+            Vector3 min=Vector3.zero,max=Vector3.zero;bool initialized=false;
+            void Include(Vector3 point){if(!initialized){min=max=point;initialized=true;}else{min=new(MathF.Min(min.x,point.x),MathF.Min(min.y,point.y),MathF.Min(min.z,point.z));max=new(MathF.Max(max.x,point.x),MathF.Max(max.y,point.y),MathF.Max(max.z,point.z));}}
+            if(this is BoxCollider box){var half=box.size*0.5f;for(int i=0;i<8;i++)Include(transform.TransformPoint(box.center+new Vector3((i&1)==0?-half.x:half.x,(i&2)==0?-half.y:half.y,(i&4)==0?-half.z:half.z)));}
+            else if(this is CapsuleCollider capsule){var(a,b,r)=capsule.Geometry();var e=new Vector3(r,r,r);Include(a-e);Include(a+e);Include(b-e);Include(b+e);}
+            else if(this is MeshCollider mesh&&mesh.vertices!=null){foreach(var vertex in mesh.vertices)Include(transform.TransformPoint(vertex));}
+            else throw new NotSupportedException("Collider bounds require a supported source collider shape");
+            return new Bounds((min+max)*0.5f,max-min);
+        }
+    }
     public abstract bool Raycast(Ray ray,out RaycastHit hit,float maxDistance);
 }
 public sealed class BoxCollider:Collider {
@@ -49,4 +61,25 @@ public static class Physics {
     }
     public static bool Raycast(Ray ray,out RaycastHit hit,float maxDistance=float.PositiveInfinity,int layerMask=-5,QueryTriggerInteraction queryTriggerInteraction=QueryTriggerInteraction.UseGlobal){var hits=RaycastAll(ray,maxDistance,layerMask,queryTriggerInteraction);hit=hits.FirstOrDefault();return hits.Length>0;}
     public static bool Raycast(Vector3 origin,Vector3 direction,out RaycastHit hit,float distance,int mask)=>Raycast(new Ray(origin,direction),out hit,distance,mask);
+    public static bool Raycast(Ray ray,float maxDistance,int layerMask=-5)=>Raycast(ray,out _,maxDistance,layerMask);
+    public static bool Raycast(Vector3 origin,Vector3 direction,float distance,int layerMask=-5)=>Raycast(new Ray(origin,direction),out _,distance,layerMask);
+    public static Collider[] OverlapSphere(Vector3 position,float radius,int layerMask=-1,QueryTriggerInteraction queryTriggerInteraction=QueryTriggerInteraction.UseGlobal){
+        if(!float.IsFinite(radius)||radius<0)throw new ArgumentOutOfRangeException(nameof(radius));
+        if(RuntimeWorld.Current.OverlapSphereQuery is {} query)return query(position,radius,layerMask,queryTriggerInteraction);
+        bool triggers=queryTriggerInteraction==QueryTriggerInteraction.Collide||(queryTriggerInteraction==QueryTriggerInteraction.UseGlobal&&queriesHitTriggers);
+        var hits=new List<Collider>();
+        foreach(var collider in RuntimeWorld.Current.Objects.OfType<Collider>()){
+            if(!collider.isActiveAndEnabled||((1<<collider.gameObject.layer)&layerMask)==0||(!triggers&&collider.isTrigger))continue;
+            if(collider is CapsuleCollider capsule){var(a,b,r)=capsule.Geometry();if((position-CapsuleCollider.SegmentPoint(position,a,b)).sqrMagnitude<=(r+radius)*(r+radius))hits.Add(collider);}
+            else if(collider is BoxCollider box){
+                var axes=new[]{box.transform.TransformVector(Vector3.right),box.transform.TransformVector(Vector3.up),box.transform.TransformVector(Vector3.forward)};
+                for(int i=0;i<3;i++)for(int j=i+1;j<3;j++)if(MathF.Abs(Vector3.Dot(axes[i].normalized,axes[j].normalized))>1e-4f)throw new NotSupportedException("Sheared box overlap requires native PhysX queries");
+                var local=box.transform.InverseTransformPoint(position)-box.center;var half=box.size*.5f;
+                var closest=new Vector3(Math.Clamp(local.x,-MathF.Abs(half.x),MathF.Abs(half.x)),Math.Clamp(local.y,-MathF.Abs(half.y),MathF.Abs(half.y)),Math.Clamp(local.z,-MathF.Abs(half.z),MathF.Abs(half.z)));
+                if((position-box.transform.TransformPoint(closest+box.center)).sqrMagnitude<=radius*radius)hits.Add(collider);
+            }else throw new NotSupportedException($"Native PhysX overlap query is required for {collider.GetType().Name}");
+        }
+        return hits.ToArray();
+    }
 }
+

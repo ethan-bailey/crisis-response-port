@@ -1,331 +1,113 @@
 using Crisis.Runtime;
+using UnityEngine;
 using System.Text.Json;
 
-if(args.Contains("--original-limb-skin")){
- var file="game/assets/operator/original-source-limb-damage-mask.json.gz";
- using var fs=File.OpenRead(file);
- using var gz=new System.IO.Compression.GZipStream(fs,System.IO.Compression.CompressionMode.Decompress);
- using var document=JsonDocument.Parse(gz);
- var masks=document.RootElement;
- if(masks.GetProperty("format").GetString()!="crisis-original-limb-initial-damage-green-v1"||
-    masks.GetProperty("originalRendererCount").GetInt32()!=17||
-    masks.GetProperty("originalTextureCount").GetInt32()!=11)
-  throw new Exception("Original source LimbTextureData mask inventory changed");
- int sampled=0;
- foreach(var skin in masks.GetProperty("skins").EnumerateArray()){
-  int width=skin.GetProperty("width").GetInt32(),
-      height=skin.GetProperty("height").GetInt32();
-  var green=Convert.FromBase64String(skin.GetProperty("originalStaticDamageGreenBottomUpBase64").GetString());
-  if(green.Length!=width*height)throw new Exception("Original skin coverage pixel length mismatch");
-  var world=new UnityEngine.RuntimeWorld();
-  var visual=new UnityEngine.GameObject("Source LimbRenderer",world).transform;
-  var tracer=new Crisis.Runtime.Character.OriginalLimbSkinTrace(visual,width,height,green);
-  int filled=Array.FindIndex(green,b=>b==0);
-  if(filled<0)throw new Exception("Original skin contains no solid texels");
-  int x=filled%width,y=filled/width;
-  var p=new UnityEngine.Vector3((x+.5f)/width-.5f,(y+.5f)/height-.5f,0f);
-  UnityEngine.Vector3 entry=default,exit=default;
-  var status=tracer.FindMarksmanEntryAndExit(p,UnityEngine.Vector3.right,ref entry,ref exit);
-  if(status!=Crisis.Runtime.Character.OriginalLimbSkinTrace.TraceResult.EntryExit||
-     Math.Abs(tracer.InitialDamageGreen(x,y))>1e-5f||
-     (exit-entry-UnityEngine.Vector3.right*.2f).magnitude>1e-5f)
-   throw new Exception("Original LimbRenderer pixel/marksman source trace mismatch");
-  int transparent=Array.FindIndex(green,b=>b==255);
-  if(transparent>=0){
-   int tx=transparent%width,ty=transparent/width;
-   var q=new UnityEngine.Vector3((tx+.5f)/width-.5f,(ty+.5f)/height-.5f,0f);
-   status=tracer.FindMarksmanEntryAndExit(q,UnityEngine.Vector3.right,ref entry,ref exit);
-   if(status!=Crisis.Runtime.Character.OriginalLimbSkinTrace.TraceResult.Failure)
-    throw new Exception("Original alpha-derived transparent pixel falsely registers as solid");
-  }
-  sampled++;
- }
- if(sampled!=11)throw new Exception("Not all recovered source skin masks tested");
- Console.WriteLine("{\"originalLimbSkinTrace\":\"pass\",\"sourceSkinTextures\":11,\"sourceRenderers\":17,\"nativePixelTrace\":true}");
- return;
-}
-if(args.Contains("--character-systems")){
- var physiology=new Crisis.Runtime.Character.OriginalPhysiologyConditions();
- physiology.InitializeBloodVolume(4500f);
- physiology.InitializeVitalClock(0f,0f,0f);
- physiology.SetBloodPressure(100f,190f,1f,0f);
- var limbPhysiology=new Crisis.Runtime.Character.OriginalLimbPhysiology(physiology);
- limbPhysiology.AddTrauma(40f);
- limbPhysiology.CreateWound(new Crisis.Runtime.Character.OriginalWound(
-  5f,UnityEngine.Vector3.zero,UnityEngine.Vector3.forward,.01f,.25f));
- var before=physiology.BloodVolume;
- limbPhysiology.UpdateHemorrhaging(.02f);
- if(limbPhysiology.WoundCavityVolume!=40f ||
-     !(limbPhysiology.InternalHemorrhaging>0f) ||
-     !(physiology.BloodVolume<before) ||
-     !(limbPhysiology.InternalBloodVolume>=0f))
-  throw new Exception("Original injury internal hemorrhage/circulation not advancing");
- limbPhysiology.AddShock(200f);
- if(Math.Abs(physiology.Shock-200f)>1e-5f)throw new Exception("Original limb shock propagation mismatch");
- limbPhysiology.StopHemorrhage();
- if(limbPhysiology.WoundCavityVolume!=0f||limbPhysiology.InternalBloodVolume!=0f)
-  throw new Exception("Original limb StopHemorrhage mismatch");
- physiology.AddLungsTrauma(20f,300f);
- if(physiology.LungsEffectiveness>=1f||physiology.LungsOxygen>=.75f)
-  throw new Exception("Original lungs trauma oxygen leakage mismatch");
- physiology.UpdateVitalDynamics(.02f,1f,.3f,false,0f);
- if(physiology.HeartRate<=0f||physiology.BloodPressure<=0f||physiology.RespirationRate<=0f)
-  throw new Exception("Original heart/breathing pressures did not advance");
- var hypoxia=new Crisis.Runtime.Character.OriginalPhysiologyConditions();
- hypoxia.InitializeBloodVolume(4500f);
- hypoxia.InitializeVitalClock(0f,0f,0f);
- hypoxia.RemoveBlood(4500f);
- hypoxia.CirculationDisabled=true;
- hypoxia.UpdateVitalDynamics(.02f,1f,.2f,true,0f);
- if(hypoxia.Conscious)throw new Exception("Source hypoxia should cause unconsciousness at 0 blood oxygen");
- hypoxia.UpdateVitalDynamics(.02f,31.2f,.2f,true,0f);
- if(hypoxia.Alive||!hypoxia.RespirationDisabled)
-  throw new Exception("Original 30-second blood-oxygen brain-death state not applied");
- var concussion=new Crisis.Runtime.Character.OriginalPhysiologyConditions();
- concussion.AddConcussion(1.3f);
- if(concussion.BrainTrauma<2.9f||!concussion.ShouldLoseConsciousness())
-  throw new Exception("Original concussion-to-brain-trauma propagation failed");
- // Real recovered Head/LimbVitalFunction prefab curves drive the native
- // original brain injury and unconsciousness thresholds, not test-only rules.
- using(var sourceVitals=JsonDocument.Parse(File.ReadAllText("game/assets/original-character-limb-components.json")))
- using(var physicsPrefab=JsonDocument.Parse(File.ReadAllText("game/assets/original-full-character-physics.json"))){
-  var sourceHead=sourceVitals.RootElement.GetProperty("characters").EnumerateArray()
-    .Single(c=>c.GetProperty("name").GetString()=="Operator")
-    .GetProperty("limbs").EnumerateArray()
-    .Single(l=>l.GetProperty("name").GetString()=="Head");
-  var sourceBrain=sourceHead.GetProperty("sourceFields").GetProperty("VitalFunctions")
-    .GetProperty("vitalFunctions").EnumerateArray()
-    .Single(v=>v.GetProperty("name").GetString()=="Brain");
-  var originalHeadGo=sourceHead.GetProperty("gameObject").GetString();
-  var sourceCapsule=physicsPrefab.RootElement.GetProperty("prefabs").EnumerateArray()
-    .Single(c=>c.GetProperty("name").GetString()=="Operator")
-    .GetProperty("records").EnumerateArray()
-    .Single(c=>c.GetProperty("classID").GetInt32()==136&&
-       c.GetProperty("fields").GetProperty("m_GameObject").GetProperty("fileID").GetString()==originalHeadGo)
-    .GetProperty("fields");
-  var anatomyWorld=new UnityEngine.RuntimeWorld();
-  var anatomyBody=new UnityEngine.GameObject("Original vital body",anatomyWorld)
-    .AddComponent<Crisis.Runtime.Weapons.CharacterBody>();
-  anatomyBody.InitializeOriginalPhysiology(0f,4500f,0f,0f);
-  var headLimb=new UnityEngine.GameObject("Original source Head",anatomyWorld)
-    .AddComponent<Crisis.Runtime.Weapons.Limb>();
-  headLimb.id=Crisis.Runtime.Weapons.LimbId.Head;headLimb.Body=anatomyBody;
-  headLimb.LimbPhysiology=new Crisis.Runtime.Character.OriginalLimbPhysiology(anatomyBody.SourcePhysiology);
-  var vitalOnly=JsonDocument.Parse(JsonSerializer.Serialize(new{vitalFunctions=new[]{sourceBrain.Clone()}}));
-  var vital=new Crisis.Runtime.Character.OriginalVitalFunctions(
-    headLimb,anatomyBody.SourcePhysiology,vitalOnly.RootElement,
-    sourceCapsule.GetProperty("m_Height").GetSingle(),
-    sourceCapsule.GetProperty("m_Center").GetProperty("y").GetSingle());
-  var sourceCenter=sourceCapsule.GetProperty("m_Center").GetProperty("y").GetSingle();
-  var sourceHeight=sourceCapsule.GetProperty("m_Height").GetSingle();
-  float normalizedSourceY=.7f*sourceHeight-(sourceHeight*.5f-sourceCenter);
-  var hit=new UnityEngine.Vector3(0f,normalizedSourceY,0f);
-  var announced=new List<string>();
-  vital.HitTest(12f,hit,hit,300f,name=>announced.Add(name));
-  float sourceBrainFactor=vital.Functions[0].Factor.Evaluate(.7f);
-  if(announced.Count!=1||announced[0]!="Brain"||
-    MathF.Abs(anatomyBody.SourcePhysiology.BrainTrauma-12f*sourceBrainFactor)>1e-4f||
-    !anatomyBody.SourcePhysiology.ShouldLoseConsciousness())
-   throw new Exception($"Original brain vital failure: names=[{string.Join(",",announced)}], trauma={anatomyBody.SourcePhysiology.BrainTrauma}, position={normalizedSourceY}, curve={vital.Functions[0].Factor.Evaluate(.7f)}, lost={anatomyBody.SourcePhysiology.ShouldLoseConsciousness()}");
-  var p=anatomyBody.SourcePhysiology;
-  var torsoHeart=new Crisis.Runtime.Character.OriginalLimbPhysiology(p);
-  var pressure=torsoHeart.bloodPressureModifier;
-  p.AddHeartTrauma(7f,0f,torsoHeart);
-  if(Math.Abs(p.HeartEffectiveness-.9f)>1e-4f||
-     Math.Abs(torsoHeart.bloodPressureModifier-(pressure+.1f))>1e-4f)
-    throw new Exception("Original heart trauma and torso pressure modification source mismatch");
-  p.SetParalyzed();
-  if(!p.Paralyzed)throw new Exception("Original spine paralysis state not retained");
- }
- var world=new UnityEngine.RuntimeWorld();
- var host=new UnityEngine.GameObject("Source ragdoll operator",world);
- var body=host.AddComponent<Crisis.Runtime.Weapons.CharacterBody>();
- host.AddComponent<UnityEngine.Animator>();
- host.AddComponent<UnityEngine.Rigidbody>().velocity=new UnityEngine.Vector3(1,0,0);
- var bone=new UnityEngine.GameObject("Source upper arm",world);
- var rb=bone.AddComponent<UnityEngine.Rigidbody>();
- rb.drag=.7f;
- var events=new List<(string kind,object value)>();
- rb.KinematicChanged=state=>events.Add(("kinematic",state));
- rb.GravityChanged=state=>events.Add(("gravity",state));
- rb.DragChanged=value=>events.Add(("drag",value));
- rb.PhysicsForceSink=(force,point,mode)=>events.Add(("force",mode));
- var limb=bone.AddComponent<Crisis.Runtime.Weapons.Limb>();
- limb.id=Crisis.Runtime.Weapons.LimbId.RightUpperArm;
- limb.Body=body;body.limbs.Add(limb);
- var injury=new Crisis.Runtime.Character.OriginalLimbPhysiology(physiology);
- limb.LimbPhysiology=injury;
- var hits=0;body.EventHit.AddListener(()=>hits++);
- limb.AddTrauma(6f,UnityEngine.Vector3.zero,UnityEngine.Vector3.zero);
- if(hits!=1||injury.WoundCavityVolume!=6f)
-  throw new Exception("Original limb injury event propagation mismatch");
- body.SetKinematic(false);
- if(rb.isKinematic||!events.Any(e=>e.kind=="force"&&Equals(e.value,UnityEngine.ForceMode.VelocityChange)))
-  throw new Exception("Original ragdoll kinematic release or source velocity transfer failed");
- body.SetFloating(true);
- if(rb.useGravity||rb.drag!=0f)throw new Exception("Source floating limb force flags failed");
- body.SetFloating(false);
- if(!rb.useGravity||Math.Abs(rb.drag-.7f)>1e-5f)
-  throw new Exception("Source gravity/drag restoration mismatch");
- body.SetKinematic(true);
- if(!rb.isKinematic)throw new Exception("Original character re-kinematic limb transition failed");
- var hinge=bone.AddComponent<UnityEngine.HingeJoint>();
- hinge.angle=33f;
- var breaks=0;
- var muscle=new Crisis.Runtime.Character.OriginalLimbMuscle(hinge,rb,physiology,()=>breaks++);
- muscle.extendAngle=65f;
- body.SetKinematic(false);
- muscle.SetSignal(1f,0f,1f,1f,false,0f);
- muscle.Update(.25f);
- if(!hinge.useSpring||hinge.spring.spring<=0||Math.Abs(hinge.spring.targetPosition-65f)>1e-5f)
-  throw new Exception("Recovered LimbMuscle.Update source spring force and target mismatch");
- muscle.LockCurrentAngle(.5f);
- if(Math.Abs(hinge.spring.targetPosition-33f)>1e-5f)
-  throw new Exception("Recovered joint-angle locking incorrect");
- muscle.AddJointTrauma(550f,1f);
- if(breaks!=1||muscle.BoneIntegrityNormalized>=0f||muscle.JointIntegrityNormalized>=0f)
-  throw new Exception("Original LimbMuscle fracture propagated no joint-break callback");
- muscle.Relax();
- if(hinge.useSpring)throw new Exception("Recovered LimbMuscle.Relax did not release source hinge");
- // Live CharacterBody owns and advances its original physiology, not a test-only kernel.
- body.InitializeOriginalPhysiology(0f,4500f,0f,0f);
- var initialVitals=body.SourcePhysiology.BloodOxygen;
- var vitalSnapshot=body.StepOriginalPhysiology(.02f,.5f,1.4f,3.2f,heartRandom:0f);
- if(body.SourcePhysiology.WorkIntensity<=0f||
-    body.SourcePhysiology.BloodOxygen>initialVitals||
-    body.SourcePhysiology.BloodVolume!=4500f||
-    body.SourcePhysiology.RespirationRate<=0f)
-  throw new Exception("Live CharacterBody original physiological work, blood and breathing did not advance");
- var target=new UnityEngine.GameObject("Original arm sequence target",world).transform;
- var binding=new SourceArmTestBindings(target);
- var arm=new Crisis.Runtime.Character.OriginalIKArmControllerPlayback(binding);
- var seq=new IKArmSequenceRuntime();
- seq.right.Add(new IKArmAnimationFrame{action=IKArmAction.Wait,time=.1f,callback=IKControllerInvoke.LowerWeapon});
- seq.right.Add(new IKArmAnimationFrame{action=IKArmAction.Transition,time=.2f,transform=IKArmTarget.MagazinePocket,
-                                       callback=IKControllerInvoke.HolsterWeapon});
- seq.left.Add(new IKArmAnimationFrame{action=IKArmAction.WaitForSiblingFrame,waitForSiblingFrame=0,
-                                      callback=IKControllerInvoke.ActivatePendingWeapon});
- arm.Play(seq,0f);
- arm.Update(.05f);
- if(binding.Calls.Count!=0)throw new Exception("Original sequencer callback fired before timed wait");
- arm.Update(.11f);arm.Update(.12f);arm.Update(.13f);arm.Update(.14f);
- if(binding.Calls.Count==0||binding.Calls[0]!=IKControllerInvoke.LowerWeapon||
-     binding.Transitions!=1)
-  throw new Exception("Original IK sequencer timed callback/target transition mismatch");
- arm.Update(.15f);arm.Update(.16f);
- if(!binding.Calls.Contains(IKControllerInvoke.ActivatePendingWeapon))
-  throw new Exception("Original IK sibling-frame synchronization failed");
- Console.WriteLine("{\"OriginalCharacterSystems\":\"pass\",\"RagdollPhysics\":true,\"SourceIKFrames\":true,\"Injury\":true}");
- return;
-}
-
-if (args.Contains("--character-facing")) {
-{
-    var w = new UnityEngine.RuntimeWorld();
-    var a = new UnityEngine.GameObject("source facing A", w).AddComponent<Crisis.Runtime.Weapons.CharacterBody>();
-    var b = new UnityEngine.GameObject("source facing B", w).AddComponent<Crisis.Runtime.Weapons.CharacterBody>();
-    a.Direction=1f;
-    b.Direction=-1f;
-    a.transform.position=new UnityEngine.Vector3(0f,0f,0f);
-    b.transform.position=new UnityEngine.Vector3(3f,0f,0f);
-    a.Torso=new UnityEngine.GameObject("source torso A",w).AddComponent<Crisis.Runtime.Weapons.Limb>();
-    a.Torso.transform.position=new UnityEngine.Vector3(1f,0f,0f);
-    if (!a.Facing(3f) || !a.Facing(b) || !a.BodyFacingMe(b) || !a.FacingDirection(1f))
-        throw new Exception("Recovered CharacterBody facing methods differ from source");
-    if (a.Facing(-3f) || a.FacingDirection(-1f) || a.Facing((Crisis.Runtime.Weapons.CharacterBody)null))
-        throw new Exception("Recovered CharacterBody facing rejection failed");
-    if (Math.Abs(a.KinematicDistanceToPosition(4f)-3f)>1e-6f)
-        throw new Exception("Recovered CharacterBody kinematic distance failed");
-    Console.WriteLine("{\"CharacterBodyFacingSource\":\"pass\"}");
-}
-
-return;
-}
-if (args.Contains("--character-dependencies")) {
-    var world=new UnityEngine.RuntimeWorld();
-    var obj=new UnityEngine.GameObject("character deps",world);
-    var animator=obj.AddComponent<UnityEngine.Animator>();
-    animator.SetFloat("KneelRatio",.35f);
-    animator.SetBool("Moving",true);
-    if(Math.Abs(animator.GetFloat("KneelRatio")-.35f)>1e-6f||!animator.GetBool("Moving"))
-       throw new Exception("Original animator parameter storage failed");
-    var col=obj.AddComponent<UnityEngine.CapsuleCollider>();
-    col.direction=0;col.radius=.5f;col.height=2f;
-    world.Initialize();
-    if(!col.Raycast(new UnityEngine.Ray(new UnityEngine.Vector3(-3,0,0),UnityEngine.Vector3.right),out var h,10f)
-        || Math.Abs(h.distance-2f)>1e-4f)
-       throw new Exception("Original axis-X capsule raycast failed");
-    if(col.Raycast(new UnityEngine.Ray(new UnityEngine.Vector3(0,0,0),UnityEngine.Vector3.right),out _,10f))
-       throw new Exception("Capsule raycast should ignore ray origin inside collider");
-    var blood=new Crisis.Runtime.Character.OriginalPhysiologyConditions();
-    blood.InitializeBloodVolume(4500f);
-    blood.RemoveBlood(450f);
-    if(Math.Abs(blood.BloodVolume-4050f)>1e-5f ||
-       Math.Abs(blood.BloodOxygen-.9f)>1e-5f ||
-       Math.Abs(blood.BloodVolumeNormalized-.9f)>1e-5f)
-       throw new Exception("Original Physiology.RemoveBlood source regression");
-    blood.RemoveLungsOxygen(.2f);
-    if(Math.Abs(blood.LungsOxygen-.6f)>1e-5f)
-       throw new Exception("Original Physiology.RemoveLungsOxygen source regression");
-    var physiology=new Crisis.Runtime.Character.OriginalPhysiologyConditions();
-    if(physiology.ShouldLoseFooting()||physiology.ShouldLoseConsciousness()||!physiology.ShouldRegainConsciousness())
-       throw new Exception("Original healthy physiology thresholds failed");
-    physiology.ShockResistance=.5f;
-    physiology.AddShock(5000f);
-    if(!physiology.ShouldLoseFooting()||Math.Abs(physiology.Shock-2500f)>1e-6f)
-       throw new Exception("Original shock resistance or footing threshold failed");
-    physiology.Concussion=.775f;
-    if(!physiology.ShouldLoseConsciousness()||physiology.ShouldRegainConsciousness())
-       throw new Exception("Original concussion unconsciousness threshold failed");
-    physiology.Concussion=.0f;physiology.BloodOxygen=.5f;
-    if(!physiology.ShouldLoseConsciousness())throw new Exception("Original blood oxygen threshold failed");
-    physiology.BloodOxygen=.9f;physiology.BrainTrauma=3f;
-    if(!physiology.ShouldLoseConsciousness())throw new Exception("Original brain trauma threshold failed");
-    var body=obj.AddComponent<Crisis.Runtime.Weapons.CharacterBody>();
-    body.Direction=1f;
-    var limb=obj.AddComponent<Crisis.Runtime.Weapons.Limb>();
-    limb.Body=body;
-    limb.visual=new UnityEngine.GameObject("limb visual",world).transform;
-    limb.visual.localPosition=new UnityEngine.Vector3(0,0,.4f);
-    limb.zLeft=-.25f;
-    var attach=new UnityEngine.GameObject("attachment",world).AddComponent<Crisis.Runtime.Weapons.LimbAttachment>();
-    attach.zLeft=-.15f;attach.zRight=.2f;
-    limb.attachments.Add(attach);
-    limb.CaptureSourceVisualDepth();
-    body.Direction=-1f;
-    limb.Flip();
-    if(Math.Abs(limb.visual.localPosition.z+.25f)>1e-6f || Math.Abs(attach.transform.localPosition.z+.15f)>1e-6f)
-       throw new Exception("Recovered original Limb.Flip left-depth source behavior failed");
-    body.Direction=1f;
-    limb.Flip();
-    if(Math.Abs(limb.visual.localPosition.z-.4f)>1e-6f || Math.Abs(attach.transform.localPosition.z-.2f)>1e-6f)
-       throw new Exception("Recovered original Limb.Flip right-depth source behavior failed");
-    Console.WriteLine("{\"CharacterBodyDependencyPrimitives\":\"pass\"}");
+if(args.Length==2&&args[0]=="--builtin-resource-contract"){
+    using var builtinPackage=JsonDocument.Parse(File.ReadAllText(args[1]));
+    Console.WriteLine(RuntimeContracts.RunBuiltinResource(builtinPackage.RootElement));
     return;
 }
-if(args.Contains("--character-animation")) {
- var world=new UnityEngine.RuntimeWorld();
- var go=new UnityEngine.GameObject("Original CharacterBody animation",world);
- var body=go.AddComponent<Crisis.Runtime.Weapons.CharacterBody>();
- var animator=go.AddComponent<UnityEngine.Animator>();
- var capsule=go.AddComponent<UnityEngine.CapsuleCollider>();
- body.InitializeSourceAnimation(animator,capsule);
- for(int i=0;i<10;i++)body.ExecuteSourceUpdateAnimation(true,true,false,2.55f,1.5f,4.2f,.6f,true,.02f,-.725f);
- if(body.KneelRatio<=.5f || Math.Abs(capsule.height-1.25f)>1e-5f
-   || Math.Abs(capsule.center.x+.15f)>1e-5f || Math.Abs(capsule.center.y+.725f)>1e-5f)
-   throw new Exception("Original CharacterBody kneeling collider interpolation failed");
- if(!animator.GetBool("Moving") || animator.GetBool("Backwards")
-   || Math.Abs(animator.GetFloat("MoveSpeed")-.19444445f)>1e-4f
-   || animator.GetFloat("CrippledRatio")!=0f)
-   throw new Exception("Original CharacterBody animation parameters failed");
- body.ExecuteSourceUpdateAnimation(false,true,true,0f,1.5f,4.2f,.6f,false,.02f,-.725f);
- if(!animator.GetBool("Backwards") || Math.Abs(animator.GetFloat("CrippledRatio")-.6f)>1e-5f
-    || body.KneelRatio>=1f)
-   throw new Exception("Original CharacterBody backwards and civilian cripple state failed");
- Console.WriteLine("{\"CharacterBodyUpdateAnimationSource\":\"pass\"}");
- return;
+var runLifecycle=args.Contains("--prefab-lifecycle");if(runLifecycle||args.Contains("--prefab-instantiate")){
+    if(args.Length!=2)throw new ArgumentException("--prefab-lifecycle and --prefab-instantiate require the generated scene-package.json path");
+    var package=File.ReadAllText(args[1]);
+    var world=new RuntimeWorld();
+    var actors=new System.Collections.Generic.List<(string,UnityEngine.GameObject,UnityEngine.GameObject)>();
+    foreach(var name in new[]{"Operator","Occupant"}){
+        var path=$"Assets/Resources/characters/{name}.prefab";
+        var loaded=SceneLoader.LoadPrefab(package,path,world,requireComplete:true);
+        var instance=UnityEngine.Object.Instantiate(loaded.prefabRoot);
+        loaded.prefabRoot.SetActive(false);
+        actors.Add((name,loaded.prefabRoot,instance));
+    }
+    var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.Public|System.Reflection.BindingFlags.NonPublic;
+    var awakeField=typeof(UnityEngine.MonoBehaviour).GetField("awoken",flags)??throw new MissingFieldException("MonoBehaviour.awoken lifecycle state is unavailable");
+    var enabledField=typeof(UnityEngine.MonoBehaviour).GetField("enableNotified",flags)??throw new MissingFieldException("MonoBehaviour.enableNotified lifecycle state is unavailable");
+    var startField=typeof(UnityEngine.MonoBehaviour).GetField("started",flags)??throw new MissingFieldException("MonoBehaviour.started lifecycle state is unavailable");
+    if(runLifecycle)world.Tick(1f/60f);
+    if(runLifecycle)world.Tick(1f/60f);
+    var bodies=new System.Collections.Generic.List<UnityEngine.MonoBehaviour>();var curves=new System.Collections.Generic.List<UnityEngine.AnimationCurve>();
+    var physiologies=new System.Collections.Generic.List<Crisis.Runtime.FullSource.Physiology>();
+    var controllers=new System.Collections.Generic.List<Crisis.Runtime.FullSource.IKArmController>();
+    var rightSolvers=new System.Collections.Generic.List<Crisis.Runtime.FullSource.ArmIKSolver>();
+    var leftSolvers=new System.Collections.Generic.List<Crisis.Runtime.FullSource.ArmIKSolver>();
+    var equipmentRefs=new System.Collections.Generic.List<Crisis.Runtime.FullSource.Equipment>();
+    foreach(var actor in actors){
+        var behaviours=actor.Item3.GetComponentsInChildren<UnityEngine.MonoBehaviour>(true);
+        var active=behaviours.Where(component=>component.isActiveAndEnabled).ToArray();
+        var awoken=active.Count(component=>(bool)awakeField.GetValue(component)!);
+        var enabled=active.Count(component=>(bool)enabledField.GetValue(component)!);
+        var started=active.Count(component=>(bool)startField.GetValue(component)!);
+        var actorBodies=behaviours.Where(component=>component.GetType().Name=="CharacterBody").ToArray();
+        if(!actor.Item3.activeInHierarchy||actorBodies.Length!=1||active.Length==0||(runLifecycle&&(awoken!=active.Length||enabled!=active.Length||started!=active.Length))||(!runLifecycle&&(awoken!=0||enabled!=0||started!=0)))
+            throw new InvalidOperationException($"{actor.Item1} actual prefab lifecycle failed: active={actor.Item3.activeInHierarchy}, bodies={actorBodies.Length}, behaviours={active.Length}, Awake={awoken}, OnEnable={enabled}, Start={started}");
+        bodies.Add(actorBodies[0]);
+        var fullBody=(Crisis.Runtime.FullSource.CharacterBody)actorBodies[0];
+        var physiology=runLifecycle?fullBody.Physiology:null;
+        var controller=runLifecycle?fullBody.armController:null;
+        var rightSolver=runLifecycle?fullBody.rightArm:null;
+        var leftSolver=runLifecycle?fullBody.leftArm:null;
+        var equipment=runLifecycle?fullBody.Equipment:null;
+        if(runLifecycle){
+            if(physiology==null||controller==null||rightSolver==null||leftSolver==null)
+                throw new InvalidOperationException($"{actor.Item1} Awake did not bind its original physiology, IK controller, and both arm solvers");
+            Crisis.Runtime.FullSource.OriginalActorIdentity.RequirePhysiology(fullBody,physiology);
+            Crisis.Runtime.FullSource.OriginalActorIdentity.RequireController(fullBody,controller);
+            if(!behaviours.Any(component=>ReferenceEquals(component,physiology))||
+               !behaviours.Any(component=>ReferenceEquals(component,controller))||
+               !behaviours.Any(component=>ReferenceEquals(component,rightSolver))||
+               !behaviours.Any(component=>ReferenceEquals(component,leftSolver)))
+                throw new InvalidOperationException($"{actor.Item1} original CharacterBody references components outside its cloned prefab graph");
+            if(behaviours.OfType<Crisis.Runtime.FullSource.Physiology>().Count()!=1||
+               behaviours.OfType<Crisis.Runtime.FullSource.IKArmController>().Count()!=1||
+               behaviours.OfType<Crisis.Runtime.FullSource.ArmIKSolver>().Count()!=2)
+                throw new InvalidOperationException($"{actor.Item1} cloned prefab has duplicate or missing original physiology/controller/solver components");
+            if(fullBody.limbs==null||fullBody.limbMap==null||fullBody.limbs.Count!=fullBody.limbMap.Count||fullBody.limbs.Count<19)
+                throw new InvalidOperationException($"{actor.Item1} original CharacterBody limb registry is incomplete");
+            foreach(var limb in fullBody.limbs){
+                Crisis.Runtime.FullSource.OriginalActorIdentity.RequireLimb(fullBody,limb);
+                if(!behaviours.Any(component=>ReferenceEquals(component,limb))||
+                   limb.LimbPhysiology==null||!ReferenceEquals(limb.GetComponent<Crisis.Runtime.FullSource.LimbPhysiology>(),limb.LimbPhysiology)||
+                   limb.LimbMuscle==null||!ReferenceEquals(limb.GetComponent<Crisis.Runtime.FullSource.LimbMuscle>(),limb.LimbMuscle))
+                    throw new InvalidOperationException($"{actor.Item1} limb {limb.id} is not bound to its actor-owned physiology and muscle components");
+            }
+            if(equipment!=null){
+                Crisis.Runtime.FullSource.OriginalActorIdentity.RequireEquipment(fullBody,equipment);
+                if(!behaviours.Any(component=>ReferenceEquals(component,equipment)))
+                    throw new InvalidOperationException($"{actor.Item1} CharacterBody equipment is not owned by its own prefab graph");
+            }
+        }
+        physiologies.Add(physiology);controllers.Add(controller);rightSolvers.Add(rightSolver);leftSolvers.Add(leftSolver);equipmentRefs.Add(equipment);
+            var originalBody=actor.Item2.GetComponentsInChildren<UnityEngine.MonoBehaviour>(true).Single(component=>component.GetType().Name=="CharacterBody");
+            var curveField=originalBody.GetType().GetField("hitRecoveryCurve",flags)??throw new MissingFieldException(originalBody.GetType().FullName,"hitRecoveryCurve");
+            var authoredCurve=curveField.GetValue(originalBody) as UnityEngine.AnimationCurve??throw new InvalidOperationException($"{actor.Item1} source prefab has no authored hitRecoveryCurve");
+            var clonedCurve=curveField.GetValue(actorBodies[0]) as UnityEngine.AnimationCurve??throw new InvalidOperationException($"{actor.Item1} clone lost hitRecoveryCurve");
+            var authoredKeys=authoredCurve.keys;var clonedKeys=clonedCurve.keys;
+            if(ReferenceEquals(authoredCurve,clonedCurve)||authoredCurve.preWrapMode!=clonedCurve.preWrapMode||authoredCurve.postWrapMode!=clonedCurve.postWrapMode||authoredCurve.clampOutside!=clonedCurve.clampOutside||authoredCurve.serializedPreInfinity!=clonedCurve.serializedPreInfinity||authoredCurve.serializedPostInfinity!=clonedCurve.serializedPostInfinity||authoredCurve.serializedVersion!=clonedCurve.serializedVersion||authoredCurve.serializedRotationOrder!=clonedCurve.serializedRotationOrder||authoredKeys.Length!=clonedKeys.Length)throw new InvalidOperationException($"{actor.Item1} clone changed authored hitRecoveryCurve metadata");
+            for(var keyIndex=0;keyIndex<authoredKeys.Length;keyIndex++){var sourceKey=authoredKeys[keyIndex];var cloneKey=clonedKeys[keyIndex];if(!sourceKey.time.Equals(cloneKey.time)||!sourceKey.value.Equals(cloneKey.value)||!sourceKey.inTangent.Equals(cloneKey.inTangent)||!sourceKey.outTangent.Equals(cloneKey.outTangent)||sourceKey.tangentMode!=cloneKey.tangentMode||sourceKey.serializedVersion!=cloneKey.serializedVersion)throw new InvalidOperationException($"{actor.Item1} clone changed authored hitRecoveryCurve key {keyIndex}");}
+            curves.Add(clonedCurve);
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(new{mode=runLifecycle?"lifecycle":"instantiation",prefab=actor.Item1,instantiatedFromOriginalPrefab=true,activeBehaviours=active.Length,awake=awoken,onEnable=enabled,start=started,characterBody=actorBodies.Length,originalIKController=controller!=null,originalPhysiology=physiology!=null,initializedEquipment=equipment!=null,hitRecoveryCurveKeys=clonedCurve.keys.Length}));
+    }
+    if(ReferenceEquals(bodies[0],bodies[1])||ReferenceEquals(bodies[0].gameObject,bodies[1].gameObject)||ReferenceEquals(curves[0],curves[1]))throw new InvalidOperationException("Operator and Occupant share a CharacterBody or authored AnimationCurve instance");
+    if(runLifecycle&&(ReferenceEquals(physiologies[0],physiologies[1])||ReferenceEquals(controllers[0],controllers[1])||ReferenceEquals(rightSolvers[0],rightSolvers[1])||ReferenceEquals(leftSolvers[0],leftSolvers[1])||(equipmentRefs[0]!=null&&ReferenceEquals(equipmentRefs[0],equipmentRefs[1]))))
+        throw new InvalidOperationException("Operator and Occupant share physiology, IK controller, arm solvers, or initialized equipment");
+    Console.WriteLine(runLifecycle?"Operator and Occupant lifecycle and component ownership passed in one RuntimeWorld.":"Operator and Occupant prefab instantiation and component ownership passed in one RuntimeWorld.");
+    foreach(var actor in actors){UnityEngine.Object.DestroyImmediate(actor.Item3);UnityEngine.Object.DestroyImmediate(actor.Item2);}
+    return;
+}
+if(args.Contains("--prefab-only")){
+    if(args.Length!=2)throw new ArgumentException("--prefab-only requires the generated scene-package.json path and loads the preserved Operator and Occupant prefabs");
+    var package=File.ReadAllText(args[1]);
+    foreach(var name in new[]{"Operator","Occupant"}){
+        var path=$"Assets/Resources/characters/{name}.prefab";
+        var world=new RuntimeWorld();
+        var loaded=SceneLoader.LoadPrefab(package,path,world,requireComplete:true);
+        Console.WriteLine(JsonSerializer.Serialize(loaded.Report()));
+        UnityEngine.Object.DestroyImmediate(loaded.prefabRoot);
+    }
+    return;
 }
 Console.WriteLine(RuntimeContracts.Run());
+Console.WriteLine(ScenePrefabContracts.Run());
 Console.WriteLine(ArmSequenceContracts.Run("game/assets/original-arm-sequences.json"));
 if(File.Exists("game/assets/presentation.json.gz"))Console.WriteLine(PresentationContracts.Run("game/assets/presentation.json.gz"));
 if(File.Exists("game/assets/weapon-runtime.json.gz"))Console.WriteLine(WeaponContracts.Run("game/assets/weapon-runtime.json.gz"));
@@ -341,44 +123,6 @@ if(args.Length>0){
     foreach(var path in new[]{"Assets/Resources/weapons/ammunition/5.56-JHP.prefab","Assets/Resources/weapons/ammunition/308-Win-BSP.prefab"})
         Console.WriteLine(JsonSerializer.Serialize(AmmunitionLoader.VerifyOriginalPrefab(package,path)));
     Console.WriteLine(JsonSerializer.Serialize(AmmunitionLoader.VerifyOriginalResource(package,"5.56-JHP")));
-}
-
-{
-    var body = new Crisis.Runtime.Weapons.CharacterBody { Direction=1f };
-    // Original CharacterBody.Move sets acceleration and reset behavior;
-    // our browser boundary returns the source ForceMode.Acceleration value.
-    body.Move(1f);
-    var first=JsonSerializer.SerializeToElement(body.ExecuteSourceMovement(0f,.02f,1.5f,4.2f,1f,true,false,true,true,false));
-    if(Math.Abs(first.GetProperty("forceX").GetSingle()-63f)>0.001f || !first.GetProperty("reset").GetBoolean())
-        throw new Exception("Original full-pull sprint force regression");
-    body.Move(1f);
-    var partial=JsonSerializer.SerializeToElement(body.ExecuteSourceMovement(0f,.02f,1.5f,4.2f,.5f,true,false,true,true,false));
-    if(Math.Abs(partial.GetProperty("forceX").GetSingle()-31.5f)>0.001f)
-        throw new Exception("Owner-approved proportional source sprint force regression");
-    body.Move(-1f);
-    var opposite=JsonSerializer.SerializeToElement(body.ExecuteSourceMovement(0f,.02f,1.5f,4.2f,1f,true,false,true,true,false));
-    if(Math.Abs(opposite.GetProperty("forceX").GetSingle()+22.5f)>0.001f)
-        throw new Exception("Original backwards sprint restriction regression");
-    body.Move(1f);
-    var overSpeed=JsonSerializer.SerializeToElement(body.ExecuteSourceMovement(5f,.02f,1.5f,4.2f,1f,false,false,true,true,false));
-    if(overSpeed.GetProperty("forceX").GetSingle()!=0f || overSpeed.GetProperty("reset").GetBoolean())
-        throw new Exception("Original overspeed no-force behavior regression");
-    Console.WriteLine("{\"CharacterBodySourceMovement\":\"pass\",\"AnalogEnhancement\":true}");
-}
-
-sealed class SourceArmTestBindings : Crisis.Runtime.Character.IOriginalIKArmBindings {
- readonly UnityEngine.Transform target;
- public readonly List<IKControllerInvoke> Calls=new();
- public int Transitions;
- public SourceArmTestBindings(UnityEngine.Transform target){this.target=target;}
- public bool OnTarget(IKArmType type)=>true;
- public float WeaponAimAlignment()=>0f;
- public UnityEngine.Transform TargetTransform(IKArmTarget value,IKArmType type,out UnityEngine.Vector3 offset){
-  offset=UnityEngine.Vector3.zero;return target;
- }
- public void TargetTransition(IKArmType type,UnityEngine.Transform t,UnityEngine.Vector3 offset,float seconds) {
-  if(t!=target||seconds<=0)throw new Exception("Source IK target transform invalid");Transitions++;
- }
- public void StartWait(IKArmType type){}
- public void Invoke(IKControllerInvoke method)=>Calls.Add(method);
+    Console.WriteLine(ResourcePrefabContracts.Run(package));
+    Console.WriteLine(SpawnerGameplayContracts.Run(package));
 }

@@ -1,0 +1,55 @@
+name: Narrow engine and source boundary contracts
+on:
+  pull_request:
+    branches: [develop/wasm, main, feature/full-source-characterbody-integration]
+    paths:
+      - 'runtime/**'
+      - 'source-reference/**'
+      - 'scripts/**'
+      - 'docs/audit/**'
+      - '.github/workflows/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: engine-contracts-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  engine-contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Audit inventory, ownership and workflow controls
+        run: |
+          python3 scripts/inventory_source_dependencies.py --check
+          python3 scripts/check_actor_migration.py
+          python3 scripts/check_characterbody_ownership.py --strict
+          python3 -m unittest discover -s scripts -p audit_tools_test.py -v
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Compile and execute isolated engine rendering package
+        run: |
+          set -o pipefail
+          dotnet run --project runtime/EngineChecks/Crisis.Runtime.EngineChecks.csproj | tee engine-contracts.log
+      - name: Compile and execute existing original foundation contracts
+        run: |
+          set -o pipefail
+          dotnet run --project runtime/FoundationChecks/Crisis.Runtime.FoundationChecks.csproj | tee foundation-contracts.log
+      - name: Record exact tested source
+        if: always()
+        run: printf '%s\n' "$GITHUB_SHA" > engine-source-sha.txt
+      - name: Preserve private native contract evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: engine-and-foundation-contracts
+          path: |
+            engine-contracts.log
+            foundation-contracts.log
+            engine-source-sha.txt
+          retention-days: 14
+          if-no-files-found: warn

@@ -23,6 +23,25 @@ public sealed class CloneProbe:MonoBehaviour {
 public static class RuntimeContracts {
     static void Check(bool condition,string name){if(!condition)throw new InvalidOperationException(name);}
     static void Near(float actual,float expected,string name){if(!float.IsFinite(actual)||MathF.Abs(actual-expected)>1e-4f)throw new InvalidOperationException($"{name}: {actual} != {expected}");}
+    public static string RunBuiltinResource(JsonElement package){
+        const string guid="0000000000000000f000000000000000";
+        var world=new RuntimeWorld();
+        var material=(Material)SerializedAssetResolver.Resolve(package,guid,"10303",world,typeof(Material));
+        var shader=(Shader)SerializedAssetResolver.Resolve(package,guid,"46",world,typeof(Shader));
+        Check(material.name=="Default-Material","Recovered built-in Material name");
+        Check(SerializedAssetIdentity.Guid(material)==guid&&SerializedAssetIdentity.FileID(material)=="10303","Recovered built-in Material identity");
+        Check(material.OriginalAssetPath=="Editor/Data/Resources/unity_builtin_extra","Recovered built-in Material source path");
+        Check(material.OriginalSerializedBytes?.Length==1076&&material.OriginalSerializedSha256=="1df2f22f709850941a6efe240cebcc3d2a8a892bd4fc10c51c735c5659d33c1e","Recovered built-in Material bytes and hash");
+        Check(material.shader==shader&&shader.name=="Standard","Material's original Shader 46 pointer");
+        Check(SerializedAssetIdentity.FileID(shader)=="46"&&shader.OriginalSerializedBytes?.Length==73778&&shader.OriginalSerializedSha256=="67598553f5b1987b841059e991434dbadfe15a1b72955d19b52d1edd647e07f5","Recovered built-in Shader identity and bytes");
+        Check(!shader.isSupported,"Serialized shader is not reported as GPU-executable by the CPU runtime");
+        Near(material.color.r,1,"Default material red");Near(material.color.g,1,"Default material green");Near(material.color.b,1,"Default material blue");Near(material.color.a,1,"Default material alpha");
+        Near(material.GetFloat("_Metallic"),0,"Default material metallic");Near(material.GetFloat("_Glossiness"),.5f,"Default material glossiness");
+        Near(material.GetFloat("_SrcBlend"),1,"Default material source blend");Near(material.GetFloat("_DstBlend"),0,"Default material destination blend");
+        Check(material.renderQueue==-1&&!material.enableInstancing&&!material.doubleSidedGI&&material.lightmapFlags==5,"Default material render and lighting flags");
+        Check(world.Objects.Contains(material)&&world.Objects.Contains(shader),"Recovered built-ins are registered in their RuntimeWorld");
+        return JsonSerializer.Serialize(new{status="PASS",materialFileID="10303",materialName=material.name,shaderFileID="46",shaderName=shader.name,materialSha256=material.OriginalSerializedSha256,shaderSha256=shader.OriginalSerializedSha256,shaderExecutable=false,editorRecordSource=material.OriginalAssetPath});
+    }
     public static string Run(){
         var passed=new List<string>();
         var world=new RuntimeWorld();var parent=new GameObject("parent",world);var child=new GameObject("child",world);

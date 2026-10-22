@@ -1,5 +1,22 @@
 using UnityEngine;
+using Crisis.Runtime.FullSource;
+using Utilities;
 public partial class AmmunitionBase : MonoBehaviour {
+public enum Type
+	{
+		Any = 0,
+		FMJ = 1,
+		JHP = 2,
+		BSP = 3,
+		Shot = 4,
+		Slug = 5,
+		XP = 6,
+		BT = 7,
+		RIP = 8,
+		HE = 9,
+		SP = 10,
+		LTL = 11
+	}
 public enum FragmentationMode
 	{
 		None = 0,
@@ -48,6 +65,15 @@ public float entryHoleModifier = 1f;
 public float exitHoleModifier = 1f;
 public float headExitHoleModifier = 1f;
 public float burnModifier = 1f;
+public Availability availability;
+public Type type = Type.FMJ;
+public AnimationCurve muzzleBlastForce;
+public Calibre calibre;
+public Crisis.Runtime.FullSource.Projectile projectile;
+public Casing casing;
+public UIAmmoRenderItem highPolyModel;
+public MarksmanRound marksmanRound;
+public Sprite sprite;
 public AnimationCurve expansionFunction;
 public FragmentationMode fragmentationMode;
 public float MetricMass

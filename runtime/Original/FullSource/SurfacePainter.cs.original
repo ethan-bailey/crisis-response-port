@@ -1,0 +1,142 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class SurfacePainter : MonoBehaviour
+{
+	private delegate void DelegatedSurfacePaintPixel(PaintableSurface surface, Vector3 position);
+
+	[Header("Pixel tests")]
+	[Tooltip("If the requested pixel is already painted, retry neighbour pixels this many times. If zero will not retry.")]
+	public int retries;
+
+	[Tooltip("When trying to find unpainted pixels, try this distance further away for each try.")]
+	public float retryDistance = 2f;
+
+	[Header("Pools")]
+	public bool formPools;
+
+	public GameObject poolPrefab;
+
+	[Tooltip("The number of failed paint attempts required before a pool is formed. Note that this is not limited by Retries above.")]
+	public int retriesBeforePool = 5;
+
+	[Tooltip("How far away a blood drop must be to form a pool separate from another one. Squared.")]
+	public float poolProximitySquared = 0.0025f;
+
+	private ParticleSystem emitter;
+
+	private List<ParticleCollisionEvent> collisionEvents;
+
+	private DelegatedSurfacePaintPixel delegatedPaintPixel;
+
+	private PerformanceManager perfMgr;
+
+	private int failedPaintAttempts;
+
+	private bool levelDecalsEnabled;
+
+	private bool wallStreaksEnabled;
+
+	public FloorPoolPainter PoolPainter { get; set; }
+
+	public Rigidbody AttachedRigidbody { get; set; }
+
+	private void Start()
+	{
+		perfMgr = PerformanceManager.Instance;
+		emitter = GetComponent<ParticleSystem>();
+		collisionEvents = new List<ParticleCollisionEvent>();
+		levelDecalsEnabled = Global.Context.Settings.Performance.SurfaceDecalsEnabled;
+		wallStreaksEnabled = perfMgr.WallStreaksEnabled;
+		if (formPools)
+		{
+			if (retries == 0)
+			{
+				delegatedPaintPixel = DelegatedPaintWithPoolingNoRetry;
+			}
+			else
+			{
+				delegatedPaintPixel = DelegatedPaintWithPoolingAndRetry;
+			}
+		}
+		else if (retries == 0)
+		{
+			delegatedPaintPixel = DelegatedPaintNoRetry;
+		}
+		else
+		{
+			delegatedPaintPixel = DelegatedPaintUseRetry;
+		}
+	}
+
+	private void OnParticleCollision(GameObject other)
+	{
+		if (!levelDecalsEnabled)
+		{
+			return;
+		}
+		PaintableSurface component = other.GetComponent<PaintableSurface>();
+		if (component == null)
+		{
+			return;
+		}
+		emitter.GetCollisionEvents(other, collisionEvents);
+		if (wallStreaksEnabled)
+		{
+			foreach (ParticleCollisionEvent collisionEvent in collisionEvents)
+			{
+				if (Random.value >= 0.9f)
+				{
+					component.SpawnStreak(collisionEvent.intersection, collisionEvent.velocity);
+				}
+				else
+				{
+					delegatedPaintPixel(component, collisionEvent.intersection);
+				}
+			}
+			return;
+		}
+		foreach (ParticleCollisionEvent collisionEvent2 in collisionEvents)
+		{
+			delegatedPaintPixel(component, collisionEvent2.intersection);
+		}
+	}
+
+	private void DelegatedPaintNoRetry(PaintableSurface surface, Vector3 position)
+	{
+		surface.PaintPixelNoRetry(position);
+	}
+
+	private void DelegatedPaintUseRetry(PaintableSurface surface, Vector3 position)
+	{
+		surface.PaintPixel(position, retries, retryDistance);
+	}
+
+	private void DelegatedPaintWithPoolingNoRetry(PaintableSurface surface, Vector3 position)
+	{
+		if (!surface.PaintPixelNoRetry(position))
+		{
+			SpawnOrUpdatePool(surface, position, 0.05f, 0.05f);
+		}
+	}
+
+	private void DelegatedPaintWithPoolingAndRetry(PaintableSurface surface, Vector3 position)
+	{
+		if (surface.PaintPixel(position, retries, retryDistance))
+		{
+			failedPaintAttempts = 0;
+			return;
+		}
+		failedPaintAttempts++;
+		if (failedPaintAttempts >= retriesBeforePool)
+		{
+			failedPaintAttempts = 0;
+			SpawnOrUpdatePool(surface, position, 0.05f, 0.05f);
+		}
+	}
+
+	private bool SpawnOrUpdatePool(PaintableSurface surface, Vector3 position, float flow, float volume)
+	{
+		return false;
+	}
+}

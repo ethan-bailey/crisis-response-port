@@ -1,0 +1,9 @@
+Microsoft (R) Visual C# Compiler version 4.11.0-3.25569.22 (3fb752d4)
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+runtime/Engine/Math.cs(77,86): warning CS9113: Parameter 'text' is unread.
+runtime/Engine/Math.cs(78,85): warning CS9113: Parameter 'text' is unread.
+runtime/Engine/Objects.cs(75,54): info CS9258: 'value' is a contextual keyword in property accessors starting in language version preview. Use '@value' instead.
+runtime/Engine/Objects.cs(32,19): warning CS0649: Field 'GameObject.assetObject' is never assigned to, and will always have its default value false
+
+Direct Roslyn compile exit 0; 24 source files

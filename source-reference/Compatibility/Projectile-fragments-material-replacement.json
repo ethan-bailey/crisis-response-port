@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "status": "source-backed compatibility candidate; runtime mapping not yet integrated",
+  "originalReference": {
+    "guid": "0000000000000000f000000000000000",
+    "fileID": "10303",
+    "expectedType": "Material",
+    "exactRecordFound": false,
+    "searchScope": "Recovered Unity project export from workflow artifact 11903811738"
+  },
+  "sourceArtifact": {
+    "workflowRunId": "38582072502",
+    "artifactId": "11903811738",
+    "artifactName": "crisis-response-recovery-direct-v3-1",
+    "archiveSha256": "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
+    "unityVersion": "2017.2.0f3"
+  },
+  "replacement": {
+    "material": {
+      "path": "source-reference/Original/Assets/Material/Projectile chunks.mat",
+      "sha256": "a7d22890e62e04e776d66eb92ae9154d4842c8e958f3c1c96e1790f1705654cb",
+      "bytes": 941,
+      "meta": {
+        "path": "source-reference/Original/Assets/Material/Projectile chunks.mat.meta",
+        "sha256": "178edb08a1d5d275dec493257cfcda1d66d4d1776e5c7fdf64ac7150779313dc",
+        "bytes": 235
+      },
+      "guid": "f20eaaaec00f311469b053da1a02332f",
+      "fileID": "2100000",
+      "name": "Projectile chunks"
+    },
+    "shader": {
+      "path": "source-reference/Original/Assets/Shader/Shader Forge_Lit (Basic).shader",
+      "sha256": "052ac759c23c2df346a3a32ff462658af9a7263ca36d8aa0dd06b73b1a340061",
+      "bytes": 890,
+      "meta": {
+        "path": "source-reference/Original/Assets/Shader/Shader Forge_Lit (Basic).shader.meta",
+        "sha256": "fc84a5f772d877328932701e37a21ca1b87fadbc351653f610cf2d79e449a5c6",
+        "bytes": 223
+      },
+      "guid": "58809839c7f61d54f8933d60fa11e0a9",
+      "fileID": "4800000",
+      "name": "Shader Forge_Lit (Basic)"
+    }
+  },
+  "scope": {
+    "prefabPath": "Assets/GameObject/Projectile fragments.prefab",
+    "originalMaterialReference": {
+      "guid": "0000000000000000f000000000000000",
+      "fileID": "10303"
+    },
+    "ownerAuthorization": "On 2026-10-21 the owner authorized scoped substitutes only when tests demonstrate identical in-game behavior for the affected feature. This authorization does not waive equivalence tests or permit an identity claim.",
+    "identityStatement": "This source-authored projectile material is a compatibility candidate, not the same asset as Unity built-in Material 10303, and its rendering behavior is unverified. Its referenced exported shader is a dummy shader body, so this candidate does not currently satisfy the functional-equivalence condition. Preserve the original prefab unchanged; any future mapping must use a separately scoped runtime/package overlay and retain the original pointer.",
+    "equivalenceGate": {
+      "status": "not demonstrated; do not integrate",
+      "requiredEvidence": [
+        "The original projectile-fragment feature and candidate overlay produce equivalent fragment lifecycle, physics, collision, and gameplay effects.",
+        "Rendering behavior is compared against a source-backed original-game reference at representative runtime conditions.",
+        "The test exercises the exact package and code SHA proposed for integration and reports any differences."
+      ]
+    }
+  }
+}

@@ -1,11 +1,7 @@
 name: Publish private original-mesh viewer asset
 on:
-  push:
-    branches: [main]
-    paths:
-      - "index.html"
-      - ".github/workflows/publish-original-mesh-viewer.yml"
   workflow_dispatch:
+
 permissions:
   contents: write
   actions: read

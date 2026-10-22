@@ -1,0 +1,13 @@
+test_comment_literals_do_not_create_dependency_edges (audit_tools_test.BoundaryTests.test_comment_literals_do_not_create_dependency_edges) ... ok
+test_inventory_covers_every_pinned_missing_name (audit_tools_test.BoundaryTests.test_inventory_covers_every_pinned_missing_name) ... ok
+test_nested_foundation_guard_cannot_hide_production_transport (audit_tools_test.BoundaryTests.test_nested_foundation_guard_cannot_hide_production_transport) ... ok
+test_record_and_struct_transport_owners_are_rejected (audit_tools_test.BoundaryTests.test_record_and_struct_transport_owners_are_rejected) ... ok
+test_transport_change_and_production_exclusion_are_rejected (audit_tools_test.BoundaryTests.test_transport_change_and_production_exclusion_are_rejected) ... ok
+test_empty_or_infrastructure_failure_never_implies_success (audit_tools_test.DiagnosticDiffTests.test_empty_or_infrastructure_failure_never_implies_success) ... ok
+test_new_and_resolved_diagnostics_and_occurrences (audit_tools_test.DiagnosticDiffTests.test_new_and_resolved_diagnostics_and_occurrences) ... ok
+test_runner_paths_summary_duplicates_and_line_movement (audit_tools_test.DiagnosticDiffTests.test_runner_paths_summary_duplicates_and_line_movement) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.454s
+
+OK

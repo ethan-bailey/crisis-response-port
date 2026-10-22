@@ -1,7 +1,15 @@
 using System.IO.Compression;using System.Text.Json;using Crisis.Runtime;using Crisis.Runtime.Weapons;using UnityEngine;
 public static class WeaponContracts {
  public static string Run(string path){
-  using var stream=new GZipStream(File.OpenRead(path),CompressionMode.Decompress);string config=new StreamReader(stream).ReadToEnd();
+  using var stream=new GZipStream(File.OpenRead(path),CompressionMode.Decompress);var configRoot=System.Text.Json.Nodes.JsonNode.Parse(new StreamReader(stream).ReadToEnd())!.AsObject();configRoot["armPhysics"]=System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(Path.Combine(Path.GetDirectoryName(path)!,"original-arm-physics.json")));string config=configRoot.ToJsonString();
+  using var serializedPackage=JsonDocument.Parse(config);var packageRoot=serializedPackage.RootElement;
+  var ammoPackage=packageRoot.GetProperty("ammoPackage");
+  var resolvedCalibre=AmmunitionLoader.ResolveOriginalCalibreReference(ammoPackage,"57cfc851e0e47374d98db0383b39cddf","114724804207875695",new RuntimeWorld()) as Crisis.Runtime.FullSource.Calibre ?? throw new Exception("Original Calibre reference did not resolve to the source Calibre type");
+  if(SerializedAssetIdentity.Guid(resolvedCalibre)!="57cfc851e0e47374d98db0383b39cddf"||SerializedAssetIdentity.FileID(resolvedCalibre)!="114724804207875695"||SerializedAssetIdentity.Path(resolvedCalibre)!="Assets/Resources/weapons/calibers/Caliber 5.56x45mm.prefab"||resolvedCalibre.calibreName!="5.56x45mm")throw new Exception("Recovered Calibre identity mismatch guid="+SerializedAssetIdentity.Guid(resolvedCalibre)+" fileID="+SerializedAssetIdentity.FileID(resolvedCalibre)+" path="+SerializedAssetIdentity.Path(resolvedCalibre)+" name="+resolvedCalibre.calibreName);
+  Console.WriteLine("PASS: original Calibre GUID, fileID, type, path, serialized name, and prefab lifetime");
+  var sourceAmmo=AmmunitionLoader.Load(packageRoot.GetProperty("ammoPackage").GetRawText(),packageRoot.GetProperty("ammoPath").GetString()!,new RuntimeWorld());
+  var calibre=sourceAmmo.calibre??throw new Exception("5.56-FMJ original Calibre reference did not resolve");
+  if(SerializedAssetIdentity.Guid(calibre)!="57cfc851e0e47374d98db0383b39cddf"||SerializedAssetIdentity.FileID(calibre)!="114724804207875695"||SerializedAssetIdentity.Path(calibre)!="Assets/Resources/weapons/calibers/Caliber 5.56x45mm.prefab"||calibre.calibreName!="5.56x45mm")throw new Exception("Recovered Calibre GUID/fileID/path/name identity mismatch");
   var input=new OriginalInputHost(new RuntimeWorld());input.Tick(.1f);var before=Time.time;
   var previousCulture=System.Globalization.CultureInfo.CurrentCulture;
   var localized=(System.Globalization.CultureInfo)System.Globalization.CultureInfo.InvariantCulture.Clone();localized.NumberFormat.PositiveInfinitySymbol="∞";localized.NumberFormat.NegativeInfinitySymbol="-∞";

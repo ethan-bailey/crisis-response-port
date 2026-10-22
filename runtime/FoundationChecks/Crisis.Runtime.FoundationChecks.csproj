@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net8.0</TargetFramework><OutputType>Exe</OutputType><ImplicitUsings>enable</ImplicitUsings><Nullable>disable</Nullable><EnableDefaultCompileItems>false</EnableDefaultCompileItems><DefineConstants>$(DefineConstants);CRISIS_FOUNDATION_TRANSPORT</DefineConstants></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../Engine/**/*.cs" />
+    <Compile Include="../Original/**/*.cs" Exclude="../Original/CharacterBody.Full.cs;../Original/FullSource/**/*.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="FoundationSourceBoundaryStubs.cs" />
+    <Compile Include="SerializationContracts.cs" />
+    <Compile Include="OriginalUIContracts.cs;../Original/FullSource/UIHitAnnouncement.cs;../Original/FullSource/AudioPlayer.cs" />
+    <Compile Include="../Original/FullSource/QualityLevels.cs" />
+    <Compile Include="../Original/FullSource/SerializableAudioSettings_v*.cs;../Original/FullSource/SerializableBulletTimeEntry.cs;../Original/FullSource/SerializableRangeSlider.cs;../Original/FullSource/SerializableGraphicsSettings_v*.cs;../Original/FullSource/SerializableGraphicsSettings_0_0_8_005.cs" />
+  </ItemGroup>
+</Project>

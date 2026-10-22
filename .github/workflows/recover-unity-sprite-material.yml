@@ -1,0 +1,44 @@
+name: Recover exact Unity 2017.2.0f3 sprite material
+on:
+  push:
+    branches: [feature/full-source-characterbody-integration]
+    paths: ['.github/workflows/recover-unity-sprite-material.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  recover:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Unity archive extractor
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y p7zip-full
+          command -v 7z
+      - name: Recover pinned Windows x86 Mono and Editor resource records
+        run: |
+          python3 -m pip install UnityPy==1.25.4
+          python3 scripts/recover_unity_2017_2_resources.py \
+            --cache /tmp/unity-2017.2.0f3 \
+            --extractor "$(command -v 7z)" \
+            --output /tmp/builtin-resource-records.json \
+            --download
+          python3 - <<'PY'
+          import base64, json
+          pack=json.load(open('/tmp/builtin-resource-records.json'))
+          for record in pack['records']:
+              if record['fileID'] == '10754' or record['type'] == 'Shader' and record['fileID'] != '46':
+                  line=json.dumps(record,separators=(',',':')).encode()
+                  print('RECOVERED_BUILTIN_RECORD='+base64.b64encode(line).decode())
+          player=pack['playerResources']['records']['10210']
+          line=json.dumps(player,separators=(',',':')).encode()
+          print('RECOVERED_PLAYER_MESH_RECORD='+base64.b64encode(line).decode())
+          print('UNITY_RESOURCE_PACK_SHA256='+pack['provenance'][0]['sha256'])
+          PY

@@ -1,0 +1,13 @@
+{
+  "baselineSha": "407c66d026784b72c96490eabae6085dd87c22e6",
+  "authority": "Crisis.Runtime.FullSource.CharacterBody owns actor gameplay. Its original limb/physiology/equipment objects must remain the same identities across projectile, IK and mission flows. Legacy owners below are frozen pending explicit, verified migration.",
+  "frozenLegacyFiles": {
+    "runtime/Engine/WeaponHost.cs": "4c018c8445cac4d703f7f9751fdea072cc3e0e7c582134a7bb3ba3ee51e6931d",
+    "runtime/Engine/OriginalArmPhysicsHost.cs": "61c1c5abe063be8a716c08678613916cf3b5c1fcdadd54f065361b8a66ab41b7",
+    "runtime/Engine/OriginalInputHost.cs": "1d4d2bdabbd7aa17049b84c19fcc67c1ba9de55e5932f0b91717717e3919a8ae",
+    "runtime/Engine/BodyPoseHost.cs": "85eb1ffe3a7fb9695f5df49b4bbc007175814d2be34fdbe56a524a38d57dc14d",
+    "runtime/Original/Weapons/CharacterTrigger.Methods.cs": "050fa67e775074740eff0145c26c1d5aee658fbb92dada0309d67814469c8bf3",
+    "runtime/Original/Weapons/WeaponMechanism.Methods.cs": "71a67937dec45987828f817f8d582b5ae0a6be7cadfc1829e393e0b1397778e7",
+    "runtime/Original/Weapons/Equipment.cs": "3a1f3be66ee81b6b59e5cb58f3e9951daec56fa00e88a95a95cb5f37750c1161"
+  }
+}

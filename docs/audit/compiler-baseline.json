@@ -1,0 +1,1085 @@
+{
+  "schemaVersion": 1,
+  "sourceSha": "407c66d026784b72c96490eabae6085dd87c22e6",
+  "buildExitCode": 1,
+  "uniqueErrorCount": 144,
+  "missingSymbols": [
+    "AudioPropagator",
+    "Benchmark",
+    "BloodStream",
+    "BloodStreamGenerator",
+    "CellPhone",
+    "CommunicationLine",
+    "DialogTree",
+    "DoorLockState",
+    "DoorMechanismState",
+    "DoorOpenState",
+    "DoorTrap",
+    "Doors",
+    "DynamicLimbDecalRenderer",
+    "DynamicLimbTexturePool",
+    "FireAlarm",
+    "FloorPoolPainter",
+    "FogOfWarElement",
+    "GrenadeSpoon",
+    "Interactable",
+    "InteriorMode",
+    "InteriorModeUI",
+    "LightShadows",
+    "LimbLayer",
+    "LimbTextureData",
+    "Marksman",
+    "Marksmen",
+    "MissionUI",
+    "Mixer",
+    "NegotiationMode",
+    "Occupants",
+    "Operators",
+    "PaintableSurface",
+    "ParticleSystem",
+    "PoweredLight",
+    "ReflectionProbe",
+    "Rendering",
+    "ScoreKeeper",
+    "SerializableAudioSettings",
+    "SerializableBulletTimeEntry",
+    "SerializableDialogOption",
+    "SerializableDialogState",
+    "SerializableExtraSettings_0_0_9_4792",
+    "SerializableGeneralSettings",
+    "SerializableGraphicsSettings",
+    "SerializableLocationSettings",
+    "SerializableOccupantSettings",
+    "SerializablePerformanceSettings",
+    "SerializableTimeSettings",
+    "ToggleElectricity",
+    "TutorialMode",
+    "UIGrenadeTimer",
+    "UIHitAnnouncements",
+    "UIInteriorModeTextIndicator",
+    "UIVocalizationText",
+    "UnityEventInt",
+    "Usage",
+    "VitalFunctions",
+    "WallStreakPainter",
+    "fsProperty",
+    "fsPropertyAttribute"
+  ],
+  "compilerDiagnostics": [
+    {
+      "path": "runtime/Original/CharacterBody.Full.cs",
+      "line": 826,
+      "column": 31,
+      "code": "CS0246",
+      "message": "The type or namespace name 'DialogTree' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/CharacterAudio.cs",
+      "line": 63,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'AudioPropagator' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/CharacterDialog.cs",
+      "line": 9,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'DialogTree' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/CharacterDialog.cs",
+      "line": 15,
+      "column": 25,
+      "code": "CS0246",
+      "message": "The type or namespace name 'DialogTree' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/CharacterDialog.cs",
+      "line": 22,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableDialogState' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/CharacterDialog.cs",
+      "line": 31,
+      "column": 32,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableDialogOption' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/CharacterDialog.cs",
+      "line": 50,
+      "column": 30,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableDialogOption' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Communication.cs",
+      "line": 15,
+      "column": 14,
+      "code": "CS0246",
+      "message": "The type or namespace name 'CommunicationLine' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Communication.cs",
+      "line": 17,
+      "column": 14,
+      "code": "CS0246",
+      "message": "The type or namespace name 'CommunicationLine' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Communication.cs",
+      "line": 19,
+      "column": 14,
+      "code": "CS0246",
+      "message": "The type or namespace name 'CommunicationLine' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Communication.cs",
+      "line": 21,
+      "column": 14,
+      "code": "CS0246",
+      "message": "The type or namespace name 'CommunicationLine' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Communication.cs",
+      "line": 24,
+      "column": 14,
+      "code": "CS0246",
+      "message": "The type or namespace name 'CommunicationLine' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Communication.cs",
+      "line": 26,
+      "column": 14,
+      "code": "CS0246",
+      "message": "The type or namespace name 'CommunicationLine' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Communication.cs",
+      "line": 29,
+      "column": 14,
+      "code": "CS0246",
+      "message": "The type or namespace name 'CommunicationLine' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Communication.cs",
+      "line": 31,
+      "column": 14,
+      "code": "CS0246",
+      "message": "The type or namespace name 'CommunicationLine' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Communication.cs",
+      "line": 37,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'InteriorModeUI' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Communication.cs",
+      "line": 39,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'UIVocalizationText' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Communication.cs",
+      "line": 69,
+      "column": 30,
+      "code": "CS0246",
+      "message": "The type or namespace name 'CommunicationLine' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Communication.cs",
+      "line": 84,
+      "column": 35,
+      "code": "CS0246",
+      "message": "The type or namespace name 'CommunicationLine' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Communication.cs",
+      "line": 93,
+      "column": 24,
+      "code": "CS0246",
+      "message": "The type or namespace name 'CommunicationLine' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/DoorController.cs",
+      "line": 7,
+      "column": 31,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Interactable' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/DoorController.cs",
+      "line": 36,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'DoorOpenState' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/DoorController.cs",
+      "line": 38,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'DoorLockState' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/DoorController.cs",
+      "line": 40,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'DoorMechanismState' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/DoorController.cs",
+      "line": 42,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'DoorLockState' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/DoorController.cs",
+      "line": 67,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'DoorTrap' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/DoorController.cs",
+      "line": 114,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'AudioPropagator' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/DoorController.cs",
+      "line": 116,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableTimeSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/DoorController.cs",
+      "line": 192,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'DoorTrap' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Emitter.cs",
+      "line": 9,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'ParticleSystem' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Emitter.cs",
+      "line": 13,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'ParticleSystem' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Emitter.cs",
+      "line": 15,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'ParticleSystem' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Emitter.cs",
+      "line": 32,
+      "column": 43,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializablePerformanceSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/FloorStreakPainter.cs",
+      "line": 47,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'PaintableSurface' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/FloorStreakPainter.cs",
+      "line": 49,
+      "column": 25,
+      "code": "CS0246",
+      "message": "The type or namespace name 'PaintableSurface' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Grenade.cs",
+      "line": 35,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'GrenadeSpoon' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Grenade.cs",
+      "line": 39,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'UIGrenadeTimer' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Grenade.cs",
+      "line": 57,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'AudioPropagator' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Grenade.cs",
+      "line": 61,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'UIGrenadeTimer' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Limb.cs",
+      "line": 54,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'ParticleSystem' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Limb.cs",
+      "line": 56,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'ParticleSystem' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Limb.cs",
+      "line": 104,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'DynamicLimbDecalRenderer' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Limb.cs",
+      "line": 106,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'FloorPoolPainter' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Limb.cs",
+      "line": 514,
+      "column": 78,
+      "code": "CS0246",
+      "message": "The type or namespace name 'LimbLayer' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/LimbPhysiology.cs",
+      "line": 28,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'VitalFunctions' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/LimbRenderer.cs",
+      "line": 52,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'LimbTextureData' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 6,
+      "column": 7,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Usage' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 28,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'MissionUI' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 35,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Marksmen' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 39,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'NegotiationMode' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 48,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'InteriorMode' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 51,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'BloodStream' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 53,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'FloorPoolPainter' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 55,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'FloorPoolPainter' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 57,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'WallStreakPainter' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 63,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'ParticleSystem' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 76,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'ToggleElectricity' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 82,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'UnityEventInt' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 104,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'AudioPropagator' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 108,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'DynamicLimbTexturePool' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 122,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'ScoreKeeper' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 124,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Mixer' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 126,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Operators' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 128,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Marksman' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 130,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Occupants' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 132,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Doors' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 134,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'CellPhone' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 136,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'InteriorMode' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 138,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Benchmark' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 140,
+      "column": 9,
+      "code": "CS0722",
+      "message": "'MarksmanMode': static types cannot be used as return types"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 144,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'TutorialMode' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 150,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'ParticleSystem' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Physiology.cs",
+      "line": 87,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'UIHitAnnouncements' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Room.cs",
+      "line": 7,
+      "column": 19,
+      "code": "CS0234",
+      "message": "The type or namespace name 'Rendering' does not exist in the namespace 'UnityEngine' (are you missing an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Room.cs",
+      "line": 25,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'FogOfWarElement' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Room.cs",
+      "line": 27,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'ReflectionProbe' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Room.cs",
+      "line": 40,
+      "column": 14,
+      "code": "CS0246",
+      "message": "The type or namespace name 'PoweredLight' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Room.cs",
+      "line": 54,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'FireAlarm' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Room.cs",
+      "line": 92,
+      "column": 38,
+      "code": "CS0246",
+      "message": "The type or namespace name 'PoweredLight' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Room.cs",
+      "line": 255,
+      "column": 34,
+      "code": "CS0246",
+      "message": "The type or namespace name 'LightShadows' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 11,
+      "column": 45,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableExtraSettings_0_0_9_4792' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 14,
+      "column": 43,
+      "code": "CS0308",
+      "message": "The non-generic type 'UnityEvent' cannot be used with type arguments"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 20,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsProperty' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 20,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsPropertyAttribute' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 23,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsProperty' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 23,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsPropertyAttribute' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 26,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsProperty' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 26,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsPropertyAttribute' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 29,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsProperty' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 29,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsPropertyAttribute' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 32,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsProperty' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 32,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsPropertyAttribute' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 35,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsProperty' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 35,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsPropertyAttribute' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 38,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsProperty' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 38,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsPropertyAttribute' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 41,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsProperty' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 41,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsPropertyAttribute' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 44,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsProperty' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 44,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsPropertyAttribute' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 47,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsProperty' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 47,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsPropertyAttribute' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 50,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsProperty' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 50,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsPropertyAttribute' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 53,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsProperty' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 53,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsPropertyAttribute' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 56,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsProperty' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 56,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsPropertyAttribute' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 59,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsProperty' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 59,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsPropertyAttribute' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 62,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsProperty' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 62,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsPropertyAttribute' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 65,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsProperty' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 65,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsPropertyAttribute' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 68,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsProperty' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 68,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsPropertyAttribute' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 71,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsProperty' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 71,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsPropertyAttribute' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 74,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsProperty' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 74,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsPropertyAttribute' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 77,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsProperty' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 77,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsPropertyAttribute' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 80,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsProperty' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 80,
+      "column": 3,
+      "code": "CS0246",
+      "message": "The type or namespace name 'fsPropertyAttribute' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/SerializableExtraSettings.cs",
+      "line": 91,
+      "column": 35,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableExtraSettings_0_0_9_4792' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 9,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableGeneralSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 13,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializablePerformanceSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 15,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableGraphicsSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 17,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableAudioSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 19,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableTimeSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 23,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableOccupantSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 25,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableLocationSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 27,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableGeneralSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 40,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableAudioSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 61,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializablePerformanceSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 74,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializablePerformanceSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 87,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableGraphicsSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 100,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableTimeSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 126,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableOccupantSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Settings.cs",
+      "line": 139,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableLocationSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/TimeScaler.cs",
+      "line": 26,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableTimeSettings' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/TimeScaler.cs",
+      "line": 28,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'UIInteriorModeTextIndicator' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/TimeScaler.cs",
+      "line": 166,
+      "column": 25,
+      "code": "CS0246",
+      "message": "The type or namespace name 'SerializableBulletTimeEntry' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Wound.cs",
+      "line": 27,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'BloodStreamGenerator' could not be found (are you missing a using directive or an assembly reference?)"
+    }
+  ],
+  "scope": "Reported diagnostics only; unresolved declarations can hide further errors. Build exit code, not parsed error count, determines compilation success.",
+  "evidence": {
+    "runId": 39091701268,
+    "jobId": 117569703653,
+    "url": "https://github.com/ethan-bailey/crisis-response-port/actions/runs/39091701268",
+    "createdAt": "2026-10-18T02:53:52Z"
+  }
+}

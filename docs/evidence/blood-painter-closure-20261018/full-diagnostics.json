@@ -1,0 +1,361 @@
+{
+  "schemaVersion": 1,
+  "missingSymbolCallsites": {
+    "Benchmark": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 138,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "CellPhone": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 134,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "DoorTrap": [
+      {
+        "path": "runtime/Original/FullSource/DoorController.cs",
+        "line": 67,
+        "column": 9,
+        "code": "CS0246"
+      },
+      {
+        "path": "runtime/Original/FullSource/DoorController.cs",
+        "line": 192,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "FogOfWarElement": [
+      {
+        "path": "runtime/Original/FullSource/Room.cs",
+        "line": 25,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "InteriorMode": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 48,
+        "column": 9,
+        "code": "CS0246"
+      },
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 136,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "InteriorModeUI": [
+      {
+        "path": "runtime/Original/FullSource/Communication.cs",
+        "line": 37,
+        "column": 10,
+        "code": "CS0246"
+      }
+    ],
+    "Marksman": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 128,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "Marksmen": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 35,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "MissionUI": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 28,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "Mixer": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 124,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "NegotiationMode": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 39,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "Occupants": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 130,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "Operators": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 126,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "ScoreKeeper": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 122,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "TutorialMode": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 144,
+        "column": 9,
+        "code": "CS0246"
+      }
+    ],
+    "Usage": [
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "line": 6,
+        "column": 7,
+        "code": "CS0246"
+      }
+    ]
+  },
+  "sourceSha": "4316cdef3f230ba0862c01e8d321de44048bf727",
+  "buildExitCode": 1,
+  "uniqueErrorCount": 19,
+  "missingSymbols": [
+    "Benchmark",
+    "CellPhone",
+    "DoorTrap",
+    "FogOfWarElement",
+    "InteriorMode",
+    "InteriorModeUI",
+    "Marksman",
+    "Marksmen",
+    "MissionUI",
+    "Mixer",
+    "NegotiationMode",
+    "Occupants",
+    "Operators",
+    "ScoreKeeper",
+    "TutorialMode",
+    "Usage"
+  ],
+  "compilerDiagnostics": [
+    {
+      "path": "runtime/Original/FullSource/Communication.cs",
+      "line": 37,
+      "column": 10,
+      "code": "CS0246",
+      "message": "The type or namespace name 'InteriorModeUI' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/DoorController.cs",
+      "line": 67,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'DoorTrap' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/DoorController.cs",
+      "line": 192,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'DoorTrap' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 6,
+      "column": 7,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Usage' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 28,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'MissionUI' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 35,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Marksmen' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 39,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'NegotiationMode' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 48,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'InteriorMode' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 122,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'ScoreKeeper' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 124,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Mixer' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 126,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Operators' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 128,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Marksman' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 130,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Occupants' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 134,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'CellPhone' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 136,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'InteriorMode' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 138,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'Benchmark' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 140,
+      "column": 9,
+      "code": "CS0722",
+      "message": "'MarksmanMode': static types cannot be used as return types"
+    },
+    {
+      "path": "runtime/Original/FullSource/Mission.cs",
+      "line": 144,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'TutorialMode' could not be found (are you missing a using directive or an assembly reference?)"
+    },
+    {
+      "path": "runtime/Original/FullSource/Room.cs",
+      "line": 25,
+      "column": 9,
+      "code": "CS0246",
+      "message": "The type or namespace name 'FogOfWarElement' could not be found (are you missing a using directive or an assembly reference?)"
+    }
+  ],
+  "scope": "Reported diagnostics only; unresolved declarations can hide further errors. Build exit code, not parsed error count, determines compilation success.",
+  "comparison": {
+    "baselineSha": "f2ef153edee7bbd3239e1e19e02e1846dc69f865",
+    "currentSha": "4316cdef3f230ba0862c01e8d321de44048bf727",
+    "resolved": [
+      {
+        "path": "runtime/Original/FullSource/FloorStreakPainter.cs",
+        "code": "CS0246",
+        "message": "The type or namespace name 'PaintableSurface' could not be found (are you missing a using directive or an assembly reference?)",
+        "occurrences": 2
+      },
+      {
+        "path": "runtime/Original/FullSource/Limb.cs",
+        "code": "CS0246",
+        "message": "The type or namespace name 'DynamicLimbDecalRenderer' could not be found (are you missing a using directive or an assembly reference?)",
+        "occurrences": 1
+      },
+      {
+        "path": "runtime/Original/FullSource/Limb.cs",
+        "code": "CS0246",
+        "message": "The type or namespace name 'FloorPoolPainter' could not be found (are you missing a using directive or an assembly reference?)",
+        "occurrences": 1
+      },
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "code": "CS0246",
+        "message": "The type or namespace name 'BloodStream' could not be found (are you missing a using directive or an assembly reference?)",
+        "occurrences": 1
+      },
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "code": "CS0246",
+        "message": "The type or namespace name 'FloorPoolPainter' could not be found (are you missing a using directive or an assembly reference?)",
+        "occurrences": 2
+      },
+      {
+        "path": "runtime/Original/FullSource/Mission.cs",
+        "code": "CS0246",
+        "message": "The type or namespace name 'WallStreakPainter' could not be found (are you missing a using directive or an assembly reference?)",
+        "occurrences": 1
+      },
+      {
+        "path": "runtime/Original/FullSource/Wound.cs",
+        "code": "CS0246",
+        "message": "The type or namespace name 'BloodStreamGenerator' could not be found (are you missing a using directive or an assembly reference?)",
+        "occurrences": 1
+      }
+    ],
+    "introduced": [],
+    "remainingCount": 19,
+    "resolvedSymbols": [
+      "BloodStream",
+      "BloodStreamGenerator",
+      "DynamicLimbDecalRenderer",
+      "FloorPoolPainter",
+      "PaintableSurface",
+      "WallStreakPainter"
+    ],
+    "introducedSymbols": []
+  }
+}

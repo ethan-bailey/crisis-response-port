@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Crisis.Runtime;
 
 public static class AmmunitionLoader {
+    public static UnityEngine.Object ResolveOriginalCalibreReference(JsonElement package,string guid,string fileID,RuntimeWorld world) => SerializedAssetResolver.Resolve(package,guid,fileID,world,typeof(Crisis.Runtime.FullSource.Calibre));
     public static AmmunitionBase Load(string packageText,string assetPath,RuntimeWorld world){
         using var document=JsonDocument.Parse(packageText);var package=document.RootElement;
         var records=package.GetProperty("assets").GetProperty(assetPath).GetProperty("records").EnumerateArray();
@@ -30,6 +31,11 @@ public static class AmmunitionLoader {
             else if(field.FieldType==typeof(string))field.SetValue(ammo,value.ValueKind==JsonValueKind.Null?null:value.GetString());
             else if(field.FieldType.IsEnum)field.SetValue(ammo,Enum.ToObject(field.FieldType,value.GetInt32()));
             else if(field.FieldType==typeof(List<AmmunitionBase.FragmentationSpecification>)){field.SetValue(ammo,JsonSerializer.Deserialize<List<AmmunitionBase.FragmentationSpecification>>(value.GetRawText(),new JsonSerializerOptions{IncludeFields=true}));}
+            else if(field.FieldType==typeof(Utilities.Availability)){
+                var availability=JsonSerializer.Deserialize<Utilities.Availability>(value.GetRawText(),new JsonSerializerOptions{IncludeFields=true});
+                if(availability==null)throw new InvalidDataException($"Original ammunition field {field.Name} deserialized to null");
+                field.SetValue(ammo,availability);
+            }
             else if(field.FieldType==typeof(AnimationCurve)){
                 var keys=value.GetProperty("m_Curve").EnumerateArray().Select(k=>{
                     if(k.TryGetProperty("weightedMode",out var mode)&&mode.GetInt32()!=0)throw new NotSupportedException("Weighted original animation curve");
@@ -38,7 +44,20 @@ public static class AmmunitionLoader {
                 // Explicit endpoint-clamp adapter, matching the existing weapon curve boundary.
                 // Native serialized-infinity mapping still requires a Unity comparison.
                 field.SetValue(ammo,new AnimationCurve(keys){clampOutside=value.GetProperty("m_PreInfinity").GetInt32()==2&&value.GetProperty("m_PostInfinity").GetInt32()==2,serializedPreInfinity=value.GetProperty("m_PreInfinity").GetInt32(),serializedPostInfinity=value.GetProperty("m_PostInfinity").GetInt32()});
-            }else throw new NotSupportedException(field.FieldType.Name);
+            }else if(typeof(UnityEngine.Object).IsAssignableFrom(field.FieldType)&&value.ValueKind==JsonValueKind.Object&&value.TryGetProperty("fileID",out var objectFileID)){
+                string objectId=objectFileID.ValueKind==JsonValueKind.String?objectFileID.GetString()!:objectFileID.ToString();
+                if(objectId=="0")field.SetValue(ammo,null);
+                else{
+                    if(!value.TryGetProperty("guid",out var objectGuid))throw new InvalidDataException($"Original ammunition Unity object field {field.Name} has fileID {objectId} but no GUID");
+                    var resolved=SerializedAssetResolver.Resolve(package,objectGuid.GetString()!,objectId,world,field.FieldType);
+                    field.SetValue(ammo,resolved);
+                }
+            }else{
+                string serializedValue=value.ValueKind==JsonValueKind.Object&&value.TryGetProperty("guid",out var unsupportedGuid)
+                    ? $"{unsupportedGuid.GetString()}:{(value.TryGetProperty("fileID",out var unsupportedFileID)?unsupportedFileID.ToString():"?")}"
+                    : value.GetRawText();
+                throw new NotSupportedException($"Original ammunition field '{field.Name}' ({field.FieldType.FullName}) is unsupported; serialized value: {serializedValue}");
+            }
         }
         return ammo;
     }

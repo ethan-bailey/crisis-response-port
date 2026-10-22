@@ -1,0 +1,166 @@
+{
+  "archiveSha256": "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
+  "missing": [
+    "CapsuleCollider",
+    "Animator",
+    "SpringJoint",
+    "Collision"
+  ],
+  "scripts": {
+    "ArmorClass": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ArmorClass.cs",
+      "bytes": 1115,
+      "sha256": "9a3eb060f2cb51c0388d08871a6b7fb1ee62b61a25082727d44934cd1fd4b05c"
+    },
+    "ArmsControl": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ArmsControl.cs",
+      "bytes": 903,
+      "sha256": "3e623b5568950ff4efe6ad280df84e41566af31e4a03dba08c30d6a7ce34162c"
+    },
+    "AudioSurface": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/AudioSurface.cs",
+      "bytes": 300,
+      "sha256": "8bfa3a366ec5a58cdebb955e83872b9a4f9579dc815c6ef06731a5f71f05497e"
+    },
+    "BallisticObstacle": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BallisticObstacle.cs",
+      "bytes": 640,
+      "sha256": "be048dca2b102bb560e15ac437f82181a5f5c30a0e0a3c2d1ba6e1d2b4fbf725"
+    },
+    "CharacterAudio": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterAudio.cs",
+      "bytes": 4911,
+      "sha256": "01ed52c1fcc1b635243bd63c7fdc45890acc9fa5cf60869e9a45e377c1953fd1"
+    },
+    "CharacterDialog": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterDialog.cs",
+      "bytes": 1293,
+      "sha256": "65d3f01352c5b05bf2b09a80fae8cc598898636a2e56e13b58e0eea028883d87"
+    },
+    "CharacterScoreCard": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterScoreCard.cs",
+      "bytes": 1495,
+      "sha256": "db0af016c36ff62cf712a8caddd65b1c60d783cd45b23686a0e48d9b49320791"
+    },
+    "Communication": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Communication.cs",
+      "bytes": 3232,
+      "sha256": "4a13979d87c672577d8b31472744683fd8b14d50cd1717755653b14faa48c965"
+    },
+    "DialogTree": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DialogTree.cs",
+      "bytes": 591,
+      "sha256": "7688d3d4ebb6cd6c2f9eec583c34cefb498b61a93395b6a5c8930241f77ab839"
+    },
+    "DoorController": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DoorController.cs",
+      "bytes": 17606,
+      "sha256": "2288164940b624b5db11fe5c41417843763489c9a5bc55d22dccdbfd6409b6d0"
+    },
+    "DynamicInteractionMarker": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DynamicInteractionMarker.cs",
+      "bytes": 237,
+      "sha256": "c90d1d65fdb3f1eadf23571160d96c2d160b647693b67e4ef96cedb42fdd2090"
+    },
+    "Emitter": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Emitter.cs",
+      "bytes": 3250,
+      "sha256": "88a5ce977a21b34af7fdd941e52c124103e08711aecfade693584f981e6e0796"
+    },
+    "FloorStreakPainter": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/FloorStreakPainter.cs",
+      "bytes": 4065,
+      "sha256": "a47949bd6b6e7effdc10b86315d95db55817bfa6e6db90aa6f83550e14b83bfb"
+    },
+    "Grenade": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Grenade.cs",
+      "bytes": 7385,
+      "sha256": "f010935c0d9bd76b1ad69804d13dd7269502fb2678562ffcec1bd56a51e52f68"
+    },
+    "IKArmController": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/IKArmController.cs",
+      "bytes": 12158,
+      "sha256": "848283e9b0a3e25ce1650529b1ac57a0bebb8f5b600cada1ad33d56a3fa2ec6e"
+    },
+    "Limb": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Limb.cs",
+      "bytes": 25867,
+      "sha256": "4057e0b5dbb0fd4c7cab847f6168d655dc09fdabf0564587b403274210e6b8de"
+    },
+    "LimbId": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/LimbId.cs",
+      "bytes": 362,
+      "sha256": "6d71a90586c71a45b5bc571bfc791552eb9513380efe76fd04da07d9beb101e5"
+    },
+    "Mission": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Mission.cs",
+      "bytes": 21360,
+      "sha256": "678cb1e176c853b856bc33277f03d2d4e157d6b66783f019443686f351f53d8f"
+    },
+    "MuscleControl": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/MuscleControl.cs",
+      "bytes": 7477,
+      "sha256": "216421ba22297b856162f1cb3049dc239a80a1020010eaad5a0fbd5ec2bf3b1c"
+    },
+    "Physiology": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Physiology.cs",
+      "bytes": 22857,
+      "sha256": "a60d5ea1cebd66daa89ffd985f14fac98d86da0c1778558637c20c9e5d2133e4"
+    },
+    "PlayerController": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/PlayerController.cs",
+      "bytes": 12632,
+      "sha256": "9e8dd93b05c3b2424a780bfb99253ee24ed2a6e4a718375edce3337d5f70d615"
+    },
+    "Room": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Room.cs",
+      "bytes": 8248,
+      "sha256": "58a3eeb4840f2ac922f38e41bed4b94e3904a8045ac1aa96ca30366ac15dfe01"
+    },
+    "SerializableEquipment": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableEquipment.cs",
+      "bytes": 2622,
+      "sha256": "d2a1acaeb61d1d7b3499dced30d39159abe60a14052eb89473ab134a50653858"
+    },
+    "SerializableExtraSettings": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/SerializableExtraSettings.cs",
+      "bytes": 5900,
+      "sha256": "4117b9d88a646acf5f61b42dedf1432d19abfce8f952b5ec91c981d8ade4bf1f"
+    },
+    "Settings": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Settings.cs",
+      "bytes": 2588,
+      "sha256": "d297cced29bee6666255fac84b6f10c6b05f720ee13b0bb574ce39c2e386d25f"
+    },
+    "Target": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Target.cs",
+      "bytes": 271,
+      "sha256": "efa5af5f54439c6ef8953482edd110eb6de5c8920bd70ccc95328b0e41e8b7be"
+    },
+    "TeamOperator": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/TeamOperator.cs",
+      "bytes": 9212,
+      "sha256": "cbc91bfe42d2d5c5c3562e20e16fbf60348af13309697016c3f3d2c9476e7ba7"
+    },
+    "TimeScaler": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/TimeScaler.cs",
+      "bytes": 6367,
+      "sha256": "f2f602dc065b0aa69fac774ffca3e949dfc052931482bf381575eb80809977a1"
+    },
+    "WeaponAimer": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WeaponAimer.cs",
+      "bytes": 8188,
+      "sha256": "c59360da8a7faa828d4121dd2e7eccc09eb7f8095b63268cb10f549435e4439c"
+    },
+    "WeaponBase": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WeaponBase.cs",
+      "bytes": 41257,
+      "sha256": "cc60b54d30225be4d0f770d4bdaaab1ebd32e805be98ba5704745c48ed1be979"
+    },
+    "WeaponMode": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/WeaponMode.cs",
+      "bytes": 68,
+      "sha256": "6b2be300392eb924f02bad8249c8a505f94a311e10aafff2ddbf7a31a94eb200"
+    }
+  }
+}

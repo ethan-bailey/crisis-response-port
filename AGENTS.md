@@ -4,11 +4,6 @@
 
 # Crisis Response Port — Agent Operating Instructions
 
-**Current repository status:** [2026-10-17 audited operations board](docs/REPOSITORY_OPERATIONS_2026-10-17.md) tracks active PRs, tested/deployed SHAs, historic branches, and manual-build constraints. Re-read it and current GitHub state before work; older handoff sections are chronological evidence.
-
-
-Derived from the 2026-10-16 workflow audit. These rules keep the port moving fast without burning quota, duplicating work, or losing results.
-
 ## 0. Mandatory live-state and checkpoint precedence gate
 
 **Before ANY code or documentation edit**, inspect live `develop/wasm`, all open PRs (including PRs recently merged into feature branches), the target branch head, recent relevant CI and `docs/REPOSITORY_REMEDIATION_2026-10-18.md` on the current full-source branch. Never choose a task solely from an old audit, conversation, `NEXT_AGENT.md`, issue body or historical compiler count. GitHub commit-search results are not sufficient to identify the newest branch head.
@@ -29,11 +24,14 @@ Derived from the 2026-10-16 workflow audit. These rules keep the port moving fas
 - **Use each branch's stable preview alias** for testing, not per-deployment URLs. One URL per branch, always pointing at its latest deploy.
 - If usage starts climbing again, say so in the branch docs before it becomes a problem — don't wait to be asked.
 
-## 2. Branch and PR hygiene
+## 2. Branch and PR hygiene - single-line workflow
 
-- **One branch per workstream.** Open a draft PR as soon as a branch holds real work — high-value results (like runtime validation) must never sit on a branch with no merge path.
+Owner rule (2026-10-22): one agent works this repo at a time, so there is **one active workstream and one line of development** - `develop/wasm` is the project; branches are short errands off it, not parallel homes.
+
+- **One active branch.** Do not run parallel feature branches. New ideas go on the written list (handoff or issue), not into a new branch, until the active workstream lands or the owner parks it. Open a draft PR as soon as a branch holds real work - high-value results (like runtime validation) must never sit on a branch with no merge path.
+- **Short-lived by default.** Branch from current `develop/wasm`, land one verified slice, and merge back the same session or day where possible. Stockpiling verified work on an unmerged branch is how PR #42 diverged from `develop/wasm` and ended up needing repeated merge probes - treat an ageing unmerged branch as a problem to report, not a routine state.
+- **Sync long-lived branches every session.** If a branch must live beyond one session, merge current `develop/wasm` into it at the start of each session and resolve the small overlaps while they are fresh. Rebase only your own unpublished, unshared commits (see CONTRIBUTING.md). Never rewrite `main`, `develop/wasm`, already merged commits, release tags, or immutable build evidence. If a published feature branch truly must be rewritten, use `--force-with-lease` only after confirming no other writer and documenting the rewritten head; otherwise prefer a merge. Ordinary reviewed merges remain appropriate for integration.
 - **Close stale PRs promptly.** Don't leave dead PRs open; close with a pointer to whatever superseded them.
-- **Rebase short-lived feature branches when useful.** The owner currently uses one agent at a time, so prefer rebasing an agent-owned feature branch onto current `develop/wasm` before merging when this reduces conflicts. Confirm the branch is not shared or already under concurrent modification; preserve provenance. Never rewrite `main`, `develop/wasm`, already merged commits, release tags, or immutable build evidence. If a feature branch was published, use `--force-with-lease` only after confirming no other writer and documenting the rewritten head; otherwise prefer a merge. Ordinary reviewed merges remain appropriate for integration.
 
 ## 3. No duplicate work
 
@@ -68,11 +66,20 @@ Derived from the 2026-10-16 workflow audit. These rules keep the port moving fas
 - **Proportional movement-stick speed is an approved, intentional feature.** Preserve the dead zone and analog target-speed scaling through future original `CharacterBody`/`PlayerController` integrations; retain keyboard full-speed behavior and recovered original acceleration/physics. Do not silently replace this with digital-only left/right movement for a 1:1 parity claim.
 - The normative implementation details, test contract and provenance are in `docs/APPROVED_IPHONE_ANALOG_MOVEMENT.md`. Future deviations need explicit written rationale and user approval, plus new regression evidence.
 
-## 9. Mandatory clean handoff replacement
+## 9. Dependency closure and actor migration checkpoints
 
-- **Every agent-to-agent handoff MUST replace the entire contents of root `NEXT_AGENT.md` with a newly written current-state handoff.** Never append a new header to old handoffs, preserve outdated paragraphs underneath, or treat the file as a chronological log. This applies after implementation, audits, housekeeping, and failed attempts whenever responsibility is transferred.
-- Immediately before writing, re-read current `develop/wasm` and all active PR heads, relevant source files, CI outcomes, and build/deployment manifests. Separate what is recovered, implemented, compiled, browser-tested, deployed and still blocked. Include exact SHA evidence only where verified.
-- Keep the new handoff self-contained and concise (target 1–3 pages), containing: current branches/PRs with owners and overlap; verified milestones; unverified changes and explicit blockers; next ordered actions with file paths/tests; source and iPhone UI preservation rules; deployment and rollback status. Do not insert irrelevant historical milestones or outdated future plans.
-- **History stays in Git history and dated evidence documents, not in `NEXT_AGENT.md`.** Do not erase Git history, original source, or recovery provenance. There is no need to generate a duplicate archive at every handoff.
-- Make the complete replacement a committed change on the appropriate branch. If the handoff is on a feature branch, clearly identify that branch and avoid implying it was merged to `develop/wasm`. For cross-project handoffs, update the canonical `develop/wasm` handoff through a reviewed maintenance PR or merge when needed; never silently overwrite concurrent updates.
-- Verify the committed file's first section and final length via GitHub readback. A handoff is incomplete if `NEXT_AGENT.md` still contains an earlier handoff appended underneath.
+- Full original CharacterBody compilation is manual-only, after a cohesive
+  subsystem batch passes narrow contracts. Do not restore push-triggered full
+  builds for individual missing types. Preserve failed compiler exit status.
+- Before importing source, use `docs/audit/recovery-source-index.json` and
+  `scripts/inventory_source_dependencies.py`; review ambiguous type identities.
+  Regenerate the source inventory with source changes and keep `--check` passing.
+- `Crisis.Runtime.FullSource.CharacterBody` is the final actor authority. Do not
+  add gameplay to the frozen transport owner files without a documented,
+  reviewed exception in `docs/REPOSITORY_REMEDIATION_2026-10-18.md`.
+- Run actor boundary/source checks, isolated EngineChecks, and existing foundation
+  checks before a deliberate complete compiler checkpoint. Two-actor lifecycle
+  and consolidated WASM/browser evidence remain required before gameplay migration.
+- Keep compiler baselines pinned to exact source/run evidence. Use diagnostic
+  diffs to distinguish resolved, introduced and unchanged errors. Read the
+  remediation log for rollback instructions and cross-PR integration contracts.

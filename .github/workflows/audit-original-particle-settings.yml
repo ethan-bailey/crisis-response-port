@@ -1,11 +1,7 @@
 name: Audit active native particle settings and source renderer modes once
 on:
-  push:
-    branches:
-      - codex/projectile-material-impacts
-    paths:
-      - .github/workflows/audit-original-particle-settings.yml
   workflow_dispatch:
+
 permissions:
   contents: read
   actions: read

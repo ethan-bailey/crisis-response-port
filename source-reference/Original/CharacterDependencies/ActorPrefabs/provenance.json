@@ -1,0 +1,127 @@
+{
+  "sourceArchive": "crisis-response-recovery-direct-v3-1.zip",
+  "sourceArchiveSha256": "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
+  "assets": [
+    {
+      "path": "Operator.prefab",
+      "bytes": 302023,
+      "sha256": "94bcda5de74f45d83f4bbf88e80874b8f77bf0339d307294187b085c03170536"
+    },
+    {
+      "path": "Operator.prefab.meta",
+      "bytes": 237,
+      "sha256": "8d01cf639201add925686afbe85b7b1fd8a7bd8ec6c41b6749d76b568ef63b0d"
+    },
+    {
+      "path": "Occupant.prefab",
+      "bytes": 267833,
+      "sha256": "9094b840c49d6c53ffa077c274561ab5cbeedb202f85dbaade023ad67cb8c419"
+    },
+    {
+      "path": "Occupant.prefab.meta",
+      "bytes": 237,
+      "sha256": "3e39f95ea92613c4c4eb1c2c2c82775b9ed075cdf7a925d980ef5b3eca9c5737"
+    }
+  ],
+  "actorInventory": {
+    "Operator": {
+      "sourcePrefab": "Assets/Resources/characters/Operator.prefab",
+      "serializedRecords": 401,
+      "gameObjects": 70,
+      "monoBehaviours": 120,
+      "rootComponents": [
+        "Transform",
+        "Rigidbody",
+        "Blackboard",
+        "CharacterAudio",
+        "AudioInstigator",
+        "Animator",
+        "CapsuleCollider",
+        "CharacterBody",
+        "TeamOperator",
+        "Communication",
+        "Physiology",
+        "ArmsControl",
+        "CharacterPhysiologyVisualizer",
+        "MuscleControl",
+        "BehaviorTree",
+        "WeaponAimer",
+        "IKArmController",
+        "Target"
+      ],
+      "limbNames": [
+        "Pelvis",
+        "Abdomen",
+        "Torso",
+        "Neck",
+        "Head",
+        "Right upper arm",
+        "Right lower arm",
+        "Right hand",
+        "Left upper arm",
+        "Left lower arm",
+        "Left hand",
+        "Right upper leg",
+        "Right lower leg",
+        "Right foot",
+        "Right toes",
+        "Left upper leg",
+        "Left lower leg",
+        "Left foot",
+        "Left toes"
+      ]
+    },
+    "Occupant": {
+      "sourcePrefab": "Assets/Resources/characters/Occupant.prefab",
+      "serializedRecords": 349,
+      "gameObjects": 56,
+      "monoBehaviours": 117,
+      "rootComponents": [
+        "Transform",
+        "Rigidbody",
+        "Blackboard",
+        "CharacterAudio",
+        "AudioInstigator",
+        "CharacterDialog",
+        "Animator",
+        "CapsuleCollider",
+        "CharacterBody",
+        "Communication",
+        "Physiology",
+        "ArmsControl",
+        "BehaviorTree",
+        "CharacterPhysiologyVisualizer",
+        "MuscleControl",
+        "WeaponAimer",
+        "IKArmController",
+        "OccupantFear",
+        "OccupantMorale",
+        "Target"
+      ],
+      "limbNames": [
+        "Pelvis",
+        "Abdomen",
+        "Torso",
+        "Neck",
+        "Head",
+        "Right upper arm",
+        "Right lower arm",
+        "Right hand",
+        "Left upper arm",
+        "Left lower arm",
+        "Left hand",
+        "Right upper leg",
+        "Right lower leg",
+        "Right foot",
+        "Right toes",
+        "Left upper leg",
+        "Left lower leg",
+        "Left foot",
+        "Left toes"
+      ]
+    }
+  },
+  "adaptations": [],
+  "scope": "Original serialized Operator and Occupant actor prefab hierarchies and Unity metadata only.",
+  "runtimeStatus": "Preserved source assets; runtime actor instantiation and gameplay parity are not implied."
+}

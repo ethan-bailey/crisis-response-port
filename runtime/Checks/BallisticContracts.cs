@@ -1,6 +1,7 @@
 using System.IO.Compression;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Crisis.Runtime;
 using Crisis.Runtime.Weapons;
 using Crisis.Runtime.Presentation;
@@ -11,7 +12,9 @@ public static class BallisticContracts {
  public static string Run(){
   var input=new OriginalInputHost(new RuntimeWorld());input.Tick(.016f);
   var presentation=new PresentationHost(Read("game/assets/presentation.json.gz"));
-  var host=new WeaponHost(Read("game/assets/weapon-runtime.json.gz"),input.handler,presentation.QueryWorld){queryWorld=presentation.QueryWorld};
+  var weaponConfig=JsonNode.Parse(Read("game/assets/weapon-runtime.json.gz"))!.AsObject();
+  weaponConfig["armPhysics"]=JsonNode.Parse(File.ReadAllText("game/assets/original-arm-physics.json"));
+  var host=new WeaponHost(weaponConfig.ToJsonString(),input.handler,presentation.QueryWorld){queryWorld=presentation.QueryWorld};
   host.InitializeBallistics(Read("game/assets/ballistics.json.gz"),presentation.QueryScene);
   var world=presentation.QueryWorld;var runtime=host.Ballistics;
   var sourceWindows=JsonSerializer.SerializeToElement(runtime.WindowVisuals());

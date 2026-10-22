@@ -1,1 +1,1 @@
-namespace UnityEngine { public enum KeyCode { A,Alpha1,Alpha2,Alpha3,Alpha4,Alpha5,B,Backslash,D,Delete,DownArrow,E,Escape,F,F1,F2,G,H,Home,Insert,Keypad0,KeypadEnter,KeypadMinus,KeypadPlus,L,LeftArrow,LeftControl,LeftShift,Mouse0,Mouse1,None,O,PageUp,R,S,Space,T,Tab,U,UpArrow,W } }
+namespace UnityEngine { public enum KeyCode { A,Alpha1,Alpha2,Alpha3,Alpha4,Alpha5,B,Backslash,D,Delete,DownArrow,E,Escape,F,F1,F2,G,H,Home,Insert,J,K,Keypad0,KeypadEnter,KeypadMinus,KeypadPlus,L,LeftArrow,LeftControl,LeftShift,Mouse0,Mouse1,None,O,PageUp,R,Return,S,Space,T,Tab,U,UpArrow,W } }

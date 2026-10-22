@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Crisis Response — WebGPU capability probe</title>
+  <style>
+    :root { color-scheme: dark; font: 16px system-ui, sans-serif; background: #101820; color: #edf3f8; }
+    body { box-sizing: border-box; max-width: 760px; margin: 0 auto; padding: 24px; }
+    h1 { font-size: 1.35rem; }
+    p { line-height: 1.5; color: #c3cfda; }
+    canvas { display: block; width: 100%; height: min(56vw, 420px); min-height: 220px; border: 1px solid #617486; border-radius: 8px; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+    a { color: #9dd7ff; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Experimental WebGPU capability probe</h1>
+    <p>This standalone diagnostic requests an adapter and device, draws one textured triangle, responds to canvas resize, and reports device loss. It does not replace or drive gameplay rendering.</p>
+    <canvas id="probeCanvas" aria-label="Textured WebGPU triangle"></canvas>
+    <pre id="probeStatus" role="status" aria-live="polite">Initializing WebGPU…</pre>
+    <p>This diagnostic is isolated from the original runtime page and does not alter gameplay rendering.</p>
+  </main>
+  <script type="module">
+    import { initializeWebGpuProbe } from './webgpu-probe.mjs';
+    const canvas = document.querySelector('#probeCanvas');
+    window.__webgpuProbe = await initializeWebGpuProbe(canvas, document.querySelector('#probeStatus'));
+  </script>
+</body>
+</html>

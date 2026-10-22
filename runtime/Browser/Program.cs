@@ -17,32 +17,7 @@ public static class RuntimeBridge {
     [JSInvokable] public static string VerifyOriginalHandModes()=>OriginalHandModes.Run();
     static OriginalInputHost input;
     static Crisis.Runtime.Weapons.WeaponHost weapons;
-    [JSInvokable] public static string InitializeWeapons(string json){
-        input??=new OriginalInputHost(new RuntimeWorld());
-        weapons=new(json,input.handler,presentation.QueryWorld){queryWorld=presentation.QueryWorld,ballisticMask=presentation.BallisticMask};
-        var character=weapons.Character;
-        var animator=character.GetComponent<Animator>()??character.gameObject.AddComponent<Animator>();
-        var capsule=character.GetComponent<CapsuleCollider>()??character.gameObject.AddComponent<CapsuleCollider>();
-        character.InitializeSourceAnimation(animator,capsule);
-        character.InitializeOriginalPhysiology(Time.time);
-        weapons.BindOriginalLimbPhysiology();
-        return "ready";
-    }
-    [JSInvokable] public static string StepCharacterAnimation(string json){
-        if(weapons==null)throw new InvalidOperationException("Original character weapon host not initialized");
-        using var doc=JsonDocument.Parse(json);
-        var p=doc.RootElement;
-        float F(string n)=>p.GetProperty(n).GetSingle();
-        bool B(string n)=>p.GetProperty(n).GetBoolean();
-        // Advance actual original CharacterBody physiology alongside animator data.
-        // Source operator has no limb wounds until the original injury graph is bound.
-        weapons.Character.StepOriginalPhysiology(F("deltaTime"),Time.time,F("velocity"),
-          F("sprintSpeed"),heartRandom:UnityEngine.Random.value);
-        return JsonSerializer.Serialize(weapons.Character.ExecuteSourceUpdateAnimation(
-          B("kneeling"),B("moving"),B("backwards"),F("velocity"),
-          F("walkSpeed"),F("sprintSpeed"),weapons.Character.CrippledRatio,B("operator"),
-          F("deltaTime"),F("colliderVerticalOffset")));
-    }
+    [JSInvokable] public static string InitializeWeapons(string json){input??=new OriginalInputHost(new RuntimeWorld());weapons=new(json,input.handler,presentation.QueryWorld){queryWorld=presentation.QueryWorld,ballisticMask=presentation.BallisticMask};return "ready";}
     [JSInvokable] public static string InitializeBallistics(string json){weapons.InitializeBallistics(json,presentation.QueryScene);return "ready";}
     [JSInvokable] public static string StepWeapons(string json)=>JsonSerializer.Serialize(weapons.Step(json));
     [JSInvokable] public static string OriginalWindowVisuals()=>JsonSerializer.Serialize(weapons?.Ballistics?.WindowVisuals()??throw new InvalidOperationException("Original windows not initialized"));
@@ -51,28 +26,6 @@ public static class RuntimeBridge {
     [JSInvokable] public static string InitializePresentation(string json){presentation=new(json);return "ready";}
     [JSInvokable] public static string SolvePresentationArms(string json)=>Crisis.Runtime.Presentation.PresentationHost.SolveArms(json);
     [JSInvokable] public static string StepPresentation(string json){if(weapons!=null)presentation.SetWeaponState(weapons.Kick,weapons.Climb);return presentation.Step(json);}
-    // Original CharacterBody.Move / FixedUpdate are executed here with the live
-    // PhysX velocity; the browser applies the returned source acceleration.
-    static readonly Crisis.Runtime.Weapons.CharacterBody movementSource = new();
-    [JSInvokable] public static string StepBodyMovement(string json){
-        using var doc=JsonDocument.Parse(json);
-        var p=doc.RootElement;
-        float Number(string key)=>p.GetProperty(key).GetSingle();
-        bool Flag(string key)=>p.GetProperty(key).GetBoolean();
-        float dir=Number("direction");
-        // Recovered PlayerController.Update stops accepting movement after
-        // CharacterBody becomes a ragdoll; do not keep driving a dead body.
-        if(weapons?.Character is {Kinematic:false})
-            return JsonSerializer.Serialize(new {forceX=0f,reset=true,animatorSpeed=1f});
-        var currentBody=weapons?.Character??movementSource;
-        currentBody.Direction=Number("facing");
-        currentBody.Move(dir);
-        var result=currentBody.ExecuteSourceMovement(Number("velocity"),Number("step"),
-            Number("walkSpeed"),Number("sprintSpeed"),Number("analogMagnitude"),
-            Flag("sprint"),Flag("crippled"),Flag("operator"),Flag("noPlayerLimp"),
-            Flag("precision"));
-        return JsonSerializer.Serialize(result);
-    }
     [JSInvokable] public static string Verify()=>RuntimeContracts.Run();
     [JSInvokable] public static string ResetInput(){input=new OriginalInputHost(new RuntimeWorld());return JsonSerializer.Serialize(input.Snapshot());}
     [JSInvokable] public static string Tick(float seconds,string states){

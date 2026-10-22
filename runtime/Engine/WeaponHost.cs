@@ -32,7 +32,7 @@ public class Hand:global::Hand {
  public Mode mode=>CurrentMode;
  public readonly Dictionary<string,GameObject> SourceVisuals=[];
 }
-public partial class Limb:BallisticMaterial {public CharacterBody Body;}
+public class Limb:Component {public CharacterBody Body;}
 public class WeaponArmConfiguration {public Hand.Mode rightHandMode,leftHandMode;public float rightHandAngle,leftHandAngle;}
 public class Blackboard {public float weaponSkill;}
 public partial class CharacterBody:Component {
@@ -41,7 +41,7 @@ public partial class CharacterBody:Component {
  public ArmIKSolver leftArm,rightArm;public Limb Torso,Pelvis;
  public Transform chestRigIKTarget,pistolPivot,pistolIKTarget;
  public bool IsPlayer=true,IsManipulatingEquipment;public float Direction=1,LastFiredTimestamp;public bool IsUsingPrecision;public float RotationY=>Direction==1?0:180;public int ShotsFired;
- public float Position=>transform.position.x;public bool FacingRight=>Direction==1f;public object AudioInstigator=>null;
+ public float Position=>transform.position.x;public object AudioInstigator=>null;
  public CharacterAction PendingAction;bool triggerPulled;
  // Source arm state: default Operator rigidbodies are authored kinematic.
  // CharacterBody/physiology ragdoll transitions must supply future changes.
@@ -93,7 +93,6 @@ public sealed class WeaponHost {
  readonly Dictionary<string,Transform> weaponTransforms=[];readonly Dictionary<string,Transform> operatorTransforms=[];readonly Dictionary<string,Transform> magazineTransforms=[];
  public readonly WeaponEffects effects=new();
  public float Kick=>weapon.RecoilKick;public float Climb=>weapon.RecoilClimb;public bool Manipulating=>body.IsManipulatingEquipment;
- public CharacterBody Character=>body;
  public static Vector3 V(JsonElement a)=>new(a[0].GetSingle(),a[1].GetSingle(),a[2].GetSingle());
  static Vector3 Vec(JsonElement a)=>new(a.GetProperty("x").GetSingle(),a.GetProperty("y").GetSingle(),a.GetProperty("z").GetSingle());
  public static AnimationCurve Curve(JsonElement c){float F(JsonElement n)=>n.ValueKind==JsonValueKind.String?(n.GetString() switch {"Infinity"=>float.PositiveInfinity,"-Infinity"=>float.NegativeInfinity,var text=>float.Parse(text,System.Globalization.CultureInfo.InvariantCulture)}):n.GetSingle();return new(c.GetProperty("m_Curve").EnumerateArray().Select(k=>new Keyframe(k.GetProperty("time").GetSingle(),k.GetProperty("value").GetSingle(),F(k.GetProperty("inSlope")),F(k.GetProperty("outSlope")))).ToArray()){serializedPreInfinity=2,serializedPostInfinity=2,clampOutside=true};}
@@ -101,12 +100,7 @@ public sealed class WeaponHost {
  void Hierarchy(JsonElement records,Dictionary<string,Transform> map){foreach(var p in records.EnumerateObject()){var t=Make(p.Name);map[p.Name]=t;}
  foreach(var p in records.EnumerateObject()){var f=p.Value;var t=map[p.Name];var pid=f.GetProperty("m_Father").GetProperty("fileID").GetString();if(map.TryGetValue(pid,out var parent))t.SetParent(parent,false);t.localPosition=Vec(f.GetProperty("m_LocalPosition"));t.localScale=Vec(f.GetProperty("m_LocalScale"));var q=f.GetProperty("m_LocalRotation");t.localRotation=new(q.GetProperty("x").GetSingle(),q.GetProperty("y").GetSingle(),q.GetProperty("z").GetSingle(),q.GetProperty("w").GetSingle());}}
  public BallisticRuntimeHost Ballistics {get;private set;}
- public void InitializeBallistics(string json,SceneLoadResult scene){
-  Ballistics=new(json,scene,effects,p=>{p.FlightMask=ballisticMask;if(!projectiles.Contains(p))projectiles.Add(p);});
-  ballisticMask=Masks.Instance.BallisticTargets;
-  if(config.TryGetProperty("sourceLimbBallistics",out var source))
-    armPhysics.BindSourceBallistics(source,Ballistics,world);
- }
+ public void InitializeBallistics(string json,SceneLoadResult scene){Ballistics=new(json,scene,effects,p=>{p.FlightMask=ballisticMask;if(!projectiles.Contains(p))projectiles.Add(p);});ballisticMask=Masks.Instance.BallisticTargets;}
  public WeaponHost(string json,InputHandler input,RuntimeWorld sourceWorld=null){
   world=sourceWorld??new RuntimeWorld(true,false);world.MakeCurrent();using var d=JsonDocument.Parse(json);var c=d.RootElement;config=c.Clone();var w=c.GetProperty("weapon");Global.Context.InputHandler=input;
   Hierarchy(c.GetProperty("weaponTransforms"),weaponTransforms);Hierarchy(c.GetProperty("operatorTransforms"),operatorTransforms);
@@ -164,24 +158,18 @@ public sealed class WeaponHost {
    a.InitializeSourcePose();a.SetOnWeapon(weapon,.1f,right);return a;
   }
   body.rightArm=Arm(true);body.leftArm=Arm(false);
-  var limbSource=c.TryGetProperty("sourceLimbComponents",out var limbConfiguration)?limbConfiguration:default;
-  armPhysics=new OriginalArmPhysicsHost(c.GetProperty("armPhysics"),operatorTransforms,body,world,limbSource);
-  if(c.TryGetProperty("sourceSkinMasks",out var actualOriginalSkinMasks))
-   armPhysics.BindOriginalSkinCoverage(actualOriginalSkinMasks);
+  armPhysics=new OriginalArmPhysicsHost(c.GetProperty("armPhysics"),operatorTransforms,body,world);
   reload=bg.AddComponent<ChangeMagazine>();reload.isPlayer=true;reload.OnAwake();workBolt=bg.AddComponent<WorkBolt>();workBolt.OnAwake();effects.events.Clear();
  }
- public void BindOriginalLimbPhysiology()=>armPhysics.BindOriginalPhysiology();
  public object Step(string json){world.MakeCurrent();using var d=JsonDocument.Parse(json);var f=d.RootElement;
   body.Direction=f.GetProperty("direction").GetSingle();body.transform.position=V(f.GetProperty("position"));body.transform.rotation=Quaternion.AngleAxis(body.RotationY,Vector3.up);
-  if(f.TryGetProperty("velocity",out var sourceVelocity)&&body.GetComponent<Rigidbody>() is Rigidbody rootRigidbody)
-   rootRigidbody.velocity=V(sourceVelocity);
   foreach(var pair in f.GetProperty("operatorTransforms").EnumerateObject())if(operatorTransforms.TryGetValue(pair.Name,out var target))SetWorld(target,pair.Value);
   SetWorld(weapon.transform,f.GetProperty("weaponPose"));
-  if(body.Kinematic){body.rightArm.Step();body.leftArm.Step();}
+  body.rightArm.Step();body.leftArm.Step();
   armPhysics.Step(f,world);
   // Original CharacterBody.QueryTrigger clears one-frame requests; manipulation blocks new pulls.
-  if(body.Kinematic&&f.GetProperty("fire").GetBoolean()&&!body.IsManipulatingEquipment)body.PullTrigger();
-  if(body.Kinematic&&task==null&&f.GetProperty("reload").GetBoolean()){body.PendingAction=CharacterBody.CharacterAction.SwitchMagazine;task=reload;task.OnStart();}
+  if(f.GetProperty("fire").GetBoolean()&&!body.IsManipulatingEquipment)body.PullTrigger();
+  if(task==null&&f.GetProperty("reload").GetBoolean()){body.PendingAction=CharacterBody.CharacterAction.SwitchMagazine;task=reload;task.OnStart();}
   if(task!=null&&task.OnUpdate()!=TaskStatus.Running){task.OnEnd();task=null;}
   if(task==null&&body.PendingAction==CharacterBody.CharacterAction.WorkBolt){task=workBolt;task.OnStart();}
   weapon.Step();world.Invoke(weapon.cyclingBolt,"Update");body.QueryTrigger();
@@ -195,24 +183,12 @@ public sealed class WeaponHost {
    upper=a.upperArm.transform.eulerAngles.z,lower=a.lowerArm.transform.eulerAngles.z,
    bones=new{upper=Pose(a.upperArm.transform),lower=Pose(a.lowerArm.transform),hand=Pose(a.hand.transform)},
    handObjects=a.hand.SourceVisuals.Select(pair=>new{id=pair.Key,active=pair.Value.activeSelf}).ToArray()};// Presentation timing must use the same scaled Unity Time.time as the recovered weapon/effect events.
-  return new{sourceTime=Time.time,sourcePhysiology=body.SourcePhysiology==null?null:new{body.SourcePhysiology.Alive,body.SourcePhysiology.Conscious,body.SourcePhysiology.BloodVolume,body.SourcePhysiology.BloodOxygen,body.SourcePhysiology.HeartRate,body.SourcePhysiology.RespirationRate,body.SourcePhysiology.BrainTrauma,
-   body.SourcePhysiology.Shock,body.SourcePhysiology.LungsOxygen,
-   WoundVolume=body.limbs.Sum(l=>l.LimbPhysiology?.WoundCavityVolume??0f),
-   Hemorrhaging=body.limbs.Sum(l=>l.LimbPhysiology?.InternalHemorrhaging??0f),
-   limbCount=body.limbs.Count,
-   originalSkinRenderers=body.limbs.Count(l=>l.SourceSkinTrace!=null),
-   originalOrganGroups=body.limbs.Count(l=>l.SourceVitals!=null),
-   originalOrgans=body.limbs.Sum(l=>l.SourceVitals?.Functions.Count??0),
-   body.SourcePhysiology.Paralyzed,body.Kinematic,body.CrippledRatio},ballistics=Ballistics?.Snapshot(),magazinePose=new{p=new[]{mp.x,mp.y,mp.z},q=new[]{mq.x,mq.y,mq.z,mq.w},visible=weapon.ComponentMagazine.gameObject.activeSelf},shots=body.ShotsFired,
+  return new{sourceTime=Time.time,ballistics=Ballistics?.Snapshot(),magazinePose=new{p=new[]{mp.x,mp.y,mp.z},q=new[]{mq.x,mq.y,mq.z,mq.w},visible=weapon.ComponentMagazine.gameObject.activeSelf},shots=body.ShotsFired,
    // The only currently executable original weapon host is the recovered M4A1.
    // Send source-owned magazine capacity and chamber state to the browser.
    // Future weapon hosts must supply their own actual equipped weapon identity;
    // a merely loaded Glock visual is NOT a playable equipped Glock.
-   physicalArms=armPhysics.Snapshot(),
-    sourceLimbBallistics=new{materials=armPhysics.SourceLimbMaterialCount,
-       colliders=armPhysics.SourceLimbColliderCount,armors=armPhysics.SourceLimbArmorCount,
-       projectileContactsActive=armPhysics.SourceLimbProjectileContactsActive},
-    weaponId="M4A1",magazineCapacity=weapon.Magazine?.capacity??weapon.ComponentMagazine.capacity,
+   physicalArms=armPhysics.Snapshot(),weaponId="M4A1",magazineCapacity=weapon.Magazine?.capacity??weapon.ComponentMagazine.capacity,
    magazine=weapon.Magazine?.roundCount??0,reserve=body.Equipment.PrimaryMagazines.Where(m=>!ReferenceEquals(m,weapon.Magazine)).Sum(m=>m.roundCount),chamberLive=weapon.cyclingBolt.Live,bolt=weapon.cyclingBolt.Status.ToString(),reloading=task!=null,manipulating=body.IsManipulatingEquipment,kick=Kick,climb=Climb,right=Arm(body.rightArm),left=Arm(body.leftArm),events=effects.events.ToArray()};}
 }
 }

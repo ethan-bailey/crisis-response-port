@@ -1,11 +1,7 @@
 name: Recover original particle source manifest for private WASM
 on:
-  push:
-    branches:
-      - codex/projectile-material-impacts
-    paths:
-      - .github/workflows/recover-original-particle-source.yml
   workflow_dispatch:
+
 permissions:
   contents: write
   actions: read

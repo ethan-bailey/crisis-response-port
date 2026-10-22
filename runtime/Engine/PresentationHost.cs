@@ -1,48 +1,5 @@
 using System.Text.Json;
 using UnityEngine;
-namespace UnityEngine {
- // Renderer/PhysX property adapters, not substitute simulation implementations.
- public sealed class Camera:Component {public float fieldOfView,aspect;}
- public enum RigidbodyInterpolation {None=0, Interpolate=1, Extrapolate=2}
- public sealed class Rigidbody:Component {
-  public Vector3 velocity;
-  public Action<Vector3,Vector3> ForceSink;
-  // Physical-arm compatibility: the original component emits force and
-  // kinematic operations to the real pinned PhysX adapter, never a JS arm AI.
-  public Action<Vector3,Vector3,ForceMode> PhysicsForceSink;
-  public Action<bool> KinematicChanged;
-  // Actual source Limb.SetFloating/SetKinematic communicates native actor
-  // gravity, drag and force operations over the existing PhysX sinks.
-  public Action<bool> GravityChanged;
-  public Action<float> DragChanged;
-  public float mass {get;set;}=1f;
-  public float angularDrag {get;set;}=.05f;
-  public RigidbodyInterpolation interpolation {get;set;}
-  bool gravity=true;
-  public bool useGravity {get=>gravity;set{if(gravity==value)return;gravity=value;GravityChanged?.Invoke(value);}}
-  float dragValue;
-  public float drag {get=>dragValue;set{if(dragValue==value)return;dragValue=value;DragChanged?.Invoke(value);}}
-  public void AddForce(Vector3 force,ForceMode mode=ForceMode.Force){
-   if(PhysicsForceSink==null)throw new NotSupportedException("Rigidbody source force requires connected PhysX actor");
-   PhysicsForceSink(force,transform.position,mode);
-  }
-  bool kinematic=true;
-  public bool isKinematic {
-   get=>kinematic;
-   set {if(kinematic==value)return;kinematic=value;KinematicChanged?.Invoke(value);}
-  }
-  public void AddForceAtPosition(Vector3 force,Vector3 position){
-   if(PhysicsForceSink!=null){PhysicsForceSink(force,position,ForceMode.Force);return;}
-   if(ForceSink==null)throw new NotSupportedException("Dynamic ballistic force sink not connected");
-   ForceSink(force,position);
-  }
-  public void AddForceAtPosition(Vector3 force,Vector3 position,ForceMode mode){
-   if(PhysicsForceSink!=null){PhysicsForceSink(force,position,mode);return;}
-   if(mode==ForceMode.Force){AddForceAtPosition(force,position);return;}
-   throw new NotSupportedException("Source physical arm ForceMode requires PhysX");
-  }
- }
-}
 namespace Crisis.Runtime.Presentation {
  public sealed class CameraDoorSnapshot:Component {}
  public sealed class CameraWeaponSnapshot {public Transform Muzzle;}

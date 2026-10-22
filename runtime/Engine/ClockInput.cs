@@ -41,12 +41,15 @@ public static class Input {
 }
 public sealed class WaitForSeconds(float seconds) {internal readonly float seconds=seconds;}
 public sealed class WaitForSecondsRealtime(float seconds) {internal readonly float seconds=seconds;}
-public sealed class CoroutineHandle {
+public abstract class Coroutine { }
+public sealed class CoroutineHandle : Coroutine {
     internal readonly MonoBehaviour owner;
     internal bool finished;
+    internal string methodName;
+    internal readonly IEnumerator routineIdentity;
     readonly Stack<IEnumerator> stack=new();
     float wake;int frame;bool real;
-    internal CoroutineHandle(MonoBehaviour owner,IEnumerator routine){this.owner=owner;stack.Push(routine);}
+    internal CoroutineHandle(MonoBehaviour owner,IEnumerator routine){this.owner=owner;routineIdentity=routine;stack.Push(routine);}
     internal void Advance(bool immediate=false){
         if(finished||!owner||!owner.gameObject.activeInHierarchy){finished=true;return;}
         if(!immediate&&(Time.frameCount<frame||(real?Time.realtimeSinceStartup:Time.time)+1e-7f<wake))return;
@@ -61,3 +64,4 @@ public sealed class CoroutineHandle {
         }finished=true;
     }
 }
+

@@ -1,4 +1,8 @@
+#if CRISIS_FOUNDATION_TRANSPORT
 using CharacterBody = Crisis.Runtime.Weapons.CharacterBody;
+#else
+using CharacterBody = Crisis.Runtime.FullSource.CharacterBody;
+#endif
 using UnityEngine;
 
 public class ArmsControl : MonoBehaviour
