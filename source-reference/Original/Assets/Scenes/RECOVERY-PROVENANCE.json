@@ -1,0 +1,26 @@
+{
+  "format": "crisis-original-scenes-from-github-actions-artifact-v1",
+  "repository": "ethan-bailey/crisis-response-port",
+  "branch": "feature/original-projectile-limb-hit-runtime",
+  "commit": "fb96e92a848409014b85f6e094d995a9376fb731",
+  "artifactId": 11903811738,
+  "artifactSha256": "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
+  "sceneFiles": {
+    "Title.unity": {
+      "sha256": "8141d52f135e1cf6608b2261c2606322ae75e8dd8e66183fa700b28cb39b641b",
+      "bytes": 7328763
+    },
+    "Transition.unity": {
+      "sha256": "4e4c0124e84e369bfab23613966400e3ce372df812fd8f4b3f4195f772961c3a",
+      "bytes": 15642
+    },
+    "Mission 01.unity": {
+      "sha256": "c43b36c415b4df14ef6223eaced686a8ddcead6c46f7504346aecb1a03c5743e",
+      "bytes": 3409183
+    },
+    "Marksman range.unity": {
+      "sha256": "cc64f48f2087a62346fdc77ee85b874e7b09c727e1fb246f86007b9415b3d16b",
+      "bytes": 1475238
+    }
+  }
+}

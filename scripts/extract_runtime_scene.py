@@ -179,8 +179,25 @@ def runtime_asset_seeds(project):
     return seeds
 
 
+def require_scene_sources(project):
+    """Fail early when the original Unity scenes needed for extraction are absent."""
+    project = Path(project).resolve()
+    required = (project/'Assets/Scenes/Marksman range.unity', project/'Assets/Scenes/Mission 01.unity')
+    missing = [path.relative_to(project).as_posix() for path in required if not path.is_file()]
+    if missing:
+        raise MissingSceneSourcesError(
+            'Required original Unity scene source file(s) are missing: ' + ', '.join(missing) +
+            '. Provide the complete original Unity project; scene data will not be synthesized.'
+        )
+
+
+class MissingSceneSourcesError(ValueError):
+    """Raised when the source project lacks required original scene files."""
+
+
 def main():
     project = Path(sys.argv[1]).resolve(); output = Path(sys.argv[2])
+    require_scene_sources(project)
     builtin_resource_records = load_builtin_resource_records()
     index = {}; metadata={}
     for meta in (project/'Assets').rglob('*.meta'):
@@ -275,4 +292,8 @@ def main():
     output.with_suffix('.report.json').write_text(json.dumps(summary, indent=2)); print(json.dumps(summary))
 
 
-if __name__ == '__main__': main()
+if __name__ == '__main__':
+    try:
+        main()
+    except MissingSceneSourcesError as error:
+        raise SystemExit(str(error))
