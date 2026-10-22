@@ -6,13 +6,13 @@
 - This handoff is a docs-only update directly on `develop/wasm`, following that merge commit. The branch head is the commit containing this handoff; GitHub commit metadata records its exact SHA.
 - PR #42 is merged. The source branch `feature/full-source-characterbody-integration` is retained at `b835196201650e7ef0be6efd9ca038b46e34259e`.
 - The merge commit tree is `7e3be9753b909d4b1210484c4a84e9270aed424b`. Compared with tested attempt-6 tree `0f885ffc326a1b2f9a084543a92b7efc1e75`, the only pre-handoff difference is the documentation-only update to `docs/00-ATTEMPT6-STATUS.md`; no source file differs.
-- Attempt-6 verification on the tested tree: `dotnet build runtime/Crisis.Runtime.csproj --no-incremental` passed (0 errors, 45 warnings, 11 seconds); Calibre, weapon, and original limb-skin provenance/hash contracts passed. No Actions run occurred.
+- Attempt-6 verification on the tested tree: `dotnet build runtime/Crisis.Runtime.csproj --no-incremental` passed (0 errors, 45 warnings, 11 seconds); Calibre, weapon, and original limb-skin provenance/hash contracts passed. No Actions run occurred at the merge SHA; see the owner Actions-disabled decision below.
 
 ## Owner decisions
 
 1. **Accepted:** remove `runtime/Original/Weapons/CharacterLimbRagdollState.cs` in full. The inventory classifies its other 33 members as develop-only and dependent on deferred types; the tested merged tree passed the full gate without the file.
-2. **Runtime Foundation Actions waived for the PR #42 merge only.** The local verification above is the temporary gate under the single-line policy. This is not a CI pass and does not waive the future Actions check. When Actions minutes are restored, run the Runtime Foundation check against `develop/wasm` at merge SHA `09987a75d671d778287605322394c474da1ed74a`. Any failure is the top fix-forward item, and this check must pass before any ChatGPT Sites publish.
-3. **The two-actor gameplay gate and exact-source browser smoke gate do not block the merge.** Both remain outstanding and are the next gameplay acceptance tasks after the Actions check.
+2. **GitHub Actions disabled by owner decision for this project.** Outcome was (c): no Actions run exists at merge SHA `09987a75d671d778287605322394c474da1ed74a` (`total_count: 0`). `.github/workflows/runtime-foundation.yml` declares `workflow_dispatch` but is absent from the default branch `main`, so it cannot be dispatched normally. The minutes balance is unverified; the owner will not restore or rely on Actions regardless. Actions workflows were removed in a follow-up commit; local verification (fresh full-source build, relevant contracts, and provenance checks recorded against exact SHAs) is the standing landing gate.
+3. **The two-actor gameplay gate and exact-source browser smoke gate do not block the merge.** Both remain outstanding and are the next gameplay acceptance tasks.
 
 ## Deferred behavior applied
 
@@ -24,8 +24,9 @@
 
 ## Ordered next work
 
-1. When Actions minutes are restored, run Runtime Foundation Actions against develop at merge SHA `09987a75d671d778287605322394c474da1ed74a`. If it fails, fix that first. It must pass before any ChatGPT Sites publish.
-2. Run the two-actor gameplay gate on develop.
-3. Run the exact-source browser smoke gate on develop.
+1. Run the two-actor gameplay gate on develop.
+2. Run the exact-source browser smoke gate on develop.
+
+The ChatGPT Sites publish is not gated on Actions. It remains gated on the local and live smoke tests specified in the Sites brief.
 
 Do not start the ChatGPT Sites migration in this session. It has its own brief and starts only after the owner confirms. PRs #7, #56, and #57 remain outside this handoff's scope.

@@ -9,7 +9,11 @@ One agent works this repository at a time, so there is one line of development: 
 - **One active workstream.** Only one feature branch is in progress at a time. New ideas and future work go on the written list (the handoff, or an issue), not into a new branch, until the active workstream lands or the owner explicitly parks it.
 - **Short-lived branches.** Branch from the current `develop/wasm` head (record the base SHA in the handoff), do one reviewable slice, verify it, and merge it back - same session or same day where possible. A branch that keeps accumulating verified work without landing is a failure mode, not diligence: it is how PR #42 diverged from `develop/wasm` and ended up needing repeated merge probes.
 - **Sync while you go.** If a branch must live beyond one session, the first work step of each following session - after the step 1 checkpoint - is to merge current `develop/wasm` into the branch and resolve the small overlaps then, while they are fresh. Never let a branch sit unmerged for days while `develop/wasm` also changes.
-- **A blocked gate does not freeze landing.** If an external gate (for example CI quota) blocks merging, name it once under the standing rules and keep verified slices small and mergeable using local verification as the temporary gate, instead of stockpiling work on one branch until the blockage clears.
+- **A blocked gate does not freeze landing.** When an external gate blocks a task, record it once with evidence and use local verification as the standing gate for mergeable slices; do not stockpile work while waiting for an unavailable service.
+
+## Verification gate (owner decision, 2026-10-22)
+
+GitHub Actions is disabled by owner decision for this project. Do not restore minutes, dispatch workflows, or treat Actions checks as a gate. The standing gate for landing work is local verification: a fresh full-source build, the relevant contracts, and provenance checks, with commands and results recorded against the exact tested source SHA in the handoff or evidence docs. Functional smoke requirements remain separate: successful compilation is not proof of browser boot or correct gameplay.
 
 ## The loop
 

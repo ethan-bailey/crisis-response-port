@@ -6,7 +6,7 @@
 
 ## 0. Mandatory live-state and checkpoint precedence gate
 
-**Before ANY code or documentation edit**, inspect live `develop/wasm`, all open PRs (including PRs recently merged into feature branches), the target branch head, recent relevant CI and `docs/REPOSITORY_REMEDIATION_2026-10-18.md` on the current full-source branch. Never choose a task solely from an old audit, conversation, `NEXT_AGENT.md`, issue body or historical compiler count. GitHub commit-search results are not sufficient to identify the newest branch head.
+**Before ANY code or documentation edit**, inspect live `develop/wasm`, all open PRs (including PRs recently merged into feature branches), the target branch head, recent relevant local verification evidence, and `docs/REPOSITORY_REMEDIATION_2026-10-18.md` on the current full-source branch. GitHub Actions is disabled by owner decision, so no CI run is required or expected. Never choose a task solely from an old audit, conversation, `NEXT_AGENT.md`, issue body or historical compiler count. GitHub commit-search results are not sufficient to identify the newest branch head.
 
 Record: (a) exact target branch and inspected head, (b) newest comparable tested source SHA/run, (c) what is superseded, (d) next unmet acceptance gate. Verify the target head has not moved before writing. When checkpoints use different compiler graphs, **never infer regression or improvement from raw error totals**.
 
@@ -16,6 +16,10 @@ For every handoff replace `NEXT_AGENT.md` entirely, begin with the observed curr
 
 
 Derived from the 2026-10-16 workflow audit. These rules keep the port moving fast without burning quota, duplicating work, or losing results.
+
+## 0a. GitHub Actions disabled; local verification is the standing gate
+
+GitHub Actions is disabled by owner decision for this project. Do not restore minutes, trigger workflows, or treat Actions checks as a gate. For landing work, run local verification on the exact candidate tree: a fresh full-source build, relevant contracts, and provenance checks. Record commands, results, and the exact tested source SHA in the handoff or evidence docs. Gameplay and browser behavior still require their applicable local/live smoke tests; a successful compile alone is not a gameplay or browser pass.
 
 ## 1. Deployments: on-demand only
 
@@ -40,9 +44,9 @@ Owner rule (2026-10-22): one agent works this repo at a time, so there is **one 
 
 ## 4. Verification standard: evidence, not claims
 
-- A successful compile is a compile result, **not proof of browser boot or correct gameplay**. Every functional claim needs appropriate evidence: localhost smoke output, real browser boot observation (for native Unity WebGL, `createUnityInstance`), screenshots or automated browser assertions or equivalent automated browser evidence — preserved as GitHub Actions artifacts with run ID, exact tested SHA, and retention limits documented. Commit only durable, high-value reference screenshots; do not add every screenshot to Git history.
+- A successful compile is a compile result, **not proof of browser boot or correct gameplay**. Every functional claim needs appropriate evidence: local smoke output, real browser boot observation (for native Unity WebGL, `createUnityInstance`), screenshots or automated browser assertions or equivalent browser evidence. Record the commands, results, evidence references, and exact tested source SHA in the handoff or evidence docs. GitHub Actions artifacts and run IDs are unavailable because Actions is disabled by owner decision. Commit only durable, high-value reference screenshots; do not add every screenshot to Git history.
 - Distinguish clearly in commit messages and docs between "it compiled," "it booted," and "it plays correctly." These are three different milestones.
-- Unity work: **return the license seat after every CI run**, keep CI manual-only, and never expose `UNITY_EMAIL` / `UNITY_PASSWORD`.
+- Unity work: return the license seat after each Unity run, and never expose `UNITY_EMAIL` / `UNITY_PASSWORD`. GitHub Actions stays disabled; use local verification.
 
 ## 5. Status reporting: the whole board
 
@@ -77,7 +81,7 @@ Owner rule (2026-10-22): one agent works this repo at a time, so there is **one 
 - `Crisis.Runtime.FullSource.CharacterBody` is the final actor authority. Do not
   add gameplay to the frozen transport owner files without a documented,
   reviewed exception in `docs/REPOSITORY_REMEDIATION_2026-10-18.md`.
-- Run actor boundary/source checks, isolated EngineChecks, and existing foundation
+- Run actor boundary/source checks, isolated EngineChecks, and locally runnable foundation
   checks before a deliberate complete compiler checkpoint. Two-actor lifecycle
   and consolidated WASM/browser evidence remain required before gameplay migration.
 - Keep compiler baselines pinned to exact source/run evidence. Use diagnostic
