@@ -203,7 +203,7 @@ def main():
     pack = recover(args.cache, args.extractor)
     rendered = json.dumps(pack, sort_keys=True, indent=2, ensure_ascii=False) + '\n'
     if args.check:
-        if args.output.read_text() != rendered:
+        if json.loads(args.output.read_text()) != pack:
             raise ValueError('Resource record pack differs from official pinned inputs')
     else:
         args.output.parent.mkdir(parents=True, exist_ok=True)
