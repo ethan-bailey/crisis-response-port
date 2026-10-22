@@ -25,6 +25,10 @@ public static class Resources {
             var loaded=SceneLoader.LoadPrefab(packageText,assetPath,assetWorld,requireComplete:true);
             cache[path]=loaded.prefabRoot;return loaded.prefabRoot;
         }
+        if(assetPath.StartsWith("Assets/Resources/items/",StringComparison.OrdinalIgnoreCase)){
+            var loaded=SceneLoader.LoadPrefab(packageText,assetPath,assetWorld,requireComplete:true);
+            cache[path]=loaded.prefabRoot;return loaded.prefabRoot;
+        }
         if(!assetPath.StartsWith("Assets/Resources/weapons/ammunition/",StringComparison.OrdinalIgnoreCase))
             throw new NotSupportedException($"Resource dependency closure for {assetPath} is not executable yet");
         var ammo=AmmunitionLoader.Load(packageText,assetPath,assetWorld);ammo.gameObject.assetObject=true;
