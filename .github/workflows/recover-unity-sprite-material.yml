@@ -1,5 +1,8 @@
 name: Recover exact Unity 2017.2.0f3 sprite material
 on:
+  push:
+    branches: [feature/full-source-characterbody-integration]
+    paths: ['.github/workflows/recover-unity-sprite-material.yml']
   workflow_dispatch:
 
 permissions:
