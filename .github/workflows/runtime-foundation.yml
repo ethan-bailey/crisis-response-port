@@ -38,7 +38,11 @@ jobs:
           python3 scripts/extract_runtime_scene.py work/recovery/export/ExportedProject work/runtime/scene-package.json
           python3 scripts/package_ammunition_closure.py game/assets/weapon-runtime.json.gz work/runtime/scene-package.json --allow-unresolved
       - name: Compile and test runtime against original components and scenes
-        run: dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- work/runtime/scene-package.json > work/runtime/contracts-and-scenes.jsonl
+        run: |
+          if ! dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- work/runtime/scene-package.json > work/runtime/contracts-and-scenes.jsonl 2>&1; then
+            cat work/runtime/contracts-and-scenes.jsonl
+            exit 1
+          fi
       - name: Build original-code browser runtime
         run: |
           cp game/browser-input.mjs runtime/Browser/wwwroot/browser-input.mjs
@@ -54,6 +58,7 @@ jobs:
           node scripts/runtime_wasm_smoke.mjs
       - name: Save private runtime build and evidence
         if: always()
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: crisis-original-runtime-foundation
