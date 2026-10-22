@@ -170,6 +170,12 @@ public static class SceneLoader {
     }
     static Type ResolveScriptType(JsonElement package,string guid,string fileID){
         string name=ResolveScriptName(package,guid,fileID);
+        // The recovered Unity asset points to the Assembly-CSharp Projectile script.
+        // Keep that component on the original global Projectile adapter; a separate
+        // Crisis.Runtime.FullSource.Projectile class shares the short name.
+        if(name=="Projectile"&&package.GetProperty("guidPaths").TryGetProperty(guid,out var scriptPath)&&
+           scriptPath.GetString().EndsWith("/Assembly-CSharp/Projectile.cs",StringComparison.OrdinalIgnoreCase))
+            return typeof(global::Projectile);
         if(name.StartsWith("Script:",StringComparison.Ordinal))return null;
         bool explicitlyGlobal=name.StartsWith("global::",StringComparison.Ordinal);
         if(explicitlyGlobal)name=name["global::".Length..];
