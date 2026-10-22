@@ -12,6 +12,11 @@ public sealed class SpriteRenderer:Renderer {
     public bool flipX {get;set;}
     public bool flipY {get;set;}
     public new int sortingOrder {get;set;}
+    public int drawMode {get;set;}
+    public Vector2 size {get;set;}
+    public float adaptiveModeThreshold {get;set;}
+    public int spriteTileMode {get;set;}
+    public int spriteSortPoint {get;set;}
 }
 
 public sealed class LineRenderer:Renderer {
