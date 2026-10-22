@@ -33,6 +33,6 @@ The pre-merge checklist contains 49 changed type-header/location entries and 1,1
 | --- | --- | --- |
 | Two-actor gameplay gate | NOT RUN in attempt 6 | This merge attempt's required gate was full-source build plus Calibre and weapon contracts. The two-actor gameplay gate remains outstanding. |
 | Exact-source browser smoke gate | NOT RUN in attempt 6 | It remains a separate acceptance gate and was not part of the attempt-6 compile/contract gate. |
-| Runtime Foundation Actions | NEEDS CI | Actions minutes remain exhausted. Restoring minutes or waiving under the single-line policy is the owner's decision. |
+| Runtime Foundation Actions | WAIVED BY OWNER for attempt-6 PR-branch merge (2026-10-22) | No Actions run occurred; the waiver is a disposition, not a passing CI result. |
 
 Attempt 6 stopped after the PR-branch merge push. PR #42 has not been merged into develop/wasm, and the ChatGPT Sites migration has not started.
