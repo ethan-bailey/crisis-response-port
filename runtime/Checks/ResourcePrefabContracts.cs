@@ -26,7 +26,7 @@ public static class ResourcePrefabContracts
             UnityEngine.Object.DestroyImmediate(clone);
         }
 
-        var world = new Crisis.Runtime.RuntimeWorld();
+        var world = new RuntimeWorld();
         world.MakeCurrent();
         var contextObject = new GameObject("Original equipment resource context");
         var context = contextObject.AddComponent<GlobalContext>();
