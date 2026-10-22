@@ -2,6 +2,15 @@
 
 Standing instructions for any agent working in this repository, on any branch or task. These rules describe a repeatable work loop. Follow them until the task reaches a clean end state.
 
+## Single-line workflow (owner rule, 2026-10-22)
+
+One agent works this repository at a time, so there is one line of development: `develop/wasm` is the project, and every branch is a short errand off it, not a second home.
+
+- **One active workstream.** Only one feature branch is in progress at a time. New ideas and future work go on the written list (the handoff, or an issue), not into a new branch, until the active workstream lands or the owner explicitly parks it.
+- **Short-lived branches.** Branch from the current `develop/wasm` head (record the base SHA in the handoff), do one reviewable slice, verify it, and merge it back - same session or same day where possible. A branch that keeps accumulating verified work without landing is a failure mode, not diligence: it is how PR #42 diverged from `develop/wasm` and ended up needing repeated merge probes.
+- **Sync while you go.** If a branch must live beyond one session, the first work step of each following session - after the step 1 checkpoint - is to merge current `develop/wasm` into the branch and resolve the small overlaps then, while they are fresh. Never let a branch sit unmerged for days while `develop/wasm` also changes.
+- **A blocked gate does not freeze landing.** If an external gate (for example CI quota) blocks merging, name it once under the standing rules and keep verified slices small and mergeable using local verification as the temporary gate, instead of stockpiling work on one branch until the blockage clears.
+
 ## The loop
 
 Repeat these steps in order. Step 1 decides how much orientation a turn actually needs — do not redo work that reliable records show is already done.
