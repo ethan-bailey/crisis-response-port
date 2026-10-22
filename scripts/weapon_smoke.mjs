@@ -31,6 +31,33 @@ for(const [engine,type] of [['chromium',chromium],['webkit',webkit]]){
   // The initial Operator authored arms are kinematic, so source IK still owns
   // their visible poses until an original physical-state transition occurs.
   assert.equal(handState.presentation.originalPhysicalArmController,true);
+  assert.equal(handState.presentation.originalFullBodySource?.sourceBodyCount,21,
+    'Must use all 21 source Operator Rigidbodies, not slim seven-body arm export');
+  assert.equal(handState.presentation.originalFullBodySource?.actorCount,20,
+    'Original contact-physics root retained; all 20 body/limb actors run in PhysX');
+  assert.equal(handState.presentation.originalFullBodySource?.hingeCount,18,
+    'All 18 authored Operator HingeJoints must be joined in PhysX');
+  assert.equal(handState.weaponState.sourceLimbBallistics?.materials,8,
+    'Every original flesh material property asset must initialize on the live Operator');
+  assert.equal(handState.weaponState.sourceLimbBallistics?.colliders,19,
+    'All original 19 limb CapsuleCollider dimensions and layers must load');
+  assert.equal(handState.weaponState.sourceLimbBallistics?.armors,4,
+    'Original two IIIA and two IV ballistic armor components must initialize');
+  assert.equal(handState.weaponState.sourceLimbBallistics?.projectileContactsActive,false,
+    'Never enable projectile hit dispatch while original limb interior code is unbound');
+  assert.equal(handState.weaponState.sourcePhysiology?.limbCount,19,
+    'Actual live CharacterBody must own all 19 source limb components');
+  assert.equal(handState.weaponState.sourcePhysiology?.originalSkinRenderers,17,
+    'All 17 source LimbRenderer damage/skin coverage masks must attach to live C# limb transforms');
+  assert.equal(handState.weaponState.sourcePhysiology?.originalOrganGroups,9,
+    'Original serialized VitalFunctions must bind to all nine live limb groups');
+  assert.equal(handState.weaponState.sourcePhysiology?.originalOrgans,15,
+    'All 15 original source organ probability/position curves must be live');
+  assert.equal(handState.weaponState.sourcePhysiology?.Paralyzed,false,
+    'Healthy original Operator must begin without an invented spine injury');
+  assert.equal(handState.weaponState.sourcePhysiology?.Kinematic,true,
+    'Original living Operator starts animator-controlled rather than ragdolled');
+
   assert.equal(handState.presentation.physicalArmState?.length,2);
   for(const arm of handState.presentation.physicalArmState){
    assert.equal(arm.chain.length,3,'Original three limb rigidbodies per arm');

@@ -1,0 +1,282 @@
+{
+  "defaultState": "1102730242686860875",
+  "parameters": [
+    "Moving",
+    "Backwards",
+    "KneelRatio",
+    "CrippledRatio",
+    "MoveSpeed"
+  ],
+  "schema": 1,
+  "source": "Original Unity AnimatorController YAML",
+  "sourceSha256": "d1ef99a73f2f600c09be9f099e6f88b10aff8328099621c45ce19a6c5635803b",
+  "states": {
+    "1102099118695303065": {
+      "id": "1102099118695303065",
+      "motion": {
+        "clip": "Body walk backward",
+        "guid": "d65c0d12f3db5594181d3f01b395a218"
+      },
+      "name": "Backward locomotion",
+      "transitions": [
+        {
+          "conditions": [
+            {
+              "mode": 2,
+              "parameter": "Moving",
+              "threshold": 0.0
+            }
+          ],
+          "destination": "1102730242686860875",
+          "duration": 0.25,
+          "fixedDuration": true,
+          "hasExitTime": false,
+          "interruptionSource": 0
+        },
+        {
+          "conditions": [
+            {
+              "mode": 1,
+              "parameter": "Moving",
+              "threshold": 0.0
+            },
+            {
+              "mode": 3,
+              "parameter": "CrippledRatio",
+              "threshold": 0.25
+            }
+          ],
+          "destination": "1102985305603660343",
+          "duration": 0.25,
+          "fixedDuration": true,
+          "hasExitTime": false,
+          "interruptionSource": 0
+        },
+        {
+          "conditions": [
+            {
+              "mode": 1,
+              "parameter": "Moving",
+              "threshold": 0.0
+            },
+            {
+              "mode": 4,
+              "parameter": "CrippledRatio",
+              "threshold": 0.25
+            },
+            {
+              "mode": 2,
+              "parameter": "Backwards",
+              "threshold": 0.0
+            }
+          ],
+          "destination": "1102709867586078768",
+          "duration": 0.25,
+          "fixedDuration": true,
+          "hasExitTime": false,
+          "interruptionSource": 0
+        }
+      ]
+    },
+    "1102709867586078768": {
+      "id": "1102709867586078768",
+      "motion": {
+        "blendTree": {
+          "blendType": 0,
+          "children": [
+            {
+              "clip": "Body walk",
+              "guid": "2f5a69c2a5c027342a2db0801ba259c5",
+              "threshold": 0.0
+            },
+            {
+              "clip": "Body sprint",
+              "guid": "e4ec5e60d58d9184e9a261f8a7507b2d",
+              "threshold": 0.5
+            }
+          ],
+          "parameter": "MoveSpeed"
+        }
+      },
+      "name": "Forward locomotion",
+      "transitions": [
+        {
+          "conditions": [
+            {
+              "mode": 1,
+              "parameter": "Moving",
+              "threshold": 0.0
+            },
+            {
+              "mode": 1,
+              "parameter": "Backwards",
+              "threshold": 0.0
+            }
+          ],
+          "destination": "1102099118695303065",
+          "duration": 0.25,
+          "fixedDuration": true,
+          "hasExitTime": false,
+          "interruptionSource": 0
+        },
+        {
+          "conditions": [
+            {
+              "mode": 1,
+              "parameter": "Moving",
+              "threshold": 0.0
+            },
+            {
+              "mode": 3,
+              "parameter": "CrippledRatio",
+              "threshold": 0.25
+            }
+          ],
+          "destination": "1102985305603660343",
+          "duration": 0.25,
+          "fixedDuration": true,
+          "hasExitTime": false,
+          "interruptionSource": 0
+        },
+        {
+          "conditions": [
+            {
+              "mode": 2,
+              "parameter": "Moving",
+              "threshold": 0.0
+            }
+          ],
+          "destination": "1102730242686860875",
+          "duration": 0.25,
+          "fixedDuration": true,
+          "hasExitTime": false,
+          "interruptionSource": 0
+        }
+      ]
+    },
+    "1102730242686860875": {
+      "id": "1102730242686860875",
+      "motion": {
+        "blendTree": {
+          "blendType": 0,
+          "children": [
+            {
+              "clip": "Body stand",
+              "guid": "bc384850d352dd044b3ab066965f6f06",
+              "threshold": 0.0
+            },
+            {
+              "clip": "Body kneel",
+              "guid": "ae9f3a81fa9fc284f8355040c4b66523",
+              "threshold": 1.0
+            }
+          ],
+          "parameter": "KneelRatio"
+        }
+      },
+      "name": "Stationary",
+      "transitions": [
+        {
+          "conditions": [
+            {
+              "mode": 1,
+              "parameter": "Moving",
+              "threshold": 0.0
+            },
+            {
+              "mode": 1,
+              "parameter": "Backwards",
+              "threshold": 0.0
+            }
+          ],
+          "destination": "1102099118695303065",
+          "duration": 0.2317524,
+          "fixedDuration": true,
+          "hasExitTime": false,
+          "interruptionSource": 0
+        },
+        {
+          "conditions": [
+            {
+              "mode": 1,
+              "parameter": "Moving",
+              "threshold": 0.0
+            },
+            {
+              "mode": 4,
+              "parameter": "CrippledRatio",
+              "threshold": 0.25
+            }
+          ],
+          "destination": "1102709867586078768",
+          "duration": 0.5693313,
+          "fixedDuration": true,
+          "hasExitTime": false,
+          "interruptionSource": 0
+        },
+        {
+          "conditions": [
+            {
+              "mode": 1,
+              "parameter": "Moving",
+              "threshold": 0.0
+            },
+            {
+              "mode": 3,
+              "parameter": "CrippledRatio",
+              "threshold": 0.25
+            }
+          ],
+          "destination": "1102985305603660343",
+          "duration": 0.25,
+          "fixedDuration": true,
+          "hasExitTime": false,
+          "interruptionSource": 0
+        }
+      ]
+    },
+    "1102985305603660343": {
+      "id": "1102985305603660343",
+      "motion": {
+        "clip": "One leg limp",
+        "guid": "4b62a96303559c2489b71ac3bdded891"
+      },
+      "name": "One leg limp",
+      "transitions": [
+        {
+          "conditions": [
+            {
+              "mode": 1,
+              "parameter": "Moving",
+              "threshold": 0.0
+            },
+            {
+              "mode": 1,
+              "parameter": "Backwards",
+              "threshold": 0.0
+            }
+          ],
+          "destination": "1102099118695303065",
+          "duration": 0.25,
+          "fixedDuration": true,
+          "hasExitTime": false,
+          "interruptionSource": 0
+        },
+        {
+          "conditions": [
+            {
+              "mode": 2,
+              "parameter": "Moving",
+              "threshold": 0.0
+            }
+          ],
+          "destination": "1102730242686860875",
+          "duration": 0.25,
+          "fixedDuration": true,
+          "hasExitTime": false,
+          "interruptionSource": 0
+        }
+      ]
+    }
+  }
+}

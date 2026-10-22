@@ -1,3 +1,21 @@
+> **Current normative behavior:** The first section below, **Approved circular iPhone joystick and icon controls (2026-10-16)**, supersedes the older horizontal 22% dead-zone/slider instructions in the second section. The approved joystick is circular with a **16% horizontal dead zone**, automatic smooth walk→sprint and no touch sprint button. Preserve the original developer movement/physics. See [current operations board](REPOSITORY_OPERATIONS_2026-10-17.md).
+
+# Approved circular iPhone joystick and icon controls (2026-10-16)
+
+The owner explicitly requested replacing the horizontal slider with a two-axis circular thumb joystick and removing the sprint touch button. This **supersedes the earlier 22% slider-specific dead zone and separate touch Sprint control**. Do not revert to a horizontal slider or require a sprint button during later source parity work.
+
+- Joystick follows thumb displacement in X/Y, clamps to its circular boundary, and springs back to center on release.
+- Since Crisis Response is a side-scrolling shooter, only horizontal displacement drives original left/right InputHandler movement. Vertical thumb freedom does not create a new jump or crouch action.
+- 16% horizontal dead zone rescaled to normalized 0–1 magnitude. Within 16%, no movement. At full pull, target speed reaches original sprint speed.
+- 65% of normalized pull is the continuous walking-to-sprinting threshold: at this threshold source target speed is exactly the original walk cap; below, source walk cap times fraction; above, interpolate linearly to original sprint cap. This preserves the developer original CharacterBody acceleration/physics solver and sprint-facing restriction while avoiding a sudden speed jump.
+- Touch sprint is automatic; original Shift-key sprint is retained for keyboard movement. Independent keyboard directional inputs remain at full intensity and override analog deflection, even when both sources are held.
+- Kneel, Stand and Fire retain their original actions and accessibility labels, but use inline line icons. The magazine UI remains a functional, visual ammunition control and is not replaced with a generic reload button.
+- Pointer capture, concurrent second touches, lost capture, cancellation, page background, resize, blur, and disposal reset input and visuals. Full-power ring is visual feedback only; no gameplay changes to weapons, ammunition, aim, or reloading.
+- Tests: `node --test scripts/browser_input_test.mjs` plus the existing source-backed movement runtime and browser build tests. Do not claim physical iPhone evaluation until user tests.
+- This is an owner-approved user-interface enhancement, not a rewritten replacement for developer gameplay systems.
+
+---
+
 # Approved iPhone analog movement enhancement
 
 **Status:** Explicitly approved by the project owner on 2026-10-16 as a product improvement. This is a deliberately permitted difference from strict original-game behavior, **not a missing original system, an approximate replacement, or a feature that should be reverted in a future “restore 1:1” pass**.

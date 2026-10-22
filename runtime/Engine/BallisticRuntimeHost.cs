@@ -88,6 +88,12 @@ public sealed class BallisticRuntimeHost {
    }).ToArray()
   };
  }
+ // The original limb tissue property GUIDs are separate developer-authored
+ // prefabs from Mission 01. Never substitute scene Wood/Concrete properties.
+ public BallisticHitEffect SourceEntryOrExitEffect(string guid)
+    =>guid!=null&&effectPrefabs.TryGetValue(guid,out var prefab)?prefab:null;
+ public BallisticHitMeshEffect SourceExitHole(string guid)
+    =>guid!=null&&meshPrefabs.TryGetValue(guid,out var prefab)?prefab:null;
  public BallisticMaterialProperties Property(string id)=>properties[id];
  public void Emit(string type,object value)=>effects.Emit(type,value);
  public void RegisterProjectile(Projectile p){fragmentCount++;register(p);Emit("fragmentSpawn",new{p.Id,p.Mass,p.BaseVelocity});}

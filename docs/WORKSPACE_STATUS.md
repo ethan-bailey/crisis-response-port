@@ -1,3 +1,7 @@
+> **Current repository-level status (2026-10-17):** See [REPOSITORY_OPERATIONS_2026-10-17.md](REPOSITORY_OPERATIONS_2026-10-17.md). This file preserves time-stamped historical results; do not treat older branch SHAs, PR states or deployment statements below as live. No gameplay or build was changed by the housekeeping audit.
+
+---
+
 # Workspace status — chronological evidence ledger
 
 **Current instructions:** [NEXT_AGENT.md](../NEXT_AGENT.md), reviewed 2026-10-16. Entries below are dated history. Old “latest” and “current track” statements are not the present work queue.

@@ -1,6 +1,6 @@
 name: Audit milestone original WASM baseline verification
 
-# Explicit full milestone: a feature/fix workflow YAML change triggers ONE test.
+# Full author flesh material and armor binding milestone: 19 original source colliders remain safely disabled until projectile injury execution.
 # Merging reviewed code into develop/wasm must not duplicate the expensive build.
 # No automatic builds on source/doc edits, and workflow_dispatch remains available.
 on:
@@ -50,7 +50,8 @@ jobs:
         run: |
           python3 scripts/verify_original_arm_sequences.py | tee work/evidence/arm-source-check.json
           python3 scripts/verify_original_arm_controller_references.py | tee work/evidence/controller-source-check.json
-          python3 scripts/verify_original_arm_limb_sources.py | tee work/evidence/hand-limb-source-check.json\n          python3 scripts/verify_original_hand_runtime.py | tee work/evidence/original-hand-runtime-check.json
+          python3 scripts/verify_original_arm_limb_sources.py | tee work/evidence/hand-limb-source-check.json
+          python3 scripts/verify_original_hand_runtime.py | tee work/evidence/original-hand-runtime-check.json
       - name: Test package corruption and mixed-build rejection
         run: python3 -m unittest discover -s scripts -p package_wasm_site_test.py -v 2>&1 | tee work/evidence/package-tests.txt
       - name: Execute recovered original native contracts
