@@ -86,3 +86,24 @@ Disposition: **needs owner decision** to reconcile the overlapping engine API an
 
 - Local commit `dfe918a6bd3be3727355acd0033a41a91a5329c7` is patch-equivalent to the corresponding remote commit (`git cherry` returned no unique patch). Disposition: duplicate; no cherry-pick or push needed.
 - `runtime/Browser/wwwroot/browser-input.mjs` is a generated workflow output copied from tracked `game/browser-input.mjs`. The preserved local copy has a different SHA-256 and is stale; regenerate it from the tracked source for checks. It is not an independent verification input.
+
+
+## Session 1 owner-decision work (2026-10-22)
+
+Checkpoint: PR #42 source head was 3a22f709c70be577c881a7300c1b6926559c0a21. The implementation commit is fcfe355d6928934a0331faceb1ed26e000bc128e.
+
+The fresh full-source compile ran as `dotnet build runtime/Crisis.Runtime.csproj --no-incremental` on fcfe355d6928934a0331faceb1ed26e000bc128e: 45 warnings, 0 errors, exit 0 (15.76 seconds). This is the full-source runtime project compile. The 0-warning/0-error report on 9479dc6 was an incremental no-op, not a full-source compile; the recorded full-source result on 9479dc6 is 45 warnings, 0 errors.
+
+The generated scene execution package was built from work/recovery/export/ExportedProject to /tmp/cr42-session1-scene-package.json. Summary: 1,382 assets, 21,366 records, 6 unresolved GUIDs, 14,249 object references, 508 binary assets, 190,490,359 bytes. The recovered built-in resource record pack SHA-256 is ad613f8d50a4d58be86781e0b332f8410727c8b2a77306d100ee3bc162e5272e.
+
+Validation command: `dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- /tmp/cr42-session1-scene-package.json`. RuntimeContracts, ScenePrefabContracts, ArmSequenceContracts, PresentationContracts, WeaponContracts, and BallisticContracts ran before scene loading without throwing; WeaponContracts includes the original Calibre identity/lifetime contract. Scene loading then failed at Marksman Range fileID 2518 (secureWeaponMarker -> Assets/Resources/markers/Marker secure.prefab). The strict prefab loader reported unsupported SpriteRenderer.m_WasSpriteAssigned and SpriteRenderer.m_MaskInteraction. The bounded m_MaskInteraction support attempt added the SpriteRenderer.maskInteraction property, but the loader still rejects that serialized field. No general renderer work was attempted. ResourcePrefabContracts and SpawnerGameplayContracts were not reached after the scene-load exception. Mission 01 was not reached by this run.
+
+Individual reference dispositions:
+- Marksman Range fileID 2518, Marker secure.prefab, m_MaskInteraction: needs owner decision for any further attempt; the one bounded attempt did not make the loader accept the serialized member.
+- Marksman Range fileID 2518, Marker secure.prefab, m_WasSpriteAssigned: needs owner decision; outside the one-field scope and still rejected by the strict prefab loader.
+- Mission 01 fileID 6932, m_Sprite -> built-in Sprite 10907: exact Sprite Background recovered from the pinned Unity 2017.2.0f3 Editor unity_builtin_extra using the existing recovery pipeline; raw SHA-256 7e986d3388d894a5bec0e2240d18c99114607491cb58cdcf05e982cccd501855. Disposition: recoverable mapping; package mapping added, scene load not reached.
+- Mission 01 fileID 6957, m_Sprite -> built-in Sprite 10913: exact Sprite Knob recovered from the same source; raw SHA-256 a44cbb0e083d3e89f9b26062a07b4d5e49af3854a91ed794021ecb8a5a0284f. Disposition: recoverable mapping; package mapping added, scene load not reached.
+
+Preserved Codespaces checkout dispositions: local commit dfe918a is a duplicate of its remote commit, so no push or cherry-pick is needed. browser-input.mjs is generated from tracked source and is not needed for this verification. The untracked global.json remains untouched.
+
+Session 1 has no develop/wasm merge. The scene-load result above is a verified failure disposition; start Session 2 only after this head and handoff update are pushed.
