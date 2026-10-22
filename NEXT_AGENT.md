@@ -35,7 +35,7 @@ The merge was aborted and the isolated worktree restored cleanly to PR head a057
 
 Checkpoint: PR #42 source tree `a653609b62f3e3c79f73d0a17f0bf3dc89eae7b8`; `develop/wasm` `2fc0a8e93be97c4d99123910fad4bd25798e71a8`. The live branch refs were checked before inventory generation. The prompt's develop SHA had a transposition; the exact branch ref was used. Both recursive trees were untruncated. All 805 tracked C# source files were verified against their exact Git blob SHAs (PR 675/675; develop 130/130). No combined tree was built or created.
 
-- Full human-readable collision list: `docs/PR42_TWO_TREE_TYPE_MEMBER_INVENTORY_2026-10-22.md`.
+- Human-readable collision list index: `docs/PR42_TWO_TREE_TYPE_MEMBER_INVENTORY_2026-10-22.md`; four complete collision parts: `docs/PR42_TWO_TREE_COLLISIONS_01_2026-10-22.md` through `_04_2026-10-22.md`; deferred types/behavior/consumers: `docs/PR42_TWO_TREE_DEFERRED_2026-10-22.md`.
 - Complete declaration/member inventory plus exact per-file source manifest: `docs/PR42_TWO_TREE_DECLARATION_INVENTORY_2026-10-22.json.gz`.
 - Counts after partial-type/member union: PR 1,071 unique type identities / 12,478 unique member signatures; develop 235 / 3,214. Raw declarations: PR 1,129 types and 13,469 members; develop 283 and 4,361.
 - Collision counts: 199 shared type identities; 2,599 common member signatures. Disposition for every shared type/member: PR side wins. Develop-only behavior remains deferred: 106 members of shared types and 36 develop-only type identities. PR-only members in shared types: 321.
