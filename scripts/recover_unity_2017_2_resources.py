@@ -152,6 +152,15 @@ def recover(cache, extractor):
     assert by_id['10754']['type'] == 'Material'
     sprite_shader_id = str(by_id['10754']['fields']['m_Shader']['m_PathID'])
     assert by_id[sprite_shader_id]['type'] == 'Shader'
+    quad = player_resource_records['records'].get('10210', {})
+    quad_geometry = quad.get('runtimeGeometry', {})
+    assert quad.get('type') == 'Mesh' and quad.get('fileID') == '10210'
+    assert quad.get('fields', {}).get('m_Name') == 'Quad'
+    assert quad.get('rawSha256') == '73c18ccdbfb3b63d9fdd472c62db5f6e25e71e1e2400c639e4fef0b7bc69b365'
+    assert len(quad_geometry.get('vertices', [])) == 4
+    assert len(quad_geometry.get('normals', [])) == 4
+    assert len(quad_geometry.get('uv', [])) == 4
+    assert len(quad_geometry.get('triangles', [])) == 6
     shader_sources = []
     with zipfile.ZipFile(cache / 'builtin_shaders-2017.2.0f3.zip') as archive:
         # Include the official Standard shader and every matching-version include
@@ -182,8 +191,9 @@ def recover(cache, extractor):
             'material10754': by_id['10754']['fields']['m_Name'] + '; shader pointer resolves to source Shader ' + sprite_shader_id,
             'playerResource': 'Exact win32_nondevelopment_mono payload extracted; '
                               'its serialized header is 2017.2.0b11, target 5. '
-                              'Mesh 10206 is Cylinder. Keep this record separate from '
-                              'the 2017.2.0f3 Editor records; do not relabel its header.',
+                              'Meshes 10206 (Cylinder) and 10210 (Quad) are source-backed. '
+                              'Keep these records separate from the 2017.2.0f3 Editor '
+                              'records; do not relabel their header.',
             'correction': 'The required 10303/46 source records are in Editor/Data/'
                           'Resources/unity_builtin_extra. Searching only unity default '
                           'resources cannot establish that these records are unavailable.',
