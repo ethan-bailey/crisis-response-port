@@ -92,6 +92,13 @@ public class InputHandler : MonoBehaviour {
     getters = [member(ammunition, name) for name in ['MetricMass','DiameterInMeters','MetricLength','MuzzleEnergy',
         'MuzzleEnergyTotal','Subsonic','MuzzleBlastRange','DetonationAudioPower']]
     extra_declarations = [member(ammunition, name) for name in ['availability', 'type', 'muzzleBlastForce', 'calibre', 'projectile', 'casing', 'highPolyModel', 'marksmanRound', 'sprite']]
+    # The recovered projectile prefab's selected serialized contract is the full
+    # namespaced original component, which owns fragmentMeshes/material/scaler.
+    projectile_index = ['availability', 'type', 'muzzleBlastForce', 'calibre', 'projectile', 'casing', 'highPolyModel', 'marksmanRound', 'sprite'].index('projectile')
+    if extra_declarations[projectile_index].strip() != 'public Projectile projectile;':
+        raise ValueError('Unexpected recovered AmmunitionBase.projectile declaration')
+    extra_declarations[projectile_index] = 'public Crisis.Runtime.FullSource.Projectile projectile;'
+    report['runtimeAdapters'] = {'AmmunitionBase.projectile': 'Crisis.Runtime.FullSource.Projectile preserves the recovered projectile prefab serialized fields.'}
     save('AmmunitionBase.cs', 'using UnityEngine;\nusing Crisis.Runtime.FullSource;\nusing Utilities;\npublic partial class AmmunitionBase : MonoBehaviour {\n' +
         block(ammunition, 'public enum Type') + '\n' + block(ammunition, 'public enum FragmentationMode') + '\n' + '\n'.join(declarations) + '\n' +
         '\n'.join(extra_declarations) + '\n' +
