@@ -83,8 +83,15 @@ def recover(cache, extractor):
         if relative.endswith('unity_builtin_extra'):
             if asset.unity_version != '2017.2.0f3':
                 raise ValueError('Wrong built-in-extra serialized Unity version')
+            builtin_extra = {obj.path_id: obj for obj in env.objects}
+            sprite_material = builtin_extra.get(10754)
+            if sprite_material is None or sprite_material.type.name != 'Material':
+                raise ValueError('Exact-release editor unity_builtin_extra has no Material 10754')
+            sprite_fields = sprite_material.read_typetree()
+            sprite_shader_id = int(sprite_fields['m_Shader']['m_PathID'])
+            wanted_ids = {46, 10303, 10754, sprite_shader_id}
             for obj in sorted(env.objects, key=lambda o: o.path_id):
-                if obj.path_id not in (46, 10303):
+                if obj.path_id not in wanted_ids:
                     continue
                 raw_obj = obj.get_raw_data()
                 tree = obj.read_typetree()
@@ -135,6 +142,9 @@ def recover(cache, extractor):
     assert by_id['10303']['fields']['m_Shader'] == {'m_FileID': 0, 'm_PathID': 46}
     assert by_id['46']['type'] == 'Shader'
     assert by_id['46']['fields']['m_ParsedForm']['m_Name'] == 'Standard'
+    assert by_id['10754']['type'] == 'Material'
+    sprite_shader_id = str(by_id['10754']['fields']['m_Shader']['m_PathID'])
+    assert by_id[sprite_shader_id]['type'] == 'Shader'
     shader_sources = []
     with zipfile.ZipFile(cache / 'builtin_shaders-2017.2.0f3.zip') as archive:
         # Include the official Standard shader and every matching-version include
@@ -162,6 +172,7 @@ def recover(cache, extractor):
         'scope': {
             'recordRecovery': 'verified from official exact-release installer',
             'material10303': 'Default-Material; shader pointer resolves to Standard (46)',
+            'material10754': by_id['10754']['fields']['m_Name'] + '; shader pointer resolves to source Shader ' + sprite_shader_id,
             'playerResource': 'Exact win32_nondevelopment_mono payload extracted; '
                               'its serialized header is 2017.2.0b11, target 5. '
                               'Mesh 10206 is Cylinder. Keep this record separate from '
