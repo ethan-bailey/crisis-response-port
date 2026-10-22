@@ -1,6 +1,6 @@
 # NEXT AGENT — Crisis Response WASM port
 
-Observed 2026-10-22 before this handoff update: PR #42 branch `feature/full-source-characterbody-integration` at `8c3db393dc16d29b5844632e8b07b80c56dfda3f`; `develop/wasm` at `2fc0a89e3be97c4d99123910fad4bd25798e71a8`. Open PRs: #7, #42, #56, #57. PR #42 remains draft and unmerged. The current owner checkpoint matched the live branch and PR set. The docs-only handoff commit that follows advances the PR head; its SHA is the GitHub commit created by this update.
+Observed 2026-10-22 before this handoff update: PR #42 branch `feature/full-source-characterbody-integration` at `a653609b62f3e3c79f73d0a17f0bf3dc89eae7b8`; `develop/wasm` at `2fc0a8e93be97c4d99123910fad4bd25798e71a8`. Open PRs: #7, #42, #56, #57. PR #42 remains draft and unmerged. The inventory uses the exact live `develop/wasm` ref; a prior prompt/handoff SHA transposed two characters. The docs-only handoff commit that follows advances the PR head; its SHA is the GitHub commit created by this update.
 
 ## Attempt 4 — merge probe aborted
 
@@ -29,3 +29,18 @@ The local merge probe commit 3bfc2a097a50414d2c14a5174980a2dd805d32 was not push
 Gate failed on the fresh dotnet build runtime/Crisis.Runtime.csproj --no-incremental at merge SHA 3bfc2a097a50414d2c14a5174980a2dd805d32: 15 errors, 10 warnings, 5.264 seconds, exit 1. Two unique CS0111 duplicate-member diagnostics were reported: (1) CapsuleCollider.Raycast at runtime/Original/Foundation/OriginalCapsuleCollider.cs:11, duplicating the PR-side CapsuleCollider in runtime/Engine/CharacterPhysics.cs:6; misclassified develop duplicate file, PR type wins and the develop copy must be dropped. (2) ArmorClass.PenetrationTest at runtime/Original/Foundation/ArmorClass.cs:17; the merge auto-combined develop content into this shared file instead of preserving the PR version. This is another misclassified shared-file duplicate; PR version of the file must win. These were not dependencies of either host. Calibre and weapon contracts were not run because the compile gate failed. No fixes or second build attempt were made.
 
 The merge was aborted and the isolated worktree restored cleanly to PR head a0577ddb239268f7e9a035d9be18a23695008e4b; no merged source was pushed. This handoff is the sole docs-only update for attempt 5. Runtime Foundation still needs CI (Actions minutes exhausted). Do not complete the PR merge into develop/wasm or start the ChatGPT Sites migration from this attempt.
+
+
+## PR #42 attempt 6 — two-tree type/member inventory — 2026-10-22
+
+Checkpoint: PR #42 source tree `a653609b62f3e3c79f73d0a17f0bf3dc89eae7b8`; `develop/wasm` `2fc0a8e93be97c4d99123910fad4bd25798e71a8`. The live branch refs were checked before inventory generation. The prompt's develop SHA had a transposition; the exact branch ref was used. Both recursive trees were untruncated. All 805 tracked C# source files were verified against their exact Git blob SHAs (PR 675/675; develop 130/130). No combined tree was built or created.
+
+- Full human-readable collision list: `docs/PR42_TWO_TREE_TYPE_MEMBER_INVENTORY_2026-10-22.md`.
+- Complete declaration/member inventory plus exact per-file source manifest: `docs/PR42_TWO_TREE_DECLARATION_INVENTORY_2026-10-22.json.gz`.
+- Counts after partial-type/member union: PR 1,071 unique type identities / 12,478 unique member signatures; develop 235 / 3,214. Raw declarations: PR 1,129 types and 13,469 members; develop 283 and 4,361.
+- Collision counts: 199 shared type identities; 2,599 common member signatures. Disposition for every shared type/member: PR side wins. Develop-only behavior remains deferred: 106 members of shared types and 36 develop-only type identities. PR-only members in shared types: 321.
+- Required self-test **passed**: Animator accessors; CapsuleCollider.Raycast across `runtime/Engine/CharacterPhysics.cs` versus `runtime/Engine/OriginalCapsuleCollider.cs`; ArmorClass.PenetrationTest; WeaponHost; OriginalArmPhysicsHost.
+- Consumer exceptions are listed in the report, including OriginalLimbSkinTrace, Limb.SourceSkinTrace, OriginalArmPhysicsHost's develop-only additions, WeaponHost develop implementations that call/read them, and top-level checks in `runtime/Checks/Program.cs`.
+- No merge probe, final merge, build, Actions run, work on PRs #7/#56/#57, or Sites migration was performed in this attempt. This commit is docs-only.
+
+The inventory is believed complete for explicit declarations across all tracked `.cs` files: exact blob hashes verified, both parses ended with zero syntax-error files, and all five known collision groups were found.
