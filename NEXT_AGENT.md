@@ -60,3 +60,29 @@ This is the active handoff for PR #42. Current code head before this handoff not
 - Exact native check still required: workflow **Execute recovered original code with runtime services**, step **Compile and test runtime against original components and scenes**. Exact full-source compile checks: workflow **Compile recovered full CharacterBody dependency closure**, jobs **foundation-contracts** and **compile-closure**. Actions quota remains unavailable; do not dispatch these workflows.
 - Exact browser acceptance still required: workflow **Execute recovered original code with runtime services**, step **Execute original methods and original scene graph in WebAssembly**, plus its Chromium/WebKit install and localhost HTTP steps. Do not treat startup or input smoke as gameplay acceptance.
 - Next implementation target is production actor/spawner integration. `runtime/Browser/Program.cs` still initializes `Crisis.Runtime.Weapons.WeaponHost`; that host constructs the transport `Crisis.Runtime.Weapons.CharacterBody`. The original `Crisis.Runtime.FullSource.OccupantSpawner` exists, but its mission/global-context equipment flow is not connected to the browser runtime's authoritative source actor. Continue with the source-owned actor path and test spawn, equip, movement, hit/physiology isolation, and destruction as separate behaviors.
+## PR #42 gate checkpoint — 2026-10-22
+
+- Checkpoint before this handoff-only commit: PR #42 head `a61cbfe0a079924c9d13c85d21b2f925d08fe2c3`; open PR set was #7, #42, #56, and #57. The handoff commit follows this source commit and does not change runtime source.
+- PR #42 remains draft and is not merge-ready. The source commit `a61cbfe` was pushed to the existing feature branch. The full-source build `dotnet build runtime/Crisis.Runtime.csproj --no-incremental` exited 0 on that source commit: 45 warnings, 0 errors (15.65 s). The full-source result on prior exact head `9479dc6d5140799b39780900c1d4add617cf9a7a` was also 45 warnings, 0 errors. The separate 0 warnings/0 errors report was an incremental no-op, not a source recompile; both diagnostic counts refer to `runtime/Crisis.Runtime.csproj`, not a runtime-only subset.
+- Local ammunition closure packaging passed with 1,382 package objects and no unresolved ammunition package fields. Official Unity 2017.2.0f3 resource recovery supplied the Mesh 10210 data and was included in `a61cbfe`.
+
+### SceneLoader blockers and individual dispositions
+
+| Scene | Reference | Disposition |
+| --- | --- | --- |
+| Marksman Range | Mission component fileID 2518, field `secureWeaponMarker` points to `Assets/Resources/markers/Marker secure.prefab`; nested unsupported built-in `SpriteRenderer` field. Runtime has no `SpriteRenderer` implementation. | Needs owner decision whether to expand this PR with renderer support. |
+| Mission 01 | GameObject fileID 6932, `m_Sprite`, zero GUID, built-in Sprite fileID 10907. No matching entry is in recovered pinned Unity resource records. | Needs owner decision on exact-source recovery versus an approved visual substitute. |
+| Mission 01 | GameObject fileID 6957, `m_Sprite`, zero GUID, built-in Sprite fileID 10913. No matching entry is in recovered pinned Unity resource records. | Needs owner decision on exact-source recovery versus an approved visual substitute. |
+
+The native scene contract stops on the Marksman Range reference. The Mission 01 rows are independently unresolved in the extracted package. Native original-scene, spawner-driven scene, and exact-source browser smoke have not passed and remain blocked by these dispositions. The Actions-only Runtime Foundation check is `needs CI`; Actions minutes have been exhausted since 2026-10-19. Do not wait on Actions.
+
+### Merge-readiness blocker
+
+A non-mutating merge-tree check against local `origin/develop/wasm` showed conflicts in `.gitignore`, `AGENTS.md`, `NEXT_AGENT.md`, `runtime/Checks/Program.cs`, and `runtime/Engine/PresentationHost.cs`. One bounded resolution attempt was made. The combined source then failed full compile with 14 duplicate-member errors involving original Animator parameter accessors (`StringToHash`, `SetBool`, `SetFloat`, `GetBool`, `GetFloat`), `CapsuleCollider.Raycast`, and `ArmorClass.PenetrationTest`, among duplicate declarations. The merge was aborted; the isolated tree is restored to source commit `a61cbfe`. Nothing from the uncompilable merge tree was pushed.
+
+Disposition: **needs owner decision** to reconcile the overlapping engine API and native-check changes between the PR history and `develop/wasm`. Do not mark PR #42 ready or merge it until this is resolved. Sites/hosting work has not started because the merge-ready trigger is not met.
+
+### Preserved Codespaces checkout items
+
+- Local commit `dfe918a6bd3be3727355acd0033a41a91a5329c7` is patch-equivalent to the corresponding remote commit (`git cherry` returned no unique patch). Disposition: duplicate; no cherry-pick or push needed.
+- `runtime/Browser/wwwroot/browser-input.mjs` is a generated workflow output copied from tracked `game/browser-input.mjs`. The preserved local copy has a different SHA-256 and is stale; regenerate it from the tracked source for checks. It is not an independent verification input.
