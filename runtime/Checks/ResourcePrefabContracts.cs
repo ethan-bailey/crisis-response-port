@@ -25,6 +25,32 @@ public static class ResourcePrefabContracts
         {
             UnityEngine.Object.DestroyImmediate(clone);
         }
-        return $"PASS: original Items/Primary magazine resource loaded and cloned with type {sourceItem.type}, quantity {sourceItem.quantity}";
+
+        var world = new Crisis.Runtime.RuntimeWorld();
+        world.MakeCurrent();
+        var contextObject = new GameObject("Original equipment resource context");
+        var context = contextObject.AddComponent<GlobalContext>();
+        var equipmentListObject = new GameObject("Original equipment list");
+        var equipmentList = equipmentListObject.AddComponent<EquipmentList>();
+        typeof(GlobalContext).GetProperty(nameof(GlobalContext.EquipmentList))!.SetValue(context, equipmentList);
+        Global.Instance.Initialize(contextObject);
+        var missionObject = new GameObject(Mission.ObjectName);
+        missionObject.AddComponent<Mission>();
+        var serializedEquipment = new SerializableEquipment
+        {
+            items = new SerializableItems { itemPrefabNames = new System.Collections.Generic.List<string> { "Primary magazine" } }
+        };
+        var equipmentObject = EquipmentHelper.Instance.SpawnEquipment(serializedEquipment);
+        try
+        {
+            var equipment = equipmentObject.GetComponent<Equipment>();
+            if (equipment == null || equipment.primaryMagazineCount != sourceItem.quantity)
+                throw new InvalidOperationException($"Original EquipmentHelper did not apply the loaded Primary magazine quantity: expected={sourceItem.quantity}, actual={equipment?.primaryMagazineCount}");
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(equipmentObject);
+        }
+        return $"PASS: original Items/Primary magazine resource loaded, cloned, and applied by EquipmentHelper ({sourceItem.quantity} magazines)";
     }
 }
