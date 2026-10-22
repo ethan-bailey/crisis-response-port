@@ -1,4 +1,5 @@
 name: Execute recovered original code with runtime services
+# Push-triggered checks run from this feature branch so the exact PR head is verifiable.
 on:
   push:
     branches: [feature/full-source-characterbody-integration]
