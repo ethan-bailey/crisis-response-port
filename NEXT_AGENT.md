@@ -30,3 +30,6 @@
 The ChatGPT Sites publish is not gated on Actions. It remains gated on the local and live smoke tests specified in the Sites brief.
 
 Do not start the ChatGPT Sites migration in this session. It has its own brief and starts only after the owner confirms. PRs #7, #56, and #57 remain outside this handoff's scope.
+## ChatGPT Sites deployment attempt — environment blocker (2026-10-22)
+
+At the start of this hosting attempt, `develop/wasm` was verified at `1dee3342a53477ce5c373f1a8d6795d35b5bcbb2`. The environment did not provide `dotnet` (`command -v dotnet` returned no path; `dotnet --version` returned `command not found`). The only located checkout, `/workspace/scratch/2cc72fdb5ef4/.sites-checkout`, was on unrelated `main` at `0a97801674f8dae292a9bdbdb4a77e602b39a45b` and had no remote; no target project checkout was available. A browser was available through the browser tool. Per the deployment brief, stop here: no build, package, local/live smoke, or Sites/Vercel publish was attempted. Resume hosting when a target Git checkout and `dotnet` are available. GitHub Actions remains disabled by owner decision.
