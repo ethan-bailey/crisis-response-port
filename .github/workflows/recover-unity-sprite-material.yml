@@ -37,5 +37,8 @@ jobs:
               if record['fileID'] == '10754' or record['type'] == 'Shader' and record['fileID'] != '46':
                   line=json.dumps(record,separators=(',',':')).encode()
                   print('RECOVERED_BUILTIN_RECORD='+base64.b64encode(line).decode())
+          player=pack['playerResources']['records']['10210']
+          line=json.dumps(player,separators=(',',':')).encode()
+          print('RECOVERED_PLAYER_MESH_RECORD='+base64.b64encode(line).decode())
           print('UNITY_RESOURCE_PACK_SHA256='+pack['provenance'][0]['sha256'])
           PY
