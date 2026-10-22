@@ -36,10 +36,10 @@ BUILTIN_OBJECTS = {
         '10102':'Font', '10206':'Mesh', '10210':'Mesh',
     },
     '0000000000000000f000000000000000': {
-        '45':'Shader', '46':'Shader', '208':'Shader', '10303':'Material',
+        '45':'Shader', '46':'Shader', '208':'Shader', '10303':'Material', '10753':'Shader', '10754':'Material',
     },
 }
-BUILTIN_RESOURCE_PACK_SHA256 = '5ff3293b8b239f1efdb51f0685d9deac31f26111b11a76a35aa0767ff1328e05'
+BUILTIN_RESOURCE_PACK_SHA256 = 'e67ecfbb1cf1ed3e857c3a36dc988d25800c353d986b8bf9134d49f4b295753b'
 
 
 def load_builtin_resource_records(repository_root=None):
@@ -60,6 +60,15 @@ def load_builtin_resource_records(repository_root=None):
         raise ValueError('Unity built-in Material 10303 source record is missing or invalid')
     if not shader or shader.get('type') != 'Shader' or shader.get('fields', {}).get('m_ParsedForm', {}).get('m_Name') != 'Standard':
         raise ValueError('Unity built-in Shader 46 source record is missing or invalid')
+    sprite_material = records.get('10754')
+    sprite_shader = records.get('10753')
+    if not sprite_material or sprite_material.get('type') != 'Material' or sprite_material.get('fields', {}).get('m_Name') != 'Sprites-Default':
+        raise ValueError('Unity built-in Sprite Material 10754 source record is missing or invalid')
+    if not sprite_shader or sprite_shader.get('type') != 'Shader' or sprite_shader.get('fields', {}).get('m_ParsedForm', {}).get('m_Name') != 'Sprites/Default':
+        raise ValueError('Unity built-in Sprite Shader 10753 source record is missing or invalid')
+    sprite_pointer = sprite_material['fields'].get('m_Shader', {})
+    if sprite_pointer.get('m_FileID') != 0 or sprite_pointer.get('m_PathID') != 10753:
+        raise ValueError('Unity built-in Sprite Material 10754 no longer points to Shader 10753')
     pointer = material['fields'].get('m_Shader', {})
     if pointer.get('m_FileID') != 0 or pointer.get('m_PathID') != 46:
         raise ValueError('Unity built-in Material 10303 no longer points to Shader 46')
@@ -80,7 +89,7 @@ def load_builtin_resource_records(repository_root=None):
         'packSha256': digest,
         'revision': pack['revision'],
         'unityVersion': pack['unityVersion'],
-        'records': {'46': shader, '10303': material},
+        'records': {'46': shader, '10303': material, '10753': sprite_shader, '10754': sprite_material},
         'playerResourceRecords': {
             'unityVersion': player['unityVersion'],
             'targetPlatform': player['targetPlatform'],
