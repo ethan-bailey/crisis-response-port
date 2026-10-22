@@ -85,6 +85,13 @@ def load_builtin_resource_records(repository_root=None):
     if (len(geometry.get('vertices', [])) != 88 or len(geometry.get('normals', [])) != 88
             or len(geometry.get('uv', [])) != 88 or len(geometry.get('triangles', [])) != 240):
         raise ValueError('Windows x86 Mono Cylinder runtime geometry is incomplete')
+    scene_mesh = player.get('records', {}).get('10210', {})
+    scene_geometry = scene_mesh.get('runtimeGeometry', {})
+    if (scene_mesh.get('type') != 'Mesh' or scene_mesh.get('fileID') != '10210'
+            or not scene_mesh.get('rawSha256') or not scene_mesh.get('rawBase64')
+            or not scene_geometry.get('vertices') or not scene_geometry.get('triangles')
+            or len(scene_geometry['triangles']) % 3):
+        raise ValueError('Windows x86 Mono source Mesh 10210 record or geometry is incomplete')
     return {
         'packSha256': digest,
         'revision': pack['revision'],
