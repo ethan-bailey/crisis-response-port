@@ -24,11 +24,14 @@ Derived from the 2026-10-16 workflow audit. These rules keep the port moving fas
 - **Use each branch's stable preview alias** for testing, not per-deployment URLs. One URL per branch, always pointing at its latest deploy.
 - If usage starts climbing again, say so in the branch docs before it becomes a problem — don't wait to be asked.
 
-## 2. Branch and PR hygiene
+## 2. Branch and PR hygiene - single-line workflow
 
-- **One branch per workstream.** Open a draft PR as soon as a branch holds real work — high-value results (like runtime validation) must never sit on a branch with no merge path.
+Owner rule (2026-10-22): one agent works this repo at a time, so there is **one active workstream and one line of development** - `develop/wasm` is the project; branches are short errands off it, not parallel homes.
+
+- **One active branch.** Do not run parallel feature branches. New ideas go on the written list (handoff or issue), not into a new branch, until the active workstream lands or the owner parks it. Open a draft PR as soon as a branch holds real work - high-value results (like runtime validation) must never sit on a branch with no merge path.
+- **Short-lived by default.** Branch from current `develop/wasm`, land one verified slice, and merge back the same session or day where possible. Stockpiling verified work on an unmerged branch is how PR #42 diverged from `develop/wasm` and ended up needing repeated merge probes - treat an ageing unmerged branch as a problem to report, not a routine state.
+- **Sync long-lived branches every session.** If a branch must live beyond one session, merge current `develop/wasm` into it at the start of each session and resolve the small overlaps while they are fresh. Rebase only your own unpublished, unshared commits (see CONTRIBUTING.md). Never rewrite `main`, `develop/wasm`, already merged commits, release tags, or immutable build evidence. If a published feature branch truly must be rewritten, use `--force-with-lease` only after confirming no other writer and documenting the rewritten head; otherwise prefer a merge. Ordinary reviewed merges remain appropriate for integration.
 - **Close stale PRs promptly.** Don't leave dead PRs open; close with a pointer to whatever superseded them.
-- **Rebase short-lived feature branches when useful.** The owner currently uses one agent at a time, so prefer rebasing an agent-owned feature branch onto current `develop/wasm` before merging when this reduces conflicts. Confirm the branch is not shared or already under concurrent modification; preserve provenance. Never rewrite `main`, `develop/wasm`, already merged commits, release tags, or immutable build evidence. If a feature branch was published, use `--force-with-lease` only after confirming no other writer and documenting the rewritten head; otherwise prefer a merge. Ordinary reviewed merges remain appropriate for integration.
 
 ## 3. No duplicate work
 
