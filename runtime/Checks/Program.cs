@@ -124,4 +124,5 @@ if(args.Length>0){
         Console.WriteLine(JsonSerializer.Serialize(AmmunitionLoader.VerifyOriginalPrefab(package,path)));
     Console.WriteLine(JsonSerializer.Serialize(AmmunitionLoader.VerifyOriginalResource(package,"5.56-JHP")));
     Console.WriteLine(ResourcePrefabContracts.Run(package));
+    Console.WriteLine(SpawnerGameplayContracts.Run(package));
 }
