@@ -39,7 +39,7 @@ BUILTIN_OBJECTS = {
         '45':'Shader', '46':'Shader', '208':'Shader', '10303':'Material', '10753':'Shader', '10754':'Material',
     },
 }
-BUILTIN_RESOURCE_PACK_SHA256 = 'e67ecfbb1cf1ed3e857c3a36dc988d25800c353d986b8bf9134d49f4b295753b'
+BUILTIN_RESOURCE_PACK_SHA256 = '5261d5a304b29fdae52723b8a4c91a5fcb36afba7ac0034edba6fb1be6a13d27'
 
 
 def load_builtin_resource_records(repository_root=None):

@@ -1,12 +1,8 @@
 using UnityEngine;
-using System.Collections.Generic;
 using Object=UnityEngine.Object;
 using Random=UnityEngine.Random;
 using Crisis.Runtime.Weapons;
 public partial class Projectile {
-	public List<UnityEngine.MeshFilter> fragmentMeshes = new();
-	public UnityEngine.Material fragmentMaterial;
-	public float particleCountScaler = 1f;
 public void StepFlight()
 	{
 		float num = 0f;
