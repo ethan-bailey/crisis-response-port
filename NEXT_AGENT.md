@@ -1,146 +1,21 @@
 # NEXT AGENT — Crisis Response WASM port
 
-Observed 2026-10-21: PR #42 branch `feature/full-source-characterbody-integration` at `645652e430e20e1aa8afa6667842b96728fb7bc3`. Live `develop/wasm` observed at `2fc0a8e93be97c4d99123910fad4bd25798e71a8`. Open parallel workstreams #56 and #57 remain separate; preserve their work. Latest comparable runtime evidence remains the recorded local scan of unchanged runtime code at 17b00ce: EngineChecks 69 assertions; FoundationChecks 120 assertions; runtime contracts stopped at Material 10303. No new runtime/browser acceptance is claimed.
+Observed 2026-10-22 before this handoff update: PR #42 branch `feature/full-source-characterbody-integration` at `8c3db393dc16d29b5844632e8b07b80c56dfda3f`; `develop/wasm` at `2fc0a89e3be97c4d99123910fad4bd25798e71a8`. Open PRs: #7, #42, #56, #57. PR #42 remains draft and unmerged. The current owner checkpoint matched the live branch and PR set. The docs-only handoff commit that follows advances the PR head; its SHA is the GitHub commit created by this update.
 
-## Completed source acquisition — no owner computer or resource upload needed
+## Attempt 4 — merge probe aborted
 
-- `cf05f6c1f242fecd42a7ba209dcde7438c21f74f`: reproducible Linux recovery tool `scripts/recover_unity_2017_2_resources.py`.
-- `645652e430e20e1aa8afa6667842b96728fb7bc3`: actual official source records in `source-reference/Unity/2017.2.0f3/builtin-resource-records.json`.
-- Downloaded the exact Windows Editor installer and matching built-in shader archive from official Unity release revision `46dda1414e51`. The Windows installer includes the actual `win32_nondevelopment_mono/Data/Resources/unity default resources`.
-- Extracted without executing the Windows installer or launching Unity. No activation, user computer, or Actions run is needed for this recovery.
-- Material fileID 10303 exists in `Editor/Data/Resources/unity_builtin_extra`: name `Default-Material`, shader pointer `{m_FileID:0,m_PathID:46}`. Shader 46 is `Standard`. The pack preserves full parsed records, raw object bytes/base64 and hashes, plus 40 exact-version shader/include sources.
-- Both common and target-specific `unity default resources` contain 83 objects and neither 10303 nor 46. Their serialized headers say `2017.2.0b11`; the files are nevertheless byte-for-byte payloads from the official 2017.2.0f3 installer. Keep this distinction. The built-in-extra header is 2017.2.0f3, target -2 (Editor).
-- This supersedes the earlier proposed owner-data/defer disposition and local evidence commit `dfe918a` insofar as they imply the needed source records cannot be acquired. No owner decision is now required to acquire these records. Do not repeat the old search or ask the owner to supply them.
-- These are authoritative exact-release Editor records, not proof that the game's built-player shader variants or browser rendering are identical. The pack explicitly retains those unverified boundaries.
+- Reused `/workspaces/crisis-response-attempt3` and its existing caches/artifacts. Reset only that isolated worktree to the verified PR head `8c3db393dc16d29b5844632e8b07b80c56dfda3f`; confirmed it was clean and that local `origin/develop/wasm` was `2fc0a89e3be97c4d99123910fad4bd25798e71a8`.
+- The local merge probe commit was `189b7e081dcd9b5abcc1e59c163f63af53e1c5b6`; it was never pushed. PR sides were selected for duplicate definitions and conflicts. PR `runtime/Engine/WeaponHost.cs` was kept byte-for-byte unchanged. No Rigidbody change events were added.
+- The probe removed develop duplicate files for Animator parameters, CapsuleCollider, and ArmorClass; excluded `OriginalArmPhysicsHost.cs` and `OriginalLimbSkinTrace.cs`; removed only the `SourceSkinTrace` field from `CharacterLimbRagdollState.cs`; and removed the `--original-limb-skin` invocation from `.github/workflows/original-limb-skin-native.yml` and `.github/workflows/live-limb-skin-native.yml`. The other ragdoll physics/impact members remained. Original-limb source/provenance/hash recovery checks and Original Limb/LimbRenderer source and mask recovery material remained.
+- Fresh full-source gate: `dotnet build runtime/Crisis.Runtime.csproj --no-incremental` on `189b7e081dcd9b5abcc1e59c163f63af53e1c5b6` failed: **4 errors, 10 warnings, 3.10 seconds**. Diagnostic: `runtime/Engine/WeaponHost.cs(92,11)` cannot resolve `OriginalArmPhysicsHost`. Calibre and weapon contracts were not run because the compile gate failed.
+- This dependency was missed by attempt 3's scan. The scan named WeaponHost as the consumer of OriginalArmPhysicsHost but incorrectly treated that reference as develop-only wiring. The unchanged PR-side WeaponHost itself contains `readonly OriginalArmPhysicsHost armPhysics;` at line 92. It cannot both remain unchanged and compile while OriginalArmPhysicsHost is excluded. **Disposition: needs owner decision** on which constraint to revise; do not adapt WeaponHost or synthesize the 21-body/18-hinge graph without a new decision.
+- Aborted the local merge and restored the isolated worktree cleanly to `8c3db393dc16d29b5844632e8b07b80c56dfda3f`. No merge-tree/source commit was pushed; this handoff update is docs-only. No final merge into `develop/wasm` or Sites migration was attempted.
 
-## Validation performed
+## Current gates and known dispositions
 
-```sh
-python3 -m pip install UnityPy==1.25.4
-python3 scripts/recover_unity_2017_2_resources.py \
-  --cache /path/to/cache --extractor /path/to/7zz \
-  --output source-reference/Unity/2017.2.0f3/builtin-resource-records.json \
-  --download
-# Repeat with --check to reproduce from SHA-pinned inputs.
-```
-
-Actual local output after regeneration with `--check`:
-
-```json
-{"material":"10303 Default-Material","packSha256":"9e2015f94ab41aa19a4304104f9f24723809e71ab4b061313b67995954751ac8","records":2,"shader":"46 Standard","shaderSources":40,"status":"pass","targetResourceRecovered":true}
-```
-
-Python byte-compilation passed. The committed GitHub resource pack was fetched back and compared exactly with the tested local pack. The earlier recovery export's missing built-in record is no longer an acquisition blocker.
-
-## Remaining implementation list — continue without another broad scan
-
-1. **Material/Shader runtime binding:** actionable now. Consume the recovered records from the checked pack in the existing serialized asset resolver/package pipeline. Preserve original GUID/fileIDs and material defaults; resolve its original shader pointer to 46. No guessed material or dummy shader candidate is needed. Entry points: `runtime/Engine/SerializedAssetResolver.cs`, `scripts/extract_runtime_scene.py`. Source acquisition is done; runtime resolution and rendering acceptance are not.
-2. **Imported Sprite/Texture records:** unresolved runtime importer/object-ID mapping. Existing triage identifies Sprite GUID 8464cbc48daa246479808d64b86fb8c2/fileID 21300000 and Operator head texture format 12. Work these separately; do not assume new built-in records solve import identity.
-3. **Original controller playback:** code/acceptance incomplete. Reference audit still reports false; the actual original controller/callback graph must execute on FullSource.CharacterBody. Composition fixtures are not playback. Use existing #57 work and source provenance; no parallel mutable actor/controller.
-4. **Actual Operator/Occupant lifecycle and independent ownership:** original prefab provenance exists; complete lifecycle not passed. Preserve one authoritative FullSource.CharacterBody graph and per-actor physiology/equipment ownership.
-5. **Independent two-actor gameplay:** spawn/equip/move/hit/physiology/destruction flow remains unverified.
-6. **Final exact-source WASM, Chromium/WebKit gameplay and HTTP smoke:** run after local source/lifecycle/gameplay implementation; startup/input evidence does not satisfy gameplay.
-7. **Required CI:** quota was exhausted. No workflow was manually dispatched in this source acquisition batch. Name the exact required workflow/check if a specific item ultimately needs Actions.
-
-Resolved earlier: mixer parameter GUID false positives; Calibre packaging/identity contract; owner-approved scoped .308 casing root mesh replacement (approximation, not recovered identity). Preserve their existing evidence and do not reopen them without new failures.
-
-## Preservation and boundaries
-
-The original Codespace checkout was fast-forwarded to 7669605 and then gained local evidence-only commit dfe918a in the preceding turn. Its pre-existing untracked `runtime/Browser/wwwroot/browser-input.mjs` remains untouched; preserve it and existing stashes. New source-recovery commits above were written to the remote PR branch through the connector, so reconcile that local evidence commit non-destructively before the next Codespace update. Do not reset/clean or overwrite user work.
-
-No preview deployment, branch integration, rebase or merge was performed. Continue on PR #42 and follow AGENT_INSTRUCTIONS.md. The user requires every remaining item to be completed or individually dispositioned; merge status is not a stopping condition.
-
-## Current continuation checkpoint — 2026-10-21 (supersedes the older remaining list above)
-
-This is the active handoff for PR #42. Current code head before this handoff note: `6cb600b1695cca3bef59b3c0a0a810b4a6d33a39`. PR #42 remains a draft. The PR description now reflects the published state and exact verification gates.
-
-- Do not reacquire Unity data. The verified Windows x86 Mono resource cache is already retained at `/workspace/scratch/c3ca869b77d9/unity-cache/Unity-2017.2.0f3-Windows-x86-Mono-resource-cache.zip`, SHA-256 `15deb1638c08b92d8b9f505486ce421d31e0a3df32f5fe359206ece3d8e23101`; the same canonical cache is preserved in the persistent Library.
-- Completed on the branch: Unity Material 10303/Shader 46 package and resolver mapping; Sprite class ID 213 hydration mapping; arm-physics fixture joins `original-arm-physics.json`; original IKArmController/sequencer playback and two-actor callback-isolation contract; Operator/Occupant lifecycle component-ownership assertions. The local scratch snapshot at 7669605 is older than the active branch and must not be treated as the current checkout.
-- Latest native run evidence predates the arm-physics fixture merge and controller playback contract. That earlier run compiled and passed deferred prefab Awake/two-clone and Calibre identity, then stopped at missing fixture `armPhysics`. The fixture now joins the recovered source object, but this exact head has not been rerun.
-- Exact native check still required: workflow **Execute recovered original code with runtime services**, step **Compile and test runtime against original components and scenes**. Exact full-source compile checks: workflow **Compile recovered full CharacterBody dependency closure**, jobs **foundation-contracts** and **compile-closure**. Actions quota remains unavailable; do not dispatch these workflows.
-- Exact browser acceptance still required: workflow **Execute recovered original code with runtime services**, step **Execute original methods and original scene graph in WebAssembly**, plus its Chromium/WebKit install and localhost HTTP steps. Do not treat startup or input smoke as gameplay acceptance.
-- Next implementation target is production actor/spawner integration. `runtime/Browser/Program.cs` still initializes `Crisis.Runtime.Weapons.WeaponHost`; that host constructs the transport `Crisis.Runtime.Weapons.CharacterBody`. The original `Crisis.Runtime.FullSource.OccupantSpawner` exists, but its mission/global-context equipment flow is not connected to the browser runtime's authoritative source actor. Continue with the source-owned actor path and test spawn, equip, movement, hit/physiology isolation, and destruction as separate behaviors.
-## PR #42 gate checkpoint — 2026-10-22
-
-- Checkpoint before this handoff-only commit: PR #42 head `a61cbfe0a079924c9d13c85d21b2f925d08fe2c3`; open PR set was #7, #42, #56, and #57. The handoff commit follows this source commit and does not change runtime source.
-- PR #42 remains draft and is not merge-ready. The source commit `a61cbfe` was pushed to the existing feature branch. The full-source build `dotnet build runtime/Crisis.Runtime.csproj --no-incremental` exited 0 on that source commit: 45 warnings, 0 errors (15.65 s). The full-source result on prior exact head `9479dc6d5140799b39780900c1d4add617cf9a7a` was also 45 warnings, 0 errors. The separate 0 warnings/0 errors report was an incremental no-op, not a source recompile; both diagnostic counts refer to `runtime/Crisis.Runtime.csproj`, not a runtime-only subset.
-- Local ammunition closure packaging passed with 1,382 package objects and no unresolved ammunition package fields. Official Unity 2017.2.0f3 resource recovery supplied the Mesh 10210 data and was included in `a61cbfe`.
-
-### SceneLoader blockers and individual dispositions
-
-| Scene | Reference | Disposition |
-| --- | --- | --- |
-| Marksman Range | Mission component fileID 2518, field `secureWeaponMarker` points to `Assets/Resources/markers/Marker secure.prefab`; nested unsupported built-in `SpriteRenderer` field. Runtime has no `SpriteRenderer` implementation. | Needs owner decision whether to expand this PR with renderer support. |
-| Mission 01 | GameObject fileID 6932, `m_Sprite`, zero GUID, built-in Sprite fileID 10907. No matching entry is in recovered pinned Unity resource records. | Needs owner decision on exact-source recovery versus an approved visual substitute. |
-| Mission 01 | GameObject fileID 6957, `m_Sprite`, zero GUID, built-in Sprite fileID 10913. No matching entry is in recovered pinned Unity resource records. | Needs owner decision on exact-source recovery versus an approved visual substitute. |
-
-The native scene contract stops on the Marksman Range reference. The Mission 01 rows are independently unresolved in the extracted package. Native original-scene, spawner-driven scene, and exact-source browser smoke have not passed and remain blocked by these dispositions. The Actions-only Runtime Foundation check is `needs CI`; Actions minutes have been exhausted since 2026-10-19. Do not wait on Actions.
-
-### Merge-readiness blocker
-
-A non-mutating merge-tree check against local `origin/develop/wasm` showed conflicts in `.gitignore`, `AGENTS.md`, `NEXT_AGENT.md`, `runtime/Checks/Program.cs`, and `runtime/Engine/PresentationHost.cs`. One bounded resolution attempt was made. The combined source then failed full compile with 14 duplicate-member errors involving original Animator parameter accessors (`StringToHash`, `SetBool`, `SetFloat`, `GetBool`, `GetFloat`), `CapsuleCollider.Raycast`, and `ArmorClass.PenetrationTest`, among duplicate declarations. The merge was aborted; the isolated tree is restored to source commit `a61cbfe`. Nothing from the uncompilable merge tree was pushed.
-
-Disposition: **needs owner decision** to reconcile the overlapping engine API and native-check changes between the PR history and `develop/wasm`. Do not mark PR #42 ready or merge it until this is resolved. Sites/hosting work has not started because the merge-ready trigger is not met.
-
-### Preserved Codespaces checkout items
-
-- Local commit `dfe918a6bd3be3727355acd0033a41a91a5329c7` is patch-equivalent to the corresponding remote commit (`git cherry` returned no unique patch). Disposition: duplicate; no cherry-pick or push needed.
-- `runtime/Browser/wwwroot/browser-input.mjs` is a generated workflow output copied from tracked `game/browser-input.mjs`. The preserved local copy has a different SHA-256 and is stale; regenerate it from the tracked source for checks. It is not an independent verification input.
-
-
-## Session 1 owner-decision work (2026-10-22)
-
-Checkpoint: PR #42 source head was 3a22f709c70be577c881a7300c1b6926559c0a21. The implementation commit is fcfe355d6928934a0331faceb1ed26e000bc128e.
-
-The fresh full-source compile ran as `dotnet build runtime/Crisis.Runtime.csproj --no-incremental` on fcfe355d6928934a0331faceb1ed26e000bc128e: 45 warnings, 0 errors, exit 0 (15.76 seconds). This is the full-source runtime project compile. The 0-warning/0-error report on 9479dc6 was an incremental no-op, not a full-source compile; the recorded full-source result on 9479dc6 is 45 warnings, 0 errors.
-
-The generated scene execution package was built from work/recovery/export/ExportedProject to /tmp/cr42-session1-scene-package.json. Summary: 1,382 assets, 21,366 records, 6 unresolved GUIDs, 14,249 object references, 508 binary assets, 190,490,359 bytes. The recovered built-in resource record pack SHA-256 is ad613f8d50a4d58be86781e0b332f8410727c8b2a77306d100ee3bc162e5272e.
-
-Validation command: `dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- /tmp/cr42-session1-scene-package.json`. RuntimeContracts, ScenePrefabContracts, ArmSequenceContracts, PresentationContracts, WeaponContracts, and BallisticContracts ran before scene loading without throwing; WeaponContracts includes the original Calibre identity/lifetime contract. Scene loading then failed at Marksman Range fileID 2518 (secureWeaponMarker -> Assets/Resources/markers/Marker secure.prefab). The strict prefab loader reported unsupported SpriteRenderer.m_WasSpriteAssigned and SpriteRenderer.m_MaskInteraction. The bounded m_MaskInteraction support attempt added the SpriteRenderer.maskInteraction property, but the loader still rejects that serialized field. No general renderer work was attempted. ResourcePrefabContracts and SpawnerGameplayContracts were not reached after the scene-load exception. Mission 01 was not reached by this run.
-
-Individual reference dispositions:
-- Marksman Range fileID 2518, Marker secure.prefab, m_MaskInteraction: needs owner decision for any further attempt; the one bounded attempt did not make the loader accept the serialized member.
-- Marksman Range fileID 2518, Marker secure.prefab, m_WasSpriteAssigned: needs owner decision; outside the one-field scope and still rejected by the strict prefab loader.
-- Mission 01 fileID 6932, m_Sprite -> built-in Sprite 10907: exact Sprite Background recovered from the pinned Unity 2017.2.0f3 Editor unity_builtin_extra using the existing recovery pipeline; raw SHA-256 7e986d3388d894a5bec0e2240d18c99114607491cb58cdcf05e982cccd501855. Disposition: recoverable mapping; package mapping added, scene load not reached.
-- Mission 01 fileID 6957, m_Sprite -> built-in Sprite 10913: exact Sprite Knob recovered from the same source; raw SHA-256 a44cbb0e083d3e89f9b26062a07b4d5e49af3854a91ed794021ecb8a5a0284f. Disposition: recoverable mapping; package mapping added, scene load not reached.
-
-Preserved Codespaces checkout dispositions: local commit dfe918a is a duplicate of its remote commit, so no push or cherry-pick is needed. browser-input.mjs is generated from tracked source and is not needed for this verification. The untracked global.json remains untouched.
-
-Session 1 has no develop/wasm merge. The scene-load result above is a verified failure disposition; start Session 2 only after this head and handoff update are pushed.
-
-
-## Session 2 merge retry — 2026-10-22 (aborted)
-
-- Checkpoint: PR #42 Session 1 head `ee3a0b6077467dca843393b6c5c0b202ce9000c5`; `develop/wasm` `2fc0a89e3be97c4d99123910fad4bd25798e71a8`; open PR set remained #7, #42, #56, #57. Work was isolated at `/workspaces/crisis-response-mergefix`.
-- Merge conflicts were resolved with PR-side `.gitignore`, `AGENTS.md`, `NEXT_AGENT.md`, `runtime/Checks/Program.cs`, and `runtime/Engine/PresentationHost.cs`. Duplicate develop definitions removed for the compile probe: `OriginalAnimatorParameters.cs`, `OriginalCapsuleCollider.cs`, and `Original/Ballistics/ArmorClass.cs`.
-- Full-source compile after resolving the duplicates and adding only the missing Rigidbody notification events: `dotnet build runtime/Crisis.Runtime.csproj --no-incremental` — **46 warnings, 0 errors**. The event-only `PhysicsComponents.cs` edit was part of that compile and was discarded on abort.
-- Runtime contracts: `dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj`. The Calibre GUID/fileID/type/path/serialized-name and prefab-lifetime contract passed. Weapon contract failed in `OriginalArmPhysicsHost`: expected the original operator physics graph to contain 21 bodies and 18 hinges; the available runtime data contains 7 bodies and 6 hinges.
-- One targeted source search found no exact physics graph record in the package or tracked source. `game/assets/operator` contains `operator.json`, animation/controller data, hand renderers, a limb-damage mask, hands, and skins; no 21-body/18-hinge physics record was present. No synthetic graph or substitute was created.
-- Duplicate behavior requiring owner disposition before any future merge push: (1) Animator: develop's `OriginalAnimatorParameters` uses stable FNV-1a parameter IDs, emits `BoolChanged`/`FloatChanged`, and rejects non-finite floats; PR Animator uses call-order IDs and lacks those events/validation. PR side was selected; these semantics remain an exception. (2) CapsuleCollider: develop's duplicate uses inverse-transformed local-space queries and reports invalid ray direction at query time; PR's implementation uses analytic world-space geometry, supports nonuniform scale, and validates direction at assignment. PR side was selected; query behavior remains an exception. (3) ArmorClass: no develop-only algorithm was found; its thresholds, randomness, energy cost, and friction conversion are represented by PR `FullSourceArmorBridge`.
-- Other conflict notes: develop `PresentationHost` supplied Rigidbody gravity/drag change events needed by `OriginalArmPhysicsHost`; the compile probe confirmed adding those two events to PR's existing Rigidbody resolves the compiler errors, but the change was reverted on abort. Develop `Checks/Program.cs` also added original limb-skin trace checks; the PR-side program was retained, so that added test coverage was not carried.
-- Gate failed on the weapon contract. The merge was aborted, PR source restored cleanly to `ee3a0b6077467dca843393b6c5c0b202ce9000c5`, and no merge commit or push was made. Runtime Foundation still needs CI.
-
-
-## 2026-10-22 owner-directed PR #42 merge probe retry
-
-- Checkpoint: docs-only handoff commit `905b986ad44a6b5d6d33145cf7a1ecb1e19847c0` was pushed to `feature/full-source-characterbody-integration`; the remote head was confirmed at that SHA. Its parent is Session 1 source commit `ee3a0b6077467dca843393b6c5c0b202ce9000c5`; no source files changed in the checkpoint. Develop checkpoint used for the probe: `2fc0a89e3be97c4d99123910fad4bd25798e71a8`.
-- Owner-directed merge choices applied in the isolated worktree: PR #42 versions retained for duplicate Animator, CapsuleCollider, and ArmorClass members; PR `runtime/Checks/Program.cs` retained, so develop limb-skin trace checks were not carried over. `OriginalArmPhysicsHost` was excluded. The targeted package and tracked-source search found no exact 21-body/18-hinge graph; it remains deferred as provably absent. No Rigidbody gravity/drag change events were added because no remaining selected code required them.
-- Gate result on the isolated merge tree based on `905b986` plus develop `2fc0a89`: `dotnet build runtime/Crisis.Runtime.csproj --no-incremental` failed with **3 errors and 10 warnings**. The unresolved `OriginalArmPhysicsHost` references are in develop-only `runtime/Engine/WeaponHost.cs` (lines 49, 92, and 168). Disposition: **needs owner decision** on whether/how to adapt or defer the develop-only WeaponHost dependency while keeping `OriginalArmPhysicsHost` excluded. The Calibre and weapon contracts were not run because the required compile gate failed.
-- Merge was aborted; the isolated worktree is restored to clean detached head `905b986ad44a6b5d6d33145cf7a1ecb1e19847c0`, with Session 1 source unchanged. No merge commit or merge-tree code was pushed. This handoff note is the only follow-up commit intended for the PR branch. Runtime Foundation Actions still needs CI (Actions minutes exhausted); final merge into `develop/wasm` and Sites migration were not attempted.
-
-## Attempt 3 owner-directed merge probe — 2026-10-22 (aborted)
-
-- Checkpoint: PR #42 branch `feature/full-source-characterbody-integration` was at `c61e397dee79f77b8ac3a7d88334619456260ddf`; Session 1 source base remains `ee3a0b6077467dca843393b6c5c0b202ce9000c5`. Develop was `2fc0a8e93be97c4d99123910fad4bd25798e71a8`. The open PR set was #7, #42, #56, #57, matching the previous checkpoint. The branch head string in the owner prompt differs by one character from the live PR head; the live SHA above was used.
-- One full source/reference scan of develop found these consumers and dispositions:
-  - `runtime/Engine/WeaponHost.cs` is the only direct `OriginalArmPhysicsHost` consumer: it owns the host field and construction, passes limb component and skin-mask data, calls source-limb ballistics/physiology binding and physics stepping, and reports source limb/skin state. The develop-only additions are deferred with the host.
-  - `runtime/Engine/OriginalArmPhysicsHost.cs` implements the source limb physics/ballistics/physiology/skin bindings. Deferred with the missing 21-body/18-hinge source graph; no graph was synthesized.
-  - `runtime/Original/OriginalLimbSkinTrace.cs` is the trace implementation created by the host and exercised by the native trace test. Deferred.
-  - `runtime/Original/Weapons/CharacterLimbRagdollState.cs` contains the `SourceSkinTrace` storage field populated by the host. That trace field is deferred. The file also adds other limb physics/impact members; their broader ownership was not independently validated in this probe.
-  - `runtime/Checks/Program.cs` implements the `--original-limb-skin` trace check. Deferred as directed.
-  - `.github/workflows/original-limb-skin-native.yml` and `.github/workflows/live-limb-skin-native.yml` invoke that check; the trace-check invocation is deferred. The original-limb workflow's independent source-file hash/provenance validation is not a runtime host consumer.
-  - Original source-reference Limb/LimbRenderer trace calls and mask export/recovery workflows are source/provenance material, not consumers of the runtime host; retained.
-- Comparison of the actual PR and develop `WeaponHost.cs` files corrected the prior assumption: a `WeaponHost.cs` already exists on PR #42. PR already provides the M4A1/ammunition/magazine/bolt/barrel transport, arm IK/grip/hand setup, fire/reload step and weapon snapshot. Develop adds source-limb ballistics, source limb components and skin masks, physiology/limb-state output, kinematic/velocity-gated stepping, and a `Character` view. Those develop-only additions are deferred. The shared PR-side host also defines UnityEvent/UnityAction compatibility types used by the full-source tree.
-- Isolated worktree: `/workspaces/crisis-response-attempt3`, based on the verified PR head. PR sides were retained for the five merge conflicts (.gitignore, AGENTS.md, NEXT_AGENT.md, runtime/Checks/Program.cs, runtime/Engine/PresentationHost.cs). Develop duplicate Animator/CapsuleCollider/ArmorClass files and the excluded host/skin-trace files were removed in the probe; no Rigidbody gravity/drag change events were added.
-- Gate failed on the merged working tree: `dotnet build runtime/Crisis.Runtime.csproj --no-incremental` reported **99 errors, 8 warnings**, exit nonzero (10.8 s). The merged probe was uncommitted, so there is no merged commit SHA. Calibre and weapon contracts were not run after the compile gate failed.
-- This failure exposed a dependency the develop-only scan did not enumerate: PR-side `runtime/Checks/BallisticContracts.cs`, `runtime/Checks/WeaponContracts.cs`, `runtime/Engine/BodyPoseHost.cs`, and `runtime/Original/OriginalVitalFunctions.cs` reference `WeaponHost`; full-source files also rely on the `UnityEngine.Events` shim types defined in that shared host file. Removing the whole file therefore removes PR-side behavior and compile support as well as the develop-only additions. The diagnostics included missing `UnityAction` and incorrect/missing `UnityEvent<T,U>` definitions in `runtime/Original/FullSource` callers. Disposition: needs owner decision on whether the PR-side host and compatibility shim remain while only develop-only additions are deferred, or whether its dependent callers/tests are also explicitly deferred. No adaptation onto PR arm physics was attempted.
-- Merge was aborted immediately after the failed gate. The isolated worktree is clean at `c61e397dee79f77b8ac3a7d88334619456260ddf`; no merge/source commit was pushed. This handoff update is docs-only. Runtime Foundation Actions still needs CI (minutes exhausted). PR #42 remains unmerged; no final develop merge or Sites migration was attempted.
+- Last successful full-source compile on the PR-side source was `dotnet build runtime/Crisis.Runtime.csproj --no-incremental` at `fcfe355d6928934a0331faceb1ed26e000bc128e`: exit 0, 45 warnings, 0 errors, 15.76 seconds. Session 1 source head `ee3a0b6077467dca843393b6c5c0b202ce9000c5` and later handoff-only commits did not change runtime source. Attempt 4 did not produce a successful merged compile.
+- Attempt 4 deferred set: develop WeaponHost additions (source-limb ballistics; limb-component and skin-mask binding; physiology/limb-state output; kinematic/velocity-gated stepping; Character view); `OriginalArmPhysicsHost.cs`; `OriginalLimbSkinTrace.cs`; the `SourceSkinTrace` field only; the `--original-limb-skin` Program check and its two test invocations. Keep OriginalLimb/LimbRenderer source and mask export/recovery material and independent provenance/hash checks.
+- Duplicate behavior exceptions retained from prior attempts: PR Animator parameter ID/event semantics selected over develop; PR CapsuleCollider query behavior selected over develop; PR ArmorClass bridge selected. No Rigidbody gravity/drag events were added.
+- SceneLoader results from Session 1 remain: Marksman Range secureWeaponMarker/SpriteRenderer serialized fields remain unresolved after the one bounded support attempt; Mission 01 Sprite 10907 and Sprite 10913 were recovered exactly and mapped, but scene load was not reached past the Marksman failure.
+- Runtime Foundation Actions check is **needs CI** because Actions minutes are exhausted. Do not wait on Actions. PR #42 is not merge-ready until the WeaponHost/OriginalArmPhysicsHost conflict is resolved and the required compile/contracts pass.
+- Next action: owner decision on the conflicting host constraint, then a new isolated probe from the PR head. No work on PRs #56, #57, or #7.
