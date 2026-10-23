@@ -16,7 +16,9 @@ window.startOriginalRuntime=async()=>{
       const sceneResponse=await fetch("../scene-data/crisis-response-scenes.json.gz");
       if(sceneResponse.ok===false)throw new Error("Original scene package unavailable: HTTP "+sceneResponse.status);
       if(typeof DecompressionStream==="undefined")throw new Error("Browser cannot decompress the original scene package");
-      const scenePackage=await new Response(sceneResponse.body.pipeThrough(new DecompressionStream("gzip"))).text();
+      const sceneDocument=JSON.parse(await new Response(sceneResponse.body.pipeThrough(new DecompressionStream("gzip"))).text());
+ for(const asset of Object.values(sceneDocument.assets??{})){for(const record of asset.records??[]){if(record.classID===1&&typeof record.fields?.m_Name==="boolean")record.fields.m_Name=record.fields.m_Name?"Yes":"No";}}
+ const scenePackage=JSON.stringify(sceneDocument);
       const loadedScenes=[];
       for(const stage of originalSceneFlowPaths){const report=JSON.parse(await call("LoadScene",scenePackage,stage.path));if(report.scene!==stage.path)throw new Error("Scene loader returned "+report.scene+" for "+stage.name);loadedScenes.push({name:stage.name,path:stage.path,report});if(stage.path==="Assets/Scenes/Mission 01.unity"){const initialized=JSON.parse(await call("InitializeGlobalContext"));if(initialized.initialized===false)throw new Error("Global.Initialize did not bind Global.Context");}}
       window.__originalSceneFlow=loadedScenes;window.__originalSceneFlowReady=true;
