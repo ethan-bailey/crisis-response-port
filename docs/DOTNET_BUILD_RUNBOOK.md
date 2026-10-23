@@ -27,6 +27,17 @@ If the expected checkout is absent, make one bounded recovery attempt:
    with `git ls-remote`. If it fails with
    `could not read Username ... No such device or address`, the noninteractive
    runner cannot prompt for credentials. Do not retry the same shell fetch.
+
+   Shell CLI login is separate from the connected GitHub app and is local to
+   the current runner. A successful `gh auth login` in another chat or runner
+   does not install `gh` or transfer its credentials here. Before offering the
+   device-login URL, confirm `gh` exists and run `gh auth status`. Once logged
+   in, run `gh auth setup-git`, then verify the target remote with one
+   `git ls-remote`. Do not copy or print access tokens. On 2026-10-23, an earlier
+   runner completed GitHub CLI device authorization, but this runner has no
+   `gh` executable or CLI credential file; the connected GitHub API is still
+   authorized. A device code cannot be generated until `gh` is available in
+   the target environment.
 3. Use the connected GitHub API to verify the live branch/PR state or read
    individual files. This is useful for inspection, but it does not provide a
    buildable local repository. The GitHub fetch connector rejects repository
