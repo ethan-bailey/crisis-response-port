@@ -3,6 +3,7 @@
 <style>html{background:#111820;color:#e9eef5;font:15px system-ui}body{margin:0;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}h1{font-size:20px}pre{white-space:pre-wrap;overflow-wrap:anywhere}#inputControls{display:flex;gap:8px;flex-wrap:wrap}button{min-height:48px;padding:10px;background:#26384a;color:white;border:1px solid #8393a5;border-radius:8px;touch-action:none;user-select:none}.active{background:#326786}#inputState{font-size:12px}</style></head><body>
 <div id="app"></div><section id="runtimeGate"><pre id="contracts" aria-live="polite"></pre><button type="button" data-action="fire">FIRE</button><pre id="inputState" aria-live="polite">FIRE idle</pre></section><div id="blazor-error-ui" style="display:none">Runtime error. Reload to reset.</div>
 <script type="module">
+import { loadOriginalScenePackage } from '../scene-data/scene-package-loader.mjs';
 import { BrowserInput } from './browser-input.mjs';
 window.__bootReady=Blazor.start();
 window.startOriginalRuntime=async()=>{
@@ -14,16 +15,16 @@ await window.__bootReady;
   const contracts=JSON.parse(await call('Verify'));
   document.querySelector('#contracts').textContent=contracts.status+' · '+contracts.contracts.length+' verified runtime contracts';
   window.__runtimeContracts=contracts;
-      const originalSceneFlowPaths=[{name:"MainMenu",path:"Assets/Scenes/Title.unity"},{name:"Transition",path:"Assets/Scenes/Transition.unity"},{name:"Mission 01 (build index 1)",path:"Assets/Scenes/Mission 01.unity"},{name:"Marksman",path:"Assets/Scenes/Marksman range.unity"}];
-      const sceneResponse=await fetch("../scene-data/crisis-response-scenes.json.gz");
-      if(sceneResponse.ok===false)throw new Error("Original scene package unavailable: HTTP "+sceneResponse.status);
-      if(typeof DecompressionStream==="undefined")throw new Error("Browser cannot decompress the original scene package");
-      const scenePackage=(await new Response(sceneResponse.body.pipeThrough(new DecompressionStream("gzip"))).text())
+      if(new URLSearchParams(location.search).has("scene-smoke")){
+       const originalSceneFlowPaths=[{name:"MainMenu",path:"Assets/Scenes/Title.unity"},{name:"Transition",path:"Assets/Scenes/Transition.unity"},{name:"Mission 01 (build index 1)",path:"Assets/Scenes/Mission 01.unity"},{name:"Marksman",path:"Assets/Scenes/Marksman range.unity"}];
+       const scenePackage=(await loadOriginalScenePackage())
  .replace('"m_Name":false','"m_Name":"No"')
  .replace('"m_Name":true','"m_Name":"Yes"');
-      const loadedScenes=[];
-      for(const stage of originalSceneFlowPaths){const report=JSON.parse(await call("LoadScene",scenePackage,stage.path));if(report.scene!==stage.path)throw new Error("Scene loader returned "+report.scene+" for "+stage.name);loadedScenes.push({name:stage.name,path:stage.path,report});if(stage.path==="Assets/Scenes/Mission 01.unity"){const initialized=JSON.parse(await call("InitializeGlobalContext"));if(initialized.initialized===false)throw new Error("Global.Initialize did not bind Global.Context");}}
-      window.__originalSceneFlow=loadedScenes;window.__originalSceneFlowReady=true;
+       const loadedScenes=[];
+       for(const stage of originalSceneFlowPaths){const report=JSON.parse(await call("LoadScene",scenePackage,stage.path));if(report.scene!==stage.path)throw new Error("Scene loader returned "+report.scene+" for "+stage.name);loadedScenes.push({name:stage.name,path:stage.path,report});if(stage.path==="Assets/Scenes/Mission 01.unity"){const initialized=JSON.parse(await call("InitializeGlobalContext"));if(initialized.initialized===false)throw new Error("Global.Initialize did not bind Global.Context");}}
+       window.__originalSceneFlow=loadedScenes;
+      } else window.__originalSceneFlow=[];
+      window.__originalSceneFlowReady=true;
 
   await call('ResetInput');
   const held={left:false,right:false,sprint:false,fire:false,kneel:false,stand:false,magazine:false,switchWeapons:false};
