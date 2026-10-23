@@ -54,20 +54,24 @@ namespace UnityEngine {
   }
   public void AddForceAtPosition(Vector3 force,Vector3 position){
    if(PhysicsForceSink!=null){PhysicsForceSink(force,position,ForceMode.Force);return;}
-   if(ForceSink==null)throw new NotSupportedException("Dynamic ballistic force sink not connected");
-   ForceSink(force,position);
+   if(ForceSink!=null){ForceSink(force,position);return;}
+   if(world?.PhysicsForceSink is { } worldSink){worldSink(this,force,position,ForceMode.Force);return;}
+   throw new NotSupportedException("Dynamic ballistic force sink not connected");
   }
   public void AddForce(Vector3 force,ForceMode mode=ForceMode.Force){
-   if(PhysicsForceSink==null)throw new NotSupportedException("Dynamic rigidbody force sink not connected");
-   PhysicsForceSink(force,transform.position,mode);
+   if(PhysicsForceSink!=null){PhysicsForceSink(force,transform.position,mode);return;}
+   if(world?.PhysicsForceSink is { } worldSink){worldSink(this,force,transform.position,mode);return;}
+   throw new NotSupportedException("Dynamic rigidbody force sink not connected");
   }
   public void AddForce(float x,float y,float z,ForceMode mode=ForceMode.Force)=>AddForce(new Vector3(x,y,z),mode);
   public void AddForceAtPosition(Vector3 force,Vector3 position,ForceMode mode){
    if(PhysicsForceSink!=null){PhysicsForceSink(force,position,mode);return;}
+   if(mode==ForceMode.Force&&ForceSink!=null){ForceSink(force,position);return;}
+   if(world?.PhysicsForceSink is { } worldSink){worldSink(this,force,position,mode);return;}
    if(mode==ForceMode.Force){AddForceAtPosition(force,position);return;}
    throw new NotSupportedException("Source physical arm ForceMode requires PhysX");
   }
-  public void AddTorque(Vector3 torque,ForceMode mode=ForceMode.Force){if(TorqueSink==null)throw new NotSupportedException("Rigidbody torque requires a bound PhysX driver");TorqueSink(torque,mode);}
+  public void AddTorque(Vector3 torque,ForceMode mode=ForceMode.Force){if(TorqueSink!=null){TorqueSink(torque,mode);return;}if(world?.PhysicsTorqueSink is { } worldSink){worldSink(this,torque,mode);return;}throw new NotSupportedException("Rigidbody torque requires a bound PhysX driver");}
  }
  [Flags] public enum RigidbodyConstraints {None=0,FreezePositionX=2,FreezePositionY=4,FreezePositionZ=8,FreezeRotationX=16,FreezeRotationY=32,FreezeRotationZ=64,FreezePosition=14,FreezeRotation=112,FreezeAll=126}
  public enum RigidbodyInterpolation {None=0,Interpolate=1,Extrapolate=2}

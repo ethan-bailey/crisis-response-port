@@ -15,7 +15,11 @@ if(args.Length==2&&args[0]=="--behavior-graph-contract"){
     Console.WriteLine(BehaviorDesignerContracts.Run(File.ReadAllText(args[1])));
     return;
 }
-if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-outcome-contract"||args[0]=="--mission-ai-contract"||args[0]=="--mission-ai-outcome-contract")){
+if(args.Length==3&&args[0]=="--ammunition-resource-contract"){
+    Console.WriteLine(JsonSerializer.Serialize(AmmunitionLoader.VerifyOriginalResource(File.ReadAllText(args[1]),args[2])));
+    return;
+}
+if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-outcome-contract"||args[0]=="--mission-ai-contract"||args[0]=="--mission-ai-outcome-contract"||args[0]=="--mission-projectile-contract"||args[0]=="--mission-ai-projectile-contract")){
     var runOriginalAI=args[0].StartsWith("--mission-ai-",StringComparison.Ordinal);
     var package=File.ReadAllText(args[1]);
     var world=new RuntimeWorld();
@@ -92,6 +96,10 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-outcome-c
     if(!missionComponent.Started)throw new InvalidOperationException("Original Mission did not reach BeginMission during normal RuntimeWorld startup");
     if(bodies.Length<2||!bodies.Any(body=>body.GetComponent<Crisis.Runtime.FullSource.TeamOperator>()!=null)||!bodies.Any(body=>body.GetComponent<Crisis.Runtime.FullSource.Occupant>()!=null))
         throw new InvalidOperationException($"Mission 01 actor flow did not produce an Operator and Occupant; bodies={bodies.Length}");
+    if(args[0]=="--mission-projectile-contract"||args[0]=="--mission-ai-projectile-contract"){
+        Console.WriteLine(MissionProjectileContracts.Describe(world,missionComponent,bodies));
+        return;
+    }
     if(args[0]=="--mission-outcome-contract"||args[0]=="--mission-ai-outcome-contract"){
         var spawnedOccupants=bodies.Where(body=>body.GetComponent<Crisis.Runtime.FullSource.Occupant>()!=null).ToArray();
         foreach(var source in world.Objects.OfType<AudioSource>())source.Driver=new MissionContractSilentAudioDriver();

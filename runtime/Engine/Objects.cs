@@ -269,6 +269,10 @@ public sealed class RuntimeWorld {
     public readonly List<Object> Objects=[];
     public Func<SpringJoint,ISpringJointDriver> SpringJointFactory;
     public Func<Vector3,float,int,QueryTriggerInteraction,Collider[]> OverlapSphereQuery;
+    // Optional scene-level PhysX bridge for source-created rigidbodies that do
+    // not yet have a per-instance driver, such as an ejected casing clone.
+    public Action<Rigidbody,Vector3,Vector3,ForceMode> PhysicsForceSink;
+    public Action<Rigidbody,Vector3,ForceMode> PhysicsTorqueSink;
     readonly HashSet<Object> destroyQueue=[];
     readonly List<CoroutineHandle> routines=[];
     readonly Dictionary<(Type,string),MethodInfo> messages=[];

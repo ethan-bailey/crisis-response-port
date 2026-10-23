@@ -30,8 +30,15 @@ public static class Resources {
             cache[path]=loaded.prefabRoot;return loaded.prefabRoot;
         }
         if(assetPath.StartsWith("Assets/Resources/weapons/ammunition/",StringComparison.OrdinalIgnoreCase)){
-            var ammo=AmmunitionLoader.Load(packageText,assetPath,assetWorld);ammo.gameObject.assetObject=true;
-            cache[path]=ammo.gameObject;return ammo.gameObject;
+            // Ammunition is an authored MonoBehaviour prefab. Load its real
+            // component graph through the same source-script and serialized
+            // reference path as the other original prefabs. The former
+            // field-only loader attached the transport/global AmmunitionBase,
+            // so FullSource.AmmunitionBase.GetAmmunition returned null and
+            // original WeaponBase.InitializeAmmunition left the weapon empty.
+            var loaded=SceneLoader.LoadPrefab(packageText,assetPath,assetWorld,requireComplete:true);
+            loaded.prefabRoot.assetObject=true;
+            cache[path]=loaded.prefabRoot;return loaded.prefabRoot;
         }
         if(assetPath.StartsWith("Assets/Resources/weapons/",StringComparison.OrdinalIgnoreCase)){
             var loaded=SceneLoader.LoadPrefab(packageText,assetPath,assetWorld,requireComplete:true);

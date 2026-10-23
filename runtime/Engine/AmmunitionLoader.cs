@@ -86,18 +86,19 @@ public static class AmmunitionLoader {
     public static object VerifyOriginalResource(string packageText,string name){
         var world=new RuntimeWorld();world.Tick(.05f);float originalClock=Time.time;
         Resources.Configure(packageText);
-        var fallback=new GameObject("Fallback only",world).AddComponent<AmmunitionBase>();
-        var ammo=AmmunitionBase.GetAmmunition(name,fallback);
+        var fallback=new GameObject("Fallback only",world).AddComponent<Crisis.Runtime.FullSource.AmmunitionBase>();
+        var ammo=Crisis.Runtime.FullSource.AmmunitionBase.GetAmmunition(name,fallback);
         if(ReferenceEquals(ammo,fallback))throw new InvalidOperationException("Original resource lookup returned fallback for an existing original prefab");
-        var again=AmmunitionBase.GetAmmunition(name,fallback);
+        var again=Crisis.Runtime.FullSource.AmmunitionBase.GetAmmunition(name,fallback);
         if(!ReferenceEquals(ammo,again))throw new InvalidOperationException("Original Resources.Load cache identity");
         if(Time.time!=originalClock)throw new InvalidOperationException("Asset loading reset active game time");
         if(ammo.gameObject.activeInHierarchy)throw new InvalidOperationException("Resource prefab became an active scene instance");
-        var instance=UnityEngine.Object.Instantiate(ammo.gameObject);var clone=instance.GetComponent<AmmunitionBase>();
-        if(clone.mass!=ammo.mass||ReferenceEquals(clone,ammo)||ReferenceEquals(clone.expansionFunction,ammo.expansionFunction))throw new InvalidOperationException("Original-configured ammunition clone fields");
+        var instance=UnityEngine.Object.Instantiate(ammo.gameObject);var clone=instance.GetComponent<Crisis.Runtime.FullSource.AmmunitionBase>();
+        if(clone==null||clone.mass!=ammo.mass||ReferenceEquals(clone,ammo)||ReferenceEquals(clone.expansionFunction,ammo.expansionFunction)||!ReferenceEquals(clone.projectile,ammo.projectile))throw new InvalidOperationException("Original-configured ammunition clone fields or shared source projectile asset");
         clone.mass+=1;if(clone.mass==ammo.mass)throw new InvalidOperationException("Clone modified source resource");
-        if(!ReferenceEquals(AmmunitionBase.GetAmmunition("missing-source-resource",fallback),fallback))throw new InvalidOperationException("Original fallback branch");
+        if(!ReferenceEquals(Crisis.Runtime.FullSource.AmmunitionBase.GetAmmunition("missing-source-resource",fallback),fallback))throw new InvalidOperationException("Original fallback branch");
         return new{name,sourceName=ammo.name,sourceMass=ammo.mass,instanceName=instance.name,independentInstance=true,
-            cachedResource=true,clockUnchanged=true,originalGetAmmunitionExecuted=true,scope="selected original ammunition fields/calculations; remaining equipment references are excluded"};
+            cachedResource=true,clockUnchanged=true,originalFullSourceGetAmmunitionExecuted=true,sourceCalibre=ammo.calibre?.name,sourceProjectile=ammo.projectile?.name,
+            scope="original FullSource ammunition prefab and resource lookup; original projectile dependency remains shared as a prefab asset"};
     }
 }

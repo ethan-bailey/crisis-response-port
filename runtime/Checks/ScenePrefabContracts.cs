@@ -46,12 +46,15 @@ public static class ScenePrefabContracts {
         Check(spriteRenderer!=null&&spriteRenderer.maskInteraction==2&&spriteRenderer.wasSpriteAssigned,"Original SpriteRenderer mask interaction and sprite-assignment state are retained");
         Check(!template.awokeWithBoundReferences&&!prefab.activeInHierarchy,"Prefab asset loading defers gameplay callbacks and remains outside the active scene");
         var world=new RuntimeWorld();world.MakeCurrent();
+        var templateBody=prefab.GetComponent<Rigidbody>();
+        templateBody.PhysicsForceSink=(_,_,_)=>{};
         var first=UnityEngine.Object.Instantiate(prefab);var second=UnityEngine.Object.Instantiate(prefab);world.Tick(0);
         var a=first.GetComponent<ScenePrefabProbe>();var b=second.GetComponent<ScenePrefabProbe>();
         Check(a.awokeWithBoundReferences&&b.awokeWithBoundReferences,"Cloned actors enter Awake only after serialized references bind");
         Check(!ReferenceEquals(a.child,b.child)&&!ReferenceEquals(a.colliderReference,b.colliderReference),"Cloned actors own independent child and collider components");
         Check(ReferenceEquals(a.child,a.colliderReference.transform)&&ReferenceEquals(b.child,b.colliderReference.transform)&&ReferenceEquals(a.joint.connectedBody,first.GetComponent<Rigidbody>())&&ReferenceEquals(b.joint.connectedBody,second.GetComponent<Rigidbody>()),"Each actor's component links resolve within its own clone");
         Check(a.joint.useSpring&&b.joint.useSpring&&a.joint.spring.spring==12f&&b.joint.spring.spring==12f,"Cloned actors retain the serialized original joint state");
+        Check(first.GetComponent<Rigidbody>().PhysicsForceSink==null&&second.GetComponent<Rigidbody>().PhysicsForceSink==null,"Runtime physics delegates are not copied from a prefab asset into independent instances");
         Check(first.transform.childCount==1&&second.transform.childCount==1,"Prefab hierarchy survives independent actor clones");
         return "PASS: source prefab record references, deferred Awake, and two independent actor clones";
     }

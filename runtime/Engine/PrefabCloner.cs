@@ -78,6 +78,6 @@ public static class PrefabCloner {
     static IEnumerable<FieldInfo> SerializedFields(Type type){
         for(var t=type;t!=null&&t!=typeof(Object)&&t!=typeof(Component)&&t!=typeof(Behaviour)&&t!=typeof(MonoBehaviour);t=t.BaseType)
             foreach(var field in t.GetFields(BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.DeclaredOnly))
-                if(!field.IsStatic&&!field.IsInitOnly&&field.GetCustomAttribute<NonSerializedAttribute>()==null&&(field.IsPublic||field.GetCustomAttribute<SerializeField>()!=null))yield return field;
+                if(!field.IsStatic&&!field.IsInitOnly&&field.GetCustomAttribute<NonSerializedAttribute>()==null&&!typeof(Delegate).IsAssignableFrom(field.FieldType)&&(field.IsPublic||field.GetCustomAttribute<SerializeField>()!=null))yield return field;
     }
 }
