@@ -1,58 +1,32 @@
-## Hosting attempt — 2026-10-22 (checkpoint 73f1e40d13d3c3498d68627d4a767edc8c732c2b)
-
-- Tree/build: verified develop/wasm and detached deployment worktree at 73f1e40d13d3c3498d68627d4a767edc8c732c2b; source is unchanged from 35f077f293305694f5a279bc073f23e159aba0fe. Worktree clean after temporary harness diagnostics were restored. dotnet build runtime/Crisis.Runtime.csproj --no-incremental: PASS, 0 errors, 45 warnings, 18.4 s. dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release: PASS, 0 errors, 45 warnings, 24.0 s.
-- Input module fix: runtime/Browser/wwwroot/index.html imports ./browser-input.mjs, resolving to /browser-input.mjs. Original staged package omitted it; direct fetch returned HTTP 404 and text/html;charset=utf-8. Added tracked game/browser-input.mjs (10,785 bytes) at package root. Direct fetch from fixed package returned HTTP 200 and Content-Type text/javascript; served bytes compare identical to tracked source. Integrity manifest verified all 720 payload files (721 including manifest); total package bytes 63,623,304.
-- Local browser: fresh Chrome tab on forwarded port 8003 loaded the page; WebAssembly started and displayed PASS · 10 verified runtime contracts. Holding FIRE for 1.5 s displayed input state with fire.Down: true, Enabled: true, key: Mouse0. No Marksman scene was loaded or visible: the browser entry point calls Verify, ResetInput, and Tick and exposes no scene-load action; the page remains the control/status panel. Therefore the required full local smoke FAILS the Marksman scene criterion. Do not publish this package. ChatGPT Sites feasibility/publication, live smoke, and Vercel fallback were not attempted.
-- Original boot error captured: on original port-8001 package, browser console showed Microsoft.JSInterop.JSException: Could not find 'startOriginalRuntime' ('startOriginalRuntime' was undefined). Blazor component stack: Microsoft.JSInterop.JSRuntime.InvokeAsync → JSRuntimeExtensions.InvokeVoidAsync → Crisis.Runtime.Browser.App.OnAfterRenderAsync(Boolean firstRender) → Renderer.GetErrorHandledTask. JS stack: blazor.webassembly.js (l.findFunction / w / beginInvokeJSFromDotNet) and dotnet.runtime.js. This followed the /browser-input.mjs 404; on corrected package the exception is gone and runtime contracts execute.
-- Two-actor gate: FAIL. Before ticking, harness showed Global.Instance.Initialized=False and Global.ObjectNull=True. Exact null at CharacterBody.Awake line 795 is Global.Context in Mission = Global.Context.Mission. Root cause is missing global-context binding in prefab lifecycle harness: it creates RuntimeWorld, loads actor prefabs, and ticks clones without loading the global/Mission scene or calling Global.Initialize; this indicates unbound setup, not an initialization race. One temporary harness-only fixture bound a GlobalContext and named Mission, but original Mission lifecycle then failed at Mission.Awake on Mission → TeamOperator.Awake on Operator(Clone) with NullReferenceException at TeamOperator.cs:110 (through Mission.CreateContainers, Mission.cs:326). Fixture/diagnostics were reverted; no runtime source was changed.
-- Disposition / next work: local hard gate remains blocked by missing browser Marksman scene load; actor lifecycle gate remains failed because the harness’s original Mission scene dependencies are not provisioned. Resolve these with owner-scoped work and rerun local smoke + two-actor gate before Sites. No GitHub Actions were used. Checkpoint remains develop/wasm 73f1e40d13d3c3498d68627d4a767edc8c732c2b.
-
----
-
-# NEXT AGENT — Crisis Response hosting
+# NEXT AGENT — Crisis Response scene package and Sites
 
 ## Checkpoint
 
-- Branch: develop/wasm. Tested source SHA: 35f077f293305694f5a279bc073f23e159aba0fe. The current handoff is one docs-only commit on top of that tested source; read the branch head from GitHub before continuing.
-- PR #42 merged as 09987a75d671d778287605322394c474da1ed74a; feature branch retained.
-- Current open draft PRs at inspection: #56 and #57 target develop/wasm; #7 targets main. PR #42 is merged and is not open.
-- GitHub Actions remains disabled by owner decision. No Actions workflow was used in this hosting attempt.
-- Deferred behavior from PR #42 remains applied: 106 develop-only members and 36 develop-only types are deferred. LimbLayer, LimbRenderer, and LimbTextureData remain only as source-reference evidence. CharacterLimbRagdollState.cs removal was accepted; OriginalLimbSkinTrace, SourceSkinTrace, OriginalArmPhysicsHost develop-only additions, and the associated consumers remain deferred.
+- Live `develop/wasm`: `54f1cb18e399789d4b55a9eed750fad4485081e9` (verified during this session).
+- Draft PR #68: `codex/scene-package-from-original-obj-20261022`. Tested code commit: `449bb9d4ced83f53d05b4d2c02a9537b389a159d`. This handoff update is documentation-only; read the live PR head before continuing.
+- Other open PRs: #56 and #57 target `develop/wasm`; #7 targets `main`. GitHub Actions remains disabled by owner decision.
+- The owner made Codespaces and an interactive real browser optional when a faster verification path exists. Do not treat those environments as prerequisites.
 
-## Hosting attempt — blocked by local smoke
+## Scene package gap and change
 
-The finish line was a public ChatGPT Site running the current develop/wasm build. This attempt did not reach publication because the hard local smoke gate failed. No public Site or Vercel deployment was created.
+The live source tree has `game/assets/mission01.obj` but no `game/assets/mission01.crg`; Git history has no commit for that CRG path. The game page fetches the CRG and the Site packager requires it. The retained recovery artifact is run 38582072502 / artifact 11903811738 (expires 2026-10-28); it contains the original `Combined Mesh (root_ scene)_1.asset`.
 
-### Build and gameplay gates
+PR #68 generates CRG1 from the tracked OBJ during package assembly, emits the existing hash report, and verifies source and binary hashes. It includes a failure-oriented package test with no prebuilt CRG fixture. Keep PR #68 draft until the pinned full build and remaining runtime gates pass.
 
-- Fresh full-source command: dotnet build runtime/Crisis.Runtime.csproj --no-incremental
-- Tested source SHA: 35f077f293305694f5a279bc073f23e159aba0fe
-- Result: PASS, 0 errors, 45 warnings. MSBuild reported 24.6 seconds; terminal wall time was 27.759 seconds.
-- Browser runtime publish: dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release
-- Result: succeeded, 45 warnings, 0 errors, 106.1 seconds. Output: runtime/Browser/bin/Release/net8.0/publish/.
-- Two-actor command: dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -- --prefab-lifecycle /workspaces/crisis-response-pr42-9479dc6/work/runtime/scene-package.json
-- Result: FAIL, exit 134. RuntimeWorld activation failed for CharacterBody.Awake on Operator(Clone); inner exception was System.NullReferenceException: Object reference not set to an instance of an object. The verifier stopped at Operator; a complete Operator/Occupant lifecycle pass was not established. The exact null member was not identified by the thrown exception.
+## Verified in this session
 
-### Package and integrity manifest
+- `python3 -m unittest discover -s scripts -p 'package_wasm_site_test.py' -v`: 12 passed.
+- Recovered Unity mesh export: 45,356 vertices, 100,998 indices, 33,666 triangles; source buffer and index checks passed.
+- `node --test scripts/game_loading_test.mjs` on the generated binary: 2 passed, including every triangle-corner position, normal, and UV check.
+- The exact code files on PR head `449bb9d` match the locally tested files.
 
-A staging package was assembled from the compiled browser publish wwwroot, game/assets, scene-data/marksman-range.json, marksman-combined.obj, and marksman-combined.mesh-report.json. It contains 719 payload files plus integrity-manifest.sha256: 720 files total and 63,613,523 bytes. sha256sum -c verified all 719 manifest entries. The package was temporary at /tmp/crisis-sites-package-35f077f; it was not uploaded or committed.
+## Open gates
 
-### Local browser smoke — FAIL (hard gate)
+- This workspace has no `dotnet` executable (`dotnet --list-sdks` returned command-not-found). No build, publish, full Site package, or live smoke was run.
+- Do not change the repository's .NET SDK pin; the expected version is 8.0.426.
+- The full two-actor lifecycle remains a separate failed gate recorded in the prior handoff evidence.
+- Existing Sites project: `appgprj_6acfef7174888191bc2bc2f269f60acc`, version 26, source SHA `64d9c812ab01e23f37ac6c0b0b3137b71130e62d`. No new Site version was saved or deployed.
 
-- Served the staged package with python3 -m http.server 8001 --directory /tmp/crisis-sites-package-35f077f in the Codespace and opened the forwarded port in a real Chrome session.
-- The page loaded and displayed the runtime heading and LEFT/RIGHT/SPRINT/FIRE/KNEEL/STAND/RELOAD/SWITCH controls.
-- The page then displayed “Runtime error. Reload to reset.” Framework .wasm requests returned HTTP 200, but browser-input.mjs returned HTTP 404. Clicking FIRE did not produce an input-state update.
-- No Marksman scene loaded. The page itself says scene loading uses extracted data and that full gameplay is incomplete.
-- One bounded packaging/server-path attempt staged the compiled output together with the available game assets and Marksman data and repeated the smoke; the same runtime error remained. The input module is absent from the develop checkpoint’s published output. Do not copy an untracked helper from another checkout or alter game code in this hosting-only task.
-- Result: local smoke FAIL. The package is not ready for publication. Sites feasibility, public access, and live smoke were NOT RUN because local smoke failed. Vercel fallback was NOT RUN because Sites was not attempted; Sites hosting feasibility is only evaluated after a locally passing package exists.
+## Next action
 
-## Hosting policy and next actions
-
-ChatGPT Sites is the primary host. Preserve the verified package byte-for-byte, set public access only under the owner’s authorization, and require local and live smoke. Vercel is manual fallback only if Sites cannot host a package that already passes local smoke; automatic Vercel deployments remain disabled in vercel.json.
-
-1. Resolve the browser runtime’s missing browser-input.mjs dependency from tracked develop/wasm sources and rerun the local smoke, including actual Marksman scene loading and responsive input.
-2. Resolve the CharacterBody.Awake null reference and rerun the two-actor gameplay lifecycle gate for both actors.
-3. After the local smoke and relevant gameplay gate pass, resume the Sites deployment, verify public access and asset/WASM serving, and perform fresh-session live smoke. Use the same verified bytes for any manual Vercel fallback.
-4. Keep the exact-source browser smoke gate open until it passes against the intended package; do not report a URL as proof of a boot.
-
-Sites remains the primary host; this handoff changes no runtime or game source. The next session should start from the live develop/wasm head and this failure evidence.
+Obtain .NET SDK 8.0.426 in an available environment, then run the fresh Release build/publish and package assembly at the live PR #68 head. Verify the package manifest and the generated CRG bytes. Run the remaining automated game scene/input checks and two-actor gate. Merge only after the relevant local gates pass. Then publish the verified package to the existing Sites project and verify its served scene assets and WASM. GitHub Actions remains disabled.
