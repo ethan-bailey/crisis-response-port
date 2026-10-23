@@ -1,0 +1,4023 @@
+{
+  "archiveSha256": "5a12ff494b26713d149f9be026619732247f817ddf8944a399b6ee1d12ea0ab3",
+  "builtinExtraObjects": [
+    {
+      "name": "Legacy Shaders/VertexLit",
+      "pathId": "6",
+      "type": "Shader"
+    },
+    {
+      "name": "Legacy Shaders/Diffuse",
+      "pathId": "7",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/Internal-StencilWrite",
+      "pathId": "19",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/Internal-DepthNormalsTexture",
+      "pathId": "62",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/Internal-PrePassLighting",
+      "pathId": "63",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/Internal-ScreenSpaceShadows",
+      "pathId": "64",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/Internal-CombineDepthNormals",
+      "pathId": "65",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/BlitCopy",
+      "pathId": "66",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/BlitCopyDepth",
+      "pathId": "67",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/ConvertTexture",
+      "pathId": "68",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/Internal-DeferredShading",
+      "pathId": "69",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/Internal-DeferredReflections",
+      "pathId": "74",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/Internal-MotionVectors",
+      "pathId": "75",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/Internal-Flare",
+      "pathId": "102",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/Internal-Halo",
+      "pathId": "105",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/BlitCopyWithDepth",
+      "pathId": "107",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/Internal-GUITextureClip",
+      "pathId": "9000",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/Internal-GUITextureClipText",
+      "pathId": "9001",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/Internal-GUITexture",
+      "pathId": "9002",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/Internal-GUITextureBlit",
+      "pathId": "9003",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/Internal-GUIRoundedRect",
+      "pathId": "9004",
+      "type": "Shader"
+    },
+    {
+      "name": "Sprites/Mask",
+      "pathId": "10757",
+      "type": "Shader"
+    },
+    {
+      "name": "UI/Default",
+      "pathId": "10770",
+      "type": "Shader"
+    },
+    {
+      "name": "UI/Default Font",
+      "pathId": "10782",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/CubeBlur",
+      "pathId": "15104",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/CubeCopy",
+      "pathId": "15105",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/CubeBlend",
+      "pathId": "15106",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/VR/BlitTexArraySlice",
+      "pathId": "15304",
+      "type": "Shader"
+    },
+    {
+      "name": "Hidden/VideoDecode",
+      "pathId": "16000",
+      "type": "Shader"
+    }
+  ],
+  "containerCount": 9,
+  "containers": [
+    {
+      "bytes": 11368076,
+      "objectCount": 10254,
+      "path": "resources.assets",
+      "sha256": "c55bd896a6b38e43fdc85d980f80fd2f43a7c1aa484f15200a30b89079c59740",
+      "targetPlatform": 5,
+      "unityVersion": "2017.2.0f3"
+    },
+    {
+      "bytes": 222136,
+      "objectCount": 1524,
+      "path": "globalgamemanagers.assets",
+      "sha256": "9a7df8c20e551201f2cfc186ad10b354960b2e37d22e4a776c48741376434d56",
+      "targetPlatform": 5,
+      "unityVersion": "2017.2.0f3"
+    },
+    {
+      "bytes": 55560,
+      "objectCount": 4,
+      "path": "sharedassets0.assets",
+      "sha256": "5eb1487e5861828afd1e822684cf2201cd5534ad89ff41c7ef31aceef34acac8",
+      "targetPlatform": 5,
+      "unityVersion": "2017.2.0f3"
+    },
+    {
+      "bytes": 1126000,
+      "objectCount": 5707,
+      "path": "sharedassets1.assets",
+      "sha256": "57d7181bd0c648dcb7f9f2c9132ca1851018f62ec0c3ee0eef81210dbd71beb2",
+      "targetPlatform": 5,
+      "unityVersion": "2017.2.0f3"
+    },
+    {
+      "bytes": 4276,
+      "objectCount": 1,
+      "path": "sharedassets2.assets",
+      "sha256": "4ff4ffd26592ecdb88c50033961323eac5be33957101e29e3ff1bfaebfccb806",
+      "targetPlatform": 5,
+      "unityVersion": "2017.2.0f3"
+    },
+    {
+      "bytes": 2651604,
+      "objectCount": 1938,
+      "path": "sharedassets3.assets",
+      "sha256": "7091982edcac822acd72a8dce8fb7bdf7c8d498d218aeebc0d2ec1bf07ba6a94",
+      "targetPlatform": 5,
+      "unityVersion": "2017.2.0f3"
+    },
+    {
+      "bytes": 109252,
+      "objectCount": 13,
+      "path": "sharedassets4.assets",
+      "sha256": "c4f4c79275a1188746883ff103bf87b5ab420b173422287794c25c4d17582a2c",
+      "targetPlatform": 5,
+      "unityVersion": "2017.2.0f3"
+    },
+    {
+      "bytes": 95340,
+      "objectCount": 30,
+      "path": "sharedassets5.assets",
+      "sha256": "be73c3ad44c1d02ebc641a6bfc2a5f7c14c68573df4eddefcb0d42dc64f1f8e3",
+      "targetPlatform": 5,
+      "unityVersion": "2017.2.0f3"
+    },
+    {
+      "bytes": 443092,
+      "objectCount": 29,
+      "path": "Resources/unity_builtin_extra",
+      "sha256": "7c8974f454eef9ed3f0ad0c21695e4cd226f4b2d33f4684d48e69315a3e9be1a",
+      "targetPlatform": 5,
+      "unityVersion": "2017.2.0f3"
+    }
+  ],
+  "meshCount": 163,
+  "meshes": [
+    {
+      "geometrySha256": "fb8dffa14e87a8ae1c74c717b961876f6905f728fe5453678f015da32d15d5cf",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Rear wall middle split",
+          "gameObjectPathId": "1211",
+          "meshFilterPathId": "6066"
+        }
+      ],
+      "name": "Wall middle split",
+      "normalCount": 108,
+      "pathId": "564",
+      "rawBytes": 7032,
+      "rawSha256": "9c534dcb06bc695073cb01035707cc317dc7359d5cabddba05f15ae06b39fcd0",
+      "sourceFile": "resources.assets",
+      "triangleCount": 60,
+      "uv0Count": 108,
+      "vertexCount": 108
+    },
+    {
+      "geometrySha256": "2644f140325737aaca258285da2120adde32da665dc4b48834e0e7a9ff0bb1bb",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Cell phone",
+          "gameObjectPathId": "2026",
+          "meshFilterPathId": "6226"
+        }
+      ],
+      "name": "Cell phone",
+      "normalCount": 300,
+      "pathId": "565",
+      "rawBytes": 3668,
+      "rawSha256": "43329a11d79771a1a1740b0b511596e3e8ed360e364e741b8c421e85680b1ca5",
+      "sourceFile": "resources.assets",
+      "triangleCount": 168,
+      "uv0Count": 300,
+      "vertexCount": 300
+    },
+    {
+      "geometrySha256": "1b8e492da8c20f49bce429b4df5cf3b5b12d6a41a9970a3a34ee6370332ac77b",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Non-paintable wall rear",
+          "gameObjectPathId": "1606",
+          "meshFilterPathId": "6135"
+        },
+        {
+          "gameObjectName": "Paintable wall rear",
+          "gameObjectPathId": "1607",
+          "meshFilterPathId": "6136"
+        }
+      ],
+      "name": "Interior wall rear",
+      "normalCount": 48,
+      "pathId": "566",
+      "rawBytes": 3348,
+      "rawSha256": "5a312ab522c42e07fcfcc5608babcd4c285e6d066bb991706e5820f51a82f20f",
+      "sourceFile": "resources.assets",
+      "triangleCount": 28,
+      "uv0Count": 48,
+      "vertexCount": 48
+    },
+    {
+      "geometrySha256": "a85b528a15581d70c256f1bacc31309efba7b31f022807f348b919e9682919ed",
+      "meshFilterReferences": [],
+      "name": "Tetraedron",
+      "normalCount": 12,
+      "pathId": "567",
+      "rawBytes": 856,
+      "rawSha256": "f89a11e38ec22cc70c6b83595d5999b3290fed3b74f36e1a71f0a99bedbff35e",
+      "sourceFile": "resources.assets",
+      "triangleCount": 4,
+      "uv0Count": 0,
+      "vertexCount": 12
+    },
+    {
+      "geometrySha256": "59907e7e2148d7c2cfa324b80dec9a228abf5be74a22e590adc57a6cd64b223a",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Middle section",
+          "gameObjectPathId": "1827",
+          "meshFilterPathId": "6078"
+        },
+        {
+          "gameObjectName": "Middle section",
+          "gameObjectPathId": "1545",
+          "meshFilterPathId": "6150"
+        }
+      ],
+      "name": "Wall left top section",
+      "normalCount": 36,
+      "pathId": "568",
+      "rawBytes": 2588,
+      "rawSha256": "1ae456482bf372d7fc704a8ffb8f729857d4335cf3947b77df3f2492ab5aa5de",
+      "sourceFile": "resources.assets",
+      "triangleCount": 20,
+      "uv0Count": 36,
+      "vertexCount": 36
+    },
+    {
+      "geometrySha256": "3390b7788ec268cfbe181128e1eb68d5ffd02e8830457b460df5d505afb22f75",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Left half window",
+          "gameObjectPathId": "1239",
+          "meshFilterPathId": "6126"
+        },
+        {
+          "gameObjectName": "Left half window",
+          "gameObjectPathId": "2405",
+          "meshFilterPathId": "6269"
+        },
+        {
+          "gameObjectName": "Left half window",
+          "gameObjectPathId": "1943",
+          "meshFilterPathId": "6387"
+        },
+        {
+          "gameObjectName": "Left half window",
+          "gameObjectPathId": "2466",
+          "meshFilterPathId": "6437"
+        },
+        {
+          "gameObjectName": "Right half window",
+          "gameObjectPathId": "1491",
+          "meshFilterPathId": "6085"
+        },
+        {
+          "gameObjectName": "Right half window",
+          "gameObjectPathId": "1895",
+          "meshFilterPathId": "6293"
+        },
+        {
+          "gameObjectName": "Right half window",
+          "gameObjectPathId": "2007",
+          "meshFilterPathId": "6400"
+        },
+        {
+          "gameObjectName": "Right half window",
+          "gameObjectPathId": "2140",
+          "meshFilterPathId": "6436"
+        }
+      ],
+      "name": "Half window 1.2m",
+      "normalCount": 79,
+      "pathId": "569",
+      "rawBytes": 1208,
+      "rawSha256": "b14863f104d521264c573ed01867cc38332ac23b6783d48b9b35c9058ab810cc",
+      "sourceFile": "resources.assets",
+      "triangleCount": 45,
+      "uv0Count": 79,
+      "vertexCount": 79
+    },
+    {
+      "geometrySha256": "399805e7eb52e69335c996c8506f22dfd14b64b1bd7025477ef79326a779ccd2",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Door",
+          "gameObjectPathId": "2737",
+          "meshFilterPathId": "6575"
+        }
+      ],
+      "name": "Wash room door",
+      "normalCount": 56,
+      "pathId": "570",
+      "rawBytes": 1016,
+      "rawSha256": "4b81cde2ff8b56e53f3fc7a8747ae3972b7ba31c71592a097adadc2f57b6c01f",
+      "sourceFile": "resources.assets",
+      "triangleCount": 36,
+      "uv0Count": 56,
+      "vertexCount": 56
+    },
+    {
+      "geometrySha256": "4195470a8dc49b134f837856648d9a50a7493c386ef1f31363bf82c4515bc93c",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Random ammunition",
+          "gameObjectPathId": "3250",
+          "meshFilterPathId": "6635"
+        }
+      ],
+      "name": "Question mark",
+      "normalCount": 1276,
+      "pathId": "571",
+      "rawBytes": 13824,
+      "rawSha256": "482143bf1640e481a0e01cb96e1283450d9f83c39211d35c426d20d9de7b92ff",
+      "sourceFile": "resources.assets",
+      "triangleCount": 1136,
+      "uv0Count": 0,
+      "vertexCount": 1276
+    },
+    {
+      "geometrySha256": "27756fdc7daf88b0325d471caadeac21927dd873bb45fd54f9d4e438039c867c",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Casing 4.6x30mm",
+          "gameObjectPathId": "1557",
+          "meshFilterPathId": "6082"
+        }
+      ],
+      "name": "4.6x30mm casing",
+      "normalCount": 36,
+      "pathId": "572",
+      "rawBytes": 712,
+      "rawSha256": "24bd87cdb8f629685dca99a4dd1cd12da17c0c8e6316e3b19c4ff601d1105d63",
+      "sourceFile": "resources.assets",
+      "triangleCount": 44,
+      "uv0Count": 0,
+      "vertexCount": 36
+    },
+    {
+      "geometrySha256": "3edb381eb5e00308023838c62e82081e784e347b0e7be6dfeef827d2da0e6d99",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "1m exterior bottom wall window",
+          "gameObjectPathId": "2602",
+          "meshFilterPathId": "6189"
+        }
+      ],
+      "name": "Wall with window",
+      "normalCount": 106,
+      "pathId": "573",
+      "rawBytes": 1716,
+      "rawSha256": "eca49e869fb1a32954eea88c82ff903c35c390adacc1afe650737f26496d4d02",
+      "sourceFile": "resources.assets",
+      "triangleCount": 62,
+      "uv0Count": 106,
+      "vertexCount": 106
+    },
+    {
+      "geometrySha256": "06f1b67f946239f270cc05393b2aa187946735b31e157f7e9e0e5cde33117835",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Fragment 2",
+          "gameObjectPathId": "1132",
+          "meshFilterPathId": "6050"
+        }
+      ],
+      "name": "Fragment 2",
+      "normalCount": 29,
+      "pathId": "574",
+      "rawBytes": 660,
+      "rawSha256": "a5bcfa58e58e9b9647ea2693e07f1ad2f50c42ff3c04287846275a388e77b58c",
+      "sourceFile": "resources.assets",
+      "triangleCount": 54,
+      "uv0Count": 0,
+      "vertexCount": 29
+    },
+    {
+      "geometrySha256": "17bb8949bdafe456526edf8dc7b416e7622298b698144abf1c5108a9a5b7b370",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Frame",
+          "gameObjectPathId": "3053",
+          "meshFilterPathId": "6496"
+        },
+        {
+          "gameObjectName": "Frame",
+          "gameObjectPathId": "3131",
+          "meshFilterPathId": "6504"
+        }
+      ],
+      "name": "Door frame",
+      "normalCount": 134,
+      "pathId": "575",
+      "rawBytes": 1840,
+      "rawSha256": "dfe09b191bc553783b97c41843151a68ef7e4b6c0245c147c623a6635b700959",
+      "sourceFile": "resources.assets",
+      "triangleCount": 84,
+      "uv0Count": 134,
+      "vertexCount": 134
+    },
+    {
+      "geometrySha256": "0954e334c1ed7a74cd8a74fc56bed6dd79eea9fd5008a8d3f84cc88308705074",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Door",
+          "gameObjectPathId": "3163",
+          "meshFilterPathId": "6490"
+        }
+      ],
+      "name": "Door",
+      "normalCount": 238,
+      "pathId": "576",
+      "rawBytes": 3460,
+      "rawSha256": "9acc072ed0498953b88d2d7a1c3953a2bce841a88695374e5e2eece8fc13e615",
+      "sourceFile": "resources.assets",
+      "triangleCount": 152,
+      "uv0Count": 238,
+      "vertexCount": 238
+    },
+    {
+      "geometrySha256": "e1be019a2c00827f4fc3c418c4dc6b74b1ac2af4e25954c14b4d076c3fe66de6",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "1.2m window",
+          "gameObjectPathId": "1794",
+          "meshFilterPathId": "6099"
+        },
+        {
+          "gameObjectName": "1.2m window",
+          "gameObjectPathId": "2016",
+          "meshFilterPathId": "6203"
+        },
+        {
+          "gameObjectName": "1.2m window",
+          "gameObjectPathId": "2300",
+          "meshFilterPathId": "6204"
+        },
+        {
+          "gameObjectName": "1.2m window",
+          "gameObjectPathId": "2521",
+          "meshFilterPathId": "6331"
+        }
+      ],
+      "name": "Window frame 1.2m",
+      "normalCount": 76,
+      "pathId": "577",
+      "rawBytes": 1196,
+      "rawSha256": "3c94d80fc00bd249959c033a6a446ffe82b9db65312838c34543777a91131fa9",
+      "sourceFile": "resources.assets",
+      "triangleCount": 50,
+      "uv0Count": 76,
+      "vertexCount": 76
+    },
+    {
+      "geometrySha256": "7fe76b3a182b9c5558f661a22f9e8316176ef05a2be09db6fda74d023c3ef178",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2494",
+          "meshFilterPathId": "6471"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2812",
+          "meshFilterPathId": "6552"
+        }
+      ],
+      "name": "7.62mm HEI",
+      "normalCount": 353,
+      "pathId": "578",
+      "rawBytes": 16208,
+      "rawSha256": "7e738f8f59997e884470b8383da59435e840714012131da5d6241d22f7e0b055",
+      "sourceFile": "resources.assets",
+      "triangleCount": 510,
+      "uv0Count": 353,
+      "vertexCount": 353
+    },
+    {
+      "geometrySha256": "4f34f8834dfaa9ea6768318ebce5c00e63096deff66fb89c014c9cc09d2b332a",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Casing .45 ACP",
+          "gameObjectPathId": "1395",
+          "meshFilterPathId": "6130"
+        }
+      ],
+      "name": "45ACP casing",
+      "normalCount": 24,
+      "pathId": "579",
+      "rawBytes": 560,
+      "rawSha256": "878551a4f8b204feb407f3d474f07282df021098a6ce20a1f89c0a559ecf2f51",
+      "sourceFile": "resources.assets",
+      "triangleCount": 20,
+      "uv0Count": 0,
+      "vertexCount": 24
+    },
+    {
+      "geometrySha256": "7dc41b5314706a816fcd466e676167f4adc7d63368a9dc1cd7bfa22f624270f9",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Wood exit hole",
+          "gameObjectPathId": "1619",
+          "meshFilterPathId": "6152"
+        }
+      ],
+      "name": "Circle",
+      "normalCount": 186,
+      "pathId": "580",
+      "rawBytes": 1932,
+      "rawSha256": "8c2c7728a249a809730792cfba9a1197881516d525ea60c5d5b2be965ff0a36d",
+      "sourceFile": "resources.assets",
+      "triangleCount": 100,
+      "uv0Count": 0,
+      "vertexCount": 186
+    },
+    {
+      "geometrySha256": "c3bcb11c461a90fcc8776cddd0ab02ee82e05ad6c629e5ec6f2d012e569481f2",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Casing 10mm Auto",
+          "gameObjectPathId": "1396",
+          "meshFilterPathId": "6131"
+        }
+      ],
+      "name": "Casing 10mm Auto low poly",
+      "normalCount": 24,
+      "pathId": "581",
+      "rawBytes": 1448,
+      "rawSha256": "13ce50fd959ba6b519db33ad8beefe506e14e2495ff16c97a264c22147cbba44",
+      "sourceFile": "resources.assets",
+      "triangleCount": 20,
+      "uv0Count": 0,
+      "vertexCount": 24
+    },
+    {
+      "geometrySha256": "e424fb5c6d104b359725c9269bc6827691cd08622dfdaef2ed0c539bf463a8ba",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Middle section",
+          "gameObjectPathId": "1613",
+          "meshFilterPathId": "6111"
+        },
+        {
+          "gameObjectName": "Middle section",
+          "gameObjectPathId": "1394",
+          "meshFilterPathId": "6129"
+        }
+      ],
+      "name": "Wall right top section",
+      "normalCount": 36,
+      "pathId": "582",
+      "rawBytes": 2588,
+      "rawSha256": "c6f66d182447b90916eb41986223d6897626776256385f5aea44d57cb32788b5",
+      "sourceFile": "resources.assets",
+      "triangleCount": 20,
+      "uv0Count": 36,
+      "vertexCount": 36
+    },
+    {
+      "geometrySha256": "1012dfae6d5c0a1092c849572321675f0bbfedb8d420db03c9ddb50d5c91d322",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "5.56x45mm FMJ",
+          "gameObjectPathId": "2427",
+          "meshFilterPathId": "6304"
+        },
+        {
+          "gameObjectName": "5.56x45mm JHP",
+          "gameObjectPathId": "2133",
+          "meshFilterPathId": "6328"
+        },
+        {
+          "gameObjectName": "5.56x45mm Subsonic",
+          "gameObjectPathId": "2134",
+          "meshFilterPathId": "6329"
+        }
+      ],
+      "name": "5.56x45mm casing hi",
+      "normalCount": 957,
+      "pathId": "583",
+      "rawBytes": 40932,
+      "rawSha256": "35ddb5afcea0d46aa5cc72128b8670c3a6fc3d1012b24563331e61aefecc2f28",
+      "sourceFile": "resources.assets",
+      "triangleCount": 1020,
+      "uv0Count": 957,
+      "vertexCount": 957
+    },
+    {
+      "geometrySha256": "5a0a518103b5480afe924ad82ade97b6fb5900b9d1b7bbc25cee36c4a1635815",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Casing 9x19mm",
+          "gameObjectPathId": "1397",
+          "meshFilterPathId": "6132"
+        }
+      ],
+      "name": "9x19mm casing",
+      "normalCount": 24,
+      "pathId": "584",
+      "rawBytes": 564,
+      "rawSha256": "9a446f6fc829222163facba7ee0e0606e7a3e3b1890931e8edad3d950a25e44f",
+      "sourceFile": "resources.assets",
+      "triangleCount": 20,
+      "uv0Count": 0,
+      "vertexCount": 24
+    },
+    {
+      "geometrySha256": "3d2fe839a4a07041a5f3d3fe57a05802a49d4e398b4c1de72b69ae85cf7bbd1e",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Frag grenade",
+          "gameObjectPathId": "3009",
+          "meshFilterPathId": "6520"
+        },
+        {
+          "gameObjectName": "Fragmentation grenade",
+          "gameObjectPathId": "1133",
+          "meshFilterPathId": "6051"
+        }
+      ],
+      "name": "Fragmentation grenade",
+      "normalCount": 419,
+      "pathId": "585",
+      "rawBytes": 5500,
+      "rawSha256": "40ed6595d4b8292489dfee16419c3ba6712402efd115dd66f62b9fcf75719a51",
+      "sourceFile": "resources.assets",
+      "triangleCount": 383,
+      "uv0Count": 419,
+      "vertexCount": 419
+    },
+    {
+      "geometrySha256": "0e0b57eda7b569ca48a9e4bfd7e3531165564a17b651f3b5090207278808b34c",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Interior floor",
+          "gameObjectPathId": "1448",
+          "meshFilterPathId": "6121"
+        },
+        {
+          "gameObjectName": "Paintable floor",
+          "gameObjectPathId": "1449",
+          "meshFilterPathId": "6122"
+        }
+      ],
+      "name": "Floor",
+      "normalCount": 24,
+      "pathId": "586",
+      "rawBytes": 1616,
+      "rawSha256": "1cdf27d20125563cf269274f2c7822aa558779ae42ad746f6972e80fe44b1fde",
+      "sourceFile": "resources.assets",
+      "triangleCount": 12,
+      "uv0Count": 24,
+      "vertexCount": 24
+    },
+    {
+      "geometrySha256": "0cd53826fc139071f0e20cf50e670c9c36990fe261a39b85761d78d908004f72",
+      "meshFilterReferences": [],
+      "name": "Particle shard",
+      "normalCount": 12,
+      "pathId": "587",
+      "rawBytes": 884,
+      "rawSha256": "68cede68627d6a782584f86f397b8338ec089cdf691b2f3b67f0243be9596328",
+      "sourceFile": "resources.assets",
+      "triangleCount": 8,
+      "uv0Count": 0,
+      "vertexCount": 12
+    },
+    {
+      "geometrySha256": "112eada8e2cd5a39a151ab482753a798010fe584a85a623ce2b05f9eed2a2558",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Left section",
+          "gameObjectPathId": "1251",
+          "meshFilterPathId": "6060"
+        },
+        {
+          "gameObjectName": "Left section",
+          "gameObjectPathId": "1587",
+          "meshFilterPathId": "6153"
+        },
+        {
+          "gameObjectName": "Left section non-paintable",
+          "gameObjectPathId": "1663",
+          "meshFilterPathId": "6097"
+        },
+        {
+          "gameObjectName": "Non-paintable wall right",
+          "gameObjectPathId": "1820",
+          "meshFilterPathId": "6164"
+        },
+        {
+          "gameObjectName": "Paintable wall right",
+          "gameObjectPathId": "1821",
+          "meshFilterPathId": "6165"
+        },
+        {
+          "gameObjectName": "Right section",
+          "gameObjectPathId": "1668",
+          "meshFilterPathId": "6064"
+        },
+        {
+          "gameObjectName": "Right section",
+          "gameObjectPathId": "1219",
+          "meshFilterPathId": "6098"
+        }
+      ],
+      "name": "Interior wall right",
+      "normalCount": 48,
+      "pathId": "588",
+      "rawBytes": 3348,
+      "rawSha256": "0e4d1132ca79f6b3b8cd70f1d84a452f84d73001579ec8bf6b76f2d5d06e416c",
+      "sourceFile": "resources.assets",
+      "triangleCount": 28,
+      "uv0Count": 48,
+      "vertexCount": 48
+    },
+    {
+      "geometrySha256": "7a1f5ff5d02aa7277bfd6f49e12799a0be855084f8bbb94824d898c67212137f",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Grenade transform",
+          "gameObjectPathId": "3031",
+          "meshFilterPathId": "6545"
+        }
+      ],
+      "name": "Grenade tape",
+      "normalCount": 114,
+      "pathId": "589",
+      "rawBytes": 6328,
+      "rawSha256": "9c15917e3f07a4cfa7bc864864e3f871145c8d3e9359b3d921376d0445085a35",
+      "sourceFile": "resources.assets",
+      "triangleCount": 84,
+      "uv0Count": 114,
+      "vertexCount": 114
+    },
+    {
+      "geometrySha256": "6356d6011d92b3196d29c86fdd4d9f2df9f46a742633d41e852c2cd65630e7c6",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Gauze",
+          "gameObjectPathId": "2229",
+          "meshFilterPathId": "6221"
+        }
+      ],
+      "name": "Gauze",
+      "normalCount": 116,
+      "pathId": "590",
+      "rawBytes": 1640,
+      "rawSha256": "61c71d467e1378afabce0439b578be9f0edf6b2165a63ecb8fb32ab8c9a249bb",
+      "sourceFile": "resources.assets",
+      "triangleCount": 84,
+      "uv0Count": 116,
+      "vertexCount": 116
+    },
+    {
+      "geometrySha256": "f4bb05cc625c8948dcf2ad7b2bcb8dec02507c1d7f1f2a0d29205e1c514ccb89",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Plasticuffs",
+          "gameObjectPathId": "2464",
+          "meshFilterPathId": "6468"
+        },
+        {
+          "gameObjectName": "Plasticuffs",
+          "gameObjectPathId": "3333",
+          "meshFilterPathId": "6489"
+        },
+        {
+          "gameObjectName": "Plasticuffs",
+          "gameObjectPathId": "3005",
+          "meshFilterPathId": "6590"
+        },
+        {
+          "gameObjectName": "Plasticuffs",
+          "gameObjectPathId": "3279",
+          "meshFilterPathId": "6621"
+        }
+      ],
+      "name": "Plasticuffs",
+      "normalCount": 208,
+      "pathId": "591",
+      "rawBytes": 2312,
+      "rawSha256": "5a3e45b39b78aff7d2d7af0118952f49e0b725bfba6ce7274fa28854569d1a3a",
+      "sourceFile": "resources.assets",
+      "triangleCount": 176,
+      "uv0Count": 0,
+      "vertexCount": 208
+    },
+    {
+      "geometrySha256": "06d3413c5ae5b4cf7f6ddadddcfd16a360f09a4d8974cb4dc7ba1ca2591e130c",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "9x19mm FMJ",
+          "gameObjectPathId": "2650",
+          "meshFilterPathId": "6292"
+        },
+        {
+          "gameObjectName": "9x19mm JHP",
+          "gameObjectPathId": "2191",
+          "meshFilterPathId": "6190"
+        },
+        {
+          "gameObjectName": "9x19mm RIP",
+          "gameObjectPathId": "2548",
+          "meshFilterPathId": "6318"
+        },
+        {
+          "gameObjectName": "9x19mm XP",
+          "gameObjectPathId": "2355",
+          "meshFilterPathId": "6405"
+        }
+      ],
+      "name": "9x19mm casing hi",
+      "normalCount": 808,
+      "pathId": "592",
+      "rawBytes": 34028,
+      "rawSha256": "a61c8c8de62eab38a2ad31568a2bc57580c3eb12c31cb76d7109b1a5ebf70289",
+      "sourceFile": "resources.assets",
+      "triangleCount": 764,
+      "uv0Count": 808,
+      "vertexCount": 808
+    },
+    {
+      "geometrySha256": "d72eadc71fe0b1642a5202797eb1bb0c5cf0b7e1f5223409881a302f2c8325dc",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Wood entry hole",
+          "gameObjectPathId": "1618",
+          "meshFilterPathId": "6151"
+        }
+      ],
+      "name": "Wood entry hole",
+      "normalCount": 78,
+      "pathId": "593",
+      "rawBytes": 984,
+      "rawSha256": "71f6e44793620bf6fe9c7a287690829377ff3aaacc4790e6370cc18c0c64898b",
+      "sourceFile": "resources.assets",
+      "triangleCount": 30,
+      "uv0Count": 0,
+      "vertexCount": 78
+    },
+    {
+      "geometrySha256": "49da9662050cbf29d05f38cdc814985d19afc6513d52d395dc998295e68f2703",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "No ammunition",
+          "gameObjectPathId": "3249",
+          "meshFilterPathId": "6634"
+        }
+      ],
+      "name": "Cross",
+      "normalCount": 272,
+      "pathId": "594",
+      "rawBytes": 14532,
+      "rawSha256": "6d19a44f290147ac12cbe9a564ad9d3c61e903537ea71bc8c3e006910b4b355e",
+      "sourceFile": "resources.assets",
+      "triangleCount": 188,
+      "uv0Count": 272,
+      "vertexCount": 272
+    },
+    {
+      "geometrySha256": "ea9f860c23e7f744515fa790bec4536006f3798f67762738983cfe934bb2ced4",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "1m exterior middle wall",
+          "gameObjectPathId": "1941",
+          "meshFilterPathId": "6311"
+        }
+      ],
+      "name": "1m exterior middle wall",
+      "normalCount": 24,
+      "pathId": "595",
+      "rawBytes": 1396,
+      "rawSha256": "4b2143820df4ba3c3282d562c6111e017c1bd9a4bedad34371f2f2ce4caf3b4f",
+      "sourceFile": "resources.assets",
+      "triangleCount": 12,
+      "uv0Count": 0,
+      "vertexCount": 24
+    },
+    {
+      "geometrySha256": "bbdbc7e040abd2a58677812dfa79328f4f6fa4824cd46a176c6a814baa70772c",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "1m wall (non-ballistic)",
+          "gameObjectPathId": "1145",
+          "meshFilterPathId": "6137"
+        }
+      ],
+      "name": "Wall",
+      "normalCount": 72,
+      "pathId": "596",
+      "rawBytes": 4816,
+      "rawSha256": "d5de65748874afddfbea980a28beb4b653eb3750df4def583e5c31667b4edf28",
+      "sourceFile": "resources.assets",
+      "triangleCount": 44,
+      "uv0Count": 72,
+      "vertexCount": 72
+    },
+    {
+      "geometrySha256": "881e068f753d73be56d14f0de0b9e548a809856e8508e641f174ff399627847d",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "5.7x28mm FMJ",
+          "gameObjectPathId": "2883",
+          "meshFilterPathId": "6600"
+        },
+        {
+          "gameObjectName": "5.7x28mm JHP",
+          "gameObjectPathId": "2775",
+          "meshFilterPathId": "6677"
+        },
+        {
+          "gameObjectName": "5.7x28mm Subsonic",
+          "gameObjectPathId": "3492",
+          "meshFilterPathId": "6626"
+        }
+      ],
+      "name": "5.7x28mm casing hi",
+      "normalCount": 897,
+      "pathId": "597",
+      "rawBytes": 12400,
+      "rawSha256": "68e08d8f778242e4572cb8f76209075f3093ffe34ab7d67632066a299658316a",
+      "sourceFile": "resources.assets",
+      "triangleCount": 1024,
+      "uv0Count": 897,
+      "vertexCount": 897
+    },
+    {
+      "geometrySha256": "9b408e50c96c0f50bc8d219d6b18cbd9a5984bd4f47b43faa3f7cf483b3e43a5",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "1.5m backdrop exterior middle wall window",
+          "gameObjectPathId": "2615",
+          "meshFilterPathId": "6339"
+        },
+        {
+          "gameObjectName": "1.5m exterior middle wall window",
+          "gameObjectPathId": "2323",
+          "meshFilterPathId": "6326"
+        }
+      ],
+      "name": "1.5m prop wall with window",
+      "normalCount": 60,
+      "pathId": "598",
+      "rawBytes": 3440,
+      "rawSha256": "99b01c56e097014124221e2215a1bb24d3aeee45c125a2598691146d0ae3cad3",
+      "sourceFile": "resources.assets",
+      "triangleCount": 32,
+      "uv0Count": 60,
+      "vertexCount": 60
+    },
+    {
+      "geometrySha256": "b1ea4e9f0d78475efb4e628e5a443cdd7c5ecf83ff760e09d0e37067a38a756b",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Interior ceiling",
+          "gameObjectPathId": "1655",
+          "meshFilterPathId": "6072"
+        },
+        {
+          "gameObjectName": "Paintable ceiling",
+          "gameObjectPathId": "1656",
+          "meshFilterPathId": "6073"
+        }
+      ],
+      "name": "Ceiling",
+      "normalCount": 24,
+      "pathId": "599",
+      "rawBytes": 1616,
+      "rawSha256": "0ab8294d6fc5e17b9a1718874a61533e9f6faef4c90aef0fb92f4a1afe547a65",
+      "sourceFile": "resources.assets",
+      "triangleCount": 12,
+      "uv0Count": 24,
+      "vertexCount": 24
+    },
+    {
+      "geometrySha256": "ed42778339ff1539f4d36ca6f236405ad730a05bf57c49efcf2775b652fcba39",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Bullet stop",
+          "gameObjectPathId": "1814",
+          "meshFilterPathId": "6107"
+        }
+      ],
+      "name": "Cube",
+      "normalCount": 62,
+      "pathId": "600",
+      "rawBytes": 3560,
+      "rawSha256": "a1740e11363cf679561d379726d30e1fb407d4956a4aedbd2469e93e11ef3527",
+      "sourceFile": "resources.assets",
+      "triangleCount": 40,
+      "uv0Count": 62,
+      "vertexCount": 62
+    },
+    {
+      "geometrySha256": "8b60d3758cc6fefc1afb326dc5a35d96c3c73c88000c71622ace0f87c28d1480",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2227",
+          "meshFilterPathId": "6345"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2451",
+          "meshFilterPathId": "6305"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2452",
+          "meshFilterPathId": "6306"
+        }
+      ],
+      "name": "308 Winchester HEI",
+      "normalCount": 590,
+      "pathId": "601",
+      "rawBytes": 27376,
+      "rawSha256": "b2b450361996f46cc18d400d34d9a39c72246ee24b618693abffed97451ceacb",
+      "sourceFile": "resources.assets",
+      "triangleCount": 948,
+      "uv0Count": 590,
+      "vertexCount": 590
+    },
+    {
+      "geometrySha256": "0f552c90abad83700b62eeb6f408d11484c8d2aaef9b1e977ed1f00498404ced",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Gib skull chunk",
+          "gameObjectPathId": "3322",
+          "meshFilterPathId": "6581"
+        }
+      ],
+      "name": "Skull chunk",
+      "normalCount": 92,
+      "pathId": "602",
+      "rawBytes": 5200,
+      "rawSha256": "ef37c33165104aa4866b151c51d54b965ec8a7153fe7f98d101d532b91cbf531",
+      "sourceFile": "resources.assets",
+      "triangleCount": 72,
+      "uv0Count": 92,
+      "vertexCount": 92
+    },
+    {
+      "geometrySha256": "5b10a5c0cec0ff5871eac1481cf8ba2a94409956387f9122a8fd5d2a5bb7f63d",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "0.6m window",
+          "gameObjectPathId": "1540",
+          "meshFilterPathId": "6074"
+        },
+        {
+          "gameObjectName": "Window",
+          "gameObjectPathId": "1893",
+          "meshFilterPathId": "6228"
+        }
+      ],
+      "name": "Window frame 0.6m",
+      "normalCount": 82,
+      "pathId": "603",
+      "rawBytes": 4596,
+      "rawSha256": "45144e00aa8d3aa7919de24680882f652aa99f6a37c1df919cd54de66081499d",
+      "sourceFile": "resources.assets",
+      "triangleCount": 50,
+      "uv0Count": 82,
+      "vertexCount": 82
+    },
+    {
+      "geometrySha256": "90fc2b5a345f1ceb21f5d3ac63cbcb26fb050950ece8573e9eb2bd6db66a70aa",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "1m exterior bottom wall",
+          "gameObjectPathId": "1617",
+          "meshFilterPathId": "6103"
+        }
+      ],
+      "name": "Wall",
+      "normalCount": 79,
+      "pathId": "604",
+      "rawBytes": 1404,
+      "rawSha256": "93e44d70a3c86915dee9dd3aab7db727abf1506af294cea7679f9a38f7643fed",
+      "sourceFile": "resources.assets",
+      "triangleCount": 40,
+      "uv0Count": 79,
+      "vertexCount": 79
+    },
+    {
+      "geometrySha256": "aa97d417e2427b0210a801b9e3a4bbdfbd1aeda041c52752405dbafb71e66ed3",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2266",
+          "meshFilterPathId": "6255"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2592",
+          "meshFilterPathId": "6262"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2352",
+          "meshFilterPathId": "6271"
+        }
+      ],
+      "name": "45 ACP FMJ",
+      "normalCount": 420,
+      "pathId": "605",
+      "rawBytes": 19288,
+      "rawSha256": "5e7c0903f4d7eaca432e6a63255ed4c8d88e03e69744e57ffa87b2891cc0729e",
+      "sourceFile": "resources.assets",
+      "triangleCount": 636,
+      "uv0Count": 420,
+      "vertexCount": 420
+    },
+    {
+      "geometrySha256": "180880e539f045bb4ef5da2f0e653a6f7ead65f59c6092c4852ca1e7d657461f",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Casing .38 Special",
+          "gameObjectPathId": "2585",
+          "meshFilterPathId": "6430"
+        }
+      ],
+      "name": "38 Special casing low",
+      "normalCount": 42,
+      "pathId": "606",
+      "rawBytes": 2188,
+      "rawSha256": "5fa1449b44abfea15532ec70150308426626393e0f3856fd940efef8716f65c6",
+      "sourceFile": "resources.assets",
+      "triangleCount": 24,
+      "uv0Count": 0,
+      "vertexCount": 42
+    },
+    {
+      "geometrySha256": "dfec62963ffaa0fc618b9cc005489462a79b5b89350233dc85b28e6780b0ee89",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Rear wall top section",
+          "gameObjectPathId": "1784",
+          "meshFilterPathId": "6139"
+        }
+      ],
+      "name": "Wall top section",
+      "normalCount": 36,
+      "pathId": "607",
+      "rawBytes": 2580,
+      "rawSha256": "a623f2b085b10817833a4b7f585c0cb3e2a3dd862ea8ac621f4843b63dca98e7",
+      "sourceFile": "resources.assets",
+      "triangleCount": 20,
+      "uv0Count": 36,
+      "vertexCount": 36
+    },
+    {
+      "geometrySha256": "4be2cd421bb9a9e1f1729ba81e3820e1e86c25961cdbdb4289ad40915d271eae",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "4.6x30mm FMJ",
+          "gameObjectPathId": "2394",
+          "meshFilterPathId": "6439"
+        },
+        {
+          "gameObjectName": "4.6x30mm JHP",
+          "gameObjectPathId": "1975",
+          "meshFilterPathId": "6451"
+        }
+      ],
+      "name": "4.6x30mm casing hi",
+      "normalCount": 1090,
+      "pathId": "608",
+      "rawBytes": 46512,
+      "rawSha256": "868fa4cc4fb1abb780ee6438e392923436e1cc813c216264d2a6eada6a3940f0",
+      "sourceFile": "resources.assets",
+      "triangleCount": 1152,
+      "uv0Count": 1090,
+      "vertexCount": 1090
+    },
+    {
+      "geometrySha256": "61389fc4b323457ebf7ba3a89015c51603e0d490cb4aece52412081f1bfcaa41",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Casing 7.62x39mm",
+          "gameObjectPathId": "2336",
+          "meshFilterPathId": "6233"
+        }
+      ],
+      "name": "7.62x39mm casing",
+      "normalCount": 42,
+      "pathId": "609",
+      "rawBytes": 772,
+      "rawSha256": "29d0e7cfecd938b1d6eb7a4e6b993f8d592ca5e8ba61495db5183d08f1e825d9",
+      "sourceFile": "resources.assets",
+      "triangleCount": 52,
+      "uv0Count": 0,
+      "vertexCount": 42
+    },
+    {
+      "geometrySha256": "26c4788b06a0823ea76ebc76247fc4a9a012f6b2540c0b5c61fa72af172378eb",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Casing .308",
+          "gameObjectPathId": "2334",
+          "meshFilterPathId": "6231"
+        }
+      ],
+      "name": ".308 Winchester casing",
+      "normalCount": 42,
+      "pathId": "610",
+      "rawBytes": 780,
+      "rawSha256": "d8b2d8bd007dde96bb005abb75a5bc9fb868016fcf691029d24f515633106649",
+      "sourceFile": "resources.assets",
+      "triangleCount": 52,
+      "uv0Count": 0,
+      "vertexCount": 42
+    },
+    {
+      "geometrySha256": "c20de7b8372381bb5c9effad0d4fdde5df69631b7de0c212a819a7d4677abc91",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Gib flesh chunk",
+          "gameObjectPathId": "2858",
+          "meshFilterPathId": "6640"
+        }
+      ],
+      "name": "LowPolySphere",
+      "normalCount": 79,
+      "pathId": "611",
+      "rawBytes": 4820,
+      "rawSha256": "3f283239fb20f5de155f6cf1625f4fa923a41c0e83d36eb58c4aa01e37765769",
+      "sourceFile": "resources.assets",
+      "triangleCount": 112,
+      "uv0Count": 79,
+      "vertexCount": 79
+    },
+    {
+      "geometrySha256": "d72f1d93c809d8d9d823a9121ed5b4f0a65ad50bd030e22a4defd01acd04e71e",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Casing 5.56x45mm",
+          "gameObjectPathId": "2335",
+          "meshFilterPathId": "6232"
+        }
+      ],
+      "name": "5.56x45mm casing",
+      "normalCount": 54,
+      "pathId": "612",
+      "rawBytes": 880,
+      "rawSha256": "01c17eb82c51a5f2dfd47e5bf934351522c22a04c0ec31c199d43cc4d93231df",
+      "sourceFile": "resources.assets",
+      "triangleCount": 52,
+      "uv0Count": 54,
+      "vertexCount": 54
+    },
+    {
+      "geometrySha256": "09f049f83b6d48f11248b3c22912d2680da964a986717bdd13c3adaa7e0df288",
+      "meshFilterReferences": [],
+      "name": "Chunk",
+      "normalCount": 28,
+      "pathId": "613",
+      "rawBytes": 644,
+      "rawSha256": "ef62d99fde813a9d1b0654eb5971ce8d98d883b288a2a8e46b958d97f5ca92b9",
+      "sourceFile": "resources.assets",
+      "triangleCount": 16,
+      "uv0Count": 28,
+      "vertexCount": 28
+    },
+    {
+      "geometrySha256": "115c7c8815106024762f20e9b679e627aa397adbadb078344408eba843a61081",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Casing 12 Ga blue",
+          "gameObjectPathId": "1520",
+          "meshFilterPathId": "6166"
+        },
+        {
+          "gameObjectName": "Casing 12 Ga red",
+          "gameObjectPathId": "1521",
+          "meshFilterPathId": "6167"
+        },
+        {
+          "gameObjectName": "Casing 12 Ga white",
+          "gameObjectPathId": "1522",
+          "meshFilterPathId": "6168"
+        }
+      ],
+      "name": "12ga casing",
+      "normalCount": 80,
+      "pathId": "614",
+      "rawBytes": 1060,
+      "rawSha256": "6eea95784a189dbb53d43bba72669626bab4cca6c24e919f3d4b371dc803a2ae",
+      "sourceFile": "resources.assets",
+      "triangleCount": 44,
+      "uv0Count": 80,
+      "vertexCount": 80
+    },
+    {
+      "geometrySha256": "17d719e4c413ac94b74ec869f3a3d8f9fd1040853295f127323ed4dc265be46b",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Casing .357 Magnum",
+          "gameObjectPathId": "2584",
+          "meshFilterPathId": "6429"
+        }
+      ],
+      "name": "357 Magnum casing low",
+      "normalCount": 42,
+      "pathId": "615",
+      "rawBytes": 716,
+      "rawSha256": "74ca1d1791c14ba399906abf93fb2885f3be66e8940e21989268f14a71569d81",
+      "sourceFile": "resources.assets",
+      "triangleCount": 24,
+      "uv0Count": 0,
+      "vertexCount": 42
+    },
+    {
+      "geometrySha256": "8511d3089a9b4700cf4b37fcb7b5b94e2761871633e983f67b549b5a6987d5e0",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "7.62x39mm FMJ",
+          "gameObjectPathId": "2473",
+          "meshFilterPathId": "6230"
+        },
+        {
+          "gameObjectName": "7.62x39mm HEI",
+          "gameObjectPathId": "3018",
+          "meshFilterPathId": "6544"
+        },
+        {
+          "gameObjectName": "7.62x39mm JHP",
+          "gameObjectPathId": "1907",
+          "meshFilterPathId": "6423"
+        }
+      ],
+      "name": "7.62x39mm casing hi",
+      "normalCount": 1016,
+      "pathId": "616",
+      "rawBytes": 43056,
+      "rawSha256": "2b8e3a99b33e42fa9a48e0f84a8e1f3f666cd1bd62dc02d8cddc8b79c788c7e0",
+      "sourceFile": "resources.assets",
+      "triangleCount": 1020,
+      "uv0Count": 1016,
+      "vertexCount": 1016
+    },
+    {
+      "geometrySha256": "3440230cd1f20844e90f2d593bf8f440ddaaa05c31984a977abade34e92fa0ae",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Fragmentation grenade spoon",
+          "gameObjectPathId": "1134",
+          "meshFilterPathId": "6052"
+        },
+        {
+          "gameObjectName": "Spoon",
+          "gameObjectPathId": "3456",
+          "meshFilterPathId": "6638"
+        }
+      ],
+      "name": "Fragmentation grenade spoon",
+      "normalCount": 90,
+      "pathId": "617",
+      "rawBytes": 1344,
+      "rawSha256": "96340e07340b1c1388686f6a94adcf038d19ec8d3364143320509d480376c84e",
+      "sourceFile": "resources.assets",
+      "triangleCount": 56,
+      "uv0Count": 90,
+      "vertexCount": 90
+    },
+    {
+      "geometrySha256": "4b8b37ae73afbc848879fd339470c10b4e8032f63820e1a4287588ed23c1725e",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "10mm Auto FMJ",
+          "gameObjectPathId": "2195",
+          "meshFilterPathId": "6297"
+        },
+        {
+          "gameObjectName": "10mm Auto JHP",
+          "gameObjectPathId": "2196",
+          "meshFilterPathId": "6298"
+        }
+      ],
+      "name": "Casing 10mm Auto hi poly",
+      "normalCount": 880,
+      "pathId": "618",
+      "rawBytes": 37036,
+      "rawSha256": "a843111b0dd43fe781e1c2a9a84f90eadfbf5cb730b9771c3c82b406e833d2bc",
+      "sourceFile": "resources.assets",
+      "triangleCount": 832,
+      "uv0Count": 880,
+      "vertexCount": 880
+    },
+    {
+      "geometrySha256": "c2c6ac3bfd2378f3bab39013481680fcf53a4bdedef613d8140e260d6d65eed6",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2161",
+          "meshFilterPathId": "6359"
+        },
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2162",
+          "meshFilterPathId": "6360"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2598",
+          "meshFilterPathId": "6273"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2331",
+          "meshFilterPathId": "6407"
+        }
+      ],
+      "name": "5.56mm FMJ",
+      "normalCount": 712,
+      "pathId": "619",
+      "rawBytes": 32872,
+      "rawSha256": "c0c01b3d72b3b3ca2adb6a49c76472bedf27c7d4f9c71534c54a800c10c10bf0",
+      "sourceFile": "resources.assets",
+      "triangleCount": 1148,
+      "uv0Count": 712,
+      "vertexCount": 712
+    },
+    {
+      "geometrySha256": "12ff3e60c58932e9535ba3690454d7442b27dec5165c2474721f08a3d2f6b075",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Explosive transform",
+          "gameObjectPathId": "3069",
+          "meshFilterPathId": "6484"
+        }
+      ],
+      "name": "Plastic explosive tape",
+      "normalCount": 112,
+      "pathId": "620",
+      "rawBytes": 6336,
+      "rawSha256": "6b0ee7a0779160ab082a8b107570df2038653b171f9a8c9ebfbde5341efa29a6",
+      "sourceFile": "resources.assets",
+      "triangleCount": 99,
+      "uv0Count": 112,
+      "vertexCount": 112
+    },
+    {
+      "geometrySha256": "b723186e65140b3cda125801823c6148cbaaed0789f175741e1792362af75c20",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Left section",
+          "gameObjectPathId": "1758",
+          "meshFilterPathId": "6094"
+        },
+        {
+          "gameObjectName": "Left section",
+          "gameObjectPathId": "1609",
+          "meshFilterPathId": "6105"
+        },
+        {
+          "gameObjectName": "Left section non-paintable",
+          "gameObjectPathId": "1287",
+          "meshFilterPathId": "6159"
+        },
+        {
+          "gameObjectName": "Non-paintable wall left",
+          "gameObjectPathId": "1704",
+          "meshFilterPathId": "6143"
+        },
+        {
+          "gameObjectName": "Paintable wall left",
+          "gameObjectPathId": "1705",
+          "meshFilterPathId": "6144"
+        },
+        {
+          "gameObjectName": "Right section",
+          "gameObjectPathId": "1228",
+          "meshFilterPathId": "6095"
+        },
+        {
+          "gameObjectName": "Right section",
+          "gameObjectPathId": "1718",
+          "meshFilterPathId": "6114"
+        }
+      ],
+      "name": "Interior wall left",
+      "normalCount": 48,
+      "pathId": "621",
+      "rawBytes": 3348,
+      "rawSha256": "dc8a59a5c3b0552e278a5e191581b2ae439d6fed245d309cc72f56be47cfd41c",
+      "sourceFile": "resources.assets",
+      "triangleCount": 28,
+      "uv0Count": 48,
+      "vertexCount": 48
+    },
+    {
+      "geometrySha256": "1f3698f48f617d65422ea3db0023698f501b92fb21cb0bc0966b437fe2dc9516",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2165",
+          "meshFilterPathId": "6363"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2439",
+          "meshFilterPathId": "6380"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2964",
+          "meshFilterPathId": "6536"
+        }
+      ],
+      "name": "5.7mm Hollow",
+      "normalCount": 527,
+      "pathId": "622",
+      "rawBytes": 7800,
+      "rawSha256": "4dfc70a4890ed62c8e6ef5535e5bc130d169d09469cd9eb8b92b35c673f555b4",
+      "sourceFile": "resources.assets",
+      "triangleCount": 700,
+      "uv0Count": 527,
+      "vertexCount": 527
+    },
+    {
+      "geometrySha256": "fbc475f1e462b1266cf9c99d754ca82cec56fdb065faf2f60da21682a5312d6b",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2358",
+          "meshFilterPathId": "6469"
+        },
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2359",
+          "meshFilterPathId": "6470"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2415",
+          "meshFilterPathId": "6458"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2419",
+          "meshFilterPathId": "6462"
+        }
+      ],
+      "name": "308 Winchester FMJ",
+      "normalCount": 589,
+      "pathId": "623",
+      "rawBytes": 27252,
+      "rawSha256": "58832bc40426ec865552bd9fe77aef4e58b0e6c81a954af5b7d19bcdb8642c80",
+      "sourceFile": "resources.assets",
+      "triangleCount": 948,
+      "uv0Count": 589,
+      "vertexCount": 589
+    },
+    {
+      "geometrySha256": "c44ed1407e47dcb4eb34832c607fa198027815b7deaf29fc3b6d15c2ee899e17",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "45 ACP FMJ",
+          "gameObjectPathId": "2179",
+          "meshFilterPathId": "6180"
+        },
+        {
+          "gameObjectName": "45 ACP JHP",
+          "gameObjectPathId": "2461",
+          "meshFilterPathId": "6251"
+        },
+        {
+          "gameObjectName": "45 ACP RIP",
+          "gameObjectPathId": "2462",
+          "meshFilterPathId": "6252"
+        },
+        {
+          "gameObjectName": "45 ACP XP",
+          "gameObjectPathId": "2609",
+          "meshFilterPathId": "6425"
+        }
+      ],
+      "name": "45 ACP casing hi",
+      "normalCount": 808,
+      "pathId": "624",
+      "rawBytes": 34028,
+      "rawSha256": "4e3df6bc67dc8b8da970b9dcb597996a60b50108dabff3eb73d885204712fc9e",
+      "sourceFile": "resources.assets",
+      "triangleCount": 764,
+      "uv0Count": 808,
+      "vertexCount": 808
+    },
+    {
+      "geometrySha256": "96e5e768c03bffd705fe5385b66d01870d924ef2eff5bfc79aef044f6d71a779",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "38 Special FMJ",
+          "gameObjectPathId": "2198",
+          "meshFilterPathId": "6300"
+        },
+        {
+          "gameObjectName": "38 Special JHP",
+          "gameObjectPathId": "2716",
+          "meshFilterPathId": "6556"
+        },
+        {
+          "gameObjectName": "38 Special SP",
+          "gameObjectPathId": "2710",
+          "meshFilterPathId": "6488"
+        }
+      ],
+      "name": "38 Special casing high",
+      "normalCount": 1698,
+      "pathId": "625",
+      "rawBytes": 70684,
+      "rawSha256": "f66ba29e96c03c74fade2f3b195415e7bd8ad2d82aac7d04416a34d666758558",
+      "sourceFile": "resources.assets",
+      "triangleCount": 1532,
+      "uv0Count": 1698,
+      "vertexCount": 1698
+    },
+    {
+      "geometrySha256": "0ea201b89d11c5590662050231a06ff1476725547270436b7d1f28f5634227a8",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2154",
+          "meshFilterPathId": "6295"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2342",
+          "meshFilterPathId": "6453"
+        }
+      ],
+      "name": "4.6mm JHP",
+      "normalCount": 745,
+      "pathId": "626",
+      "rawBytes": 33676,
+      "rawSha256": "d9fdd7fb79b2d6f9496fde199515e000638776d34bea3e8a72f77908257c437c",
+      "sourceFile": "resources.assets",
+      "triangleCount": 1084,
+      "uv0Count": 745,
+      "vertexCount": 745
+    },
+    {
+      "geometrySha256": "5eb3f0ade529913f2f58ee5f4f6546aa99d0912a63eabb633554af070d26aebe",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "357 Magnum FMJ",
+          "gameObjectPathId": "2197",
+          "meshFilterPathId": "6299"
+        },
+        {
+          "gameObjectName": "357 Magnum JHP",
+          "gameObjectPathId": "1963",
+          "meshFilterPathId": "6385"
+        },
+        {
+          "gameObjectName": "357 Magnum SP",
+          "gameObjectPathId": "1983",
+          "meshFilterPathId": "6466"
+        }
+      ],
+      "name": "357 Magnum casing high",
+      "normalCount": 1700,
+      "pathId": "627",
+      "rawBytes": 70756,
+      "rawSha256": "8a1bb9dda8521dbe50a2e87f81f9e4d04d4d0b83c740dc93656d881e71ac2b91",
+      "sourceFile": "resources.assets",
+      "triangleCount": 1532,
+      "uv0Count": 1700,
+      "vertexCount": 1700
+    },
+    {
+      "geometrySha256": "923b45eecbdefed4eab0359e49a740e858d191a13e38f500045df885db332008",
+      "meshFilterReferences": [],
+      "name": "Splinter",
+      "normalCount": 12,
+      "pathId": "628",
+      "rawBytes": 516,
+      "rawSha256": "4413fb5ef09d978fdc53307f2aa34273b0bef949797021713faae016af301d5f",
+      "sourceFile": "resources.assets",
+      "triangleCount": 4,
+      "uv0Count": 0,
+      "vertexCount": 12
+    },
+    {
+      "geometrySha256": "ad110b7b26aa39c6e93882a5ab3f4cd8cb2581c2ae61172142e09d3a320ceeaf",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Window",
+          "gameObjectPathId": "1852",
+          "meshFilterPathId": "6077"
+        },
+        {
+          "gameObjectName": "Window",
+          "gameObjectPathId": "2354",
+          "meshFilterPathId": "6261"
+        }
+      ],
+      "name": "Window 0.6m",
+      "normalCount": 82,
+      "pathId": "629",
+      "rawBytes": 4596,
+      "rawSha256": "9e58cbce7e03e7fcb39ad29e83427d540f66f1b2b3d6f7fbb3b3226cb73294a6",
+      "sourceFile": "resources.assets",
+      "triangleCount": 51,
+      "uv0Count": 82,
+      "vertexCount": 82
+    },
+    {
+      "geometrySha256": "07105ebc13b8ecbf4b55e3847e5b9933c33ac658a3823a68ee0d9974b1a69338",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Fragment 1",
+          "gameObjectPathId": "1130",
+          "meshFilterPathId": "6049"
+        }
+      ],
+      "name": "Fragment 1",
+      "normalCount": 29,
+      "pathId": "630",
+      "rawBytes": 660,
+      "rawSha256": "d0be639140c07b9c1c881e0147cf7b7daa1b95500e52572315f048e5f69b9594",
+      "sourceFile": "resources.assets",
+      "triangleCount": 54,
+      "uv0Count": 0,
+      "vertexCount": 29
+    },
+    {
+      "geometrySha256": "afba22342ac29fff4fb664fdfeebe75218bd81afb81a98f5bb73b5cd3762e01e",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Grenade fragment 3",
+          "gameObjectPathId": "1138",
+          "meshFilterPathId": "6055"
+        }
+      ],
+      "name": "Grenade fragment 3",
+      "normalCount": 74,
+      "pathId": "631",
+      "rawBytes": 1160,
+      "rawSha256": "e86d538463e8159e3fc0229f60a93fecc4bc04b0eec1e1eb5172f62df04588da",
+      "sourceFile": "resources.assets",
+      "triangleCount": 44,
+      "uv0Count": 74,
+      "vertexCount": 74
+    },
+    {
+      "geometrySha256": "4f179603daac18db8413d11573f6092b3898281a07b90da4a1d166110b40095f",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2267",
+          "meshFilterPathId": "6256"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2593",
+          "meshFilterPathId": "6263"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2616",
+          "meshFilterPathId": "6322"
+        }
+      ],
+      "name": "10mm Auto FMJ",
+      "normalCount": 317,
+      "pathId": "632",
+      "rawBytes": 14432,
+      "rawSha256": "922f3c75ac038f481c6920274334b455640c08bb5b61af2b99b1f3e1958d3ebe",
+      "sourceFile": "resources.assets",
+      "triangleCount": 444,
+      "uv0Count": 317,
+      "vertexCount": 317
+    },
+    {
+      "geometrySha256": "0200c453dff271656cc567dfb1834e36c27f20bfa9e350bbdce47b5d83d6857d",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2008",
+          "meshFilterPathId": "6174"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "1942",
+          "meshFilterPathId": "6222"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2562",
+          "meshFilterPathId": "6253"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2524",
+          "meshFilterPathId": "6302"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2170",
+          "meshFilterPathId": "6308"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2489",
+          "meshFilterPathId": "6337"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2490",
+          "meshFilterPathId": "6338"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "1995",
+          "meshFilterPathId": "6354"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2077",
+          "meshFilterPathId": "6409"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2979",
+          "meshFilterPathId": "6529"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2746",
+          "meshFilterPathId": "6612"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2983",
+          "meshFilterPathId": "6654"
+        }
+      ],
+      "name": "Intact boxer small rifle primer",
+      "normalCount": 94,
+      "pathId": "633",
+      "rawBytes": 5436,
+      "rawSha256": "381e71c4ccca8869e6d2157edc6e56bdcebe0342ba3be330ac6e80935f90c029",
+      "sourceFile": "resources.assets",
+      "triangleCount": 92,
+      "uv0Count": 94,
+      "vertexCount": 94
+    },
+    {
+      "geometrySha256": "11324dda3b0523791b9c2403325ddf29d55a204277ac20dc08dcdf8c1d7d1f4d",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2382",
+          "meshFilterPathId": "6341"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2372",
+          "meshFilterPathId": "6319"
+        }
+      ],
+      "name": "5.56mm JHP",
+      "normalCount": 830,
+      "pathId": "634",
+      "rawBytes": 37504,
+      "rawSha256": "ba3cc10873c4899789be1227d2c1d03f88a659d698af550831592c349c3e37bc",
+      "sourceFile": "resources.assets",
+      "triangleCount": 1212,
+      "uv0Count": 830,
+      "vertexCount": 830
+    },
+    {
+      "geometrySha256": "3ba094a90cde21b023c45226eeef7d93ba3c70237f380c051a14e8e06c2513ef",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Plastic explosive",
+          "gameObjectPathId": "3440",
+          "meshFilterPathId": "6531"
+        }
+      ],
+      "name": "Plastic explosive",
+      "normalCount": 122,
+      "pathId": "635",
+      "rawBytes": 7164,
+      "rawSha256": "bdd21bfc5d7f3560c44b0355fccdd3fdf1181da707f869270cbf6b319e9b2180",
+      "sourceFile": "resources.assets",
+      "triangleCount": 158,
+      "uv0Count": 122,
+      "vertexCount": 122
+    },
+    {
+      "geometrySha256": "a7b619a98745d051f4673a6eafc47be90535f459bf25fafda3dca9849d9d382b",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2164",
+          "meshFilterPathId": "6362"
+        },
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2166",
+          "meshFilterPathId": "6364"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2749",
+          "meshFilterPathId": "6537"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "3197",
+          "meshFilterPathId": "6585"
+        }
+      ],
+      "name": "5.7mm Painted",
+      "normalCount": 465,
+      "pathId": "636",
+      "rawBytes": 7020,
+      "rawSha256": "94e1c7be567e4d3b97884b28e2644884505e948f4bfe88f3c28f154bc867176a",
+      "sourceFile": "resources.assets",
+      "triangleCount": 700,
+      "uv0Count": 465,
+      "vertexCount": 465
+    },
+    {
+      "geometrySha256": "7ec99aa446a455cf8c59471d22849972ed390025afc641c0e7ff7e55d7c22c4d",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2059",
+          "meshFilterPathId": "6250"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2416",
+          "meshFilterPathId": "6459"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2420",
+          "meshFilterPathId": "6463"
+        }
+      ],
+      "name": "308 Winchester JHP",
+      "normalCount": 659,
+      "pathId": "637",
+      "rawBytes": 30084,
+      "rawSha256": "419ec0fceb3cfd270fc6dfc0ae0a0ee6174c7e793bdcaf647ef2917a45bb5d18",
+      "sourceFile": "resources.assets",
+      "triangleCount": 1000,
+      "uv0Count": 659,
+      "vertexCount": 659
+    },
+    {
+      "geometrySha256": "43d7852429adf758fa5ce10b0faa5c9ce411e049457068285a0e44bdba2a4b91",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2063",
+          "meshFilterPathId": "6218"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2053",
+          "meshFilterPathId": "6375"
+        }
+      ],
+      "name": "45 ACP JHP",
+      "normalCount": 268,
+      "pathId": "638",
+      "rawBytes": 15496,
+      "rawSha256": "6c6e6b783dd8c16323f26fcf6bcc84f31f68c833f2ddefbedb349fabd9eab055",
+      "sourceFile": "resources.assets",
+      "triangleCount": 380,
+      "uv0Count": 268,
+      "vertexCount": 268
+    },
+    {
+      "geometrySha256": "a4ad89351b90cc4e4c0cec9915188f6b5bef23ce7dd686c78915068fd51bb8c9",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2052",
+          "meshFilterPathId": "6432"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "1965",
+          "meshFilterPathId": "6282"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "1966",
+          "meshFilterPathId": "6283"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2618",
+          "meshFilterPathId": "6324"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2619",
+          "meshFilterPathId": "6325"
+        }
+      ],
+      "name": "357 Magnum FMJ",
+      "normalCount": 316,
+      "pathId": "639",
+      "rawBytes": 14396,
+      "rawSha256": "d47f886f9459d9d938af4e72d59318f151590decbb89fd51f87ef9756e46b8a5",
+      "sourceFile": "resources.assets",
+      "triangleCount": 444,
+      "uv0Count": 316,
+      "vertexCount": 316
+    },
+    {
+      "geometrySha256": "2bd8d811514d980eed7b94adf2b4da25904104d28eb8af649b1a2337f6930acb",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "HE grenade",
+          "gameObjectPathId": "1707",
+          "meshFilterPathId": "6071"
+        },
+        {
+          "gameObjectName": "Stun grenade",
+          "gameObjectPathId": "2514",
+          "meshFilterPathId": "6336"
+        }
+      ],
+      "name": "Stun grenade can",
+      "normalCount": 178,
+      "pathId": "640",
+      "rawBytes": 2264,
+      "rawSha256": "480a8122dd4852b46bde550c5c0774bce89986d43b5aa9def32ae947479e6c15",
+      "sourceFile": "resources.assets",
+      "triangleCount": 92,
+      "uv0Count": 178,
+      "vertexCount": 178
+    },
+    {
+      "geometrySha256": "57de62561daaa3de77ac1a69d2afb8419911a9215268469be70ce9340f878499",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2233",
+          "meshFilterPathId": "6313"
+        },
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2234",
+          "meshFilterPathId": "6314"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2207",
+          "meshFilterPathId": "6223"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2332",
+          "meshFilterPathId": "6408"
+        }
+      ],
+      "name": "7.62mm FMJ",
+      "normalCount": 359,
+      "pathId": "641",
+      "rawBytes": 16336,
+      "rawSha256": "87897403ea1d939f81bc2057ee96350a97a724196db300f6fda0c9effe0666a4",
+      "sourceFile": "resources.assets",
+      "triangleCount": 510,
+      "uv0Count": 359,
+      "vertexCount": 359
+    },
+    {
+      "geometrySha256": "a705c248d9a128672808844d6380f7df6dfd23d492310108c73aa3e5b5e52bd6",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Grenade fragment 2",
+          "gameObjectPathId": "1137",
+          "meshFilterPathId": "6054"
+        }
+      ],
+      "name": "Grenade fragment 2",
+      "normalCount": 103,
+      "pathId": "642",
+      "rawBytes": 1488,
+      "rawSha256": "bfb4ceff74aab7491dd695aa1e5c024dbc0ccb875f2e92dda4fba972513b3f7f",
+      "sourceFile": "resources.assets",
+      "triangleCount": 66,
+      "uv0Count": 103,
+      "vertexCount": 103
+    },
+    {
+      "geometrySha256": "e15b1d94c09de1f18af00adc82f0688f57dc9b7b52fa330c15332feee2e54c6f",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2080",
+          "meshFilterPathId": "6210"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2617",
+          "meshFilterPathId": "6323"
+        }
+      ],
+      "name": "10mm Auto JHP",
+      "normalCount": 353,
+      "pathId": "643",
+      "rawBytes": 16156,
+      "rawSha256": "7f1ffe6c48db8b733bf5fd74a6a5ceeb3d4d7bcd68a8b8f07a10ca3b89471c56",
+      "sourceFile": "resources.assets",
+      "triangleCount": 508,
+      "uv0Count": 353,
+      "vertexCount": 353
+    },
+    {
+      "geometrySha256": "9bea8b3b096d04d7943c92ea4ab83d9fa1f8c3defa75b752bbd0afb9d1c5bb9c",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2039",
+          "meshFilterPathId": "6182"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2051",
+          "meshFilterPathId": "6185"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "1909",
+          "meshFilterPathId": "6285"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "1910",
+          "meshFilterPathId": "6286"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2638",
+          "meshFilterPathId": "6312"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2399",
+          "meshFilterPathId": "6332"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "1924",
+          "meshFilterPathId": "6350"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2583",
+          "meshFilterPathId": "6351"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2203",
+          "meshFilterPathId": "6455"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "3014",
+          "meshFilterPathId": "6507"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "3386",
+          "meshFilterPathId": "6624"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "3167",
+          "meshFilterPathId": "6670"
+        }
+      ],
+      "name": "Struck boxer small rifle primer",
+      "normalCount": 164,
+      "pathId": "644",
+      "rawBytes": 9180,
+      "rawSha256": "386fe8d37753988006a45735293767b75fb570291c49b657919a38c890b04177",
+      "sourceFile": "resources.assets",
+      "triangleCount": 156,
+      "uv0Count": 164,
+      "vertexCount": 164
+    },
+    {
+      "geometrySha256": "48c5828634dae7ac8c22aa6f2e8e49f32b65e125430369bd1c9939d4b457896b",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2163",
+          "meshFilterPathId": "6361"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2373",
+          "meshFilterPathId": "6320"
+        }
+      ],
+      "name": "5.56mm Tipped",
+      "normalCount": 676,
+      "pathId": "645",
+      "rawBytes": 31240,
+      "rawSha256": "8761b950beb34ff716ad7f3fea93f43a27ebb056386b1432f12bb35fc3c18d02",
+      "sourceFile": "resources.assets",
+      "triangleCount": 1084,
+      "uv0Count": 676,
+      "vertexCount": 676
+    },
+    {
+      "geometrySha256": "503b03aa23265006b0da65e42b213e4d87f6d88add595b87893cf3c12aca4c21",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "1890",
+          "meshFilterPathId": "6289"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2061",
+          "meshFilterPathId": "6206"
+        }
+      ],
+      "name": "9mm RIP",
+      "normalCount": 555,
+      "pathId": "646",
+      "rawBytes": 22404,
+      "rawSha256": "bb796a1aef42f6d83b6d24d3c045580ad91f8e64a3e94627442ec4531c769dc3",
+      "sourceFile": "resources.assets",
+      "triangleCount": 346,
+      "uv0Count": 555,
+      "vertexCount": 555
+    },
+    {
+      "geometrySha256": "56ce924ea0071a905ccb2f904788af69ef3d007c4790c43a01bfc5319a45c67c",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2160",
+          "meshFilterPathId": "6267"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "3260",
+          "meshFilterPathId": "6660"
+        }
+      ],
+      "name": "12 ga rifled slug",
+      "normalCount": 840,
+      "pathId": "647",
+      "rawBytes": 33648,
+      "rawSha256": "249fbe6e8879b9831ab32df0028d73d8724b8c65af771697166d9087f862de83",
+      "sourceFile": "resources.assets",
+      "triangleCount": 508,
+      "uv0Count": 840,
+      "vertexCount": 840
+    },
+    {
+      "geometrySha256": "f1b14332bcd415ea8d8b84a5c515d9dc785a55bbbcc762e47a1ae13d8c8b38e3",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Casing 5.7x28mm",
+          "gameObjectPathId": "1558",
+          "meshFilterPathId": "6083"
+        }
+      ],
+      "name": "5.7x28mm casing lo",
+      "normalCount": 36,
+      "pathId": "648",
+      "rawBytes": 716,
+      "rawSha256": "c9cfa16f1d03e4d8b76c2c35c9a2c96bb197350448898a9507ef23677d51c90b",
+      "sourceFile": "resources.assets",
+      "triangleCount": 44,
+      "uv0Count": 0,
+      "vertexCount": 36
+    },
+    {
+      "geometrySha256": "21d3d9c2dc56526c62b4a4987492dfbd781b9f89b645a66fabae3d8a500b7451",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "1.5m exterior bottom wall window",
+          "gameObjectPathId": "2201",
+          "meshFilterPathId": "6301"
+        }
+      ],
+      "name": "1.5m wall with window",
+      "normalCount": 106,
+      "pathId": "649",
+      "rawBytes": 6044,
+      "rawSha256": "fd98ae510c6924c99fc5b1e9d972aaab8904bce20fd6f142cfac82d808ce3903",
+      "sourceFile": "resources.assets",
+      "triangleCount": 62,
+      "uv0Count": 106,
+      "vertexCount": 106
+    },
+    {
+      "geometrySha256": "c6a31546c13acf3b04f2a925c11dd76ac7fcf23d8d69c4d5fb4bfe62575c15cd",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2236",
+          "meshFilterPathId": "6330"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2330",
+          "meshFilterPathId": "6406"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2417",
+          "meshFilterPathId": "6460"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2421",
+          "meshFilterPathId": "6464"
+        }
+      ],
+      "name": "308 Winchester SP",
+      "normalCount": 618,
+      "pathId": "650",
+      "rawBytes": 28436,
+      "rawSha256": "fc378b0cac4ecea1d5aaa4b1bf8dffa49f22579093046d3863d114472fc0b43c",
+      "sourceFile": "resources.assets",
+      "triangleCount": 964,
+      "uv0Count": 618,
+      "vertexCount": 618
+    },
+    {
+      "geometrySha256": "f401c69cf5fcbdccd31079418c7494092d7386255804ff0b7491eacef1fec8c8",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2064",
+          "meshFilterPathId": "6219"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2054",
+          "meshFilterPathId": "6376"
+        }
+      ],
+      "name": "45 ACP RIP",
+      "normalCount": 541,
+      "pathId": "651",
+      "rawBytes": 21904,
+      "rawSha256": "283f22084d909924f4dae2d73c6dcfb716f7649e5a71fa7ac1538ff0cdbf1036",
+      "sourceFile": "resources.assets",
+      "triangleCount": 346,
+      "uv0Count": 541,
+      "vertexCount": 541
+    },
+    {
+      "geometrySha256": "8bbb7d800970757b5623a96980f2b304ebf42622a0de4162407cf1d23141dcb7",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2312",
+          "meshFilterPathId": "6277"
+        },
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2313",
+          "meshFilterPathId": "6278"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2611",
+          "meshFilterPathId": "6340"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2438",
+          "meshFilterPathId": "6379"
+        }
+      ],
+      "name": "4.6mm FMJ",
+      "normalCount": 712,
+      "pathId": "652",
+      "rawBytes": 32872,
+      "rawSha256": "db2c325c974f7a3d7a8892fd99e446f72529a931647157237da118453d75aae0",
+      "sourceFile": "resources.assets",
+      "triangleCount": 1148,
+      "uv0Count": 712,
+      "vertexCount": 712
+    },
+    {
+      "geometrySha256": "89b02069ea8101102b56f31b770cf98b2c2c702f1cf17bbfd05833cd6a73b67d",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2079",
+          "meshFilterPathId": "6209"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2190",
+          "meshFilterPathId": "6434"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2807",
+          "meshFilterPathId": "6602"
+        }
+      ],
+      "name": "357 Magnum JHP",
+      "normalCount": 409,
+      "pathId": "653",
+      "rawBytes": 18172,
+      "rawSha256": "6d6084fbe236dc2846b6b7ec9bc4b846383b95181a8c91a124491c17b7adf155",
+      "sourceFile": "resources.assets",
+      "triangleCount": 508,
+      "uv0Count": 409,
+      "vertexCount": 409
+    },
+    {
+      "geometrySha256": "68951569fa5728ddc7fd9e06a175efd8930d49a4451a28888770787f87e0ac6b",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Pin",
+          "gameObjectPathId": "2907",
+          "meshFilterPathId": "6580"
+        },
+        {
+          "gameObjectName": "Pin",
+          "gameObjectPathId": "2731",
+          "meshFilterPathId": "6619"
+        }
+      ],
+      "name": "Grenade pin",
+      "normalCount": 16,
+      "pathId": "654",
+      "rawBytes": 484,
+      "rawSha256": "ff033ba627c939323acd8db1c99e34829d10a938575b88d1368d38de45eaa244",
+      "sourceFile": "resources.assets",
+      "triangleCount": 12,
+      "uv0Count": 0,
+      "vertexCount": 16
+    },
+    {
+      "geometrySha256": "9b669eab5dd43b38c9776bf50bd55e66bfe83edc2d6f80e6d81db022d2a77537",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2470",
+          "meshFilterPathId": "6443"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2491",
+          "meshFilterPathId": "6472"
+        }
+      ],
+      "name": "7.62mm JHP",
+      "normalCount": 467,
+      "pathId": "655",
+      "rawBytes": 20764,
+      "rawSha256": "97650a5d736062c72d960f8c3366dcfbcc4d5709e43ec55d84bc4529d664e31c",
+      "sourceFile": "resources.assets",
+      "triangleCount": 600,
+      "uv0Count": 467,
+      "vertexCount": 467
+    },
+    {
+      "geometrySha256": "36ad0fd873b50cf77bb96d6207c3ae898ec6e67078ea5cac86b4d98144aa68db",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Grenade fragment 1",
+          "gameObjectPathId": "1136",
+          "meshFilterPathId": "6053"
+        }
+      ],
+      "name": "Grenade fragment 1",
+      "normalCount": 120,
+      "pathId": "656",
+      "rawBytes": 1684,
+      "rawSha256": "ccac53c612c196fe2d5e1b9b6c2250e8a684eab0b7e4758b094a83aadb58036a",
+      "sourceFile": "resources.assets",
+      "triangleCount": 84,
+      "uv0Count": 120,
+      "vertexCount": 120
+    },
+    {
+      "geometrySha256": "4a266600b46ac14c4bf283cb9bec07c71b872cf9a481597d614f4e964ed1631f",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "1977",
+          "meshFilterPathId": "6175"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "1921",
+          "meshFilterPathId": "6187"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "1922",
+          "meshFilterPathId": "6188"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2028",
+          "meshFilterPathId": "6212"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "1993",
+          "meshFilterPathId": "6214"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "1998",
+          "meshFilterPathId": "6268"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2092",
+          "meshFilterPathId": "6316"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2093",
+          "meshFilterPathId": "6317"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2378",
+          "meshFilterPathId": "6358"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2664",
+          "meshFilterPathId": "6365"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2665",
+          "meshFilterPathId": "6366"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2666",
+          "meshFilterPathId": "6367"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2667",
+          "meshFilterPathId": "6368"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2668",
+          "meshFilterPathId": "6369"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2669",
+          "meshFilterPathId": "6370"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2670",
+          "meshFilterPathId": "6371"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2671",
+          "meshFilterPathId": "6372"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2374",
+          "meshFilterPathId": "6399"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2383",
+          "meshFilterPathId": "6419"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2384",
+          "meshFilterPathId": "6420"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2385",
+          "meshFilterPathId": "6421"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2386",
+          "meshFilterPathId": "6422"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2756",
+          "meshFilterPathId": "6495"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "3038",
+          "meshFilterPathId": "6517"
+        },
+        {
+          "gameObjectName": "Primer intact",
+          "gameObjectPathId": "2862",
+          "meshFilterPathId": "6582"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2344",
+          "meshFilterPathId": "6257"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2345",
+          "meshFilterPathId": "6258"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2612",
+          "meshFilterPathId": "6296"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "1894",
+          "meshFilterPathId": "6403"
+        }
+      ],
+      "name": "Intact boxer large rifle primer",
+      "normalCount": 94,
+      "pathId": "657",
+      "rawBytes": 5436,
+      "rawSha256": "6e592bcb697785d29570fc87922219a034463ee42948c22f4460ff588f68f0c7",
+      "sourceFile": "resources.assets",
+      "triangleCount": 92,
+      "uv0Count": 94,
+      "vertexCount": 94
+    },
+    {
+      "geometrySha256": "14ac98a0630dba4a45609361af6a9da4f4b1e07e21312e7a107189becebb739e",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Spoon",
+          "gameObjectPathId": "3111",
+          "meshFilterPathId": "6553"
+        }
+      ],
+      "name": "Stun grenade spoon",
+      "normalCount": 92,
+      "pathId": "658",
+      "rawBytes": 5088,
+      "rawSha256": "f381764f726491990ee3f5176b90dc23a11708c7a1f687f5586efdd39a902da8",
+      "sourceFile": "resources.assets",
+      "triangleCount": 52,
+      "uv0Count": 92,
+      "vertexCount": 92
+    },
+    {
+      "geometrySha256": "138791d58ca1cd168ed8f9ff6ca05248ac657afad046118d75e207dc535168ab",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "1888",
+          "meshFilterPathId": "6287"
+        },
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "1889",
+          "meshFilterPathId": "6288"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2468",
+          "meshFilterPathId": "6194"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2660",
+          "meshFilterPathId": "6281"
+        }
+      ],
+      "name": "9mm FMJ",
+      "normalCount": 240,
+      "pathId": "659",
+      "rawBytes": 13544,
+      "rawSha256": "b2f77754ee0694d1b5e70fb49d605bd7c6798692c516439fcd3d2ca8d7c4e0cd",
+      "sourceFile": "resources.assets",
+      "triangleCount": 279,
+      "uv0Count": 240,
+      "vertexCount": 240
+    },
+    {
+      "geometrySha256": "e71bb9dd236989f0ff4bc3d7fa93c49b22efc6c5d36f1ca1019a723cd7589df2",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2159",
+          "meshFilterPathId": "6266"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "3217",
+          "meshFilterPathId": "6604"
+        }
+      ],
+      "name": "12 ga rubber slug",
+      "normalCount": 276,
+      "pathId": "660",
+      "rawBytes": 15888,
+      "rawSha256": "32545ec6ef81452355dc6dbd1f2d1c80e19eb9cf753b967339b79581aada5c6b",
+      "sourceFile": "resources.assets",
+      "triangleCount": 380,
+      "uv0Count": 276,
+      "vertexCount": 276
+    },
+    {
+      "geometrySha256": "0e237e720824d872e177436e00bd725ddfc4c07bc617383052862418fe450d01",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2226",
+          "meshFilterPathId": "6344"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2414",
+          "meshFilterPathId": "6457"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2418",
+          "meshFilterPathId": "6461"
+        }
+      ],
+      "name": "308 Winchester BT",
+      "normalCount": 594,
+      "pathId": "661",
+      "rawBytes": 27476,
+      "rawSha256": "eb3f3e2c3fe3a3271d253d933bc682b9db34c236622cb90c1e2f5cce07191175",
+      "sourceFile": "resources.assets",
+      "triangleCount": 948,
+      "uv0Count": 594,
+      "vertexCount": 594
+    },
+    {
+      "geometrySha256": "e67e23abfabe8da5dd8ca7c301a14e45bee2423c37be4686f4c1728b5186e9a5",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2065",
+          "meshFilterPathId": "6220"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2363",
+          "meshFilterPathId": "6413"
+        }
+      ],
+      "name": "45 ACP XP",
+      "normalCount": 368,
+      "pathId": "662",
+      "rawBytes": 15688,
+      "rawSha256": "beb577adb302ed0eddbf7928bf93368e196b00330bd8fdcededacf9020f526f8",
+      "sourceFile": "resources.assets",
+      "triangleCount": 348,
+      "uv0Count": 368,
+      "vertexCount": 368
+    },
+    {
+      "geometrySha256": "dcde599488ad68ddb9537b5c8c7e501dfabf32e737390665221fe239e412d1a8",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2078",
+          "meshFilterPathId": "6208"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2440",
+          "meshFilterPathId": "6237"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2740",
+          "meshFilterPathId": "6534"
+        }
+      ],
+      "name": "357 Magnum FNSP",
+      "normalCount": 422,
+      "pathId": "663",
+      "rawBytes": 18640,
+      "rawSha256": "7637acc8d9322ad0643af0f088a743c7b717dab1daa7b719ade21616b172931f",
+      "sourceFile": "resources.assets",
+      "triangleCount": 508,
+      "uv0Count": 422,
+      "vertexCount": 422
+    },
+    {
+      "geometrySha256": "d9f0c36f86bae6c8fbd9e49ca04cecef057341be5c22f1c82eae80b743ca3284",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Grenade pin ring",
+          "gameObjectPathId": "3497",
+          "meshFilterPathId": "6573"
+        },
+        {
+          "gameObjectName": "Grenade pin ring",
+          "gameObjectPathId": "2854",
+          "meshFilterPathId": "6595"
+        }
+      ],
+      "name": "Grenade pin ring",
+      "normalCount": 32,
+      "pathId": "664",
+      "rawBytes": 696,
+      "rawSha256": "e7f42c200dca8e095e6ee69847be1b384b5bdd220dc2b1ab68e696b6d184a0c7",
+      "sourceFile": "resources.assets",
+      "triangleCount": 64,
+      "uv0Count": 0,
+      "vertexCount": 32
+    },
+    {
+      "geometrySha256": "2aaaead5891794f4134b1e6b8d5986b0490c3fed0d8301e98361b82324dba2f5",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2142",
+          "meshFilterPathId": "6195"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2143",
+          "meshFilterPathId": "6196"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "1915",
+          "meshFilterPathId": "6198"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "1916",
+          "meshFilterPathId": "6199"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "1918",
+          "meshFilterPathId": "6201"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2569",
+          "meshFilterPathId": "6242"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2570",
+          "meshFilterPathId": "6243"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2571",
+          "meshFilterPathId": "6244"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2572",
+          "meshFilterPathId": "6245"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2573",
+          "meshFilterPathId": "6246"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2574",
+          "meshFilterPathId": "6247"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2575",
+          "meshFilterPathId": "6248"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2576",
+          "meshFilterPathId": "6249"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2206",
+          "meshFilterPathId": "6355"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2147",
+          "meshFilterPathId": "6404"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2790",
+          "meshFilterPathId": "6475"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "2844",
+          "meshFilterPathId": "6587"
+        },
+        {
+          "gameObjectName": "Primer struck",
+          "gameObjectPathId": "3300",
+          "meshFilterPathId": "6599"
+        }
+      ],
+      "name": "Struck boxer large rifle primer",
+      "normalCount": 164,
+      "pathId": "665",
+      "rawBytes": 9180,
+      "rawSha256": "1f3142a5ba10022754c358733225d0d26037aa90d42de82a6ad78f7813dcb2a9",
+      "sourceFile": "resources.assets",
+      "triangleCount": 156,
+      "uv0Count": 164,
+      "vertexCount": 164
+    },
+    {
+      "geometrySha256": "582a533d3402fe26a79ea4a70397955e4478486d16d67f253debe587829c8d7e",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "2145",
+          "meshFilterPathId": "6424"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2320",
+          "meshFilterPathId": "6465"
+        }
+      ],
+      "name": "9mm JHP",
+      "normalCount": 144,
+      "pathId": "666",
+      "rawBytes": 8292,
+      "rawSha256": "7f7191c9f1afe77e123ffd66d82bb17043e18c0f9c9e81a38d59e6c96668ba3e",
+      "sourceFile": "resources.assets",
+      "triangleCount": 172,
+      "uv0Count": 144,
+      "vertexCount": 144
+    },
+    {
+      "geometrySha256": "e78ed300bcff99a9d7cfba4bf213e7e254b8e4483015a86c47e35b197c380f6f",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "12 Gauge rubber shot",
+          "gameObjectPathId": "3383",
+          "meshFilterPathId": "6615"
+        },
+        {
+          "gameObjectName": "12 Gauge shot",
+          "gameObjectPathId": "2009",
+          "meshFilterPathId": "6192"
+        }
+      ],
+      "name": "12 ga 2.75 inch medium brass crimped",
+      "normalCount": 1448,
+      "pathId": "667",
+      "rawBytes": 59108,
+      "rawSha256": "89bd193172ae9311c0ff0fc10e91249abc799de6ba621ce254ce0d204db44e30",
+      "sourceFile": "resources.assets",
+      "triangleCount": 1086,
+      "uv0Count": 1448,
+      "vertexCount": 1448
+    },
+    {
+      "geometrySha256": "21797fbafb29d86380466f774b0e41adb4f7790567df67d772e86faad073e761",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Mesh",
+          "gameObjectPathId": "1891",
+          "meshFilterPathId": "6290"
+        },
+        {
+          "gameObjectName": "Projectile",
+          "gameObjectPathId": "2375",
+          "meshFilterPathId": "6227"
+        }
+      ],
+      "name": "9mm XP",
+      "normalCount": 317,
+      "pathId": "668",
+      "rawBytes": 13848,
+      "rawSha256": "12d7a0333dfa7c05d45122ea81e71809319c79c0e9b4dd4c0f5142e7c7b40a08",
+      "sourceFile": "resources.assets",
+      "triangleCount": 348,
+      "uv0Count": 317,
+      "vertexCount": 317
+    },
+    {
+      "geometrySha256": "f041f65fd818b5fed153a0a412b4b0900dc44d7c53b9d6914920bc32ea304e8b",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "12 Gauge slug",
+          "gameObjectPathId": "2874",
+          "meshFilterPathId": "6601"
+        }
+      ],
+      "name": "12 ga 3 inch high brass open",
+      "normalCount": 1388,
+      "pathId": "669",
+      "rawBytes": 56748,
+      "rawSha256": "41fdbfc698c75173f114519416dfc9e7509c1f10c045c4843f5934240eabd710",
+      "sourceFile": "resources.assets",
+      "triangleCount": 1054,
+      "uv0Count": 1388,
+      "vertexCount": 1388
+    },
+    {
+      "geometrySha256": "00f84b238b907ccc61831bd3a67c16c3ebf11b792c755848213c8d8d159a213c",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "308 Winchester BTHP",
+          "gameObjectPathId": "2125",
+          "meshFilterPathId": "6392"
+        },
+        {
+          "gameObjectName": "308 Winchester FMJ",
+          "gameObjectPathId": "2126",
+          "meshFilterPathId": "6393"
+        },
+        {
+          "gameObjectName": "308 Winchester HEI",
+          "gameObjectPathId": "1914",
+          "meshFilterPathId": "6217"
+        },
+        {
+          "gameObjectName": "308 Winchester JHP",
+          "gameObjectPathId": "2127",
+          "meshFilterPathId": "6394"
+        },
+        {
+          "gameObjectName": "308 Winchester SP",
+          "gameObjectPathId": "2128",
+          "meshFilterPathId": "6395"
+        },
+        {
+          "gameObjectName": "Marksman round .308 Winchester BT",
+          "gameObjectPathId": "2121",
+          "meshFilterPathId": "6388"
+        },
+        {
+          "gameObjectName": "Marksman round .308 Winchester FMJ",
+          "gameObjectPathId": "2122",
+          "meshFilterPathId": "6389"
+        },
+        {
+          "gameObjectName": "Marksman round .308 Winchester HEI",
+          "gameObjectPathId": "1913",
+          "meshFilterPathId": "6216"
+        },
+        {
+          "gameObjectName": "Marksman round .308 Winchester JHP",
+          "gameObjectPathId": "2123",
+          "meshFilterPathId": "6390"
+        },
+        {
+          "gameObjectName": "Marksman round .308 Winchester SP",
+          "gameObjectPathId": "2124",
+          "meshFilterPathId": "6391"
+        }
+      ],
+      "name": "308 Winchester casing hi",
+      "normalCount": 494,
+      "pathId": "670",
+      "rawBytes": 21112,
+      "rawSha256": "85c6719c0e8b49bc3c87e38e54ee52ff5f6327a6239f3a369702e88297612bfa",
+      "sourceFile": "resources.assets",
+      "triangleCount": 494,
+      "uv0Count": 494,
+      "vertexCount": 494
+    },
+    {
+      "geometrySha256": "cf2cdc546a9884a0484669ecedb3cdafddca14022c7dafa8d118c5471d406756",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "12 Gauge rubber slug",
+          "gameObjectPathId": "3036",
+          "meshFilterPathId": "6667"
+        }
+      ],
+      "name": "12 ga 2.75 inch low brass open",
+      "normalCount": 1168,
+      "pathId": "671",
+      "rawBytes": 48832,
+      "rawSha256": "5f5dccaaf3238c9691e77484e599b8077a5a593bf05df9399bd7b6bb77f4ec46",
+      "sourceFile": "resources.assets",
+      "triangleCount": 1054,
+      "uv0Count": 1168,
+      "vertexCount": 1168
+    },
+    {
+      "geometrySha256": "f2f9058ad4df2ab9902a7715a5ff0bd9cfb686c37878ee08abb1f4283cb2f0ae",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Wall light fixture",
+          "gameObjectPathId": "618",
+          "meshFilterPathId": "942"
+        }
+      ],
+      "name": "Wall light fixture",
+      "normalCount": 60,
+      "pathId": "265",
+      "rawBytes": 3488,
+      "rawSha256": "0fe84b70b6080b381e38494fc08557d72f4cdc3e8d5666bc2b491597befd1879",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 34,
+      "uv0Count": 60,
+      "vertexCount": 60
+    },
+    {
+      "geometrySha256": "4e82e08f1f4aad9da9100dc981bc881015958e5df674eb8580fae8b09c4a96be",
+      "meshFilterReferences": [],
+      "name": "Building extension support",
+      "normalCount": 64,
+      "pathId": "266",
+      "rawBytes": 1060,
+      "rawSha256": "3cc74885d6dffe54f701031b317aee53fd7dd9877b8c7cbc55fcedaf07a6a295",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 48,
+      "uv0Count": 64,
+      "vertexCount": 64
+    },
+    {
+      "geometrySha256": "1836f4e403338eeabf8b47ebfadd352cfdaf3f81b324e57838822ca23aa523b6",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Fire alarm",
+          "gameObjectPathId": "462",
+          "meshFilterPathId": "924"
+        }
+      ],
+      "name": "Smoke detector",
+      "normalCount": 334,
+      "pathId": "267",
+      "rawBytes": 4180,
+      "rawSha256": "3e0c62925a549b7d39866d3ae5ee433c1164c384be178499d3f4aa1c4b59f4fd",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 226,
+      "uv0Count": 334,
+      "vertexCount": 334
+    },
+    {
+      "geometrySha256": "e2de6b1d0ab45b9b81fd57e6d5784adfa83feddad229f7b88f33e52e0498ec71",
+      "meshFilterReferences": [],
+      "name": "Plant",
+      "normalCount": 693,
+      "pathId": "268",
+      "rawBytes": 8704,
+      "rawSha256": "895a4c3e3bcb87205731d4b0791eec9c71356079d69b0b534b80d1d5c308200f",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 539,
+      "uv0Count": 693,
+      "vertexCount": 693
+    },
+    {
+      "geometrySha256": "a4378cbf8ceb446b6649fb88ac0a4af71d7505d8ca1666cac9b121316496ab70",
+      "meshFilterReferences": [],
+      "name": "Human steel target",
+      "normalCount": 170,
+      "pathId": "269",
+      "rawBytes": 9432,
+      "rawSha256": "a166b26b6e38874d4cd6f770c861e81e518b31c3d3c9812abba8c50297251095",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 152,
+      "uv0Count": 170,
+      "vertexCount": 170
+    },
+    {
+      "geometrySha256": "9b7391a4123b384c94c4f43d3562796b799e39ec3add51f9f8acb4b96f48708a",
+      "meshFilterReferences": [],
+      "name": "Wash table",
+      "normalCount": 378,
+      "pathId": "270",
+      "rawBytes": 4732,
+      "rawSha256": "988c361abf0100c21283c17de80893387903abd18fbdbccebc64f8524a00071c",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 260,
+      "uv0Count": 378,
+      "vertexCount": 378
+    },
+    {
+      "geometrySha256": "d6078bcc3edae9c207791b5e37c7f0d9df56f9891e1a7454f85d6c307314884c",
+      "meshFilterReferences": [],
+      "name": "Perforator",
+      "normalCount": 136,
+      "pathId": "271",
+      "rawBytes": 1568,
+      "rawSha256": "585b168151a9904c2d6597ceda4182b4caf91d2567a410b03c6a3a10ee4b1d19",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 92,
+      "uv0Count": 0,
+      "vertexCount": 136
+    },
+    {
+      "geometrySha256": "17397f45d91827a95f860d269f1b6d25744d060e309df0210e0cc482a9bb6b9a",
+      "meshFilterReferences": [],
+      "name": "Washing machine",
+      "normalCount": 625,
+      "pathId": "272",
+      "rawBytes": 8112,
+      "rawSha256": "ea2fd1c43bb6add8250278d927582c0636cb9c709a863d44e8f944c69eeb2e7b",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 467,
+      "uv0Count": 625,
+      "vertexCount": 625
+    },
+    {
+      "geometrySha256": "27646334a566fe26e371348c5b0699d47d2a0591c922977b500d5a28dd78cac5",
+      "meshFilterReferences": [],
+      "name": "Cube",
+      "normalCount": 40,
+      "pathId": "273",
+      "rawBytes": 2384,
+      "rawSha256": "946890844a1bec5dc9957c9ac02039d67c5b44efc3accc65415fb279f932264a",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 20,
+      "uv0Count": 40,
+      "vertexCount": 40
+    },
+    {
+      "geometrySha256": "2a50149becfa7b1b798e01b542fe0f98b07bba5ac607f02cd603ac9e2d1401e9",
+      "meshFilterReferences": [],
+      "name": "Mug",
+      "normalCount": 120,
+      "pathId": "274",
+      "rawBytes": 6392,
+      "rawSha256": "cea00ff71535728766c89102bf855d1f0af88dfec2f2d7a060dfb3c6143b3a20",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 208,
+      "uv0Count": 0,
+      "vertexCount": 120
+    },
+    {
+      "geometrySha256": "a0592b91bd68c4adf5244649cb70745f2e2859315d317ebba94b472b1b5a2496",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Bolt action model",
+          "gameObjectPathId": "537",
+          "meshFilterPathId": "940"
+        }
+      ],
+      "name": "Bolt action model",
+      "normalCount": 538,
+      "pathId": "275",
+      "rawBytes": 21004,
+      "rawSha256": "aaa23a7774257b6a66982c0bc9c1c787e9d61c885cd6131080a45284ff824e37",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 564,
+      "uv0Count": 0,
+      "vertexCount": 538
+    },
+    {
+      "geometrySha256": "debbacae5ff6c0cedb8097196832777ccbbdf3b09aacd2707c1107fe321f76fd",
+      "meshFilterReferences": [],
+      "name": "Pencil",
+      "normalCount": 48,
+      "pathId": "276",
+      "rawBytes": 2016,
+      "rawSha256": "5f9251deaef75e3e1014f402ad43e1fef76231c3b7b2a623b7ba902c4bb5e659",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 22,
+      "uv0Count": 48,
+      "vertexCount": 48
+    },
+    {
+      "geometrySha256": "a999b61ceea5c0e72fe98f7a36971b9e3e471d60f9b2308ecd11cbd98015f04c",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Decorative wall lamp",
+          "gameObjectPathId": "532",
+          "meshFilterPathId": "922"
+        }
+      ],
+      "name": "Decorative wall lamp",
+      "normalCount": 336,
+      "pathId": "277",
+      "rawBytes": 4188,
+      "rawSha256": "9da4d855399681a5675a252f590df9b5ac43fdfe11f4662b02e5b6bdfc240dea",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 236,
+      "uv0Count": 0,
+      "vertexCount": 336
+    },
+    {
+      "geometrySha256": "a5a44d026c3f98d69f436822b266d60e728f80b578d64c92aea71c118e4333d4",
+      "meshFilterReferences": [],
+      "name": "Locker",
+      "normalCount": 78,
+      "pathId": "278",
+      "rawBytes": 1056,
+      "rawSha256": "ddffc007212e08d098831d92148752d57e6c77321c65b7b5f455c21e58c9cc82",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 60,
+      "uv0Count": 0,
+      "vertexCount": 78
+    },
+    {
+      "geometrySha256": "ff1a4509691677cd17ae259ff0248f2c0f64e3120a9d02349dc511d7819684f7",
+      "meshFilterReferences": [],
+      "name": "Cube.002",
+      "normalCount": 240,
+      "pathId": "279",
+      "rawBytes": 12588,
+      "rawSha256": "8778e7d32008672cab8bf3bd0f079b6a985884fb1eecea2ac1c036882e7ea627",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 120,
+      "uv0Count": 240,
+      "vertexCount": 240
+    },
+    {
+      "geometrySha256": "063ddbc14be33c750b416e6f43069c3a98dc130a666903393586eb1bf2c05473",
+      "meshFilterReferences": [],
+      "name": "Floor lamp",
+      "normalCount": 298,
+      "pathId": "280",
+      "rawBytes": 3672,
+      "rawSha256": "d8c511d340032f12325b4708662e4da3e7e741ae5043e486292f25cd204343bc",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 348,
+      "uv0Count": 0,
+      "vertexCount": 298
+    },
+    {
+      "geometrySha256": "477f1a3441d492df776ff956a1f5e074205051d84d49f56574123f5932a35843",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Wall socket",
+          "gameObjectPathId": "420",
+          "meshFilterPathId": "918"
+        }
+      ],
+      "name": "Wall socket",
+      "normalCount": 144,
+      "pathId": "281",
+      "rawBytes": 7816,
+      "rawSha256": "d81afad5f12212596a760619fe2d2ac66e22af511260d0ac98b52cdb30f36337",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 92,
+      "uv0Count": 144,
+      "vertexCount": 144
+    },
+    {
+      "geometrySha256": "94c8aa72bcf24722911d4a8e40370b9756d1b351ff0b9a8df8544304674eae60",
+      "meshFilterReferences": [],
+      "name": "Magazine",
+      "normalCount": 24,
+      "pathId": "282",
+      "rawBytes": 604,
+      "rawSha256": "09ea01419e69d8aece9e14f1134ad97bde3c18ec44e4879b817a6e6542862b87",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 12,
+      "uv0Count": 24,
+      "vertexCount": 24
+    },
+    {
+      "geometrySha256": "3e27b67605914e2dd5deabdf00743783343107e8bef9fc80f6ecf1776e23648d",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Powered light switch",
+          "gameObjectPathId": "570",
+          "meshFilterPathId": "939"
+        }
+      ],
+      "name": "Powered light switch",
+      "normalCount": 88,
+      "pathId": "283",
+      "rawBytes": 4904,
+      "rawSha256": "e255a338af8aa9e206398c36f864ac96c7162da382fee3197b508ce04c57ebd8",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 46,
+      "uv0Count": 88,
+      "vertexCount": 88
+    },
+    {
+      "geometrySha256": "0761348020d9a6d7211a67dac434e719a93d332981fc74c2afd7f158307eb1ae",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Piece 1",
+          "gameObjectPathId": "425",
+          "meshFilterPathId": "921"
+        },
+        {
+          "gameObjectName": "Piece 2",
+          "gameObjectPathId": "494",
+          "meshFilterPathId": "923"
+        }
+      ],
+      "name": "Smoke detector piece",
+      "normalCount": 223,
+      "pathId": "284",
+      "rawBytes": 2800,
+      "rawSha256": "4a699900d136e842e0a6c91f3bb6ed738aeeb6f7b258c2058675842f507616bd",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 132,
+      "uv0Count": 223,
+      "vertexCount": 223
+    },
+    {
+      "geometrySha256": "e0071e042b7d2c20c6a0e2b71a156cb9fc14a5feb37501545a2df7ce5a5702e5",
+      "meshFilterReferences": [],
+      "name": "Decorative lamp",
+      "normalCount": 516,
+      "pathId": "285",
+      "rawBytes": 5600,
+      "rawSha256": "a4418519fe38520baeee4432f377d2f1fa5a26d053fab4005f1d4a9e796e3a69",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 438,
+      "uv0Count": 0,
+      "vertexCount": 516
+    },
+    {
+      "geometrySha256": "215e441df5f4663cf8fcf425b7f398873353591da966a444b545ef0f1480ab0b",
+      "meshFilterReferences": [],
+      "name": "Target stand",
+      "normalCount": 96,
+      "pathId": "286",
+      "rawBytes": 5248,
+      "rawSha256": "42248af9ba7f485ca89d8beb9e03838ee9477549593bb8e2d1bfaa056d23f2b6",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 48,
+      "uv0Count": 96,
+      "vertexCount": 96
+    },
+    {
+      "geometrySha256": "c44fb0b8c5005d632f4e3c700c1a8f66b2b869b3dcacc7301917d0e0ddd86e7d",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Ceiling light cupola",
+          "gameObjectPathId": "444",
+          "meshFilterPathId": "925"
+        },
+        {
+          "gameObjectName": "Wall light cupola",
+          "gameObjectPathId": "445",
+          "meshFilterPathId": "926"
+        }
+      ],
+      "name": "Ceiling light cupola",
+      "normalCount": 188,
+      "pathId": "287",
+      "rawBytes": 2908,
+      "rawSha256": "4bb8be48dbb6ace699f23569c6bd55a7d5c91664ff88acecef7fcc09fb84f9ed",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 276,
+      "uv0Count": 0,
+      "vertexCount": 188
+    },
+    {
+      "geometrySha256": "6af444e183533f9f20dacaa1e7fa721c293d5a5a8d0b50542062052f0d2f5fec",
+      "meshFilterReferences": [],
+      "name": "LCD panel",
+      "normalCount": 80,
+      "pathId": "288",
+      "rawBytes": 1180,
+      "rawSha256": "950f1cbe82d17c2abb5a5d1ed1d06bd49cd7d146142c24e5b8c9aa79e6edc1df",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 44,
+      "uv0Count": 80,
+      "vertexCount": 80
+    },
+    {
+      "geometrySha256": "c6b9d96e93eaba7f564f415602f476b503e8fdc36070da350f4a483abe0b4b42",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Vent",
+          "gameObjectPathId": "416",
+          "meshFilterPathId": "919"
+        }
+      ],
+      "name": "Cube",
+      "normalCount": 24,
+      "pathId": "289",
+      "rawBytes": 1568,
+      "rawSha256": "d770e02db9147875766b89c2e3685acce7aa25e4137aaa61a65155f8de44c763",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 12,
+      "uv0Count": 24,
+      "vertexCount": 24
+    },
+    {
+      "geometrySha256": "f01a53adfd51dea1e3fbd7f586be408dfd0fe7c4e1e12c10977b39156195c57f",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Ceiling light",
+          "gameObjectPathId": "413",
+          "meshFilterPathId": "915"
+        }
+      ],
+      "name": "Light fixture",
+      "normalCount": 24,
+      "pathId": "290",
+      "rawBytes": 1580,
+      "rawSha256": "5bf357c8e37c6182816f74dd3f8242d2877cb5c72ea9d7363c98a83619238b8b",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 12,
+      "uv0Count": 24,
+      "vertexCount": 24
+    },
+    {
+      "geometrySha256": "4fd6fa703914db7863b071b16e71ab2cf71ac2752d393b2edbef93c55136d1c2",
+      "meshFilterReferences": [],
+      "name": "MTB handle bars",
+      "normalCount": 270,
+      "pathId": "291",
+      "rawBytes": 3348,
+      "rawSha256": "2e2de4cf2a798f3c8549aa2ef780fe16270487fffc0f0037636475f619a5b2f1",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 146,
+      "uv0Count": 0,
+      "vertexCount": 270
+    },
+    {
+      "geometrySha256": "4566d62e8a0166669c9b9accacec39ef3fa93df8d049b60c8d769eb8f522baab",
+      "meshFilterReferences": [],
+      "name": "Pot tray",
+      "normalCount": 144,
+      "pathId": "292",
+      "rawBytes": 2000,
+      "rawSha256": "4b3e249136c90910d2c17c2518d5ecc411f51b611164884320f21ed23647dbb3",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 220,
+      "uv0Count": 0,
+      "vertexCount": 144
+    },
+    {
+      "geometrySha256": "4bd1ec7838bb42ffe5703777639f01ce0df71904655158cb05e93c09776a7267",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Ballistic table laying",
+          "gameObjectPathId": "694",
+          "meshFilterPathId": "933"
+        },
+        {
+          "gameObjectName": "Ballistic table standing",
+          "gameObjectPathId": "695",
+          "meshFilterPathId": "927"
+        }
+      ],
+      "name": "Cube",
+      "normalCount": 108,
+      "pathId": "293",
+      "rawBytes": 1544,
+      "rawSha256": "b3b5c8f5444e66245763c4305f95d9b107fff108cfb4bf89343d5002313d0634",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 60,
+      "uv0Count": 108,
+      "vertexCount": 108
+    },
+    {
+      "geometrySha256": "69087c1ff198ea981e99a37d61862149b79eaad28cfe5de0b52fecaef61a368d",
+      "meshFilterReferences": [],
+      "name": "Sewer lid",
+      "normalCount": 78,
+      "pathId": "294",
+      "rawBytes": 1260,
+      "rawSha256": "853ef1a612d74fa0408524bcf2c43ddb617648b290e3d43074c8a77910e679a6",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 70,
+      "uv0Count": 78,
+      "vertexCount": 78
+    },
+    {
+      "geometrySha256": "1792573117ca610757761edb4d0282213868ff9d3245e56b2819c52d9fd5590c",
+      "meshFilterReferences": [],
+      "name": "Stapler",
+      "normalCount": 138,
+      "pathId": "295",
+      "rawBytes": 1532,
+      "rawSha256": "f34b22ceca2b716cf22bbdf5efaa98330cdecfafb8a84bbbfa671e1360d78bcc",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 76,
+      "uv0Count": 0,
+      "vertexCount": 138
+    },
+    {
+      "geometrySha256": "1d81295844d7645c651709fc7bba3a2bcc2526ba05fca470104b7b1fb6d8b93f",
+      "meshFilterReferences": [],
+      "name": "Drying machine",
+      "normalCount": 413,
+      "pathId": "296",
+      "rawBytes": 5264,
+      "rawSha256": "d56c67f09a8cbbb8c79de94980f2eb7fbad7f5aedefc738d43757f3d700b878d",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 278,
+      "uv0Count": 413,
+      "vertexCount": 413
+    },
+    {
+      "geometrySha256": "d2f7998e87019a90c607726ba459dc2233dcc0f45c14114293693e30db02b5f7",
+      "meshFilterReferences": [],
+      "name": "Plane",
+      "normalCount": 4,
+      "pathId": "297",
+      "rawBytes": 552,
+      "rawSha256": "64bcd0dd0bb07705762af4c01820e532924c8ebcff6dbd6cc7516fa75e7135d3",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 2,
+      "uv0Count": 4,
+      "vertexCount": 4
+    },
+    {
+      "geometrySha256": "49f6edcd94d08488621a68b62b56d2f8a12ac3fc10b2b1482137d066247d6c93",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Follower",
+          "gameObjectPathId": "736",
+          "meshFilterPathId": "936"
+        }
+      ],
+      "name": "Magazine follower",
+      "normalCount": 44,
+      "pathId": "298",
+      "rawBytes": 2432,
+      "rawSha256": "8cce4449b6a74db33f8310bf4f6e745e57f690a99a6018ba357913614d59a2e3",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 52,
+      "uv0Count": 0,
+      "vertexCount": 44
+    },
+    {
+      "geometrySha256": "19ce4c7744521c14d3af8f282f5ab7c52fb8593b0225e8f3ba15d0582aa9ce16",
+      "meshFilterReferences": [],
+      "name": "Wall sign",
+      "normalCount": 24,
+      "pathId": "299",
+      "rawBytes": 600,
+      "rawSha256": "0bfc6a4d299f4e339fd167b0ccf985627f75eb5eb5b74a5d0e118796d785f6b7",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 12,
+      "uv0Count": 24,
+      "vertexCount": 24
+    },
+    {
+      "geometrySha256": "4fdeb2ce647119e57ac9818669e20a5e38ac08d286b2c9a643c74c15b29e277b",
+      "meshFilterReferences": [],
+      "name": "Decorative lamp shade",
+      "normalCount": 96,
+      "pathId": "300",
+      "rawBytes": 1276,
+      "rawSha256": "3444d37d7943d9609a004fe4081f4978c1608caf25918219ded4e35ecfd8d521",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 96,
+      "uv0Count": 0,
+      "vertexCount": 96
+    },
+    {
+      "geometrySha256": "ac92e218e1f4eb34011614df79c42f37ed725c215a81e8cc76af99ef3f7e22d2",
+      "meshFilterReferences": [],
+      "name": "Binder",
+      "normalCount": 128,
+      "pathId": "301",
+      "rawBytes": 1696,
+      "rawSha256": "c5b29302ab869d6c1d94f1cd7c2d37589a6235ca64a2ed3a727bef99b57c96ab",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 68,
+      "uv0Count": 128,
+      "vertexCount": 128
+    },
+    {
+      "geometrySha256": "ccd9b3ef45bffdd5f5c6847bef8944bd171b1777546511b9558069026b9282c9",
+      "meshFilterReferences": [],
+      "name": "LCD stand",
+      "normalCount": 132,
+      "pathId": "302",
+      "rawBytes": 1856,
+      "rawSha256": "13147faa8a8423ab515f6adae6be9de092e2138409a71fa2e120a80cc982522e",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 96,
+      "uv0Count": 132,
+      "vertexCount": 132
+    },
+    {
+      "geometrySha256": "ef018ef518b1feb67f7e71457c669bf56e83ef8ca7869c126d8772470e0c939f",
+      "meshFilterReferences": [],
+      "name": "Pot",
+      "normalCount": 176,
+      "pathId": "303",
+      "rawBytes": 2120,
+      "rawSha256": "cf6ec9bdba34fc9f6bc786ce8dabff2c526209a488e7d0179bce62fa5b38006a",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 188,
+      "uv0Count": 0,
+      "vertexCount": 176
+    },
+    {
+      "geometrySha256": "4289e47cc2bdbb90496dc98836397f5a8699cdc5e3a3c71c218b3c04ad187a6d",
+      "meshFilterReferences": [],
+      "name": "Trash bin",
+      "normalCount": 108,
+      "pathId": "304",
+      "rawBytes": 1664,
+      "rawSha256": "625c6e5d725b3e6679e9e8d5dafa21cf4c8583223f9a2553988b42e0d871ca51",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 92,
+      "uv0Count": 108,
+      "vertexCount": 108
+    },
+    {
+      "geometrySha256": "65ca907c1fc8a8fc7e8baae6bcaaad25322deae1cc9eb4d46ee38caf6ae2d5fb",
+      "meshFilterReferences": [
+        {
+          "gameObjectName": "Bolt",
+          "gameObjectPathId": "726",
+          "meshFilterPathId": "938"
+        }
+      ],
+      "name": "Bolt",
+      "normalCount": 304,
+      "pathId": "305",
+      "rawBytes": 15788,
+      "rawSha256": "18c3cee38865898462189e632338b64425818117f286e01f9306f99b22c58090",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 540,
+      "uv0Count": 0,
+      "vertexCount": 304
+    },
+    {
+      "geometrySha256": "e8cf0a6f29e2c17a19faec776c4d5990105ea0f9a3624230bdbc168917288f0b",
+      "meshFilterReferences": [],
+      "name": "Computer speaker",
+      "normalCount": 114,
+      "pathId": "306",
+      "rawBytes": 1572,
+      "rawSha256": "7c3f1df2ce646bcd9bca4f6a38666db7b5fc5b3283ffca425f0ad40ec012fa99",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 64,
+      "uv0Count": 114,
+      "vertexCount": 114
+    },
+    {
+      "geometrySha256": "fc489c232f8f1bfc5e6eeed011ecf6f8ab6ea4c093a7001314b0d4421644b015",
+      "meshFilterReferences": [],
+      "name": "Back pillow",
+      "normalCount": 96,
+      "pathId": "307",
+      "rawBytes": 1344,
+      "rawSha256": "e9a22d0a6b936016a2849c39498bb5e7306dab302f3ecc10c4a1a5e67f2daac2",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 44,
+      "uv0Count": 96,
+      "vertexCount": 96
+    },
+    {
+      "geometrySha256": "e0d0419da729543b44fdc8ef76b441d15b8581a36f29a259bf17ddba14411e84",
+      "meshFilterReferences": [],
+      "name": "Bruno chair",
+      "normalCount": 1008,
+      "pathId": "308",
+      "rawBytes": 12568,
+      "rawSha256": "eec245017da488b15b05755b9b3dfc7cbb004c29dda3e26ee5ed8cc9eaa590b8",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 792,
+      "uv0Count": 1008,
+      "vertexCount": 1008
+    },
+    {
+      "geometrySha256": "91ff9345eac34677643048a08e56a6c441b0ae652d601e47c4107fa4bb7cea55",
+      "meshFilterReferences": [],
+      "name": "Cupboard top",
+      "normalCount": 20,
+      "pathId": "309",
+      "rawBytes": 556,
+      "rawSha256": "361fc8818ba783b246a379b5926413829b7133e8174067ec98e7bff46044f4a3",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 10,
+      "uv0Count": 20,
+      "vertexCount": 20
+    },
+    {
+      "geometrySha256": "3c47d2da168f1f9d2417b5eaed05353ab005cf25841467e93a1c931b819668a1",
+      "meshFilterReferences": [],
+      "name": "Mouse pad",
+      "normalCount": 32,
+      "pathId": "310",
+      "rawBytes": 628,
+      "rawSha256": "a153be2e6813b319e564ce3897264a5faa15af73cc1a30e2f1d2d73d99189d9d",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 28,
+      "uv0Count": 0,
+      "vertexCount": 32
+    },
+    {
+      "geometrySha256": "61e5bb421559e883db887751261c6c2de36b0715866f00f292ccd7f06929fbc0",
+      "meshFilterReferences": [],
+      "name": "Bottom pillow",
+      "normalCount": 102,
+      "pathId": "311",
+      "rawBytes": 1440,
+      "rawSha256": "f0f11e3168d4d84fa0f8bf95e8b44c13358771f479e47fe790ef7560093486cb",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 52,
+      "uv0Count": 102,
+      "vertexCount": 102
+    },
+    {
+      "geometrySha256": "13535b4fd16609aab9d50960c9130720dbf5bde3a7e2dfac623fea792e27919b",
+      "meshFilterReferences": [],
+      "name": "Cover board",
+      "normalCount": 16,
+      "pathId": "312",
+      "rawBytes": 508,
+      "rawSha256": "38da5a6ae591b330dccb27a324f7d49697e68b75b74a8c72a8ae231a590416a4",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 8,
+      "uv0Count": 16,
+      "vertexCount": 16
+    },
+    {
+      "geometrySha256": "fddb7ee1a1946dcff471e140a91834aae59db010a634476844d8ac8936f3559a",
+      "meshFilterReferences": [],
+      "name": "Keyboard",
+      "normalCount": 24,
+      "pathId": "313",
+      "rawBytes": 588,
+      "rawSha256": "b19558fd8bbe854be1d3ea2d858ef75f657ef8ed1af8197ce0ac1ba0001ea00a",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 12,
+      "uv0Count": 24,
+      "vertexCount": 24
+    },
+    {
+      "geometrySha256": "670a9156ac7660ff6783f593208ce355f245f3bc0e238417e0486f0f4fa6c474",
+      "meshFilterReferences": [],
+      "name": "Mouse",
+      "normalCount": 44,
+      "pathId": "314",
+      "rawBytes": 768,
+      "rawSha256": "05c2a371678749d2018683175a70cc22db176792b45232bb92244b2346df0d4b",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 48,
+      "uv0Count": 0,
+      "vertexCount": 44
+    },
+    {
+      "geometrySha256": "229c007dd8c0512354629a43e7eea05465e24d1f152b4721338bec3b7d75265b",
+      "meshFilterReferences": [],
+      "name": "Cupboard bottom",
+      "normalCount": 16,
+      "pathId": "315",
+      "rawBytes": 512,
+      "rawSha256": "b8d263210e47e493aa87e2079270b287241a06198eb00032dc7f730eb017f16b",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 8,
+      "uv0Count": 16,
+      "vertexCount": 16
+    },
+    {
+      "geometrySha256": "2cd8cf5ea2df161c99eca01a1814169a8450ddae210c89eea0783edce9b23ca0",
+      "meshFilterReferences": [],
+      "name": "Floor skirt",
+      "normalCount": 32,
+      "pathId": "316",
+      "rawBytes": 684,
+      "rawSha256": "da7dfaa34054d1fd7a95dad7f9a994ff5e3158a990b6786353ee30cc195b7925",
+      "sourceFile": "sharedassets3.assets",
+      "triangleCount": 20,
+      "uv0Count": 32,
+      "vertexCount": 32
+    },
+    {
+      "geometrySha256": "a308474eba814096b70dc232f2e1063f48be4b27a4a3467f8c07fa5355d4bcc9",
+      "meshFilterReferences": [],
+      "name": "Window stand",
+      "normalCount": 299,
+      "pathId": "8",
+      "rawBytes": 3732,
+      "rawSha256": "4e64a9b2fe7e2b4fa84300778a29438f3c22cc6057940c5cd04b5a58d152e9a7",
+      "sourceFile": "sharedassets4.assets",
+      "triangleCount": 188,
+      "uv0Count": 299,
+      "vertexCount": 299
+    },
+    {
+      "geometrySha256": "e38b357908d53b5b1c4695e2d1bf737eea63c5c86a5d3a96b3a3e261fc1ae53e",
+      "meshFilterReferences": [],
+      "name": "Work light lamp",
+      "normalCount": 387,
+      "pathId": "9",
+      "rawBytes": 4756,
+      "rawSha256": "10d58bf14aff3e7d24ea0dbdee2e6ee2c359c3ad3a14a09972d952280649695c",
+      "sourceFile": "sharedassets4.assets",
+      "triangleCount": 256,
+      "uv0Count": 0,
+      "vertexCount": 387
+    },
+    {
+      "geometrySha256": "86910a4bfde3a593010e3470714efaadd7c0a7471047bde04f674b211542d420",
+      "meshFilterReferences": [],
+      "name": "Work light stand",
+      "normalCount": 321,
+      "pathId": "10",
+      "rawBytes": 4340,
+      "rawSha256": "f722742e2c2032e9f5be3e7396eeed6a377f2a4e1852ff0297f6ee7c6c1fdf20",
+      "sourceFile": "sharedassets4.assets",
+      "triangleCount": 320,
+      "uv0Count": 0,
+      "vertexCount": 321
+    }
+  ],
+  "parser": "UnityPy==1.25.4",
+  "schemaVersion": 1,
+  "scope": "Original Windows player serialized containers; mesh geometry is hashed, not copied. Player object IDs do not establish source .meta GUID identity.",
+  "serializedObjectCount": 19500
+}
