@@ -69,3 +69,8 @@ When the owner explicitly asks for continued work without further prompts, do no
 - Each cycle takes stock of branch, HEAD, worktree, open PRs, current blockers, and the next actionable gate. It then completes one bounded batch of substantive work, verifies that batch once, and updates the handoff once.
 - If a gate is externally blocked, record its exact evidence and disposition once, then continue with the next independent actionable item. Do not create repetitive status-only cycles.
 - Keep GitHub Actions disabled. Publish only when the owner has authorized the destination and the required local gates pass. Do not use an unbounded shell loop or repeat a production deployment as a polling mechanism.
+
+
+## Codespace startup recovery
+
+If the existing Codespace does not load or is initially unavailable, restart that same Codespace up to three times, waiting for each restart to finish. After recovery, verify its branch, HEAD, worktree, and active operation before continuing. Never delete or recreate the Codespace.
