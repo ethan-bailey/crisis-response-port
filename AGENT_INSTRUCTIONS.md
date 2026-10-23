@@ -15,6 +15,16 @@ One agent works this repository at a time, so there is one line of development: 
 
 GitHub Actions is disabled by owner decision for this project. Do not restore minutes, dispatch workflows, or treat Actions checks as a gate. The standing gate for landing work is local verification: a fresh full-source build, the relevant contracts, and provenance checks, with commands and results recorded against the exact tested source SHA in the handoff or evidence docs. Functional smoke requirements remain separate: successful compilation is not proof of browser boot or correct gameplay.
 
+## Current execution environment: Codex Work Mode (owner direction, 2026-10-23)
+
+The active working environment is the repository checkout provided to Codex Work Mode. It is independent of Codespaces, but it is **not** the owner's iPhone or personal computer. Use the checkout directly for repository reads, edits, local builds, and tests. Do not open or restart Codespaces for ordinary code work; use it only if the owner requests it or a required gate cannot run in the current workspace and Codespaces is the necessary available environment.
+
+- At session start, compare the current branch, HEAD, and worktree with `NEXT_AGENT.md`. Query live `develop/wasm` and open PRs through the GitHub connector when shell GitHub authentication is unavailable. If the recorded checkpoint and PR set are unchanged, do not repeat completed orientation or tests.
+- The scratch checkout may not survive a new chat/session. Make repository work persistent by committing it and pushing the active branch to GitHub. Confirm the remote branch/PR head after the push. An uncommitted change is not a persistent checkpoint.
+- Use shell tools in this workspace for direct code work; a browser is for a genuinely browser-dependent gate, not for editing files or running routine repository commands.
+- Keep the pinned .NET SDK at 8.0.426. If a fresh .NET invocation fails before compilation while reading process metadata or `/proc`, classify it as a runner/environment failure first. Do not change project source to compensate. Use a proven workspace-level workaround only if available, then record the exact invocation and result; do not spend repeated runs rediscovering the same environment failure.
+- Update `NEXT_AGENT.md` once at the end of a substantive session, replacing it entirely with the current branch/head, exact tested source SHA, checks actually run, outstanding blockers, owner decisions, and one exact next action. Keep historical detail in dated evidence files or Git history rather than accumulating stale handoff sections.
+
 ## The loop
 
 Repeat these steps in order. Step 1 decides how much orientation a turn actually needs — do not redo work that reliable records show is already done.
@@ -44,15 +54,6 @@ Stop and report the end state when any of these is true:
 - **External blockers are stated once.** If progress depends on something outside the repo (quota, access, a service, the owner), name it once, clearly, and keep working on everything that does not depend on it.
 - **Next turn starts from the handoff**, not from zero: compare the branch head to the recorded checkpoint SHA (step 1); if it matches, the first unfinished, actionable item on the list is the entry point.
 
-## Codespace startup recovery
-
-The owner wants transient Codespaces startup failures retried before they are treated as blockers.
-
-- If the existing Codespace is unavailable or fails to load on the first attempt, restart it up to three times. Let each startup attempt finish and inspect the resulting state before retrying. Do not delete or recreate the Codespace as a restart workaround.
-- Before restarting, record the branch, HEAD, worktree status, and any active build or publish. Do not interrupt an active write, build, or publish. Preserve uncommitted work before any restart that could discard it.
-- After it loads, re-check the branch, HEAD, worktree, and pinned SDK before building or testing.
-- If it still fails after three restart attempts, capture the exact observed error, report the environment blocker, and continue with independent work.
-
 ## Resolve instruction conflicts
 
 When project instructions conflict, resolve the conflict and continue instead of stopping at the first contradiction.
@@ -69,8 +70,3 @@ When the owner explicitly asks for continued work without further prompts, do no
 - Each cycle takes stock of branch, HEAD, worktree, open PRs, current blockers, and the next actionable gate. It then completes one bounded batch of substantive work, verifies that batch once, and updates the handoff once.
 - If a gate is externally blocked, record its exact evidence and disposition once, then continue with the next independent actionable item. Do not create repetitive status-only cycles.
 - Keep GitHub Actions disabled. Publish only when the owner has authorized the destination and the required local gates pass. Do not use an unbounded shell loop or repeat a production deployment as a polling mechanism.
-
-
-## Codespace startup recovery
-
-If the existing Codespace does not load or is initially unavailable, restart that same Codespace up to three times, waiting for each restart to finish. After recovery, verify its branch, HEAD, worktree, and active operation before continuing. Never delete or recreate the Codespace.
