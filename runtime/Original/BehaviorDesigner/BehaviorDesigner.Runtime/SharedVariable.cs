@@ -170,7 +170,13 @@ public abstract class SharedVariable<T> : SharedVariable
 			Debug.LogError("Error: Unable to find GameObject on " + behaviorSource.behaviorName + " for property mapping with variable " + base.Name);
 			return;
 		}
-		Component component = gameObject.GetComponent(TaskUtility.GetTypeWithinAssembly(array[0]));
+		Type componentType = TaskUtility.GetTypeWithinAssembly(array[0]);
+		if (componentType == null)
+		{
+			Debug.LogError("Error: Unable to resolve component type " + array[0] + " on " + behaviorSource.behaviorName + " for property mapping with variable " + base.Name);
+			return;
+		}
+		Component component = gameObject.GetComponent(componentType);
 		if (component == null)
 		{
 			Debug.LogError("Error: Unable to find component on " + behaviorSource.behaviorName + " for property mapping with variable " + base.Name);

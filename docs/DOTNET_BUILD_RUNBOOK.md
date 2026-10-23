@@ -37,7 +37,14 @@ If the expected checkout is absent, make one bounded recovery attempt:
    runner completed GitHub CLI device authorization, but this runner has no
    `gh` executable or CLI credential file; the connected GitHub API is still
    authorized. A device code cannot be generated until `gh` is available in
-   the target environment.
+   the target environment. On 2026-10-23, installing GitHub CLI 2.45.0 from
+   Ubuntu's apt snapshot and completing device authorization restored shell
+   access. `gh auth setup-git` followed by `git ls-remote` verified the private
+   repo. The CLI warned that credentials were saved in plain text under
+   `/root/.config/gh/hosts.yml`; do not copy or commit that file. This fixes the
+   current runner only. To avoid repeating device authorization, use a
+   persistent development environment with GitHub CLI and a secure credential
+   store; a fresh Work Mode scratch runner does not inherit either.
 3. Use the connected GitHub API to verify the live branch/PR state or read
    individual files. This is useful for inspection, but it does not provide a
    buildable local repository. The GitHub fetch connector rejects repository
@@ -63,6 +70,33 @@ were not present. The connector could still confirm `develop/wasm` at
 failure.
 
 ## Preflight
+
+If the SDK archive has to be restored, use the pinned official archive and
+verify its known SHA-256 before extracting. Avoid `dotnet-install.sh` on this
+runner because its tar extraction tries to restore archive ownership, which the
+container rejects. The successful extraction path was:
+
+```sh
+curl -fL https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.426/dotnet-sdk-8.0.426-linux-x64.tar.gz \
+  -o /tmp/dotnet-sdk-8.0.426-linux-x64.tar.gz
+echo 'bb691c98abc8797eedbd48d3a766bc734214aed746e52e2691d8bbb268c60764  /tmp/dotnet-sdk-8.0.426-linux-x64.tar.gz' | sha256sum -c -
+mkdir -p /tmp/codex-dotnet-8.0.426
+tar --no-same-owner -xzf /tmp/dotnet-sdk-8.0.426-linux-x64.tar.gz -C /tmp/codex-dotnet-8.0.426
+```
+
+If no prior shim exists and `dotnet --version` aborts in
+`System.Diagnostics.Process.GetStat`, build the runner workaround tracked at
+`scripts/env/procstat-namespace-shim.c`:
+
+```sh
+gcc -shared -fPIC -O2 -Wall -Wextra -o /tmp/libprocshim.so \
+  scripts/env/procstat-namespace-shim.c -ldl
+export LD_PRELOAD=/tmp/libprocshim.so
+```
+
+The shim only redirects the current process's `/proc/<pid>/stat` read to
+`/proc/self/stat`. It is not production code. On 2026-10-23, that preflight
+made the exact SDK report `8.0.426` successfully.
 
 Run from the repository root:
 
@@ -162,3 +196,62 @@ verification, and both compile-summary regression tests. See
 `docs/evidence/CHARACTERBODY_FULL_COMPILE_2026-10-23.json` for the machine-readable
 result. This establishes compilation of the original class, not runtime gameplay
 or parity.
+
+## Gameplay gate 7: Mission 01 and recurring runtime failures
+
+On 2026-10-23, Mission 01 reached `Mission.Start` and `BeginMission` with the
+original spawners and produced 2 TeamOperators and 5 Occupants (8 CharacterBody
+instances total). The headless contract uses silent audio/mixer adapters and
+disables the presentation-only MissionUI, interior canvas, FogOfWarElement, and
+vocalization callbacks. It verifies mission/actor startup and gameplay ownership;
+it does not verify rendered UI, audible output, AI behavior-tree parity, or
+browser/iPhone acceptance.
+
+Before running the mission contract, restore the package and source prerequisites
+recorded by earlier gates. Then use the pinned SDK and process shim from this
+runbook:
+
+```sh
+dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj --no-restore -- \
+  --mission-contract /tmp/cpr-original/scene-data/crisis-response-scenes-with-gameplay-resources.json
+```
+
+The mission contract passed after these recurring runtime issues were corrected:
+
+| Failure | Fix to apply before the next mission run |
+| --- | --- |
+| Operators absent although the prefab and serialized script GUID exist | Include the recovered original `OperatorSpawner.cs` in the compiled source set. Resolve its GUID to the original source type. |
+| Spawned `CharacterBody.Physiology` is null inside `OperatorSpawner.Awake` | An active `Instantiate` must finish `Awake`/`OnEnable` for the complete, remapped clone before returning, including when called from another `Awake`. `PrefabCloner` now activates that clone immediately after deserialization. |
+| `Singular transform` under the original Interior mode UI root (serialized scale is zero) | `SetParent` retains the serialized local pose when the parent world matrix has no inverse. |
+| `Cannot preserve sheared transform when reparenting` during weapon arm IK | Extract translation, axis scales, and closest rotation when a hierarchy produces a matrix that cannot be represented as exact TRS. |
+| Original reticle `WeaponReticle.Awake` finds no `LineRenderer` | Import built-in Unity class ID 120 for prefab assets before invoking original callbacks. |
+| Behavior Designer task load crashes unboxing absent `ID`, `FriendlyName`, or node metadata | Apply safe defaults for optional task/node metadata before loading task fields. |
+| Property mappings report `Unable to resolve component type Blackboard` | Resolve unqualified original type names by their short name when assembly-qualified lookup fails; the runtime source namespace differs from the original `Assembly-CSharp`. |
+| EngineChecks expects `Renderer.material` to be the original material object | Match Unity semantics: first `Renderer.material` access creates a private copy; keep the test focused on that copy and preserve identities for the remaining material slots. |
+
+The gate 7 run passed with no `Blackboard` property-mapping errors after the
+short-name type lookup fix. Scene import still reports intentionally unsupported
+presentation/physics asset records and unresolved external resources in the
+incomplete package; the check's JSON output is diagnostic inventory, not proof
+that every scene asset is executable. The unrelated Marksman `.308` round prefab
+still has a missing original asset GUID; the approved `.308` casing-only mapping
+does not authorize replacing that projectile mesh.
+
+Verification on the working source tree for this checkpoint:
+
+- `Crisis.Runtime.Checks --mission-contract`: passed; 2 Operators, 5 Occupants.
+- `Crisis.Runtime.Checks --spawner-contract`: passed; actor-owned trauma and
+  physiology remained independent and original movement/animation contracts ran.
+- `scripts/package_ammunition_closure.py ... --check`: passed; 29/29 assets,
+  no unresolved assets or stale script/builtin maps.
+- `python3 -m unittest scripts.extract_runtime_scene_test`: passed, 6 tests.
+- `runtime/EngineChecks`: passed, 69 assertions.
+- `runtime/FoundationChecks`: passed, 121 assertions.
+- Full `runtime/Crisis.Runtime.csproj` rebuild: 0 errors, 45 warnings.
+
+The warnings are existing source/compiler diagnostics (including member hiding,
+nullable annotations, obsolete legacy serialization/crypto APIs, unassigned
+fields, and Windows-only registry calls); they are not build errors. Capture the
+full output at `/tmp/cpr-full-build-final.log` if a later run needs individual
+warning locations. Do not treat this gate as completion of gate 8 or as browser
+or mobile acceptance.

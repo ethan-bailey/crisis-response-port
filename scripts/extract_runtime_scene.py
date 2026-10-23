@@ -156,7 +156,16 @@ def parse_asset(path, relative):
     for index, match in enumerate(matches):
         end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
         raw = text[match.end():end]
-        parsed = yaml.safe_load(raw)
+        # Unity 2017 material YAML can encode an empty stringTagMap key as a
+        # bare colon. PyYAML treats that spelling as malformed, while Unity
+        # interprets it as the empty string. Normalize only the parsed copy;
+        # sourceText/rawYaml and the asset hash below remain byte-faithful.
+        parse_raw = re.sub(r'(?m)^(\s+):(?=\s*(?:#.*)?$)', r"\1'':", raw)
+        # Unity packs enum arrays into unquoted hex, but all-digit byte strings
+        # are parsed by YAML as decimal integers. Quote this parsed copy so the
+        # runtime can decode the original little-endian bytes.
+        parse_raw = re.sub(r'(?m)^(\s*(?:fireModes|functions|slotTypes|orientations):\s*)([0-9a-fA-F]+)(\s*(?:#.*)?)$', r'\1"\2"\3', parse_raw)
+        parsed = yaml.safe_load(parse_raw)
         if not isinstance(parsed, dict) or len(parsed) != 1: raise ValueError(f'Bad record {relative}:{match.group(2)}')
         kind, fields = next(iter(parsed.items()))
         records.append({'fileID':match.group(2), 'classID':int(match.group(1)), 'className':kind,
@@ -176,9 +185,14 @@ def runtime_asset_seeds(project):
     project = Path(project).resolve()
     seeds = ['Assets/Scenes/Title.unity', 'Assets/Scenes/Transition.unity', 'Assets/Scenes/Mission 01.unity', 'Assets/Scenes/Marksman range.unity',
         'Assets/Resources/characters/Operator.prefab', 'Assets/Resources/characters/Occupant.prefab',
+        'Assets/Resources/Version.prefab', 'Assets/Resources/Global context.prefab',
         'ProjectSettings/TimeManager.asset', 'ProjectSettings/TagManager.asset']
     # Resources.Load paths are runtime strings, not serialized GUID edges.
-    seeds.extend(str(p.relative_to(project)) for p in sorted((project/'Assets/Resources/weapons/ammunition').glob('*.prefab')))
+    # Runtime Resources.Load paths are not represented by serialized GUID edges.
+    # Include the complete original weapons resource tree so equipment and
+    # weapon-prefab checks load source assets instead of silently resolving null.
+    seeds.extend(str(p.relative_to(project)) for p in sorted((project/'Assets/Resources/weapons').rglob('*.prefab')))
+    seeds.extend(str(p.relative_to(project)) for p in sorted((project/'Assets/Resources/items').rglob('*.prefab')))
     return seeds
 
 

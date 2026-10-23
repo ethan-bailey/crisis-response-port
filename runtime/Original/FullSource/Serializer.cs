@@ -17,6 +17,8 @@ public static class Serializer
 		try
 		{
 			string graph = SerializeToString(type, data);
+			string directory = Path.GetDirectoryName(path);
+			if (!string.IsNullOrEmpty(directory)) Directory.CreateDirectory(directory);
 			using (FileStream serializationStream = File.Create(path))
 			{
 				BinaryFormatter binaryFormatter = new BinaryFormatter();

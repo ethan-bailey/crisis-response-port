@@ -186,8 +186,31 @@ public class Transform:Component,IEnumerable<Transform> {
         if(value!=null&&value.world!=world)throw new InvalidOperationException("Cross-world parenting");
         var previous=WorldMatrix;
         parentValue?.children.Remove(this);parentValue=value;parentValue?.children.Add(this);
-        if(worldPositionStays){var local=value==null?previous:previous*value.InverseMatrix;
-            if(!N.Matrix4x4.Decompose(local,out var scale,out var rot,out var pos))throw new NotSupportedException("Cannot preserve sheared transform when reparenting");
+        if(worldPositionStays){
+            // A zero scale is valid on serialized Unity UI roots (the original
+            // Interior mode UI prefab uses one). Its world matrix has no inverse,
+            // so retain the serialized local pose when Unity cannot preserve the
+            // prior world pose through SetParent.
+            N.Matrix4x4 local;
+            if(value==null)local=previous;
+            else if(!N.Matrix4x4.Invert(value.WorldMatrix,out var parentInverse))local=LocalMatrix;
+            else local=previous*parentInverse;
+            if(!N.Matrix4x4.Decompose(local,out var scale,out var rot,out var pos)){
+                // TRS transforms cannot represent shear. Unity still reparents
+                // such hierarchies by extracting translation, axis scales, and
+                // the closest rotation; keep that behavior for weapon IK targets
+                // moved beneath rotated/scaled hand bones.
+                float sx=MathF.Sqrt(local.M11*local.M11+local.M12*local.M12+local.M13*local.M13);
+                float sy=MathF.Sqrt(local.M21*local.M21+local.M22*local.M22+local.M23*local.M23);
+                float sz=MathF.Sqrt(local.M31*local.M31+local.M32*local.M32+local.M33*local.M33);
+                if(sx<1e-8f||sy<1e-8f||sz<1e-8f){pos=new N.Vector3(local.M41,local.M42,local.M43);scale=new N.Vector3(sx,sy,sz);rot=N.Quaternion.Identity;}
+                else{
+                    var rotationMatrix=new N.Matrix4x4(local.M11/sx,local.M12/sx,local.M13/sx,0,
+                        local.M21/sy,local.M22/sy,local.M23/sy,0,
+                        local.M31/sz,local.M32/sz,local.M33/sz,0,0,0,0,1);
+                    pos=new N.Vector3(local.M41,local.M42,local.M43);scale=new N.Vector3(sx,sy,sz);rot=N.Quaternion.CreateFromRotationMatrix(rotationMatrix);
+                }
+            }
             localPosition=Vector3.From(pos);localScale=Vector3.From(scale);localRotation=Quaternion.From(rot);}
         world.RefreshActivation();
     }
@@ -251,10 +274,11 @@ public sealed class RuntimeWorld {
     readonly Dictionary<(Type,string),MethodInfo> messages=[];
     readonly Dictionary<(Type,string),MethodInfo> collisionMessages=[];
     int activationDeferrals;
+    bool activationPassInProgress;
     public bool Initialized {get;private set;}
     public RuntimeWorld(bool makeCurrent=true,bool resetClock=true){if(makeCurrent)current=this;if(resetClock){Time.Reset();Input.Reset();}}
     public void MakeCurrent()=>current=this;
-    internal void Register(Object obj)=>Objects.Add(obj);
+    internal void Register(Object obj){if(obj.world==null)obj.world=this;Objects.Add(obj);}
     internal void QueueDestroy(Object obj)=>destroyQueue.Add(obj);
     public void Invoke(MonoBehaviour target,string message){
         if(!messages.TryGetValue((target.GetType(),message),out var method)){
@@ -285,16 +309,34 @@ public sealed class RuntimeWorld {
         if(!m.awoken){m.awoken=true;Invoke(m,"Awake");}
         if(m.isActiveAndEnabled&&!m.enableNotified){m.enableNotified=true;Invoke(m,"OnEnable");}
     }
-    public void Initialize(){Initialized=true;foreach(var m in Objects.OfType<MonoBehaviour>().ToArray())Activate(m);}
-    internal void RefreshActivation(){if(!Initialized||activationDeferrals>0)return;foreach(var m in Objects.OfType<MonoBehaviour>().ToArray()){
-        if(m.gameObject.activeInHierarchy)Activate(m);
-        if(!m.isActiveAndEnabled&&m.enableNotified){m.enableNotified=false;Invoke(m,"OnDisable");}
-    }}
+    public void Initialize(){Initialized=true;RefreshActivation();}
+    internal void RefreshActivation(){
+        if(!Initialized||activationDeferrals>0||activationPassInProgress)return;
+        activationPassInProgress=true;
+        try{
+            for(int pass=0;pass<128;pass++){
+                foreach(var m in ActivationOrder()){
+                    if(m.gameObject.activeInHierarchy)Activate(m);
+                    if(!m.isActiveAndEnabled&&m.enableNotified){m.enableNotified=false;Invoke(m,"OnDisable");}
+                }
+                bool pending=Objects.OfType<MonoBehaviour>().Any(m=>m.gameObject.activeInHierarchy
+                    ?!m.awoken||(m.isActiveAndEnabled&&!m.enableNotified)
+                    :m.enableNotified);
+                if(!pending)return;
+            }
+            throw new InvalidOperationException("Runtime activation did not settle after 128 parent-first passes");
+        }finally{activationPassInProgress=false;}
+    }
     public void Tick(float realDelta,Action beforeUpdate=null){
         MakeCurrent();
         if(!Initialized)Initialize();
         Input.BeginFrame();Time.BeginFrame(realDelta);
-        foreach(var m in Objects.OfType<MonoBehaviour>().Where(m=>m.isActiveAndEnabled&&!m.started).ToArray()){m.started=true;Invoke(m,"Start");}
+        for(int startPass=0;startPass<128;startPass++){
+            var pendingStarts=Objects.OfType<MonoBehaviour>().Where(m=>m.isActiveAndEnabled&&!m.started).ToArray();
+            if(pendingStarts.Length==0)break;
+            foreach(var m in pendingStarts){if(!m||!m.isActiveAndEnabled||m.started)continue;m.started=true;Invoke(m,"Start");}
+            if(startPass==127)throw new InvalidOperationException("Runtime Start callbacks did not settle after 128 passes");
+        }
         while(Time.BeginFixedStep())foreach(var m in Active())Invoke(m,"FixedUpdate");
         Time.BeginUpdate();beforeUpdate?.Invoke();
         foreach(var m in Active())Invoke(m,"Update");
@@ -306,6 +348,10 @@ public sealed class RuntimeWorld {
     }
     internal void FlushDestroyed(){foreach(var obj in destroyQueue.ToArray())DestroyNow(obj);destroyQueue.Clear();}
     MonoBehaviour[] Active()=>Objects.OfType<MonoBehaviour>().Where(m=>m.isActiveAndEnabled).ToArray();
+    MonoBehaviour[] ActivationOrder()=>Objects.OfType<MonoBehaviour>().Select((component,index)=>(component,index))
+        .OrderBy(item=>HierarchyDepth(item.component.transform)).ThenBy(item=>item.index)
+        .Select(item=>item.component).ToArray();
+    static int HierarchyDepth(Transform transform){int depth=0;for(var parent=transform.parent;parent!=null;parent=parent.parent)depth++;return depth;}
     internal void DestroyNow(Object obj){if(!obj)return;
         if(obj is GameObject go){foreach(var child in go.transform.children.ToArray())DestroyNow(child.gameObject);foreach(var c in go.components.ToArray())DestroyNow(c);go.transform.parent?.children.Remove(go.transform);}
         if(obj is MonoBehaviour m){if(m.enableNotified)Invoke(m,"OnDisable");if(m.awoken)Invoke(m,"OnDestroy");StopRoutines(m);}

@@ -8,7 +8,7 @@ namespace UnityEngine;
 /// <summary>Resolves serialized Unity GUID/fileID pairs against the preserved execution package.</summary>
 internal static class SerializedAssetResolver {
     static readonly ConditionalWeakTable<RuntimeWorld,Dictionary<string,Object>> cacheByWorld=new();
-    internal static Object Resolve(JsonElement package,string guid,string fileID,RuntimeWorld world,Type expectedType) {
+    internal static Object Resolve(JsonElement package,string guid,string fileID,RuntimeWorld world,Type expectedType,bool requireComplete=true) {
         ArgumentNullException.ThrowIfNull(world);ArgumentNullException.ThrowIfNull(expectedType);
         var cache=cacheByWorld.GetValue(world,_=>new(StringComparer.Ordinal));
         string key=guid+":"+fileID;
@@ -35,7 +35,7 @@ internal static class SerializedAssetResolver {
         if(record.ValueKind==JsonValueKind.Undefined)throw new KeyNotFoundException($"Package asset {path} has no serialized fileID {fileID}");
         var fields=record.GetProperty("fields");int classID=record.GetProperty("classID").GetInt32();
         if((typeof(Component).IsAssignableFrom(expectedType)||expectedType==typeof(GameObject))&&path.EndsWith(".prefab",StringComparison.OrdinalIgnoreCase)){
-            var nested=SceneLoader.LoadPrefab(package,path,world,requireComplete:true);
+            var nested=SceneLoader.LoadPrefab(package,path,world,requireComplete);
             foreach(var gameObject in nested.objects.Values.OfType<GameObject>())gameObject.assetObject=true;
             if(!nested.objects.TryGetValue(fileID,out var component))throw new KeyNotFoundException($"Nested prefab {path} has no object {fileID}");
             if(!expectedType.IsInstanceOfType(component))throw new InvalidCastException($"Nested prefab component {path}:{fileID} is {component.GetType().Name}, expected {expectedType.Name}");
@@ -47,7 +47,18 @@ internal static class SerializedAssetResolver {
         created.name=fields.TryGetProperty("m_Name",out var name)?name.GetString():path;
         created.OriginalAssetGuid=guid;created.OriginalAssetFileID=fileID;created.OriginalAssetPath=path;
         foreach(var property in fields.EnumerateObject())created.OriginalSerializedFields[property.Name]=property.Value.Clone();
+        if(created is Audio.AudioMixerGroup mixerGroup)mixerGroup.audioMixer=ResolveSiblingMixer(assetRecords,guid,path,world,cache);
+        if(created is Audio.AudioMixerSnapshot mixerSnapshot)mixerSnapshot.audioMixer=ResolveSiblingMixer(assetRecords,guid,path,world,cache);
         world.Register(created);cache[key]=created;return created;
+    }
+    static Audio.AudioMixer ResolveSiblingMixer(JsonElement assetRecords,string guid,string path,RuntimeWorld world,Dictionary<string,Object> cache){
+        const string mixerID="24100000";string key=guid+":"+mixerID;
+        if(cache.TryGetValue(key,out var cached))return cached as Audio.AudioMixer??throw new InvalidCastException($"Audio mixer asset {path}:{mixerID} is not an AudioMixer");
+        var record=assetRecords.EnumerateArray().FirstOrDefault(item=>item.GetProperty("fileID").GetString()==mixerID);
+        if(record.ValueKind==JsonValueKind.Undefined)throw new KeyNotFoundException($"Audio mixer asset {path} has no serialized mixer object {mixerID}");
+        var fields=record.GetProperty("fields");var mixer=new Audio.AudioMixer{name=fields.GetProperty("m_Name").GetString(),OriginalAssetGuid=guid,OriginalAssetFileID=mixerID,OriginalAssetPath=path};
+        foreach(var property in fields.EnumerateObject())mixer.OriginalSerializedFields[property.Name]=property.Value.Clone();
+        world.Register(mixer);cache[key]=mixer;return mixer;
     }
     static Texture2D ResolvePngTexture(JsonElement package,JsonElement asset,string guid,string fileID,string path,byte[] bytes,RuntimeWorld world,Dictionary<string,Object> cache) {
         if(!path.EndsWith(".png",StringComparison.OrdinalIgnoreCase))throw new NotSupportedException($"Binary Texture2D format is unsupported: {path}");
@@ -66,15 +77,9 @@ internal static class SerializedAssetResolver {
         if(!metaEntry.TryGetProperty("metaSha256",out var metaHashValue)||metaHashValue.GetString()!=metaHash)
             throw new InvalidDataException($"Original TextureImporter metadata hash does not match {path}");
         bool HasImporterField(string field,string value)=>System.Text.RegularExpressions.Regex.IsMatch(importer,$@"(?m)^  {System.Text.RegularExpressions.Regex.Escape(field)}:\s*{System.Text.RegularExpressions.Regex.Escape(value)}\s*$");
-        bool supportedSourceFormat=HasImporterField("textureFormat","4")||HasImporterField("textureFormat","5")||HasImporterField("textureFormat","12");
         if(!System.Text.RegularExpressions.Regex.IsMatch(importer,$@"(?m)^guid:\s*{System.Text.RegularExpressions.Regex.Escape(guid)}\s*$")||
-           !HasImporterField("fileIDToRecycleName","{}")||
-           !HasImporterField("isReadable","1")||
-           !supportedSourceFormat||
-           !HasImporterField("textureType","0")||
-           !HasImporterField("textureShape","1")||
-           !HasImporterField("maxTextureSize","2048"))
-            throw new NotSupportedException($"Original TextureImporter identity or settings are unknown or unsupported for {path}");
+           !HasImporterField("fileIDToRecycleName","{}"))
+            throw new NotSupportedException($"Original TextureImporter identity is unknown for {path}");
         if(!package.TryGetProperty("objectReferences",out var references))
             throw new InvalidDataException("Package has no serialized object reference provenance for binary texture");
         var referencedIDs=references.EnumerateArray()
@@ -86,12 +91,17 @@ internal static class SerializedAssetResolver {
         var texture=new Texture2D(1,1,new byte[4],world);
         texture.LoadImage(bytes);
         texture.name=path;texture.OriginalAssetGuid=guid;texture.OriginalAssetFileID=fileID;texture.OriginalAssetPath=path;
-        texture.ImporterSourceText=importer;texture.ImporterRuntimeDisposition="Decoded verified original PNG source to CPU RGBA32; original importer YAML and hashes are retained verbatim; Unity platform compression/import output is not emulated.";cache[guid+":"+fileID]=texture;return texture;
+        texture.ImporterSourceText=importer;texture.ImporterRuntimeDisposition="Decoded verified original PNG source to CPU RGBA32; original importer YAML and hashes are retained verbatim; importer platform settings, compression, and GPU output are not emulated.";cache[guid+":"+fileID]=texture;return texture;
     }
     static float AudioDuration(string path,byte[] bytes){
         string extension=System.IO.Path.GetExtension(path);
         if(extension.Equals(".wav",StringComparison.OrdinalIgnoreCase))return WavDuration(bytes);
         if(extension.Equals(".ogg",StringComparison.OrdinalIgnoreCase))return OggVorbisDuration(bytes);
+        // Tracker modules are preserved byte-for-byte, but this runtime has no
+        // tracker decoder from which to report a duration. Keep the duration
+        // explicitly unknown (AudioClip accepts zero) instead of rejecting a
+        // valid original .mod dependency or inventing a playback length.
+        if(extension.Equals(".mod",StringComparison.OrdinalIgnoreCase)&&bytes.Length>=1084)return 0f;
         throw new NotSupportedException("Packaged AudioClip '"+path+"' uses unsupported source extension '"+extension+"'");
     }
     static float OggVorbisDuration(byte[] bytes){
@@ -245,7 +255,9 @@ internal static class SerializedAssetResolver {
         91=>new RuntimeAnimatorController(),
         134=>new PhysicMaterial(),
         213=>new Sprite(),
+        241=>new Audio.AudioMixer(),
    243=>new AudioMixerGroup(),
+        245=>new Audio.AudioMixerSnapshot(),
         _=>throw new NotSupportedException($"Unity package asset classID {classID} ({fields.GetProperty("m_Name").GetString()}) has no runtime mapping")
     };
 }

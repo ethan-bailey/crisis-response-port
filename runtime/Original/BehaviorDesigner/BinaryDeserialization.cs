@@ -319,9 +319,14 @@ public static class BinaryDeserialization
 		}
 		task.Owner = behaviorSource.Owner.GetObject() as Behavior;
 		taskList.Add(task);
-		task.ID = (int)LoadField(fieldSerializationData, dictionary, typeof(int), "ID", 0, null);
-		task.FriendlyName = (string)LoadField(fieldSerializationData, dictionary, typeof(string), "FriendlyName", 0, null);
-		task.IsInstant = (bool)LoadField(fieldSerializationData, dictionary, typeof(bool), "IsInstant", 0, null);
+		// Some shipped Behavior Designer trees omit optional task metadata fields.
+		// LoadField returns null for an absent hash, so direct unboxing crashes
+		// before the original tree can initialize. Keep deterministic safe defaults.
+		object taskID = LoadField(fieldSerializationData, dictionary, typeof(int), "ID", 0, null);
+		task.ID = taskID is int id ? id : count;
+		task.FriendlyName = LoadField(fieldSerializationData, dictionary, typeof(string), "FriendlyName", 0, null) as string ?? task.GetType().Name;
+		object isInstant = LoadField(fieldSerializationData, dictionary, typeof(bool), "IsInstant", 0, null);
+		task.IsInstant = isInstant is bool instant && instant;
 		object obj;
 		if ((obj = LoadField(fieldSerializationData, dictionary, typeof(bool), "Disabled", 0, null)) != null)
 		{
@@ -343,10 +348,13 @@ public static class BinaryDeserialization
 	private static void LoadNodeData(FieldSerializationData fieldSerializationData, Dictionary<int, int> fieldIndexMap, Task task)
 	{
 		NodeData nodeData = new NodeData();
-		nodeData.Offset = (Vector2)LoadField(fieldSerializationData, fieldIndexMap, typeof(Vector2), "NodeDataOffset", 0, null);
-		nodeData.Comment = (string)LoadField(fieldSerializationData, fieldIndexMap, typeof(string), "NodeDataComment", 0, null);
-		nodeData.IsBreakpoint = (bool)LoadField(fieldSerializationData, fieldIndexMap, typeof(bool), "NodeDataIsBreakpoint", 0, null);
-		nodeData.Collapsed = (bool)LoadField(fieldSerializationData, fieldIndexMap, typeof(bool), "NodeDataCollapsed", 0, null);
+		object offset = LoadField(fieldSerializationData, fieldIndexMap, typeof(Vector2), "NodeDataOffset", 0, null);
+		nodeData.Offset = offset is Vector2 nodeOffset ? nodeOffset : Vector2.zero;
+		nodeData.Comment = LoadField(fieldSerializationData, fieldIndexMap, typeof(string), "NodeDataComment", 0, null) as string ?? string.Empty;
+		object breakpoint = LoadField(fieldSerializationData, fieldIndexMap, typeof(bool), "NodeDataIsBreakpoint", 0, null);
+		nodeData.IsBreakpoint = breakpoint is bool isBreakpoint && isBreakpoint;
+		object collapsed = LoadField(fieldSerializationData, fieldIndexMap, typeof(bool), "NodeDataCollapsed", 0, null);
+		nodeData.Collapsed = collapsed is bool isCollapsed && isCollapsed;
 		object obj = LoadField(fieldSerializationData, fieldIndexMap, typeof(int), "NodeDataColorIndex", 0, null);
 		if (obj != null)
 		{
@@ -795,6 +803,10 @@ public static class BinaryDeserialization
 		if (sharedVariable == null || !(flag3 = sharedVariable.GetType().Equals(typeWithinAssembly)))
 		{
 			sharedVariable = TaskUtility.CreateInstance(typeWithinAssembly) as SharedVariable;
+			if (sharedVariable == null)
+			{
+				throw new InvalidOperationException($"Behavior Designer could not construct shared variable type '{text}' from serialized variable '{name}'.");
+			}
 			sharedVariable.Name = name;
 			sharedVariable.IsShared = flag;
 			sharedVariable.IsGlobal = flag2;

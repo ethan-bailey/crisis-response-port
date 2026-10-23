@@ -101,6 +101,21 @@ public class TaskUtility
 					break;
 				}
 			}
+			// Property mappings in the original Behavior Designer assets store
+			// short component names (for example "Blackboard"). The upstream
+			// project type lived in Assembly-CSharp, while this runtime compiles it
+			// under Crisis.Runtime.FullSource, so assembly-qualified lookup misses.
+			if (value == null && !typeName.Contains('.'))
+			{
+				foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+				{
+					Type[] types;
+					try { types = assembly.GetTypes(); }
+					catch (ReflectionTypeLoadException error) { types = error.Types.Where(type => type != null).ToArray(); }
+					value = types.FirstOrDefault(type => type.Name == typeName);
+					if (value != null) break;
+				}
+			}
 		}
 		if (value != null)
 		{

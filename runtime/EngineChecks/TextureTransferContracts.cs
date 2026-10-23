@@ -58,10 +58,10 @@ static class TextureTransferContracts {
         Throws<ArgumentOutOfRangeException>(()=>sourceLight.shadows=(LightShadows)99);
         var roomRenderer=lightingGo.AddComponent<MeshRenderer>();var firstMaterial=new Material();var secondMaterial=new Material();
         Material[] observedMaterials=null;roomRenderer.OnMaterialsAssigned=materials=>observedMaterials=materials;
-        roomRenderer.materials=new[]{firstMaterial,secondMaterial};var materialSnapshot=roomRenderer.materials;
-        Check(ReferenceEquals(roomRenderer.material,firstMaterial)&&materialSnapshot.Length==2&&ReferenceEquals(materialSnapshot[1],secondMaterial),"original renderer material array preserves assigned material identities");
+        roomRenderer.materials=new[]{firstMaterial,secondMaterial};var firstMaterialInstance=roomRenderer.material;var materialSnapshot=roomRenderer.materials;
+        Check(!ReferenceEquals(firstMaterialInstance,firstMaterial)&&materialSnapshot.Length==2&&ReferenceEquals(materialSnapshot[0],firstMaterialInstance)&&ReferenceEquals(materialSnapshot[1],secondMaterial),"renderer material access creates a private first-material instance while preserving remaining assigned identities");
         materialSnapshot[0]=new Material();
-        Check(ReferenceEquals(roomRenderer.materials[0],firstMaterial),"renderer material arrays are independent snapshots");
+        Check(ReferenceEquals(roomRenderer.materials[0],firstMaterialInstance),"renderer material arrays are independent snapshots");
         var emission=new Color(.2f,.4f,.6f,1);string colorProperty=null;Color observedColor=default;
         firstMaterial.OnColorAssigned=(property,color)=>{colorProperty=property;observedColor=color;};
         firstMaterial.SetColor("_EmissionColor",emission);

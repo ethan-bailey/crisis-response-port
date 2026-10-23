@@ -81,7 +81,7 @@ public static class Application {
     // This host executes play mode; no editor import loop runs here.
     public static bool isPlaying=>true;
     public static string dataPath=>AppContext.BaseDirectory;
-    public static string persistentDataPath=>Path.Combine(
+    public static string persistentDataPath {get;set;}=Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"CrisisResponsePort");
     public static SystemLanguage systemLanguage=>SystemLanguage.English;
     public static Action<string> OpenUrlHandler;

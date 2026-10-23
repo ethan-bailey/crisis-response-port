@@ -14,6 +14,8 @@ public sealed class RenderTexture : Texture {
     public int height {get;}
     public int depth {get;}
     public RenderTextureFormat format {get;}
+    public int anisoLevel {get;set;}=1;
+    public int antiAliasing {get;set;}=1;
     ITextureTransferDriver allocationDriver;
     public RenderTexture() {world=RuntimeWorld.Current;world.Register(this);}
     public RenderTexture(int width,int height,int depth,RenderTextureFormat format) {

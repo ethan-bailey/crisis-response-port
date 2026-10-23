@@ -320,6 +320,10 @@ public abstract class Behavior : MonoBehaviour, IBehavior
 
 	public void EnableBehavior()
 	{
+		// Scene deserialization replaces the constructor-created source with its
+		// serialized instance; restore the runtime owner before binary tasks map
+		// their property references back to this actor.
+		mBehaviorSource?.Initialize(this);
 		CreateBehaviorManager();
 		if (BehaviorManager.instance != null)
 		{

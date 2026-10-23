@@ -8,6 +8,12 @@ public static class SpawnerGameplayContracts
     static readonly BindingFlags InstanceFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
     static readonly FieldInfo Awoken = typeof(MonoBehaviour).GetField("awoken", InstanceFlags)!;
 
+    sealed class SceneDriver : UnityEngine.SceneManagement.ISceneManagerDriver
+    {
+        public UnityEngine.SceneManagement.Scene GetActiveScene() => new(3, "Mission");
+        public void LoadScene(int buildIndex) => throw new NotSupportedException("Scene changes are outside the spawner ownership contract");
+    }
+
     static void SetProperty(object target, string name, object value)
     {
         var property = target.GetType().GetProperty(name, InstanceFlags)
@@ -29,6 +35,8 @@ public static class SpawnerGameplayContracts
         Resources.Configure(packageText);
         var world = new RuntimeWorld();
         world.MakeCurrent();
+        UnityEngine.SceneManagement.SceneManager.Bind(world, new SceneDriver());
+        Material.TextureDriver ??= new Action<string, Texture>((_, _) => { });
 
         GameObject occupantObject = null;
         GameObject operatorObject = null;
@@ -40,9 +48,16 @@ public static class SpawnerGameplayContracts
             contextObject.SetActive(false);
             var context = contextObject.AddComponent<GlobalContext>();
             var settings = contextObject.AddComponent<Settings>();
-            var input = contextObject.AddComponent<InputHandler>();
-            input.SetMapping(new InputMapping());
+            var input = contextObject.AddComponent<Crisis.Runtime.FullSource.InputHandler>();
+            input.SetMapping(new Crisis.Runtime.FullSource.InputMapping());
             var equipmentList = contextObject.AddComponent<EquipmentList>();
+            var noWeaponObject = new GameObject("No weapon fixture", world);
+            equipmentList.noWeapon = noWeaponObject.AddComponent<WeaponBase>();
+            equipmentList.noWeapon.name = null;
+            var randomWeaponObject = new GameObject("Random weapon fixture", world);
+            equipmentList.randomWeapon = randomWeaponObject.AddComponent<WeaponBase>();
+            var randomAmmunitionObject = new GameObject("Random ammunition fixture", world);
+            equipmentList.randomAmmunition = randomAmmunitionObject.AddComponent<Crisis.Runtime.FullSource.AmmunitionBase>();
             var randomItemObject = new GameObject("Random item", world);
             randomItemObject.transform.SetParent(contextObject.transform, false);
             equipmentList.randomItem = randomItemObject.AddComponent<Item>();
@@ -58,6 +73,8 @@ public static class SpawnerGameplayContracts
             missionObject = new GameObject(Mission.ObjectName, world);
             var mission = missionObject.AddComponent<Mission>();
             MarkAwake(mission);
+            Shader.Resolver ??= new Func<string, Shader>(name => new Shader { name = name, isSupported = false });
+            Crisis.Runtime.FullSource.MissionHelper.Instance.Initialize(mission);
             var containers = new GameObject("Spawner contract containers", world).transform;
             containers.SetParent(missionObject.transform, false);
             SetProperty(mission, nameof(Mission.Containers), containers);
@@ -70,6 +87,22 @@ public static class SpawnerGameplayContracts
             hitAnnouncementsObject.transform.SetParent(uiObject.transform, false);
             ui.hitAnnouncements = hitAnnouncementsObject.AddComponent<UIHitAnnouncements>();
             MarkAwake(ui.hitAnnouncements);
+            var resourceCounterObject = new GameObject("Spawner contract resource counter", world);
+            var resourceCounter = resourceCounterObject.AddComponent<UIResourceCounter>();
+            resourceCounter.enabled = false;
+            MarkAwake(resourceCounter);
+            typeof(MonoBehaviour).GetField("started", InstanceFlags)!.SetValue(resourceCounter, true);
+            var entryObject = new GameObject("Spawner contract resource entry", world);
+            entryObject.SetActive(false);
+            var entry = entryObject.AddComponent<UIResourceCounterEntry>();
+            var labelObject = new GameObject("Spawner contract resource label", world);
+            labelObject.transform.SetParent(entryObject.transform, false);
+            var valueObject = new GameObject("Spawner contract resource value", world);
+            valueObject.transform.SetParent(entryObject.transform, false);
+            entry.labelText = labelObject.AddComponent<UnityEngine.UI.Text>();
+            entry.valueText = valueObject.AddComponent<UnityEngine.UI.Text>();
+            resourceCounter.entryPrefab = entry;
+            ui.resourceCounter = resourceCounter;
             mission.UI = ui;
 
             var operators = missionObject.AddComponent<Operators>();
@@ -141,13 +174,15 @@ public static class SpawnerGameplayContracts
                 ?? throw new InvalidOperationException("Original Operator has no original Physiology");
             var operatorEquipment = operatorBody.InitializeEquipment(new SerializableEquipment
             {
-                primary = null,
+                primary = new SerializableWeapon { prefabName = "M4A1", ammunitionPrefabName = "5.56-FMJ" },
                 secondary = null,
                 armor = ArmorClass.Type.None,
                 items = new SerializableItems { itemPrefabNames = new List<string> { "Primary magazine" } }
             });
             if (operatorEquipment == null || ReferenceEquals(operatorEquipment, occupantEquipment))
                 throw new InvalidOperationException("Operator and Occupant do not own independent original Equipment components");
+            if (operatorEquipment.primaryWeapon == null || !ReferenceEquals(operatorEquipment.primaryWeapon.Owner, operatorBody))
+                throw new InvalidOperationException($"Original M4A1 resource did not initialize as Operator-owned equipment (weapon={operatorEquipment.primaryWeapon?.name ?? "null"}, ownerMatches={ReferenceEquals(operatorEquipment.primaryWeapon?.Owner, operatorBody)})");
             if (!operatorObject.GetComponentsInChildren<MonoBehaviour>(true).Any(c => ReferenceEquals(c, operatorEquipment)))
                 throw new InvalidOperationException("Operator Equipment is outside its original prefab clone graph");
 
@@ -177,13 +212,47 @@ public static class SpawnerGameplayContracts
             if (operatorPhysiology.BloodVolume != operatorBloodBefore ||
                 operatorLimbPhysiology.WoundCavityVolume != operatorTraumaBefore)
                 throw new InvalidOperationException("Occupant hit changed the Operator's original physiology");
-            return $"PASS: original OccupantSpawner spawned an independent Occupant and Operator; original Limb.AddTrauma and Physiology.Update changed only the target actor (blood loss {targetBloodBefore - occupantPhysiology.BloodVolume:0.##} ml)";
+
+            // Exercise source movement and animation parameter production with a
+            // recording PhysX sink. This verifies original gameplay calls without
+            // claiming that a Unity physics or AnimatorController graph ran.
+            var movementForces = new List<Vector3>();
+            occupant.Rigidbody.PhysicsForceSink = (force, _, mode) =>
+            {
+                if (mode != ForceMode.Acceleration)
+                    throw new InvalidOperationException($"CharacterBody movement used unexpected force mode {mode}");
+                movementForces.Add(force);
+            };
+            occupant.Move(1f);
+            world.Invoke(occupant, "FixedUpdate");
+            if (movementForces.Count != 1 || movementForces[0].x <= 0f)
+                throw new InvalidOperationException("Original CharacterBody.Move/FixedUpdate did not emit forward movement force");
+
+            occupant.transform.position += Vector3.right * 0.2f;
+            world.Invoke(occupant, "UpdateMovement");
+            occupant.IsKneeling = true;
+            world.Invoke(occupant, "UpdateAnimation");
+            var animator = occupant.GetComponent<Animator>()
+                ?? throw new InvalidOperationException("Spawned Occupant has no original Animator");
+            if (!animator.GetBool("Moving") || animator.GetFloat("KneelRatio") <= 0f)
+                throw new InvalidOperationException("Original CharacterBody animation update did not emit moving/kneeling Animator parameters");
+
+            return $"PASS: original OccupantSpawner spawned independent actors; trauma/physiology stayed actor-owned (blood loss {targetBloodBefore - occupantPhysiology.BloodVolume:0.##} ml); CharacterBody movement emitted force and animation parameters";
         }
         finally
         {
             if (occupantObject != null) UnityEngine.Object.DestroyImmediate(occupantObject);
             if (operatorObject != null) UnityEngine.Object.DestroyImmediate(operatorObject);
-            if (missionObject != null) UnityEngine.Object.DestroyImmediate(missionObject);
+            if (missionObject != null)
+            {
+                // The fixture marks Mission.Awake as already handled instead
+                // of running the full scene initializer, so its OnDestroy
+                // cleanup is not applicable to this isolated contract.
+                if (missionObject.GetComponent<Mission>() is { } mission)
+                    Awoken.SetValue(mission, false);
+                Crisis.Runtime.FullSource.MissionHelper.Instance.Release();
+                UnityEngine.Object.DestroyImmediate(missionObject);
+            }
             if (contextObject != null) UnityEngine.Object.DestroyImmediate(contextObject);
         }
     }

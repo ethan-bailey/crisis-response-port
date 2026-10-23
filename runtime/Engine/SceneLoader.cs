@@ -17,12 +17,14 @@ public sealed class SceneLoadResult {
     public List<string> unresolvedReferences {get;set;}=[];
     public Dictionary<string,UObject> objects {get;}=[];
     internal JsonElement package;
+    internal bool requireComplete;
     public RuntimeWorld world {get;set;}
     public GameObject prefabRoot {get;set;}
     public object Report()=>new {scene,serializedRecords,gameObjects,transforms,boxColliders,originalComponents,unsupportedComponents,unresolvedReferences};
 }
 public static class SceneLoader {
     static string Ref(JsonElement value)=>value.GetProperty("fileID").ToString();
+    static string ScalarString(JsonElement value)=>value.ValueKind==JsonValueKind.String?value.GetString()!:value.ValueKind is JsonValueKind.True or JsonValueKind.False or JsonValueKind.Number?value.GetRawText():throw new NotSupportedException($"Expected YAML string scalar, got {value.ValueKind}");
     static bool Flag(JsonElement fields,string name,bool fallback=true)=>fields.TryGetProperty(name,out var v) ? v.ValueKind==JsonValueKind.True||(v.ValueKind==JsonValueKind.False?false:v.ValueKind==JsonValueKind.String?int.Parse(v.GetString()!,System.Globalization.CultureInfo.InvariantCulture)!=0:v.GetInt32()!=0) : fallback;
     static float Number(JsonElement fields,string name,float fallback=0)=>fields.TryGetProperty(name,out var v)?float.Parse(v.ValueKind==JsonValueKind.String?v.GetString()!:v.GetRawText(),System.Globalization.NumberStyles.Float,System.Globalization.CultureInfo.InvariantCulture):fallback;
     static Vector3 Vector(JsonElement value)=>new(Number(value,"x"),Number(value,"y"),Number(value,"z"));
@@ -41,7 +43,11 @@ public static class SceneLoader {
     }
     public static SceneLoadResult Load(string json,string scene,bool resetClock=true){
         using var document=JsonDocument.Parse(json);
-        return LoadRecords(document.RootElement,scene,new RuntimeWorld(resetClock:resetClock),false,false);
+        return LoadRecords(document.RootElement,scene,new RuntimeWorld(resetClock:resetClock),false,false,false);
+    }
+    public static SceneLoadResult Load(string json,string scene,RuntimeWorld world,Action<SceneLoadResult> beforeActivate=null){
+        using var document=JsonDocument.Parse(json);
+        return LoadRecords(document.RootElement,scene,world,false,false,false,beforeActivate);
     }
     static readonly System.Threading.AsyncLocal<HashSet<string>> prefabLoadStack=new();
     public static SceneLoadResult LoadPrefab(string json,string prefabPath,RuntimeWorld world,bool requireComplete=true){
@@ -51,15 +57,25 @@ public static class SceneLoader {
     internal static SceneLoadResult LoadPrefab(JsonElement package,string prefabPath,RuntimeWorld world,bool requireComplete=true){
         var stack=prefabLoadStack.Value??=new HashSet<string>(StringComparer.Ordinal);
         if(!stack.Add(prefabPath))throw new InvalidOperationException($"Cyclic prefab asset dependency: {string.Join(" -> ",stack)} -> {prefabPath}");
-        try{return LoadRecords(package,prefabPath,world,true,requireComplete);}
+        try{return LoadRecords(package,prefabPath,world,true,requireComplete,true);}
+        finally{stack.Remove(prefabPath);if(stack.Count==0)prefabLoadStack.Value=null;}
+    }
+    public static SceneLoadResult LoadPrefabInstance(string json,string prefabPath,RuntimeWorld world,bool requireComplete=true){
+        using var document=JsonDocument.Parse(json);
+        return LoadPrefabInstance(document.RootElement,prefabPath,world,requireComplete);
+    }
+    internal static SceneLoadResult LoadPrefabInstance(JsonElement package,string prefabPath,RuntimeWorld world,bool requireComplete=true){
+        var stack=prefabLoadStack.Value??=new HashSet<string>(StringComparer.Ordinal);
+        if(!stack.Add(prefabPath))throw new InvalidOperationException($"Cyclic prefab asset dependency: {string.Join(" -> ",stack)} -> {prefabPath}");
+        try{return LoadRecords(package,prefabPath,world,true,requireComplete,false);}
         finally{stack.Remove(prefabPath);if(stack.Count==0)prefabLoadStack.Value=null;}
     }
 
-    static SceneLoadResult LoadRecords(JsonElement package,string assetPath,RuntimeWorld world,bool prefab,bool requireComplete){
+    static SceneLoadResult LoadRecords(JsonElement package,string assetPath,RuntimeWorld world,bool prefab,bool requireComplete,bool markAsAsset=true,Action<SceneLoadResult> beforeActivate=null){
         ArgumentNullException.ThrowIfNull(world);
         var asset=package.GetProperty("assets").GetProperty(assetPath);
         var records=asset.GetProperty("records").EnumerateArray().Select(r=>r.Clone()).ToArray();
-        var result=new SceneLoadResult{scene=assetPath,serializedRecords=records.Length,world=world};
+        var result=new SceneLoadResult{scene=assetPath,serializedRecords=records.Length,world=world,requireComplete=requireComplete};
         result.package=package;
         var existingObjects=new HashSet<UObject>(world.Objects,ReferenceEqualityComparer.Instance);
         using var deferred=world.DeferActivation();
@@ -70,8 +86,8 @@ public static class SceneLoader {
             foreach(var record in records.Where(r=>r.GetProperty("classID").GetInt32()==1)){
                 var id=record.GetProperty("fileID").GetString();var f=record.GetProperty("fields");
                 if(!transformsByGO.TryGetValue(id,out var tr))throw new NotSupportedException($"GameObject {id} requires prefab/stripped Transform resolution before execution");
-                var go=new GameObject(f.GetProperty("m_Name").GetString(),world,tr.GetProperty("classID").GetInt32()==224);
-                go.layer=f.GetProperty("m_Layer").GetInt32();go.tag=f.GetProperty("m_TagString").GetString();
+                var go=new GameObject(ScalarString(f.GetProperty("m_Name")),world,tr.GetProperty("classID").GetInt32()==224);
+                go.layer=f.GetProperty("m_Layer").GetInt32();go.tag=ScalarString(f.GetProperty("m_TagString"));
                 go.isStatic=f.TryGetProperty("m_StaticEditorFlags",out var flags)&&flags.GetUInt32()!=0;
                 go.SetActive(Flag(f,"m_IsActive"));result.objects[id]=go;
                 result.objects[tr.GetProperty("fileID").GetString()]=go.transform;result.gameObjects++;result.transforms++;
@@ -104,8 +120,10 @@ public static class SceneLoader {
                 if(!result.objects.TryGetValue(Ref(goRef),out var goObj)||goObj is not GameObject go)throw new InvalidOperationException($"Component {id} has unresolved GameObject");
                 Component component=null;
                 switch(cls){
-                    case 23 when prefab:component=go.AddComponent<MeshRenderer>();break;
-                    case 33 when prefab:component=go.AddComponent<MeshFilter>();break;
+                    case 23:component=go.AddComponent<MeshRenderer>();break;
+                    case 33:component=go.AddComponent<MeshFilter>();break;
+                    case 120 when prefab:component=go.AddComponent<LineRenderer>();break;
+                    case 20:component=go.AddComponent<Camera>();break;
                     case 54 when prefab:component=go.AddComponent<Rigidbody>();break;
                     case 59 when prefab:component=go.AddComponent<HingeJoint>();break;
                     case 61 when prefab:component=go.AddComponent<BoxCollider2D>();break;
@@ -117,6 +135,7 @@ public static class SceneLoader {
                     case 136 when prefab:component=go.AddComponent<CapsuleCollider>();break;
                     case 212 when prefab:component=go.AddComponent<SpriteRenderer>();break;
                     case 222 when prefab:component=go.AddComponent<CanvasRenderer>();break;
+                    case 223 when prefab:component=go.AddComponent<Canvas>();break;
                     case 114:{
                         var script=fields.GetProperty("m_Script");
                         string guid=script.GetProperty("guid").GetString();
@@ -130,7 +149,7 @@ public static class SceneLoader {
                 if(component!=null){
                     result.objects[id]=component;
                     if(component is Behaviour b)b.enabled=Flag(fields,"m_Enabled");
-                    if(prefab&&cls!=114)builtinFields.Add((component,fields,id,cls));
+                    if(cls!=114&&(prefab||cls is 20 or 23 or 33))builtinFields.Add((component,fields,id,cls));
                 } else result.unsupportedComponents[label]=result.unsupportedComponents.GetValueOrDefault(label)+1;
             }
             foreach(var (component,fields,id,classID) in builtinFields){
@@ -148,7 +167,7 @@ public static class SceneLoader {
             if(prefab&&roots.Length!=1)throw new InvalidOperationException($"Expected one root Transform in prefab {assetPath}, found {roots.Length}");
             if(prefab){
                 result.prefabRoot=roots[0].gameObject;
-                foreach(var go in world.Objects.OfType<GameObject>().Where(g=>ReferenceEquals(g.world,world)&&g!=null&&IsWithin(g.transform,roots[0])))go.assetObject=true;
+                foreach(var go in world.Objects.OfType<GameObject>().Where(g=>ReferenceEquals(g.world,world)&&g!=null&&IsWithin(g.transform,roots[0])))go.assetObject=markAsAsset;
             }
             if(!prefab&&package.GetProperty("assets").TryGetProperty("ProjectSettings/TimeManager.asset",out var timeAsset)){
                 var settings=timeAsset.GetProperty("records")[0].GetProperty("fields");
@@ -156,6 +175,7 @@ public static class SceneLoader {
             }
             if(requireComplete&&(result.unsupportedComponents.Count>0||result.unresolvedReferences.Count>0))
                 throw new NotSupportedException($"Incomplete original prefab {assetPath}: unsupported [{string.Join(", ",result.unsupportedComponents.Keys)}], unresolved [{string.Join(", ",result.unresolvedReferences.Take(8))}]");
+            beforeActivate?.Invoke(result);
             return result;
         }catch(KeyNotFoundException ex){
             foreach(var root in world.Objects.OfType<GameObject>().Where(g=>g&&!existingObjects.Contains(g)&&ReferenceEquals(g.world,world)&&g.transform.parent==null).ToArray())world.DestroyNow(root);
@@ -251,6 +271,7 @@ public static class SceneLoader {
         if(classID==199){SetField("m_RenderMode","renderMode",typeof(int));SetField("m_SortMode","sortMode",typeof(int));SetField("m_LengthScale","lengthScale",typeof(float));SetField("m_RenderAlignment","renderAlignment",typeof(int));SetField("m_UseCustomVertexStreams","useCustomVertexStreams",typeof(bool));SetField("m_VertexStreams","vertexStreams",typeof(int));SetField("m_Pivot","pivot",typeof(Vector3));SetField("m_Flip","flip",typeof(Vector3));SetField("m_CameraVelocityScale","cameraVelocityScale",typeof(float));SetField("m_VelocityScale","velocityScale",typeof(float));SetField("m_SortingFudge","sortingFudge",typeof(float));SetField("m_MinParticleSize","minParticleSize",typeof(float));SetField("m_MaxParticleSize","maxParticleSize",typeof(float));SetField("m_MaskInteraction","maskInteraction",typeof(int));External("m_Mesh");External("m_Mesh1");External("m_Mesh2");External("m_Mesh3");}
 if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("Spatialize","spatialize",typeof(bool));SetField("SpatializePostEffects","spatializePostEffects",typeof(bool));SetField("DopplerLevel","dopplerLevel",typeof(float));SetField("MinDistance","minDistance",typeof(float));SetField("MaxDistance","maxDistance",typeof(float));SetField("Pan2D","pan2D",typeof(float));SetField("rolloffMode","rolloffMode",typeof(int));SetField("BypassEffects","bypassEffects",typeof(bool));SetField("BypassListenerEffects","bypassListenerEffects",typeof(bool));SetField("BypassReverbZones","bypassReverbZones",typeof(bool));SetField("rolloffCustomCurve","rolloffCustomCurve",typeof(AnimationCurve));SetField("panLevelCustomCurve","panLevelCustomCurve",typeof(AnimationCurve));SetField("spreadCustomCurve","spreadCustomCurve",typeof(AnimationCurve));SetField("reverbZoneMixCustomCurve","reverbZoneMixCustomCurve",typeof(AnimationCurve));}
         switch(classID){
+            case 20:SetField("field of view","fieldOfView",typeof(float));SetField("near clip plane","nearClipPlane",typeof(float));SetField("far clip plane","farClipPlane",typeof(float));SetField("orthographic size","orthographicSize",typeof(float));SetField("orthographic","orthographic",typeof(bool));SetField("culling mask","cullingMask",typeof(int));External("target texture");break;
             case 23:case 199:External("m_Materials");External("m_StaticBatchRoot");External("m_Mesh");External("m_ProbeAnchor");External("m_LightProbeVolumeOverride");External("m_LightmapParameters");break;
             case 64:SetField("m_IsTrigger","isTrigger",typeof(bool));SetField("m_Convex","convex",typeof(bool));SetField("m_InflateMesh","inflateMesh",typeof(bool));SetField("m_SkinWidth","skinWidth",typeof(float));External("m_Mesh");External("m_Material");break;
             case 212:External("m_Materials");External("m_StaticBatchRoot");External("m_ProbeAnchor");External("m_LightProbeVolumeOverride");External("m_LightmapParameters");External("m_Sprite");break;
@@ -278,6 +299,7 @@ if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("S
                 SetField("m_AllowConstantClipSamplingOptimization","allowConstantClipSamplingOptimization",typeof(bool));
                 External("m_Avatar");External("m_Controller");break;
             case 108:SetField("m_Intensity","intensity",typeof(float));break;
+            case 120:SetField("m_UseWorldSpace","useWorldSpace",typeof(bool));break;
             case 65:SetField("m_Center","center",typeof(Vector3));SetField("m_Size","size",typeof(Vector3));SetField("m_IsTrigger","isTrigger",typeof(bool));External("m_Material");break;
             case 136:
                 SetField("m_Center","center",typeof(Vector3));SetField("m_Radius","radius",typeof(float));SetField("m_Height","height",typeof(float));SetField("m_Direction","direction",typeof(int));
@@ -351,12 +373,18 @@ if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("S
             if(value.ValueKind!=JsonValueKind.Object||!value.TryGetProperty("fileID",out var fileId))throw new NotSupportedException($"External {type.Name} asset reference is not mapped");
             var key=fileId.ToString();if(key=="0")return null;
             if(result.objects.TryGetValue(key,out var found)&&type.IsInstanceOfType(found))return found;
-            if(value.TryGetProperty("guid",out var referenceGuid))return SerializedAssetResolver.Resolve(result.package,referenceGuid.GetString(),key,result.world,type);
+            if(value.TryGetProperty("guid",out var referenceGuid)){
+                try{return SerializedAssetResolver.Resolve(result.package,referenceGuid.GetString(),key,result.world,type,result.requireComplete);}
+                catch(KeyNotFoundException) when(!result.requireComplete){
+                    result.unresolvedReferences.Add($"Unresolved {type.Name} reference {referenceGuid.GetString()}:{key}");
+                    return null;
+                }
+            }
             string guid=value.TryGetProperty("guid",out var externalGuid)?externalGuid.GetString():"local";
             result.unresolvedReferences.Add($"Unresolved {type.Name} reference {guid}:{key}");return null;
         }
         if(type.IsEnum)return value.ValueKind==JsonValueKind.String?Enum.Parse(type,value.GetString(),true):Enum.ToObject(type,value.GetInt32());
-        if(type==typeof(string))return value.GetString();
+        if(type==typeof(string))return value.ValueKind==JsonValueKind.String?value.GetString():value.ValueKind is JsonValueKind.True or JsonValueKind.False or JsonValueKind.Number?value.GetRawText():throw new NotSupportedException($"Cannot load serialized string from {value.ValueKind}");
         if(type==typeof(bool))return value.ValueKind==JsonValueKind.True||(value.ValueKind==JsonValueKind.Number&&value.GetInt32()!=0);
         if(type==typeof(float))return float.Parse(value.ValueKind==JsonValueKind.String?value.GetString()!:value.GetRawText(),System.Globalization.NumberStyles.Float,System.Globalization.CultureInfo.InvariantCulture);
         if(type==typeof(double))return value.GetDouble();
@@ -365,12 +393,14 @@ if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("S
         if(type==typeof(uint)){if(value.ValueKind==JsonValueKind.String)return uint.Parse(value.GetString()!,System.Globalization.CultureInfo.InvariantCulture);if(value.TryGetUInt32(out var unsignedValue))return unsignedValue;if(value.TryGetInt32(out var signedValue)&&signedValue<0)return unchecked((uint)signedValue);throw new FormatException($"Serialized UInt32 value is {value.ValueKind}: {value.GetRawText()}");}
         if(type==typeof(byte))return value.ValueKind==JsonValueKind.String?byte.Parse(value.GetString()!,System.Globalization.CultureInfo.InvariantCulture):value.GetByte();
         if(type==typeof(byte[])&&value.ValueKind==JsonValueKind.String)return Convert.FromHexString(value.GetString()!);if(type.IsArray){if(value.ValueKind!=JsonValueKind.Array)throw new NotSupportedException($"Cannot load serialized array {type.FullName} from {value.GetRawText()}");var items=value.EnumerateArray().Select(v=>ReadValue(v,type.GetElementType(),result)).ToArray();var array=Array.CreateInstance(type.GetElementType(),items.Length);for(int i=0;i<items.Length;i++)array.SetValue(items[i],i);return array;}
-        if(type.IsGenericType&&typeof(IList).IsAssignableFrom(type)){if(type.GetGenericArguments()[0]==typeof(byte)&&value.ValueKind==JsonValueKind.String){var raw=Convert.FromHexString(value.GetString()!);var decoded=(IList)Activator.CreateInstance(type)!;foreach(var b in raw)decoded.Add(b);return decoded;}if(type.GetGenericArguments()[0]==typeof(int)&&value.ValueKind==JsonValueKind.String){var raw=Convert.FromHexString(value.GetString()!);if(raw.Length%4!=0)throw new FormatException($"Invalid serialized int list length: {raw.Length}");var decoded=(IList)Activator.CreateInstance(type)!;for(var offset=0;offset<raw.Length;offset+=4)decoded.Add(System.Buffers.Binary.BinaryPrimitives.ReadInt32LittleEndian(raw.AsSpan(offset,4)));return decoded;}if(value.ValueKind!=JsonValueKind.Array)throw new NotSupportedException($"Cannot load serialized list {type.FullName} from {value.GetRawText()}");
+        if(type.IsGenericType&&typeof(IList).IsAssignableFrom(type)){if(type.GetGenericArguments()[0]==typeof(byte)&&value.ValueKind==JsonValueKind.String){var raw=Convert.FromHexString(value.GetString()!);var decoded=(IList)Activator.CreateInstance(type)!;foreach(var b in raw)decoded.Add(b);return decoded;}if((type.GetGenericArguments()[0]==typeof(int)||type.GetGenericArguments()[0].IsEnum)&&value.ValueKind==JsonValueKind.String){var raw=Convert.FromHexString(value.GetString()!);if(raw.Length%4!=0)throw new FormatException($"Invalid serialized int list length: {raw.Length}");var decoded=(IList)Activator.CreateInstance(type)!;var listElement=type.GetGenericArguments()[0];for(var offset=0;offset<raw.Length;offset+=4){int item=System.Buffers.Binary.BinaryPrimitives.ReadInt32LittleEndian(raw.AsSpan(offset,4));decoded.Add(listElement.IsEnum?Enum.ToObject(listElement,item):item);}return decoded;}if(value.ValueKind!=JsonValueKind.Array)throw new NotSupportedException($"Cannot load serialized list {type.FullName} from {value.GetRawText()}");
             var list=(IList)Activator.CreateInstance(type);var element=type.GetGenericArguments()[0];foreach(var item in value.EnumerateArray())list.Add(ReadValue(item,element,result));return list;
         }
         if(type==typeof(AnimationCurve))return ReadAnimationCurve(value,result);
         if(value.ValueKind!=JsonValueKind.Object)throw new NotSupportedException($"Expected serialized object for {type.FullName}");
-        object instance=type==typeof(AnimationCurve)?System.Runtime.CompilerServices.RuntimeHelpers.GetUninitializedObject(type):Activator.CreateInstance(type,true)!;
+        object instance;
+        try{instance=Activator.CreateInstance(type,true)!;}
+        catch(MissingMethodException){instance=System.Runtime.CompilerServices.RuntimeHelpers.GetUninitializedObject(type);}
         foreach(var property in value.EnumerateObject()){
             var member=type.GetField(property.Name,BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic) as MemberInfo
                 ??type.GetProperty(property.Name,BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);

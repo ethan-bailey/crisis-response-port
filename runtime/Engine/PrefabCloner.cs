@@ -11,6 +11,7 @@ public static class PrefabCloner {
         if(root==null)throw new NotSupportedException($"Asset cloning for {original.GetType().Name} is not implemented");
         var world=parent?.world??RuntimeWorld.Current;
         var map=new Dictionary<Object,Object>(ReferenceEqualityComparer.Instance);
+        var clonedBehaviours=new List<MonoBehaviour>();
         using var deferred=world.DeferActivation();
         try {
         void Allocate(Transform source,Transform targetParent){
@@ -21,6 +22,7 @@ public static class PrefabCloner {
             target.transform.localPosition=source.localPosition;target.transform.localRotation=source.localRotation;target.transform.localScale=source.localScale;
             foreach(var component in sourceGO.components.Where(c=>c&&c is not Transform)){
                 var copy=target.AddComponent(component.GetType());map[component]=copy;
+                if(copy is MonoBehaviour behaviour)clonedBehaviours.Add(behaviour);
                 if(component is Behaviour b&&copy is Behaviour copied)copied.enabled=b.enabled;
             }
             foreach(var child in source.children)Allocate(child,target.transform);
@@ -38,7 +40,10 @@ public static class PrefabCloner {
                 for(int i=0;i<array.Length;i++)output.SetValue(CopyValue(array.GetValue(i),values),i);return output;}
             if(value is IList list){var output=(IList)Activator.CreateInstance(type);values[value]=output;foreach(var item in list)output.Add(CopyValue(item,values));return output;}
             if(IsUnityEventType(type)){for(var candidate=type;candidate!=null&&candidate.FullName!="UnityEngine.Events.UnityEvent"&&!(candidate.IsGenericType&&candidate.Namespace=="UnityEngine.Events"&&candidate.Name.StartsWith("UnityEvent",StringComparison.Ordinal));candidate=candidate.BaseType){foreach(var field in candidate.GetFields(BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.DeclaredOnly))if(!field.IsStatic)throw new NotSupportedException($"UnityEvent subclass state is not implemented: {type.FullName}.{field.Name}");}var eventCopy=Activator.CreateInstance(type,true);if(eventCopy==null)throw new NotSupportedException($"UnityEvent {type.FullName} has no constructible empty state");values[value]=eventCopy;return eventCopy;}if(type.IsValueType){var valueCopy=Activator.CreateInstance(type)??throw new NotSupportedException($"Value type {type.FullName} has no default state");values[value]=valueCopy;for(var candidate=type;candidate!=null&&candidate!=typeof(object);candidate=candidate.BaseType){foreach(var field in candidate.GetFields(BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.DeclaredOnly)){if(field.IsStatic)continue;try{field.SetValue(valueCopy,CopyValue(field.GetValue(value),values));}catch(Exception error){throw new NotSupportedException($"Value type field clone is not implemented: {type.FullName}.{field.Name}",error);}}}return valueCopy;}if(type.FullName=="Crisis.Runtime.FullSource.CharacterPsychologyDriver"){var driverCopy=Activator.CreateInstance(type)??throw new NotSupportedException("CharacterPsychologyDriver has no source default constructor");values[value]=driverCopy;return driverCopy;}if(type.GetCustomAttribute<SerializableAttribute>()==null)throw new NotSupportedException($"Serialized clone value {type.FullName} is not implemented");
-            var result=Activator.CreateInstance(type);values[value]=result;
+            object result;
+            try{result=Activator.CreateInstance(type,true)!;}
+            catch(MissingMethodException){result=System.Runtime.CompilerServices.RuntimeHelpers.GetUninitializedObject(type);}
+            values[value]=result;
             foreach(var field in SerializedFields(type))field.SetValue(result,CopyValue(field.GetValue(value),values));
             return result;
         }
@@ -54,6 +59,15 @@ public static class PrefabCloner {
         if(parent!=null)cloneRoot.transform.SetParent(parent,worldPositionStays);
         if(position.HasValue)cloneRoot.transform.position=position.Value;
         if(rotation.HasValue)cloneRoot.transform.rotation=rotation.Value;
+        // Unity's Instantiate completes Awake/OnEnable for an active clone before
+        // returning, including when called from another component's Awake. The
+        // world's normal activation sweep is reentrant-safe and therefore defers
+        // newly created objects until the current callback returns; explicitly
+        // initialize this fully mapped clone now to preserve Instantiate semantics.
+        deferred.Dispose();
+        if(world.Initialized)
+            foreach(var behaviour in clonedBehaviours)
+                world.Activate(behaviour);
         return (T)map[original];
         }catch{
             // No original Awake/OnEnable callback may observe a failed partial clone.

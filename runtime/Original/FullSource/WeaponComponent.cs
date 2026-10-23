@@ -81,6 +81,10 @@ public class WeaponComponent : MonoBehaviour
 		{
 			return string.IsNullOrEmpty(qualifiers);
 		}
+		if (string.IsNullOrEmpty(qualifiers))
+		{
+			return false;
+		}
 		string[] array = qualifiers.Split(WeaponComponentSlot.SplitDelimiters, StringSplitOptions.RemoveEmptyEntries);
 		string[] array2 = array;
 		foreach (string value in array2)

@@ -22,8 +22,9 @@ namespace UnityEngine {
  // Read/write CPU texture adapter for the original glass alpha decisions. Pixels
  // are stored bottom-left first, as Unity Texture2D.GetPixels expects.
  public sealed class Material:Object {
+  public static Action<string,Texture> TextureDriver {get;set;}
   public Material(){}
-  public Material(Shader shader){this.shader=shader??throw new ArgumentNullException(nameof(shader));}
+  public Material(Shader shader){this.shader=shader??throw new ArgumentNullException(nameof(shader));world=RuntimeWorld.Current;}
   public Shader shader {get;set;}
   public int renderQueue {get;set;}=-1;
   public bool enableInstancing {get;set;}
@@ -46,9 +47,10 @@ namespace UnityEngine {
   readonly Dictionary<string,Texture> textures=new();
   public void SetTexture(string property,Texture value){
    ArgumentException.ThrowIfNullOrEmpty(property);
-   if(OnTextureAssigned==null && !(property=="_Bloodmask" && value is Texture2D))
+   var driver=OnTextureAssigned??TextureDriver;
+   if(driver==null && !(property=="_Bloodmask" && value is Texture2D))
     throw new NotSupportedException("Source material texture driver is not bound");
-   OnTextureAssigned?.Invoke(property,value);
+   driver?.Invoke(property,value);
    textures[property]=value;
    if(property=="_MainTex" && value is Texture2D image)mainTexture=image;
   }
@@ -71,6 +73,20 @@ namespace UnityEngine {
    get=>texture;
    set {texture=value;OnMainTextureAssigned?.Invoke(value);}
   }
+  internal Material CloneForRenderer(RuntimeWorld owner){
+   var clone=new Material(){shader=shader,renderQueue=renderQueue,enableInstancing=enableInstancing,doubleSidedGI=doubleSidedGI,lightmapFlags=lightmapFlags,hideFlags=hideFlags,passCount=passCount,name=name};
+   clone.world=owner??RuntimeWorld.Current;clone.world.Register(clone);
+   clone.texture=texture;clone.OnTextureAssigned=OnTextureAssigned;clone.OnMainTextureAssigned=OnMainTextureAssigned;clone.OnColorAssigned=OnColorAssigned;
+   foreach(var item in colors)clone.colors[item.Key]=item.Value;
+   foreach(var item in floats)clone.floats[item.Key]=item.Value;
+   foreach(var item in vectors)clone.vectors[item.Key]=item.Value;
+   foreach(var item in matrices)clone.matrices[item.Key]=item.Value;
+   foreach(var item in textures)clone.textures[item.Key]=item.Value;
+   foreach(var item in OriginalSerializedFields)clone.OriginalSerializedFields[item.Key]=item.Value.Clone();
+   clone.OriginalSerializedBytes=OriginalSerializedBytes==null?null:(byte[])OriginalSerializedBytes.Clone();clone.OriginalSerializedSha256=OriginalSerializedSha256;
+   clone.OriginalAssetGuid=OriginalAssetGuid;clone.OriginalAssetFileID=OriginalAssetFileID;clone.OriginalAssetPath=OriginalAssetPath;
+   return clone;
+  }
  }
  public class Renderer:Behaviour {
   public bool castShadows=true,receiveShadows=true,dynamicOccludee=true,preserveUVs,ignoreNormalsForChartDetection,importantGI,stitchLightmapSeams;
@@ -79,11 +95,18 @@ namespace UnityEngine {
   public StaticBatchInfo staticBatchInfo;
   public new Transform staticBatchRoot,probeAnchor,lightProbeVolumeOverride;
   public Object lightmapParameters;
-  Material singleMaterial=new();Material[] materialInstances;
+  Material singleMaterial=new();Material[] materialInstances;bool materialInstance;
   public Action<Material[]> OnMaterialsAssigned;
   public Material material {
-   get=>materialInstances is {Length:>0}?materialInstances[0]:singleMaterial;
-   set {singleMaterial=value??throw new ArgumentNullException(nameof(value));if(materialInstances is {Length:>0})materialInstances[0]=value;}
+   get {
+    if(materialInstances is {Length:>0}){
+     if(!materialInstance&&materialInstances[0]){materialInstances[0]=materialInstances[0].CloneForRenderer(world);materialInstance=true;}
+     return materialInstances[0];
+    }
+    if(!materialInstance&&singleMaterial){singleMaterial=singleMaterial.CloneForRenderer(world);materialInstance=true;}
+    return singleMaterial;
+   }
+   set {singleMaterial=value??throw new ArgumentNullException(nameof(value));if(materialInstances is {Length:>0})materialInstances[0]=value;materialInstance=true;}
   }
   public Material[] materials {
    get=>materialInstances is null?new[]{singleMaterial}:(Material[])materialInstances.Clone();
@@ -92,6 +115,7 @@ namespace UnityEngine {
 
     materialInstances=(Material[])value.Clone();
     if(materialInstances.Length>0)singleMaterial=materialInstances[0];
+    materialInstance=false;
     OnMaterialsAssigned?.Invoke((Material[])materialInstances.Clone());
    }
   }

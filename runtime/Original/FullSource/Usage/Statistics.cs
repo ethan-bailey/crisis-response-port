@@ -37,7 +37,16 @@ namespace Usage
 
 		private void Start()
 		{
-			client.Load();
+			try
+			{
+				client.Load();
+			}
+			catch (IOException)
+			{
+				// First launch has no persisted client record yet. Keep the authored
+				// defaults and create the record through the normal save path.
+				client.Save();
+			}
 			VerifyPreviousSession();
 			PersistGUID();
 		}

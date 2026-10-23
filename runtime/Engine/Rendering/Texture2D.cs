@@ -19,7 +19,7 @@ internal static class PngTextureDecoder {
     internal static (int width,int height,byte[] rgba) Decode(byte[] png) {
         ArgumentNullException.ThrowIfNull(png);
         if(png.Length<8||!png.AsSpan(0,8).SequenceEqual(Signature))throw new InvalidDataException("Texture asset is not a PNG");
-        int offset=8,width=0,height=0;bool header=false,end=false,seenData=false;using var compressed=new System.IO.MemoryStream();
+        int offset=8,width=0,height=0,channels=0;bool header=false,end=false,seenData=false;using var compressed=new System.IO.MemoryStream();
         while(offset<=png.Length-12) {
             uint length=ReadU32(png,offset);offset+=4;
             if(length>int.MaxValue||length>(uint)(png.Length-offset-8))throw new InvalidDataException("PNG chunk exceeds source bounds");
@@ -30,8 +30,9 @@ internal static class PngTextureDecoder {
                 if(header||offset!=16||count!=13)throw new InvalidDataException("PNG must have one leading 13-byte IHDR");
                 width=checked((int)ReadU32(png,dataOffset));height=checked((int)ReadU32(png,dataOffset+4));
                 if(width<=0||height<=0||width>2048||height>2048)throw new NotSupportedException($"PNG dimensions {width}x{height} exceed the preserved importer limit");
-                if(png[dataOffset+8]!=8||png[dataOffset+9]!=6||png[dataOffset+10]!=0||png[dataOffset+11]!=0||png[dataOffset+12]!=0)
-                    throw new NotSupportedException("Only non-interlaced 8-bit RGBA PNG textures are supported");
+                channels=png[dataOffset+9] switch {2=>3,6=>4,_=>0};
+                if(png[dataOffset+8]!=8||channels==0||png[dataOffset+10]!=0||png[dataOffset+11]!=0||png[dataOffset+12]!=0)
+                    throw new NotSupportedException("Only non-interlaced 8-bit RGB or RGBA PNG textures are supported");
                 header=true;
             } else if(type=="IDAT") {
                 if(!header||end)throw new InvalidDataException("PNG IDAT appears outside the image-data section");
@@ -43,21 +44,25 @@ internal static class PngTextureDecoder {
             offset=checked(dataOffset+count+4);
         }
         if(!end||offset!=png.Length)throw new InvalidDataException("PNG is missing IEND or has trailing bytes");
-        int rowBytes=checked(width*4),expected=checked(height*(rowBytes+1));compressed.Position=0;
+        int sourceRowBytes=checked(width*channels),expected=checked(height*(sourceRowBytes+1));compressed.Position=0;
         using var inflater=new System.IO.Compression.ZLibStream(compressed,System.IO.Compression.CompressionMode.Decompress,true);
         using var decoded=new System.IO.MemoryStream(expected);inflater.CopyTo(decoded);
         if(decoded.Length!=expected)throw new InvalidDataException($"PNG pixel stream has {decoded.Length} bytes; expected {expected}");
-        byte[] filtered=decoded.ToArray(),rgba=new byte[checked(rowBytes*height)],previous=new byte[rowBytes],current=new byte[rowBytes];int at=0;
+        byte[] filtered=decoded.ToArray(),rgba=new byte[checked(width*height*4)],previous=new byte[sourceRowBytes],current=new byte[sourceRowBytes];int at=0;
         for(int y=0;y<height;y++) {
             byte filter=filtered[at++];
             if(filter>4)throw new InvalidDataException($"Unsupported PNG row filter {filter}");
-            for(int i=0;i<rowBytes;i++) {
-                byte left=i>=4?current[i-4]:(byte)0,up=previous[i],upperLeft=i>=4?previous[i-4]:(byte)0;
+            for(int i=0;i<sourceRowBytes;i++) {
+                byte left=i>=channels?current[i-channels]:(byte)0,up=previous[i],upperLeft=i>=channels?previous[i-channels]:(byte)0;
                 int predictor=filter switch {0=>0,1=>left,2=>up,3=>(left+up)/2,4=>Paeth(left,up,upperLeft),_=>throw new InvalidDataException()};
                 current[i]=unchecked((byte)(filtered[at++]+predictor));
             }
             // PNG stores top row first; Unity CPU textures address from bottom-left.
-            Array.Copy(current,0,rgba,(height-y-1)*rowBytes,rowBytes);
+            int targetRow=(height-y-1)*width*4;
+            for(int x=0;x<width;x++){
+                int source=x*channels,target=targetRow+x*4;
+                rgba[target]=current[source];rgba[target+1]=current[source+1];rgba[target+2]=current[source+2];rgba[target+3]=channels==4?current[source+3]:(byte)255;
+            }
             (previous,current)=(current,previous);
         }
         return(width,height,rgba);
