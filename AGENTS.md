@@ -4,6 +4,12 @@
 
 # Crisis Response Port — Agent Operating Instructions
 
+## Current execution environment — owner direction, 2026-10-23
+
+The owner has switched routine repository work from Codespaces to the Codex Work Mode checkout. Work directly in the currently provided repository workspace; do not route routine edits through a browser or restart Codespaces. This is a managed Codex workspace, not the owner's iPhone or personal computer. Scratch files may disappear between chats, so persist repository changes by committing and pushing the active branch, then verify the GitHub branch/PR head. Use the GitHub connector to inspect live branch/PR state when shell GitHub authentication is unavailable. Keep all existing build, browser, gameplay, and publishing acceptance gates unchanged.
+
+See [`AGENT_INSTRUCTIONS.md`](AGENT_INSTRUCTIONS.md) for the session-start efficiency check, .NET runner failure handling, and handoff rules.
+
 ## 0. Mandatory live-state and checkpoint precedence gate
 
 **Before ANY code or documentation edit**, inspect live `develop/wasm`, all open PRs (including PRs recently merged into feature branches), the target branch head, recent relevant local verification evidence, and `docs/REPOSITORY_REMEDIATION_2026-10-18.md` on the current full-source branch. GitHub Actions is disabled by owner decision, so no CI run is required or expected. Never choose a task solely from an old audit, conversation, `NEXT_AGENT.md`, issue body or historical compiler count. GitHub commit-search results are not sufficient to identify the newest branch head.

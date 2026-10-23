@@ -10,6 +10,16 @@ public struct ColorBlock {
     public Color normalColor,highlightedColor,pressedColor,selectedColor,disabledColor;
     public float colorMultiplier,fadeDuration;
 }
+// Unity 2017.2 uGUI component identities used by the recovered original prefabs.
+// Layout/render execution stays presentation-driver owned; these components retain
+// the authored hierarchy and serialized identity without inventing browser layout.
+public sealed class CanvasScaler:MonoBehaviour { }
+public sealed class GraphicRaycaster:MonoBehaviour { }
+public sealed class LayoutElement:MonoBehaviour { }
+public sealed class HorizontalLayoutGroup:MonoBehaviour { }
+public sealed class VerticalLayoutGroup:MonoBehaviour { }
+public sealed class ContentSizeFitter:MonoBehaviour { }
+public sealed class Mask:MonoBehaviour { }
 public class Graphic:MonoBehaviour {
     [SerializeField] Color tint=Color.white;
     public UnityEngine.Material material {get;set;}
@@ -29,7 +39,9 @@ public sealed class Button:Selectable {
 }
 public sealed class Toggle:Selectable {
     bool selected;
-    public readonly UnityEngine.Events.UnityEvent<bool> onValueChanged=new();
+    public int toggleTransition;
+    public Graphic graphic;
+    public UnityEngine.Events.UnityEvent<bool> onValueChanged=new();
     public bool isOn {
         get=>selected;
         set {if(selected==value)return;selected=value;onValueChanged.Invoke(selected);}
@@ -53,6 +65,15 @@ public sealed class Dropdown:Selectable {
     public void ClearOptions(){availableOptions.Clear();current=0;}
     public void AddOptions(List<OptionData> items){if(items!=null)availableOptions.AddRange(items);}
     public void AddOptions(List<string> items){if(items!=null)availableOptions.AddRange(items.Select(value=>new OptionData(value)));}
+}
+public sealed class Scrollbar:Selectable {
+    float current;
+    public float size=1;
+    public UnityEngine.Events.UnityEvent<float> onValueChanged=new();
+    public float value {
+        get=>current;
+        set {var next=Math.Clamp(value,0f,1f);if(current==next)return;current=next;onValueChanged.Invoke(current);}
+    }
 }
 public sealed class InputField:Selectable {
     string content=string.Empty;

@@ -148,7 +148,7 @@ async function load(){
    const response=await fetch("../scene-data/crisis-response-scenes.json.gz");
    if(!response.ok)throw new Error("Original scene package unavailable: HTTP "+response.status);
    if(typeof DecompressionStream==="undefined")throw new Error("Browser cannot decompress the original scene package");
-   const scenePackage=await new Response(response.body.pipeThrough(new DecompressionStream("gzip"))).text();
+   const scenePackage=(await new Response(response.body.pipeThrough(new DecompressionStream("gzip"))).text()).replace('"m_Name":false','"m_Name":"No"').replace('"m_Name":true','"m_Name":"Yes"');
    const loaded=[];
    for(const stage of originalSceneFlowPaths){
     const report=JSON.parse(await runtimeCall("LoadScene",scenePackage,stage.path));

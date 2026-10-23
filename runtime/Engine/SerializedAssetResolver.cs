@@ -66,7 +66,7 @@ internal static class SerializedAssetResolver {
         if(!metaEntry.TryGetProperty("metaSha256",out var metaHashValue)||metaHashValue.GetString()!=metaHash)
             throw new InvalidDataException($"Original TextureImporter metadata hash does not match {path}");
         bool HasImporterField(string field,string value)=>System.Text.RegularExpressions.Regex.IsMatch(importer,$@"(?m)^  {System.Text.RegularExpressions.Regex.Escape(field)}:\s*{System.Text.RegularExpressions.Regex.Escape(value)}\s*$");
-        bool supportedSourceFormat=HasImporterField("textureFormat","4")||HasImporterField("textureFormat","12");
+        bool supportedSourceFormat=HasImporterField("textureFormat","4")||HasImporterField("textureFormat","5")||HasImporterField("textureFormat","12");
         if(!System.Text.RegularExpressions.Regex.IsMatch(importer,$@"(?m)^guid:\s*{System.Text.RegularExpressions.Regex.Escape(guid)}\s*$")||
            !HasImporterField("fileIDToRecycleName","{}")||
            !HasImporterField("isReadable","1")||

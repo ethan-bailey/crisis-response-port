@@ -101,6 +101,7 @@ public class Component:Object {
         for(var t=transform;t!=null;t=t.parent){var c=t.GetComponent<T>();if(c!=null)return c;}return null;
     }
 }
+public sealed class CanvasRenderer:Component { }
 public class Behaviour:Component {
     bool value=true;
     public virtual bool enabled {get=>value;set{this.value=value;world?.RefreshActivation();}}

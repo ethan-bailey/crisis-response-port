@@ -117,6 +117,14 @@ if(args.Length>0){
     foreach(var path in new[]{"Assets/Scenes/Marksman range.unity","Assets/Scenes/Mission 01.unity"}){
         var loaded=SceneLoader.Load(package,path);
         if(loaded.unresolvedReferences.Count>0)throw new Exception("Unresolved supported fields");
+        if(path=="Assets/Scenes/Marksman range.unity"){
+            var glass=loaded.objects.Values.OfType<Crisis.Runtime.FullSource.BallisticWindow>()
+                .Select(window=>window.texture).FirstOrDefault(texture=>texture?.OriginalAssetPath=="Assets/Texture2D/window glass.png");
+            if(glass==null||glass.OriginalAssetGuid!="bb3d703bd542afc47a1423a6c37397aa"||glass.OriginalAssetFileID!="2800000"||
+               glass.OriginalImageBytes==null||Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(glass.OriginalImageBytes)).ToLowerInvariant()!="ba810cf6d18d29ac28aebfc07340188c0cd3d00f0c4fd4071f8e2a7b98d1d4b5"||
+               !glass.ImporterSourceText.Contains("  textureFormat: 5\n",StringComparison.Ordinal))
+                throw new InvalidOperationException("Original Marksman window texture lost its GUID, fileID, PNG source, or ARGB32 importer metadata");
+        }
         Console.WriteLine(JsonSerializer.Serialize(loaded.Report()));
         Console.WriteLine(JsonSerializer.Serialize(SceneLoader.VerifyImportedRay(loaded)));
     }

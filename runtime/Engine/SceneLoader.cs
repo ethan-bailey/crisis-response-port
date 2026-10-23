@@ -116,6 +116,7 @@ public static class SceneLoader {
                     case 64 when prefab:component=go.AddComponent<MeshCollider>();break;
                     case 136 when prefab:component=go.AddComponent<CapsuleCollider>();break;
                     case 212 when prefab:component=go.AddComponent<SpriteRenderer>();break;
+                    case 222 when prefab:component=go.AddComponent<CanvasRenderer>();break;
                     case 114:{
                         var script=fields.GetProperty("m_Script");
                         string guid=script.GetProperty("guid").GetString();
@@ -165,8 +166,17 @@ public static class SceneLoader {
         }
     }
     static bool IsWithin(Transform value,Transform root){for(var t=value;t!=null;t=t.parent)if(ReferenceEquals(t,root))return true;return false;}
+    const string UnityUiGuid="f5f67c52d1564df4a8936ccd202a3bd8";
+    static readonly Dictionary<string,string> UnityUiTypes=new(StringComparer.Ordinal) {
+        ["-2061169968"]="Scrollbar",["-1200242548"]="Mask",["-765806418"]="Image",
+        ["-405508275"]="HorizontalLayoutGroup",["-113659843"]="Slider",["708705254"]="Text",
+        ["853051423"]="Dropdown",["1297475563"]="VerticalLayoutGroup",["1301386320"]="GraphicRaycaster",
+        ["1367256648"]="ScrollRect",["1392445389"]="Button",["1679637790"]="LayoutElement",
+        ["1741964061"]="ContentSizeFitter",["1980459831"]="CanvasScaler",["2109663825"]="Toggle",
+    };
     static string ResolveScriptName(JsonElement package,string guid,string fileID){
         if(package.TryGetProperty("scriptTypes",out var bindings)&&bindings.TryGetProperty(guid,out var types)&&types.TryGetProperty(fileID,out var mapped))return mapped.GetString();
+        if(guid==UnityUiGuid&&UnityUiTypes.TryGetValue(fileID,out var uiType))return uiType;
         if(package.GetProperty("guidPaths").TryGetProperty(guid,out var source))return Path.GetFileNameWithoutExtension(source.GetString());
         return $"Script:{guid}:{fileID}";
     }
@@ -236,6 +246,7 @@ public static class SceneLoader {
             SetField("m_Color","color",typeof(Color));SetField("m_FlipX","flipX",typeof(bool));SetField("m_FlipY","flipY",typeof(bool));
             SetField("m_DrawMode","drawMode",typeof(int));SetField("m_Size","size",typeof(Vector2));SetField("m_AdaptiveModeThreshold","adaptiveModeThreshold",typeof(float));
             SetField("m_SpriteTileMode","spriteTileMode",typeof(int));SetField("m_SpriteSortPoint","spriteSortPoint",typeof(int));
+            SetField("m_MaskInteraction","maskInteraction",typeof(int));SetField("m_WasSpriteAssigned","wasSpriteAssigned",typeof(bool));
         }
         if(classID==199){SetField("m_RenderMode","renderMode",typeof(int));SetField("m_SortMode","sortMode",typeof(int));SetField("m_LengthScale","lengthScale",typeof(float));SetField("m_RenderAlignment","renderAlignment",typeof(int));SetField("m_UseCustomVertexStreams","useCustomVertexStreams",typeof(bool));SetField("m_VertexStreams","vertexStreams",typeof(int));SetField("m_Pivot","pivot",typeof(Vector3));SetField("m_Flip","flip",typeof(Vector3));SetField("m_CameraVelocityScale","cameraVelocityScale",typeof(float));SetField("m_VelocityScale","velocityScale",typeof(float));SetField("m_SortingFudge","sortingFudge",typeof(float));SetField("m_MinParticleSize","minParticleSize",typeof(float));SetField("m_MaxParticleSize","maxParticleSize",typeof(float));SetField("m_MaskInteraction","maskInteraction",typeof(int));External("m_Mesh");External("m_Mesh1");External("m_Mesh2");External("m_Mesh3");}
 if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("Spatialize","spatialize",typeof(bool));SetField("SpatializePostEffects","spatializePostEffects",typeof(bool));SetField("DopplerLevel","dopplerLevel",typeof(float));SetField("MinDistance","minDistance",typeof(float));SetField("MaxDistance","maxDistance",typeof(float));SetField("Pan2D","pan2D",typeof(float));SetField("rolloffMode","rolloffMode",typeof(int));SetField("BypassEffects","bypassEffects",typeof(bool));SetField("BypassListenerEffects","bypassListenerEffects",typeof(bool));SetField("BypassReverbZones","bypassReverbZones",typeof(bool));SetField("rolloffCustomCurve","rolloffCustomCurve",typeof(AnimationCurve));SetField("panLevelCustomCurve","panLevelCustomCurve",typeof(AnimationCurve));SetField("spreadCustomCurve","spreadCustomCurve",typeof(AnimationCurve));SetField("reverbZoneMixCustomCurve","reverbZoneMixCustomCurve",typeof(AnimationCurve));}

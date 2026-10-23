@@ -18,6 +18,7 @@ public sealed class SpriteRenderer:Renderer {
     public int spriteTileMode {get;set;}
     public int spriteSortPoint {get;set;}
     public int maskInteraction {get;set;}
+    public bool wasSpriteAssigned {get;set;}
 }
 
 public sealed class LineRenderer:Renderer {
