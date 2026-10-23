@@ -32,6 +32,15 @@
 
 Gate 8 remains open. WASM compilation and package integrity pass at the tested SHA, but exact-build browser behavior, the linked two-actor combat flow, and physical iPhone Safari acceptance remain unverified. The browser application page explicitly describes full gameplay as incomplete. Do not publish this package as a completed game or claim Gate 8 acceptance.
 
+## Continuation after owner authorization
+
+- The owner authorized pushing the evidence/handoff commit and transmitting the private package to ChatGPT Cloud Chrome. Commit `76760e3c3c3e4ad09786849aa588e2fa699bdc39` was pushed to `origin/develop/wasm`; `git ls-remote` confirmed the remote ref equals that SHA.
+- Retried Cloud Chrome against the local package URL `http://127.0.0.1:8765/game/`. The browser returned `net::ERR_CONNECTION_REFUSED`. Restarted the local Python server on port 8765 and retried once; the same connection error remained. The cloud browser cannot reach the workspace loopback address.
+- Checked for installed Chromium/Chrome/Firefox binaries in the workspace; none were found. No public deployment or indirect package transfer was attempted.
+- Preserve untracked `scene-data/.crisis-response-scenes.json.gz.QEOasz`; it was present before and after the push and was not included in commits.
+
+Gate 8 remains open. The package transfer is authorized, but a private browser-reachable route or a working local browser runner is still needed for exact-build browser acceptance. The combined two-actor combat chain and physical iPhone Safari acceptance also remain open.
+
 ## Next action
 
-Obtain the owner's explicit approval before transmitting the private package to the remote browser for testing. Then close the linked two-actor scenario and rerun one final exact-SHA package/browser acceptance. Physical iPhone Safari acceptance remains a separate required device check.
+Resolve private browser access without exposing the package publicly, then exercise exact-build browser gameplay and the combined two-actor combat chain. Complete physical iPhone Safari acceptance against the final verified build before closing Gate 8.
