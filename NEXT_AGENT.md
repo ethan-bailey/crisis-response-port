@@ -1,5 +1,15 @@
 # NEXT_AGENT — Crisis Response port completion
 
+## Latest checkpoint — 2026-10-23 source-level serialized-reference verification
+
+- Startup stock: the existing Codespace tab was unavailable. Opening that same Codespace reached GitHub's sign-in page, and its existing forwarded runtime returned an HTTP failure. This automation environment exposes no Codespace restart API, so no restart was attempted and the Codespace was not deleted or recreated. Its branch, worktree, and active process remain untouched.
+- Repository stock from GitHub: `develop/wasm` remains `adb4e6b73f67a2bafc8c5daf46dc15a6cde1e252`; feature branch `codex/game-scene-name-normalization-20261023` started this batch at `03e069df8c1a74a935c8d4fcfd882dc5737c275b`. The remote worktree cannot be inspected while the Codespace is unavailable. The previously selected SDK is .NET 8.0.426, but SDK selection could not be rechecked in this environment.
+- Bounded verification: inspected `SceneLoader.ReadValue`, `SerializedAssetResolver.Resolve`, and the recovered `UIPreferencesMenu` source at the exact starting SHA. Serialized fields are processed in declaration/source order, making `UIPreferencesMenu.generalPrefab` the first prefab dependency attempted from the recorded Title component. External prefab references call `SceneLoader.LoadPrefab(..., requireComplete: true)`; therefore an unsupported or unresolved nested dependency aborts the entire reference before Title can complete. This narrows the failure path but does **not** identify the inner failing asset; the prior runner did not retain the full exception chain.
+- No runtime code was changed because this environment cannot build or execute the repository, and an uncompiled resolver change would violate the exact-SHA gate. GitHub Actions remain disabled. No browser-policy workaround, Site save, deployment, access-policy change, or unrelated merge was attempted.
+- Gates remain open: explicit original Title → Transition → Mission 01 → Marksman result; rendered Marksman scene; in-scene FIRE; and Operator/Occupant lifecycle with real Mission/global dependencies.
+- Next bounded batch: after recovering the same Codespace, first re-verify branch/HEAD/worktree and .NET 8.0.426. Run the existing normalized temporary scene runner once while printing `Exception.ToString()` (or recursively printing every inner exception), capture the full `generalPrefab` dependency failure, make only the smallest source-backed fix, then build and rerun the scene sequence once at the resulting exact source SHA.
+
+
 ## Latest checkpoint — 2026-10-23
 
 - `develop/wasm` was reconciled and pushed. Source HEAD at this verification was `9229cd06d22a9d3fcc8a9296c58cceb3453c8c3e`; the Codespace worktree was clean and aligned with `origin/develop/wasm`. The pre-reconcile backup branch remains `backup/develop-wasm-c2a4f37-before-reconcile-2026-10-23`.
