@@ -2,33 +2,28 @@
 
 ## Checkpoint
 
-- Development line: `develop/wasm`; repository checkpoint before this handoff refresh: `84a16ddd0997e6cdec287c21a259a9e54c3f5ddb`. The branch was pushed and confirmed equal to `origin/develop/wasm`; no open PRs at the latest GitHub connector check. GitHub Actions remain disabled. Continue directly on `develop/wasm`.
-- Codespaces use is at 90% through 2026-11-01. Keep working in this checkout.
-- Full original CharacterBody compilation was verified against exact code source SHA `1237e360b829a5a80289d0136d2f8be7a7159050`. The only commits after that SHA are compile evidence and this handoff refresh; no runtime source changed.
+- Development line: `develop/wasm`; the code source checkpoint remains `5bb158f0bb18ab3fbf17fcd478f2266226cd057e`. Documentation-only commit `c297cc1c1e6c3179902d19b3e74ab4646fe7f6dd` records the recurring workspace issue. Live GitHub confirms that head and no open PRs. GitHub Actions remain disabled.
+- Codespaces use is at 90% through 2026-11-01; avoid it unless the owner requests it or a required gate cannot run elsewhere.
+- Full original CharacterBody compilation passed at exact code source SHA `1237e360b829a5a80289d0136d2f8be7a7159050` (0 errors, 45 warnings). The later changes are documentation only.
 
-## Completed this session
+## Current blocker
 
-- Selected pinned .NET SDK 8.0.426 and existing `/tmp/libprocshim.so`; exact runtime restore succeeded.
-- `dotnet build runtime/Crisis.Runtime.csproj --no-restore --no-incremental -v:q`: exit 0, **0 errors**, **45 warnings**. The project includes `runtime/Original/CharacterBody.Full.cs`, compiled as `Crisis.Runtime.FullSource.CharacterBody`.
-- `python3 scripts/check_characterbody_ownership.py --strict`: pass; original and browser transport actor identities remain separate.
-- `python3 scripts/verify_full_characterbody_enums.py`: pass for recovered `WeaponMode` and `LimbId`.
-- `python3 -m unittest scripts.test_summarize_characterbody_compile -v`: 2 tests pass.
-- Recorded exact-SHA evidence in `docs/evidence/CHARACTERBODY_FULL_COMPILE_2026-10-23.json`; expanded `docs/DOTNET_BUILD_RUNBOOK.md` with the observed direct-MSBuild `MSB1025` workaround and full compile result.
-- Commit `84a16dd` pushed to `develop/wasm`; remote head confirmed. No runtime/gameplay source changed.
+- This Work Mode session has no Crisis Response checkout mounted. The prior `/workspace/scratch/c5901021c6f6/crisis-response-port` path is absent; the only Git checkout found is an unrelated Sites repository.
+- Shell `git ls-remote` failed with `could not read Username ... No such device or address`; this runner cannot prompt for shell GitHub credentials. GitHub's connected API can verify the head and read/write individual text files, but its fetch tool rejected the repository tarball endpoint and cannot provide a buildable checkout.
+- The pinned .NET SDK 8.0.426 and `/tmp/libprocshim.so` were not found in the current runner. Gate 1 has not started; no gameplay source changes or gameplay gates are claimed.
+- Recovery steps and exact observed failures are documented in `docs/DOTNET_BUILD_RUNBOOK.md` under “Repeated workspace/checkout unavailability” and linked from `AGENT_INSTRUCTIONS.md`.
+- The existing “Crisis Response Gates 1–7” hourly automation is paused to avoid repeating this same environment failure. It may be resumed once a usable project checkout and toolchain are available.
 
-## Remaining gates
+## Gameplay gates requested
 
-- Compilation alone does not establish live gameplay integration or parity. Verify how the compiled original `CharacterBody` is instantiated and owned by Player/Occupant paths, then add source-backed runtime integration checks without replacing the original actor with the browser transport class.
-- Original actor lifecycle, two-actor combat/physiology/ragdoll, scene flow, real browser gameplay smoke, and physical iPhone Safari acceptance remain open.
-- Original player casing Mesh 610 rendering-equivalence and built-in resource pointer closure remain open as recorded in the asset evidence. Do not substitute Mesh 670 for the casing root or alter round/projectile references.
-- Do not publish until the exact-SHA browser/game gates pass and the owner-authorized destination is confirmed.
-
-## .NET failures and warnings
-
-- Compile errors: none.
-- Restore/startup failures: none in this run. The pinned SDK and process shim worked. Known host startup (`/proc`/process metadata, `DebugUtils`, direct-MSBuild `MSB1025`), missing restore assets (`NETSDK1004`), missing WASM runtime pack (`NETSDK1112`), and compiler diagnostics are documented in `docs/DOTNET_BUILD_RUNBOOK.md`.
-- Build emitted 45 warnings, primarily legacy API/serialization obsolescence, member hiding, and platform analyzer warnings. They did not fail compilation; see the evidence JSON and build command in the runbook.
+1. Load, initialize, and destroy the original Operator prefab; preserve authored components and 19 limb identities.
+2. Load Occupant and prove body, limbs, health, and equipment are independent of Operator.
+3. Connect original movement/input, animation, and arm IK.
+4. Equip original weapon; verify aim, trigger, and reload.
+5. Verify projectile-to-limb collision, damage, and original physiology.
+6. Verify unconsciousness/death, ragdoll, weapon drop, and destruction.
+7. Run these systems with real actors in a normally initialized mission.
 
 ## Next action
 
-On `develop/wasm`, inspect the source-backed Player/Occupant constructors and runtime ownership paths for the original `Crisis.Runtime.FullSource.CharacterBody`. Identify one integration slice that can be verified without placeholders, implement it, run its focused native checks plus the full runtime build once, then update this handoff once and push the verified checkpoint.
+Restore the `develop/wasm` checkout and pinned .NET 8.0.426 runner in Work Mode. Verify branch/head/worktree, then start Gate 1 by tracing the authentic Operator prefab’s source-backed load/initialization/destruction path and its complete serialized-reference closure. Avoid Codespaces through 2026-11-01 where practical.
