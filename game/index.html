@@ -80,6 +80,7 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 <div id="error"></div><div id="rotateNotice">Rotate your phone to landscape to view the port prototype.</div>
 <div id="controls"><div class="cluster"><div id="movementStick" role="group" tabindex="0" aria-label="Movement joystick. Pull left or right: small movements walk slowly, farther runs, full pull sprints. Release to stop."><span class="stick-thumb" aria-hidden="true"></span><span class="stick-label" aria-hidden="true">MOVE</span></div></div><div class="cluster"><button id="magazineTouch" type="button" aria-label="M4 magazine ammunition unavailable"><span class="mag-body"><img class="mag-image" data-mag-image alt="" draggable="false"><span class="mag-window" data-mag-rounds aria-hidden="true"></span><span class="mag-count" data-mag-count aria-hidden="true">–</span></span></button><button id="kneel" class="action-icon" data-action="kneel" aria-label="Kneel" title="Kneel"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="18" cy="5" r="3"/><path d="M17 9l-6 7 8 3 5 8M11 16l-6 9h9M19 19h9"/></svg></button><button id="stand" class="action-icon" data-action="stand" aria-label="Stand up" title="Stand"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="5" r="3"/><path d="M16 9v10m0-7-7 6m7-6 7 6m-7 1-6 10m6-10 6 10"/></svg></button><button id="fire" class="action-icon" data-action="fire" aria-label="Hold to fire" title="Fire"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="9"/><circle cx="16" cy="16" r="3"/><path d="M16 1v7m0 16v7M1 16h7m16 0h7"/></svg></button></div></div>
 <script type="module">
+import { loadOriginalScenePackage } from "../scene-data/scene-package-loader.mjs";
 import * as THREE from "three";
 import { loadSourceCutoutMaterials, sourceCutoutMaterial } from "./source-cutout-materials.mjs";
 import { loadWeaponData } from "./weapon-runtime.mjs";
@@ -145,10 +146,7 @@ async function load(){
    {name:"Marksman",path:"Assets/Scenes/Marksman range.unity"}
   ];
   const originalSceneFlowReady=runtimeReady.then(async()=>{
-   const response=await fetch("../scene-data/crisis-response-scenes.json.gz");
-   if(!response.ok)throw new Error("Original scene package unavailable: HTTP "+response.status);
-   if(typeof DecompressionStream==="undefined")throw new Error("Browser cannot decompress the original scene package");
-   const scenePackage=(await new Response(response.body.pipeThrough(new DecompressionStream("gzip"))).text()).replace('"m_Name":false','"m_Name":"No"').replace('"m_Name":true','"m_Name":"Yes"');
+   const scenePackage=(await loadOriginalScenePackage()).replace('"m_Name":false','"m_Name":"No"').replace('"m_Name":true','"m_Name":"Yes"');
    const loaded=[];
    for(const stage of originalSceneFlowPaths){
     const report=JSON.parse(await runtimeCall("LoadScene",scenePackage,stage.path));
