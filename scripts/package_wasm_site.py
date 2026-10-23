@@ -147,9 +147,10 @@ def package(repo, published, output, toolchain, run_url):
     require(toolchain.get("dotnet") == sdk["version"],
             "Selected .NET SDK differs from tracked compiler pin")
     files(repo / "game")
+    files(repo / "scene-data")
     files(published)
     inventory = []
-    tracked = git(repo, "ls-files", "-z", "--", "game", "runtime", "scripts", ".github/workflows", "tools/wasm-compile")
+    tracked = git(repo, "ls-files", "-z", "--", "game", "runtime", "scripts", ".github/workflows", "tools/wasm-compile", "scene-data")
     for name in sorted(filter(None, tracked.split("\0"))):
         path = repo / name
         require(path.is_file() and not path.is_symlink(), f"Invalid source input: {name}")
@@ -173,6 +174,7 @@ def package(repo, published, output, toolchain, run_url):
     require(scene_report.get("binarySha256") == digest(scene_binary),
             "Generated scene report does not match the packaged scene binary")
     shutil.copytree(published, output / "runtime-web")
+    shutil.copytree(repo / "scene-data", output / "scene-data")
     runtime_index = output / "runtime-web/index.html"
     html = runtime_index.read_text()
     require(html.count('<base href="/">') == 1, "Unexpected compiled runtime base path")

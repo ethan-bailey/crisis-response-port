@@ -171,7 +171,7 @@ def parse_asset(path, relative):
 
 def runtime_asset_seeds(project):
     project = Path(project).resolve()
-    seeds = ['Assets/Scenes/Marksman range.unity', 'Assets/Scenes/Mission 01.unity',
+    seeds = ['Assets/Scenes/Title.unity', 'Assets/Scenes/Transition.unity', 'Assets/Scenes/Mission 01.unity', 'Assets/Scenes/Marksman range.unity',
         'Assets/Resources/characters/Operator.prefab', 'Assets/Resources/characters/Occupant.prefab',
         'ProjectSettings/TimeManager.asset', 'ProjectSettings/TagManager.asset']
     # Resources.Load paths are runtime strings, not serialized GUID edges.
@@ -182,7 +182,7 @@ def runtime_asset_seeds(project):
 def require_scene_sources(project):
     """Fail early when the original Unity scenes needed for extraction are absent."""
     project = Path(project).resolve()
-    required = (project/'Assets/Scenes/Marksman range.unity', project/'Assets/Scenes/Mission 01.unity')
+    required = (project/'Assets/Scenes/Title.unity', project/'Assets/Scenes/Transition.unity', project/'Assets/Scenes/Mission 01.unity', project/'Assets/Scenes/Marksman range.unity')
     missing = [path.relative_to(project).as_posix() for path in required if not path.is_file()]
     if missing:
         raise MissingSceneSourcesError(

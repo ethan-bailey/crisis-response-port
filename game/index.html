@@ -138,7 +138,29 @@ async function load(){
   const json=async url=>{const r=await fetch(url);if(!r.ok)throw new Error(url+": HTTP "+r.status);return r.json();};
   const runtimeReady=initializeOriginalRuntime().then(()=>markLoaded("inputReady"));
   const presentationReady=loadPresentationData().then(data=>{presentationData=data;configureCamera(camera,data);return data;});
-  const presentationRuntimeReady=Promise.all([runtimeReady,presentationReady]).then(async([_,data])=>{await runtimeCall("InitializePresentation",JSON.stringify(data));markLoaded("presentationReady");});
+  const originalSceneFlowPaths=[
+   {name:"MainMenu",path:"Assets/Scenes/Title.unity"},
+   {name:"Transition",path:"Assets/Scenes/Transition.unity"},
+   {name:"Mission 01 (build index 1)",path:"Assets/Scenes/Mission 01.unity"},
+   {name:"Marksman",path:"Assets/Scenes/Marksman range.unity"}
+  ];
+  const originalSceneFlowReady=runtimeReady.then(async()=>{
+   const response=await fetch("../scene-data/crisis-response-scenes.json.gz");
+   if(!response.ok)throw new Error("Original scene package unavailable: HTTP "+response.status);
+   if(typeof DecompressionStream==="undefined")throw new Error("Browser cannot decompress the original scene package");
+   const scenePackage=await new Response(response.body.pipeThrough(new DecompressionStream("gzip"))).text();
+   const loaded=[];
+   for(const stage of originalSceneFlowPaths){
+    const report=JSON.parse(await runtimeCall("LoadScene",scenePackage,stage.path));
+    if(report.scene!==stage.path)throw new Error("Scene loader returned "+report.scene+" for "+stage.path);
+    loaded.push({name:stage.name,path:stage.path,report});
+      if(stage.path==="Assets/Scenes/Mission 01.unity"){const globalInit=JSON.parse(await runtimeCall("InitializeGlobalContext"));if(!globalInit.initialized)throw new Error("Global.Initialize did not bind Global.Context");}
+   }
+   window.__originalSceneFlow=loaded;
+   markLoaded("sceneFlowReady");
+   return loaded;
+  });
+  const presentationRuntimeReady=Promise.all([originalSceneFlowReady,presentationReady]).then(async([_,data])=>{await runtimeCall("InitializePresentation",JSON.stringify(data));markLoaded("presentationReady");});
   const weaponReady=loadWeaponData().then(data=>{weaponData=data;return data;});
   // Original 14 entry/exit effect prefab records, 26 ParticleSystem modules and
   // original renderer materials. These remain unrendered until source parity.

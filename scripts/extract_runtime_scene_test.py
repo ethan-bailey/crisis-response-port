@@ -33,7 +33,9 @@ class ExtractRuntimeSceneTests(unittest.TestCase):
             self.assertIn('Required original Unity scene source file(s) are missing', result.stderr)
             self.assertIn('Assets/Scenes/Marksman range.unity', result.stderr)
             self.assertIn('Assets/Scenes/Mission 01.unity', result.stderr)
-            self.assertFalse(output.exists())
+        self.assertIn('Assets/Scenes/Title.unity', result.stderr)
+        self.assertIn('Assets/Scenes/Transition.unity', result.stderr)
+        self.assertFalse(output.exists())
 
 
 if __name__ == '__main__':
