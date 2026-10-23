@@ -2,37 +2,28 @@
 
 ## Checkpoint
 
-- Branch: `develop/wasm`; current HEAD `76760e3c3c3e4ad09786849aa588e2fa699bdc39`, confirmed equal to `origin/develop/wasm`. Code/test source SHA remains `2530764705352f98c3c42018b8aa2238ce561842`; later commits only record evidence and handoff.
-- No source edits were made during this continuation.
-- Preserve the known untracked corrupt package fragment `scene-data/.crisis-response-scenes.json.gz.QEOasz`; it is excluded from commits.
-- GitHub Actions remain disabled. Codespaces use is at 90% through 2026-11-01; avoid Codespaces unless no practical alternative exists.
-- Read `AGENT_INSTRUCTIONS.md` and `docs/DOTNET_BUILD_RUNBOOK.md` before project work. Recurring .NET runner failures and fixes are recorded there.
-- Detailed Gate 8 checks and errors: `docs/evidence/GATE8_ACCEPTANCE_ATTEMPT_2026-10-23.md`.
+- Branch: `develop/wasm`; Gate 1 acceptance code/evidence commit: `ba3196d5b1522007bf208d6f40b73fe6e344363d`. This handoff update is a documentation-only descendant.
+- Open pull requests: none (`gh pr list --repo ethan-bailey/crisis-response-port --state open` returned `[]`).
+- Preserve untracked `scene-data/.crisis-response-scenes.json.gz.QEOasz`; it is excluded from commits.
+- Keep GitHub Actions disabled. Codespaces use remains at 90% through 2026-11-01; avoid Codespaces where the current checkout can do the work.
+- Read `AGENT_INSTRUCTIONS.md` and `docs/DOTNET_BUILD_RUNBOOK.md` before project work. The recurring .NET runner failures and fixes are recorded there.
 
-## Gate 7
+## Gate 1 — one complete source character
 
-Gate 7 passed at the tested source checkpoint: Mission 01 reached `Mission.Start` and `BeginMission`, producing 2 original TeamOperators and 5 Occupants (8 CharacterBody instances). The headless gate uses silent audio and suppresses presentation-only callbacks; it does not establish visual/audio parity, full behavior-tree execution, browser gameplay, or iPhone Safari acceptance.
+**Passed native focused source acceptance** at code commit `ba3196d5b1522007bf208d6f40b73fe6e344363d` with SDK 8.0.426.
 
-## Gate 8 status
+- Full `runtime/Crisis.Runtime.csproj` rebuild: 0 errors, 45 existing warnings.
+- Strict ownership scan and exact recovered `WeaponMode`/`LimbId` checks passed; all 19 original limb identities are present.
+- Original Operator and Occupant prefab lifecycle passed: all 134 and 132 active behaviors respectively reached Awake, OnEnable and Start; each retained one original FullSource CharacterBody, IK controller and Physiology.
+- Combined source contract passed original M4 directional aim/alignment and turn, Occupant movement and kneeling animation, actor-owned trauma/shock/hemorrhage/oxygen, unconsciousness, ragdoll command dispatch and timed hypoxic death. Operator state remained independent of Occupant state.
+- The headless contract binds a command-recording Rigidbody sink and silent audio driver. It proves original source dispatches through those adapters, not live physical trajectories, rendered animation or audible output. Detailed failure fixes and exact commands are in `docs/evidence/GATE1_CHARACTER_ACCEPTANCE_2026-10-23.md`.
 
-Gate 8 is **not complete**. Current local evidence passes the mission/spawner startup and ownership contracts, weapon source contract, ballistics contract, engine/foundation checks, Release WASM publish, and package integrity. The complete combined two-actor gameplay flow has not been proven in the real browser runtime. The browser app itself still labels full gameplay incomplete.
+## Gate 8 — still open
 
-The browser-package build at source SHA `2530764705352f98c3c42018b8aa2238ce561842` produced and verified 767 files, 199 Blazor boot resources, and 195 WASM modules. Local Chromium installation failed because Playwright's download endpoint returned an invalid 0 MiB archive; no local browser binary is installed. The owner explicitly approved transmitting the package to ChatGPT Cloud Chrome, but the cloud browser cannot reach the workspace's `127.0.0.1:8765` server (`ERR_CONNECTION_REFUSED`), both before and after restarting the server. No remote/public deployment or alternate file transfer was attempted.
+The previously built package at code SHA `2530764705352f98c3c42018b8aa2238ce561842` passed WASM publish/package integrity, but exact-build browser gameplay is unverified. Owner authorized Cloud Chrome transmission; the browser could not reach the workspace localhost server (`ERR_CONNECTION_REFUSED`), and no local browser binary is installed. Do not expose the private package publicly. Physical iPhone Safari acceptance is also outstanding.
 
-Physical iPhone Safari acceptance remains unperformed; this workspace is not the owner's iPhone. Do not claim Gate 8 complete until browser gameplay and real-device Safari checks pass.
-
-## Remaining dependency order
-
-1. Provide a permitted, private route that Cloud Chrome can reach for the exact-SHA package, or restore a local browser runner. The package transmission itself is authorized; localhost routing is the current blocker. Then exercise the package, original scene startup, and input.
-2. Close the combined two-actor flow in a normally initialized mission: original Operator and Occupant ownership, movement/animation, M4 equipment and firing, limb hit/injury response, physiology/state outcome, and weapon-drop/destruction. Existing isolated contracts do not establish this complete linked sequence.
-3. Fix the strict recovered-scene import failure for `Assets/Scenes/Marksman range.unity` if that scene remains in Gate 8 scope; the broad Checks run aborts on unresolved supported fields before finishing the scene loop. Record any source-faithful dispositions for missing/unsupported serialized assets.
-4. Rebuild and package once from the final gameplay SHA, verify all manifest hashes, then rerun the exact-build browser smoke.
-5. Perform actual iPhone Safari acceptance against that final verified build. The owner device test is required; desktop emulation is not equivalent.
-
-## Known asset issue
-
-GUID `b4b69dc6c74eeb54cbd22d28e37f9a19` is still absent from the recovered project metadata. Existing evidence identifies it on the `.308` casing root and Marksman-round prefabs; a separate projectile child mesh exists. The owner approved the available `.308` casing candidate as a functional substitute if verified, but no substitute was applied during this Gate 8 pass. This issue does not block the tested Mission 01 M4/5.56 startup path.
+Other recorded limits: no complete linked two-actor combat chain has been verified in a normal browser mission; broad strict scene loading still fails on unresolved supported fields in `Assets/Scenes/Marksman range.unity`. These do not invalidate Gate 1's native focused acceptance.
 
 ## Next action
 
-Resolve the isolated-browser access path without publicly exposing the private runtime, then run the exact-SHA browser smoke. Gate 8 remains open pending the linked two-actor combat chain, browser gameplay, and owner-device iPhone Safari acceptance.
+Proceed to Gate 2: exercise the original IK controller/sequencer and equipment actions on the Gate 1 source actors, fix the first actionable source/runtime blocker, and validate the slice with the pinned SDK and focused contracts. Then continue to Gate 3 before attempting the end-to-end browser/device acceptance path.
