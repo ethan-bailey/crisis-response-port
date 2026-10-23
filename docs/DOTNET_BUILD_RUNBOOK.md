@@ -255,3 +255,28 @@ fields, and Windows-only registry calls); they are not build errors. Capture the
 full output at `/tmp/cpr-full-build-final.log` if a later run needs individual
 warning locations. Do not treat this gate as completion of gate 8 or as browser
 or mobile acceptance.
+
+## Recovered AI source closure and latest Gate 2–6 preflight
+
+Before compiling the recovered original Behavior Designer actor tasks, keep the
+following fixes in place:
+
+| Failure | Fix to apply before the next build |
+| --- | --- |
+| Hundreds of `CS0104` ambiguities for `Action` or `TaskStatus` in original author tasks | Add explicit aliases to the authored task source (`System.Action` where required and `BehaviorDesigner.Runtime.Tasks.TaskStatus`); preserve task declarations and rule bodies. |
+| `CS0246` for SharedTarget, SharedDoor, SharedAudioStimuli, SharedFleeSource, SharedGameObject, or SharedGrenade | Restore the original typed shared-variable definitions from the pinned source archive and include them in the full runtime compile. |
+| Missing `StaticBehavior`, `DoorReference`, `ConditionalEvaluator`, `EntryTask`, or `RandomProbability` | Restore the original source/dependency with its `.meta` identity and record its source provenance; do not create a no-op stub to make compilation green. |
+| `CS1061` for `Collider.tag` in original door/obstacle tasks | Implement the Unity-compatible `Collider.tag` bridge from its owning GameObject. |
+| FoundationChecks starts compiling restored actor tasks and fails `CS0246: ArmIKSolver` | Keep `../Original/CharacterBehavior/**/*.cs` out of the FoundationChecks compile glob. The complete runtime owns that source closure; FoundationChecks tests a narrower engine/foundation boundary. |
+| Runtime compiles, but original AI throws `NullReferenceException` in `ConditionalEvaluator.OnUpdate` at `conditionalTask.OnUpdate()` | This is a runtime Behavior Designer graph/reference failure, not a C# compile error. Inspect task deserialization and authored embedded condition references; do not hide it by claiming AI acceptance or silently replacing the task. |
+| Original `Mission.EndMission` computes outcome, then throws `NullReferenceException` in `MissionUI.PauseMenu` | Initialize the original MissionUI dependencies for full mission acceptance. A headless contract may record mission state before that presentation failure, but cannot count the transition as passed. |
+
+The 2026-10-23 Gate 2–6 run used the pinned SDK 8.0.426 and the process shim.
+The full runtime compiled with 0 errors and 48 warnings; General Checks passed,
+EngineChecks passed 69 assertions, and FoundationChecks passed 121 assertions.
+The CharacterBehavior-specific pinned archive audit passed all 265 source and
+metadata records. The broader pre-existing
+`verify_foundation_sources.py --archive` remains blocked by stale source
+provenance entries outside this recovered AI source set; do not report that
+audit as passing. Current gameplay gate detail and the complete command list
+are in `docs/evidence/GATES_2_TO_6_PROGRESS_2026-10-23.md`.

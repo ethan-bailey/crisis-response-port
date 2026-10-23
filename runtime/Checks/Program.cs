@@ -11,7 +11,7 @@ if(args.Length==2&&args[0]=="--spawner-contract"){
     Console.WriteLine(SpawnerGameplayContracts.Run(File.ReadAllText(args[1])));
     return;
 }
-if(args.Length==2&&args[0]=="--mission-contract"){
+if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-outcome-contract")){
     var package=File.ReadAllText(args[1]);
     var world=new RuntimeWorld();
     world.MakeCurrent();
@@ -75,15 +75,35 @@ if(args.Length==2&&args[0]=="--mission-contract"){
     // calls execute without claiming decoded or audible output.
     foreach(var clip in world.Objects.OfType<AudioClip>())clip.ReportLoadState(AudioDataLoadState.Loaded);
     foreach(var source in world.Objects.OfType<AudioSource>())source.Driver=new MissionContractSilentAudioDriver();
-    void DisableUnboundVocalizationPresentation(){foreach(var vocalization in world.Objects.OfType<Crisis.Runtime.FullSource.UIVocalizationText>().ToArray())vocalization.enabled=false;}
+    void DisableUnboundVocalizationPresentation(){foreach(var vocalization in world.Objects.OfType<Crisis.Runtime.FullSource.UIVocalizationText>().ToArray())vocalization.enabled=false;foreach(var tree in world.Objects.OfType<BehaviorDesigner.Runtime.BehaviorTree>().ToArray())tree.enabled=false;}
     world.Tick(1f/60f,DisableUnboundVocalizationPresentation);
+    // Original AI/movement can emit forces on its next fixed tick. This
+    // contract records source force commands without claiming a PhysX solve.
+    foreach(var rigidbody in world.Objects.OfType<Rigidbody>())rigidbody.PhysicsForceSink??=((_,_,_)=>{});
     world.Tick(1f/60f,DisableUnboundVocalizationPresentation);
     missionComponent=world.Objects.OfType<Crisis.Runtime.FullSource.Mission>().SingleOrDefault()??throw new InvalidOperationException("Mission 01 did not initialize exactly one original Mission component");
     var bodies=world.Objects.OfType<Crisis.Runtime.FullSource.CharacterBody>().ToArray();
     if(!missionComponent.Started)throw new InvalidOperationException("Original Mission did not reach BeginMission during normal RuntimeWorld startup");
     if(bodies.Length<2||!bodies.Any(body=>body.GetComponent<Crisis.Runtime.FullSource.TeamOperator>()!=null)||!bodies.Any(body=>body.GetComponent<Crisis.Runtime.FullSource.Occupant>()!=null))
         throw new InvalidOperationException($"Mission 01 actor flow did not produce an Operator and Occupant; bodies={bodies.Length}");
-    Console.WriteLine(JsonSerializer.Serialize(new{mission=mission.scene,missionStarted=missionComponent.Started,globalContext=context.gameObject.name,globalContextInstantiated=!ReferenceEquals(context.gameObject,contextPrefab.prefabRoot),sourceActors=bodies.Length,operators=bodies.Count(body=>body.GetComponent<Crisis.Runtime.FullSource.TeamOperator>()!=null),occupants=bodies.Count(body=>body.GetComponent<Crisis.Runtime.FullSource.Occupant>()!=null),sceneObjects=mission.gameObjects,originalComponents=mission.originalComponents,missionUnsupported=mission.unsupportedComponents,missionUnresolved=mission.unresolvedReferences,globalContextUnsupported=contextPrefab.unsupportedComponents,globalContextUnresolved=contextPrefab.unresolvedReferences,audio="silent test adapter; original decode/playback not verified"}));
+    if(args[0]=="--mission-outcome-contract"){
+        var spawnedOccupants=bodies.Where(body=>body.GetComponent<Crisis.Runtime.FullSource.Occupant>()!=null).ToArray();
+        foreach(var source in world.Objects.OfType<AudioSource>())source.Driver=new MissionContractSilentAudioDriver();
+        foreach(var room in missionComponent.rooms)room.cleared=true;
+        world.Invoke(missionComponent,"UpdateMissionState");
+        var allDisabledEventCount=0;missionComponent.Occupants.allDisabledEvent.AddListener(()=>allDisabledEventCount++);
+        foreach(var body in spawnedOccupants)body.SetUnconscious();
+        world.Tick(1f/60f,DisableUnboundVocalizationPresentation);
+        if(!missionComponent.Occupants.AllRenderedSafe||allDisabledEventCount!=1||spawnedOccupants.Any(body=>!body.IsRagdoll))
+            throw new InvalidOperationException($"Original Occupants manager failed to propagate the all-disabled event: allRenderedSafe={missionComponent.Occupants.AllRenderedSafe}, eventCount={allDisabledEventCount}, ragdoll={spawnedOccupants.Count(body=>body.IsRagdoll)}/{spawnedOccupants.Length}");
+        string presentationBlocker=null;
+        try{missionComponent.EndMission(0f);}
+        catch(NullReferenceException error){presentationBlocker=error.Message;}
+        if(!missionComponent.missionSuccess)throw new InvalidOperationException("Original Mission.EndMission did not derive success from the checked-room and all-rendered-safe source state");
+        Console.WriteLine(JsonSerializer.Serialize(new{mission=mission.scene,missionStarted=missionComponent.Started,missionEnded=missionComponent.missionEnded,missionSuccess=missionComponent.missionSuccess,allRenderedSafe=missionComponent.Occupants.AllRenderedSafe,allDisabledEventCount,allRoomsChecked=missionComponent.AllRoomsChecked,spawnedOccupants=spawnedOccupants.Length,allOccupantsRagdoll=spawnedOccupants.All(body=>body.IsRagdoll),outcomePath="authored rooms checked -> original Occupant.SetUnconscious/allDisabledEvent -> original Mission.EndMission computed success",presentationTransition=presentationBlocker==null?"completed":"blocked by uninitialized headless MissionUI PauseMenu: "+presentationBlocker,ai="suppressed; AI gate remains blocked",audio="silent adapter"}));
+        return;
+    }
+    Console.WriteLine(JsonSerializer.Serialize(new{mission=mission.scene,missionStarted=missionComponent.Started,globalContext=context.gameObject.name,globalContextInstantiated=!ReferenceEquals(context.gameObject,contextPrefab.prefabRoot),sourceActors=bodies.Length,operators=bodies.Count(body=>body.GetComponent<Crisis.Runtime.FullSource.TeamOperator>()!=null),occupants=bodies.Count(body=>body.GetComponent<Crisis.Runtime.FullSource.Occupant>()!=null),ai="suppressed in headless mission contract; serialized source task graph failure is separate",sceneObjects=mission.gameObjects,originalComponents=mission.originalComponents,missionUnsupported=mission.unsupportedComponents,missionUnresolved=mission.unresolvedReferences,globalContextUnsupported=contextPrefab.unsupportedComponents,globalContextUnresolved=contextPrefab.unresolvedReferences,audio="silent test adapter; original decode/playback not verified"}));
     return;
 }
 var runLifecycle=args.Contains("--prefab-lifecycle");if(runLifecycle||args.Contains("--prefab-instantiate")){

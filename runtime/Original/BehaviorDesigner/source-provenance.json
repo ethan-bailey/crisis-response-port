@@ -315,11 +315,36 @@
       "runtimeSha256": "458196edb433b93f6aa64519b9be563eaf8e1572afb4bb0df9a08d2fe4e651bd",
       "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/TaskSerializationData.cs",
       "compiled": true
+    },
+    "BehaviorDesigner.Runtime.Tasks/ConditionalEvaluator.cs": {
+      "decompiledSha256": "3d28e2a9e838cf587c7fe6f4d7975c85acf742a5ada538327a8f26f4318c7556",
+      "runtimeSha256": "a44a5f917c79e62c9db260e19ddd7cff83b30864b6900fe5664517d987ee96a7",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/ConditionalEvaluator.cs",
+      "compiled": true,
+      "sourceArchiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/ConditionalEvaluator.cs",
+      "adaptation": "Original source with explicit Behavior Designer TaskStatus/Action aliases for .NET 8."
+    },
+    "BehaviorDesigner.Runtime.Tasks/EntryTask.cs": {
+      "decompiledSha256": "e7feb4195361bb2c1ac3f74309a6b4e80768fbd80e1854635675fdc8dca2de15",
+      "runtimeSha256": "676025f4d79dcbe6f3c474819a5d7042c8eec94c426136815e56735a54addff1",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/EntryTask.cs",
+      "compiled": true,
+      "sourceArchiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/EntryTask.cs",
+      "adaptation": "Original source with explicit Behavior Designer TaskStatus/Action aliases for .NET 8."
+    },
+    "BehaviorDesigner.Runtime.Tasks/RandomProbability.cs": {
+      "decompiledSha256": "6cf839039683f233b164eda4edbc79dfd75c4663eb01e772c943c2447a89a89b",
+      "runtimeSha256": "6aae140acf00e3e17f9a303d4b17636b37ea46e1bff4bc221828e205cddd80d5",
+      "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/RandomProbability.cs",
+      "compiled": true,
+      "sourceArchiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/RandomProbability.cs",
+      "adaptation": "Original source with explicit Behavior Designer TaskStatus/Action aliases for .NET 8."
     }
   },
   "adaptationRules": [
     "prefix aliases for Unity Object and Behavior Designer Task/TaskStatus identity",
-    "remove illegal decompiler virtual modifier from explicit IBehavior.GetInstanceID implementation (Behavior.cs and ExternalBehavior.cs only)"
+    "remove illegal decompiler virtual modifier from explicit IBehavior.GetInstanceID implementation (Behavior.cs and ExternalBehavior.cs only)",
+    "original game Behavior Designer task source restored for Operator/Occupant serialized graphs; only explicit TaskStatus/Action aliases were added"
   ],
   "exportedWrappers": {
     "BehaviorTree": {

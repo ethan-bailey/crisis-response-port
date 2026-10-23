@@ -183,9 +183,9 @@ public static class SpawnerGameplayContracts
             var operatorEquipment = operatorBody.InitializeEquipment(new SerializableEquipment
             {
                 primary = new SerializableWeapon { prefabName = "M4A1", ammunitionPrefabName = "5.56-FMJ" },
-                secondary = null,
+                secondary = new SerializableWeapon { prefabName = "Glock-18", ammunitionPrefabName = "9-FMJ" },
                 armor = ArmorClass.Type.None,
-                items = new SerializableItems { itemPrefabNames = new List<string> { "Primary magazine" } }
+                items = new SerializableItems { itemPrefabNames = new List<string> { "Primary magazine", "Secondary magazine" } }
             });
             foreach (var clip in world.Objects.OfType<AudioClip>())
                 clip.ReportLoadState(AudioDataLoadState.Loaded);
@@ -195,6 +195,26 @@ public static class SpawnerGameplayContracts
                 throw new InvalidOperationException("Operator and Occupant do not own independent original Equipment components");
             if (operatorEquipment.primaryWeapon == null || !ReferenceEquals(operatorEquipment.primaryWeapon.Owner, operatorBody))
                 throw new InvalidOperationException($"Original M4A1 resource did not initialize as Operator-owned equipment (weapon={operatorEquipment.primaryWeapon?.name ?? "null"}, ownerMatches={ReferenceEquals(operatorEquipment.primaryWeapon?.Owner, operatorBody)})");
+            if (operatorEquipment.secondaryWeapon == null || !ReferenceEquals(operatorEquipment.secondaryWeapon.Owner, operatorBody))
+                throw new InvalidOperationException($"Original Glock-18 resource did not initialize as Operator-owned secondary equipment (weapon={operatorEquipment.secondaryWeapon?.name ?? "null"}, ownerMatches={ReferenceEquals(operatorEquipment.secondaryWeapon?.Owner, operatorBody)})");
+            var armController=operatorBody.armController??throw new InvalidOperationException("Original Operator has no actor-owned IKArmController");
+            Crisis.Runtime.FullSource.OriginalActorIdentity.RequireController(operatorBody,armController);
+            if(operatorBody.ActiveWeapon!=operatorEquipment.primaryWeapon||operatorBody.InactiveWeapon!=operatorEquipment.secondaryWeapon)
+                throw new InvalidOperationException("Original Operator did not initialize its authored primary/secondary active weapon states");
+            armController.IK_HolsterWeapon();
+            if(!operatorEquipment.primaryWeapon.IsHolstered)throw new InvalidOperationException("Original IK holster callback did not holster the active M4A1");
+            SetProperty(armController,nameof(IKArmController.PendingWeapon),operatorEquipment.secondaryWeapon);
+            armController.IK_ActivatePendingWeapon();
+            if(operatorBody.ActiveWeapon!=operatorEquipment.secondaryWeapon||!operatorEquipment.secondaryWeapon.IsHeld)
+                throw new InvalidOperationException("Original IK pending-weapon callback did not activate the Operator-owned Glock-18");
+            SetProperty(operatorBody.rightArm,"OnTarget",true);
+            armController.IK_FireWeapon();
+            if(!operatorBody.QueryTrigger())throw new InvalidOperationException("Original IK fire callback did not reach the actor-owned CharacterBody trigger");
+            armController.IK_HolsterWeapon();
+            SetProperty(armController,nameof(IKArmController.PendingWeapon),operatorEquipment.primaryWeapon);
+            armController.IK_ActivatePendingWeapon();
+            if(operatorBody.ActiveWeapon!=operatorEquipment.primaryWeapon)
+                throw new InvalidOperationException("Original IK pending-weapon callback did not restore the M4A1");
             if (!operatorObject.GetComponentsInChildren<MonoBehaviour>(true).Any(c => ReferenceEquals(c, operatorEquipment)))
                 throw new InvalidOperationException("Operator Equipment is outside its original prefab clone graph");
             var aimWeapon = operatorBody.ActiveWeapon
@@ -318,7 +338,7 @@ public static class SpawnerGameplayContracts
             if (!operatorPhysiology.Alive || !operatorPhysiology.Conscious || operatorPhysiology.BloodVolume != operatorBloodBefore)
                 throw new InvalidOperationException("Occupant physiology state transitions changed the independent Operator");
 
-            return $"PASS: original Operator/Occupant source actors; directional aim/turn, movement/posture, actor-owned trauma/shock/hemorrhage/oxygen, unconscious/ragdoll/death timing, and PhysX command dispatch passed (Occupant blood loss {targetBloodBefore - occupantPhysiology.BloodVolume:0.##} ml)";
+            return $"PASS: original Operator/Occupant actors; M4A1/Glock-18 ownership and original IK holster/activate/fire callbacks, directional aim/turn, movement/posture, independent physiology, unconscious/ragdoll/death timing, and PhysX command dispatch passed (Occupant blood loss {targetBloodBefore - occupantPhysiology.BloodVolume:0.##} ml)";
         }
         finally
         {

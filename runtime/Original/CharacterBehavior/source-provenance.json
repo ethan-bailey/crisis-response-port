@@ -1,0 +1,1579 @@
+{
+  "archiveSha256": "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
+  "sourceRoot": "export/ExportedProject/Assets/Scripts/Assembly-CSharp",
+  "sources": {
+    "CharacterBehavior/AimAtTarget.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/AimAtTarget.cs",
+      "sourceSha256": "142b2d4e74f4fe872c930cc1eb93d6331a912465c114bec57e7b250ebb7eb75a",
+      "runtimeSha256": "1b90b804b996b7cc25c28eb99daa9629bfda3a3eb1965b367e63ab7e09f37f7d",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/AimAtTarget.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/AimAtTarget.cs.meta",
+      "sourceSha256": "e60b5f16346bc79baeef0943e4dd4eac1548b8ee9085f3fe8b5346f8670c7c14",
+      "runtimeSha256": "e60b5f16346bc79baeef0943e4dd4eac1548b8ee9085f3fe8b5346f8670c7c14",
+      "adapter": "none"
+    },
+    "CharacterBehavior/Ambush.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/Ambush.cs",
+      "sourceSha256": "7d152b5c787149bcd76cffc8e77b277446dffb45ca2f35f66c9b2ff0f41c6e8e",
+      "runtimeSha256": "ba1583f1655bf59f976f0f34c693fe7cb7b8c75d43fd4cda7e3601d57670ee39",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/Ambush.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/Ambush.cs.meta",
+      "sourceSha256": "573a54613aff50f490a225a3e72fee15be6ff8802e2379297f25a7aca2ea29d5",
+      "runtimeSha256": "573a54613aff50f490a225a3e72fee15be6ff8802e2379297f25a7aca2ea29d5",
+      "adapter": "none"
+    },
+    "CharacterBehavior/AmmoState.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/AmmoState.cs",
+      "sourceSha256": "2cede8b37e620d82ad018ef709d8a37afeb364e53eddc8c0dc1dd7359bab5d92",
+      "runtimeSha256": "c32605cf5d24b61688f52f468f496162a7c9758f948fb996f9a931202faac2bb",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/AmmoState.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/AmmoState.cs.meta",
+      "sourceSha256": "6054c7454c68036a2bfdcdcb18601ab86cd58315d11e351d308fad2d7308b975",
+      "runtimeSha256": "6054c7454c68036a2bfdcdcb18601ab86cd58315d11e351d308fad2d7308b975",
+      "adapter": "none"
+    },
+    "CharacterBehavior/AttackTarget.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/AttackTarget.cs",
+      "sourceSha256": "c5689962872182412e5560683901d5c36ddd0d3089413035bd7cc055995659ca",
+      "runtimeSha256": "1167a52d19baacb3b12a983187df7981cace3407665cab5641a13bfd0e1cc687",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/AttackTarget.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/AttackTarget.cs.meta",
+      "sourceSha256": "9541f27ea50a717d37b7979ae79b00386699e7788434e71fbbcbea0e63ba4d05",
+      "runtimeSha256": "9541f27ea50a717d37b7979ae79b00386699e7788434e71fbbcbea0e63ba4d05",
+      "adapter": "none"
+    },
+    "CharacterBehavior/AudioDistance.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/AudioDistance.cs",
+      "sourceSha256": "304483a1bfbccf90965398f0b15a7f62078fd6212475bb4cb38d907f0bc8538e",
+      "runtimeSha256": "f4974437c323c4718df7f1d8e1caa242da9f1f3457ff71fc840c43b461388af0",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/AudioDistance.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/AudioDistance.cs.meta",
+      "sourceSha256": "b4b1e6e790937b86cb6ea1bfaf3668f8eb860f0405b7e8eb5a623d5e6ce3f46a",
+      "runtimeSha256": "b4b1e6e790937b86cb6ea1bfaf3668f8eb860f0405b7e8eb5a623d5e6ce3f46a",
+      "adapter": "none"
+    },
+    "CharacterBehavior/AuditoryPerceive.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/AuditoryPerceive.cs",
+      "sourceSha256": "95baa54f380b079361bc046991d0b166a67464f216844844d2db1d1dc5c61bfd",
+      "runtimeSha256": "31161d6cdf049b90cb04bf14ec5a55dbc3ab30739f9beba11056165119015201",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/AuditoryPerceive.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/AuditoryPerceive.cs.meta",
+      "sourceSha256": "7a8cdf1db4a5fc64cbf76d46e511338f0c4c62a0ceeb69502e4f53a540671cc3",
+      "runtimeSha256": "7a8cdf1db4a5fc64cbf76d46e511338f0c4c62a0ceeb69502e4f53a540671cc3",
+      "adapter": "none"
+    },
+    "CharacterBehavior/BoltState.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/BoltState.cs",
+      "sourceSha256": "d33dff8e9d12977d171ccb2f1f6052748115088e23d220b74b74cf43dcc0c80a",
+      "runtimeSha256": "378573e2f0424fc5d004f0b04ee40d962c53b9874cc1022d6f740accb69fdb32",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/BoltState.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/BoltState.cs.meta",
+      "sourceSha256": "4ff877ce797bbd112b3c931b4b05ec0b146b38fc9aca8b39aa0236f7f206badc",
+      "runtimeSha256": "4ff877ce797bbd112b3c931b4b05ec0b146b38fc9aca8b39aa0236f7f206badc",
+      "adapter": "none"
+    },
+    "CharacterBehavior/ChamberState.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/ChamberState.cs",
+      "sourceSha256": "3759c1d6e3fa1939e05b7d456042e63fab327fff5ee2a71b2211f77a3dd2a899",
+      "runtimeSha256": "e5dce9044b48353526bb6017602bc02e576ed5554cab6460944a57ef492f56f1",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/ChamberState.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/ChamberState.cs.meta",
+      "sourceSha256": "d2418c77a5ab268818fac5c7b812f8e0dddd3585858b06660e2a54cb28e14880",
+      "runtimeSha256": "d2418c77a5ab268818fac5c7b812f8e0dddd3585858b06660e2a54cb28e14880",
+      "adapter": "none"
+    },
+    "CharacterBehavior/ChangeMagazine.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/ChangeMagazine.cs",
+      "sourceSha256": "79088deb268b4155e7ba3322dae2ace18a99a5732fd671fed5802ba5610e1770",
+      "runtimeSha256": "1cf403387eb32ff3fdc4359c5e4d4847dcc4cea6bd905b4e5a3ae7d6de091ac3",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/ChangeMagazine.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/ChangeMagazine.cs.meta",
+      "sourceSha256": "da64eaf5c34f02ebfe561407ef5a3368f2141cc2868fcefb5250a400a75b479e",
+      "runtimeSha256": "da64eaf5c34f02ebfe561407ef5a3368f2141cc2868fcefb5250a400a75b479e",
+      "adapter": "none"
+    },
+    "CharacterBehavior/ChangeMagazineCondition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/ChangeMagazineCondition.cs",
+      "sourceSha256": "ab497350b005acb5d86a5955b4ae4d7c3d7031e3774c229a7cb793bcf7e596f2",
+      "runtimeSha256": "f30281eddbcb4b5a4832258004a7e7fd21c591f1f9a990cbda50d63507eab55a",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/ClearSwapMagazine.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/ClearSwapMagazine.cs",
+      "sourceSha256": "ad6143c0758fb5dca7e682e1f8f075697b79b76371db3309f250c9c0504fc6a7",
+      "runtimeSha256": "906e24cec8b71b359f6375140f59191f4c28ec6111d9f98d4d059af5a8732d6d",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/ClearSwapMagazine.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/ClearSwapMagazine.cs.meta",
+      "sourceSha256": "f27dfa3203362a9c4a00826cc7d8df6c564b8ede225a4cb709d8325c82cb0d5e",
+      "runtimeSha256": "f27dfa3203362a9c4a00826cc7d8df6c564b8ede225a4cb709d8325c82cb0d5e",
+      "adapter": "none"
+    },
+    "CharacterBehavior/ClearWorkBolt.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/ClearWorkBolt.cs",
+      "sourceSha256": "5543308ae36093289e7c68e1e48f517564731b5e65d12e67e7daae6b3fcb777e",
+      "runtimeSha256": "617a86a9ad29c86638c67b26be8cb504d655801c195f35deea111185a3b3c99a",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/ClearWorkBolt.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/ClearWorkBolt.cs.meta",
+      "sourceSha256": "684f56a86c3f877d3ca3a6723a7865955da8c89c9b1902bef4680b20490b0a17",
+      "runtimeSha256": "684f56a86c3f877d3ca3a6723a7865955da8c89c9b1902bef4680b20490b0a17",
+      "adapter": "none"
+    },
+    "CharacterBehavior/DetectClosedDoor.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/DetectClosedDoor.cs",
+      "sourceSha256": "12d84bc88b0c039895a07648badd5bdbcce06eb9286efb8582ecd433446e6545",
+      "runtimeSha256": "876a00d13c2c89977d2ad080a9090641b9e5b226905ab06019537a620faf2d00",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/DetectClosedDoor.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/DetectClosedDoor.cs.meta",
+      "sourceSha256": "e841ce6d83a6d220d061bcf9700b6266ad0e05020cc1c5bd72ba702952c9f27d",
+      "runtimeSha256": "e841ce6d83a6d220d061bcf9700b6266ad0e05020cc1c5bd72ba702952c9f27d",
+      "adapter": "none"
+    },
+    "CharacterBehavior/DoorState.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/DoorState.cs",
+      "sourceSha256": "cf1b274445ee3e07b9a62526c082a009ea6966d067f9d4197d1c953e654c4901",
+      "runtimeSha256": "e3743782f2ec7085c04e29ccfbaded46c8318d0375d2636809134d199788f030",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/DoorState.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/DoorState.cs.meta",
+      "sourceSha256": "909191a1353129cec099b4e757acb6311ea12494fe45d7a434c0a7cd37d8ef2f",
+      "runtimeSha256": "909191a1353129cec099b4e757acb6311ea12494fe45d7a434c0a7cd37d8ef2f",
+      "adapter": "none"
+    },
+    "CharacterBehavior/Engage.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/Engage.cs",
+      "sourceSha256": "6146128a0e2ccfc5c13f29cd4e1cf570f7dfe09d690cb2434ad5b64d67e0120c",
+      "runtimeSha256": "29a5a8e84306feb40c61323f7983edb99f1851c0aee7b9b469fe6731936b8d2d",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/Engage.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/Engage.cs.meta",
+      "sourceSha256": "810965e758db11126beab3db8b4f99d54e576d95eed86ffeb44bb0b3c3158645",
+      "runtimeSha256": "810965e758db11126beab3db8b4f99d54e576d95eed86ffeb44bb0b3c3158645",
+      "adapter": "none"
+    },
+    "CharacterBehavior/EngageCondition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/EngageCondition.cs",
+      "sourceSha256": "a0a5372346a893796be221f1b0bfb9de6dc89d434527f5fa1f95fb462b1ba055",
+      "runtimeSha256": "1279e71b16c79e0a5f8b2aba0a22af76bc460b7ac823b8eec1af78114f51e2fa",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/EngageWhenCornered.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/EngageWhenCornered.cs",
+      "sourceSha256": "5b8e6cf0205bfc1e930836290e1232279cda16df8520ad0730bea443f57ec41b",
+      "runtimeSha256": "248c265306a245453522f2b75de77325855d306e9685b3d6d5373d9a345978aa",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/EngageWhenCornered.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/EngageWhenCornered.cs.meta",
+      "sourceSha256": "84edc5b0423e0ab5f1c1eb4d8c4e8d20019c659f90844c1aca510397beaa97ad",
+      "runtimeSha256": "84edc5b0423e0ab5f1c1eb4d8c4e8d20019c659f90844c1aca510397beaa97ad",
+      "adapter": "none"
+    },
+    "CharacterBehavior/EquipmentAction.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/EquipmentAction.cs",
+      "sourceSha256": "c1a6bc05947e87afa2c39b54d8be2a66723b64921c6421058308151b752d1c2c",
+      "runtimeSha256": "438e0ddefd4d64a4cced72d38545bbd9d9b26edce5e6e1796741ecd726af35a0",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/EquipmentAction.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/EquipmentAction.cs.meta",
+      "sourceSha256": "d0b0ad61d294872a497247f0f6c47bb19fd4b0ece730eb83dd87f2966283491f",
+      "runtimeSha256": "d0b0ad61d294872a497247f0f6c47bb19fd4b0ece730eb83dd87f2966283491f",
+      "adapter": "none"
+    },
+    "CharacterBehavior/FaceAudio.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FaceAudio.cs",
+      "sourceSha256": "2d085040751a84b53827f13a39a75a532d356694eb089f29737343b144f8bd08",
+      "runtimeSha256": "e01f0ec6880affc657893b3ac3e3884e0c1d5644f5b48c3ea02d4c634e283386",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/FaceAudio.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FaceAudio.cs.meta",
+      "sourceSha256": "60d49838eeb476f75ed7b5f77887419d11d62f653dc6dc40fd3a0a89ee53c505",
+      "runtimeSha256": "60d49838eeb476f75ed7b5f77887419d11d62f653dc6dc40fd3a0a89ee53c505",
+      "adapter": "none"
+    },
+    "CharacterBehavior/FacingAudio.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FacingAudio.cs",
+      "sourceSha256": "d99c036f7ef69ac0cb71704611c5e200b50cce254261d93dd27f62fc4232eb0f",
+      "runtimeSha256": "f3ba826e126dcb8ebc25cd3cf8077bcfbbb9d416ba631d2c83dbedf23d5efaf7",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/FacingAudio.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FacingAudio.cs.meta",
+      "sourceSha256": "68bc97d9bd0f5540987c2bcdcd1cd6792824a10da89a8324d030e916d3a8713d",
+      "runtimeSha256": "68bc97d9bd0f5540987c2bcdcd1cd6792824a10da89a8324d030e916d3a8713d",
+      "adapter": "none"
+    },
+    "CharacterBehavior/FacingDoor.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FacingDoor.cs",
+      "sourceSha256": "3e40c8520b70f0629c08d4a9938c952625a8862dff982b06ee284ef0437052f7",
+      "runtimeSha256": "694459ed89bc7c67a278d19df9d926365e2ac6d77b4e8f67101a99872d6728a3",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/FacingDoor.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FacingDoor.cs.meta",
+      "sourceSha256": "285ee0e356b770383fe9139b28580716098c71d8f685b4b1c4c397122ef01f67",
+      "runtimeSha256": "285ee0e356b770383fe9139b28580716098c71d8f685b4b1c4c397122ef01f67",
+      "adapter": "none"
+    },
+    "CharacterBehavior/FacingMovePosition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FacingMovePosition.cs",
+      "sourceSha256": "2e35cacf0471d0643ea9c8bacbe40e316dbde513686d1058641ed1e6d48ac795",
+      "runtimeSha256": "6d9ad2468220f81492e60c455a9038da447dbe1f319cc3cf96a1bb8ac91ded3d",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/FacingMovePosition.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FacingMovePosition.cs.meta",
+      "sourceSha256": "54d91e742b218554c37e4989bf02c4a20cb5c3a3bf066dcc4a40f06fe2cd9ce2",
+      "runtimeSha256": "54d91e742b218554c37e4989bf02c4a20cb5c3a3bf066dcc4a40f06fe2cd9ce2",
+      "adapter": "none"
+    },
+    "CharacterBehavior/FacingTarget.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FacingTarget.cs",
+      "sourceSha256": "985b5e3ec6993b275926b66fb7c32820b9b98a1d5189473f925e8d558e5758f3",
+      "runtimeSha256": "57550ebc905bd1bdde01289a8c8390eec923444c6af5c3b3532e4d3c67d049a8",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/FacingTarget.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FacingTarget.cs.meta",
+      "sourceSha256": "45c42aac5ca8673eb4c2dfa11d06507c1cbb35e0fab9ea14b440d5d48a2d9836",
+      "runtimeSha256": "45c42aac5ca8673eb4c2dfa11d06507c1cbb35e0fab9ea14b440d5d48a2d9836",
+      "adapter": "none"
+    },
+    "CharacterBehavior/FindDoor.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FindDoor.cs",
+      "sourceSha256": "71eee55b6bfbbf143db454003ed04db8e7459016896c9c2c35fa32bb1ab84a21",
+      "runtimeSha256": "47b76838734fbdb63a43d435b5d853f86ae86e07af3d547e468e1ef8a766a0c9",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/FindDoor.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FindDoor.cs.meta",
+      "sourceSha256": "e7f821f1b246a8f5ca42c151491a4567731b98d950f8232be7324b904d1ce51a",
+      "runtimeSha256": "e7f821f1b246a8f5ca42c151491a4567731b98d950f8232be7324b904d1ce51a",
+      "adapter": "none"
+    },
+    "CharacterBehavior/FindWeapon.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FindWeapon.cs",
+      "sourceSha256": "141e7f9b4aaa546246db506d8befe6512c868cd7636b68254588216d8c3ceb2e",
+      "runtimeSha256": "a1e167e6327a19d82ca0f056315e69cdefa112cf379aa2477ec680af620dbe5b",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/FindWeapon.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FindWeapon.cs.meta",
+      "sourceSha256": "4ebb21806bc10c2a30cdd68bc11112c7f5703f7ba32c40f7f525e662a2697f1e",
+      "runtimeSha256": "4ebb21806bc10c2a30cdd68bc11112c7f5703f7ba32c40f7f525e662a2697f1e",
+      "adapter": "none"
+    },
+    "CharacterBehavior/FinishEnemy.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FinishEnemy.cs",
+      "sourceSha256": "02445b0bd2e39a2229e0b3fc8a873b444dc1c2c9a8b79dd10799e5937beeba62",
+      "runtimeSha256": "1e92f09937cc2c32e37764fd57957f0eabbdc19b2e903ac4bb40b24b98c167f5",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/FinishEnemy.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FinishEnemy.cs.meta",
+      "sourceSha256": "b8112a3711a7ca145dff0b9ba27ef4fccdebba0ecc33adf6c862e08fcac378b0",
+      "runtimeSha256": "b8112a3711a7ca145dff0b9ba27ef4fccdebba0ecc33adf6c862e08fcac378b0",
+      "adapter": "none"
+    },
+    "CharacterBehavior/FireAtAudio.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FireAtAudio.cs",
+      "sourceSha256": "3d2c575bd6e65bf4061ea09cdd3014d3a8742b95116e3d4b2f97cd35e0f2cf7f",
+      "runtimeSha256": "e69169dbb4a276c5feb2efbfe24591567c8932584730bc44215844634e062032",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/FireAtAudio.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FireAtAudio.cs.meta",
+      "sourceSha256": "f337bd19dbc08806d4bbfb9d5c511261771ea712f62fef78b18f0656e0857720",
+      "runtimeSha256": "f337bd19dbc08806d4bbfb9d5c511261771ea712f62fef78b18f0656e0857720",
+      "adapter": "none"
+    },
+    "CharacterBehavior/FireAtAudioCondition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FireAtAudioCondition.cs",
+      "sourceSha256": "b288bd717af83b2f3208d800dfd71bb4dff973837bd61633bcd3adcca159f052",
+      "runtimeSha256": "00bfd0b661711eeb3175cd5a11ddff50309ed86f69735b37289710dc4bda756b",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/FireWeapon.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FireWeapon.cs",
+      "sourceSha256": "40ba1050f5c5f87165013f6336984b0930c8cde5139c99319f26cc285660c2d7",
+      "runtimeSha256": "858f616fe023d5349b30bbbb9bc7d51b50d06d9c4acd89d4f69d861cdbd23468",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/FireWeapon.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FireWeapon.cs.meta",
+      "sourceSha256": "54c2b9acc341ae6d9b5f6bb3a285896c0ae7f299c58b6faac94c204397a176f4",
+      "runtimeSha256": "54c2b9acc341ae6d9b5f6bb3a285896c0ae7f299c58b6faac94c204397a176f4",
+      "adapter": "none"
+    },
+    "CharacterBehavior/Flee.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/Flee.cs",
+      "sourceSha256": "ce1af3b4001f91d496e75975e0119f8ba233731a32e8ec21fa5be689b310b1af",
+      "runtimeSha256": "991574a16f03b68462505d337c9cd9726ee14d34eea2006d9d99bfb9653d0cf5",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/Flee.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/Flee.cs.meta",
+      "sourceSha256": "c4e05752a2b97303ff763da1cf401cbf863997e0f4ce0cefb168f6519e06d19c",
+      "runtimeSha256": "c4e05752a2b97303ff763da1cf401cbf863997e0f4ce0cefb168f6519e06d19c",
+      "adapter": "none"
+    },
+    "CharacterBehavior/FleeFromAudio.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FleeFromAudio.cs",
+      "sourceSha256": "ad5cf689d0a9e86670e5ef286d09b86d652cc3eb0e312d6ecf313cdc39dbde9d",
+      "runtimeSha256": "c690be9f7a61adf41b4f115bca567b9c671e88b062b6c5d02b563381ce615207",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/FleeFromAudio.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FleeFromAudio.cs.meta",
+      "sourceSha256": "763ce444fcefbe02d9ff425731041ff2528458f50a55bf9efd6c467609ac44d6",
+      "runtimeSha256": "763ce444fcefbe02d9ff425731041ff2528458f50a55bf9efd6c467609ac44d6",
+      "adapter": "none"
+    },
+    "CharacterBehavior/FleeSourceClose.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FleeSourceClose.cs",
+      "sourceSha256": "3c3ecccec12897a24b23ca74357d7ff1ac423a27ac59eff32f9f750cb232844d",
+      "runtimeSha256": "91040855117691b1d645fada1664d5994d5b0d252c93237d8aaff40ddc0d8077",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/FleeSourceClose.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FleeSourceClose.cs.meta",
+      "sourceSha256": "139fcd2542c9f72bb6d6143d22da88d1edf26155d69efd4cd4e8e8d81ac16026",
+      "runtimeSha256": "139fcd2542c9f72bb6d6143d22da88d1edf26155d69efd4cd4e8e8d81ac16026",
+      "adapter": "none"
+    },
+    "CharacterBehavior/FleeSourceType.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FleeSourceType.cs",
+      "sourceSha256": "a9625c98a715120c86314b83f57bad4373fd064d918b20383ba6cca7a775a92c",
+      "runtimeSha256": "88f9fa60af8b72a7712f88b94e1d33807eff725392b852bb3687de95ad147dd8",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/FleeSourceType.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FleeSourceType.cs.meta",
+      "sourceSha256": "4b3167b55ae07acafaf9802dcf91f953e407a7a5f6cd8f83bd318319cb2a6e29",
+      "runtimeSha256": "4b3167b55ae07acafaf9802dcf91f953e407a7a5f6cd8f83bd318319cb2a6e29",
+      "adapter": "none"
+    },
+    "CharacterBehavior/FlipDirection.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FlipDirection.cs",
+      "sourceSha256": "0924962abfba226631b0c4177d4c852a6d6e133f2a2a8de0d748aca78f3d712c",
+      "runtimeSha256": "dc2ae34397e113eba50fdff68138d6a8d1a65992f1aa29d7ab9ebf11524e0e67",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/FlipDirection.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FlipDirection.cs.meta",
+      "sourceSha256": "fea2ec3a7ff037534bbedd0bd9fe62780a671cef2947c229ad8379034c0539f8",
+      "runtimeSha256": "fea2ec3a7ff037534bbedd0bd9fe62780a671cef2947c229ad8379034c0539f8",
+      "adapter": "none"
+    },
+    "CharacterBehavior/FriendlyInLineOfFire.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FriendlyInLineOfFire.cs",
+      "sourceSha256": "15ddc24804d5d0e3f65cc0ed67a80f34ce88ca59f766f8c113b1a84859a1a99a",
+      "runtimeSha256": "2bc77607828b2fd7d758b930c9b66180320f3e8d33f5ddda3a8e24e4fc813c35",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/FriendlyInLineOfFire.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/FriendlyInLineOfFire.cs.meta",
+      "sourceSha256": "3c8ffb96e754884106f4b088312a04df09ec13a79c79fd582ab7564ce24b7760",
+      "runtimeSha256": "3c8ffb96e754884106f4b088312a04df09ec13a79c79fd582ab7564ce24b7760",
+      "adapter": "none"
+    },
+    "CharacterBehavior/HasAudio.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/HasAudio.cs",
+      "sourceSha256": "93fa127f4deccaebf55b2033320b90f7d29d26d1c8f2c9009383694e9cf4fa84",
+      "runtimeSha256": "1fcdd34290443332138ea92a0237d6fe4ae5a2bc815b063b055340b866647121",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/HasAudio.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/HasAudio.cs.meta",
+      "sourceSha256": "cbb19126f5d85b387622c66087c1e3e058d461957eeb0ebe701737938e03edfd",
+      "runtimeSha256": "cbb19126f5d85b387622c66087c1e3e058d461957eeb0ebe701737938e03edfd",
+      "adapter": "none"
+    },
+    "CharacterBehavior/HasFleeSource.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/HasFleeSource.cs",
+      "sourceSha256": "536fd73af8455ab92fe39eeffc506eb5aaabae1d28623dcd59eba62d2cb6cc29",
+      "runtimeSha256": "9fe7f8cff14872928ae49d3078d994c75f1e347f9611356be939c163200eb7b1",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/HasFleeSource.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/HasFleeSource.cs.meta",
+      "sourceSha256": "34e21c8fb9387848fc24dd876f1451a517c7e8db13f9961c7d268bb904e6f86f",
+      "runtimeSha256": "34e21c8fb9387848fc24dd876f1451a517c7e8db13f9961c7d268bb904e6f86f",
+      "adapter": "none"
+    },
+    "CharacterBehavior/HasObstacle.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/HasObstacle.cs",
+      "sourceSha256": "2c48f9fa43e77e812a402864cf6c21528904c811a6a4a58fdcad1c7302061936",
+      "runtimeSha256": "7874288b7b1b6016657d4e3a716056b66d70e61f6586a7da08fca5ab945e8d3b",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/HasObstacle.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/HasObstacle.cs.meta",
+      "sourceSha256": "6eb3591d7e171b4529e4c531b189770db39ac85d66ac86d3427cea302ec639f4",
+      "runtimeSha256": "6eb3591d7e171b4529e4c531b189770db39ac85d66ac86d3427cea302ec639f4",
+      "adapter": "none"
+    },
+    "CharacterBehavior/HasTarget.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/HasTarget.cs",
+      "sourceSha256": "0b890df02814dc355640c5706225eb6f2156d54b57cfb46236f53a2217380525",
+      "runtimeSha256": "e9731ed2f97628024a96482ebce684df79bc8422358d237b5f4b64b32a07da7b",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/HasTarget.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/HasTarget.cs.meta",
+      "sourceSha256": "0a5787c394c429d54e90fef4179196dd6dcb7f1d3945dc3446eae9cde457c3e8",
+      "runtimeSha256": "0a5787c394c429d54e90fef4179196dd6dcb7f1d3945dc3446eae9cde457c3e8",
+      "adapter": "none"
+    },
+    "CharacterBehavior/HeadLook.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/HeadLook.cs",
+      "sourceSha256": "ae394e80cfe1dff40dce5f58ad1846c8c297fc48a3700dd2036c4d7b8347a963",
+      "runtimeSha256": "c64cc8fcc42fde2f4f085a472dbe5917300f347f58c1f29e6d030788b4cc080f",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/HeadLook.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/HeadLook.cs.meta",
+      "sourceSha256": "5a2e560878b9b20faa80908656afbf9b634dbe06ee090ca8b6f92b3cf22905e9",
+      "runtimeSha256": "5a2e560878b9b20faa80908656afbf9b634dbe06ee090ca8b6f92b3cf22905e9",
+      "adapter": "none"
+    },
+    "CharacterBehavior/InvestigateAudio.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/InvestigateAudio.cs",
+      "sourceSha256": "cfe9ff3bf0f897da9345f7fe19117c9b2437c59f7242495fe855452f399a7c49",
+      "runtimeSha256": "5690b1457280246a420d60607c3a3f6708ae9df7e6d7d0f4952d8cdf7ef96adc",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/InvestigateAudio.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/InvestigateAudio.cs.meta",
+      "sourceSha256": "5db4d7b2758a7230b35877377d3c99b6479f4f543fc28c510c29f55d72079bb5",
+      "runtimeSha256": "5db4d7b2758a7230b35877377d3c99b6479f4f543fc28c510c29f55d72079bb5",
+      "adapter": "none"
+    },
+    "CharacterBehavior/IsConscious.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/IsConscious.cs",
+      "sourceSha256": "b46569050e6c71002ca9df50d6d04ea19d77200fd8c5c8a4e67e9881daf6c1c1",
+      "runtimeSha256": "06a912667aafe5e450c8b7b6f8e8a4065547d69b72f8a9c705e8cbc3e0907b5e",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/IsConscious.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/IsConscious.cs.meta",
+      "sourceSha256": "2499a84a5ad9b456d5e0f289446ca277f635be7d6ac4bb16e67923de0683c28b",
+      "runtimeSha256": "2499a84a5ad9b456d5e0f289446ca277f635be7d6ac4bb16e67923de0683c28b",
+      "adapter": "none"
+    },
+    "CharacterBehavior/IsPlayer.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/IsPlayer.cs",
+      "sourceSha256": "966277e59582acc8b119b4e04389ad12acf1d0461dc310d8d3f0bc0b4de9a5ee",
+      "runtimeSha256": "3f83b934d84149e5b396e1f37315bb9c0736236f2a8e0866a3228d1177dfa2a3",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/IsPlayer.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/IsPlayer.cs.meta",
+      "sourceSha256": "09a6733ec4110f9087413b4f88e2332f77131fa71bc29f736ad53456dfc5ba4c",
+      "runtimeSha256": "09a6733ec4110f9087413b4f88e2332f77131fa71bc29f736ad53456dfc5ba4c",
+      "adapter": "none"
+    },
+    "CharacterBehavior/Kneel.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/Kneel.cs",
+      "sourceSha256": "0242c9bc55c3dc44622832a47bc988c31f3bb533492645cb8cd60cf1268259ef",
+      "runtimeSha256": "94b145ff585f9b4378bb7f3c61da6276bc4033ce4c7882933c0b1634039a8e1f",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/Kneel.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/Kneel.cs.meta",
+      "sourceSha256": "02faf4b3d787112e6b1d8cd611933b88080228474c68108dbd894f9da775ddae",
+      "runtimeSha256": "02faf4b3d787112e6b1d8cd611933b88080228474c68108dbd894f9da775ddae",
+      "adapter": "none"
+    },
+    "CharacterBehavior/MagazineState.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/MagazineState.cs",
+      "sourceSha256": "8c311466ee243086dfea87e4b05d180f87f03b760bb1a87be47f9d12c68f80e1",
+      "runtimeSha256": "18b1e6cd589abe8a0b9c4406cb7f288325a0f136c7d9324f90a914590a5c7f1f",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/ManipulateDoor.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/ManipulateDoor.cs",
+      "sourceSha256": "f898ab16f77950fd5834f3de6a45f486f5fdbdb251186547949ce284772ff7dd",
+      "runtimeSha256": "6d5f8d7f97c3f55177ba7a28725ddc7740f4594ec369cf06cc271b7a2fe5b4fd",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/ManipulateDoor.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/ManipulateDoor.cs.meta",
+      "sourceSha256": "9d5de4a305557da5ff598c63b300a745a312efb515611659cb475fa1e390a8d9",
+      "runtimeSha256": "9d5de4a305557da5ff598c63b300a745a312efb515611659cb475fa1e390a8d9",
+      "adapter": "none"
+    },
+    "CharacterBehavior/MoveToDoor.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/MoveToDoor.cs",
+      "sourceSha256": "a5f4707ccd7eae76f6499f1a900451e318edaadce57be0a5dcbb8dfa51b25ee7",
+      "runtimeSha256": "7bf2a95db1a101d1b0a702ab964eb3abd7cd1cbfd7ca0831d4f07c03ce654c91",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/MoveToDoor.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/MoveToDoor.cs.meta",
+      "sourceSha256": "d02bcb9f730dad31a04f9aadaa64db62a895a92e522f98b7873d22c030aa68ca",
+      "runtimeSha256": "d02bcb9f730dad31a04f9aadaa64db62a895a92e522f98b7873d22c030aa68ca",
+      "adapter": "none"
+    },
+    "CharacterBehavior/MoveToPosition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/MoveToPosition.cs",
+      "sourceSha256": "a19621c48c2e3a6771808c9ce00cb2846e1c8575bbbe8149d571c559221d7b68",
+      "runtimeSha256": "a9d1a558689493192264401d76e48f64475b869e5bb3c46f38a9cbdc0f1bf6cc",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/MoveToPosition.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/MoveToPosition.cs.meta",
+      "sourceSha256": "b3488dbc8441d50d1258faafb6c73150caec89ea57e52f0b8d80bff20e0c2c47",
+      "runtimeSha256": "b3488dbc8441d50d1258faafb6c73150caec89ea57e52f0b8d80bff20e0c2c47",
+      "adapter": "none"
+    },
+    "CharacterBehavior/MuzzleFree.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/MuzzleFree.cs",
+      "sourceSha256": "ece0a703aaf6809f4fa92db1b662b16baa43ad34c15016ec6e3652a38c2f97dd",
+      "runtimeSha256": "206ee864e448d3c142013565b51060c84d197c79a18895d2849b658c6f8924ac",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/MuzzleFree.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/MuzzleFree.cs.meta",
+      "sourceSha256": "5db9177fdc72dcb88caaa8837a0260360e6300f075fc15757f7e825142f776e2",
+      "runtimeSha256": "5db9177fdc72dcb88caaa8837a0260360e6300f075fc15757f7e825142f776e2",
+      "adapter": "none"
+    },
+    "CharacterBehavior/PrepareDoorForStun.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/PrepareDoorForStun.cs",
+      "sourceSha256": "5368d7cff5d40bc8aa4ccdf2f779677d60b6886400ce27b4331fb3cc35c96c2e",
+      "runtimeSha256": "e611df6a6e7af2140bab518bfdd55f4187c756188722dbe621c9aa8133293314",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/PrepareDoorForStun.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/PrepareDoorForStun.cs.meta",
+      "sourceSha256": "1ed114ca5ae0bcb471252b8b6bc0a762124523178e0c139957c97a49289dec80",
+      "runtimeSha256": "1ed114ca5ae0bcb471252b8b6bc0a762124523178e0c139957c97a49289dec80",
+      "adapter": "none"
+    },
+    "CharacterBehavior/RaiseWeaponAtTarget.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/RaiseWeaponAtTarget.cs",
+      "sourceSha256": "da532bae0cc4be85d8bba4f1441cb0a2f2182d6b81602c977f2f8953cce00c84",
+      "runtimeSha256": "afe00be27354e0d9ff680ec45d393bd06dae428bcc7ece93899cb0c732353f8e",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/RaiseWeaponAtTarget.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/RaiseWeaponAtTarget.cs.meta",
+      "sourceSha256": "1babab11a4ea6d5a950f63ed133b94341bea67822d017724bb95d0f34c11a702",
+      "runtimeSha256": "1babab11a4ea6d5a950f63ed133b94341bea67822d017724bb95d0f34c11a702",
+      "adapter": "none"
+    },
+    "CharacterBehavior/Reload.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/Reload.cs",
+      "sourceSha256": "4bbc65b920810fa93a9a56f239d9ae1c38dcf1a251f4cd3d1cde3b99bafb2d5b",
+      "runtimeSha256": "c12f1c6b52747c415216321705802bf10dd2ebf49a6e8969a421e023daaa0731",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/Reload.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/Reload.cs.meta",
+      "sourceSha256": "c81846ef7dfcbc6c39ee26c5b3011e5a953277b316705de814d952db5f50d1a8",
+      "runtimeSha256": "c81846ef7dfcbc6c39ee26c5b3011e5a953277b316705de814d952db5f50d1a8",
+      "adapter": "none"
+    },
+    "CharacterBehavior/RequestedApplyGauze.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/RequestedApplyGauze.cs",
+      "sourceSha256": "6dd9ba4ff8849eacfb16bb017faa23414746221df0ed601b9e0907579f9a9297",
+      "runtimeSha256": "259ee9c81146052662d8fc0b499947965001d5632a6ddb779790918b079af958",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/RequestedApplyGauze.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/RequestedApplyGauze.cs.meta",
+      "sourceSha256": "c994de8bd96715638c498590d2f27e80277b4cd59dea7a23a5bf97da35789e7a",
+      "runtimeSha256": "c994de8bd96715638c498590d2f27e80277b4cd59dea7a23a5bf97da35789e7a",
+      "adapter": "none"
+    },
+    "CharacterBehavior/RequestedCheckVitals.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/RequestedCheckVitals.cs",
+      "sourceSha256": "d32de4d102536e0b1753813b5f7291dd768bb46f5de8bb9e64b1491dfb386069",
+      "runtimeSha256": "677021840926465e61081b79000029dd581226167a786c68759b151dfa16cf3f",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/RequestedCheckVitals.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/RequestedCheckVitals.cs.meta",
+      "sourceSha256": "6167d9fa295a7e49f53519d80509832ecd367e9b9a9ff491583c0a1e5dd26b35",
+      "runtimeSha256": "6167d9fa295a7e49f53519d80509832ecd367e9b9a9ff491583c0a1e5dd26b35",
+      "adapter": "none"
+    },
+    "CharacterBehavior/RequestedReload.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/RequestedReload.cs",
+      "sourceSha256": "75d42d8a0b998fbf2ca552c0c5dd74246540517883de3b65717681c3e2a5c60a",
+      "runtimeSha256": "0eb8ecb5faa6fb255ac9c90d6ead3a0542c62c82e95295a8ae23e7829228755f",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/RequestedReload.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/RequestedReload.cs.meta",
+      "sourceSha256": "97c9c6d8af48ffc02b54711b05a43d656c3c4279a46aa6c0e3b6a4c1fa85a78a",
+      "runtimeSha256": "97c9c6d8af48ffc02b54711b05a43d656c3c4279a46aa6c0e3b6a4c1fa85a78a",
+      "adapter": "none"
+    },
+    "CharacterBehavior/RequestedRestrain.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/RequestedRestrain.cs",
+      "sourceSha256": "efeedcb01e04d05bf6641f03296e010f89c511fb5033fef440ee468a10020103",
+      "runtimeSha256": "7eeb725ea909bdcea59edea0109d58cc8a2e14e730efca6f9aa4bee1d4265cc4",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/RequestedRestrain.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/RequestedRestrain.cs.meta",
+      "sourceSha256": "1075d06baa1caeed8d986ef985f681a465d86da4a21bc54a4a2590a878b25082",
+      "runtimeSha256": "1075d06baa1caeed8d986ef985f681a465d86da4a21bc54a4a2590a878b25082",
+      "adapter": "none"
+    },
+    "CharacterBehavior/RequestedSecureWeapon.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/RequestedSecureWeapon.cs",
+      "sourceSha256": "c2879cc63c8f13e6403ad1dda25e6397240e73e0e0036c764921c6f311e673d0",
+      "runtimeSha256": "a0e719fa43a8c9b1066a55018ddac4d01438b3594dda8a1b7cea582555c4ee33",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/RequestedSecureWeapon.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/RequestedSecureWeapon.cs.meta",
+      "sourceSha256": "7c2de7f40fe39fd8a66fcdfd502396ec2b2d3328375fc4701d1cbf0e00a05cd1",
+      "runtimeSha256": "7c2de7f40fe39fd8a66fcdfd502396ec2b2d3328375fc4701d1cbf0e00a05cd1",
+      "adapter": "none"
+    },
+    "CharacterBehavior/SeesGrenade.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/SeesGrenade.cs",
+      "sourceSha256": "eecc4d687b413614c8ac5d6f58ae3e9b6b0107f5ca95b20302fce94a683c1757",
+      "runtimeSha256": "3286e75dd5fc92e9f01edf7c3d39f7554a6732f00e40cb1162ec0289ed5b86bc",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/SeesGrenade.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/SeesGrenade.cs.meta",
+      "sourceSha256": "e06641b58e05e217d4e64a2831865e895f0474e7562e98edaa317a8f474ca548",
+      "runtimeSha256": "e06641b58e05e217d4e64a2831865e895f0474e7562e98edaa317a8f474ca548",
+      "adapter": "none"
+    },
+    "CharacterBehavior/SelectFleeDoorPosition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/SelectFleeDoorPosition.cs",
+      "sourceSha256": "1d3667b964063a80621caf555f9c0d0515cba809a0631bfdeb41fd0d6c8e9550",
+      "runtimeSha256": "79862e7e13418e1bd6523972f81f0895548d225d226f79533b6b8ba8797a3880",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/SelectFleePosition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/SelectFleePosition.cs",
+      "sourceSha256": "cc60fe40a9a397235a349f277f9d6f913d5fa8f1c85cff522d919c1cfefb001b",
+      "runtimeSha256": "6fcd90c880a91862a70bf9ff6b5de23bc87aca996766fcddddbf88941a94aa87",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/SelectFleePosition.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/SelectFleePosition.cs.meta",
+      "sourceSha256": "ee7458fc8895bc172ae42535ca68a3ac8751f169459a3306ce2b89576354bcca",
+      "runtimeSha256": "ee7458fc8895bc172ae42535ca68a3ac8751f169459a3306ce2b89576354bcca",
+      "adapter": "none"
+    },
+    "CharacterBehavior/SelectMovePosition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/SelectMovePosition.cs",
+      "sourceSha256": "fee192a701bdc018c0fcdc9f767d066f85f7f4a84993fa6530accd933e50a0ef",
+      "runtimeSha256": "e178ca1cb5e078a4d98bb646d1289766a19200a8bc03bb9cef8d7f5daff2a7ee",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/SelectMovePosition.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/SelectMovePosition.cs.meta",
+      "sourceSha256": "5eb3c0f8121b17d1c718ed29434cfdd2b20700478cbdf27a4f844c1c438b01c5",
+      "runtimeSha256": "5eb3c0f8121b17d1c718ed29434cfdd2b20700478cbdf27a4f844c1c438b01c5",
+      "adapter": "none"
+    },
+    "CharacterBehavior/SelectPatrolPosition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/SelectPatrolPosition.cs",
+      "sourceSha256": "061388cfbb561178f59dba2e5f5ec781e6dd438cb727066c0712c1935c9361e5",
+      "runtimeSha256": "d23cff76043e1b54494c4490c18a823f5b95a59bb379cc61dbce444197269da3",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/SelectPatrolPosition.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/SelectPatrolPosition.cs.meta",
+      "sourceSha256": "f5288cdf27e88459dede7745c775c3a1eb97c466c15cb62598a38195f60c00ba",
+      "runtimeSha256": "f5288cdf27e88459dede7745c775c3a1eb97c466c15cb62598a38195f60c00ba",
+      "adapter": "none"
+    },
+    "CharacterBehavior/SetFleeSource.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/SetFleeSource.cs",
+      "sourceSha256": "60250e9c411b0ff984132624727d3a715afe84857ca1b279e072881738e70fe7",
+      "runtimeSha256": "883096a05474a4f8b34606f8820cb06213a15cb8061251a7c739a864dad8dd18",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/SetFleeSource.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/SetFleeSource.cs.meta",
+      "sourceSha256": "47acd258221ae21b4a1f3bc719db4c9abec29e0f114c0d18554fb5fbae7b9266",
+      "runtimeSha256": "47acd258221ae21b4a1f3bc719db4c9abec29e0f114c0d18554fb5fbae7b9266",
+      "adapter": "none"
+    },
+    "CharacterBehavior/SprintWhenInvestigating.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/SprintWhenInvestigating.cs",
+      "sourceSha256": "4d81e00a742625d59acfd73618ab26ad50b90373fd14fafcd92135a734c86968",
+      "runtimeSha256": "13d68ff71ac0c758c395c6a307ee96fedabef7369811d5cc995db8ec52768a7b",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/SprintWhenInvestigating.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/SprintWhenInvestigating.cs.meta",
+      "sourceSha256": "b24bfebdd68c67226eb8de2d9dcfa7a5d613d5ad032b8b05b57aae14dc1e673c",
+      "runtimeSha256": "b24bfebdd68c67226eb8de2d9dcfa7a5d613d5ad032b8b05b57aae14dc1e673c",
+      "adapter": "none"
+    },
+    "CharacterBehavior/Step.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/Step.cs",
+      "sourceSha256": "651958af9e4bc6f215c53b8b5b5bfe1efd6affa1dd7bb34b6837370bc1282a27",
+      "runtimeSha256": "629b63e2774d049b77d609852fe83720143a5be9dda5f2e14980a6dc29544453",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/Step.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/Step.cs.meta",
+      "sourceSha256": "ee295d53110d70f3e118697837e9718c09883422eaf1eaa7f7372da09e54879f",
+      "runtimeSha256": "ee295d53110d70f3e118697837e9718c09883422eaf1eaa7f7372da09e54879f",
+      "adapter": "none"
+    },
+    "CharacterBehavior/SwitchWeapon.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/SwitchWeapon.cs",
+      "sourceSha256": "c5c888cdbf52e9d560904079a8109f91c2c9eb1819d82d09f7ca6af922f3b436",
+      "runtimeSha256": "a7aa130c38d4d640dc291c1d3a9c435aa799d469569b636434c514a192156b06",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/SwitchWeapon.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/SwitchWeapon.cs.meta",
+      "sourceSha256": "0a5560ed7fb6cfffa8fba55d2f8184710cac2efd610c0a375d2da08609f7fac3",
+      "runtimeSha256": "0a5560ed7fb6cfffa8fba55d2f8184710cac2efd610c0a375d2da08609f7fac3",
+      "adapter": "none"
+    },
+    "CharacterBehavior/SwitchWeaponCondition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/SwitchWeaponCondition.cs",
+      "sourceSha256": "93db546eee31c0ee156d3df0b5b16466ae3faa4b7b2a7d31e77f43f9cc15bf37",
+      "runtimeSha256": "e36377689a20434913f0c198ea74ea6afb72476497fd04f23e1fd285caf584fe",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/TargetConscious.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/TargetConscious.cs",
+      "sourceSha256": "57cd8fa4cf7f152377bedcd74a617716a615940f6b1ffbc8503f9782c54f75dd",
+      "runtimeSha256": "0d3084e68e876baa6bbdf153b71390b1dbaf7052ae35d5767dd48ae54a85ff31",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/TargetConscious.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/TargetConscious.cs.meta",
+      "sourceSha256": "52f8f8ef05bf76ff5db4e0c16f7feda38a0117fc577ac6bf4c18b5a743269916",
+      "runtimeSha256": "52f8f8ef05bf76ff5db4e0c16f7feda38a0117fc577ac6bf4c18b5a743269916",
+      "adapter": "none"
+    },
+    "CharacterBehavior/TargetUnconscious.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/TargetUnconscious.cs",
+      "sourceSha256": "d1e57f9656617348ec8c03ea0277ffcf8fc2f9768598fa777d0e1b05284e648f",
+      "runtimeSha256": "be69efb7f2c29078b6d2b7d5276e6f2ff2562a179997121036efcebb84314e54",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/TargetUnconscious.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/TargetUnconscious.cs.meta",
+      "sourceSha256": "c94039dbb70fbfa1f92d12a311b5695666a99db7fc3ec9bf5f230de92a7b0884",
+      "runtimeSha256": "c94039dbb70fbfa1f92d12a311b5695666a99db7fc3ec9bf5f230de92a7b0884",
+      "adapter": "none"
+    },
+    "CharacterBehavior/TestEngageDistance.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/TestEngageDistance.cs",
+      "sourceSha256": "f19b18fcc269d25ef48c3b762e6d3810bfd1a94ae984021c86e821b767f3a696",
+      "runtimeSha256": "7feda038a213a6303e4be1910f2342a8c96c0c28dc6c01663f8f666b7f772514",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/TestEngageDistance.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/TestEngageDistance.cs.meta",
+      "sourceSha256": "8fea4fb668c9f7801033fdec56d0b8b7df953d05bacb53e5a19349692dac2d54",
+      "runtimeSha256": "8fea4fb668c9f7801033fdec56d0b8b7df953d05bacb53e5a19349692dac2d54",
+      "adapter": "none"
+    },
+    "CharacterBehavior/TestSetting.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/TestSetting.cs",
+      "sourceSha256": "a4caa4ead7a8227b60d68f3c97646cd767b9646255b1ba23183fc7f5599a4573",
+      "runtimeSha256": "7df8826ed00fd99f60a0e93d57d9f4ca52c7e10b1de07ecf2567176f23fe34b4",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/TestSetting.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/TestSetting.cs.meta",
+      "sourceSha256": "a9c78a57d46c47668c852a3de0679087e16264d66383b473e39ca4eb9813f2da",
+      "runtimeSha256": "a9c78a57d46c47668c852a3de0679087e16264d66383b473e39ca4eb9813f2da",
+      "adapter": "none"
+    },
+    "CharacterBehavior/TurnAround.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/TurnAround.cs",
+      "sourceSha256": "a315d105efb2a820499c245e10cd4425f7dcf1cfa5b825897be163061f709c57",
+      "runtimeSha256": "6e3a8d59535e26ee0403163c8e218aeedd1eb35c5a783ddefe24c63a4f62ef72",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/TurnAround.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/TurnAround.cs.meta",
+      "sourceSha256": "89922eeded23185ba1d3687d13aa9c29f351d8c51fd3dbc611b2a25ca203b965",
+      "runtimeSha256": "89922eeded23185ba1d3687d13aa9c29f351d8c51fd3dbc611b2a25ca203b965",
+      "adapter": "none"
+    },
+    "CharacterBehavior/VisualPerceive.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/VisualPerceive.cs",
+      "sourceSha256": "a4e3456f7ac9768001a53228d77f173cab0b473ab48db907a52fc2462915494a",
+      "runtimeSha256": "557ff87d9958f582d74382a7528b49738ebbad09d1366d7538e180173f6a0270",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/VisualPerceive.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/VisualPerceive.cs.meta",
+      "sourceSha256": "42c54e735d00b2416089c8e5307339aecad6fdab74f07dcf37acd15918b6c6c9",
+      "runtimeSha256": "42c54e735d00b2416089c8e5307339aecad6fdab74f07dcf37acd15918b6c6c9",
+      "adapter": "none"
+    },
+    "CharacterBehavior/WeaponAligned.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WeaponAligned.cs",
+      "sourceSha256": "53aa6a69bc727d97e23bcee19402ee8ff4a8ae74acf135fc44ef7cb5013cc13b",
+      "runtimeSha256": "bb9b8554583aefb89b3f2dfb9a5729d2f3a4c621da03507eea32e5e464414373",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/WeaponAligned.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WeaponAligned.cs.meta",
+      "sourceSha256": "9d3ba65fef2f37af3d4915197505190cb6583ee6e98dc7f720c9b27016229872",
+      "runtimeSha256": "9d3ba65fef2f37af3d4915197505190cb6583ee6e98dc7f720c9b27016229872",
+      "adapter": "none"
+    },
+    "CharacterBehavior/WeaponAngle.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WeaponAngle.cs",
+      "sourceSha256": "9668c5a507714422bee78c2485df4e2805ec83098b1ac91b5b2263a1a1cc42e1",
+      "runtimeSha256": "3a8294d74060343f88aae5f0564d6770a49bc4c0999d72d7e89e2beba6bc5dc2",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/WeaponAngle.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WeaponAngle.cs.meta",
+      "sourceSha256": "c8607bba639d301fe49b02a6d4253819e5e46f4acab2d6ee089f0d3603c3bf6b",
+      "runtimeSha256": "c8607bba639d301fe49b02a6d4253819e5e46f4acab2d6ee089f0d3603c3bf6b",
+      "adapter": "none"
+    },
+    "CharacterBehavior/WeaponHasAmmo.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WeaponHasAmmo.cs",
+      "sourceSha256": "0fba315c2deac6dc53120224914c33cbce2050ecc9348df9af8e1dd69c85199b",
+      "runtimeSha256": "de776f9bf7ccbb1d7bd142d29a8738f2505c19a06e20b19d24108cbc8e5fdab8",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/WeaponHasAmmo.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WeaponHasAmmo.cs.meta",
+      "sourceSha256": "445ab42e22a60d4a239e1ee1990325ba52deda870ade7948bd5d110fb0a0ff59",
+      "runtimeSha256": "445ab42e22a60d4a239e1ee1990325ba52deda870ade7948bd5d110fb0a0ff59",
+      "adapter": "none"
+    },
+    "CharacterBehavior/WeaponNotAligned.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WeaponNotAligned.cs",
+      "sourceSha256": "2a7d91e8260a1674321cd920db16f3007a81d7a2a3517279f81e286f5358dcc0",
+      "runtimeSha256": "360167300124b2e9acdd7c348b17ade7b81eef6e52320e2a5ec214aa8b0057b0",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/WeaponNotAligned.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WeaponNotAligned.cs.meta",
+      "sourceSha256": "ec99453a5083858c92dc84f226f0541e3696e6c55c07f5675987a0a5d084c0ea",
+      "runtimeSha256": "ec99453a5083858c92dc84f226f0541e3696e6c55c07f5675987a0a5d084c0ea",
+      "adapter": "none"
+    },
+    "CharacterBehavior/WeaponNotLive.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WeaponNotLive.cs",
+      "sourceSha256": "946ccca78f8727612b5f5f787e173810b8a1f38c4d3761f365d1f87b8f62dc5c",
+      "runtimeSha256": "b92040038a58b1f68541c90e8c392a376fe234822e9bdbcf45ed02a6da25d372",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/WeaponNotLive.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WeaponNotLive.cs.meta",
+      "sourceSha256": "366f14f97d03cf82dc24634916cf29ee8af9b69f010e5d5442acde5155153322",
+      "runtimeSha256": "366f14f97d03cf82dc24634916cf29ee8af9b69f010e5d5442acde5155153322",
+      "adapter": "none"
+    },
+    "CharacterBehavior/WillAmbush.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WillAmbush.cs",
+      "sourceSha256": "bfd258b376fcafd7191774f0ab7771f40eee8a82bfe1a4d79ccf72986b0cf5c5",
+      "runtimeSha256": "81c1ac7dbac9c60abec45285fba2d2d112623c760b8d1b9463b67d26fd8e6f3d",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/WillAmbush.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WillAmbush.cs.meta",
+      "sourceSha256": "ed9d5509aad22f93cf35ea09d8de3ed9e999ef09117c2873e064e125b478e33f",
+      "runtimeSha256": "ed9d5509aad22f93cf35ea09d8de3ed9e999ef09117c2873e064e125b478e33f",
+      "adapter": "none"
+    },
+    "CharacterBehavior/WillBlindFire.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WillBlindFire.cs",
+      "sourceSha256": "cae2b317b1d63b8230447ae5fdd5535291884503441e36bf41f58ae502d3bb35",
+      "runtimeSha256": "0c598b52f9eaac3fa2dfb306213ff11ad45160834237c7a94194ea7885bda609",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/WillBlindFire.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WillBlindFire.cs.meta",
+      "sourceSha256": "c0da4ae5a7994acaf449b248a1013f13515ca06931413dd032078ef01dfca656",
+      "runtimeSha256": "c0da4ae5a7994acaf449b248a1013f13515ca06931413dd032078ef01dfca656",
+      "adapter": "none"
+    },
+    "CharacterBehavior/WillFinishEnemy.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WillFinishEnemy.cs",
+      "sourceSha256": "f8d77e10c4c1945dfcf0c2e4d7a3303a947baab776e348b22ca4f032a6b42026",
+      "runtimeSha256": "472f72d3c09b94af66b6cbb47b93ebe65001732ca5f724c098e615146659b3f9",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/WillFinishEnemy.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WillFinishEnemy.cs.meta",
+      "sourceSha256": "593d13091062ae1c00c33fd02664f23c97c84e6f2290eb62ea3d551894f25ab6",
+      "runtimeSha256": "593d13091062ae1c00c33fd02664f23c97c84e6f2290eb62ea3d551894f25ab6",
+      "adapter": "none"
+    },
+    "CharacterBehavior/WillFlee.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WillFlee.cs",
+      "sourceSha256": "2ee84889dbf0647bca223fea64ec2e78cd0dff060aa46103c93d3411bff5def1",
+      "runtimeSha256": "724ee7b408f5422dd91fb9273261a3381cb9d8a388cd98eac7b3cf73823ea409",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/WillFlee.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WillFlee.cs.meta",
+      "sourceSha256": "05a506f1ccfc90971e1cf19d6c8cc999d833f9a20ce432471161e3ea4bb974ff",
+      "runtimeSha256": "05a506f1ccfc90971e1cf19d6c8cc999d833f9a20ce432471161e3ea4bb974ff",
+      "adapter": "none"
+    },
+    "CharacterBehavior/WillSurrender.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WillSurrender.cs",
+      "sourceSha256": "d2f4c4c3318c6e38e41127fcf73f6462f56fa7c3ddf9a1a6f9b2d053039780ee",
+      "runtimeSha256": "639ef7168135a18f533740152e3f680a81bbcfc29269abf775f48ce80309920f",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/WillSurrender.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WillSurrender.cs.meta",
+      "sourceSha256": "1b0cb14bf825878f89564d39f0050ec7bf1bad8b3ca7c4a99ee8a0c9d70846fa",
+      "runtimeSha256": "1b0cb14bf825878f89564d39f0050ec7bf1bad8b3ca7c4a99ee8a0c9d70846fa",
+      "adapter": "none"
+    },
+    "CharacterBehavior/WorkBolt.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WorkBolt.cs",
+      "sourceSha256": "d3fd6d951c5018dd58940841d24e8da0d16296212c1deb5e94275b508ae569ee",
+      "runtimeSha256": "ea6530e438299a8170d309b7d9232664a71e80c50a4751289991968ec42bdf98",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "CharacterBehavior/WorkBolt.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WorkBolt.cs.meta",
+      "sourceSha256": "073a1506631c34b9540a78fa403fce6efe5dd523f32bfa77bf102d73397fac15",
+      "runtimeSha256": "073a1506631c34b9540a78fa403fce6efe5dd523f32bfa77bf102d73397fac15",
+      "adapter": "none"
+    },
+    "CharacterBehavior/WorkBoltCondition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CharacterBehavior/WorkBoltCondition.cs",
+      "sourceSha256": "5be1afecd8752c1acbbf1c3bf6f68b25aaacce807d220bed91738a42b6c06db2",
+      "runtimeSha256": "8f48cba6ae069a2550664c8bb9119d81006371fec7a1e7a2cf7c1db897fac689",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Occupants/Surrender.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Occupants/Surrender.cs",
+      "sourceSha256": "b91eda77ef4f9541e8914534e1761d924c945c344b85e00cebe914d1b15da516",
+      "runtimeSha256": "9c4ab31e442e3aaa991c2d4ab74550f951a8d55f5aa3cfb572e254e9dbac8c6d",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Occupants/Surrender.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Occupants/Surrender.cs.meta",
+      "sourceSha256": "2025abceff84f644d29a938ebf4c5e19a8fcf01f26b6a43f1ec439835970bdc9",
+      "runtimeSha256": "2025abceff84f644d29a938ebf4c5e19a8fcf01f26b6a43f1ec439835970bdc9",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/AllPacified.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/AllPacified.cs",
+      "sourceSha256": "df344c9660f63cdbef0d820d7f0124f8f2bad26d5990b4c67c6714b423cb7ee0",
+      "runtimeSha256": "7576b306cfc988663cd214d25486a8868b05ee19c84a73134fc109439260fc91",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/AllPacified.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/AllPacified.cs.meta",
+      "sourceSha256": "52036a6882987c9e1975c8550ad8dbb15f21520ce141da5fccfec4a46dfefc3d",
+      "runtimeSha256": "52036a6882987c9e1975c8550ad8dbb15f21520ce141da5fccfec4a46dfefc3d",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/ApplyGauze.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/ApplyGauze.cs",
+      "sourceSha256": "548c335b9e2b629b9b62e3cd6fa1ff2122122f244696a37f5423eec7ab234bf7",
+      "runtimeSha256": "f06d9b353015d06831eacceb6b910627b690281beb48ac58fd356eceae332091",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/ApplyGauze.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/ApplyGauze.cs.meta",
+      "sourceSha256": "ab6245bbef57f36eb0989bc5e11d5948f8241f87e0922e641e86517dc9dbdafe",
+      "runtimeSha256": "ab6245bbef57f36eb0989bc5e11d5948f8241f87e0922e641e86517dc9dbdafe",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/ApplyGauzeCondition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/ApplyGauzeCondition.cs",
+      "sourceSha256": "ec3533b3d7a9c575a4dd3d4d8f7d4a55170b56c022d5e51471bc5db190ac0d5d",
+      "runtimeSha256": "5a72c3c3c17ff41b940cbec0bea6da5dda09c362654caff15e7d4faf642b1a27",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/ApproachingRoom.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/ApproachingRoom.cs",
+      "sourceSha256": "9f56ae4b6f95308f21558df0f898a14ecdef6f605c09949105f1f0ff0269a6e5",
+      "runtimeSha256": "f53ceda05321b634b48af1b043044c868c51b87c27c9ccc90c2724c809b2f62f",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/ApproachingRoom.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/ApproachingRoom.cs.meta",
+      "sourceSha256": "2a9abc23e5aa2dcd8ae8693340aa6a58c29af0021e8259634f491cd1e806f06e",
+      "runtimeSha256": "2a9abc23e5aa2dcd8ae8693340aa6a58c29af0021e8259634f491cd1e806f06e",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/CheckVitals.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/CheckVitals.cs",
+      "sourceSha256": "31401a3dad7abe3507af9a9848a2aa9c254e9da2ffd132945c8dd3535bde669e",
+      "runtimeSha256": "694d0f46de187e4d615784a72c53a5396363ff823dc89abb17e6290f410d61d9",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/CheckVitals.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/CheckVitals.cs.meta",
+      "sourceSha256": "5d5fc028ce63f4f9f9a50ed2ca02b9b61c605be1cda5e67e0920fb79d51d5406",
+      "runtimeSha256": "5d5fc028ce63f4f9f9a50ed2ca02b9b61c605be1cda5e67e0920fb79d51d5406",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/CorrectFollowFacing.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/CorrectFollowFacing.cs",
+      "sourceSha256": "2359a016a902524b0d057ce43912a528f34522553c9d917a7ad9fccf837009f1",
+      "runtimeSha256": "962b6fccb2a6cc6d3cf5dec6f3045224ea24b68bd99a3efee1f294ae6f9255c0",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/CorrectFollowFacing.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/CorrectFollowFacing.cs.meta",
+      "sourceSha256": "fe37adf761bef009da1c5f34aca095a91ca7226ebb99e8c3373bd00350e74c29",
+      "runtimeSha256": "fe37adf761bef009da1c5f34aca095a91ca7226ebb99e8c3373bd00350e74c29",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/CorrectLeadFacing.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/CorrectLeadFacing.cs",
+      "sourceSha256": "d2d57c54afc7c5422b64d4e0fd94aaa5aab00ada92cf7a151e63bb026aaa9c79",
+      "runtimeSha256": "b50f111c94dcd6a908e11f12bbe1b5a29c097cf58d113f56e8836e75fec18261",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/CorrectLeadFacing.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/CorrectLeadFacing.cs.meta",
+      "sourceSha256": "dda62fdd4399801dfbc19a94e900d86093afca1088ac980a0aa39e28c5217f38",
+      "runtimeSha256": "dda62fdd4399801dfbc19a94e900d86093afca1088ac980a0aa39e28c5217f38",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/DisarmTrap.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/DisarmTrap.cs",
+      "sourceSha256": "929a08ba82082dc2b5232dc3a62c11da6239e43c2104f4e736d416b09d00bd74",
+      "runtimeSha256": "14d216f035f48d170553992f272b7c51ac4bfc1cddc54312781bfb1353f81d04",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/DisarmTrap.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/DisarmTrap.cs.meta",
+      "sourceSha256": "71481492acc331ba52675373a10a81b3627b789ca2e8a554292c877b84cf504e",
+      "runtimeSha256": "71481492acc331ba52675373a10a81b3627b789ca2e8a554292c877b84cf504e",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/DisarmTrapCondition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/DisarmTrapCondition.cs",
+      "sourceSha256": "eaee78a18d2b19344a27a0fd6d5d1b5cb30d3871c14b86cda3cacbb48cb3dbf4",
+      "runtimeSha256": "b6bb6ef19a6665b95f02bda27a07f39602a9c08cb2476f406e0dd3951f5e5212",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/ExamineDoor.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/ExamineDoor.cs",
+      "sourceSha256": "15acd8a7d9eb0c7d94896090d0f95873a265bb0a50ef63b13410a55d5537e70f",
+      "runtimeSha256": "2db80567d560c826439acb05112704a17627f39ad5380bd15af5c1afe7c5508d",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/ExamineDoor.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/ExamineDoor.cs.meta",
+      "sourceSha256": "22366a4d1b2775586869b2a024e52cd35d59830bf287bb14886f16e2dc28d6b3",
+      "runtimeSha256": "22366a4d1b2775586869b2a024e52cd35d59830bf287bb14886f16e2dc28d6b3",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/ExamineDoorCondition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/ExamineDoorCondition.cs",
+      "sourceSha256": "edd828e97bd4187a5d03e6af9ee50f20dd6208ff8b45234035963210f664893e",
+      "runtimeSha256": "f07313dd4e19c01460e15aa4c68d097684956ea88b2634adca3ed23f82cbec81",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/Follow.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/Follow.cs",
+      "sourceSha256": "a3a39a635b0e0be3e1d85ce1e510eba8b330b3f109ee78448bcd719977a83f07",
+      "runtimeSha256": "f8f40ab7d4e08e6e82306cdba9194dddd4ba5c085fce4ab485ea13ebae618cce",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/Follow.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/Follow.cs.meta",
+      "sourceSha256": "281389aea57b81816b5628c57a02535706406af1414425a14a6002ba4e081838",
+      "runtimeSha256": "281389aea57b81816b5628c57a02535706406af1414425a14a6002ba4e081838",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/FollowMove.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/FollowMove.cs",
+      "sourceSha256": "eb45c3851b7b56ce89c3f1afa5d4e6033ff6a1839fb12aa22889f6832eb94fbb",
+      "runtimeSha256": "07d353aa4d9fce0e4207377c27c7e2b61a855622e7d6aaaa084824e6ff208cc8",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/FollowMove.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/FollowMove.cs.meta",
+      "sourceSha256": "b269c037952bae1b019f43b22b3a0b6247c66cf764f3241353c077fe2be20d6f",
+      "runtimeSha256": "b269c037952bae1b019f43b22b3a0b6247c66cf764f3241353c077fe2be20d6f",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/FollowerWithinDistance.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/FollowerWithinDistance.cs",
+      "sourceSha256": "b76e86b9cc4bb6ebcc27602c7871912039cfc148b3b79645967337eed4c15a0a",
+      "runtimeSha256": "e3a2657765bc48151056903b551cfb3589e25b68e3ee8cf905227dadb167bef1",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/FollowerWithinDistance.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/FollowerWithinDistance.cs.meta",
+      "sourceSha256": "a3e230a4642cccde47e2c0cf863fd331043904e958abfb200bd439fead7cf37e",
+      "runtimeSha256": "a3e230a4642cccde47e2c0cf863fd331043904e958abfb200bd439fead7cf37e",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/GetWeapon.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/GetWeapon.cs",
+      "sourceSha256": "23f94df362daac5f489211882a0e44bedce2c84c7a1e43a36aff346efff87b14",
+      "runtimeSha256": "8439ef711993fc633b16be2d99182228629e38e34350f75e3c5307be93b9057f",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/GetWeapon.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/GetWeapon.cs.meta",
+      "sourceSha256": "5da573abb8f382a498dff610856118ef877745bc5d15a496db2c4d9675e4496f",
+      "runtimeSha256": "5da573abb8f382a498dff610856118ef877745bc5d15a496db2c4d9675e4496f",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/HandleDoor.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/HandleDoor.cs",
+      "sourceSha256": "63a0f01801979a2b0520c938f5bdfdd2e8020bf22cd4905a663927705d222370",
+      "runtimeSha256": "1010cb80c4a15571ff961ddc74b4f1f258d37ae6ef601b6621a5164322f5bc5e",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/HandleDoor.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/HandleDoor.cs.meta",
+      "sourceSha256": "7faa785fc29355be48edbde62dafb03daeb6462080e3500be786f03e7c024edb",
+      "runtimeSha256": "7faa785fc29355be48edbde62dafb03daeb6462080e3500be786f03e7c024edb",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/HasCover.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/HasCover.cs",
+      "sourceSha256": "ce8c087af87f4898e65362046c46bbd8f97dc5302f88cf3cca4a20410ac8615d",
+      "runtimeSha256": "ab4597966176b5176d1202a308e41232903e133ba6fdbc02479f62100e739143",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/HasCover.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/HasCover.cs.meta",
+      "sourceSha256": "72f64926ecc6fe31a8c573b43b44129d473d4bf2a23056508076a964aae6082b",
+      "runtimeSha256": "72f64926ecc6fe31a8c573b43b44129d473d4bf2a23056508076a964aae6082b",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/HasFollower.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/HasFollower.cs",
+      "sourceSha256": "c202625f6739d0b389a6d49b9a42c38ea84c552adbacb2ac0c33a33a50664c99",
+      "runtimeSha256": "af646d9c725983f87145d7eb5e473918562e189ab49afb42b0ba4fa376f92aee",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/HasFollower.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/HasFollower.cs.meta",
+      "sourceSha256": "74dd48e1cde80a7cc814242ee8d35ccb6eac0703597bae489e0049e22195178f",
+      "runtimeSha256": "74dd48e1cde80a7cc814242ee8d35ccb6eac0703597bae489e0049e22195178f",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/HasLeader.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/HasLeader.cs",
+      "sourceSha256": "b7293b0f9e463025725387fdd3372716c8f0db75d2dec3787677225fb7ade0bf",
+      "runtimeSha256": "ca5cbce6a8936b7da71e036de6cd079614308291a5423a091a7be22c6656699c",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/HasLeader.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/HasLeader.cs.meta",
+      "sourceSha256": "abe05b31e0d6d4037379b4477640c5f03698a095f1ad1750d7e8f57f8dc34475",
+      "runtimeSha256": "abe05b31e0d6d4037379b4477640c5f03698a095f1ad1750d7e8f57f8dc34475",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/HasReachedTeamTargetPosition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/HasReachedTeamTargetPosition.cs",
+      "sourceSha256": "fb24dc9d0d65f5d404ca6299ae1fed8a924964bb21bb36fa4b9f3d3ca8649797",
+      "runtimeSha256": "7ea5554cefcc2c2af9cda8b8446b73fbe7e2d685aeb4855c1abca0c7dc38ec45",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/HasReachedTeamTargetPosition.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/HasReachedTeamTargetPosition.cs.meta",
+      "sourceSha256": "08ab3a6e51de31e90c5a06508105815bb04ceb9f405ef91724af5eb1cbad1701",
+      "runtimeSha256": "08ab3a6e51de31e90c5a06508105815bb04ceb9f405ef91724af5eb1cbad1701",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/HoldingPosition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/HoldingPosition.cs",
+      "sourceSha256": "b4883e11a5962e19d81ff38823c48f12cdd59e1ab6e77439fa206b7c91d2baf3",
+      "runtimeSha256": "2c3e489f001814b097dd29b8ac858e19de325d761717cd4902ac08b429f7987f",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/HoldingPosition.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/HoldingPosition.cs.meta",
+      "sourceSha256": "01b146a1b279b1dc05e00e5f8922a5c6d850b680f705be631341656ad94e6969",
+      "runtimeSha256": "01b146a1b279b1dc05e00e5f8922a5c6d850b680f705be631341656ad94e6969",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/IdleMove.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/IdleMove.cs",
+      "sourceSha256": "29bead4f2043177abfe3fc24083f2a0cff59a969140c27f7dbb7a772eaf651a2",
+      "runtimeSha256": "03e2d33e913d140dd64771d1c56ac942846db449d86f20fb6d2033d44c009bb1",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/IdleMove.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/IdleMove.cs.meta",
+      "sourceSha256": "158160fc22df807d385c7bf7509108f4c1be5d32cd93784b1464f582bedca121",
+      "runtimeSha256": "158160fc22df807d385c7bf7509108f4c1be5d32cd93784b1464f582bedca121",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/IsRearGuard.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/IsRearGuard.cs",
+      "sourceSha256": "0c18405909a3f01a9c57f076f815cee2ed87fde2ef5f9273596f32615516a131",
+      "runtimeSha256": "cccf2e6f79b2e1a5f76df814c420e6504bc746604f3d220a1c23c7c017c65ae6",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/IsRearGuard.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/IsRearGuard.cs.meta",
+      "sourceSha256": "70cb28524a5479354cfee93bfbdeda6801a13ecd2f676484fbcb9cfa0358c62c",
+      "runtimeSha256": "70cb28524a5479354cfee93bfbdeda6801a13ecd2f676484fbcb9cfa0358c62c",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/Lead.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/Lead.cs",
+      "sourceSha256": "d3089ee3b2ccd910a3199b0257c5e952365b0d334d56e80919a847b465ec7a65",
+      "runtimeSha256": "f7e398bc1f97c5d9b5dd2a4feee9444a81f3560d6ff31984369ad56494568935",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/Lead.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/Lead.cs.meta",
+      "sourceSha256": "8491129e3a18a3ba5f699775a5b745284c68d6bad7b2aea6afc1576ed80b1c05",
+      "runtimeSha256": "8491129e3a18a3ba5f699775a5b745284c68d6bad7b2aea6afc1576ed80b1c05",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/ReadyStunGrenade.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/ReadyStunGrenade.cs",
+      "sourceSha256": "9af3e2c71fe91f60a319ffc50cbc39fb5abe2049e1283c7e68c3026e958ffc7d",
+      "runtimeSha256": "72b01e137460d570830b04e542d27dee7f405515d3d13dfdeddd425126e8893b",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/ReadyStunGrenade.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/ReadyStunGrenade.cs.meta",
+      "sourceSha256": "97570b39401b6807acd722faa5c41f72e2530407d522da4a29d8a11a8cba27ef",
+      "runtimeSha256": "97570b39401b6807acd722faa5c41f72e2530407d522da4a29d8a11a8cba27ef",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/RemoveObstacle.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/RemoveObstacle.cs",
+      "sourceSha256": "eac7e99a47430a0af24d6453d7c7cf76fbe3f899be795f328a73af2df0462c51",
+      "runtimeSha256": "dbbd9b9b7345903f0cfc345e6d5d69fc01ffb6c891cb7bfbfa6f555345aed9b9",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/RemoveObstacle.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/RemoveObstacle.cs.meta",
+      "sourceSha256": "7db1441227ca0b032d7e8df45b9ecc4f5e79a3911ae50ba71ed53016cfb364c7",
+      "runtimeSha256": "7db1441227ca0b032d7e8df45b9ecc4f5e79a3911ae50ba71ed53016cfb364c7",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/RemoveObstacleCondition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/RemoveObstacleCondition.cs",
+      "sourceSha256": "307e83c125a5c3f6ef640314174997911c0562a445d70ee56f4a6ea65eff5f86",
+      "runtimeSha256": "15422fffb3471b57b4092cf1bef7f1160b3dcefe0a8c603234d93c001067a2cf",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/Restrain.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/Restrain.cs",
+      "sourceSha256": "4a3316e05cfdeffa3261f074e084e2ffac8566d78fa0f33f47b629f4b8730bd7",
+      "runtimeSha256": "0387bb2d3115e57efbaa8a2026c75ff05c451a8b757069ea6d4d1f2a989f881f",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/Restrain.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/Restrain.cs.meta",
+      "sourceSha256": "e213bec0f36f3ad02de0b78cfc4438ea080a0458a0abbda57e16ac3c99c00998",
+      "runtimeSha256": "e213bec0f36f3ad02de0b78cfc4438ea080a0458a0abbda57e16ac3c99c00998",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/RestrainCondition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/RestrainCondition.cs",
+      "sourceSha256": "81eb04d561eacec41117ada228b08dddd36cc680945d7517dc3cb8f246f61925",
+      "runtimeSha256": "e8ca486470fb59edebcfc91bb4f460293c60bb405cba1586212daaeaeea44014",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/RoomBeyondDoorIsChecked.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/RoomBeyondDoorIsChecked.cs",
+      "sourceSha256": "231d3878075407a4b06dd0d91244936809c76feccb42109b434092132c988709",
+      "runtimeSha256": "d8172cc1f8c9891b04fcfe7760630a17f14d9583aa146b193c0ca70bd367acb4",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/RoomBeyondDoorIsChecked.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/RoomBeyondDoorIsChecked.cs.meta",
+      "sourceSha256": "acc01782dbb7b9a640e28bb230a5251eef691238f01d54fd60959d4fafc52133",
+      "runtimeSha256": "acc01782dbb7b9a640e28bb230a5251eef691238f01d54fd60959d4fafc52133",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/SecureWeapon.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/SecureWeapon.cs",
+      "sourceSha256": "65fa6cfcc0a9ae60f2d8c7f6f2cc45867587cd58b09fbcab92dac23b5fbc81c2",
+      "runtimeSha256": "58d50798d1766f3511ee6de3c64c5ce87e34656239f1a270646c7130ea2434c9",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/SecureWeapon.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/SecureWeapon.cs.meta",
+      "sourceSha256": "85cfa66ed3898eebbcc52cbf019a8e5af7bd0f7c1c23040319cacb952a5d5d91",
+      "runtimeSha256": "85cfa66ed3898eebbcc52cbf019a8e5af7bd0f7c1c23040319cacb952a5d5d91",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/SecureWeaponCondition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/SecureWeaponCondition.cs",
+      "sourceSha256": "be2b714c16aafb07289914bde305bddc2248fb90c7bee9bb618ca560d3ac56c5",
+      "runtimeSha256": "37e2db8dd31ed97e29c71431987ed1020218c462594de1d5d1be146f4f164653",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/SetAimMode.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetAimMode.cs",
+      "sourceSha256": "29d6e547212f0d1594180c83aef524a47afe051216d355d2995075753e897cb1",
+      "runtimeSha256": "78a0181a7744cbd08a137a64c7b3d3b647f475ac5343f0e75fbd505e69c5ae82",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/SetAimMode.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetAimMode.cs.meta",
+      "sourceSha256": "73bf7cdbf54bd79f4b6aac799915f6bbd733673fd84e6b5c0644f7fdbe428a6b",
+      "runtimeSha256": "73bf7cdbf54bd79f4b6aac799915f6bbd733673fd84e6b5c0644f7fdbe428a6b",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/SetFollowMovePosition_DEPRECATED.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetFollowMovePosition_DEPRECATED.cs",
+      "sourceSha256": "88bd6c4d45a4582dfcceab4cb57a4337a34905309994e9338a3a1d532f1fb8f1",
+      "runtimeSha256": "dc262753e515ef81026728328565e63e1108e3f5b417f929e798aae86d22d765",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/SetHoldPosition.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetHoldPosition.cs",
+      "sourceSha256": "9def0748f6036debfa7019082aa1a73d4697e908395cf885a0b5bd17e314df15",
+      "runtimeSha256": "e81f7d4218acc29a35fd5ef2f94ec215b895a6602baa9372b15a5a7b55dc4776",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/SetHoldPosition.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetHoldPosition.cs.meta",
+      "sourceSha256": "3aad0ca3fe31f445dbf3816a3fe67ccbe658f26a7dd8d1a84b62b8ea34f8b3c8",
+      "runtimeSha256": "3aad0ca3fe31f445dbf3816a3fe67ccbe658f26a7dd8d1a84b62b8ea34f8b3c8",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/SetReloading.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetReloading.cs",
+      "sourceSha256": "8ec26e9587880ffe50cbd5a6071c7cfcefa0695d4903b910ba22fe9ea8ad81db",
+      "runtimeSha256": "0fc1d5c3d53ab6065717cfaad833ff8ff4034a9510aabee4bb422ff15b8c1a53",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/SetReloading.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetReloading.cs.meta",
+      "sourceSha256": "7ec54fbfabc408343fbfdde90c34f6d488d2a5acc4f2ec9d244f64b019fcdf63",
+      "runtimeSha256": "7ec54fbfabc408343fbfdde90c34f6d488d2a5acc4f2ec9d244f64b019fcdf63",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/SetTask.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetTask.cs",
+      "sourceSha256": "373a44003628619f28546ddcc8548ab222097c3be5a2cddac09400a282edf9ab",
+      "runtimeSha256": "affb47547022d290d665ec66050e34e692bef473f73a00bfb392c583eff188ed",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/SetTask.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetTask.cs.meta",
+      "sourceSha256": "487fce186efa10366645de030f5d9539615a8546e48e6f8dce079e02ab959e0a",
+      "runtimeSha256": "487fce186efa10366645de030f5d9539615a8546e48e6f8dce079e02ab959e0a",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/SetUseSights.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetUseSights.cs",
+      "sourceSha256": "8b53e06f11742fca0db19e67cbd979cd8b2c947ab82c8e305f7af73005a9ce45",
+      "runtimeSha256": "8150c4086d18ca883f8ee69701778899f8e80066120c4f76b3eedad47b380979",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/SetUseSights.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetUseSights.cs.meta",
+      "sourceSha256": "9cfca27cab2fbf3cf31def73387eca3922d4e455e5f2c3c5317877dbac0a0eae",
+      "runtimeSha256": "9cfca27cab2fbf3cf31def73387eca3922d4e455e5f2c3c5317877dbac0a0eae",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/ShouldUseStun.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/ShouldUseStun.cs",
+      "sourceSha256": "2d1d5cb3255d30b3f48ee599a2f0d3a4f52edd2a11f2ce1a2cb219da726f3ce7",
+      "runtimeSha256": "5a5f7ceddc06cafd2fbb8fdce4bb6cc054c8453dc70d3a2916c71a392612f0f9",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/ShouldUseStun.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/ShouldUseStun.cs.meta",
+      "sourceSha256": "6f093306bd9d1395d01e2c70bc0fd43cf8addc7404a5be80f4ca693dc7098e3c",
+      "runtimeSha256": "6f093306bd9d1395d01e2c70bc0fd43cf8addc7404a5be80f4ca693dc7098e3c",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/TeamDoubleBack.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/TeamDoubleBack.cs",
+      "sourceSha256": "f87f9f65320d7f969e8aeb332d1beed645a0c5810f6ef33d4f013e754fbec267",
+      "runtimeSha256": "82b4bf26eacacf283c32486465265d697eea35ab892ef9780eb8e3fb503ae571",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/TeamDoubleBack.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/TeamDoubleBack.cs.meta",
+      "sourceSha256": "fd97c2cd8dc6e368b3add348187bffe57f7b2b1985313f18a208874be8c33fe1",
+      "runtimeSha256": "fd97c2cd8dc6e368b3add348187bffe57f7b2b1985313f18a208874be8c33fe1",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/ThrowStunThroughDoor.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/ThrowStunThroughDoor.cs",
+      "sourceSha256": "7f4d135989f51fa02d4c74f7318f4c1fd9c9a735f53bac148844c86c2a01b30a",
+      "runtimeSha256": "c839652f535f997179466735283fe7815388f111506ddb1b6cdecc0a8199bb51",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/ThrowStunThroughDoor.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/ThrowStunThroughDoor.cs.meta",
+      "sourceSha256": "1229dec98d47632277b6e5d03882885df4f8e40c6789205081d94f85c7373abf",
+      "runtimeSha256": "1229dec98d47632277b6e5d03882885df4f8e40c6789205081d94f85c7373abf",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/WaitForCover.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/WaitForCover.cs",
+      "sourceSha256": "602de07788f3dce04f2e86021fd15b8994a1137a63ef241038cd9a92109bf6aa",
+      "runtimeSha256": "cdad8ec0a4aa8fcb0fe48d6498adda2a6babb5a3afb565cb294bea8d3df50808",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/WaitForCover.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/WaitForCover.cs.meta",
+      "sourceSha256": "bc50ef37705f5ffdcd4d0c524017ab0a962b0c635c75acb37204ed4b9a731223",
+      "runtimeSha256": "bc50ef37705f5ffdcd4d0c524017ab0a962b0c635c75acb37204ed4b9a731223",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/WaitForFollower.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/WaitForFollower.cs",
+      "sourceSha256": "4a543fa2ef63c1e17d802dc33bcb98ba360ddcd42cf21a027783bd6ebfdba427",
+      "runtimeSha256": "db914fcc733786def291d0278380ffc547507adf8467691c2c52834315de69f2",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/WaitForFollower.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/WaitForFollower.cs.meta",
+      "sourceSha256": "246f8e693bab4d9331feb556e28a8a2f433ef7a1184b2b031806f8e10993845b",
+      "runtimeSha256": "246f8e693bab4d9331feb556e28a8a2f433ef7a1184b2b031806f8e10993845b",
+      "adapter": "none"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/WaitForStunDetonation.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/WaitForStunDetonation.cs",
+      "sourceSha256": "9e12f090091c220da81b69e348f8663e1870dff22c9f1f5eb2ceb0a1aaca4ac9",
+      "runtimeSha256": "fda394f5128acab076631e3dbf7d4f315c887b5940997a34e929beee5a156d73",
+      "adapter": "FullSource/BehaviorDesigner imports and explicit Action/TaskStatus aliases; original declarations and method bodies retained"
+    },
+    "Assets/Scripts/Characters/Behavior/Conditions/Operators/WaitForStunDetonation.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/WaitForStunDetonation.cs.meta",
+      "sourceSha256": "5a6faeffc4bf77268463ce18312322400181424be08d73675fdaae4bee6512bb",
+      "runtimeSha256": "5a6faeffc4bf77268463ce18312322400181424be08d73675fdaae4bee6512bb",
+      "adapter": "none"
+    },
+    "BehaviorDesigner.Runtime/SharedTarget.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/SharedTarget.cs",
+      "sourceSha256": "34db66b7be67e02538fe6c2250dc3efe90bb672a7b923d3eaa05573740c18468",
+      "runtimeSha256": "17e0a5ef7ea63f11ac56d0a7d1647d413b6804a13b81f0eefd0e9e25666ccd5a",
+      "adapter": "FullSource import for original game typed reference; method bodies retained"
+    },
+    "BehaviorDesigner.Runtime/SharedTarget.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/SharedTarget.cs.meta",
+      "sourceSha256": "f3658ece8a8a1319c7dd0fb752debd64776352d848e1877c46e87a5d7ea6e65d",
+      "runtimeSha256": "f3658ece8a8a1319c7dd0fb752debd64776352d848e1877c46e87a5d7ea6e65d",
+      "adapter": "none"
+    },
+    "BehaviorDesigner.Runtime/SharedDoor.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/SharedDoor.cs",
+      "sourceSha256": "50213af7f5f31b370eb1068d046d2ca4ff54f1e1717f846adab287fe4d7ad75b",
+      "runtimeSha256": "00585d9c833f4fab58c3c1e7c07dcac2d3069666d1488599fa5d6bb7bed36143",
+      "adapter": "FullSource import for original game typed reference; method bodies retained"
+    },
+    "BehaviorDesigner.Runtime/SharedDoor.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/SharedDoor.cs.meta",
+      "sourceSha256": "8ac3080758adcfd8bdd1f179b58412bc0df72b0b6bd574f24f2f41fffb74ec1d",
+      "runtimeSha256": "8ac3080758adcfd8bdd1f179b58412bc0df72b0b6bd574f24f2f41fffb74ec1d",
+      "adapter": "none"
+    },
+    "BehaviorDesigner.Runtime/SharedAudioStimuli.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/SharedAudioStimuli.cs",
+      "sourceSha256": "f5ade1d21224720ea8988ca41e4220b929526f2d4fd48d78f296f9789af39d22",
+      "runtimeSha256": "84638423d017352b5c1155a62570d9f0a209b27f4fefe7571894cabad67b3e53",
+      "adapter": "FullSource import for original game typed reference; method bodies retained"
+    },
+    "BehaviorDesigner.Runtime/SharedAudioStimuli.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/SharedAudioStimuli.cs.meta",
+      "sourceSha256": "6bee5629e18cf7f2baa90280ee1da2dd05e69394c51737ffbebda6f18d87e731",
+      "runtimeSha256": "6bee5629e18cf7f2baa90280ee1da2dd05e69394c51737ffbebda6f18d87e731",
+      "adapter": "none"
+    },
+    "BehaviorDesigner.Runtime/SharedFleeSource.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/SharedFleeSource.cs",
+      "sourceSha256": "b354d9b5dfd78470061058aba0048dda7721c3d231018190dda7a46cf949b620",
+      "runtimeSha256": "4b9fc13827a00c51ad026383e6d26e6cd141f6777e83f93000207f3a498395c4",
+      "adapter": "FullSource import for original game typed reference; method bodies retained"
+    },
+    "BehaviorDesigner.Runtime/SharedFleeSource.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/SharedFleeSource.cs.meta",
+      "sourceSha256": "0e8159d24517c5dc4bca3150799ff3662706b4fb45773502f1d60b00cd2dc52b",
+      "runtimeSha256": "0e8159d24517c5dc4bca3150799ff3662706b4fb45773502f1d60b00cd2dc52b",
+      "adapter": "none"
+    },
+    "BehaviorDesigner.Runtime/SharedGameObject.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/SharedGameObject.cs",
+      "sourceSha256": "036dbfb6909440c4576c40138b88c6d4645aa4a2ea6c84c7d6b4941bf217f741",
+      "runtimeSha256": "564b3e378f36a350f1b6e3817c858d19f61ed9059adeff9241ddb1c3d5e514b7",
+      "adapter": "FullSource import for original game typed reference; method bodies retained"
+    },
+    "BehaviorDesigner.Runtime/SharedGameObject.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/SharedGameObject.cs.meta",
+      "sourceSha256": "76a29cb1c934328b1326bd522fc2e66ca85e81ce071c733f3130119bc74cb4a6",
+      "runtimeSha256": "76a29cb1c934328b1326bd522fc2e66ca85e81ce071c733f3130119bc74cb4a6",
+      "adapter": "none"
+    },
+    "BehaviorDesigner.Runtime/SharedGrenade.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/SharedGrenade.cs",
+      "sourceSha256": "a21d6427897de77136e16fd23184c2c6687be1fa48980d835a6317d14dbecb99",
+      "runtimeSha256": "5c34f7912d2a0df03842ddaafdc44d503b4b72c07c0191e877fb9b08f8ea5746",
+      "adapter": "FullSource import for original game typed reference; method bodies retained"
+    },
+    "BehaviorDesigner.Runtime/SharedGrenade.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/SharedGrenade.cs.meta",
+      "sourceSha256": "608ff272c4c922c0a0db0f0ba73a648b24601ce93c81dfcbfca194c37a088838",
+      "runtimeSha256": "608ff272c4c922c0a0db0f0ba73a648b24601ce93c81dfcbfca194c37a088838",
+      "adapter": "none"
+    },
+    "FullSource/StaticBehavior.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/StaticBehavior.cs",
+      "sourceSha256": "cf4c36820466c1aa389eecfb9fca32f59d1a7417b3bc1f007d4b51aa56e8df27",
+      "runtimeSha256": "35911d6014334326b8ad0b66ba58b8b6d5be71deaad469cf4a1bda6fb7fbf940",
+      "adapter": "FullSource namespace wrapper and TaskStatus alias; original declarations and method bodies retained."
+    },
+    "FullSource/StaticBehavior.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/StaticBehavior.cs.meta",
+      "sourceSha256": "6877f3279231ed8f0b6d83f460042b7ff121ff824f46e09fc69532536fe5999e",
+      "runtimeSha256": "6877f3279231ed8f0b6d83f460042b7ff121ff824f46e09fc69532536fe5999e",
+      "adapter": "none"
+    },
+    "FullSource/DoorReference.cs": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DoorReference.cs",
+      "sourceSha256": "0f4e452a803ca4ba2f37dfb222e1432de2e0207c117eda9d16268c97e29e5379",
+      "runtimeSha256": "5fef18b51905d51ed157308c00520c16ad7228813bd95c22d0a80786a8579eea",
+      "adapter": "FullSource namespace and required Behavior Designer TaskStatus import; original declarations/method bodies retained"
+    },
+    "FullSource/DoorReference.cs.meta": {
+      "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/DoorReference.cs.meta",
+      "sourceSha256": "125ddba5d50771fb65c9d14994e88c6daf19da2eb4bccec68e7ee89942531d1d",
+      "runtimeSha256": "125ddba5d50771fb65c9d14994e88c6daf19da2eb4bccec68e7ee89942531d1d",
+      "adapter": "none"
+    }
+  },
+  "adaptation": "Original code bodies retained. Namespace/type adapters: FullSource imports, explicit Unity Random and Behavior Designer Action/TaskStatus aliases, qualified runtime Hand and Masks references, and qualified FullSource.InputHandler fields."
+}
