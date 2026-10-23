@@ -74,6 +74,7 @@ Use the exact command for the operation rather than copying flags between
 | `NETSDK1112` during WebAssembly publish | Missing runtime pack | Repeat publish with restore enabled. |
 | Missing `Crisis.Runtime.FullSource.Projectile` in FoundationChecks | Check-project source boundary | Confirm `runtime/FoundationChecks/FoundationSourceBoundaryStubs.cs` declares the compile-only boundary type. Keep the stub out of production runtime sources. |
 | `DebugUtils` / `Process.get_ProcessName` exception from direct MSBuild | Runner startup | Prefer the pinned `dotnet` CLI with the process shim. Do not record it as a compiler diagnostic. |
+| `MSB1025` from direct MSBuild while the runner cannot read process metadata | Runner startup | Use the pinned `dotnet` CLI with the existing process shim; do not repeatedly retry direct MSBuild or edit project/source files. |
 | `wasm-tools` workload optimization warning with successful publish | Optional workload warning | Record the warning; it did not prevent the verified publish. Install workloads only if a later required gate specifically needs them. |
 | `CSxxxx` diagnostics after compilation begins | Source/compiler result | Preserve the exact exit status and full diagnostics; compare only against a baseline built from the same compiler graph. |
 
@@ -90,3 +91,17 @@ rebuild (0 compile errors), Release Blazor WebAssembly publish, EngineChecks (69
 assertions), and FoundationChecks (121 assertions). The runbook documents those
 observed environment/build failures and is a preflight aid; it does not replace
 the current source SHA's required local verification.
+
+## Full original CharacterBody compilation
+
+On 2026-10-23, the pinned SDK **8.0.426** and `/tmp/libprocshim.so` compiled the
+entire `runtime/Crisis.Runtime.csproj` source graph, including
+`runtime/Original/CharacterBody.Full.cs` (`Crisis.Runtime.FullSource.CharacterBody`),
+at source SHA `1237e360b829a5a80289d0136d2f8be7a7159050`. The exact build command
+was `dotnet build runtime/Crisis.Runtime.csproj --no-restore --no-incremental
+-v:q`; it exited **0**, with **0 errors** and **45 warnings**. The run also
+passed `check_characterbody_ownership.py --strict`, the exact recovered enum
+verification, and both compile-summary regression tests. See
+`docs/evidence/CHARACTERBODY_FULL_COMPILE_2026-10-23.json` for the machine-readable
+result. This establishes compilation of the original class, not runtime gameplay
+or parity.
