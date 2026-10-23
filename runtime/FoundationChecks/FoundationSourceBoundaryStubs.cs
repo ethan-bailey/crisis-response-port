@@ -10,6 +10,7 @@ namespace Crisis.Runtime.FullSource
 {
     public sealed class CharacterBody { }
     public sealed class WeaponBase { }
+    public sealed class Projectile { }
     public sealed class Calibre { }
     public sealed class Casing { }
     public sealed class UIAmmoRenderItem { }

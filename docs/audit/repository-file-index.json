@@ -2,11 +2,11 @@
   "countsByPackageRole": {
     "build-or-validation-input": 106,
     "game-source-or-asset": 136,
-    "repository-only": 994,
+    "repository-only": 995,
     "runtime-build-source": 647,
     "scene-package-source": 3
   },
-  "fileCount": 1886,
+  "fileCount": 1887,
   "files": [
     {
       "bytes": 1658,
@@ -2916,13 +2916,13 @@
       "sha256": "81e18bbdbf1adae25201df1499a01e58b5149c4f06c7b3bba0d0f588647b7a26"
     },
     {
-      "bytes": 10615,
-      "copiedAtSamePathToLatestPackage": true,
+      "bytes": 11565,
+      "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
-      "matchesLatestSourceInventory": true,
+      "matchesLatestSourceInventory": false,
       "packageRole": "game-source-or-asset",
       "path": "game/browser-input.mjs",
-      "sha256": "bffebf62ab4f225b8e4a49d0b6903614689ba3074fe7e95235509dab28fd9733"
+      "sha256": "6a906f5155ae0d7138e360d1b0d1171ede330feeb5685781752aadc790dada40"
     },
     {
       "bytes": 5576,
@@ -2934,13 +2934,13 @@
       "sha256": "765d19a5d1bd2b6783affd5aaffdfd91ee2a1289008965eb83f8c76d7f4678ac"
     },
     {
-      "bytes": 43698,
-      "copiedAtSamePathToLatestPackage": true,
+      "bytes": 43808,
+      "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
-      "matchesLatestSourceInventory": true,
+      "matchesLatestSourceInventory": false,
       "packageRole": "game-source-or-asset",
       "path": "game/index.html",
-      "sha256": "da2c3fa3bfa5d9dac69b13f6c4e18d8bb39c550775d717dc7b56832f221168be"
+      "sha256": "aeeca782ecd46febb3a6d3e9aaca4b1e8fa29dc3b27be579b3760d5a8def99cc"
     },
     {
       "bytes": 700,
@@ -3852,13 +3852,13 @@
       "sha256": "14bb7b6470a1f52b6f71a65e2212d9cbab5a72f3ea10c1b9c2cd90401c44d4e7"
     },
     {
-      "bytes": 549,
+      "bytes": 588,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
-      "matchesLatestSourceInventory": true,
+      "matchesLatestSourceInventory": false,
       "packageRole": "runtime-build-source",
       "path": "runtime/FoundationChecks/FoundationSourceBoundaryStubs.cs",
-      "sha256": "d09cd8cd92561ea7242e682347a81df52a50191287ba4a09816c313a3749464d"
+      "sha256": "8ab38208fe4e8770be41e1108faaad693d1c8ef739c7b2da07e47c45d02e123c"
     },
     {
       "bytes": 5534,
@@ -9135,13 +9135,13 @@
       "sha256": "9cd6e2bd336dbee7cdd21eb2c0a0cdb50dbc1f42b19c18d1694235be00fef6af"
     },
     {
-      "bytes": 12523,
+      "bytes": 14146,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
-      "matchesLatestSourceInventory": true,
+      "matchesLatestSourceInventory": false,
       "packageRole": "build-or-validation-input",
       "path": "scripts/browser_input_test.mjs",
-      "sha256": "6e04ad0fa26186a89c6b5de8508a6160ff22ba2e2af58f3b871a7bffd979dd04"
+      "sha256": "a4a399b24ff7b130703b9e63af6f48feb603dbb056ffeb904087cf97310f0d41"
     },
     {
       "bytes": 1618,
@@ -9313,6 +9313,15 @@
       "packageRole": "build-or-validation-input",
       "path": "scripts/extract_original_particle_meshes.py",
       "sha256": "7cdd5b62860533dfd041b38bcce9325c2e2176591ee8ee6faac15dbcaa53cb7e"
+    },
+    {
+      "bytes": 8208,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": false,
+      "matchesLatestSourceInventory": false,
+      "packageRole": "repository-only",
+      "path": "scripts/extract_original_player_data.py",
+      "sha256": "f7eb21ed9c5038226eabb4d611d7063d882c42e5b6a9fdc331233eb1fcdc425b"
     },
     {
       "bytes": 8776,
@@ -16983,7 +16992,7 @@
       "sha256": "7a72a008c918982a5f11c9a0e809e76e6738d1567f03a69861242365f567d9c5"
     }
   ],
-  "repositoryHead": "254aaf23e52e93c4b3a91d48fe2dd3e30d11a982",
+  "repositoryHead": "c8fd14b6eef0e91833f02436deebee42f1105b9a",
   "reviewedCandidates": [
     {
       "decision": "keep-and-package",
