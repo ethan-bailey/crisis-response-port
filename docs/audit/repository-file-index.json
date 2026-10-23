@@ -1,8 +1,8 @@
 {
   "countsByPackageRole": {
-    "build-or-validation-input": 106,
+    "build-or-validation-input": 107,
     "game-source-or-asset": 136,
-    "repository-only": 995,
+    "repository-only": 994,
     "runtime-build-source": 647,
     "scene-package-source": 3
   },
@@ -2917,9 +2917,9 @@
     },
     {
       "bytes": 11565,
-      "copiedAtSamePathToLatestPackage": false,
+      "copiedAtSamePathToLatestPackage": true,
       "inLatestSourceInventory": true,
-      "matchesLatestSourceInventory": false,
+      "matchesLatestSourceInventory": true,
       "packageRole": "game-source-or-asset",
       "path": "game/browser-input.mjs",
       "sha256": "6a906f5155ae0d7138e360d1b0d1171ede330feeb5685781752aadc790dada40"
@@ -2935,9 +2935,9 @@
     },
     {
       "bytes": 43808,
-      "copiedAtSamePathToLatestPackage": false,
+      "copiedAtSamePathToLatestPackage": true,
       "inLatestSourceInventory": true,
-      "matchesLatestSourceInventory": false,
+      "matchesLatestSourceInventory": true,
       "packageRole": "game-source-or-asset",
       "path": "game/index.html",
       "sha256": "aeeca782ecd46febb3a6d3e9aaca4b1e8fa29dc3b27be579b3760d5a8def99cc"
@@ -3855,7 +3855,7 @@
       "bytes": 588,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
-      "matchesLatestSourceInventory": false,
+      "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/FoundationChecks/FoundationSourceBoundaryStubs.cs",
       "sha256": "8ab38208fe4e8770be41e1108faaad693d1c8ef739c7b2da07e47c45d02e123c"
@@ -9117,13 +9117,13 @@
       "sha256": "856e23e4e29139bffc85d784124b2a4e8b0c0a9adfb1936bffc64c1c19b950fc"
     },
     {
-      "bytes": 10317,
+      "bytes": 10891,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
-      "matchesLatestSourceInventory": true,
+      "matchesLatestSourceInventory": false,
       "packageRole": "build-or-validation-input",
       "path": "scripts/audit_tools_test.py",
-      "sha256": "2787b718eaec569e8a57b79735c72ca067bfb652e21a7efa601608b698c8182f"
+      "sha256": "9e5faef718ffa8ec05c46580355221904d0d3a62968240a98ac57a7c0be02dda"
     },
     {
       "bytes": 2070,
@@ -9138,7 +9138,7 @@
       "bytes": 14146,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
-      "matchesLatestSourceInventory": false,
+      "matchesLatestSourceInventory": true,
       "packageRole": "build-or-validation-input",
       "path": "scripts/browser_input_test.mjs",
       "sha256": "a4a399b24ff7b130703b9e63af6f48feb603dbb056ffeb904087cf97310f0d41"
@@ -9317,9 +9317,9 @@
     {
       "bytes": 8208,
       "copiedAtSamePathToLatestPackage": false,
-      "inLatestSourceInventory": false,
-      "matchesLatestSourceInventory": false,
-      "packageRole": "repository-only",
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "build-or-validation-input",
       "path": "scripts/extract_original_player_data.py",
       "sha256": "f7eb21ed9c5038226eabb4d611d7063d882c42e5b6a9fdc331233eb1fcdc425b"
     },
@@ -16992,7 +16992,7 @@
       "sha256": "7a72a008c918982a5f11c9a0e809e76e6738d1567f03a69861242365f567d9c5"
     }
   ],
-  "repositoryHead": "c8fd14b6eef0e91833f02436deebee42f1105b9a",
+  "repositoryHead": "d59cba1dc5bfb4b5b0898ead711c1e7eedc53002",
   "reviewedCandidates": [
     {
       "decision": "keep-and-package",
@@ -17026,9 +17026,9 @@
   "schemaVersion": 1,
   "scope": "Every tracked or non-ignored working-tree file in this repository, excluding this generated index. Hashes identify file contents; file contents remain in their repository/package source paths.",
   "sitePackage": {
-    "manifestSha256": "a7f19760b78d42596b31f28c17fcab2657b914f1fc4dd69ea7973175208880c3",
+    "manifestSha256": "4c7b6e96c57767494843444352ec32bce79407856d33bc8f69b695482c0e2d74",
     "outputFileCount": 766,
-    "sourceCommit": "6e8148c1bb7f6b7eedab0231c2e5ea04ec188946",
-    "sourceInventoryCount": 892
+    "sourceCommit": "d59cba1dc5bfb4b5b0898ead711c1e7eedc53002",
+    "sourceInventoryCount": 893
   }
 }
