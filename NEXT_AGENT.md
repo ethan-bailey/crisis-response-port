@@ -1,29 +1,24 @@
-# NEXT AGENT — Crisis Response port completion
+# NEXT_AGENT — Crisis Response port completion
 
-## Checkpoint
+## Latest checkpoint — 2026-10-23
 
-- Live `develop/wasm`: merge commit `f3802019e7cfdd419223dc3e02b9df87b8035289` (PR #68 merged 2026-10-23).
-- PR #68 merged the Mission 01 package fix: the Site packager now generates CRG1 from tracked `game/assets/mission01.obj`, writes provenance hashes, and checks source/binary hashes before building the integrity manifest.
-- Package verification on the PR head: Python package tests 12/12 passed; generated scene checks 2/2 passed. Unity source mesh export: 45,356 vertices, 100,998 indices, 33,666 triangles.
-- GitHub Actions remain disabled by owner decision. Other open PRs noted before this merge: #56 and #57 target `develop/wasm`; #7 targets `main`.
-- Codespaces and an interactive real browser are optional when another environment can complete the same verification.
-
-## Remaining gates
-
-- The current workspace did not have `.NET SDK 8.0.426`; no fresh build, publish, full Site package, or live smoke was run on merge commit `f3802019`.
-- Prior browser smoke loaded the WebAssembly control panel and passed 10 runtime contracts, but no Marksman scene appeared or loaded. A full gameplay smoke still needs to prove scene loading and core controls.
-- The two-actor prefab lifecycle gate remains unresolved. The original harness lacked the global/Mission scene binding (null `Global.Context`); after a temporary harness-only binding, `TeamOperator.Awake` failed at `TeamOperator.cs:110`. The temporary fixture was reverted. Do not treat a partial Operator-only run as a pass.
-- Existing Sites project: `appgprj_6acfef7174888191bc2bc2f269f60acc`, version 26, source SHA `64d9c812ab01e23f37ac6c0b0b3137b71130e62d`. No new Site version was saved or deployed.
+- `develop/wasm` was reconciled and pushed. Source HEAD at this verification was `9229cd06d22a9d3fcc8a9296c58cceb3453c8c3e`; the Codespace worktree was clean and aligned with `origin/develop/wasm`. The pre-reconcile backup branch remains `backup/develop-wasm-c2a4f37-before-reconcile-2026-10-23`.
+- PR #68 is merged. GitHub Actions remain disabled; do not merge PRs #56, #57, or #7.
+- `AGENT_INSTRUCTIONS.md` now says to restart the existing Codespace up to three times if startup fails, preserving the initial branch, SHA, worktree, and active operation before each restart. The current Codespace loaded successfully.
+- The selected SDK is .NET 8.0.426. A fresh Release build passed at SHA `9229cd06d22a9d3fcc8a9296c58cceb3453c8c3e` with 0 errors and 45 warnings. Browser publish passed.
+- The exact-SHA package was built at `/tmp/crisis-site-package-9229` and independently verified: 750 files, 199 Blazor resources, and 195 WASM files. The generated Mission 01 CRG matches its tracked OBJ provenance: source SHA-256 `891dc21c94f1be328b48b6c24f8624c68a7125283b0c386230304009abe65fda`, CRG SHA-256 `ad1b48755b368ebab7b3e44dbc367ae01c0e4968fc3f213aac0f8c2a7924d79`, 45,356 vertices, and 33,666 triangles.
+- On the current package, `/runtime-web/` displayed `PASS · 10 verified runtime contracts` without surfacing the earlier `UIPreferencesMenu` exception. The page code attempts Title → Transition → Mission 01 → Marksman loading and binds the Mission `GlobalContext`; it does not display a separate scene-flow report, so this is not evidence of rendered gameplay.
+- The `/game/` route remained a black viewport with its initial recovered-scene and weapons loading text. No Marksman render or in-scene FIRE result was captured. The cause is unconfirmed.
+- A direct `data:` URL WebGL probe was blocked by the browser URL policy. Do not retry through alternate browser surfaces, injected JavaScript, raw CDP, or other workarounds. Use only an environment and browser interaction path permitted by the active policy.
+- The Operator/Occupant lifecycle gate was not rerun at this SHA. Earlier attempts lacked the actual Mission/global context; a temporary harness binding then failed in `TeamOperator.Awake`. Do not count a partial actor run as a pass.
+- Sites project `appgprj_6acfef7174888191bc2bc2f269f60acc` remains version 26 with custom owner-only access. No version was saved, deployed, or made public.
 
 ## Next viable steps
 
-1. In an available environment, use the pinned .NET SDK 8.0.426 and run a fresh Release build and browser publish at `f3802019`; leave the SDK pin unchanged.
-2. Assemble a fresh Site package from that publish output. Verify the generated Mission 01 CRG and provenance report, then validate every entry in the integrity manifest.
-3. Fix or complete the scene-loading path so the browser loads the Marksman scene; rerun the browser smoke and verify scene rendering plus input behavior.
-4. Repair the two-actor lifecycle harness by provisioning the actual Mission/global dependencies, then pass both Operator and Occupant lifecycle checks without temporary harness shortcuts.
-5. After all local gates pass, publish the verified package to the existing Sites project and run a live smoke against served WASM and scene assets. Vercel remains a manual fallback only if Sites cannot host a locally passing package. Do not publish before local verification.
-
-
+1. In an environment with an authorized WebGL-capable browser, capture an explicit result for the original scene flow, Marksman rendering, and the in-scene FIRE action. Diagnose the `/game/` startup failure from permitted evidence; do not infer a WebGL cause from the black viewport alone.
+2. Build a lifecycle fixture with the real Mission/global dependencies and pass the Operator and Occupant Awake/OnEnable/Start ownership gate.
+3. Rebuild and repackage from the final exact source SHA, verify CRG provenance and every manifest entry, and repeat all local scene/browser gates.
+4. Save and deploy to the existing Sites project only after every gate passes. Preserve its current custom owner-only access; do not change the access policy.
 
 ## Verification attempt at checkpoint 8ab1c2d (2026-10-23)
 
@@ -68,3 +63,11 @@ Resume only with a WebGL-capable Codespaces browser (or another authorized real 
 - Sites: no save, access change, deployment, or Vercel fallback was attempted because the local scene gate failed. Existing project remains Crisis Response Runtime at https://crisis-response-runtime.craftysnipe13.chatgpt.site, previously owner-only; public access was not enabled. No live smoke was run.
 - Next bounded item: restore/provide the original UIPreferencesMenu component behavior or a source-backed compatible implementation, then rebuild and rerun the complete flow and lifecycle gates against the assembled package. Do not skip the Title component or claim the menu flow passed.
 - Checkpoint source SHA: 7975d643687f43cf99aca685984ae7e1d4f3c62. At handoff before this documentation update, branch tracked remote at 0 behind / 11 ahead; preserve normal fast-forward-only push semantics and keep GitHub Actions disabled.
+
+## Verification at exact source SHA `9229cd06d22a9d3fcc8a9296c58cceb3453c8c3e` — 2026-10-23
+
+- `dotnet build runtime/Browser/Crisis.Runtime.Browser.csproj --configuration Release --no-incremental`: passed with 0 errors and 45 warnings; `dotnet --version` returned 8.0.426.
+- `dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj --configuration Release --no-restore --output /tmp/crisis-publish-9229`: passed. The SDK recommended the optional `wasm-tools` workload.
+- `python3 scripts/package_wasm_site.py build --repo . --published /tmp/crisis-publish-9229/wwwroot --output /tmp/crisis-site-package-9229 --toolchain /tmp/toolchain-9229.json`: passed with status `verified`; the standalone `verify` command passed with the same counts and source SHA.
+- The package was built from source SHA 9229 before this handoff-only update. No game/runtime tracked inputs were changed during this verification.
+- Browser observations: `/runtime-web/` showed the 10 runtime contracts passing and no visible scene-load exception. `/game/` stayed black and on initial loading text. No Site publish/live smoke was attempted because the playable render and lifecycle gates remain open.
