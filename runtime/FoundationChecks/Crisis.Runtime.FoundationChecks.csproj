@@ -2,7 +2,7 @@
   <PropertyGroup><TargetFramework>net8.0</TargetFramework><OutputType>Exe</OutputType><ImplicitUsings>enable</ImplicitUsings><Nullable>disable</Nullable><EnableDefaultCompileItems>false</EnableDefaultCompileItems><DefineConstants>$(DefineConstants);CRISIS_FOUNDATION_TRANSPORT</DefineConstants></PropertyGroup>
   <ItemGroup>
     <Compile Include="../Engine/**/*.cs" />
-    <Compile Include="../Original/**/*.cs" Exclude="../Original/CharacterBody.Full.cs;../Original/CharacterBehavior/**/*.cs;../Original/FullSource/**/*.cs" />
+    <Compile Include="../Original/**/*.cs" Exclude="../Original/CharacterBody.Full.cs;../Original/CharacterBehavior/**/*.cs;../Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/RestartBehaviorTree.cs;../Original/FullSource/**/*.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="FoundationSourceBoundaryStubs.cs" />
     <Compile Include="SerializationContracts.cs" />

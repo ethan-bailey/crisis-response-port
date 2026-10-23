@@ -398,7 +398,7 @@ public static class BinaryDeserialization
 	private static object LoadField(FieldSerializationData fieldSerializationData, Dictionary<int, int> fieldIndexMap, Type fieldType, string fieldName, int hashPrefix, IVariableSource variableSource, object obj = null, FieldInfo fieldInfo = null)
 	{
 		int num = hashPrefix;
-		num = ((!shaHashSerialization) ? (num + (fieldType.Name.GetHashCode() + fieldName.GetHashCode())) : (num + (StringHash(fieldType.Name.ToString(), strHashSerialization) + StringHash(fieldName, strHashSerialization))));
+		num = ((!shaHashSerialization) ? (num + (LegacyStringHash(fieldType.Name) + LegacyStringHash(fieldName))) : (num + (StringHash(fieldType.Name.ToString(), strHashSerialization) + StringHash(fieldName, strHashSerialization))));
 		if (!fieldIndexMap.TryGetValue(num, out var value))
 		{
 			if (fieldType.IsAbstract)
@@ -596,6 +596,28 @@ public static class BinaryDeserialization
 		}
 		byte[] value2 = shaHash.ComputeHash(bytes);
 		return BitConverter.ToInt32(value2, 0);
+	}
+
+	// Unity's legacy Behavior Designer field hashes were produced by Mono's
+	// deterministic string hash. .NET 8 randomizes string.GetHashCode per
+	// process, so using it here makes serialized v1.5.7–1.5.8 field lookups fail
+	// (including nested [InspectTask] references). Preserve the original Mono
+	// polynomial hash for those pre-SHA serialization versions.
+	private static int LegacyStringHash(string value)
+	{
+		if (string.IsNullOrEmpty(value))
+		{
+			return 0;
+		}
+		int hash = 0;
+		unchecked
+		{
+			for (int i = 0; i < value.Length; i++)
+			{
+				hash = hash * 31 + value[i];
+			}
+		}
+		return hash;
 	}
 
 	private static int GetFieldSize(FieldSerializationData fieldSerializationData, int fieldIndex)

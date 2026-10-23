@@ -11,7 +11,12 @@ if(args.Length==2&&args[0]=="--spawner-contract"){
     Console.WriteLine(SpawnerGameplayContracts.Run(File.ReadAllText(args[1])));
     return;
 }
-if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-outcome-contract")){
+if(args.Length==2&&args[0]=="--behavior-graph-contract"){
+    Console.WriteLine(BehaviorDesignerContracts.Run(File.ReadAllText(args[1])));
+    return;
+}
+if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-outcome-contract"||args[0]=="--mission-ai-contract"||args[0]=="--mission-ai-outcome-contract")){
+    var runOriginalAI=args[0].StartsWith("--mission-ai-",StringComparison.Ordinal);
     var package=File.ReadAllText(args[1]);
     var world=new RuntimeWorld();
     world.MakeCurrent();
@@ -75,18 +80,19 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-outcome-c
     // calls execute without claiming decoded or audible output.
     foreach(var clip in world.Objects.OfType<AudioClip>())clip.ReportLoadState(AudioDataLoadState.Loaded);
     foreach(var source in world.Objects.OfType<AudioSource>())source.Driver=new MissionContractSilentAudioDriver();
-    void DisableUnboundVocalizationPresentation(){foreach(var vocalization in world.Objects.OfType<Crisis.Runtime.FullSource.UIVocalizationText>().ToArray())vocalization.enabled=false;foreach(var tree in world.Objects.OfType<BehaviorDesigner.Runtime.BehaviorTree>().ToArray())tree.enabled=false;}
+    void DisableUnboundVocalizationPresentation(){foreach(var vocalization in world.Objects.OfType<Crisis.Runtime.FullSource.UIVocalizationText>().ToArray())vocalization.enabled=false;foreach(var source in world.Objects.OfType<AudioSource>())source.Driver??=new MissionContractSilentAudioDriver();if(!runOriginalAI)foreach(var tree in world.Objects.OfType<BehaviorDesigner.Runtime.BehaviorTree>().ToArray())tree.enabled=false;}
     world.Tick(1f/60f,DisableUnboundVocalizationPresentation);
     // Original AI/movement can emit forces on its next fixed tick. This
     // contract records source force commands without claiming a PhysX solve.
-    foreach(var rigidbody in world.Objects.OfType<Rigidbody>())rigidbody.PhysicsForceSink??=((_,_,_)=>{});
+    var aiForceCommands=0;foreach(var rigidbody in world.Objects.OfType<Rigidbody>())rigidbody.PhysicsForceSink??=((_,_,_)=>aiForceCommands++);
     world.Tick(1f/60f,DisableUnboundVocalizationPresentation);
+    var aiSimulationTicks=0;if(runOriginalAI)for(var aiTick=0;aiTick<60;aiTick++){world.Tick(1f/60f,DisableUnboundVocalizationPresentation);aiSimulationTicks++;}
     missionComponent=world.Objects.OfType<Crisis.Runtime.FullSource.Mission>().SingleOrDefault()??throw new InvalidOperationException("Mission 01 did not initialize exactly one original Mission component");
     var bodies=world.Objects.OfType<Crisis.Runtime.FullSource.CharacterBody>().ToArray();
     if(!missionComponent.Started)throw new InvalidOperationException("Original Mission did not reach BeginMission during normal RuntimeWorld startup");
     if(bodies.Length<2||!bodies.Any(body=>body.GetComponent<Crisis.Runtime.FullSource.TeamOperator>()!=null)||!bodies.Any(body=>body.GetComponent<Crisis.Runtime.FullSource.Occupant>()!=null))
         throw new InvalidOperationException($"Mission 01 actor flow did not produce an Operator and Occupant; bodies={bodies.Length}");
-    if(args[0]=="--mission-outcome-contract"){
+    if(args[0]=="--mission-outcome-contract"||args[0]=="--mission-ai-outcome-contract"){
         var spawnedOccupants=bodies.Where(body=>body.GetComponent<Crisis.Runtime.FullSource.Occupant>()!=null).ToArray();
         foreach(var source in world.Objects.OfType<AudioSource>())source.Driver=new MissionContractSilentAudioDriver();
         foreach(var room in missionComponent.rooms)room.cleared=true;
@@ -96,14 +102,31 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-outcome-c
         world.Tick(1f/60f,DisableUnboundVocalizationPresentation);
         if(!missionComponent.Occupants.AllRenderedSafe||allDisabledEventCount!=1||spawnedOccupants.Any(body=>!body.IsRagdoll))
             throw new InvalidOperationException($"Original Occupants manager failed to propagate the all-disabled event: allRenderedSafe={missionComponent.Occupants.AllRenderedSafe}, eventCount={allDisabledEventCount}, ragdoll={spawnedOccupants.Count(body=>body.IsRagdoll)}/{spawnedOccupants.Length}");
-        string presentationBlocker=null;
+        string presentationBlocker=null;string missionUiInitialization=null;
+        var missionUI=world.Objects.OfType<Crisis.Runtime.FullSource.MissionUI>().Single();
+        try{
+            missionUI.gameObject.SetActive(true);
+            if(missionUI.PauseMenu==null)world.Invoke(missionUI,"Awake");
+            if(missionUI.PauseMenu==null)throw new InvalidOperationException("Original MissionUI.Awake returned without instantiating its authored PauseMenu prefab");
+            missionUiInitialization="original MissionUI.Awake created the authored PauseMenu";
+        }catch(Exception error){missionUiInitialization=error.ToString();}
+        bool cameraDepthOfFieldFound=false;
+        var interiorCamera=missionComponent.InteriorMode?.interiorCamera;
+        if(interiorCamera!=null){
+            cameraDepthOfFieldFound=interiorCamera.GetComponent<UnityStandardAssets.ImageEffects.DepthOfField>()!=null;
+            if(cameraDepthOfFieldFound)world.Invoke(interiorCamera,"Awake");
+        }
         try{missionComponent.EndMission(0f);}
-        catch(NullReferenceException error){presentationBlocker=error.Message;}
+        catch(Exception error){presentationBlocker=error.ToString();}
         if(!missionComponent.missionSuccess)throw new InvalidOperationException("Original Mission.EndMission did not derive success from the checked-room and all-rendered-safe source state");
-        Console.WriteLine(JsonSerializer.Serialize(new{mission=mission.scene,missionStarted=missionComponent.Started,missionEnded=missionComponent.missionEnded,missionSuccess=missionComponent.missionSuccess,allRenderedSafe=missionComponent.Occupants.AllRenderedSafe,allDisabledEventCount,allRoomsChecked=missionComponent.AllRoomsChecked,spawnedOccupants=spawnedOccupants.Length,allOccupantsRagdoll=spawnedOccupants.All(body=>body.IsRagdoll),outcomePath="authored rooms checked -> original Occupant.SetUnconscious/allDisabledEvent -> original Mission.EndMission computed success",presentationTransition=presentationBlocker==null?"completed":"blocked by uninitialized headless MissionUI PauseMenu: "+presentationBlocker,ai="suppressed; AI gate remains blocked",audio="silent adapter"}));
+        var endMenuVisible=missionUI.missionEndMenu?.Visible??false;
+        if(presentationBlocker==null&&!endMenuVisible)throw new InvalidOperationException("Original Mission.EndMission returned without showing the authored MissionEndMenu");
+        Console.WriteLine(JsonSerializer.Serialize(new{mission=mission.scene,missionStarted=missionComponent.Started,missionEnded=missionComponent.missionEnded,missionSuccess=missionComponent.missionSuccess,allRenderedSafe=missionComponent.Occupants.AllRenderedSafe,allDisabledEventCount,allRoomsChecked=missionComponent.AllRoomsChecked,spawnedOccupants=spawnedOccupants.Length,allOccupantsRagdoll=spawnedOccupants.All(body=>body.IsRagdoll),outcomePath="rooms checked in fixture -> original Occupant.SetUnconscious/allDisabledEvent -> original Mission.EndMission computed success",missionUiInitialization,cameraDepthOfFieldFound,endMenuVisible,presentationTransition=presentationBlocker==null?"completed":"blocked: "+presentationBlocker,ai=runOriginalAI?"original BehaviorTrees remained enabled during the outcome":"suppressed; original BehaviorDesigner graph separately passes both actor prefabs",audio="silent adapter"}));
         return;
     }
-    Console.WriteLine(JsonSerializer.Serialize(new{mission=mission.scene,missionStarted=missionComponent.Started,globalContext=context.gameObject.name,globalContextInstantiated=!ReferenceEquals(context.gameObject,contextPrefab.prefabRoot),sourceActors=bodies.Length,operators=bodies.Count(body=>body.GetComponent<Crisis.Runtime.FullSource.TeamOperator>()!=null),occupants=bodies.Count(body=>body.GetComponent<Crisis.Runtime.FullSource.Occupant>()!=null),ai="suppressed in headless mission contract; serialized source task graph failure is separate",sceneObjects=mission.gameObjects,originalComponents=mission.originalComponents,missionUnsupported=mission.unsupportedComponents,missionUnresolved=mission.unresolvedReferences,globalContextUnsupported=contextPrefab.unsupportedComponents,globalContextUnresolved=contextPrefab.unresolvedReferences,audio="silent test adapter; original decode/playback not verified"}));
+    var liveTrees=world.Objects.OfType<BehaviorDesigner.Runtime.BehaviorTree>().Where(tree=>tree.enabled).ToArray();
+    if(runOriginalAI&&(liveTrees.Length==0||liveTrees.Any(tree=>tree.GetBehaviorSource().RootTask==null)))throw new InvalidOperationException($"Original mission AI trees did not remain active with deserialized roots: activeTrees={liveTrees.Length}");
+    Console.WriteLine(JsonSerializer.Serialize(new{mission=mission.scene,missionStarted=missionComponent.Started,globalContext=context.gameObject.name,globalContextInstantiated=!ReferenceEquals(context.gameObject,contextPrefab.prefabRoot),sourceActors=bodies.Length,operators=bodies.Count(body=>body.GetComponent<Crisis.Runtime.FullSource.TeamOperator>()!=null),occupants=bodies.Count(body=>body.GetComponent<Crisis.Runtime.FullSource.Occupant>()!=null),ai=runOriginalAI?"original BehaviorTrees enabled for one simulated second":"suppressed in headless mission contract",aiSimulationTicks,aiForceCommands,behaviorTrees=liveTrees.Length,behaviorTreeStatus=liveTrees.Select(tree=>new{root=tree.GetBehaviorSource().RootTask?.GetType().Name,execution=tree.ExecutionStatus.ToString()}).ToArray(),sceneObjects=mission.gameObjects,originalComponents=mission.originalComponents,missionUnsupported=mission.unsupportedComponents,missionUnresolved=mission.unresolvedReferences,globalContextUnsupported=contextPrefab.unsupportedComponents,globalContextUnresolved=contextPrefab.unresolvedReferences,audio="silent test adapter; original decode/playback not verified"}));
     return;
 }
 var runLifecycle=args.Contains("--prefab-lifecycle");if(runLifecycle||args.Contains("--prefab-instantiate")){

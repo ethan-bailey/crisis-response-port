@@ -270,6 +270,9 @@ following fixes in place:
 | FoundationChecks starts compiling restored actor tasks and fails `CS0246: ArmIKSolver` | Keep `../Original/CharacterBehavior/**/*.cs` out of the FoundationChecks compile glob. The complete runtime owns that source closure; FoundationChecks tests a narrower engine/foundation boundary. |
 | Runtime compiles, but original AI throws `NullReferenceException` in `ConditionalEvaluator.OnUpdate` at `conditionalTask.OnUpdate()` | This is a runtime Behavior Designer graph/reference failure, not a C# compile error. Inspect task deserialization and authored embedded condition references; do not hide it by claiming AI acceptance or silently replacing the task. |
 | Original `Mission.EndMission` computes outcome, then throws `NullReferenceException` in `MissionUI.PauseMenu` | Initialize the original MissionUI dependencies for full mission acceptance. A headless contract may record mission state before that presentation failure, but cannot count the transition as passed. |
+| FoundationChecks reports `CS0246 SharedGameObject` in restored `RestartBehaviorTree.cs` | The restored gameplay task is outside FoundationChecks' focused compile boundary. Exclude `../Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/RestartBehaviorTree.cs` in `Crisis.Runtime.FoundationChecks.csproj`; keep it compiled by the complete runtime project. |
+| Original `LimbAudio.Update` throws `NotSupportedException: Decoded original audio playback driver is not bound` during the headless AI mission contract | New AudioSource components can be instantiated after initial scene setup. Bind the silent test driver for every AudioSource in the per-tick headless adapter callback. This enables source execution but does not claim decoded or audible playback. |
+| Mission outcome contract returns without a visible authored end menu | The fixture had deactivated the original MissionUI root, so children remained inactive in hierarchy. Reactivate that original root before its Awake path, then assert the authored `MissionEndMenu.Visible` state after `EndMission`. |
 
 The 2026-10-23 Gate 2–6 run used the pinned SDK 8.0.426 and the process shim.
 The full runtime compiled with 0 errors and 48 warnings; General Checks passed,
@@ -278,5 +281,6 @@ The CharacterBehavior-specific pinned archive audit passed all 265 source and
 metadata records. The broader pre-existing
 `verify_foundation_sources.py --archive` remains blocked by stale source
 provenance entries outside this recovered AI source set; do not report that
-audit as passing. Current gameplay gate detail and the complete command list
-are in `docs/evidence/GATES_2_TO_6_PROGRESS_2026-10-23.md`.
+audit as passing. Later 2026-10-23 Behavior Designer recovery added one source
+record; see `docs/evidence/GATES_2_TO_6_PROGRESS_2026-10-23.md` for the current
+gate status and verification results.
