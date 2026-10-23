@@ -14,6 +14,14 @@ public static class SpawnerGameplayContracts
         public void LoadScene(int buildIndex) => throw new NotSupportedException("Scene changes are outside the spawner ownership contract");
     }
 
+    sealed class SilentAudioDriver : IAudioClipPlaybackDriver
+    {
+        public bool IsPlaying => false;
+        public void PlayOneShot(AudioClip clip, float volume, int priority) { }
+        public void Play(AudioClip clip, float volume, float pitch, bool loop, bool muted, int priority) { }
+        public void Stop() { }
+    }
+
     static void SetProperty(object target, string name, object value)
     {
         var property = target.GetType().GetProperty(name, InstanceFlags)
@@ -179,12 +187,51 @@ public static class SpawnerGameplayContracts
                 armor = ArmorClass.Type.None,
                 items = new SerializableItems { itemPrefabNames = new List<string> { "Primary magazine" } }
             });
+            foreach (var clip in world.Objects.OfType<AudioClip>())
+                clip.ReportLoadState(AudioDataLoadState.Loaded);
+            foreach (var source in world.Objects.OfType<AudioSource>())
+                source.Driver = new SilentAudioDriver();
             if (operatorEquipment == null || ReferenceEquals(operatorEquipment, occupantEquipment))
                 throw new InvalidOperationException("Operator and Occupant do not own independent original Equipment components");
             if (operatorEquipment.primaryWeapon == null || !ReferenceEquals(operatorEquipment.primaryWeapon.Owner, operatorBody))
                 throw new InvalidOperationException($"Original M4A1 resource did not initialize as Operator-owned equipment (weapon={operatorEquipment.primaryWeapon?.name ?? "null"}, ownerMatches={ReferenceEquals(operatorEquipment.primaryWeapon?.Owner, operatorBody)})");
             if (!operatorObject.GetComponentsInChildren<MonoBehaviour>(true).Any(c => ReferenceEquals(c, operatorEquipment)))
                 throw new InvalidOperationException("Operator Equipment is outside its original prefab clone graph");
+            var aimWeapon = operatorBody.ActiveWeapon
+                ?? throw new InvalidOperationException("Original Operator has no active source weapon for CharacterBody aim");
+            var muzzle = aimWeapon.Muzzle
+                ?? throw new InvalidOperationException("Original Operator M4A1 has no authored muzzle transform");
+            var weaponDirection = aimWeapon.transform.right;
+            operatorBody.AimPoint = muzzle.position + weaponDirection * 5f;
+            if (operatorBody.WeaponAimAlignment() > 0.01f)
+                throw new InvalidOperationException("Original CharacterBody aim alignment did not follow the authored weapon direction");
+            operatorBody.AimPoint = muzzle.position - weaponDirection * 5f;
+            if (operatorBody.WeaponAimAlignment() < 179f)
+                throw new InvalidOperationException("Original CharacterBody aim alignment did not distinguish the opposite aim direction");
+            operatorBody.Turn(-1f);
+            if (operatorBody.Direction != -1f || operatorBody.FacingRight || operatorBody.RotationY != 180f)
+                throw new InvalidOperationException("Original CharacterBody.Turn did not apply the left-facing direction");
+            operatorBody.Turn(1f);
+            if (operatorBody.Direction != 1f || !operatorBody.FacingRight || operatorBody.RotationY != 0f)
+                throw new InvalidOperationException("Original CharacterBody.Turn did not restore the right-facing direction");
+
+            // These actors are instantiated after RuntimeWorld.Initialize, so
+            // Unity's next-frame Start pass has not run yet. Initialize both
+            // original arm controllers before exercising ragdoll and
+            // physiology transitions that depend on their Rigidbody bindings.
+            var occupantArmsControl = occupant.GetComponent<Crisis.Runtime.FullSource.ArmsControl>()
+                ?? throw new InvalidOperationException("Spawned Occupant has no FullSource.ArmsControl");
+            var operatorArmsControl = operatorBody.GetComponent<Crisis.Runtime.FullSource.ArmsControl>()
+                ?? throw new InvalidOperationException("Original Operator has no FullSource.ArmsControl");
+            world.Invoke(occupantArmsControl, "Start");
+            world.Invoke(operatorArmsControl, "Start");
+            var physicalForceCommands = 0;
+            var kinematicCommands = 0;
+            foreach (var rigidbody in occupantObject.GetComponentsInChildren<Rigidbody>(true))
+            {
+                rigidbody.PhysicsForceSink = (_, _, _) => physicalForceCommands++;
+                rigidbody.KinematicChanged = _ => kinematicCommands++;
+            }
 
             var torso = occupant.Torso ?? throw new InvalidOperationException("Spawned Occupant has no torso limb");
             var targetLimbPhysiology = torso.LimbPhysiology
@@ -212,6 +259,7 @@ public static class SpawnerGameplayContracts
             if (operatorPhysiology.BloodVolume != operatorBloodBefore ||
                 operatorLimbPhysiology.WoundCavityVolume != operatorTraumaBefore)
                 throw new InvalidOperationException("Occupant hit changed the Operator's original physiology");
+            var occupantBloodAfterTrauma = occupantPhysiology.BloodVolume;
 
             // Exercise source movement and animation parameter production with a
             // recording PhysX sink. This verifies original gameplay calls without
@@ -237,7 +285,40 @@ public static class SpawnerGameplayContracts
             if (!animator.GetBool("Moving") || animator.GetFloat("KneelRatio") <= 0f)
                 throw new InvalidOperationException("Original CharacterBody animation update did not emit moving/kneeling Animator parameters");
 
-            return $"PASS: original OccupantSpawner spawned independent actors; trauma/physiology stayed actor-owned (blood loss {targetBloodBefore - occupantPhysiology.BloodVolume:0.##} ml); CharacterBody movement emitted force and animation parameters";
+            // Continue the original Occupant through source-authored shock,
+            // hemorrhage/oxygen loss, loss of consciousness, and death. Drive
+            // Physiology.Update instead of setting state flags.
+            var shockBefore = occupantPhysiology.Shock;
+            targetLimbPhysiology.AddShock(100f);
+            if (occupantPhysiology.Shock <= shockBefore)
+                throw new InvalidOperationException("Original LimbPhysiology.AddShock did not change the Occupant's source shock state");
+            var unconsciousEvents = 0;
+            var deathEvents = 0;
+            occupant.EventUnconscious.AddListener(() => unconsciousEvents++);
+            occupant.EventDeath.AddListener(() => deathEvents++);
+            occupantPhysiology.RemoveBlood(occupantPhysiology.BloodVolume);
+            if (occupantPhysiology.BloodOxygen > 0.5f || !occupantPhysiology.ShouldLoseConsciousness())
+                throw new InvalidOperationException("Original blood loss did not cross the source consciousness threshold");
+            world.Invoke(occupantPhysiology, "Update");
+            if (occupantPhysiology.Conscious || !occupantPhysiology.Alive || unconsciousEvents != 1)
+                throw new InvalidOperationException($"Original Physiology.Update failed the unconscious transition: conscious={occupantPhysiology.Conscious}, alive={occupantPhysiology.Alive}, eventCount={unconsciousEvents}");
+            if (!occupant.IsRagdoll || physicalForceCommands == 0 || kinematicCommands == 0)
+                throw new InvalidOperationException($"Original unconsciousness/ragdoll did not dispatch the actor's PhysX commands: ragdoll={occupant.IsRagdoll}, forceCommands={physicalForceCommands}, kinematicCommands={kinematicCommands}");
+            var timeSetter = typeof(Time).GetProperty(nameof(Time.time), BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)!
+                .GetSetMethod(true) ?? throw new MissingMethodException("Time.time setter");
+            var startTime = Time.time;
+            for (var step = 1; step <= 320 && occupantPhysiology.Alive; step++)
+            {
+                timeSetter.Invoke(null, new object[] { startTime + step * 0.1f });
+                deltaTime.Invoke(null, new object[] { 0.1f });
+                world.Invoke(occupantPhysiology, "Update");
+            }
+            if (occupantPhysiology.Alive || deathEvents != 1)
+                throw new InvalidOperationException($"Original hypoxia/brain-death timing failed the source death transition: alive={occupantPhysiology.Alive}, eventCount={deathEvents}, simulatedSeconds={Time.time - startTime:0.0}");
+            if (!operatorPhysiology.Alive || !operatorPhysiology.Conscious || operatorPhysiology.BloodVolume != operatorBloodBefore)
+                throw new InvalidOperationException("Occupant physiology state transitions changed the independent Operator");
+
+            return $"PASS: original Operator/Occupant source actors; directional aim/turn, movement/posture, actor-owned trauma/shock/hemorrhage/oxygen, unconscious/ragdoll/death timing, and PhysX command dispatch passed (Occupant blood loss {targetBloodBefore - occupantPhysiology.BloodVolume:0.##} ml)";
         }
         finally
         {
