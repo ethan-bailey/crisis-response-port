@@ -1,6 +1,7 @@
 """Failure-oriented packaging tests. Fixture bytes are not game build evidence."""
 import base64
 import hashlib
+import gzip
 import json
 import subprocess
 import struct
@@ -8,7 +9,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from package_wasm_site import MANIFEST, WASM_HEADER, package, verify
+from package_wasm_site import MANIFEST, WASM_HEADER, package, split_scene_package, verify
 
 
 class PackageTests(unittest.TestCase):
@@ -21,7 +22,7 @@ class PackageTests(unittest.TestCase):
         self.site = self.root / "site"
         self.repo.mkdir()
         for path, value in {
-            "game/index.html": '<script type="importmap">{"imports":{"three":"https://example.test/pinned.js"}}</script>',
+            "game/index.html": '<script type="importmap">{"imports":{"three":"https://example.test/pinned.js"}}</script><script type="module">import { loadOriginalScenePackage } from "../scene-data/scene-package-loader.mjs";</script>',
             "game/browser-input.mjs": "// input adapter\n",
             "game/assets/mission01.obj": "\n".join([
                 "v 0 0 0", "v 1 0 0", "v 0 1 0",
@@ -36,7 +37,7 @@ class PackageTests(unittest.TestCase):
         }.items():
             self.write(self.repo / path, value)
         for path, value in {
-            "index.html": '<base href="/">',
+            "index.html": '<base href="/"><script type="module">import { loadOriginalScenePackage } from "../scene-data/scene-package-loader.mjs";</script>',
             "index.html.br": b"stale root index compression",
             "index.html.gz": b"stale root index compression",
             "browser-input.mjs": "// input adapter\n",
@@ -53,6 +54,10 @@ class PackageTests(unittest.TestCase):
             boot["resources"]["assembly"][name] = "sha256-" + base64.b64encode(hashlib.sha256(value).digest()).decode()
         self.write(self.pub / "_framework/blazor.boot.json", json.dumps(boot))
         self.write(self.repo / "scene-data" / "fixture.json", "{}")
+        self.write(self.repo / "scene-data" / "crisis-response-scenes.json.gz",
+                   gzip.compress('{"scene":"fixture-☃"}'.encode(), mtime=0))
+        self.write(self.repo / "scene-data" / "scene-package-loader.mjs",
+                   "export async function loadOriginalScenePackage() {}\n")
         self.git("init", "-q")
         self.git("add", ".")
         self.git("-c", "user.name=Fixture", "-c", "user.email=fixture@example.test", "commit", "-qm", "Fixture")
@@ -81,6 +86,13 @@ class PackageTests(unittest.TestCase):
         self.assertFalse((self.site / "game/package-lock.json").exists())
         manifest = json.loads((self.site / MANIFEST).read_text())
         self.assertIn("scene-data/fixture.json", [entry["path"] for entry in manifest["files"]])
+        scene_manifest = json.loads((self.site / "scene-data/crisis-response-scenes.manifest.json").read_text())
+        self.assertEqual(scene_manifest["encoding"], "independent-gzip-chunks")
+        scene_bytes = b"".join(gzip.decompress((self.site / "scene-data" / chunk["path"]).read_bytes())
+                                 for chunk in scene_manifest["chunks"])
+        self.assertEqual(scene_bytes.decode(), '{"scene":"fixture-☃"}')
+        self.assertFalse((self.site / "scene-data/crisis-response-scenes.json.gz").exists())
+        self.assertIn("scene-data/scene-package-loader.mjs", [entry["path"] for entry in manifest["files"]])
         self.assertFalse(manifest["scope"]["physicalIPhoneTested"])
         self.assertFalse(manifest["scope"]["browserTestedThisBuild"])
         self.assertEqual(manifest["externalImports"]["three"], "https://example.test/pinned.js")
@@ -96,6 +108,18 @@ class PackageTests(unittest.TestCase):
         self.assertEqual(report["sourceSha256"], hashlib.sha256((self.repo / "game/assets/mission01.obj").read_bytes()).hexdigest())
         self.assertEqual(report["binarySha256"], hashlib.sha256(scene).hexdigest())
         self.assertEqual(verify(self.site), result)
+
+    def test_scene_split_keeps_utf8_boundaries_as_bytes(self):
+        scene_data = self.root / "split-scene-data"
+        scene_data.mkdir()
+        source = '{"scene":"snowman ☃ and a long continuation"}'.encode()
+        (scene_data / "crisis-response-scenes.json.gz").write_bytes(gzip.compress(source, mtime=0))
+        manifest = split_scene_package(scene_data, chunk_bytes=7)
+        rebuilt = b"".join(gzip.decompress((scene_data / chunk["path"]).read_bytes())
+                           for chunk in manifest["chunks"])
+        self.assertGreater(len(manifest["chunks"]), 1)
+        self.assertEqual(rebuilt, source)
+        self.assertEqual(manifest["uncompressedBytes"], len(source))
 
     def test_modified_binary_fails(self):
         self.build()

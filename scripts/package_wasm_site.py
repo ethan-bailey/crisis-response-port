@@ -7,6 +7,7 @@ and corruption; it is not a signature or an authorization/hosting mechanism.
 import argparse
 import base64
 import hashlib
+import gzip
 import json
 import re
 import shutil
@@ -16,6 +17,10 @@ from pathlib import Path, PurePosixPath
 
 MANIFEST = "build-manifest.json"
 WASM_HEADER = b"\x00asm\x01\x00\x00\x00"
+SCENE_ARCHIVE = "crisis-response-scenes.json.gz"
+SCENE_MANIFEST = "crisis-response-scenes.manifest.json"
+SCENE_CHUNK_BYTES = 16 * 1024 * 1024
+SITE_FILE_LIMIT_BYTES = 25 * 1024 * 1024
 
 
 def require(condition, message):
@@ -40,6 +45,33 @@ def files(root):
 def record(path, root):
     return {"path": path.relative_to(root).as_posix(),
             "bytes": path.stat().st_size, "sha256": digest(path)}
+
+
+def split_scene_package(scene_data, chunk_bytes=SCENE_CHUNK_BYTES):
+    """Expand the source gzip into independent gzip chunks below Sites' file limit."""
+    archive = scene_data / SCENE_ARCHIVE
+    if not archive.exists():
+        return None
+    require(chunk_bytes > 0, "Scene chunk size must be positive")
+    chunks = []
+    total_bytes = 0
+    with gzip.open(archive, "rb") as source:
+        index = 0
+        while raw := source.read(chunk_bytes):
+            name = f"crisis-response-scenes-{index:03d}.json.gz"
+            data = gzip.compress(raw, compresslevel=6, mtime=0)
+            require(len(data) < SITE_FILE_LIMIT_BYTES,
+                    f"Scene chunk exceeds Sites' per-file limit: {name}")
+            (scene_data / name).write_bytes(data)
+            chunks.append({"path": name, "bytes": len(raw)})
+            total_bytes += len(raw)
+            index += 1
+    require(chunks, "Original scene package is empty")
+    archive.unlink()
+    manifest = {"schemaVersion": 1, "encoding": "independent-gzip-chunks",
+                "uncompressedBytes": total_bytes, "chunks": chunks}
+    (scene_data / SCENE_MANIFEST).write_text(json.dumps(manifest, indent=2) + "\n")
+    return manifest
 
 
 def safe_path(root, name):
@@ -84,13 +116,25 @@ def validate_site(site):
     required = ["index.html", "game/index.html", "game/assets/mission01.crg",
                 "game/browser-input.mjs", "game/vendor/physx-js-webidl.mjs",
                 "game/vendor/physx-js-webidl.wasm", "runtime-web/index.html",
-                "runtime-web/browser-input.mjs", "runtime-web/_framework/blazor.webassembly.js"]
+                "runtime-web/browser-input.mjs", "runtime-web/_framework/blazor.webassembly.js",
+                "scene-data/scene-package-loader.mjs", "scene-data/crisis-response-scenes.manifest.json"]
     for name in required:
         require((site / name).is_file(), f"Missing site input: {name}")
     require(digest(site / "game/browser-input.mjs") == digest(site / "runtime-web/browser-input.mjs"),
             "Game and compiled runtime have different input adapters")
     html = (site / "runtime-web/index.html").read_text()
     require('<base href="/runtime-web/">' in html, "Runtime must be served at /runtime-web/")
+    require("scene-package-loader.mjs" in html, "Runtime must load scenes through the split-package loader")
+    scene_manifest = json.loads((site / "scene-data/crisis-response-scenes.manifest.json").read_text())
+    require(scene_manifest.get("encoding") == "independent-gzip-chunks"
+            and bool(scene_manifest.get("chunks")), "Scene package chunk manifest is invalid")
+    for chunk in scene_manifest["chunks"]:
+        name = chunk.get("path", "")
+        require(re.fullmatch(r"crisis-response-scenes-\d{3}\.json\.gz", name) is not None,
+                "Invalid scene package chunk name")
+        path = site / "scene-data" / name
+        require(path.is_file() and path.stat().st_size < SITE_FILE_LIMIT_BYTES,
+                f"Scene package chunk is missing or exceeds Sites' per-file limit: {name}")
     wasm = list((site / "runtime-web/_framework").rglob("*.wasm"))
     require(wasm, "Actual compiled .NET WebAssembly is missing")
     wasm.append(site / "game/vendor/physx-js-webidl.wasm")
@@ -175,6 +219,7 @@ def package(repo, published, output, toolchain, run_url):
             "Generated scene report does not match the packaged scene binary")
     shutil.copytree(published, output / "runtime-web")
     shutil.copytree(repo / "scene-data", output / "scene-data")
+    split_scene_package(output / "scene-data")
     runtime_index = output / "runtime-web/index.html"
     html = runtime_index.read_text()
     require(html.count('<base href="/">') == 1, "Unexpected compiled runtime base path")

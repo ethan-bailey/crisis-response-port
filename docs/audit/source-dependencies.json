@@ -1342,7 +1342,10 @@
     "source-reference/Original/CharacterDependencies/TimeScaler.cs",
     "source-reference/Original/CharacterDependencies/WeaponAimer.cs",
     "source-reference/Original/CharacterDependencies/WeaponBase.cs",
-    "source-reference/Original/CharacterDependencies/WeaponMode.cs"
+    "source-reference/Original/CharacterDependencies/WeaponMode.cs",
+    "source-reference/Original/LimbSkin/LimbLayer.cs",
+    "source-reference/Original/LimbSkin/LimbRenderer.cs",
+    "source-reference/Original/LimbSkin/LimbTextureData.cs"
   ],
   "sources": [
     {
@@ -1542,7 +1545,7 @@
     },
     {
       "path": "runtime/Engine/BallisticRuntimeHost.cs",
-      "sha256": "60f5f3646dea93189dcbea84106ed4c8e0c6757e740d564e4f9e838d74fd4397",
+      "sha256": "e48bef15c1713c9bc45153c7727c552c1a0ce70ca7cfc1faa281e1de9df0a094",
       "declares": [
         "BallisticRuntimeHost",
         "in"
@@ -1755,7 +1758,7 @@
     },
     {
       "path": "runtime/Engine/Mesh.cs",
-      "sha256": "aac42c0efe2b044264dc20f9c70e303697afb9a5f72f3be448225d4c8da04693",
+      "sha256": "07d71084c43685fc1bb644fb5e28f42a30cb5809dc841075f858c0d76d59c735",
       "declares": [
         "Mesh",
         "MeshFilter"
@@ -1770,11 +1773,12 @@
     },
     {
       "path": "runtime/Engine/Objects.cs",
-      "sha256": "2863b888a69da3548e091829c64464d6cf0594ec48461d39bd7121ab3002a839",
+      "sha256": "c24fbaf76b2771f060c6947aa9228e00b2491a54eb8c7b87bf63402e3d14d82a",
       "declares": [
         "ActivationScope",
         "Axis",
         "Behaviour",
+        "CanvasRenderer",
         "Component",
         "GameObject",
         "ILightDriver",
@@ -2196,7 +2200,7 @@
     },
     {
       "path": "runtime/Engine/Rendering/GraphicsPrimitives.cs",
-      "sha256": "a2b93b0d743de7ac8caec3755e6d4234555f066acb3ab509179a440770b48351",
+      "sha256": "39d5b107f9376b79b1da756147bf141488f8547b21331376a71916497986922e",
       "declares": [
         "Color",
         "Material",
@@ -2260,7 +2264,7 @@
     },
     {
       "path": "runtime/Engine/Rendering/SpriteComponents.cs",
-      "sha256": "6225db6c89ef2383c61ee4a6732de1cfad974ee26dd60f5616bc3451d14c4aeb",
+      "sha256": "67e7f7d523af6b6f54037c9eaf83dc3fb3cb90cba23b8c54610f1cf9a0642c4a",
       "declares": [
         "LineRenderer",
         "Sprite",
@@ -2327,7 +2331,7 @@
     },
     {
       "path": "runtime/Engine/Resources.cs",
-      "sha256": "8ea40b46dbb16ec353837740dabd8f583dd7e2feb0be659c27fcf6b1b0e9d715",
+      "sha256": "ce167a1ca4d79279164540987db803e32ccad6b5fc4e6113ecdfe3c8fe615677",
       "declares": [
         "Resources"
       ],
@@ -2345,7 +2349,7 @@
     },
     {
       "path": "runtime/Engine/RuntimeContracts.cs",
-      "sha256": "7ee1e7ec023aa27e5d84ad5cc5fcaafd97b9af29d0ffb3c3c459e8cb23a1c06f",
+      "sha256": "c1a2284e66dd045070be1863424a1a82c6c84ff190ef7424ff5986a600d87a54",
       "declares": [
         "CloneProbe",
         "LifecycleProbe",
@@ -2362,10 +2366,12 @@
         "GameObject",
         "GetChild",
         "GetComponent",
+        "GetFloat",
         "Input",
         "InputKey",
         "Instantiate",
         "Keyframe",
+        "Material",
         "MonoBehaviour",
         "Object",
         "ObjectRemover",
@@ -2376,7 +2382,10 @@
         "Ray",
         "Raycast",
         "RuntimeWorld",
+        "SerializedAssetIdentity",
+        "SerializedAssetResolver",
         "SetParent",
+        "Shader",
         "Text",
         "Time",
         "Transform",
@@ -2386,7 +2395,7 @@
     },
     {
       "path": "runtime/Engine/SceneLoader.cs",
-      "sha256": "8d891c11705a50f7d811002ddc54acf3ff8eddf47109334467f7073cb2f7a139",
+      "sha256": "45b36f0c8e15c6726117a8d7b3335d40a5301c3a480efde0fbd642b5e78a81ef",
       "declares": [
         "SceneLoadResult",
         "SceneLoader",
@@ -2403,14 +2412,17 @@
         "Behaviour",
         "BoxCollider",
         "BoxCollider2D",
+        "CanvasRenderer",
         "CapsuleCollider",
         "Clear",
         "CollisionDetectionMode",
+        "Color",
         "Component",
         "Enum",
         "GameObject",
         "GetString",
         "HingeJoint",
+        "IsNullOrEmpty",
         "JointLimits",
         "JointMotor",
         "JointSpring",
@@ -2418,6 +2430,7 @@
         "Light",
         "Material",
         "Mesh",
+        "MeshCollider",
         "MeshFilter",
         "MeshRenderer",
         "MonoBehaviour",
@@ -2426,6 +2439,7 @@
         "ParticleSystemRenderer",
         "PhysicMaterial",
         "Physics",
+        "Projectile",
         "Quaternion",
         "QueryTriggerInteraction",
         "Ray",
@@ -2440,6 +2454,8 @@
         "SetActive",
         "SetParent",
         "SetValue",
+        "Sprite",
+        "SpriteRenderer",
         "StaticBatchInfo",
         "Text",
         "Threading",
@@ -2497,7 +2513,7 @@
     },
     {
       "path": "runtime/Engine/SerializedAssetResolver.cs",
-      "sha256": "dca40c4023c82c661f494abdf91417e8cf916e785adf15fbc9cd87bf23d4e280",
+      "sha256": "80241b94a1c8e6e8065667f4d950587a051b5ee472b737b433e448964233649b",
       "declares": [
         "SerializedAssetIdentity",
         "SerializedAssetResolver"
@@ -2505,10 +2521,12 @@
       "references": [
         "AudioClip",
         "AudioMixerGroup",
+        "Color",
         "Component",
         "Font",
         "GameObject",
         "GetString",
+        "HideFlags",
         "Material",
         "Mesh",
         "Object",
@@ -2516,10 +2534,15 @@
         "RuntimeAnimatorController",
         "RuntimeWorld",
         "SceneLoader",
+        "SetColor",
+        "SetFloat",
         "Shader",
+        "Sprite",
         "Text",
         "Texture2D",
         "Type",
+        "Vector2",
+        "Vector3",
         "in"
       ]
     },
@@ -2590,22 +2613,30 @@
     },
     {
       "path": "runtime/Engine/UI.cs",
-      "sha256": "def973b7fc9d46c0671386210c6675e2a70825101a53ac41c232f54b288ca674",
+      "sha256": "ca3e6e242ea7a179392c8995e41f02f6236272900da4d52076638df23c2c8ac3",
       "declares": [
         "Button",
+        "CanvasScaler",
         "ColorBlock",
+        "ContentSizeFitter",
         "Dropdown",
         "Graphic",
+        "GraphicRaycaster",
+        "HorizontalLayoutGroup",
         "IGraphicDriver",
         "Image",
         "InputField",
+        "LayoutElement",
+        "Mask",
         "OptionData",
         "RawImage",
         "ScrollRect",
+        "Scrollbar",
         "Selectable",
         "Slider",
         "Text",
-        "Toggle"
+        "Toggle",
+        "VerticalLayoutGroup"
       ],
       "references": [
         "Action",
@@ -2747,7 +2778,7 @@
     },
     {
       "path": "runtime/Original/AmmunitionBase.cs",
-      "sha256": "35477fe4d4ae402ab3512027ce60f7b2ba83a18ec1060fa2fce54da50ad03835",
+      "sha256": "789cb6a2a9c31d7decd7cb4ad2754e5d3f71965855dc9bc2eb436889ea1dc1cf",
       "declares": [
         "AmmunitionBase",
         "FragmentationMode",
@@ -9203,7 +9234,7 @@
     },
     {
       "path": "runtime/Original/FullSource/OriginalActorIdentity.cs",
-      "sha256": "74953068cc9b28d1823f66dbd39fdcf63193290c9c8cf5c7bb4c7b0f00b7b85d",
+      "sha256": "5c5cefeac71aa2218be7435d3bfcf040d79fc99444894ca9024729e400ab3b67",
       "declares": [
         "OriginalActorIdentity"
       ],
@@ -15496,6 +15527,71 @@
         "WeaponMode"
       ],
       "references": []
+    },
+    {
+      "path": "source-reference/Original/LimbSkin/LimbLayer.cs",
+      "sha256": "86d3b58ea800d79f6c0c4e45bf0194bcf7d604e5718814d965ce30d37f71589e",
+      "declares": [
+        "LimbLayer"
+      ],
+      "references": []
+    },
+    {
+      "path": "source-reference/Original/LimbSkin/LimbRenderer.cs",
+      "sha256": "a54c9c2b4454d1a9e8d0c9f6c7c8326757db749e5146485383b0873820443592",
+      "declares": [
+        "EdgeFindMode",
+        "LimbRenderer",
+        "TraceResult"
+      ],
+      "references": [
+        "BoxCollider2D",
+        "Collider",
+        "Color",
+        "Destroy",
+        "Entry",
+        "GL",
+        "GetComponent",
+        "Instantiate",
+        "LimbTextureData",
+        "Material",
+        "Mathf",
+        "MeshRenderer",
+        "MissionHelper",
+        "MonoBehaviour",
+        "Object",
+        "Random",
+        "RenderTexture",
+        "StaticDebug",
+        "Texture2D",
+        "Vector2",
+        "Vector3",
+        "in"
+      ]
+    },
+    {
+      "path": "source-reference/Original/LimbSkin/LimbTextureData.cs",
+      "sha256": "6497989fda940321313bee655475cfae8e790ffaa75848c1fa08c49cac8afacc",
+      "declares": [
+        "LimbTextureData"
+      ],
+      "references": [
+        "Collider",
+        "Color",
+        "Debug",
+        "Destroy",
+        "DynamicLimbTextureData",
+        "DynamicLimbTexturePool",
+        "Graphics",
+        "LimbRenderer",
+        "Object",
+        "Random",
+        "Rect",
+        "RenderTexture",
+        "Texture2D",
+        "TextureFormat",
+        "Vector2"
+      ]
     }
   ],
   "archivedSourceCount": 1384,
@@ -19217,7 +19313,8 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/SceneLoader.cs",
-        "runtime/Original/FullSource/LimbRenderer.cs"
+        "runtime/Original/FullSource/LimbRenderer.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs"
       ]
     },
     {
@@ -19608,6 +19705,34 @@
         "runtime/Original/FullSource/UIRangeSlider.cs",
         "runtime/Original/FullSource/UITooltipManager.cs"
       ]
+    },
+    {
+      "name": "CanvasRenderer",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/Objects.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Engine/SceneLoader.cs"
+      ]
+    },
+    {
+      "name": "CanvasScaler",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/UI.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
     },
     {
       "name": "CapsuleCollider",
@@ -20515,7 +20640,9 @@
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/DoorController.cs",
         "source-reference/Original/CharacterDependencies/Grenade.cs",
-        "source-reference/Original/CharacterDependencies/WeaponBase.cs"
+        "source-reference/Original/CharacterDependencies/WeaponBase.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs",
+        "source-reference/Original/LimbSkin/LimbTextureData.cs"
       ]
     },
     {
@@ -20623,7 +20750,9 @@
         "runtime/Engine/Rendering/SpriteComponents.cs",
         "runtime/Engine/Rendering/Texture2D.cs",
         "runtime/Engine/Rendering/TextureTransfers.cs",
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Engine/SerializationTypes.cs",
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Engine/UI.cs",
         "runtime/Original/Ballistics/BallisticWindow.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserialization.cs",
@@ -20663,7 +20792,9 @@
         "runtime/Original/FullSource/WeaponPointer.cs",
         "runtime/Original/FullSource/WeaponReticle.cs",
         "source-reference/Original/Animation/ArmIKSolver.cs",
-        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs"
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs",
+        "source-reference/Original/LimbSkin/LimbTextureData.cs"
       ]
     },
     {
@@ -21337,6 +21468,19 @@
       ]
     },
     {
+      "name": "ContentSizeFitter",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/UI.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
+    },
+    {
       "name": "ContextView",
       "category": "native Unity adapter",
       "requiresAuthoredAssets": false,
@@ -21756,7 +21900,8 @@
         "source-reference/Original/CharacterDependencies/Limb.cs",
         "source-reference/Original/CharacterDependencies/SerializableExtraSettings.cs",
         "source-reference/Original/CharacterDependencies/TimeScaler.cs",
-        "source-reference/Original/CharacterDependencies/WeaponBase.cs"
+        "source-reference/Original/CharacterDependencies/WeaponBase.cs",
+        "source-reference/Original/LimbSkin/LimbTextureData.cs"
       ]
     },
     {
@@ -21994,7 +22139,9 @@
         "source-reference/Original/CharacterDependencies/Mission.cs",
         "source-reference/Original/CharacterDependencies/PlayerController.cs",
         "source-reference/Original/CharacterDependencies/TeamOperator.cs",
-        "source-reference/Original/CharacterDependencies/WeaponBase.cs"
+        "source-reference/Original/CharacterDependencies/WeaponBase.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs",
+        "source-reference/Original/LimbSkin/LimbTextureData.cs"
       ]
     },
     {
@@ -22595,7 +22742,8 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Original/FullSource/DynamicLimbTexturePool.cs",
-        "runtime/Original/FullSource/LimbTextureData.cs"
+        "runtime/Original/FullSource/LimbTextureData.cs",
+        "source-reference/Original/LimbSkin/LimbTextureData.cs"
       ]
     },
     {
@@ -22615,7 +22763,8 @@
         "runtime/Original/FullSource/LimbTextureData.cs",
         "runtime/Original/FullSource/Mission.cs",
         "runtime/Original/FullSource/StagingDebugUI.cs",
-        "source-reference/Original/CharacterDependencies/Mission.cs"
+        "source-reference/Original/CharacterDependencies/Mission.cs",
+        "source-reference/Original/LimbSkin/LimbTextureData.cs"
       ]
     },
     {
@@ -22626,7 +22775,9 @@
         "runtime/Original/FullSource/LimbRenderer.cs"
       ],
       "engineSources": [],
-      "referenceSources": [],
+      "referenceSources": [
+        "source-reference/Original/LimbSkin/LimbRenderer.cs"
+      ],
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/LimbRenderer.cs"
       ],
@@ -22966,7 +23117,8 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
-        "runtime/Original/FullSource/LimbRenderer.cs"
+        "runtime/Original/FullSource/LimbRenderer.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs"
       ]
     },
     {
@@ -24703,7 +24855,8 @@
         "runtime/Original/FullSource/LimbRenderer.cs",
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
-        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs"
+        "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs"
       ]
     },
     {
@@ -25364,7 +25517,8 @@
         "source-reference/Original/CharacterDependencies/Target.cs",
         "source-reference/Original/CharacterDependencies/TeamOperator.cs",
         "source-reference/Original/CharacterDependencies/WeaponAimer.cs",
-        "source-reference/Original/CharacterDependencies/WeaponBase.cs"
+        "source-reference/Original/CharacterDependencies/WeaponBase.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs"
       ]
     },
     {
@@ -25543,6 +25697,7 @@
         "runtime/Engine/Animator.cs",
         "runtime/Engine/PlayerPrefs.cs",
         "runtime/Engine/Rendering/GraphicsPrimitives.cs",
+        "runtime/Engine/RuntimeContracts.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/VariableSynchronizer.cs"
       ]
     },
@@ -26820,6 +26975,19 @@
       "referencedBy": []
     },
     {
+      "name": "GraphicRaycaster",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/UI.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
+    },
+    {
       "name": "Graphics",
       "category": "native Unity adapter",
       "requiresAuthoredAssets": false,
@@ -26850,7 +27018,8 @@
         "source-reference/Original/ArmDependencies/Limb.cs",
         "source-reference/Original/CharacterDependencies/Limb.cs",
         "source-reference/Original/CharacterDependencies/Mission.cs",
-        "source-reference/Original/CharacterDependencies/Settings.cs"
+        "source-reference/Original/CharacterDependencies/Settings.cs",
+        "source-reference/Original/LimbSkin/LimbTextureData.cs"
       ]
     },
     {
@@ -27551,6 +27720,7 @@
       "referencedBy": [
         "runtime/Engine/Objects.cs",
         "runtime/Engine/Rendering/GraphicsPrimitives.cs",
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Original/FullSource/MissionHelper.cs",
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs"
@@ -27610,6 +27780,19 @@
         "decompiled/Assets/Scripts/Characters/Behavior/Conditions/Operators/HoldingPosition.cs",
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Assets/Scripts/Characters/Behavior/Conditions/Operators/HoldingPosition.cs"
       ],
+      "compilerMissing": false,
+      "referencedBy": []
+    },
+    {
+      "name": "HorizontalLayoutGroup",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/UI.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": []
     },
@@ -28704,7 +28887,8 @@
         "source-reference/Original/CharacterDependencies/Limb.cs",
         "source-reference/Original/CharacterDependencies/Mission.cs",
         "source-reference/Original/CharacterDependencies/TeamOperator.cs",
-        "source-reference/Original/CharacterDependencies/WeaponBase.cs"
+        "source-reference/Original/CharacterDependencies/WeaponBase.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs"
       ]
     },
     {
@@ -29340,6 +29524,7 @@
       "referencedBy": [
         "runtime/Engine/Objects.cs",
         "runtime/Engine/PlayerPrefs.cs",
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/Behavior.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/BehaviorManager.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/BehaviorSource.cs",
@@ -29837,6 +30022,19 @@
       ]
     },
     {
+      "name": "LayoutElement",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/UI.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
+    },
+    {
       "name": "Lead",
       "category": "recoverable source",
       "requiresAuthoredAssets": false,
@@ -30244,7 +30442,9 @@
         "runtime/Original/FullSource/LimbLayer.cs"
       ],
       "engineSources": [],
-      "referenceSources": [],
+      "referenceSources": [
+        "source-reference/Original/LimbSkin/LimbLayer.cs"
+      ],
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/LimbLayer.cs"
       ],
@@ -30324,7 +30524,9 @@
         "runtime/Original/FullSource/LimbRenderer.cs"
       ],
       "engineSources": [],
-      "referenceSources": [],
+      "referenceSources": [
+        "source-reference/Original/LimbSkin/LimbRenderer.cs"
+      ],
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/LimbRenderer.cs"
       ],
@@ -30337,7 +30539,8 @@
         "runtime/Original/FullSource/LimbStreak.cs",
         "runtime/Original/FullSource/LimbTextureData.cs",
         "source-reference/Original/ArmDependencies/Limb.cs",
-        "source-reference/Original/CharacterDependencies/Limb.cs"
+        "source-reference/Original/CharacterDependencies/Limb.cs",
+        "source-reference/Original/LimbSkin/LimbTextureData.cs"
       ]
     },
     {
@@ -30365,13 +30568,16 @@
         "runtime/Original/FullSource/LimbTextureData.cs"
       ],
       "engineSources": [],
-      "referenceSources": [],
+      "referenceSources": [
+        "source-reference/Original/LimbSkin/LimbTextureData.cs"
+      ],
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/LimbTextureData.cs"
       ],
       "compilerMissing": true,
       "referencedBy": [
-        "runtime/Original/FullSource/LimbRenderer.cs"
+        "runtime/Original/FullSource/LimbRenderer.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs"
       ]
     },
     {
@@ -31007,6 +31213,19 @@
       ]
     },
     {
+      "name": "Mask",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/UI.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
+    },
+    {
       "name": "Masks",
       "category": "recovered source",
       "requiresAuthoredAssets": false,
@@ -31091,6 +31310,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/Rendering/TextureTransfers.cs",
+        "runtime/Engine/RuntimeContracts.cs",
         "runtime/Engine/SceneLoader.cs",
         "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Engine/UI.cs",
@@ -31111,7 +31331,8 @@
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs",
         "runtime/Original/FullSource/WeaponFactory.cs",
-        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs"
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs"
       ]
     },
     {
@@ -31296,7 +31517,8 @@
         "source-reference/Original/CharacterDependencies/TeamOperator.cs",
         "source-reference/Original/CharacterDependencies/TimeScaler.cs",
         "source-reference/Original/CharacterDependencies/WeaponAimer.cs",
-        "source-reference/Original/CharacterDependencies/WeaponBase.cs"
+        "source-reference/Original/CharacterDependencies/WeaponBase.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs"
       ]
     },
     {
@@ -31441,6 +31663,7 @@
       "referencedBy": [
         "runtime/Engine/BallisticRuntimeHost.cs",
         "runtime/Engine/Physics.cs",
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Original/FullSource/EditorWeaponComponent.cs",
         "runtime/Original/FullSource/WeaponFactory.cs"
       ]
@@ -31496,7 +31719,8 @@
         "runtime/Original/FullSource/PaintableSurface.cs",
         "runtime/Original/FullSource/Projectile.cs",
         "runtime/Original/FullSource/WeaponFactory.cs",
-        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs"
+        "source-reference/Original/Assets/Scripts/Assembly-CSharp/Projectile.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs"
       ]
     },
     {
@@ -31748,7 +31972,8 @@
         "source-reference/Original/CharacterBody.cs",
         "source-reference/Original/CharacterDependencies/Grenade.cs",
         "source-reference/Original/CharacterDependencies/Limb.cs",
-        "source-reference/Original/CharacterDependencies/Mission.cs"
+        "source-reference/Original/CharacterDependencies/Mission.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs"
       ]
     },
     {
@@ -32285,7 +32510,8 @@
         "source-reference/Original/CharacterDependencies/TeamOperator.cs",
         "source-reference/Original/CharacterDependencies/TimeScaler.cs",
         "source-reference/Original/CharacterDependencies/WeaponAimer.cs",
-        "source-reference/Original/CharacterDependencies/WeaponBase.cs"
+        "source-reference/Original/CharacterDependencies/WeaponBase.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs"
       ]
     },
     {
@@ -32848,7 +33074,9 @@
         "source-reference/Original/CharacterDependencies/Mission.cs",
         "source-reference/Original/CharacterDependencies/PlayerController.cs",
         "source-reference/Original/CharacterDependencies/TeamOperator.cs",
-        "source-reference/Original/CharacterDependencies/WeaponBase.cs"
+        "source-reference/Original/CharacterDependencies/WeaponBase.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs",
+        "source-reference/Original/LimbSkin/LimbTextureData.cs"
       ]
     },
     {
@@ -34348,6 +34576,7 @@
         "runtime/Engine/BallisticEffects.cs",
         "runtime/Engine/BallisticEngine.cs",
         "runtime/Engine/BallisticRuntimeHost.cs",
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/AmmunitionBase.cs",
         "runtime/Original/Ballistics/BallisticHitMeshEffect.cs",
@@ -34837,7 +35066,9 @@
         "source-reference/Original/CharacterDependencies/Room.cs",
         "source-reference/Original/CharacterDependencies/TeamOperator.cs",
         "source-reference/Original/CharacterDependencies/WeaponAimer.cs",
-        "source-reference/Original/CharacterDependencies/WeaponBase.cs"
+        "source-reference/Original/CharacterDependencies/WeaponBase.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs",
+        "source-reference/Original/LimbSkin/LimbTextureData.cs"
       ]
     },
     {
@@ -35194,7 +35425,8 @@
         "runtime/Original/FullSource/WeaponRenderer.cs",
         "source-reference/Original/ArmDependencies/WeaponBase.cs",
         "source-reference/Original/BehaviorDesigner/BehaviorGameGUI.cs",
-        "source-reference/Original/CharacterDependencies/WeaponBase.cs"
+        "source-reference/Original/CharacterDependencies/WeaponBase.cs",
+        "source-reference/Original/LimbSkin/LimbTextureData.cs"
       ]
     },
     {
@@ -35431,7 +35663,9 @@
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/PostEffectsBase.cs",
-        "runtime/Original/FullSource/WeaponRenderer.cs"
+        "runtime/Original/FullSource/WeaponRenderer.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs",
+        "source-reference/Original/LimbSkin/LimbTextureData.cs"
       ]
     },
     {
@@ -36584,6 +36818,19 @@
       "referencedBy": [
         "runtime/Original/FullSource/UISettingsPanel.cs"
       ]
+    },
+    {
+      "name": "Scrollbar",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/UI.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
     },
     {
       "name": "SecureWeapon",
@@ -37830,7 +38077,9 @@
       "referenceSources": [],
       "archiveEntries": [],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Engine/RuntimeContracts.cs"
+      ]
     },
     {
       "name": "SerializedAssetResolver",
@@ -37845,6 +38094,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/AmmunitionLoader.cs",
+        "runtime/Engine/RuntimeContracts.cs",
         "runtime/Engine/SceneLoader.cs"
       ]
     },
@@ -38217,6 +38467,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/Rendering/GraphicsPrimitives.cs",
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Engine/UI.cs",
         "runtime/Original/FullSource/PoweredLight.cs"
       ]
@@ -38396,6 +38647,7 @@
         "runtime/Engine/AudioMixer.cs",
         "runtime/Engine/PlayerPrefs.cs",
         "runtime/Engine/Rendering/GraphicsPrimitives.cs",
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/VariableSynchronizer.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/Explosion.cs",
@@ -39854,6 +40106,7 @@
       "referencedBy": [
         "runtime/Engine/PhysicsComponents.cs",
         "runtime/Engine/Rendering/GraphicsPrimitives.cs",
+        "runtime/Engine/RuntimeContracts.cs",
         "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Original/FullSource/MissionHelper.cs",
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs",
@@ -40681,6 +40934,8 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/SceneLoader.cs",
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Engine/UI.cs",
         "runtime/Original/AmmunitionBase.cs",
         "runtime/Original/FullSource/AmmunitionBase.cs",
@@ -40703,6 +40958,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Original/FullSource/MarksmanTargetIndicator.cs"
       ]
     },
@@ -40899,7 +41155,8 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Original/FullSource/LimbRenderer.cs",
-        "runtime/Original/FullSource/StagingDebugUI.cs"
+        "runtime/Original/FullSource/StagingDebugUI.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs"
       ]
     },
     {
@@ -42209,7 +42466,9 @@
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/CameraMotionBlur.cs",
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/DepthOfField.cs",
         "runtime/Original/FullSource/UnityStandardAssets/ImageEffects/NoiseAndGrain.cs",
-        "runtime/Original/FullSource/WeaponFactory.cs"
+        "runtime/Original/FullSource/WeaponFactory.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs",
+        "source-reference/Original/LimbSkin/LimbTextureData.cs"
       ]
     },
     {
@@ -42224,7 +42483,8 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
-        "runtime/Original/FullSource/LimbTextureData.cs"
+        "runtime/Original/FullSource/LimbTextureData.cs",
+        "source-reference/Original/LimbSkin/LimbTextureData.cs"
       ]
     },
     {
@@ -42744,7 +43004,9 @@
         "runtime/Original/FullSource/LimbRenderer.cs"
       ],
       "engineSources": [],
-      "referenceSources": [],
+      "referenceSources": [
+        "source-reference/Original/LimbSkin/LimbRenderer.cs"
+      ],
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/LimbRenderer.cs"
       ],
@@ -45825,6 +46087,7 @@
         "runtime/Engine/Rendering/SpriteComponents.cs",
         "runtime/Engine/SceneLoader.cs",
         "runtime/Engine/SerializationTypes.cs",
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Engine/SerializedEngineTypes.cs",
         "runtime/Engine/UnityEventSystems.cs",
         "runtime/Original/Ballistics/BallisticMaterial.cs",
@@ -45875,7 +46138,9 @@
         "source-reference/Original/CharacterDependencies/Limb.cs",
         "source-reference/Original/CharacterDependencies/MuscleControl.cs",
         "source-reference/Original/CharacterDependencies/Room.cs",
-        "source-reference/Original/CharacterDependencies/WeaponBase.cs"
+        "source-reference/Original/CharacterDependencies/WeaponBase.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs",
+        "source-reference/Original/LimbSkin/LimbTextureData.cs"
       ]
     },
     {
@@ -45915,6 +46180,7 @@
         "runtime/Engine/RuntimeContracts.cs",
         "runtime/Engine/SceneLoader.cs",
         "runtime/Engine/SerializationTypes.cs",
+        "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Engine/SerializedEngineTypes.cs",
         "runtime/Engine/SpringJoint.cs",
         "runtime/Engine/WeaponHost.cs",
@@ -46067,7 +46333,8 @@
         "source-reference/Original/CharacterDependencies/Room.cs",
         "source-reference/Original/CharacterDependencies/TeamOperator.cs",
         "source-reference/Original/CharacterDependencies/WeaponAimer.cs",
-        "source-reference/Original/CharacterDependencies/WeaponBase.cs"
+        "source-reference/Original/CharacterDependencies/WeaponBase.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs"
       ]
     },
     {
@@ -46142,6 +46409,19 @@
       "archiveEntries": [
         "export/ExportedProject/Assets/Scripts/Assembly-CSharp/VersionCommand.cs"
       ],
+      "compilerMissing": false,
+      "referencedBy": []
+    },
+    {
+      "name": "VerticalLayoutGroup",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/UI.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": []
     },
@@ -48574,7 +48854,8 @@
         "source-reference/Original/CharacterDependencies/Room.cs",
         "source-reference/Original/CharacterDependencies/SerializableEquipment.cs",
         "source-reference/Original/CharacterDependencies/WeaponAimer.cs",
-        "source-reference/Original/CharacterDependencies/WeaponBase.cs"
+        "source-reference/Original/CharacterDependencies/WeaponBase.cs",
+        "source-reference/Original/LimbSkin/LimbRenderer.cs"
       ]
     }
   ],
@@ -48771,6 +49052,10 @@
       "runtime/Original/FullSource/SerializableGraphicsSettings_v3.cs",
       "runtime/Original/FullSource/SerializableGraphicsSettings_v_0_0_7_008.cs"
     ],
+    "EdgeFindMode": [
+      "runtime/Original/FullSource/LimbRenderer.cs",
+      "source-reference/Original/LimbSkin/LimbRenderer.cs"
+    ],
     "Emitter": [
       "runtime/Original/FullSource/Emitter.cs",
       "source-reference/Original/CharacterDependencies/Emitter.cs"
@@ -48866,6 +49151,18 @@
     "LimbId": [
       "runtime/Original/FullSource/LimbId.cs",
       "source-reference/Original/CharacterDependencies/LimbId.cs"
+    ],
+    "LimbLayer": [
+      "runtime/Original/FullSource/LimbLayer.cs",
+      "source-reference/Original/LimbSkin/LimbLayer.cs"
+    ],
+    "LimbRenderer": [
+      "runtime/Original/FullSource/LimbRenderer.cs",
+      "source-reference/Original/LimbSkin/LimbRenderer.cs"
+    ],
+    "LimbTextureData": [
+      "runtime/Original/FullSource/LimbTextureData.cs",
+      "source-reference/Original/LimbSkin/LimbTextureData.cs"
     ],
     "Lockable": [
       "runtime/Original/FullSource/DoorController.cs",
@@ -49068,6 +49365,10 @@
     "TooltipAttribute": [
       "runtime/Engine/Math.cs",
       "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/TooltipAttribute.cs"
+    ],
+    "TraceResult": [
+      "runtime/Original/FullSource/LimbRenderer.cs",
+      "source-reference/Original/LimbSkin/LimbRenderer.cs"
     ],
     "Type": [
       "runtime/Engine/OriginalArmPhysicsHost.cs",
