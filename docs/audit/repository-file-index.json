@@ -2,11 +2,11 @@
   "countsByPackageRole": {
     "build-or-validation-input": 107,
     "game-source-or-asset": 136,
-    "repository-only": 995,
+    "repository-only": 997,
     "runtime-build-source": 647,
     "scene-package-source": 3
   },
-  "fileCount": 1888,
+  "fileCount": 1890,
   "files": [
     {
       "bytes": 1658,
@@ -36,22 +36,22 @@
       "sha256": "a0e2b0be8186bd17d66f8bee2a5d4cb85f0f1a4224426175e3a331e2bd8cb9d7"
     },
     {
-      "bytes": 11847,
+      "bytes": 2219,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "AGENTS.md",
-      "sha256": "8e513841a9f2e92a160f01cf40053c06f9a85ebe0279325631b699be8cc273c0"
+      "sha256": "6fa6b2505a0ed075f0f721609f43a71b051e08d8393687eba0df478314301748"
     },
     {
-      "bytes": 11190,
+      "bytes": 11877,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "AGENT_INSTRUCTIONS.md",
-      "sha256": "693ca7a63b4ae952433d94cb8efa6602b18c2b8378b53e5dc2539db7130f694d"
+      "sha256": "2625b743f1377025c415edfd5ac7ea03bf50d066781c76f6affc8ec976db00fc"
     },
     {
       "bytes": 5887,
@@ -72,13 +72,13 @@
       "sha256": "3e5df6404789d96c0b5b5f556d3ed02447bee0a97e340f6ec14c1a59c0a23d16"
     },
     {
-      "bytes": 4732,
+      "bytes": 3570,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "NEXT_AGENT.md",
-      "sha256": "9a25fa8de79330b3274a2844962338c4ced38785145cdc5d4e3bf3697cd57384"
+      "sha256": "93db0f3f4f38a16741553246087e90673a71decd3de7bb1a1ed4da93476173df"
     },
     {
       "bytes": 9885,
@@ -207,13 +207,13 @@
       "sha256": "d1505fc293c83e03a1937f2b380b98e1a5a2db0e8ad3c88c743bd3e03435b737"
     },
     {
-      "bytes": 19889,
+      "bytes": 4192,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "docs/COMPLETE_WASM_PORT_ROADMAP.md",
-      "sha256": "262252891de8a9a404a1d37ac1b45a04bfb4730bdfab141b0c5aba88b31425f9"
+      "sha256": "2e2faa04c8cbd4ebcdc81ceea90a36bbd36cce4b91e073949aa5a50cac4f35b9"
     },
     {
       "bytes": 5126,
@@ -252,13 +252,13 @@
       "sha256": "92821aed6f0527ce0cfd1820e92cf9f00b217bf7079366d423b18546fcadc08a"
     },
     {
-      "bytes": 9280,
+      "bytes": 5369,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "docs/GAMEPLAY_COMPLETION_ROADMAP.md",
-      "sha256": "8b213d7b52db394a1b404f742dc6fd588546da37fdf18d171b7d84af5d1de495"
+      "sha256": "fb3bf16520f1b8c7440dee471b558ad03e6adfbf0f4e6418d42ccdc45541d767"
     },
     {
       "bytes": 3765,
@@ -835,6 +835,24 @@
       "packageRole": "repository-only",
       "path": "docs/audit/source-dependencies.json",
       "sha256": "16af7ee487eca13d9f79d7b608bd20c4cefd63a3d6412a13f225f6167b6d1dd5"
+    },
+    {
+      "bytes": 2908,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": false,
+      "matchesLatestSourceInventory": false,
+      "packageRole": "repository-only",
+      "path": "docs/evidence/ORIGINAL_PLAYER_ASSET_RECOVERY_2026-10-23.md",
+      "sha256": "acf622fe2ad38a687afa5075ba660e2064d031f3c356cd044e9844401a2eceac"
+    },
+    {
+      "bytes": 3068,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": false,
+      "matchesLatestSourceInventory": false,
+      "packageRole": "repository-only",
+      "path": "docs/evidence/PR69_PUBLISH_VERIFICATION_2026-10-23.md",
+      "sha256": "d3f0720e1e230ffd693ad00d70adedd948fd89824ae730ac879b3c4683ee8d42"
     },
     {
       "bytes": 20422,
@@ -17001,7 +17019,7 @@
       "sha256": "7a72a008c918982a5f11c9a0e809e76e6738d1567f03a69861242365f567d9c5"
     }
   ],
-  "repositoryHead": "d98fe1393640924e1c21121b4fa00162d243c225",
+  "repositoryHead": "89255ef2ccac94ee42dd6c4727607afc3d6c7358",
   "reviewedCandidates": [
     {
       "decision": "keep-and-package",

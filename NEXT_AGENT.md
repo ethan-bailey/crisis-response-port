@@ -1,41 +1,29 @@
-# Crisis Response Port — WorkMode handoff
+# Crisis Response parity handoff
 
-## Checkpoint
+## Current checkpoint
 
-- Local checkout: `codex/game-scene-name-normalization-20261023`, checkpoint before this documentation commit `fbd5dbe9750ac4bfb585bf6da09a14ae3aa26999`. This documentation update changes no runtime source.
-- Live GitHub state was checked through the GitHub connector: `develop/wasm` is `c6cee907eb12504e91e33963cd5e512fe20c491a`; live feature branch is `b3640f02009147eb7a3350489db382bb9ad30983`; no open PRs were returned. The local branch contains 12 commits not on the live feature branch. Do not force-update or discard them; reconcile with live `develop/wasm` when the correct GitHub write path is available. GitHub Actions remain disabled.
-- Shell `git fetch` previously failed because this scratch checkout had no GitHub CLI/credential-helper credentials. This is separate from the connected GitHub API tool, which successfully read branch and PR state during this session. Keep the pinned SDK at .NET 8.0.426.
-- Codespaces capacity: the owner has used 90% of their allowance through **2026-11-01**. Avoid Codespaces until then unless a required gate cannot be completed here and no practical alternative is available.
+- Development line: `develop/wasm`. This evidence batch landed at `9c1e1f4e0f8d80bc3b3b80294545e4a075ff86a2`; this handoff/instruction cleanup is documentation-only. Query live HEAD before the next edit.
+- No open PRs at the last check. The hourly parity automation is paused; its already-running cycle completed at `92e68c43c1f5738cca16afd53605a92a18be3d10`.
+- No Site version was saved or deployed. The existing private Site remains v31.
+- Original archive SHA-256: `5a12ff494b26713d149f9be026619732247f817ddf8944a399b6ee1d12ea0ab3`. Do not add its binaries to Git.
+- `scripts/extract_original_player_data.py` passed `py_compile` and a full extraction of the original archive: 411 player-data files / 185,036,038 bytes. Asset-container hashes and the remaining parser task are recorded in `docs/evidence/ORIGINAL_PLAYER_ASSET_RECOVERY_2026-10-23.md`.
+- Touch adapter tests passed 18/18 against source blobs identical to develop code SHA `a75983409c8aeeab76f53afeab5c0e7a41c428c8`. This does not prove original actor integration or device parity.
+- The selected runtime project compiled at `a75983409c8aeeab76f53afeab5c0e7a41c428c8` under SDK 8.0.426 with 0 errors / 45 warnings, and its contracts ran. Their report still says `fullGameParity=false`, `fullUnityParity=false`, and two unresolved built-ins. This is not a complete original-source build or parity pass.
+- The current Work Mode shell has no .NET SDK, Unity Editor, `7zz`, or `UnityPy`; no .NET build was run in this evidence batch.
 
-## Verified project state
+## Gates 1–10
 
-- Last full runtime rebuild: 0 compile errors using SDK 8.0.426 and `/tmp/libprocshim.so`. Release Blazor WASM publish passed.
-- EngineChecks passed 69 assertions; FoundationChecks passed 121 assertions. The latter uses the compile-only `FullSource.Projectile` declaration in `runtime/FoundationChecks/FoundationSourceBoundaryStubs.cs`; it does not alter production runtime sources.
-- The package at `/tmp/crisis-response-site-20bfc1d` verified 766 output files, 199 Blazor boot resources and 195 WASM files. Browser/package acceptance remains separate from a successful compile.
-- All prior focused checks and limitations are recorded in the preceding Git history. This documentation-only task does not require rerunning .NET builds.
+1. **Asset/scene closure — open.** The original player archive contains `resources.assets`, `sharedassets*.assets`, and `Resources/unity_builtin_extra`. String scanning found `.308 Winchester casing` and related names, but no object IDs or geometry have been parsed. Missing GUID `b4b69dc6c74eeb54cbd22d28e37f9a19` / fileID `4300000` remains unresolved. The owner-approved compatibility mapping is limited to the casing root; do not substitute the five Marksman round/projectile references. Built-in records also remain unparsed.
+2. **Unity compatibility/full source compile — open.** The previous build covers the selected runtime graph only.
+3. **Original actors/lifecycle — open.** Current `WeaponHost` still defines/uses transport `Crisis.Runtime.Weapons.CharacterBody`. Authored Operator/Occupant runtime loading, all 19 limbs on live actors, and two independent lifecycles with Mission/global dependencies are unverified.
+4. **Controls — partial.** The adapter tests pass; integration through the original actor and physical-device checks remain open.
+5. **IK and physics — open.**
+6. **Weapons and combat — open.**
+7. **Physiology and treatment — open.**
+8. **AI, missions, and progression — open.**
+9. **Presentation and platform behavior — open.**
+10. **Original-vs-port traces, exact-SHA browser gameplay, and iPhone 16 Safari acceptance — open.**
 
-## .NET preflight documentation added
+## Next bounded action
 
-- `docs/DOTNET_BUILD_RUNBOOK.md` records the pinned SDK setup, existing process-stat shim, restore-first commands, correct WASM publish path, failure classification, and fixes for observed failures.
-- `AGENT_INSTRUCTIONS.md` now requires following the runbook before the first .NET command in a fresh checkout.
-- The repository file index must be regenerated and checked after this doc and handoff update.
-
-## Known failures and fixes
-
-- `dotnet` aborted before compilation in `Process.GetStat` or `/proc` lookup. The pinned SDK plus `LD_PRELOAD=/tmp/libprocshim.so` worked; classify this as runner startup, not a source error.
-- `NETSDK1004` / missing `project.assets.json`: restore the exact project, then use `--no-restore` for build/run.
-- `NETSDK1112` during WebAssembly publish with `--no-restore`: run `dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release` with restore enabled so the WASM runtime pack is resolved.
-- FoundationChecks initially lacked `Crisis.Runtime.FullSource.Projectile`; a compile-only boundary declaration fixed the check graph without changing production code.
-- An invalid direct MSBuild switch and direct MSBuild process-name exception were not compiler failures. Use the pinned CLI and operation-specific flags in the runbook.
-- `wasm-tools` produced an optional optimization warning during a successful publish; the warning did not block output.
-- Shell fetch credential failure blocks CLI Git sync, not local builds or GitHub connector reads. Do not place credentials in repository files.
-
-## Remaining project gates
-
-- Real Chromium/WebKit/browser boot and touch gameplay smoke are unavailable in this workspace. Do not publish a new Site build until those gates pass. Private Site v31 remains the last deployed build.
-- Marksman references missing Mesh GUID `b4b69dc6c74eeb54cbd22d28e37f9a19`, fileID `4300000`. The recovered candidate `Assets/Mesh/308 Winchester casing hi.asset` (GUID `cd74722033652fb409431b2947740490`) is only an owner-approved possible compatibility replacement, not original identity. Preserve the missing-GUID provenance record and use the existing scoped script if applying it.
-- Original Operator/Occupant two-actor lifecycle and gameplay acceptance remain unverified despite successful compilation. Continue with real prefab lifecycle, two-actor spawn/equip/move/hit/physiology/ragdoll, then matching browser verification.
-
-## Next action
-
-After committing this documentation update, reconcile the local feature branch with live `develop/wasm` before any push or PR operation. Use the connected GitHub API for reads; arrange persistent host credentials if shell `git fetch` is required. Do not repeat passed local checks without source or dependency changes.
+Use a Unity 2017.2-compatible asset reader, ideally the pinned `UnityPy==1.25.4` referenced by `scripts/recover_unity_2017_2_resources.py`, to parse the extracted player assets. Record Mesh object IDs, types, names, geometry hashes, and built-in records; resolve the original GUID only with evidence. The extractor and evidence note are in the repository. If the parser cannot be made available, record that exact tool blocker once and continue an independent source-backed gate. Keep changes on `develop/wasm`, commit verified slices directly, and do not deploy until all gates pass on one SHA.
