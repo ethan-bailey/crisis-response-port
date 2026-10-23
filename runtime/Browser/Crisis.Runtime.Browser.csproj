@@ -5,4 +5,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.21" PrivateAssets="all" />
     <ProjectReference Include="../Crisis.Runtime.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="../../game/browser-input.mjs" Link="wwwroot/browser-input.mjs" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>
