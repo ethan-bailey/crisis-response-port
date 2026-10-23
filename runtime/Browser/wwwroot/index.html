@@ -15,13 +15,16 @@ await window.__bootReady;
   const contracts=JSON.parse(await call('Verify'));
   document.querySelector('#contracts').textContent=contracts.status+' · '+contracts.contracts.length+' verified runtime contracts';
   window.__runtimeContracts=contracts;
-      const originalSceneFlowPaths=[{name:"MainMenu",path:"Assets/Scenes/Title.unity"},{name:"Transition",path:"Assets/Scenes/Transition.unity"},{name:"Mission 01 (build index 1)",path:"Assets/Scenes/Mission 01.unity"},{name:"Marksman",path:"Assets/Scenes/Marksman range.unity"}];
-      const scenePackage=(await loadOriginalScenePackage())
+      if(new URLSearchParams(location.search).has("scene-smoke")){
+       const originalSceneFlowPaths=[{name:"MainMenu",path:"Assets/Scenes/Title.unity"},{name:"Transition",path:"Assets/Scenes/Transition.unity"},{name:"Mission 01 (build index 1)",path:"Assets/Scenes/Mission 01.unity"},{name:"Marksman",path:"Assets/Scenes/Marksman range.unity"}];
+       const scenePackage=(await loadOriginalScenePackage())
  .replace('"m_Name":false','"m_Name":"No"')
  .replace('"m_Name":true','"m_Name":"Yes"');
-      const loadedScenes=[];
-      for(const stage of originalSceneFlowPaths){const report=JSON.parse(await call("LoadScene",scenePackage,stage.path));if(report.scene!==stage.path)throw new Error("Scene loader returned "+report.scene+" for "+stage.name);loadedScenes.push({name:stage.name,path:stage.path,report});if(stage.path==="Assets/Scenes/Mission 01.unity"){const initialized=JSON.parse(await call("InitializeGlobalContext"));if(initialized.initialized===false)throw new Error("Global.Initialize did not bind Global.Context");}}
-      window.__originalSceneFlow=loadedScenes;window.__originalSceneFlowReady=true;
+       const loadedScenes=[];
+       for(const stage of originalSceneFlowPaths){const report=JSON.parse(await call("LoadScene",scenePackage,stage.path));if(report.scene!==stage.path)throw new Error("Scene loader returned "+report.scene+" for "+stage.name);loadedScenes.push({name:stage.name,path:stage.path,report});if(stage.path==="Assets/Scenes/Mission 01.unity"){const initialized=JSON.parse(await call("InitializeGlobalContext"));if(initialized.initialized===false)throw new Error("Global.Initialize did not bind Global.Context");}}
+       window.__originalSceneFlow=loadedScenes;
+      } else window.__originalSceneFlow=[];
+      window.__originalSceneFlowReady=true;
 
   await call('ResetInput');
   const held={left:false,right:false,sprint:false,fire:false,kneel:false,stand:false,magazine:false,switchWeapons:false};

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { gzipSync } from "node:zlib";
+import { readFile } from "node:fs/promises";
 import { test } from "node:test";
 import { loadOriginalScenePackage } from "../scene-data/scene-package-loader.mjs";
 
@@ -55,5 +56,15 @@ test("rejects an invalid chunk path before fetching it", async () => {
     await assert.rejects(loadOriginalScenePackage(), /invalid chunk path/);
   } finally {
     globalThis.fetch = originalFetch;
+  }
+});
+
+test("defers the 220 MB original scene preflight unless scene-smoke is requested", async () => {
+  const game = await readFile(new URL("../game/index.html", import.meta.url), "utf8");
+  const runtime = await readFile(new URL("../runtime/Browser/wwwroot/index.html", import.meta.url), "utf8");
+  for (const [name, html] of [["game", game], ["runtime", runtime]]) {
+    const guard = html.indexOf('has("scene-smoke")');
+    const load = html.indexOf("loadOriginalScenePackage())");
+    assert.ok(guard >= 0 && load > guard, `${name}: heavy scene package must be behind the opt-in smoke flag`);
   }
 });

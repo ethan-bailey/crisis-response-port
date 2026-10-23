@@ -146,6 +146,14 @@ async function load(){
    {name:"Marksman",path:"Assets/Scenes/Marksman range.unity"}
   ];
   const originalSceneFlowReady=runtimeReady.then(async()=>{
+   // The complete recovered Unity package expands to ~220 MB. Scene validation
+   // is diagnostic work, not required by the playable mesh/runtime path, so
+   // keep it off the iPhone startup path unless explicitly requested.
+   if(!new URLSearchParams(location.search).has("scene-smoke")){
+    window.__originalSceneFlow=[];
+    markLoaded("sceneFlowReady");
+    return [];
+   }
    const scenePackage=(await loadOriginalScenePackage()).replace('"m_Name":false','"m_Name":"No"').replace('"m_Name":true','"m_Name":"Yes"');
    const loaded=[];
    for(const stage of originalSceneFlowPaths){
