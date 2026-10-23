@@ -167,6 +167,8 @@ Use the exact command for the operation rather than copying flags between
 | `DebugUtils` / `Process.get_ProcessName` exception from direct MSBuild | Runner startup | Prefer the pinned `dotnet` CLI with the process shim. Do not record it as a compiler diagnostic. |
 | `MSB1025` from direct MSBuild while the runner cannot read process metadata | Runner startup | Use the pinned `dotnet` CLI with the existing process shim; do not repeatedly retry direct MSBuild or edit project/source files. |
 | `wasm-tools` workload optimization warning with successful publish | Optional workload warning | Record the warning; it did not prevent the verified publish. Install workloads only if a later required gate specifically needs them. |
+| `NullReferenceException` in original `PlayerController.Update` at `InteriorMode.UI.InteractionMenu.Visible` | Headless fixture omitted original InteriorMode UI | Do not classify as an input/compiler failure. The controller reads the authored menu before completing movement input; verify that the original UI was initialized before the callback. On 2026-10-23, activating the entire authored UI and manually invoking `Awake` stalled the headless mission during actor spawning, so do not repeat that workaround without isolating its startup dependency. |
+| `NotSupportedException: Sheared capsule transforms require native PhysX shape geometry` during projectile raycast | Runtime query geometry limitation | Preserve the exact source transforms and record the missing native PhysX dependency. Do not silently replace the ray hit or deform the actor hierarchy. The original FullSource projectile-to-limb callbacks exist; this exception is in the analytic capsule query path. |
 | `CSxxxx` diagnostics after compilation begins | Source/compiler result | Preserve the exact exit status and full diagnostics; compare only against a baseline built from the same compiler graph. |
 
 Do not use `dotnet build`/`run`/`publish` exit codes as interchangeable evidence.
@@ -255,6 +257,34 @@ fields, and Windows-only registry calls); they are not build errors. Capture the
 full output at `/tmp/cpr-full-build-final.log` if a later run needs individual
 warning locations. Do not treat this gate as completion of gate 8 or as browser
 or mobile acceptance.
+
+## Gate 6 input and projectile path inspection
+
+On 2026-10-23, the one bounded input probe reached the original
+`PlayerController.Update` and failed because the headless fixture had disabled
+`InteriorMode.UI`; the original controller dereferences
+`UI.InteractionMenu.Visible` before it finishes processing movement. A retry
+that activated the authored UI and called its original `Awake` stalled while
+the mission spawned actors. The temporary probe was removed. Treat this as a
+headless UI/bootstrap dependency, not a compiler error or a broken input map.
+Do not repeat full UI activation until its startup callbacks are isolated.
+
+The live projectile path has a different boundary: original
+`Crisis.Runtime.FullSource.Projectile.Update` raycasts and dispatches to its
+implemented `HandleLimbHit`, then original `Limb.HandleProjectile` and
+`Limb.HandleInterior` apply material interaction, trauma, physiology/vitals,
+shock, and wounds. `runtime/Engine/ProjectileFlightHost.cs` contains an
+unsupported `HandleLimbHit` only for the separate global/transport projectile
+partial; it is not the implementation used by the recovered FullSource
+projectile. Original entry/exit tracing requires `LimbRenderer.Awake` to find
+its child `MeshRenderer` and parent collider, a non-empty authored `skins` list
+with readable pixel data, and `MissionHelper.Instance.RenderMaterialInstance`;
+`LimbTextureData.Initialize` builds its trace mask from skin alpha. A live test
+also requires a successful ray query. The headless analytic capsule query
+rejects sheared transforms with `NotSupportedException` because exact native
+PhysX shape geometry is unavailable. Keep this gate partial until those source
+setup and query prerequisites can be exercised without replacing the original
+hit path.
 
 ## Recovered AI source closure and latest Gate 2–6 preflight
 

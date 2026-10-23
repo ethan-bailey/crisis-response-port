@@ -4,7 +4,7 @@
 
 - Branch: `develop/wasm`.
 - Verified source commit: `90f9f67ceb8fb6c01ed37742e346196c07c5e395` (`Exercise original operator room clear outcome path`); pushed to `origin/develop/wasm`.
-- This handoff update is docs-only and follows that tested source commit.
+- This documentation checkpoint records the bounded Gate 6 input probe and projectile source inspection; it does not change runtime code. Rebuild/runtime verification remains tied to source commit `90f9f67`.
 - Gate 1 evidence: `docs/evidence/GATE1_CHARACTER_ACCEPTANCE_2026-10-23.md`.
 - Gates 2–6 evidence: `docs/evidence/GATES_2_TO_6_PROGRESS_2026-10-23.md`.
 - Before .NET work read `AGENT_INSTRUCTIONS.md` and `docs/DOTNET_BUILD_RUNBOOK.md`.
@@ -43,7 +43,9 @@ Pinned SDK .NET 8.0.426 with `/tmp/libprocshim.so`; no Codespaces or GitHub Acti
 - MissionEndMenu was inactive because MissionUI's parent was deactivated. Reactivate the original MissionUI before Awake and assert the authored end menu is visible.
 - First room-path fixture run selected a TeamOperator whose `Body` reference was uninitialized. Select an original TeamOperator with a bound CharacterBody; all seven source room clears then passed.
 - Initial `git diff --check` found trailing spaces in the report header. Removed; final check passes.
+- Original input probe reached `PlayerController.Update` and threw `NullReferenceException` at `InteriorMode.UI.InteractionMenu.Visible`, because the headless fixture disables that authored UI. Manually activating the full original UI and invoking `Awake` stalled the mission during actor spawning. The experimental probe was removed; do not repeat this retry until the UI bootstrap path is isolated.
+- Projectile source inspection corrected the earlier seam description: original `FullSource.Projectile.HandleLimbHit` and `Limb.HandleInterior` are implemented. The unsupported stub is only the separate global/transport projectile partial. Original entry/exit tracing requires a `LimbRenderer` with a child `MeshRenderer`, parent collider, non-empty readable skin texture list, and `MissionHelper.Instance.RenderMaterialInstance`; skin alpha initializes the trace mask. Sheared capsule queries still require native PhysX shape geometry.
 
 ## Next action
 
-Try one focused contract that uses the original input/controller path to move the Operator between rooms. The current headless room test relocates the source body directly and invokes original update methods, so it is not evidence of player input or autonomous movement. If that path is blocked by unsupported input/physics services, record the exact dependency and continue with a bounded inspection of the live projectile-to-limb injury route. Keep Gate 6 partial and stop before Gate 7/8.
+Do not repeat the full authored UI activation probe: it stalls this headless host during mission spawning, and the original input callback dereferences `InteriorMode.UI.InteractionMenu.Visible`. If revisiting input, first isolate the smallest source UI bootstrap required by that callback. The bounded projectile source inspection is complete: next, check whether the authored limb assets supply a child `MeshRenderer`, parent collider, readable non-empty skin list, and initialized `MissionHelper` render material in a focused fixture. Test ray queries only where exact transforms avoid the sheared-capsule native PhysX boundary. Do not replace the FullSource hit or injury path. Gate 6 remains partial. Stop before Gate 7/8 per owner direction.
