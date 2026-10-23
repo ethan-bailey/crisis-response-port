@@ -4,7 +4,9 @@
 <div id="app"></div><section id="runtimeGate"><pre id="contracts" aria-live="polite"></pre><button type="button" data-action="fire">FIRE</button><pre id="inputState" aria-live="polite">FIRE idle</pre></section><div id="blazor-error-ui" style="display:none">Runtime error. Reload to reset.</div>
 <script type="module">
 import { BrowserInput } from './browser-input.mjs';
+window.__bootReady=Blazor.start();
 window.startOriginalRuntime=async()=>{
+await window.__bootReady;
  try{
   const call=(method,...args)=>DotNet.invokeMethodAsync('Crisis.Runtime.Browser',method,...args);
   window.runtimeCall=call;
@@ -39,4 +41,4 @@ window.startOriginalRuntime=async()=>{
   requestAnimationFrame(frame);
  }catch(error){document.querySelector('#contracts').textContent=String(error);window.__runtimeError=String(error)}
 };
-</script><script src="_framework/blazor.webassembly.js"></script></body></html>
+</script><script src="_framework/blazor.webassembly.js" autostart="false"></script></body></html>
