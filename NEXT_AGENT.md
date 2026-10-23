@@ -2,28 +2,22 @@
 
 ## Current checkpoint
 
-- Development line: develop/wasm in ethan-bailey/crisis-response-port. Keep this as the single development branch and use normal fast-forward operations.
-- Source SHA at the start of this verified batch: a75983409c8aeeab76f53afeab5c0e7a41c428c8. The batch rewrites the two stale roadmap documents and this handoff; check git log HEAD for the documentation commit SHA.
-- At batch start the worktree was clean, the branch tracked origin/develop/wasm, and SDK 8.0.426 was selected.
-- Live GitHub check at batch start found no open PRs. Keep Actions disabled. No Site version was saved or deployed.
-- AGENT_INSTRUCTIONS.md and AGENTS.md govern priorities. The updated GAMEPLAY_COMPLETION_ROADMAP.md is the behavioral gate order; COMPLETE_WASM_PORT_ROADMAP.md describes the source-to-WASM evidence path. Historical PR #42, Codespaces-only, old checkpoint/branch, and Actions workflow directions are superseded.
+- Single development line: `develop/wasm`. This batch started from `92e68c43c1f5738cca16afd53605a92a18be3d10`; it adds the original-player extractor and evidence below. Recheck live HEAD before further edits.
+- Open PRs: none at batch start. GitHub Actions remain disabled. No Site version was saved or deployed.
+- The exact original archive is preserved by the user; archive SHA-256: `5a12ff494b26713d149f9be026619732247f817ddf8944a399b6ee1d12ea0ab3`.
+- `scripts/extract_original_player_data.py` passed compilation and extraction: 411 files / 185,036,038 bytes; see `docs/evidence/ORIGINAL_PLAYER_ASSET_RECOVERY_2026-10-23.md`.
+- Touch source blobs on develop at code SHA `a75983409c8aeeab76f53afeab5c0e7a41c428c8` exactly matched the focused local files. `node --test scripts/browser_input_test.mjs` passed 18/18, including stationary hold-fire, release/cancel, joystick aiming and rim sprint. This validates the input adapter only, not the integrated original actor or an iPhone session.
+- The prior full selected-runtime build at `a75983409c8aeeab76f53afeab5c0e7a41c428c8` passed under .NET SDK 8.0.426 with 0 errors / 45 warnings, and runtime contracts passed while reporting `fullGameParity=false`, `fullUnityParity=false`, and two unresolved built-ins. Do not call this a full-source or parity pass. This WorkMode shell currently has no `dotnet`, Unity Editor, `7zz`, or `UnityPy`; no build was run in this batch.
+- The private Sites deployment remains v31; it has not been updated or authenticated gameplay-tested.
 
-## Verified evidence for source SHA a75983409c8aeeab76f53afeab5c0e7a41c428c8
+## Gate state
 
-- SDK: dotnet --version -> 8.0.426.
-- dotnet build runtime/Crisis.Runtime.csproj --no-incremental -> passed, 0 errors and 45 warnings. This project includes Engine/**/*.cs and Original/**/*.cs; it is not the entire recovered original source tree.
-- dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -c Release -> returned PASS contract JSON. The report says fullGameParity=false, fullUnityParity=false, and unresolvedBuiltins=2. It does not prove original scene playback or playable parity.
-- python3 scripts/scene_dependency_audit.py source-reference/Original /tmp/crisis-scene-audit.md -> 4 assets, 3 dependency edges, 123 unresolved GUIDs. This curated source-reference/Original directory is not the full six-scene Unity project.
-- A search for a complete package/manifest under /tmp found none. The full source package needed by the scene-flow runner is unavailable in this Codespace.
-- git diff --check passed for the roadmap refresh.
+1. Asset closure remains open. The original player archive contains Unity `resources.assets`, `sharedassets*.assets`, and `Resources/unity_builtin_extra`. A string scan found `.308 Winchester casing` and related names, but no serialized Mesh IDs or geometry have yet been parsed. The missing GUID `b4b69dc6c74eeb54cbd22d28e37f9a19` / fileID `4300000` remains unresolved. The approved compatibility substitution is limited to the casing root; do not substitute the five Marksman round/projectile references. Required built-ins remain unparsed.
+2. Unity compatibility and complete original C# graph compilation remain incomplete. The previous SDK build covers the selected runtime graph only.
+3. The source actor is not yet the sole runtime owner: the current source still includes transport `WeaponHost` / `Crisis.Runtime.Weapons.CharacterBody`. Authored Operator/Occupant loading and two-actor lifecycle with real Mission/global dependencies are unverified.
+4. Input adapter tests pass; routing through the original actor and device acceptance remain open.
+5–10. Original IK/physics, full combat, physiology, AI/mission progression, presentation/platform behavior, cross-scene original-vs-port traces, browser tests, and real iPhone 16 Safari acceptance remain open.
 
-## Gates still open
+## Next bounded action
 
-1. Resolve original scene/asset dependencies for all six scenes. In particular, original mesh GUID b4b69dc6c74eeb54cbd22d28e37f9a19 / fileID 4300000 for the .308 casing and required built-ins remain unverified. Do not use a substitute without original evidence. Capture native scene flow.
-2. Verify rendered Marksman gameplay and in-scene FIRE behavior; current contract checks do not establish either.
-3. Prove two independently operating authored Operator/Occupant actors through full lifecycle with all 19 limbs and real Mission/global dependencies; prefab-only synthetic tests do not pass.
-4. Complete remaining controls, IK/physics, combat, physiology, mission, presentation/platform, and original-vs-port trace/browser/mobile gates in the ordered roadmap.
-
-## Next bounded batch
-
-Start at the earliest unfinished gate. Seek the original .308 mesh metadata/content, required built-ins, and complete six-scene project evidence; run the dependency audit and capture native scene-flow behavior only when those inputs are present. If unavailable, record the precise missing evidence and advance one independent source-backed gate. Recheck branch/HEAD/worktree, selected SDK, and live PR state at the next run. Verify every change once at its exact SHA and replace this handoff once. Do not deploy until every required gate passes on a single SHA and owner publication instructions authorize it.
+Use a Unity 2017.2-compatible reader, ideally the pinned `UnityPy==1.25.4` referenced by `scripts/recover_unity_2017_2_resources.py`, to parse the extracted original player asset containers. Record the serialized object IDs, types, names, geometry hashes, and built-in records; map only with evidence. Then rerun the dependency audit against the complete recovered scene/prefab source. If the parser cannot be made available in this environment, record that precise tooling blocker once and continue with the next source-backed runtime gate. Keep changes on `develop/wasm`, commit verified slices directly, open at most one PR when review materially helps, and do not deploy until all parity gates pass on one exact SHA.
