@@ -6,7 +6,7 @@
 - Active branch: `codex/game-scene-name-normalization-20261023`.
 - Latest tested runtime source: `30668ba99fb8250987b63ea81d067abf006ceabd` (`Support original SpriteRenderer and ARGB32 scene data`). The instruction and handoff changes in this checkpoint are documentation-only and do not change that tested source.
 - Live `develop/wasm` was queried through GitHub immediately before these documentation edits and is still `adb4e6b73f67a2bafc8c5daf46dc15a6cde1e252`. It matches PR #70's base. No develop merge is needed unless the live branch moves.
-- PR #70 remains open and draft, targeting `develop/wasm`. The instruction/handoff update is already on the remote branch at `2dbe205632385e3daddc875dbb41c025e2312426`; GitHub readback confirmed this is also the PR head. No push is pending.
+- PR #70 was confirmed open and draft, targeting `develop/wasm`. The WorkMode instruction commit was verified at remote head `2dbe205632385e3daddc875dbb41c025e2312426`; this final handoff-only commit is its child and contains no runtime changes. Verify the live head and PR set at the next session start. No source push is pending.
 - Other open PRs inspected through GitHub: #69, #57, #56, and #7. No overlap was found with PR #70's SpriteRenderer and texture-import changes. GitHub Actions remain disabled by owner decision.
 
 ## WorkMode operating instructions
