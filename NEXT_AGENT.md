@@ -1,5 +1,11 @@
 # NEXT_AGENT — Crisis Response port completion
 
+## Latest checkpoint — 2026-10-23 (handoff reconciliation)
+
+- The existing `literate invention` Codespace loaded normally after the owner cleared the workspace-trust prompt; no restart or source edits were needed. Initial checkout was `codex/game-scene-name-normalization-20261023` at `03e069df8c1a74a935c8d4fcfd882dc5737c275b`, with .NET SDK 8.0.426. During this run, origin advanced to `8a386ece`; fetch showed five newer remote commits with an overlapping handoff update. The first push of local documentation commit `7f51a6b` was rejected as non-fast-forward; this handoff is being reconciled on top of origin without force-pushing.
+- At the earlier source tree `03e069d`, `dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -c Release` passed runtime-contract checks only; it did not load scenes. The temporary package/runner/toolchain inputs were absent, so the exact `AssignSerializedFields` exception was not recaptured. Treat the newer remote checkpoint below as authoritative for subsequent source and gate status.
+- GitHub Actions remain disabled; no Site save/deploy was attempted.
+
 ## Latest checkpoint — 2026-10-23 recovered settings uGUI compatibility
 
 - Startup stock: the preserved Codespace again had no browser tab and this environment exposes no Codespace restart control. It was not deleted or recreated; its worktree and active process remain untouched. Feature branch `codex/game-scene-name-normalization-20261023` started at `bd756d943c8e185125998e7e93c9408fc84ffe27`; `develop/wasm` remained `adb4e6b73f67a2bafc8c5daf46dc15a6cde1e252`. The last verified SDK is .NET 8.0.426, but remote worktree and SDK selection could not be rechecked.
