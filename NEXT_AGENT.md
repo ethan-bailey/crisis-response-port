@@ -1,47 +1,30 @@
 # Crisis Response Port — WorkMode handoff
 
-## Checkpoint
+## Current checkpoint
 
-- Current working environment: the repository checkout supplied to Codex Work Mode. It is independent of Codespaces, but it is not a checkout on the owner's iPhone or personal computer. Use this checkout for code edits, builds, and local tests; use a browser only for browser acceptance gates. Scratch workspace state can disappear between chats, so persistent repository work must be committed and pushed.
+- Work directly in this persistent WorkMode checkout; do not restart Codespaces for routine edits.
 - Active branch: `codex/game-scene-name-normalization-20261023`.
-- Latest tested runtime source: `30668ba99fb8250987b63ea81d067abf006ceabd` (`Support original SpriteRenderer and ARGB32 scene data`). The instruction and handoff changes in this checkpoint are documentation-only and do not change that tested source.
-- Live `develop/wasm` was queried through GitHub immediately before these documentation edits and is still `adb4e6b73f67a2bafc8c5daf46dc15a6cde1e252`. It matches PR #70's base. No develop merge is needed unless the live branch moves.
-- PR #70 was confirmed open and draft, targeting `develop/wasm`. The WorkMode instruction commit was verified at remote head `2dbe205632385e3daddc875dbb41c025e2312426`; this final handoff-only commit is its child and contains no runtime changes. Verify the live head and PR set at the next session start. No source push is pending.
-- Other open PRs inspected through GitHub: #69, #57, #56, and #7. No overlap was found with PR #70's SpriteRenderer and texture-import changes. GitHub Actions remain disabled by owner decision.
+- Latest game-source commit packaged: `6e8148c1bb7f6b7eedab0231c2e5ea04ec188946` (`Refresh complete repository file index`). Site source commit: `d6768c2c9a211caa7a004c03e01e41b53254cfc9`.
+- Site version 31 deployed successfully at `https://crisis-response-runtime.craftysnipe13.chatgpt.site`; deployment `appgdep_6adb753be4508191b0ef6cc4cf3f2b57`. The Site is owner-private. An unauthenticated browser sees “Sign in required”; the deployed game itself has not yet been manually checked in an authenticated session.
+- The complete repository index is `docs/audit/repository-file-index.json`. Regenerate and check with `scripts/index_repository_files.py --site-manifest <Site dist/build-manifest.json>` after source changes. The index covers all tracked and non-ignored repository files and maps them to the latest package.
+- No open PRs were present at the last GitHub check. Live `develop/wasm` was `9e234ba325d83fb1ba2f7ab38d7097e75e83fdbb`; it contains documentation/evidence commits not in this branch, with no code overlap. The active feature branch has local commits not yet pushed; check the live branch and PR list before syncing or opening a PR. Keep at most one PR open and merge promptly when checks and gates pass.
 
-## WorkMode operating instructions
+## Latest Site changes and checks
 
-1. Begin by checking branch, HEAD, and worktree against this file. Query live `develop/wasm` and open PRs with the GitHub connector if shell GitHub authentication is unavailable. If there is no relevant source or PR movement, resume at the next action below without rerunning completed checks.
-2. Work directly in the provided repository checkout. Do not reopen/restart Codespaces for routine edits or tests. Do not assume the workspace is the owner's local computer. Use a real browser only for a required browser gate.
-3. Keep SDK `8.0.426`; do not change the pin. In the prior WorkMode runner, .NET failed before compilation because the process PID did not map to the mounted `/proc`. A temporary `/tmp/libprocshim.so` workaround enabled SDK builds/checks. That file is ephemeral. If the same host failure recurs, treat it as an environment issue rather than changing project source; use a proven workspace-level workaround if available and record the actual command/result. Avoid repeated attempts at the same unchanged failure.
-4. Preserve work across chats by committing and pushing the active branch, then read back its GitHub head/PR head. A local scratch edit alone is not persistent.
-5. Keep `NEXT_AGENT.md` concise and replace it entirely once at the end of substantive work. Record exact source SHA and checks actually run separately from documentation commits. Do not create status-only commits or repetitive cycles.
+- Restored owner-approved touch behavior from the known-good Site build: joystick vertical aim, horizontal movement with proportional travel, sprint only past the stick rim, touch guide, and iOS callout/context-menu protections.
+- Fixed the animation adapter's movement predicate to use velocity. Position-delta detection falsely toggled idle on render frames between fixed PhysX steps, causing the walk/limp appearance.
+- Kept the JS bridge adapter required because the deployed WASM lacks those JS-invokable methods. No raw recovered C# archive was added to the website.
+- Site package contains 766 manifest-listed files from 892 source inputs. The remaining repository-only files are indexed but not copied into the browser runtime.
+- Site test suite: 33/33 passed, including build integrity, WASM validation, touch input, source animation, occupant spawning, and scene package checks. Main-repository touch/animation tests and dependency inventory also passed.
+- .NET SDK is unavailable in this checkout; the package reuses the compiled runtime from Site v30. No fresh C#/WASM compilation was run.
+- Browser preview reached the owner-only sign-in gate. Ask the owner to sign into the Site and test joystick aiming/sprint, hold-to-fire, and walking on a touch device. Do not generate or rotate a SIWC bypass token unless explicitly requested.
 
-## Completed source work and verification
+## Known unrelated scene gate
 
-At source commit `30668ba`:
+Marksman scene loading still stops at missing Mesh GUID `b4b69dc6c74eeb54cbd22d28e37f9a19`, fileID `4300000`, referenced by `Assets/Resources/weapons/ammunition/marksman/Marksman round .308 Winchester SP.prefab`. Existing evidence is in `docs/MISSING_CASING_MESH_GUID_SEARCH-2026-10-14.md` and `docs/evidence/logs/triage-2026-10-20-pr42.md`. Do not substitute the .308 casing mesh without verifying identical collider behavior. Find and verify the original round mesh or ask whether to defer the Marksman scene gate.
 
-- Added serialized `SpriteRenderer.m_MaskInteraction` and `m_WasSpriteAssigned` handling with a regression contract.
-- Allowed the source-backed Unity `TextureImporter.textureFormat: 5` value used by `Assets/Texture2D/window glass.png`, retaining GUID `bb3d703bd542afc47a1423a6c37397aa`, fileID `2800000`, original PNG bytes, SHA-256 `ba810cf6d18d29ac28aebfc07340188c0cd3d00f0c4fd4071f8e2a7b98d1d4b5`, and importer checks.
-- Fresh Release Browser build passed: 0 errors, 45 warnings.
-- Runtime contract suite passed (runtime, scene-prefab, presentation, weapons, ballistics). It reports `fullGameParity: false`; this is not a gameplay pass.
-- Normalized Marksman scene import passed the fixed SpriteRenderer fields and original ARGB32 window texture, then stopped at the missing mesh below. The later scene texture assertion has not run because the complete scene has not loaded.
-- `git diff --check` passed at the source checkpoint. The current documentation-only instruction changes also passed `git diff --check` before commit.
+## Operating constraints
 
-## Unresolved scene dependency — next action
-
-Full Marksman scene loading reaches:
-
-`Assets/Scenes/Marksman range.unity` → `Marksmen` component fileID `2598` → `Assets/GameObject/Marksman mode.prefab` → `MarksmanBoltActionVisualization.roundPrefab` → `Assets/Resources/weapons/ammunition/marksman/Marksman round .308 Winchester SP.prefab` → MeshCollider fileID `64587765826080250`.
-
-The collider references missing Mesh GUID `b4b69dc6c74eeb54cbd22d28e37f9a19`, fileID `4300000`. It is absent from the recovered package `guidPaths` and recovered export/repository metadata. Existing search/evidence: `docs/MISSING_CASING_MESH_GUID_SEARCH-2026-10-14.md` and `docs/evidence/logs/triage-2026-10-20-pr42.md`.
-
-The owner allows substitutes only when affected behavior is identical and verified. The previously documented casing mapping (`Assets/Mesh/308 Winchester casing hi.asset`) applies to the root MeshFilter of `Assets/Resources/weapons/ammunition/casings/Casing .308.prefab`; it is not automatically an equivalent Marksman projectile collider. Do not silently reuse it. First search the available recovered/source assets for an actual .308 round mesh candidate and matching `.meta`. If one exists, preserve the missing source pointer/provenance and run a focused equivalence check against the collider's intended round behavior before using it. If there is no suitable verified candidate, request the original mesh plus matching metadata or the owner's explicit decision to defer this Marksman scene gate. Do not claim original scene flow, Marksman rendering, in-scene FIRE, or two-actor gameplay while this dependency prevents scene loading.
-
-After a valid source/replacement decision, rerun the full scene check once. Then continue the original scene-flow, render, FIRE, and real Operator/Occupant lifecycle gates. Do not publish until the required local/browser gameplay gates pass.
-
-## Environment and policy notes
-
-- `docs/REPOSITORY_REMEDIATION_2026-10-18.md` was read for the mandatory repository gate. Its older CharacterBody compiler counts are historical and unrelated to this scene-import checkpoint.
-- No Site save, deployment, access change, or GitHub Actions workflow was run for this work.
-- Do not repeat the original .NET `/proc` diagnosis unless new runner evidence appears. Do not restore GitHub Actions.
+- Keep SDK pin `8.0.426`; a full build requires a compatible .NET SDK. Do not change project source to work around a host `/proc` issue.
+- Preserve the game's original behavior and provenance. Add substitutes only where necessary and verified; avoid duplicate or less robust versions.
+- Update this handoff once at the end of substantive work. Commit and push the active branch so work persists. Keep GitHub Actions disabled per owner decision.

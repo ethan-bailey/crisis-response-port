@@ -1,8 +1,8 @@
 {
   "countsByPackageRole": {
-    "build-or-validation-input": 105,
+    "build-or-validation-input": 106,
     "game-source-or-asset": 136,
-    "repository-only": 995,
+    "repository-only": 994,
     "runtime-build-source": 647,
     "scene-package-source": 3
   },
@@ -72,13 +72,13 @@
       "sha256": "3e5df6404789d96c0b5b5f556d3ed02447bee0a97e340f6ec14c1a59c0a23d16"
     },
     {
-      "bytes": 6450,
+      "bytes": 3866,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "NEXT_AGENT.md",
-      "sha256": "15f95335c328d7e7c861a9f79a5d956a111d39a4e51a7f397f50578a1be3e3a3"
+      "sha256": "66894195ab7f0c941dd71d48bc13369228ef99ab4a4ff3a17f1cb4e8939a6a19"
     },
     {
       "bytes": 9885,
@@ -2917,9 +2917,9 @@
     },
     {
       "bytes": 10615,
-      "copiedAtSamePathToLatestPackage": false,
+      "copiedAtSamePathToLatestPackage": true,
       "inLatestSourceInventory": true,
-      "matchesLatestSourceInventory": false,
+      "matchesLatestSourceInventory": true,
       "packageRole": "game-source-or-asset",
       "path": "game/browser-input.mjs",
       "sha256": "bffebf62ab4f225b8e4a49d0b6903614689ba3074fe7e95235509dab28fd9733"
@@ -2935,9 +2935,9 @@
     },
     {
       "bytes": 43698,
-      "copiedAtSamePathToLatestPackage": false,
+      "copiedAtSamePathToLatestPackage": true,
       "inLatestSourceInventory": true,
-      "matchesLatestSourceInventory": false,
+      "matchesLatestSourceInventory": true,
       "packageRole": "game-source-or-asset",
       "path": "game/index.html",
       "sha256": "da2c3fa3bfa5d9dac69b13f6c4e18d8bb39c550775d717dc7b56832f221168be"
@@ -3043,9 +3043,9 @@
     },
     {
       "bytes": 2042,
-      "copiedAtSamePathToLatestPackage": false,
+      "copiedAtSamePathToLatestPackage": true,
       "inLatestSourceInventory": true,
-      "matchesLatestSourceInventory": false,
+      "matchesLatestSourceInventory": true,
       "packageRole": "game-source-or-asset",
       "path": "game/source-character-step.mjs",
       "sha256": "0eb459f5de5fbbd9ec7401ce8cbdf6dae538975a2f5a1ca457b0d417c61d4f98"
@@ -9138,7 +9138,7 @@
       "bytes": 12523,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
-      "matchesLatestSourceInventory": false,
+      "matchesLatestSourceInventory": true,
       "packageRole": "build-or-validation-input",
       "path": "scripts/browser_input_test.mjs",
       "sha256": "6e04ad0fa26186a89c6b5de8508a6160ff22ba2e2af58f3b871a7bffd979dd04"
@@ -9389,9 +9389,9 @@
     {
       "bytes": 6204,
       "copiedAtSamePathToLatestPackage": false,
-      "inLatestSourceInventory": false,
-      "matchesLatestSourceInventory": false,
-      "packageRole": "repository-only",
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "build-or-validation-input",
       "path": "scripts/index_repository_files.py",
       "sha256": "00b4c9875082027066aedd86049d6ac96e7c4ab3bfb2e62925387d819066214e"
     },
@@ -9732,7 +9732,7 @@
       "bytes": 2310,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
-      "matchesLatestSourceInventory": false,
+      "matchesLatestSourceInventory": true,
       "packageRole": "build-or-validation-input",
       "path": "scripts/source_character_step_test.mjs",
       "sha256": "0dc66495a74b0a517f195c449adc404eac993cfb8d1de84ad89fa245cd3833f9"
@@ -16983,7 +16983,7 @@
       "sha256": "7a72a008c918982a5f11c9a0e809e76e6738d1567f03a69861242365f567d9c5"
     }
   ],
-  "repositoryHead": "81d8905024eefecacf7c27bbfd8921a87af92804",
+  "repositoryHead": "6e8148c1bb7f6b7eedab0231c2e5ea04ec188946",
   "reviewedCandidates": [
     {
       "decision": "keep-and-package",
@@ -17017,9 +17017,9 @@
   "schemaVersion": 1,
   "scope": "Every tracked or non-ignored working-tree file in this repository, excluding this generated index. Hashes identify file contents; file contents remain in their repository/package source paths.",
   "sitePackage": {
-    "manifestSha256": "2ed2f0956ac5cdb7653debb24f47e576b094d5001f747fc67de559ca559e8fa2",
+    "manifestSha256": "a7f19760b78d42596b31f28c17fcab2657b914f1fc4dd69ea7973175208880c3",
     "outputFileCount": 766,
-    "sourceCommit": "8eb7ae607e85d9b0f6ec949d57a996e5d7768bf7",
-    "sourceInventoryCount": 891
+    "sourceCommit": "6e8148c1bb7f6b7eedab0231c2e5ea04ec188946",
+    "sourceInventoryCount": 892
   }
 }
