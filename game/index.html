@@ -81,6 +81,7 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 <div id="controls"><div class="cluster"><div id="movementStick" role="group" tabindex="0" aria-label="Movement joystick. Pull left or right: small movements walk slowly, farther runs, full pull sprints. Release to stop."><span class="stick-thumb" aria-hidden="true"></span><span class="stick-label" aria-hidden="true">MOVE</span></div></div><div class="cluster"><button id="magazineTouch" type="button" aria-label="M4 magazine ammunition unavailable"><span class="mag-body"><img class="mag-image" data-mag-image alt="" draggable="false"><span class="mag-window" data-mag-rounds aria-hidden="true"></span><span class="mag-count" data-mag-count aria-hidden="true">–</span></span></button><button id="kneel" class="action-icon" data-action="kneel" aria-label="Kneel" title="Kneel"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="18" cy="5" r="3"/><path d="M17 9l-6 7 8 3 5 8M11 16l-6 9h9M19 19h9"/></svg></button><button id="stand" class="action-icon" data-action="stand" aria-label="Stand up" title="Stand"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="5" r="3"/><path d="M16 9v10m0-7-7 6m7-6 7 6m-7 1-6 10m6-10 6 10"/></svg></button><button id="fire" class="action-icon" data-action="fire" aria-label="Hold to fire" title="Fire"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="9"/><circle cx="16" cy="16" r="3"/><path d="M16 1v7m0 16v7M1 16h7m16 0h7"/></svg></button></div></div>
 <script type="module">
 import { loadOriginalScenePackage } from "../scene-data/scene-package-loader.mjs";
+import { stepBodyMovement, stepCharacterAnimation } from "./source-character-step.mjs";
 import * as THREE from "three";
 import { loadSourceCutoutMaterials, sourceCutoutMaterial } from "./source-cutout-materials.mjs";
 import { loadWeaponData } from "./weapon-runtime.mjs";
@@ -106,6 +107,7 @@ camera.position.set(-3,1.2,9.8);
 const world=new THREE.Group();scene.add(world);
 const character=new THREE.Group();character.name="Original Operator prefab";scene.add(character);
 const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(2,0,0),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,physicsState=null,physicsTime=0,sprintBlend=0,gaitPhase=0,upperBody=null,presentationData=null,weaponData=null,ballisticsData=null,hasAimPointer=false,aimDirty=false,tapPending=0,tapFrame=false,reloadPending=false,weaponState=null,handRenderers=null,armRig=null;const lockedAim=new AimDirection();
+let lastAnimationX=playerX;
 const loadStart=performance.now(),loadingTimings={};window.__loadingTimings=loadingTimings;
 const markLoaded=name=>loadingTimings[name]=performance.now()-loadStart;
 function showError(e){errorBox.style.display="block";errorBox.textContent=String(e?.message||e)+"\n"+String(e?.stack||"");status.textContent="Build failed to load; see error details."}
@@ -262,15 +264,16 @@ async function load(){
   function samplePose(track,time,clip){const value=sample(track,time);return track.property==="position"?posePosition(track,value,clip,animationData.animator.applyRootMotion):value;}
   function applyTrack(track,time,clip){const group=nodeByPath.get(track.path);if(!group)return;const value=samplePose(track,time,clip);if(track.property==="rotation")group.quaternion.fromArray(value);else if(track.property==="position")group.position.fromArray(value);else if(track.property==="scale")group.scale.fromArray(value)}
   applyAnimation=async function(dt){
-   // Execute the exact recovered CharacterBody.UpdateAnimation() C# formulas
-   // on the LIVE weapon/operator host, not an unrelated test-only instance.
-   const original=JSON.parse(await runtimeCall("StepCharacterAnimation",JSON.stringify({
-    kneeling:isKneeling,moving:Math.abs(velocity)>.15,
-    backwards:Math.abs(velocity)>.15&&Math.sign(velocity)!==facingDirection,
-    velocity,walkSpeed:contactPhysics.data.character.movement.walkSpeed,
+   // The original StepCharacterAnimation bridge was deferred and is absent
+   // from the current compiled WASM assembly. Apply the recovered source
+   // formulas to the authored AnimatorController data without a missing call.
+   const original=stepCharacterAnimation({
+    kneelRatio:physicsState.kneelRatio,movingDelta:playerX-lastAnimationX,
+    direction:facingDirection,velocity,walkSpeed:contactPhysics.data.character.movement.walkSpeed,
     sprintSpeed:contactPhysics.data.character.movement.sprintSpeed,
-    crippledRatio:0,operator:true,deltaTime:dt,colliderVerticalOffset:-.725
-   })));
+    crippledRatio:0,operator:true,deltaTime:dt
+   });
+   lastAnimationX=playerX;
    if(original.ragdoll){return;} // PhysX owns bones after original source ragdoll.
    const timeline=sourceAnimator.step(dt,{
     Moving:original.moving,Backwards:original.backwards,
@@ -367,18 +370,18 @@ async function frame(now){
  fixedAccumulator+=dt;
  while(fixedAccumulator>=contactPhysics.data.fixedDeltaTime){
   const step=contactPhysics.data.fixedDeltaTime;
-  // Direct port of CharacterBody.FixedUpdate() for the recovered Operator prefab.
+   // Recovered CharacterBody.FixedUpdate() formula, applied to the PhysX actor.
   if(acceleration!==0){
-   // Execute recovered CharacterBody.Move / FixedUpdate source logic in C#.
-   // This adapter transports the resulting force to the real PhysX actor.
+   // StepBodyMovement is also deferred from the compiled WASM bridge; this
+   // adapter applies the source speed-cap and acceleration formula directly.
    const walkSpeed=contactPhysics.data.character.movement.walkSpeed;
    const sprintSpeed=contactPhysics.data.character.movement.sprintSpeed;
    const motion=input.movementProfile(Math.sign(acceleration),walkSpeed,sprintSpeed,keys.sprint);
-   const movement=JSON.parse(await runtimeCall("StepBodyMovement",JSON.stringify({
+   const movement=stepBodyMovement({
     direction:acceleration,velocity,step,facing:facingDirection,
     walkSpeed,sprintSpeed,analogMagnitude:motion.magnitude,
-    sprint:motion.sprint,crippled:false,operator:true,noPlayerLimp:true,precision:false
-   })));
+    sprint:motion.sprint,crippledRatio:0,operator:true,noPlayerLimp:true,precision:false
+   });
    if(movement.forceX!==0)contactPhysics.addAcceleration(movement.forceX);
    if(movement.reset)acceleration=0;
   }

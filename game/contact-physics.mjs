@@ -1,6 +1,7 @@
 // Engine adapter: actual PhysX contact solving, using original extracted data.
 // PhysX 5.6.1 is not Unity 2017's PhysX build: full solver parity is unverified.
 import PhysX from './vendor/physx-js-webidl.mjs';
+import { advanceOriginalKneelRatio } from './source-character-step.mjs';
 export async function createContactPhysics(data,{x=-3,y=1.5,z=1.5}={},options={}) {
  const P=await PhysX(options), version=P.PHYSICS_VERSION;
  const allocator=new P.PxDefaultAllocator(),errors=new P.PxDefaultErrorCallback();
@@ -62,14 +63,13 @@ export async function createContactPhysics(data,{x=-3,y=1.5,z=1.5}={},options={}
  const api={
   data,backend:'PhysX '+[(version>>>24)&255,(version>>>16)&255,(version>>>8)&255].join('.'),
   setPoseState(kneeling,facing,dt){
-   const target=kneeling?1:0,diff=target-kneelRatio;
-   kneelRatio+=Math.sign(diff)*dt*5*Math.min(1,Math.max(.025,Math.abs(diff)));
+   kneelRatio=advanceOriginalKneelRatio(kneelRatio,kneeling,dt);
    const low=kneelRatio>=.5;
    if(low!==previousKneeling||facing!==previousFacing)dimensions(low,facing);
   },
   addAcceleration(ax){force.set_x(ax);body.addForce(force,P.PxForceModeEnum.eACCELERATION,true);},
   step(dt){scene.simulate(dt);scene.fetchResults(true);return api.snapshot();},
-  snapshot(){const p=body.getGlobalPose().get_p(),v=body.getLinearVelocity();return {x:p.get_x(),y:p.get_y(),z:p.get_z(),velocity:v.get_x(),verticalVelocity:v.get_y(),sleeping:body.isSleeping(),boxes:statics.length,backend:api.backend};},
+  snapshot(){const p=body.getGlobalPose().get_p(),v=body.getLinearVelocity();return {x:p.get_x(),y:p.get_y(),z:p.get_z(),velocity:v.get_x(),verticalVelocity:v.get_y(),kneelRatio,sleeping:body.isSleeping(),boxes:statics.length,backend:api.backend};},
   dispose(){scene.removeActor(body);body.release();shape.release();for(const a of statics)a.release();scene.release();for(const m of materials.values())m.release();physics.release();P.destroy(dispatcher);foundation.release();P.destroy(flags);P.destroy(filter);P.destroy(force);P.destroy(allocator);P.destroy(errors);}
  };
  return api;
