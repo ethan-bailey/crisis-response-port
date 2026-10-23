@@ -69,6 +69,22 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 #controls button.action-icon:focus-visible,#movementStick:focus-visible{outline:2px solid #b3dbf5;outline-offset:3px}
 @media(max-height:430px){#movementStick{width:94px;height:94px;min-width:94px}#movementStick .stick-thumb{width:42px;height:42px;left:calc(50% - 21px);top:calc(50% - 21px)}}
 @media(prefers-reduced-motion:reduce){#movementStick .stick-thumb{transition:none}}
+/* Restore the proven iPhone controls and suppress the system text callout. */
+html,body,#stage,canvas,#controls,#movementStick,#controlsHelp,#controlsGuide{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+*,*::before,*::after{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+#movementStick{position:relative;display:block;width:112px;height:112px;min-width:112px;flex:none;border-radius:50%;border:2px solid #90a5b89c;background:radial-gradient(circle at center,#263a4a75 0 23%,#14212bc9 25% 64%,#233448dc 65% 100%);box-shadow:inset 0 0 0 2px #b8d4ea18,0 6px 18px #03080ca8;touch-action:none;user-select:none;-webkit-user-select:none;pointer-events:auto;--stick-power:0}
+#movementStick:before{content:"";position:absolute;inset:18%;height:auto;left:18%;right:18%;top:18%;border:1px dashed #98b1c65e;border-radius:50%;transform:none;background:none}
+#movementStick:after{content:"";position:absolute;inset:5px;height:auto;top:5px;left:5px;bottom:5px;right:5px;border:2px solid #a4ceec5a;border-radius:50%;pointer-events:none}
+#movementStick .stick-thumb{position:absolute;left:calc(50% - 24px);top:calc(50% - 24px);width:48px;height:48px;border-radius:50%;border:2px solid #d6e9f2e8;background:radial-gradient(circle at 35% 30%,#5385a6,#25445f);box-shadow:0 3px 7px #0309119c,inset 0 0 0 6px #c9e7fc12;pointer-events:none;z-index:2;transition:transform .12s cubic-bezier(.2,.9,.2,1)}
+#movementStick.active .stick-thumb{transition:none;background:radial-gradient(circle at 35% 30%,#62a3cc,#275374)}
+#movementStick.sprinting{border-color:#e6c48c;box-shadow:inset 0 0 0 2px #e9d4aa30,0 0 16px #e6c48c24}
+#movementStick .stick-label{position:absolute;left:0;right:0;bottom:-16px;text-align:center;font:700 9px/1 system-ui;color:#b3c6d8;letter-spacing:.08em;pointer-events:none}
+#controlsHelp{position:absolute;right:max(8px,env(safe-area-inset-right));top:max(8px,env(safe-area-inset-top));z-index:4;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border-radius:50%;background:#101820d9;border-color:#c4d3df70;font-size:20px;opacity:.9;touch-action:manipulation}
+#controlsGuide{position:absolute;z-index:3;top:max(60px,calc(env(safe-area-inset-top) + 56px));right:max(8px,env(safe-area-inset-right));width:min(310px,calc(100vw - 24px));padding:14px 16px;border:1px solid #697887;border-radius:12px;background:#111820f2;box-shadow:0 12px 36px #0009;color:#e9eef5;font-size:13px;line-height:1.45;touch-action:auto}
+#controlsGuide h2{margin:0 40px 8px 0;font-size:16px}#controlsGuide p{margin:7px 0;color:#cbd5df}#controlsGuide strong{color:#fff}
+#controlsGuide .scope{margin-top:10px;padding-top:9px;border-top:1px solid #536170;color:#b8c7d4;font-size:12px}#controlsGuide[hidden]{display:none}
+@media(max-height:430px){#movementStick{width:94px;height:94px;min-width:94px}#movementStick .stick-thumb{width:42px;height:42px;left:calc(50% - 21px);top:calc(50% - 21px)}}
+@media(prefers-reduced-motion:reduce){#movementStick .stick-thumb{transition:none}}
 
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
@@ -77,9 +93,19 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 <div id="stage"></div>
 <div id="hud"><div id="title">Crisis Response · incomplete port</div><div id="status">Loading recovered scene and original Operator prefab…</div><div id="position"></div><div id="weaponStatus">Loading original weapons…</div></div>
 <div id="help">A/D · Shift · S/W · drag or tap to aim · tap same spot to fire · <a href="../runtime-web/">Runtime checks</a></div>
+<button id="controlsHelp" type="button" aria-label="Show touch controls" aria-expanded="false" aria-controls="controlsGuide">?</button>
+<aside id="controlsGuide" aria-labelledby="controlsGuideTitle" hidden>
+<h2 id="controlsGuideTitle">Touch controls</h2>
+<p><strong>Move:</strong> push left or right; travel inside the rim scales your walk, and pushing past the rim sprints.</p>
+<p><strong>Aim:</strong> push the stick up or down to aim vertically, or tap/drag across the scene.</p>
+<p><strong>Fire:</strong> tap the current aim point again, or hold the crosshair button.</p>
+<p><strong>Reload:</strong> pull the magazine down. Use the stance buttons to kneel or stand.</p>
+</aside>
 <div id="error"></div><div id="rotateNotice">Rotate your phone to landscape to view the port prototype.</div>
-<div id="controls"><div class="cluster"><div id="movementStick" role="group" tabindex="0" aria-label="Movement joystick. Pull left or right: small movements walk slowly, farther runs, full pull sprints. Release to stop."><span class="stick-thumb" aria-hidden="true"></span><span class="stick-label" aria-hidden="true">MOVE</span></div></div><div class="cluster"><button id="magazineTouch" type="button" aria-label="M4 magazine ammunition unavailable"><span class="mag-body"><img class="mag-image" data-mag-image alt="" draggable="false"><span class="mag-window" data-mag-rounds aria-hidden="true"></span><span class="mag-count" data-mag-count aria-hidden="true">–</span></span></button><button id="kneel" class="action-icon" data-action="kneel" aria-label="Kneel" title="Kneel"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="18" cy="5" r="3"/><path d="M17 9l-6 7 8 3 5 8M11 16l-6 9h9M19 19h9"/></svg></button><button id="stand" class="action-icon" data-action="stand" aria-label="Stand up" title="Stand"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="5" r="3"/><path d="M16 9v10m0-7-7 6m7-6 7 6m-7 1-6 10m6-10 6 10"/></svg></button><button id="fire" class="action-icon" data-action="fire" aria-label="Hold to fire" title="Fire"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="9"/><circle cx="16" cy="16" r="3"/><path d="M16 1v7m0 16v7M1 16h7m16 0h7"/></svg></button></div></div>
+<div id="controls"><div class="cluster"><div id="movementStick" role="group" tabindex="0" aria-label="Movement joystick. Push left or right to walk; push past the rim to sprint. Push up or down to aim. Release to stop."><span class="stick-thumb" aria-hidden="true"></span><span class="stick-label" aria-hidden="true">MOVE</span></div></div><div class="cluster"><button id="magazineTouch" type="button" aria-label="M4 magazine ammunition unavailable"><span class="mag-body"><img class="mag-image" data-mag-image alt="" draggable="false"><span class="mag-window" data-mag-rounds aria-hidden="true"></span><span class="mag-count" data-mag-count aria-hidden="true">–</span></span></button><button id="kneel" class="action-icon" data-action="kneel" aria-label="Kneel" title="Kneel"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="18" cy="5" r="3"/><path d="M17 9l-6 7 8 3 5 8M11 16l-6 9h9M19 19h9"/></svg></button><button id="stand" class="action-icon" data-action="stand" aria-label="Stand up" title="Stand"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="5" r="3"/><path d="M16 9v10m0-7-7 6m7-6 7 6m-7 1-6 10m6-10 6 10"/></svg></button><button id="fire" class="action-icon" data-action="fire" aria-label="Hold to fire" title="Fire"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="9"/><circle cx="16" cy="16" r="3"/><path d="M16 1v7m0 16v7M1 16h7m16 0h7"/></svg></button></div></div>
 <script type="module">
+import { loadOriginalScenePackage } from "../scene-data/scene-package-loader.mjs";
+import { stepBodyMovement, stepCharacterAnimation } from "./source-character-step.mjs";
 import * as THREE from "three";
 import { loadSourceCutoutMaterials, sourceCutoutMaterial } from "./source-cutout-materials.mjs";
 import { loadWeaponData } from "./weapon-runtime.mjs";
@@ -126,8 +152,12 @@ for (const button of document.querySelectorAll("button[data-action]")) input.bin
 // Original InputMapping.cs bindings, plus arrow-key movement aliases.
 input.bindKeyboard(window, {KeyA:"left", ArrowLeft:"left", KeyD:"right", ArrowRight:"right",
  ShiftLeft:"sprint", KeyR:"magazine", Tab:"switchWeapons", KeyS:"kneel", KeyW:"stand"});
-input.bindMovementStick(document.querySelector("#movementStick"),document.querySelector("#movementStick .stick-thumb"));
+input.bindMovementStick(document.querySelector("#movementStick"),document.querySelector("#movementStick .stick-thumb"),{onAim(vertical){if(Math.abs(vertical)>0){pointerNdc.y=vertical;aimDirty=true;}}});
 input.bindLifecycle(window, document);
+document.addEventListener("contextmenu",event=>event.preventDefault());
+const controlsHelp=document.querySelector("#controlsHelp"),controlsGuide=document.querySelector("#controlsGuide");
+function setControlsGuide(open){controlsGuide.hidden=!open;controlsHelp.setAttribute("aria-expanded",String(open));controlsHelp.setAttribute("aria-label",open?"Hide touch controls":"Show touch controls");}
+controlsHelp.addEventListener("click",()=>setControlsGuide(controlsGuide.hidden));
 for(const type of ["blur","pagehide","resize"])addEventListener(type,()=>{tapPending=0;tapFrame=false;reloadPending=false;magazineHud.resetGesture();});
 document.addEventListener("visibilitychange",()=>{if(document.hidden){tapPending=0;tapFrame=false;reloadPending=false;magazineHud.resetGesture();}});
 function setMeshMaterials(root){root.traverse(o=>{if(o.isMesh){o.material=new THREE.MeshStandardMaterial({color:0x858b91,roughness:1,metalness:0,side:THREE.DoubleSide});o.castShadow=false;o.receiveShadow=true}})}
@@ -145,10 +175,15 @@ async function load(){
    {name:"Marksman",path:"Assets/Scenes/Marksman range.unity"}
   ];
   const originalSceneFlowReady=runtimeReady.then(async()=>{
-   const response=await fetch("../scene-data/crisis-response-scenes.json.gz");
-   if(!response.ok)throw new Error("Original scene package unavailable: HTTP "+response.status);
-   if(typeof DecompressionStream==="undefined")throw new Error("Browser cannot decompress the original scene package");
-   const scenePackage=(await new Response(response.body.pipeThrough(new DecompressionStream("gzip"))).text()).replace('"m_Name":false','"m_Name":"No"').replace('"m_Name":true','"m_Name":"Yes"');
+   // The complete recovered Unity package expands to ~220 MB. Scene validation
+   // is diagnostic work, not required by the playable mesh/runtime path, so
+   // keep it off the iPhone startup path unless explicitly requested.
+   if(!new URLSearchParams(location.search).has("scene-smoke")){
+    window.__originalSceneFlow=[];
+    markLoaded("sceneFlowReady");
+    return [];
+   }
+   const scenePackage=(await loadOriginalScenePackage()).replace('"m_Name":false','"m_Name":"No"').replace('"m_Name":true','"m_Name":"Yes"');
    const loaded=[];
    for(const stage of originalSceneFlowPaths){
     const report=JSON.parse(await runtimeCall("LoadScene",scenePackage,stage.path));
@@ -256,15 +291,15 @@ async function load(){
   function samplePose(track,time,clip){const value=sample(track,time);return track.property==="position"?posePosition(track,value,clip,animationData.animator.applyRootMotion):value;}
   function applyTrack(track,time,clip){const group=nodeByPath.get(track.path);if(!group)return;const value=samplePose(track,time,clip);if(track.property==="rotation")group.quaternion.fromArray(value);else if(track.property==="position")group.position.fromArray(value);else if(track.property==="scale")group.scale.fromArray(value)}
   applyAnimation=async function(dt){
-   // Execute the exact recovered CharacterBody.UpdateAnimation() C# formulas
-   // on the LIVE weapon/operator host, not an unrelated test-only instance.
-   const original=JSON.parse(await runtimeCall("StepCharacterAnimation",JSON.stringify({
-    kneeling:isKneeling,moving:Math.abs(velocity)>.15,
-    backwards:Math.abs(velocity)>.15&&Math.sign(velocity)!==facingDirection,
-    velocity,walkSpeed:contactPhysics.data.character.movement.walkSpeed,
+   // The original StepCharacterAnimation bridge was deferred and is absent
+   // from the current compiled WASM assembly. Apply the recovered source
+   // formulas to the authored AnimatorController data without a missing call.
+   const original=stepCharacterAnimation({
+    kneelRatio:physicsState.kneelRatio,
+    direction:facingDirection,velocity,walkSpeed:contactPhysics.data.character.movement.walkSpeed,
     sprintSpeed:contactPhysics.data.character.movement.sprintSpeed,
-    crippledRatio:0,operator:true,deltaTime:dt,colliderVerticalOffset:-.725
-   })));
+    crippledRatio:0,operator:true,deltaTime:dt
+   });
    if(original.ragdoll){return;} // PhysX owns bones after original source ragdoll.
    const timeline=sourceAnimator.step(dt,{
     Moving:original.moving,Backwards:original.backwards,
@@ -361,18 +396,18 @@ async function frame(now){
  fixedAccumulator+=dt;
  while(fixedAccumulator>=contactPhysics.data.fixedDeltaTime){
   const step=contactPhysics.data.fixedDeltaTime;
-  // Direct port of CharacterBody.FixedUpdate() for the recovered Operator prefab.
+   // Recovered CharacterBody.FixedUpdate() formula, applied to the PhysX actor.
   if(acceleration!==0){
-   // Execute recovered CharacterBody.Move / FixedUpdate source logic in C#.
-   // This adapter transports the resulting force to the real PhysX actor.
+   // StepBodyMovement is also deferred from the compiled WASM bridge; this
+   // adapter applies the source speed-cap and acceleration formula directly.
    const walkSpeed=contactPhysics.data.character.movement.walkSpeed;
    const sprintSpeed=contactPhysics.data.character.movement.sprintSpeed;
    const motion=input.movementProfile(Math.sign(acceleration),walkSpeed,sprintSpeed,keys.sprint);
-   const movement=JSON.parse(await runtimeCall("StepBodyMovement",JSON.stringify({
+   const movement=stepBodyMovement({
     direction:acceleration,velocity,step,facing:facingDirection,
     walkSpeed,sprintSpeed,analogMagnitude:motion.magnitude,
-    sprint:motion.sprint,crippled:false,operator:true,noPlayerLimp:true,precision:false
-   })));
+    sprint:motion.sprint,crippledRatio:0,operator:true,noPlayerLimp:true,precision:false
+   });
    if(movement.forceX!==0)contactPhysics.addAcceleration(movement.forceX);
    if(movement.reset)acceleration=0;
   }

@@ -7,6 +7,8 @@ export class BrowserInput {
     this.onPress = onPress;
     this.cleanup = [];
     this.movementStickAxis = 0;
+    this.movementStickAim = 0;
+    this.movementStickOvertravel = false;
   }
 
   pressed(action) { return (this.sources.get(action)?.size || 0) > 0; }
@@ -68,46 +70,52 @@ export class BrowserInput {
   // two-axis visual tracking; only horizontal displacement changes movement.
   // A spring return, dead zone, per-pointer capture and lifecycle reset prevent
   // ghost locomotion. Sprint is inferred from stick travel, never a touch button.
-  bindMovementStick(surface, thumb, { deadZone = 0.16, sprintZone = 0.65 } = {}) {
+  bindMovementStick(surface, thumb, { deadZone = 0.16, onAim = () => {} } = {}) {
     let pointer = null;
     const source = 'stick:movement';
-    this.movementSprintZone = sprintZone;
     const reset = () => {
       const released = pointer;
       pointer = null;
       this.movementStickAxis = 0;
+      this.movementStickAim = 0;
+      this.movementStickOvertravel = false;
       this.set('left', source, false);
       this.set('right', source, false);
       this.set('sprint', source, false);
       if (thumb) thumb.style.transform = '';
       surface.style?.setProperty?.('--stick-power', '0');
+      onAim(0);
       surface.classList.remove('active', 'sprinting');
       if (released !== null && surface.hasPointerCapture?.(released)) surface.releasePointerCapture(released);
     };
     const move = event => {
       if (pointer !== event.pointerId) return;
       const rect = surface.getBoundingClientRect();
-      const radius = Math.max(1, Math.min(rect.width, rect.height) / 2);
-      const dx = (event.clientX - (rect.left + rect.width / 2)) / radius;
-      const dy = (event.clientY - (rect.top + rect.height / 2)) / radius;
-      const length = Math.hypot(dx, dy);
-      const radial = Math.min(1, length);
+      const thumbWidth = thumb?.offsetWidth || 48;
+      const thumbHeight = thumb?.offsetHeight || 48;
+      const travelX = Math.max(1, (rect.width - thumbWidth) / 2 - 4);
+      const travelY = Math.max(1, (rect.height - thumbHeight) / 2 - 4);
+      const rawX = (event.clientX - (rect.left + rect.width / 2)) / travelX;
+      const rawY = (event.clientY - (rect.top + rect.height / 2)) / travelY;
+      const length = Math.hypot(rawX, rawY);
       const scale = length > 1 ? 1 / length : 1;
-      const horizontal = dx * scale;
-      const vertical = dy * scale;
-      // Horizontal travel owns side-scroller speed; vertical movement is
-      // ergonomic thumb freedom, NOT a substitute jump or crouch input.
+      const horizontal = rawX * scale;
+      const vertical = rawY * scale;
       const magnitude = Math.max(0, (Math.abs(horizontal) - deadZone) / (1 - deadZone));
-      this.movementStickAxis = Math.sign(horizontal) * Math.min(1, magnitude);
+      const overtravel = Math.abs(rawX) > 1;
+      this.movementStickOvertravel = overtravel;
+      this.movementStickAxis = Math.sign(rawX) * (overtravel ? 1 : magnitude);
+      const aimPower = Math.max(0, (Math.abs(vertical) - deadZone) / (1 - deadZone));
+      this.movementStickAim = -Math.sign(vertical) * aimPower;
+      onAim(this.movementStickAim);
       this.set('left', source, this.movementStickAxis < 0);
       this.set('right', source, this.movementStickAxis > 0);
-      const sprinting = magnitude >= sprintZone;
+      const sprinting = overtravel;
       this.set('sprint', source, sprinting);
       surface.classList.toggle('sprinting', sprinting);
-      surface.style?.setProperty?.('--stick-power', String(magnitude));
+      surface.style?.setProperty?.('--stick-power', String(overtravel ? 1 : magnitude));
       if (thumb) {
-        const travel = Math.max(0, (Math.min(rect.width, rect.height) - thumb.offsetWidth) / 2 - 4);
-        thumb.style.transform = `translate3d(${horizontal * travel}px,${vertical * travel}px,0)`;
+        thumb.style.transform = `translate3d(${horizontal * travelX}px,${vertical * travelY}px,0)`;
       }
       event.preventDefault();
     };
@@ -130,10 +138,8 @@ export class BrowserInput {
     this.listen(surface, 'contextmenu', event => event.preventDefault());
   }
 
-  // Original CharacterBody uses a walk cap or sprint cap. This adapter maps
-  // continuous thumb deflection to those original caps WITHOUT a speed jump.
-  // Digital movement and Shift retain their original behavior, including when
-  // held at the same time as a touch input.
+  // Preserve the known-good Site behavior: stick travel scales acceleration;
+  // only pushing beyond the stick rim selects the sprint cap.
   movementProfile(direction, walkSpeed, sprintSpeed, keyboardSprint = false) {
     const action = direction < 0 ? 'left' : direction > 0 ? 'right' : null;
     const sources = action && this.sources.get(action);
@@ -141,12 +147,7 @@ export class BrowserInput {
     if ([...sources].some(source => source !== 'stick:movement'))
       return { magnitude: 1, sprint: keyboardSprint };
     const power = Math.abs(this.movementStickAxis);
-    const split = this.movementSprintZone ?? .65;
-    if (power < split) return { magnitude: power / split, sprint: false };
-    if (!Number.isFinite(sprintSpeed) || sprintSpeed <= walkSpeed)
-      return { magnitude: power, sprint: keyboardSprint };
-    const targetSpeed = walkSpeed + (sprintSpeed - walkSpeed) * (power - split) / (1 - split);
-    return { magnitude: Math.min(1, targetSpeed / sprintSpeed), sprint: true };
+    return { magnitude: power, sprint: keyboardSprint || this.movementStickOvertravel };
   }
 
   bindKeyboard(target, bindings) {

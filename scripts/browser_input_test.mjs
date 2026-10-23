@@ -150,53 +150,55 @@ function analogStickFixture() {
  stick.classList={add:x=>classes.add(x),remove:(...xs)=>xs.forEach(x=>classes.delete(x)),toggle:(x,on)=>on?classes.add(x):classes.delete(x)};
  stick.style={setProperty:(key,value)=>properties.set(key,value)};
  stick.getBoundingClientRect=()=>({left:40,top:20,width:200,height:200});
- input.bindMovementStick(stick,thumb);
+ const aim={value:0};input.bindMovementStick(stick,thumb,{onAim:value=>aim.value=value});
  input.bindKeyboard(keyboard,{KeyA:'left',KeyD:'right',ShiftLeft:'sprint'});
  const move=(type,x,y=120,pointerId=9)=>stick.send(type,{pointerId,clientX:x,clientY:y});
- return {input,stick,keyboard,thumb,classes,properties,move};
+ return {input,stick,keyboard,thumb,classes,properties,aim,move};
 }
 
-test('circular joystick snaps to center and tracks both axes without vertical locomotion',()=>{
- const {input,thumb,move,stick}=analogStickFixture();
+test('circular joystick restores vertical aim and only moves horizontally',()=>{
+ const {input,thumb,move,stick,aim}=analogStickFixture();
  move('pointerdown',140,120);
  assert.equal(input.movementMagnitude(1),0);
  move('pointermove',140,20); // vertical-only gesture
  assert.equal(input.pressed('left'),false);assert.equal(input.pressed('right'),false);
+ assert.ok(Math.abs(input.movementStickAim-1)<1e-12);assert.ok(Math.abs(aim.value-1)<1e-12);
  assert.match(thumb.style.transform,/translate3d\(0px,-/);
- move('pointermove',152,120); // 12% horizontal, inside 16% dead zone
+ move('pointermove',150,120); // inside the dead zone
  assert.equal(input.movementMagnitude(1),0);
- move('pointermove',190,120); // half right
- assert.ok(Math.abs(input.movementMagnitude(1)-(.5-.16)/.84)<1e-8);
- move('pointermove',240,120); // full right/sprint
+ move('pointermove',177,120); // half travel, scaled walk
+ assert.ok(Math.abs(input.movementMagnitude(1)-((37/74)-.16)/.84)<1e-8);
+ move('pointermove',240,120); // full right; sprint beyond rim
  assert.equal(input.movementMagnitude(1),1);
+ assert.equal(input.movementStickOvertravel,true);
  move('pointermove',40,120); // full left without releasing
  assert.equal(input.movementMagnitude(-1),1);
  assert.equal(input.pressed('right'),false);
  move('pointerup',40);
  assert.equal(input.movementMagnitude(-1),0);
  assert.equal(thumb.style.transform,'');
+ assert.equal(input.movementStickAim,0);assert.equal(aim.value,0);
  assert.equal(stick.hasPointerCapture(9),false);
  input.dispose();
 });
 
-test('walk-to-sprint profile is continuous at transition and full pull reaches original sprint speed',()=>{
+test('joystick travel scales walk; sprint begins only beyond the rim',()=>{
  const {input,move,classes}=analogStickFixture();
  const walk=1.5,sprint=4.2;
  move('pointerdown',140,120);
- for(const x of [150,180,194,195,196,210,230,240]){
+ for(const x of [150,180,194,195,196,210,213,214,240]){
   move('pointermove',x,120);
   const p=input.movementProfile(1,walk,sprint,false);
-  const speed=(p.sprint?sprint:walk)*p.magnitude;
-  assert.ok(speed>=0&&speed<=sprint);
+  assert.ok(p.magnitude>=0&&p.magnitude<=1);
  }
- const splitX=140+100*(.16+.84*.65);
- move('pointermove',splitX-.001,120);
+ move('pointermove',214,120); // exactly at the rim
  const below=input.movementProfile(1,walk,sprint);
- move('pointermove',splitX+.001,120);
+ move('pointermove',215,120); // beyond the rim
  const above=input.movementProfile(1,walk,sprint);
  assert.equal(below.sprint,false);
  assert.equal(above.sprint,true);
- assert.ok(Math.abs(below.magnitude*walk-above.magnitude*sprint)<.001);
+ assert.equal(below.magnitude,1);
+ assert.equal(above.magnitude,1);
  move('pointermove',240,120);
  assert.deepEqual(input.movementProfile(1,walk,sprint),{magnitude:1,sprint:true});
  assert.equal(classes.has('sprinting'),true);
