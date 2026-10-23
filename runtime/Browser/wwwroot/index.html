@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><base href="/">
 <title>Crisis Response original runtime</title>
 <style>html{background:#111820;color:#e9eef5;font:15px system-ui}body{margin:0;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}h1{font-size:20px}pre{white-space:pre-wrap;overflow-wrap:anywhere}#inputControls{display:flex;gap:8px;flex-wrap:wrap}button{min-height:48px;padding:10px;background:#26384a;color:white;border:1px solid #8393a5;border-radius:8px;touch-action:none;user-select:none}.active{background:#326786}#inputState{font-size:12px}</style></head><body>
-<div id="app"></div><div id="blazor-error-ui" style="display:none">Runtime error. Reload to reset.</div>
+<div id="app"></div><section id="runtimeGate"><pre id="contracts" aria-live="polite"></pre><button type="button" data-action="fire">FIRE</button><pre id="inputState" aria-live="polite">FIRE idle</pre></section><div id="blazor-error-ui" style="display:none">Runtime error. Reload to reset.</div>
 <script type="module">
 import { BrowserInput } from './browser-input.mjs';
 window.startOriginalRuntime=async()=>{
