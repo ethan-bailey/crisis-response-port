@@ -71,6 +71,7 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 @media(prefers-reduced-motion:reduce){#movementStick .stick-thumb{transition:none}}
 /* Restore the proven iPhone controls and suppress the system text callout. */
 html,body,#stage,canvas,#controls,#movementStick,#controlsHelp,#controlsGuide{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#stage,canvas{-webkit-user-drag:none}
 *,*::before,*::after{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 #movementStick{position:relative;display:block;width:112px;height:112px;min-width:112px;flex:none;border-radius:50%;border:2px solid #90a5b89c;background:radial-gradient(circle at center,#263a4a75 0 23%,#14212bc9 25% 64%,#233448dc 65% 100%);box-shadow:inset 0 0 0 2px #b8d4ea18,0 6px 18px #03080ca8;touch-action:none;user-select:none;-webkit-user-select:none;pointer-events:auto;--stick-power:0}
 #movementStick:before{content:"";position:absolute;inset:18%;height:auto;left:18%;right:18%;top:18%;border:1px dashed #98b1c65e;border-radius:50%;transform:none;background:none}
@@ -155,6 +156,7 @@ input.bindKeyboard(window, {KeyA:"left", ArrowLeft:"left", KeyD:"right", ArrowRi
 input.bindMovementStick(document.querySelector("#movementStick"),document.querySelector("#movementStick .stick-thumb"),{onAim(vertical){if(Math.abs(vertical)>0){pointerNdc.y=vertical;aimDirty=true;}}});
 input.bindLifecycle(window, document);
 document.addEventListener("contextmenu",event=>event.preventDefault());
+document.addEventListener("selectstart",event=>event.preventDefault());
 const controlsHelp=document.querySelector("#controlsHelp"),controlsGuide=document.querySelector("#controlsGuide");
 function setControlsGuide(open){controlsGuide.hidden=!open;controlsHelp.setAttribute("aria-expanded",String(open));controlsHelp.setAttribute("aria-label",open?"Hide touch controls":"Show touch controls");}
 controlsHelp.addEventListener("click",()=>setControlsGuide(controlsGuide.hidden));

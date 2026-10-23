@@ -103,6 +103,33 @@ test('first touch aims; near-repeat taps fire; changing target aims without shoo
  assert.equal(input.pressed('fire'),false,'Tap does not hold fire');
 });
 
+test('holding a stationary touch starts continuous fire and release stops it',async()=>{
+ const input=new BrowserInput(),surface=new Surface(),taps=[],aims=[];
+ input.bindAim(surface,e=>aims.push([e.clientX,e.clientY]),()=>taps.push('tap'),{holdFireDelayMs:10});
+ surface.send('pointerdown',{pointerId:1,clientX:100,clientY:100});
+ await new Promise(resolve=>setTimeout(resolve,20));
+ assert.equal(input.pressed('fire'),true,'A stationary hold starts firing');
+ assert.deepEqual(aims,[[100,100]],'Held fire aims at the point under the finger');
+ surface.send('pointerup',{pointerId:1,clientX:100,clientY:100});
+ assert.equal(input.pressed('fire'),false,'Release stops held fire');
+ assert.deepEqual(taps,[],'A hold must not also trigger the tap action');
+});
+
+test('touch drag cancels hold-to-fire timer and pointer cancellation clears fire',async()=>{
+ const input=new BrowserInput(),surface=new Surface();
+ input.bindAim(surface,()=>{},()=>{},{holdFireDelayMs:10});
+ surface.send('pointerdown',{pointerId:1,clientX:100,clientY:100});
+ surface.send('pointermove',{pointerId:1,clientX:120,clientY:100});
+ await new Promise(resolve=>setTimeout(resolve,20));
+ assert.equal(input.pressed('fire'),false,'Dragging to aim does not start fire');
+ surface.send('pointercancel',{pointerId:1,clientX:120,clientY:100});
+ surface.send('pointerdown',{pointerId:2,clientX:100,clientY:100});
+ await new Promise(resolve=>setTimeout(resolve,20));
+ assert.equal(input.pressed('fire'),true);
+ surface.send('pointercancel',{pointerId:2,clientX:100,clientY:100});
+ assert.equal(input.pressed('fire'),false,'Cancelled hold releases fire');
+});
+
 test('drag establishes new aim; subsequent tap near drag endpoint fires',()=>{
  const input=new BrowserInput(),surface=new Surface(),aims=[],fires=[];
  input.bindAim(surface,e=>aims.push([e.clientX,e.clientY]),()=>fires.push('fire'));

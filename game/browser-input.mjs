@@ -166,11 +166,16 @@ export class BrowserInput {
     });
   }
 
-  bindAim(surface, onAim, onTap = () => {}) {
+  bindAim(surface, onAim, onTap = () => {}, { holdFireDelayMs = 350 } = {}) {
     // CSS pixels, not physical pixels: allow ordinary finger placement error
     // without treating a different target as an attempt to shoot.
     const dragThreshold = 8, sameSpotRadius = 24;
     let pointer = null, start = null, dragging = false, lastTouchAim = null;
+    let holdFireTimer = null, holdFired = false;
+    const clearHoldFireTimer = () => {
+      if (holdFireTimer !== null) clearTimeout(holdFireTimer);
+      holdFireTimer = null;
+    };
     const aimAtTouch = event => {
       onAim(event);
       lastTouchAim = { x: event.clientX, y: event.clientY };
@@ -182,10 +187,13 @@ export class BrowserInput {
       const duration = performance.now() - start.time;
       const moved = Math.hypot(event.clientX - start.x, event.clientY - start.y);
       const wasDrag = dragging || (event.type === 'pointerup' && moved > dragThreshold);
-      pointer = null; start = null; dragging = false;
+      clearHoldFireTimer();
+      const firedOnHold = holdFired;
+      pointer = null; start = null; dragging = false; holdFired = false;
       this.set('fire', `aim:${previous}`, false);
       if (surface.hasPointerCapture?.(previous)) surface.releasePointerCapture(previous);
       if (event.type !== 'pointerup' || !isTouch) return;
+      if (firedOnHold) return;
       if (wasDrag) {
         // Ending a drag establishes its final screen-space aim location.
         aimAtTouch(event);
@@ -201,14 +209,29 @@ export class BrowserInput {
     this.listen(surface, 'pointerdown', event => {
       if (event.button !== 0 || pointer !== null) return;
       event.preventDefault(); pointer = event.pointerId;
-      start = {x:event.clientX, y:event.clientY, time:performance.now(), touch:event.pointerType !== 'mouse'};
+      start = {x:event.clientX, y:event.clientY, time:performance.now(), touch:event.pointerType !== 'mouse', event};
       dragging = false; surface.setPointerCapture(pointer);
+      holdFired = false;
       if (!start.touch) {onAim(event); this.set('fire', `aim:${pointer}`, true);}
+      else {
+        const touchPointer = pointer;
+        holdFireTimer = setTimeout(() => {
+          holdFireTimer = null;
+          if (pointer !== touchPointer || dragging || !start?.touch) return;
+          onAim(start.event);
+          lastTouchAim = { x: start.x, y: start.y };
+          holdFired = true;
+          this.set('fire', `aim:${touchPointer}`, true);
+        }, holdFireDelayMs);
+      }
     });
     this.listen(surface, 'pointermove', event => {
       if (pointer === null && event.pointerType === 'mouse') {onAim(event);return;}
       if (event.pointerId !== pointer) return;
-      if (Math.hypot(event.clientX-start.x,event.clientY-start.y)>dragThreshold) dragging=true;
+      if (Math.hypot(event.clientX-start.x,event.clientY-start.y)>dragThreshold) {
+        dragging=true;
+        if (start.touch) clearHoldFireTimer();
+      }
       if (start.touch) {
         if (dragging) aimAtTouch(event);
       } else onAim(event);
@@ -216,7 +239,8 @@ export class BrowserInput {
     for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) this.listen(surface, type, release);
     this.listen(surface, 'contextmenu', event => event.preventDefault());
     this.resetAim = () => {
-      const previous=pointer; pointer=null; start=null; dragging=false; lastTouchAim=null;
+      const previous=pointer; clearHoldFireTimer(); pointer=null; start=null; dragging=false; holdFired=false; lastTouchAim=null;
+      if (previous !== null) this.set('fire', `aim:${previous}`, false);
       if (previous !== null && surface.hasPointerCapture?.(previous)) surface.releasePointerCapture(previous);
     };
   }
