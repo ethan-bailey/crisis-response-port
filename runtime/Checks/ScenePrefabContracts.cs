@@ -27,6 +27,7 @@ public static class ScenePrefabContracts {
             new {fileID="4",classID=1,className="GameObject",fields=new {m_Name="Child",m_Layer=0,m_TagString="Untagged",m_StaticEditorFlags=0,m_IsActive=true}},
             new {fileID="5",classID=4,className="Transform",fields=new {m_GameObject=Ref("4"),m_LocalPosition=new{x=0f,y=1f,z=0f},m_LocalScale=new{x=1f,y=1f,z=1f},m_LocalRotation=new{x=0f,y=0f,z=0f,w=1f},m_Father=Ref("2"),m_Children=Array.Empty<object>()}},
             new {fileID="6",classID=65,className="BoxCollider",fields=new {m_GameObject=Ref("4"),m_Enabled=true,m_Center=new{x=0f,y=0f,z=0f},m_Size=new{x=1f,y=1f,z=1f},m_IsTrigger=false}},
+            new {fileID="9",classID=212,className="SpriteRenderer",fields=new {m_GameObject=Ref("4"),m_Enabled=true,m_MaskInteraction=2,m_WasSpriteAssigned=1}},
             new {fileID="8",classID=59,className="HingeJoint",fields=new {m_GameObject=Ref("4"),m_Enabled=true,m_ConnectedBody=Ref("7"),m_Anchor=new{x=0f,y=0f,z=0f},m_Axis=new{x=1f,y=0f,z=0f},m_ConnectedAnchor=new{x=0f,y=0f,z=0f},m_AutoConfigureConnectedAnchor=false,m_UseSpring=true,m_Spring=new{spring=12f,damper=3f,targetPosition=4f},m_UseLimits=false,m_Limits=new{min=-10f,max=10f,bounciness=0f,bounceMinVelocity=0f,contactDistance=0f},m_UseMotor=false,m_Motor=new{targetVelocity=0f,force=0f,freeSpin=false},m_BreakForce=100f,m_BreakTorque=100f,m_EnableCollision=false,m_EnablePreprocessing=true,m_MassScale=1f,m_ConnectedMassScale=1f}}
         };
         var package=JsonSerializer.Serialize(new{
@@ -41,6 +42,8 @@ public static class ScenePrefabContracts {
         Check(template!=null&&template.child!=null,"Original prefab records load without unresolved component fields");
         Check(ReferenceEquals(template.child,templateChild)&&ReferenceEquals(template.colliderReference,templateChild.GetComponent<BoxCollider>())&&ReferenceEquals(template.linkedTransforms[0],templateChild)&&ReferenceEquals(template.joint.connectedBody,prefab.GetComponent<Rigidbody>()),"Serialized references bind to the exact prefab graph objects");
         Check(prefab.GetComponent<Rigidbody>().mass==2f&&template.joint.useSpring&&template.joint.spring.spring==12f&&template.joint.axis.x==1f,"Serialized rigidbody and hinge state retains original values");
+        var spriteRenderer=templateChild.GetComponent<SpriteRenderer>();
+        Check(spriteRenderer!=null&&spriteRenderer.maskInteraction==2&&spriteRenderer.wasSpriteAssigned,"Original SpriteRenderer mask interaction and sprite-assignment state are retained");
         Check(!template.awokeWithBoundReferences&&!prefab.activeInHierarchy,"Prefab asset loading defers gameplay callbacks and remains outside the active scene");
         var world=new RuntimeWorld();world.MakeCurrent();
         var first=UnityEngine.Object.Instantiate(prefab);var second=UnityEngine.Object.Instantiate(prefab);world.Tick(0);
