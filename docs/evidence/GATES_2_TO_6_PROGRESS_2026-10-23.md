@@ -15,7 +15,7 @@ This checkpoint advances the original actor AI graph and mission presentation. I
 | 3. Projectile injury and body outcomes | Partial | Actor-owned physiology, movement/posture, unconsciousness, ragdoll command dispatch, timed hypoxic death, and generic material ballistics pass existing contracts. Original projectile-to-limb tissue/injury callback is not implemented by the runtime projectile host and remains open. |
 | 4. Mission startup and spawning | Partial | Mission 01 starts with original Operators and Occupants from the recovered full scene package. Unsupported serialized fields/resources and native physics/render/audio remain. |
 | 5. Original NPC AI | Partial, graph-load blocker fixed | Original Operator and Occupant Behavior Designer graphs deserialize with 91 and 66 tasks, no unknown nodes, and both embedded conditional references resolved. A one-second original mission AI run completed 60 ticks with 4 active trees remaining `Running`; the headless force sink recorded 153 source force commands. Navigation, perception/combat outcomes, and native physics remain unverified. |
-| 6. Mission and outcome | Partial | Source Occupant unconsciousness/ragdoll and all-disabled event pass. Original `Mission.EndMission` computes success and shows the authored `MissionEndMenu` (`Visible=true`) after initializing the authored PauseMenu and camera depth-of-field dependencies. The fixture sets rooms checked directly; player/AI room traversal and the complete objective path remain unverified. |
+| 6. Mission and outcome | Partial | The fixture repositions an initialized original Operator through the seven active rooms, calls original `CharacterBody.UpdateMovement`, then original `TeamController.UpdateMissionState`/`Room.Clear` and `Mission.UpdateMissionState`. The original Occupant disable/ragdoll event and `Mission.EndMission` success/UI transition pass. This does not prove input-driven movement, autonomous navigation, or a complete live objective path. |
 
 ## Fixes made in this checkpoint
 
@@ -23,6 +23,7 @@ This checkpoint advances the original actor AI graph and mission presentation. I
 - Restored the original archived `RestartBehaviorTree.cs` and `.meta`, with the explicit .NET `Action` alias and archive provenance. This removed the last unknown task from the two actor graphs.
 - Added `--behavior-graph-contract`, which deserializes both authored actor prefabs and checks task counts, unknown tasks, and embedded condition resolution.
 - Added original AI mission contracts for 60 update ticks and the source mission outcome path. New audio sources are bound to the silent headless adapter each tick; this does not claim decoded or audible output.
+- Replaced direct `room.cleared = true` assignments with per-room Operator relocation, original CharacterBody room update, TeamController room-clear dispatch, and Mission objective update. The contract reports seven rooms cleared through that source path.
 - Reactivated the original MissionUI root before its authored Awake path and asserted that `Mission.EndMission` makes the authored end menu visible.
 - Excluded the restored `RestartBehaviorTree` gameplay source from FoundationChecks' narrower compile boundary. It remains compiled by the full runtime.
 
@@ -35,7 +36,7 @@ Pinned SDK: .NET 8.0.426, using `/tmp/libprocshim.so`; no Codespaces or GitHub A
 - Default `Crisis.Runtime.Checks`: passed; original arm sequences/reload, ownership, and ballistics contract outputs all passed.
 - `--behavior-graph-contract`: passed; Operator 91 tasks / Occupant 66 tasks, zero unknown tasks, one embedded condition each resolved.
 - `--mission-ai-contract`: passed; mission started, 2 Operators, 3 Occupants, 4 active trees, 60 AI simulation ticks, 153 force commands.
-- `--mission-ai-outcome-contract`: passed; 4 spawned Occupants ragdolled, all-disabled event fired once, mission success computed, PauseMenu initialized, camera depth-of-field found, authored end menu visible, AI remained enabled through outcome.
+- `--mission-ai-outcome-contract`: passed; seven active rooms cleared through the source Operator path, all spawned Occupants ragdolled, all-disabled event fired once, mission success computed, PauseMenu initialized, camera depth-of-field found, authored end menu visible, AI remained enabled through outcome.
 - EngineChecks: passed, 69 assertions.
 - FoundationChecks: passed, 121 assertions.
 - `check_characterbody_ownership.py --strict` and `verify_full_characterbody_enums.py`: passed.
@@ -46,9 +47,10 @@ Pinned SDK: .NET 8.0.426, using `/tmp/libprocshim.so`; no Codespaces or GitHub A
 ## Failures encountered and fixes
 
 - First one-second mission AI run failed in original `LimbAudio.Update`: a runtime-created AudioSource had no playback driver. The per-tick headless adapter now binds sources created after initial scene setup; the AI run then passed.
+- First room-path attempt selected a TeamOperator whose `Body` reference was not initialized in the fixture and threw `NullReferenceException`. Selecting an original TeamOperator with a bound CharacterBody resolved the fixture failure; the source room path then cleared all seven active rooms.
 - FoundationChecks initially failed with `CS0246 SharedGameObject` from restored `RestartBehaviorTree.cs`. The gameplay task was excluded from FoundationChecks' source glob while retained in the complete runtime build; 121 assertions then passed.
 - A strengthened UI assertion found the authored MissionEndMenu still inactive because the fixture had deactivated its MissionUI parent. Reactivating the original root before Awake fixed the transition; the end menu is now visibly active in the contract.
 
 ## Remaining blockers and next action
 
-Gate 6 is still partial because no contract drives an Operator/player through room traversal and source objective updates; rooms are currently marked checked by the outcome fixture. The live source projectile-to-limb injury route also remains open. Continue at the real room/objective path, then assess whether a complete original projectile limb hit can be executed without substituting gameplay. Stop before Gate 7/8 per owner direction.
+Gate 6 is still partial because the room contract relocates the actor inside the headless fixture rather than applying player input or demonstrating autonomous navigation; broader mission objective/player flow remains open. The live source projectile-to-limb injury route also remains open. Continue by exercising input-driven room traversal if supported, then assess whether a complete original projectile limb hit can be executed without substituting gameplay. Stop before Gate 7/8 per owner direction.

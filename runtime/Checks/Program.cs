@@ -95,8 +95,24 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-outcome-c
     if(args[0]=="--mission-outcome-contract"||args[0]=="--mission-ai-outcome-contract"){
         var spawnedOccupants=bodies.Where(body=>body.GetComponent<Crisis.Runtime.FullSource.Occupant>()!=null).ToArray();
         foreach(var source in world.Objects.OfType<AudioSource>())source.Driver=new MissionContractSilentAudioDriver();
-        foreach(var room in missionComponent.rooms)room.cleared=true;
+        var sourceOperator=bodies.Select(body=>body.GetComponent<Crisis.Runtime.FullSource.TeamOperator>()).FirstOrDefault(op=>op!=null&&op.Body!=null)??throw new InvalidOperationException("Mission outcome contract has no original TeamOperator with an initialized original CharacterBody reference");
+        var sourceRoomUpdate=typeof(Crisis.Runtime.FullSource.TeamController).GetMethod("UpdateMissionState",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)??throw new MissingMethodException("Original TeamController.UpdateMissionState");
+        var roomsClearedThroughSource=0;
+        foreach(var room in missionComponent.rooms.Where(room=>room!=null&&room.gameObject.activeInHierarchy)){
+            var actorPosition=sourceOperator.Body.transform.position;
+            actorPosition.x=room.CenterCoord;
+            sourceOperator.Body.transform.position=actorPosition;
+            sourceOperator.Body.Turn(1f);
+            world.Invoke(sourceOperator.Body,"UpdateMovement");
+            if(!ReferenceEquals(sourceOperator.Body.Room,room))throw new InvalidOperationException($"Original CharacterBody room query did not resolve room {room.name}");
+            sourceOperator.Body.VisibleRange=MathF.Max(0f,room.RightEdge-sourceOperator.Body.Eye.position.x+1f);
+            sourceRoomUpdate.Invoke(sourceOperator.Team,new object[]{sourceOperator});
+            if(!room.cleared)throw new InvalidOperationException($"Original TeamController.UpdateMissionState did not clear traversed room {room.name}");
+            roomsClearedThroughSource++;
+        }
+        if(roomsClearedThroughSource==0)throw new InvalidOperationException("Mission 01 has no active rooms to clear through the original Operator path");
         world.Invoke(missionComponent,"UpdateMissionState");
+        if(!missionComponent.AllRoomsChecked)throw new InvalidOperationException("Original Mission.UpdateMissionState did not accept rooms cleared through the Operator path");
         var allDisabledEventCount=0;missionComponent.Occupants.allDisabledEvent.AddListener(()=>allDisabledEventCount++);
         foreach(var body in spawnedOccupants)body.SetUnconscious();
         world.Tick(1f/60f,DisableUnboundVocalizationPresentation);
@@ -121,7 +137,7 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-outcome-c
         if(!missionComponent.missionSuccess)throw new InvalidOperationException("Original Mission.EndMission did not derive success from the checked-room and all-rendered-safe source state");
         var endMenuVisible=missionUI.missionEndMenu?.Visible??false;
         if(presentationBlocker==null&&!endMenuVisible)throw new InvalidOperationException("Original Mission.EndMission returned without showing the authored MissionEndMenu");
-        Console.WriteLine(JsonSerializer.Serialize(new{mission=mission.scene,missionStarted=missionComponent.Started,missionEnded=missionComponent.missionEnded,missionSuccess=missionComponent.missionSuccess,allRenderedSafe=missionComponent.Occupants.AllRenderedSafe,allDisabledEventCount,allRoomsChecked=missionComponent.AllRoomsChecked,spawnedOccupants=spawnedOccupants.Length,allOccupantsRagdoll=spawnedOccupants.All(body=>body.IsRagdoll),outcomePath="rooms checked in fixture -> original Occupant.SetUnconscious/allDisabledEvent -> original Mission.EndMission computed success",missionUiInitialization,cameraDepthOfFieldFound,endMenuVisible,presentationTransition=presentationBlocker==null?"completed":"blocked: "+presentationBlocker,ai=runOriginalAI?"original BehaviorTrees remained enabled during the outcome":"suppressed; original BehaviorDesigner graph separately passes both actor prefabs",audio="silent adapter"}));
+        Console.WriteLine(JsonSerializer.Serialize(new{mission=mission.scene,missionStarted=missionComponent.Started,missionEnded=missionComponent.missionEnded,missionSuccess=missionComponent.missionSuccess,allRenderedSafe=missionComponent.Occupants.AllRenderedSafe,allDisabledEventCount,allRoomsChecked=missionComponent.AllRoomsChecked,roomsClearedThroughSource,spawnedOccupants=spawnedOccupants.Length,allOccupantsRagdoll=spawnedOccupants.All(body=>body.IsRagdoll),outcomePath="Operator traversed room -> original CharacterBody room query -> original TeamController.UpdateMissionState/Room.Clear -> original Mission.UpdateMissionState -> Occupant disable event -> Mission.EndMission",missionUiInitialization,cameraDepthOfFieldFound,endMenuVisible,presentationTransition=presentationBlocker==null?"completed":"blocked: "+presentationBlocker,ai=runOriginalAI?"original BehaviorTrees remained enabled during the outcome":"suppressed; original BehaviorDesigner graph separately passes both actor prefabs",audio="silent adapter"}));
         return;
     }
     var liveTrees=world.Objects.OfType<BehaviorDesigner.Runtime.BehaviorTree>().Where(tree=>tree.enabled).ToArray();
