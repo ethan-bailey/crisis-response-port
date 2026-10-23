@@ -43,3 +43,29 @@ Stop and report the end state when any of these is true:
 - **Stay in scope.** Work only the assigned branch, PR, or task. Do not expand into unrelated work without an instruction to do so.
 - **External blockers are stated once.** If progress depends on something outside the repo (quota, access, a service, the owner), name it once, clearly, and keep working on everything that does not depend on it.
 - **Next turn starts from the handoff**, not from zero: compare the branch head to the recorded checkpoint SHA (step 1); if it matches, the first unfinished, actionable item on the list is the entry point.
+
+## Codespace startup recovery
+
+The owner wants transient Codespaces startup failures retried before they are treated as blockers.
+
+- If the existing Codespace is unavailable or fails to load on the first attempt, restart it up to three times. Let each startup attempt finish and inspect the resulting state before retrying. Do not delete or recreate the Codespace as a restart workaround.
+- Before restarting, record the branch, HEAD, worktree status, and any active build or publish. Do not interrupt an active write, build, or publish. Preserve uncommitted work before any restart that could discard it.
+- After it loads, re-check the branch, HEAD, worktree, and pinned SDK before building or testing.
+- If it still fails after three restart attempts, capture the exact observed error, report the environment blocker, and continue with independent work.
+
+## Resolve instruction conflicts
+
+When project instructions conflict, resolve the conflict and continue instead of stopping at the first contradiction.
+
+- Non-overridable platform, safety, legal, and approval requirements take precedence.
+- Among project instructions, follow the latest explicit owner direction that applies to the current task. Treat older handoffs and stale status notes as historical when newer evidence or owner direction supersedes them.
+- When equally current project rules still conflict, choose the narrowest reversible action that preserves source, data, and verification gates. Record the chosen rule, evidence, and effect in the handoff. Continue independent work while preserving any genuinely blocked decision.
+
+## Owner-requested autonomous continuation
+
+When the owner explicitly asks for continued work without further prompts, do not end the work sequence merely because one bounded gate is complete or blocked.
+
+- Create or resume a recurring Codex automation no more often than hourly, starting from the current `NEXT_AGENT.md` checkpoint, and run its first cycle immediately.
+- Each cycle takes stock of branch, HEAD, worktree, open PRs, current blockers, and the next actionable gate. It then completes one bounded batch of substantive work, verifies that batch once, and updates the handoff once.
+- If a gate is externally blocked, record its exact evidence and disposition once, then continue with the next independent actionable item. Do not create repetitive status-only cycles.
+- Keep GitHub Actions disabled. Publish only when the owner has authorized the destination and the required local gates pass. Do not use an unbounded shell loop or repeat a production deployment as a polling mechanism.
