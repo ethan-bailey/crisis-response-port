@@ -2,11 +2,11 @@
   "countsByPackageRole": {
     "build-or-validation-input": 107,
     "game-source-or-asset": 136,
-    "repository-only": 997,
+    "repository-only": 999,
     "runtime-build-source": 647,
     "scene-package-source": 3
   },
-  "fileCount": 1890,
+  "fileCount": 1892,
   "files": [
     {
       "bytes": 1658,
@@ -72,13 +72,13 @@
       "sha256": "3e5df6404789d96c0b5b5f556d3ed02447bee0a97e340f6ec14c1a59c0a23d16"
     },
     {
-      "bytes": 3570,
+      "bytes": 4422,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "NEXT_AGENT.md",
-      "sha256": "93db0f3f4f38a16741553246087e90673a71decd3de7bb1a1ed4da93476173df"
+      "sha256": "941dc19367b74dc4ca7414aa66018e98b754c89f1ee3ff66eb9a08836dc01b43"
     },
     {
       "bytes": 9885,
@@ -837,13 +837,22 @@
       "sha256": "16af7ee487eca13d9f79d7b608bd20c4cefd63a3d6412a13f225f6167b6d1dd5"
     },
     {
-      "bytes": 2908,
+      "bytes": 4407,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "docs/evidence/ORIGINAL_PLAYER_ASSET_RECOVERY_2026-10-23.md",
-      "sha256": "acf622fe2ad38a687afa5075ba660e2064d031f3c356cd044e9844401a2eceac"
+      "sha256": "4b4fed83560870486cf870d14a84f8f3145aa3e1a756f1ffd1c85abf329942ed"
+    },
+    {
+      "bytes": 122799,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": false,
+      "matchesLatestSourceInventory": false,
+      "packageRole": "repository-only",
+      "path": "docs/evidence/ORIGINAL_PLAYER_MESH_INVENTORY_2026-10-23.json",
+      "sha256": "e7d405a86f90a562e28f081bac27e6f711157fd752513f409cb4020cebdf6170"
     },
     {
       "bytes": 3068,
@@ -9441,6 +9450,15 @@
       "sha256": "fd0e9b55813ccdd874a2c6e8e56f663dc445d4b804004631b198ee870401a193"
     },
     {
+      "bytes": 8623,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": false,
+      "matchesLatestSourceInventory": false,
+      "packageRole": "repository-only",
+      "path": "scripts/inventory_original_player_meshes.py",
+      "sha256": "a5de13ca4104892d02b52d26d478ef62442aea8f059aefb8d866686a3e420cf0"
+    },
+    {
       "bytes": 7330,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
@@ -17019,7 +17037,7 @@
       "sha256": "7a72a008c918982a5f11c9a0e809e76e6738d1567f03a69861242365f567d9c5"
     }
   ],
-  "repositoryHead": "89255ef2ccac94ee42dd6c4727607afc3d6c7358",
+  "repositoryHead": "b30b59fe7d0247828df0d4b589b07929aa6b0cfc",
   "reviewedCandidates": [
     {
       "decision": "keep-and-package",
