@@ -19,6 +19,8 @@ GitHub Actions is disabled by owner decision for this project. Do not restore mi
 
 The active working environment is the repository checkout provided to Codex Work Mode. It is independent of Codespaces, but it is **not** the owner's iPhone or personal computer. Use the checkout directly for repository reads, edits, local builds, and tests. Do not open or restart Codespaces for ordinary code work; use it only if the owner requests it or a required gate cannot run in the current workspace and Codespaces is the necessary available environment.
 
+- The owner has used 90% of their Codespaces usage allowance through **2026-11-01**. Avoid Codespaces through that date whenever the task can be completed in the current checkout or through another already available tool. Use it only when a required gate cannot run here and no practical alternative is available.
+
 - At session start, compare the current branch, HEAD, and worktree with `NEXT_AGENT.md`. Query live `develop/wasm` and open PRs through the GitHub connector when shell GitHub authentication is unavailable. If the recorded checkpoint and PR set are unchanged, do not repeat completed orientation or tests.
 - The scratch checkout may not survive a new chat/session. Make repository work persistent by committing it and pushing the active branch to GitHub. Confirm the remote branch/PR head after the push. An uncommitted change is not a persistent checkpoint.
 - Use shell tools in this workspace for direct code work; a browser is for a genuinely browser-dependent gate, not for editing files or running routine repository commands.

@@ -5,6 +5,7 @@
 - Local checkout: `codex/game-scene-name-normalization-20261023`, checkpoint before this documentation commit `fbd5dbe9750ac4bfb585bf6da09a14ae3aa26999`. This documentation update changes no runtime source.
 - Live GitHub state was checked through the GitHub connector: `develop/wasm` is `c6cee907eb12504e91e33963cd5e512fe20c491a`; live feature branch is `b3640f02009147eb7a3350489db382bb9ad30983`; no open PRs were returned. The local branch contains 12 commits not on the live feature branch. Do not force-update or discard them; reconcile with live `develop/wasm` when the correct GitHub write path is available. GitHub Actions remain disabled.
 - Shell `git fetch` previously failed because this scratch checkout had no GitHub CLI/credential-helper credentials. This is separate from the connected GitHub API tool, which successfully read branch and PR state during this session. Keep the pinned SDK at .NET 8.0.426.
+- Codespaces capacity: the owner has used 90% of their allowance through **2026-11-01**. Avoid Codespaces until then unless a required gate cannot be completed here and no practical alternative is available.
 
 ## Verified project state
 

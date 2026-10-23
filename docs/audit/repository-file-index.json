@@ -45,13 +45,13 @@
       "sha256": "8e513841a9f2e92a160f01cf40053c06f9a85ebe0279325631b699be8cc273c0"
     },
     {
-      "bytes": 10875,
+      "bytes": 11190,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "AGENT_INSTRUCTIONS.md",
-      "sha256": "d16278c0689c49769b9fa8f336194251a1a8f9aef5293bb5a0615f10248a17ac"
+      "sha256": "693ca7a63b4ae952433d94cb8efa6602b18c2b8378b53e5dc2539db7130f694d"
     },
     {
       "bytes": 5887,
@@ -72,13 +72,13 @@
       "sha256": "3e5df6404789d96c0b5b5f556d3ed02447bee0a97e340f6ec14c1a59c0a23d16"
     },
     {
-      "bytes": 4524,
+      "bytes": 4732,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "NEXT_AGENT.md",
-      "sha256": "1b113f568057e1917104779898ef65908de759f372651baf0390fe46d514b7ad"
+      "sha256": "9a25fa8de79330b3274a2844962338c4ced38785145cdc5d4e3bf3697cd57384"
     },
     {
       "bytes": 9885,
@@ -17001,7 +17001,7 @@
       "sha256": "7a72a008c918982a5f11c9a0e809e76e6738d1567f03a69861242365f567d9c5"
     }
   ],
-  "repositoryHead": "fbd5dbe9750ac4bfb585bf6da09a14ae3aa26999",
+  "repositoryHead": "d98fe1393640924e1c21121b4fa00162d243c225",
   "reviewedCandidates": [
     {
       "decision": "keep-and-package",
