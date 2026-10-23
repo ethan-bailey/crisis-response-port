@@ -72,13 +72,13 @@
       "sha256": "3e5df6404789d96c0b5b5f556d3ed02447bee0a97e340f6ec14c1a59c0a23d16"
     },
     {
-      "bytes": 3864,
+      "bytes": 5826,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "NEXT_AGENT.md",
-      "sha256": "9d7730e93ade74c6fb0a6ed5ad5a18b3256b3063802beb7ed0cd9feeecdff358"
+      "sha256": "a5b0d03d37982eed0b5ee6b261967965553daa997cd7309a452b1feba9d775d7"
     },
     {
       "bytes": 9885,
@@ -9399,7 +9399,7 @@
       "bytes": 6730,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
-      "matchesLatestSourceInventory": false,
+      "matchesLatestSourceInventory": true,
       "packageRole": "build-or-validation-input",
       "path": "scripts/index_repository_files.py",
       "sha256": "af4df7154370ba0ac4292cf36041cfe0edba69e28bfeeb2c09ba138fc7ccc2d8"
@@ -16992,7 +16992,7 @@
       "sha256": "7a72a008c918982a5f11c9a0e809e76e6738d1567f03a69861242365f567d9c5"
     }
   ],
-  "repositoryHead": "c3bccc1d5d2b24d05402309a1b0a744be2bd9347",
+  "repositoryHead": "20bfc1d4996dcd8c9e6abd042e74d4e3721cd935",
   "reviewedCandidates": [
     {
       "decision": "keep-and-package",
@@ -17026,9 +17026,9 @@
   "schemaVersion": 1,
   "scope": "Every tracked or non-ignored working-tree file in this repository, excluding this generated index. Hashes identify file contents; file contents remain in their repository/package source paths.",
   "sitePackage": {
-    "manifestSha256": "6095e6d4aec52067fefa40043e36563e3cc7adc5af078f44a6ccca9b9880b829",
+    "manifestSha256": "a3ff9a51dc4f61d456a2854a670957f3cc75fc3124cf09683fa8d8d5abc8eca9",
     "outputFileCount": 766,
-    "sourceCommit": "c3bccc1d5d2b24d05402309a1b0a744be2bd9347",
+    "sourceCommit": "20bfc1d4996dcd8c9e6abd042e74d4e3721cd935",
     "sourceInventoryCount": 893
   }
 }

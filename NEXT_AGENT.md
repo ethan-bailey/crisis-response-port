@@ -1,30 +1,36 @@
 # Crisis Response Port — WorkMode handoff
 
-## Current checkpoint
+## Checkpoint
 
-- Work directly in this persistent WorkMode checkout; do not restart Codespaces for routine edits.
-- Active branch: `codex/game-scene-name-normalization-20261023`.
-- Latest game-source commit packaged: `6e8148c1bb7f6b7eedab0231c2e5ea04ec188946` (`Refresh complete repository file index`). Site source commit: `d6768c2c9a211caa7a004c03e01e41b53254cfc9`.
-- Site version 31 deployed successfully at `https://crisis-response-runtime.craftysnipe13.chatgpt.site`; deployment `appgdep_6adb753be4508191b0ef6cc4cf3f2b57`. The Site is owner-private. An unauthenticated browser sees “Sign in required”; the deployed game itself has not yet been manually checked in an authenticated session.
-- The complete repository index is `docs/audit/repository-file-index.json`. Regenerate and check with `scripts/index_repository_files.py --site-manifest <Site dist/build-manifest.json>` after source changes. The index covers all tracked and non-ignored repository files and maps them to the latest package.
-- No open PRs were present at the last GitHub check. Live `develop/wasm` was `9e234ba325d83fb1ba2f7ab38d7097e75e83fdbb`; it contains documentation/evidence commits not in this branch, with no code overlap. The current task snapshot is pushed to the active feature branch; verify its live head and PR list before any further sync. Keep at most one PR open and merge promptly when checks and gates pass.
+- Observed local branch/head: `codex/game-scene-name-normalization-20261023` at `20bfc1d4996dcd8c9e6abd042e74d4e3721cd935`. The only changes made after this checkpoint are this handoff and the generated repository index.
+- Live GitHub has no open PRs. `develop/wasm` is `c6cee907eb12504e91e33963cd5e512fe20c491a`; the live feature branch is `b3640f02009147eb7a3350489db382bb9ad30983`. GitHub comparison shows the feature branch is 2 commits ahead and 6 behind `develop/wasm` from merge base `9e234ba325d83fb1ba2f7ab38d7097e75e83fdbb`.
+- Local commits `d59cba1`, `c3bccc1`, and `20bfc1d` are not on the live branch. Shell `git fetch` failed because this checkout has no GitHub username/credential. Do not force-update a ref or lose the local commits; reconcile with live `develop/wasm` when authenticated Git access is available. Keep one consolidated line of work; do not open a PR for each small fix. GitHub Actions remain disabled.
+- Root `global.json` remains pinned to .NET SDK `8.0.426`. SDK is installed at `/tmp/codex-dotnet-8.0.426`; this host needs `LD_PRELOAD=/tmp/libprocshim.so` for the normal CLI to avoid its process-stat startup failure.
 
-## Latest Site changes and checks
+## Verified work
 
-- Restored owner-approved touch behavior from the known-good Site build: joystick vertical aim, horizontal movement with proportional travel, sprint only past the stick rim, touch guide, and iOS callout/context-menu protections.
-- Fixed the animation adapter's movement predicate to use velocity. Position-delta detection falsely toggled idle on render frames between fixed PhysX steps, causing the walk/limp appearance.
-- Kept the JS bridge adapter required because the deployed WASM lacks those JS-invokable methods. No raw recovered C# archive was added to the website.
-- Site package contains 766 manifest-listed files from 892 source inputs. The remaining repository-only files are indexed but not copied into the browser runtime.
-- Site test suite: 33/33 passed, including build integrity, WASM validation, touch input, source animation, occupant spawning, and scene package checks. Main-repository touch/animation tests and dependency inventory also passed.
-- .NET SDK is unavailable in this checkout; the package reuses the compiled runtime from Site v30. No fresh C#/WASM compilation was run.
-- Browser preview reached the owner-only sign-in gate. Ask the owner to sign into the Site and test joystick aiming/sprint, hold-to-fire, and walking on a touch device. Do not generate or rotate a SIWC bypass token unless explicitly requested.
+- Full `runtime/Crisis.Runtime.csproj` rebuild passed with .NET 8.0.426: 0 compile errors. Release Blazor WASM publish passed; the compiled runtime was produced from the same `game/` and `runtime/` sources in `d59cba1` (later commits changed only audit tests/index tooling and documentation).
+- The regenerated package at source commit `20bfc1d` passed `scripts/package_wasm_site.py verify`: 766 output files, 199 Blazor boot resources, and 195 WASM files. `game/browser-input.mjs` and `runtime-web/browser-input.mjs` have identical SHA-256. Package manifest correctly says `browserTestedThisBuild: false`.
+- Same-process localhost HTTP smoke returned 200 for the root, game and runtime HTML, both input modules, the scene loader, and a WASM file; WASM MIME was `application/wasm`. Chromium/Firefox executables are absent, so this is not browser boot or gameplay evidence.
+- Repository file index `docs/audit/repository-file-index.json` covers 1,887 tracked/non-ignored files against the latest package (893 source inputs, 766 outputs); zero indexed source hashes mismatch. Its `--check` now ignores only the recorded generation HEAD, so the index remains checkable after the index commit advances HEAD.
+- Passing checks: browser input 18/18, source character-step 5/5, scene loader 3/3, package tests 13/13, audit tools 12/12, actor migration (0 violations), strict ownership scan, and source dependency inventory (662 sources, 1,704 symbols, 1,332 reachable files; 124 ambiguous names remain classified for review). EngineChecks passed 69 assertions; FoundationChecks passed 121 assertions.
+- Recovered player-data extractor validated the pinned `Crisis Response.rar` SHA-256 and all 411 files / 185,036,038 bytes without altering the archive.
+- Added stationary touch hold-to-fire after 350 ms while preserving tap-to-aim, same-spot tap fire, drag-to-aim, and cancel/release semantics. Added cancellation and hold regression tests. Added the missing compile-only `FullSource.Projectile` declaration to FoundationChecks; this changes no production runtime owner.
+- Corrected the audit test to verify the six recovered Unity built-in resource records: Shader 46, Material 10303, Sprite Shader 10753, Sprite Material 10754, and Sprite records 10907/10913.
 
-## Known unrelated scene gate
+## Outstanding gates
 
-Marksman scene loading still stops at missing Mesh GUID `b4b69dc6c74eeb54cbd22d28e37f9a19`, fileID `4300000`, referenced by `Assets/Resources/weapons/ammunition/marksman/Marksman round .308 Winchester SP.prefab`. Existing evidence is in `docs/MISSING_CASING_MESH_GUID_SEARCH-2026-10-14.md` and `docs/evidence/logs/triage-2026-10-20-pr42.md`. Do not substitute the .308 casing mesh without verifying identical collider behavior. Find and verify the original round mesh or ask whether to defer the Marksman scene gate.
+- No real Chromium/WebKit/browser boot or touch gameplay smoke was available. Do not publish a new Site build until that gate passes. Existing private Site v31 remains the last deployed build; this new package is local at `/tmp/crisis-response-site-20bfc1d` and was not deployed.
+- Marksman still references missing Mesh GUID `b4b69dc6c74eeb54cbd22d28e37f9a19`, fileID `4300000`. The recovered candidate `Assets/Mesh/308 Winchester casing hi.asset` (GUID `cd74722033652fb409431b2947740490`) is owner-approved as a possible compatibility replacement, not as original identity. Defer it until the other completion gates because it affects the Marksman scene. Apply only with the existing scoped script and preserve the missing-GUID provenance record.
+- Original Operator/Occupant two-actor lifecycle and full gameplay acceptance remain unverified even though the C# graph compiles. After browser access and branch reconciliation, continue with the real prefab lifecycle, then two-actor spawn/equip/move/hit/physiology/ragdoll, and matching browser verification.
 
-## Operating constraints
+## Errors encountered and disposition
 
-- Keep SDK pin `8.0.426`; a full build requires a compatible .NET SDK. Do not change project source to work around a host `/proc` issue.
-- Preserve the game's original behavior and provenance. Add substitutes only where necessary and verified; avoid duplicate or less robust versions.
-- Update this handoff once at the end of substantive work. Commit and push the active branch so work persists. Keep GitHub Actions disabled per owner decision.
+- Plain `dotnet` initially failed before compilation at `Process.GetStat`; the pinned SDK plus `/tmp/libprocshim.so` worked. A direct MSBuild invocation with an invalid `-noIncremental` switch was discarded; `-target:Rebuild` was used instead.
+- First FoundationChecks compile exposed missing compile-only `Crisis.Runtime.FullSource.Projectile`; the boundary stub was added and the suite then passed. An early run also lacked `project.assets.json`; restore succeeded with the shim.
+- One audit test still expected only records 46/10303; the expectation was corrected to the six source-backed records above and all 12 tests passed.
+- Shell fetch cannot authenticate (`could not read Username for 'https://github.com'`). This prevents syncing or pushing the local commits; it does not affect local verification.
+
+## Next action
+
+Restore authenticated Git access, fetch the live feature and `develop/wasm` refs, preserve and reconcile local head `20bfc1d`, and land the verified batch back to `develop/wasm` as one consolidated integration. Then obtain a real browser and continue the original prefab/two-actor acceptance gates. Do not re-run the already passing local checks without new code or a changed dependency.
