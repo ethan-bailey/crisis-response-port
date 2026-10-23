@@ -157,7 +157,7 @@ def package(repo, published, output, toolchain, run_url):
         inventory.append(record(path, repo))
     require(inventory, "Empty source inventory")
     shutil.copytree(repo / "game", output / "game",
-                    ignore=shutil.ignore_patterns("node_modules", ".git", "package.json", "package-lock.json"))
+                    ignore=shutil.ignore_patterns("node_modules", ".git", "package.json", "package-lock.json", "mission01.crg.report.json"))
     # The compact runtime scene is a deterministic build output from the
     # tracked original Unity mesh export. Generate it in the package so the
     # source tree does not need to commit a second copy of the scene geometry.
