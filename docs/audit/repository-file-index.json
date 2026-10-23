@@ -72,13 +72,13 @@
       "sha256": "3e5df6404789d96c0b5b5f556d3ed02447bee0a97e340f6ec14c1a59c0a23d16"
     },
     {
-      "bytes": 3866,
+      "bytes": 3864,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "NEXT_AGENT.md",
-      "sha256": "83d418b9ee4357c4c8b278ad18a5ffc75cffa3c1ae70f5d4dc00ce148aa557bf"
+      "sha256": "9d7730e93ade74c6fb0a6ed5ad5a18b3256b3063802beb7ed0cd9feeecdff358"
     },
     {
       "bytes": 9885,
@@ -16983,7 +16983,7 @@
       "sha256": "7a72a008c918982a5f11c9a0e809e76e6738d1567f03a69861242365f567d9c5"
     }
   ],
-  "repositoryHead": "6291294a500bb0780a0776d190801f8b9d560e1e",
+  "repositoryHead": "254aaf23e52e93c4b3a91d48fe2dd3e30d11a982",
   "reviewedCandidates": [
     {
       "decision": "keep-and-package",
