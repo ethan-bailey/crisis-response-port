@@ -1,91 +1,32 @@
-# Gameplay completion roadmap
+# Gameplay Completion Roadmap
 
-## Goal and acceptance standard
+## Authority and working line
 
-Complete the original Crisis Response game as a browser game that can be played
-on iPhone Safari with touch controls. Original source methods, assets, update
-order and authored scene data remain the gameplay authority. Approved iPhone
-usability improvements, including proportional joystick speed, remain part of
-the target. A compiler pass alone does not establish gameplay parity.
+AGENT_INSTRUCTIONS.md, AGENTS.md, and the latest NEXT_AGENT.md govern execution. Use develop/wasm as the only development line. Prefer small, verified fast-forward commits directly on that branch; use one short-lived PR only when review or isolation materially helps, with at most one open at a time. Keep GitHub Actions disabled. Do not save or deploy a Site version until every required local gate passes on the exact final source SHA and the owners publication instructions authorize it.
 
-“100%” means every original player, weapon, enemy, mission, interaction, injury,
-animation, presentation and progression path in the recovered game has a
-source-backed implementation and a passing acceptance check. Unsupported
-actions must stay explicit until their original behavior is connected.
+Older PR #42, Codespaces-only, checkpoint, and Actions workflow directions in historical notes are superseded. The Work Mode checkout is the normal environment. Use an existing Codespace only when a required gate cannot run in the current workspace; preserve and verify its state if recovery is needed.
 
-## Priority order
+## Completion standard
 
-| Priority | Work | Completion evidence | Status |
-|---:|---|---|---|
-| 1 | Reconcile and checkpoint the current CharacterBody dependency batch. Preserve the exact branch state, review all staged and recovered files, refresh source inventories, and run narrow source/ownership checks. | A reversible checkpoint commit or hash-checked patch/archive; inventory, provenance, migration-boundary and audit tests pass. Record any build limitation without converting it into a pass. | Committed to PR #42 as `af56508d832125ce655fa705d62fda23795c1492`; all 312 staged paths match the preserved per-file hashes, with no deletions. Inventory, provenance, migration-boundary and audit checks pass. Compile remains unverified. |
-| 2 | Make `Crisis.Runtime.FullSource.CharacterBody` the sole gameplay actor owner. Connect original Awake/lifecycle, limbs, physiology, blackboard, equipment, weapons, projectile callbacks and IK to the same source actor instances. Keep the transport actor out of authoritative gameplay. | Full original-source compile; actor host instantiates the source actor with its authored components and all 19 registered limbs; no live gameplay caller creates or mutates a second CharacterBody; exact source and ownership checks pass. | In progress. Original Operator/Occupant prefab graphs are recovered verbatim and source-verified. `runtime/Engine/WeaponHost.cs` still creates `Crisis.Runtime.Weapons.CharacterBody`; no runtime prefab loader or two-actor test is connected. |
-| 3 | Prove the actor lifecycle with two independent original actors. Exercise spawn, equipment, movement, projectile hit, source callback order, wound and physiology progression, unconsciousness/death, ragdoll and destruction. | Native actor tests prove shared per-actor component identities, independent vitals, no self-hits and original event order. | Not started; blocked by priority 2. |
-| 4 | Connect player controls and movement to the original actor update path. Preserve keyboard behavior, touch gestures, proportional joystick speed, dead zone and original acceleration. | Native/input tests plus browser checks for movement, aiming, sprinting, firing intent, pause and focus cancellation. | Existing source-backed input work is not sufficient evidence for the integrated original actor path. |
-| 5 | Integrate original animation, weapon posing and arm IK on the actor. Wire `IKArmController`, `IKArmSequencer`, `ArmController` and arm physics to the source-owned limbs and targets. | Source action sequences run through the real actor; transition and interruption tests cover supported actions and explicit unsupported boundaries. | Not started; follows priority 2. |
-| 6 | Complete physics and body state: collision ownership, joints, muscle control, limb constraints, ragdoll, recovery and self-hit filtering. | Two-actor collision, joint and state-transition checks with source-authored parameters. | Not started; follows priorities 2–3. |
-| 7 | Complete original combat flow: weapons, magazines, bolts, reloads, grenades, projectiles, callbacks, hit effects and weapon drops. | Source-order action tests and two-actor combat checks cover each original weapon/action path. | Partial work exists on separate branches; shared actor acceptance is pending. |
-| 8 | Complete injury and physiology behavior, including wound placement, blood loss, circulation, oxygen, pain, shock, consciousness, death and treatment. | Controlled fixtures use original source calculations and assets; live actor tests show the same chain from impact through outcome. | Source-backed slices exist; live actor acceptance is pending. |
-| 9 | Connect NPC behavior, team control, mission rules, interactions, doors, traps, negotiation, scoring and mission completion. | Each original behavior tree and mission action is exercised against the shared actor/world graph. | Not started as an integrated game loop. |
-| 10 | Close the full parity inventory across original scenes, missions, weapons, enemies, settings, UI, audio, particles, shaders, saves and progression. | Every recovered feature is mapped to an implementation and a reproducible acceptance check; no unexplained omissions remain. | Not started. |
-| 11 | Build the actual WASM game and verify browser runtime, packaging, iPhone layout and touch gameplay. Keep WebGPU capability diagnostics isolated from game rendering. | One exact tested source SHA passes WASM build, localhost HTTP smoke, Chromium and WebKit game interactions, then a real iPhone Safari check. | Not verified for this branch head. |
-| 12 | Publish a preview of that exact tested game build. | Preview source/artifact matches the tested SHA, the game boots from the link, and its access behavior is verified. | Blocked by priorities 2–11 and exact build/browser evidence. |
+Parity means source-backed behavior in all six original scenes, not code presence, inventories, compilation, or synthetic tests alone. Keep rules derived from recovered original C# and Unity assets. Capture native reference behavior and compare source and port traces with justified numeric tolerances. Require exact-SHA local build, HTTP smoke, Chromium and WebKit gameplay, and real iPhone 16 Safari full-mission, performance, audio, and background-resume checks.
 
-## Current checkpoint
+## Ordered gates
 
-- Repository: `ethan-bailey/crisis-response-port`, private.
-- Active branch: `feature/full-source-characterbody-integration`.
-- Source checkpoint commit: `af56508d832125ce655fa705d62fda23795c1492` (parent `1077c79ae1aa919b17b17b4007bdf777fba41db1`).
-- Target `develop/wasm` inspected on GitHub: `2fc0a8e93be97c4d99123910fad4bd25798e71a8`.
-- Open overlapping lanes: #7 (historical input/movement), #56 (projectile/limb),
-  #57 (IK) and #42 (full CharacterBody). Keep their ownership boundaries intact.
-- No Actions run or status check is attached to source checkpoint `af56508`. The
-  latest documented full-source compile is a local failure at executable SHA
-  `517ce292` (19 errors / 15 missing names); the older Actions failure at
-  `407c66d` (run `39091701268`, 144 errors / 60 names) is from a different source
-  graph and is not a comparable count. The successful #56 WASM/browser run is a
-  different branch and does not validate this CharacterBody integration.
-- The source checkpoint commit adds/modifies exactly 312 files against parent
-  `1077c79ae1aa919b17b17b4007bdf777fba41db1`; a recursive Git tree comparison
-  confirms all 312 paths and zero removals. The preserved patch and archive hashes
-  and every per-file SHA-256 were reverified. This environment has no .NET SDK,
-  and no Actions run is attached to this source commit, so compilation is
-  unverified.
-- Current local checks: inventory freshness passes (646 sources, 1,680 symbols,
-  1,326 conservatively reachable files, 116 ambiguous names); actor migration
-  boundary and strict ownership scan pass; 477 recovered-source identities pass;
-  all 8 audit-tool tests pass; original actor prefab extraction/check passes; and
-  `git diff --check` passes. These checks do not establish compilation, browser
-  boot or gameplay parity.
-- Original `Operator.prefab` and `Occupant.prefab` are preserved verbatim under
-  `source-reference/Original/CharacterDependencies/ActorPrefabs/`, with original
-  `.meta` files, SHA-256 provenance and a structural inventory. The pinned
-  archive check confirms Operator: 70 GameObjects, 120 MonoBehaviours, all 13
-  required root components and the original 19 limb names; Occupant: 56
-  GameObjects, 117 MonoBehaviours and the same 19 limb names. This is source
-  asset recovery, not runtime instantiation. The current M4 transport fixture
-  still does not create that graph.
+1. Close original scene and asset dependencies. Resolve prefab overrides, GUID/fileID/local references, built-ins, Resources, materials, shaders, colliders, and scene transitions for all six scenes. Locate the exact original .308 casing mesh GUID b4b69dc6c74eeb54cbd22d28e37f9a19 / fileID 4300000 and required built-ins from original evidence; do not substitute an unverified asset. Capture native scene-flow behavior.
+2. Complete Unity compatibility and source compile: lifecycle, identity/destruction, prefab remapping, transforms, time/coroutines/events, physics/collision order, animation, audio, UI, resources, and scene management. Compile the required original C# graph with pinned .NET SDK 8.0.426. Distinguish the selected runtime graph from the entire recovered source tree.
+3. Use original actors end to end. Make Crisis.Runtime.FullSource.CharacterBody the sole actor owner. Load authored Operator.prefab and Occupant.prefab, preserve original lifecycle and all 19 limbs, and remove competing transport ownership such as WeaponHost. Prove two independent actors through spawn, equipment, movement, hit, injury, death/ragdoll, and destruction with real Mission and global dependencies. Synthetic prefab-only tests do not pass.
+4. Route controls through the original actor: keyboard and touch movement, proportional joystick walk and rim-triggered sprint, aim, hold-to-fire, reload, stance, pause, cancellation, and lifecycle reset.
+5. Run original IK and physical constraints. Execute IKArmController, IKArmSequencer, ArmController, and ArmIKSolver on source-owned limbs. Complete collision, joints, muscle/limb constraints, ragdoll, recovery, and self-hit filtering.
+6. Complete original weapon and combat paths: WeaponBase, Firearm, WeaponAimer, CyclingBolt, magazine/chamber/reload, recoil, grenades, Projectile, BallisticMaterial, ProjectileLimbEvent, penetration/deflection, callbacks, effects, and weapon drops.
+7. Complete physiology: wound placement, bleeding, circulation, oxygen, pain, shock, consciousness, treatment, death, and UI/AI effects through LimbPhysiology, Physiology, VitalFunctions, and Wound.
+8. Complete mission and progression. Connect CharacterBehavior, TeamOperator, TeamController, Blackboard, Mission, CampaignManager, and ScoreKeeper for navigation, cover, commands, doors, traps, objectives, scoring, win/loss, restart, transitions, and progression.
+9. Close presentation and platform parity: original UI/settings, audio/mixer/spatial behavior, particles, shaders/materials, mirror/glass, camera/light/render order, saves/load/resume, browser storage, and mobile lifecycle. Inventories and dummy shader exports are not implementation.
+10. Run original-vs-port trace comparison across every scene/system with justified tolerances, then complete the exact-SHA browser and mobile gates above.
 
-## Immediate next work
+## Current evidence (2026-10-23)
 
-1. Run the one deliberate full-source compile on the current PR #42 source. The
-   repository workflow is dispatch-only; retain the actual exit code and compare
-   diagnostics only against a matching source graph.
-2. Build the runtime importer for the recovered actor prefab component graph,
-   including local component references and source lifecycle ordering. Do not
-   manufacture substitute gameplay state. Replace the weapon fixture's transport
-   actor only after its source actor dependencies can be constructed and tested
-   together.
-3. Run isolated C# checks and one deliberate full original-source build with the
-   repository's .NET 8 toolchain. Keep the real exit code; this environment has no
-   local `dotnet` executable and the GitHub connector has no workflow-dispatch
-   operation.
-4. Continue the two-actor acceptance sequence before broad mission/NPC work or a
-   new public game preview.
+At develop/wasm SHA a75983409c8aeeab76f53afeab5c0e7a41c428c8, dotnet build runtime/Crisis.Runtime.csproj --no-incremental passed with 0 errors and 45 warnings under SDK 8.0.426. dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -c Release passed its emitted contracts, but explicitly reports fullGameParity=false, fullUnityParity=false, and two unresolved built-ins. This establishes selected-graph compilation and contract behavior only.
 
-## Revert and evidence notes
+The available curated root source-reference/Original yielded 4 assets, 3 dependency edges, and 123 unresolved GUIDs in scripts/scene_dependency_audit.py; it is not the full six-scene source project. The casing mesh GUID remains unresolved in available original evidence. A valid complete scene package was not found for the scene-flow runner. Rendered Marksman gameplay and in-scene FIRE behavior, and real Operator/Occupant lifecycle with Mission/global dependencies, remain unverified.
 
-This roadmap is documentation. Revert it independently with
-`git revert <roadmap-commit>`. Source checkpoint commits must be reverted as
-ordinary commits in reverse order; do not reset `develop/wasm` or `main`. Keep
-the full-source compiler result, actor tests and browser evidence tied to exact
-source SHAs, and keep a failed compiler result as a failure.
+Resume from the earliest unfinished gate using the current handoff. Record evidence and blockers once per bounded batch; never mark a gate complete based on compilation or inventory alone.
