@@ -14,10 +14,13 @@ SCRIPT_GUIDS = {
     # Unity 2017.2.0f3 uGUI assembly identity is pinned from the recovered
     # UnityEngine.UI.dll. The fileIDs are AssetRipper's serialized TypeDef IDs.
     'f5f67c52d1564df4a8936ccd202a3bd8': {
+        '-2061169968': 'Scrollbar', '-1200242548': 'Mask',
         '-765806418': 'Image', '-405508275': 'HorizontalLayoutGroup',
-        '-113659843': 'Slider', '708705254': 'Text',
+        '-113659843': 'Slider', '708705254': 'Text', '853051423': 'Dropdown',
         '1297475563': 'VerticalLayoutGroup', '1301386320': 'GraphicRaycaster',
-        '1679637790': 'LayoutElement', '1980459831': 'CanvasScaler',
+        '1367256648': 'ScrollRect', '1392445389': 'Button',
+        '1679637790': 'LayoutElement', '1741964061': 'ContentSizeFitter',
+        '1980459831': 'CanvasScaler', '2109663825': 'Toggle',
     }
 }
 SOURCE_ONLY_SUFFIXES = {'.cs'}

@@ -13,6 +13,16 @@ EXTRACTOR = runpy.run_path(str(SCRIPT))
 
 
 class ExtractRuntimeSceneTests(unittest.TestCase):
+    def test_recovered_unity_ui_typedef_ids_are_mapped(self):
+        types = EXTRACTOR['SCRIPT_GUIDS']['f5f67c52d1564df4a8936ccd202a3bd8']
+        self.assertEqual(types['1741964061'], 'ContentSizeFitter')
+        self.assertEqual(types['1392445389'], 'Button')
+        self.assertEqual(types['853051423'], 'Dropdown')
+        self.assertEqual(types['1367256648'], 'ScrollRect')
+        self.assertEqual(types['-1200242548'], 'Mask')
+        self.assertEqual(types['2109663825'], 'Toggle')
+        self.assertEqual(types['-2061169968'], 'Scrollbar')
+
     def test_verified_mesh_10210_is_accepted(self):
         records = EXTRACTOR['load_builtin_resource_records']()['playerResourceRecords']['records']
         mesh = records['10210']

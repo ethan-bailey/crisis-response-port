@@ -116,6 +116,7 @@ public static class SceneLoader {
                     case 64 when prefab:component=go.AddComponent<MeshCollider>();break;
                     case 136 when prefab:component=go.AddComponent<CapsuleCollider>();break;
                     case 212 when prefab:component=go.AddComponent<SpriteRenderer>();break;
+                    case 222 when prefab:component=go.AddComponent<CanvasRenderer>();break;
                     case 114:{
                         var script=fields.GetProperty("m_Script");
                         string guid=script.GetProperty("guid").GetString();
@@ -165,8 +166,17 @@ public static class SceneLoader {
         }
     }
     static bool IsWithin(Transform value,Transform root){for(var t=value;t!=null;t=t.parent)if(ReferenceEquals(t,root))return true;return false;}
+    const string UnityUiGuid="f5f67c52d1564df4a8936ccd202a3bd8";
+    static readonly Dictionary<string,string> UnityUiTypes=new(StringComparer.Ordinal) {
+        ["-2061169968"]="Scrollbar",["-1200242548"]="Mask",["-765806418"]="Image",
+        ["-405508275"]="HorizontalLayoutGroup",["-113659843"]="Slider",["708705254"]="Text",
+        ["853051423"]="Dropdown",["1297475563"]="VerticalLayoutGroup",["1301386320"]="GraphicRaycaster",
+        ["1367256648"]="ScrollRect",["1392445389"]="Button",["1679637790"]="LayoutElement",
+        ["1741964061"]="ContentSizeFitter",["1980459831"]="CanvasScaler",["2109663825"]="Toggle",
+    };
     static string ResolveScriptName(JsonElement package,string guid,string fileID){
         if(package.TryGetProperty("scriptTypes",out var bindings)&&bindings.TryGetProperty(guid,out var types)&&types.TryGetProperty(fileID,out var mapped))return mapped.GetString();
+        if(guid==UnityUiGuid&&UnityUiTypes.TryGetValue(fileID,out var uiType))return uiType;
         if(package.GetProperty("guidPaths").TryGetProperty(guid,out var source))return Path.GetFileNameWithoutExtension(source.GetString());
         return $"Script:{guid}:{fileID}";
     }

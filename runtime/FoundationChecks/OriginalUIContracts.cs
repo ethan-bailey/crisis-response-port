@@ -43,6 +43,14 @@ static class OriginalUIContracts {
         var slider=new GameObject("timer data",world).AddComponent<Slider>();var updates=new List<float>();slider.onValueChanged.AddListener(updates.Add);
         slider.value=1.5f;slider.value=1.8f;slider.value=-.5f;
         Check(updates.SequenceEqual(new[]{1f,0f}),"slider clamps fuse fractions and only notifies actual value changes");
+        var recoveredUi=new GameObject("recovered settings UI",world);
+        var toggle=recoveredUi.AddComponent<Toggle>();toggle.graphic=recoveredUi.AddComponent<Image>();toggle.toggleTransition=1;
+        Check(recoveredUi.AddComponent<CanvasRenderer>()!=null&&recoveredUi.AddComponent<LayoutElement>()!=null&&
+            recoveredUi.AddComponent<HorizontalLayoutGroup>()!=null&&recoveredUi.AddComponent<VerticalLayoutGroup>()!=null&&
+            recoveredUi.AddComponent<ContentSizeFitter>()!=null&&recoveredUi.AddComponent<Mask>()!=null&&
+            recoveredUi.AddComponent<Dropdown>()!=null&&recoveredUi.AddComponent<ScrollRect>()!=null&&
+            recoveredUi.AddComponent<Scrollbar>()!=null&&toggle.graphic!=null,
+            "recovered Unity 2017 settings prefab component identities are available");
         return count;
     }
     sealed class GraphicProbe:IGraphicDriver {
