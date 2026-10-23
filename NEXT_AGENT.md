@@ -1,5 +1,16 @@
 # NEXT_AGENT — Crisis Response port completion
 
+## Latest checkpoint — 2026-10-23 recovered settings uGUI compatibility
+
+- Startup stock: the preserved Codespace again had no browser tab and this environment exposes no Codespace restart control. It was not deleted or recreated; its worktree and active process remain untouched. Feature branch `codex/game-scene-name-normalization-20261023` started at `bd756d943c8e185125998e7e93c9408fc84ffe27`; `develop/wasm` remained `adb4e6b73f67a2bafc8c5daf46dc15a6cde1e252`. The last verified SDK is .NET 8.0.426, but remote worktree and SDK selection could not be rechecked.
+- Bounded implementation commit: `f621cab33c58afacac40f216583424c3d0c3713b` (`Support recovered Unity settings UI components`). It adds classID 222 CanvasRenderer prefab loading; recovered Unity 2017.2 uGUI TypeDef fallback mappings; CPU serialized component identities for layout, mask, scaler, raycaster, and scrollbar state; the corresponding extractor mappings; and regression contracts.
+- The TypeDef mappings are source-backed by the exact recovered `UI Settings general.prefab`: ContentSizeFitter `1741964061`, Button `1392445389`, Dropdown `853051423`, ScrollRect `1367256648`, Mask `-1200242548`, Toggle `2109663825`, and Scrollbar `-2061169968`. Existing recovered mappings for LayoutElement, horizontal/vertical layout groups, CanvasScaler, and GraphicRaycaster now also have runtime component types.
+- Exact-SHA verification at `f621cab33c58afacac40f216583424c3d0c3713b`: fetched all six committed blobs back from GitHub; structural contracts confirm the loader case, fallback table, runtime component types, and foundation check. Executing the committed extractor module passed the mapping assertion: `PASS uGUI mappings 15`. Blob SHAs are recorded by the commit.
+- A .NET build and normalized scene-runner result are not claimed. The current execution environment has no .NET SDK and the Codespace is unavailable, so compilation and the strict `generalPrefab` load remain the next required verification. GitHub Actions stayed disabled. No alternate browser surface, injected JavaScript, raw CDP, Site save/deployment, access change, or unrelated merge was used.
+- Gates remain open: explicit original scene flow, rendered Marksman, in-scene FIRE, and Operator/Occupant lifecycle with real Mission/global dependencies.
+- Next bounded batch: recover the same Codespace, recheck its branch/HEAD/worktree and .NET 8.0.426, fast-forward to this branch head, run the fresh full-source/FoundationChecks build once, and run the normalized Title scene loader once with the complete exception chain. If the recovered general-settings prefab advances, fix only the next named source-backed dependency.
+
+
 ## Latest checkpoint — 2026-10-23 original general-settings prefab recovery
 
 - Startup stock: the existing Codespace had no available browser tab and this environment still exposes no Codespace restart control. It was not deleted or recreated, and its worktree/active process were left untouched. GitHub showed feature branch `codex/game-scene-name-normalization-20261023` at `744c4c05fcd2bfbff503824e1849527b702586a8`; `develop/wasm` remained `adb4e6b73f67a2bafc8c5daf46dc15a6cde1e252`. Remote worktree and SDK selection could not be rechecked; the last verified SDK remains .NET 8.0.426.
