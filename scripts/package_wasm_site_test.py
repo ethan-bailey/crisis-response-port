@@ -3,6 +3,7 @@ import base64
 import hashlib
 import json
 import subprocess
+import struct
 import tempfile
 import unittest
 from pathlib import Path
@@ -22,7 +23,11 @@ class PackageTests(unittest.TestCase):
         for path, value in {
             "game/index.html": '<script type="importmap">{"imports":{"three":"https://example.test/pinned.js"}}</script>',
             "game/browser-input.mjs": "// input adapter\n",
-            "game/assets/mission01.crg": "source scene fixture",
+            "game/assets/mission01.obj": "\n".join([
+                "v 0 0 0", "v 1 0 0", "v 0 1 0",
+                "vt 0 0", "vt 1 0", "vt 0 1", "vn 0 0 1",
+                "f 1/1/1 2/2/1 3/3/1", "",
+            ]),
             "game/vendor/physx-js-webidl.mjs": "// pinned PhysX loader",
             "game/vendor/physx-js-webidl.wasm": WASM_HEADER + b"physx-fixture",
             "game/package-lock.json": "{}",
@@ -51,6 +56,10 @@ class PackageTests(unittest.TestCase):
         self.git("add", ".")
         self.git("-c", "user.name=Fixture", "-c", "user.email=fixture@example.test", "commit", "-qm", "Fixture")
         self.write(self.repo / "global.json", (self.repo / "tools/wasm-compile/global.json").read_bytes())
+        self.write(self.repo / "scripts/build_scene_binary.py",
+                   Path(__file__).with_name("build_scene_binary.py").read_text())
+        self.git("add", ".")
+        self.git("-c", "user.name=Fixture", "-c", "user.email=fixture@example.test", "commit", "--amend", "-qm", "Fixture")
 
     def write(self, path, value):
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -74,6 +83,16 @@ class PackageTests(unittest.TestCase):
         self.assertFalse(manifest["scope"]["browserTestedThisBuild"])
         self.assertEqual(manifest["externalImports"]["three"], "https://example.test/pinned.js")
         self.assertIn("runtime/Original/Example.cs", [r["path"] for r in manifest["sourceInventory"]])
+        self.assertIn("game/assets/mission01.obj", [r["path"] for r in manifest["sourceInventory"]])
+        scene = (self.site / "game/assets/mission01.crg").read_bytes()
+        magic, vertices, indices, attributes = struct.unpack("<4sIII", scene[:16])
+        self.assertEqual(magic, b"CRG1")
+        self.assertEqual(attributes, 3)
+        self.assertEqual((vertices, indices), (3, 3))
+        self.assertEqual(len(scene), 16 + vertices * 32 + indices * 4)
+        report = json.loads((self.site / "game/assets/mission01.report.json").read_text())
+        self.assertEqual(report["sourceSha256"], hashlib.sha256((self.repo / "game/assets/mission01.obj").read_bytes()).hexdigest())
+        self.assertEqual(report["binarySha256"], hashlib.sha256(scene).hexdigest())
         self.assertEqual(verify(self.site), result)
 
     def test_modified_binary_fails(self):
