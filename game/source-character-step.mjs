@@ -28,17 +28,20 @@ export function stepBodyMovement({
 }
 
 export function stepCharacterAnimation({
-  kneelRatio, movingDelta, deltaTime, velocity, direction,
+  kneelRatio, velocity, direction,
   walkSpeed, sprintSpeed, crippledRatio = 0, operator = true,
 }) {
-  const moving = Math.abs(movingDelta) > deltaTime * 0.1;
+  // This browser physics adapter exposes fixed-step positions without Unity's
+  // Rigidbody interpolation. Use the last known-good velocity predicate so
+  // render frames between fixed steps do not alternate walk and idle states.
+  const moving = Math.abs(velocity) > 0.15;
   const speed = Math.abs(velocity);
   const moveSpeed = speed < walkSpeed
     ? 0
     : Math.min(1, Math.max(0, (speed - walkSpeed) / (sprintSpeed - walkSpeed))) * 0.5;
   return {
     moving,
-    backwards: moving && Math.sign(movingDelta) !== direction,
+    backwards: moving && Math.sign(velocity) !== direction,
     moveSpeed,
     KneelRatio: kneelRatio,
     crippled: operator ? 0 : crippledRatio,

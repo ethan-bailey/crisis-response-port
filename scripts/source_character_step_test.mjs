@@ -35,7 +35,7 @@ test('source movement prevents sprint while reversing or limping', () => {
 
 test('source animator inputs match CharacterBody movement and speed thresholds', () => {
   const result = stepCharacterAnimation({
-    kneelRatio: 0.4, movingDelta: -0.02, deltaTime: 0.1, velocity: -2.2,
+    kneelRatio: 0.4, velocity: -2.2,
     direction: 1, walkSpeed: 1.2, sprintSpeed: 3.2,
   });
   assert.deepEqual(result, {
@@ -43,4 +43,18 @@ test('source animator inputs match CharacterBody movement and speed thresholds',
     KneelRatio: 0.4, crippled: 0, ragdoll: false,
   });
   assert.ok(Math.abs(result.moveSpeed - 0.25) < 1e-12);
+});
+
+test('movement animation stays active on render frames between physics steps', () => {
+  const result = stepCharacterAnimation({
+    kneelRatio: 0, velocity: 0.8, direction: 1,
+    walkSpeed: 1.2, sprintSpeed: 3.2,
+  });
+  assert.equal(result.moving, true);
+  assert.equal(result.backwards, false);
+  assert.equal(result.moveSpeed, 0);
+  assert.equal(stepCharacterAnimation({
+    kneelRatio: 0, velocity: 0.15, direction: 1,
+    walkSpeed: 1.2, sprintSpeed: 3.2,
+  }).moving, false);
 });
