@@ -1,0 +1,20 @@
+{
+  "source": "source-reference/Original/Assets/Mesh/Combined Mesh (root_ scene)_1.asset",
+  "sourceSha256": "bb6dc486c0544e08c5f9e6bf2ed1edcc9276d0009a574b7cd3acb80cde979c34",
+  "output": "game/assets/mission01.crg",
+  "outputSha256": "97bff2ecd4ce4f57627f92725e8df68f59e16579fe824c99be09ca391c42209a",
+  "format": "CRG1",
+  "vertices": 45356,
+  "indices": 100998,
+  "triangles": 33666,
+  "submeshes": 764,
+  "strideBytes": 48,
+  "channels": [
+    "position3f32",
+    "normal3f32",
+    "uv0_2f32",
+    "indices_u32"
+  ],
+  "conversion": "Unity to right-handed coordinates: negate position/normal Z and reverse each source triangle winding",
+  "validation": "source channel bounds, finite values, and triangle indices passed"
+}

@@ -120,9 +120,9 @@ def main() -> int:
     with out.open("w", encoding="utf-8") as f:
         f.write(f"# Extracted from original serialized Unity mesh: {src.name}\n")
         f.write("# Coordinates converted to right-handed convention; face winding reversed.\n")
-        for x,y,z in positions: f.write(f"v {x:.8g} {y:.8g} {z:.8g}\n")
-        for u,v in uvs: f.write(f"vt {u:.8g} {v:.8g}\n")
-        for x,y,z in normals: f.write(f"vn {x:.8g} {y:.8g} {z:.8g}\n")
+        for x,y,z in positions: f.write(f"v {x:.9g} {y:.9g} {z:.9g}\n")
+        for u,v in uvs: f.write(f"vt {u:.9g} {v:.9g}\n")
+        for x,y,z in normals: f.write(f"vn {x:.9g} {y:.9g} {z:.9g}\n")
         for si, faces in enumerate(faces_by_submesh):
             f.write(f"g submesh_{si:03d}\n")
             for a,b,c in faces:

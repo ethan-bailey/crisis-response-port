@@ -1,0 +1,14 @@
+{
+  "source": "source-reference/Original/Assets/Mesh/Combined Mesh (root_ scene)_1.asset",
+  "output": "game/assets/mission01.obj",
+  "vertices": 45356,
+  "strideBytes": 48,
+  "indices": 100998,
+  "triangles": 33666,
+  "submeshes": 764,
+  "maxVertexIndex": 45355,
+  "hasNormals": true,
+  "hasUV0": true,
+  "conversion": "Unity left-handed coordinates to right-handed by negating Z and reversing triangle winding",
+  "validation": "vertex/index bounds and buffer lengths passed"
+}
