@@ -11,6 +11,7 @@ import json
 import re
 import shutil
 import subprocess
+import sys
 from pathlib import Path, PurePosixPath
 
 MANIFEST = "build-manifest.json"
@@ -156,6 +157,21 @@ def package(repo, published, output, toolchain, run_url):
     require(inventory, "Empty source inventory")
     shutil.copytree(repo / "game", output / "game",
                     ignore=shutil.ignore_patterns("node_modules", ".git", "package.json", "package-lock.json"))
+    # The compact runtime scene is a deterministic build output from the
+    # tracked original Unity mesh export. Generate it in the package so the
+    # source tree does not need to commit a second copy of the scene geometry.
+    scene_obj = output / "game/assets/mission01.obj"
+    scene_binary = output / "game/assets/mission01.crg"
+    scene_builder = repo / "scripts/build_scene_binary.py"
+    require(scene_obj.is_file(), "Original Mission 01 OBJ source is missing")
+    require(scene_builder.is_file(), "Original scene binary builder is missing")
+    subprocess.run([sys.executable, str(scene_builder), str(scene_obj), str(scene_binary)],
+                   check=True, cwd=repo)
+    scene_report = json.loads(scene_binary.with_suffix(".report.json").read_text())
+    require(scene_report.get("sourceSha256") == digest(scene_obj),
+            "Generated scene report does not match the packaged original OBJ")
+    require(scene_report.get("binarySha256") == digest(scene_binary),
+            "Generated scene report does not match the packaged scene binary")
     shutil.copytree(published, output / "runtime-web")
     runtime_index = output / "runtime-web/index.html"
     html = runtime_index.read_text()
