@@ -2,28 +2,44 @@
 
 ## Checkpoint
 
-- Development line: `develop/wasm`; the code source checkpoint remains `5bb158f0bb18ab3fbf17fcd478f2266226cd057e`. Documentation-only commit `c297cc1c1e6c3179902d19b3e74ab4646fe7f6dd` records the recurring workspace issue. Live GitHub confirms that head and no open PRs. GitHub Actions remain disabled.
-- Codespaces use is at 90% through 2026-11-01; avoid it unless the owner requests it or a required gate cannot run elsewhere.
-- Full original CharacterBody compilation passed at exact code source SHA `1237e360b829a5a80289d0136d2f8be7a7159050` (0 errors, 45 warnings). The later changes are documentation only.
+- Development branch `develop/wasm` is at `72c167993280934d19c7921113eb9efe80849f89` (`Complete Mission 01 actor startup contract`). The live GitHub branch was verified at the same SHA after push; no open PRs were listed.
+- The exact tested code checkpoint is `72c167993280934d19c7921113eb9efe80849f89`. A documentation-only handoff update may follow it.
+- GitHub Actions remain disabled. Codespaces use is at 90% through 2026-11-01; avoid it unless the owner requests it or a required gate cannot run elsewhere.
+- Read `AGENT_INSTRUCTIONS.md` and `docs/DOTNET_BUILD_RUNBOOK.md` before project work. The runbook now records the recurring .NET runner failures and Gate 7 gameplay/runtime fixes.
 
-## Current blocker
+## Gate 7 result
 
-- This Work Mode session has no Crisis Response checkout mounted. The prior `/workspace/scratch/c5901021c6f6/crisis-response-port` path is absent; the only Git checkout found is an unrelated Sites repository.
-- Shell `git ls-remote` failed with `could not read Username ... No such device or address`; this runner cannot prompt for shell GitHub credentials. GitHub's connected API can verify the head and read/write individual text files, but its fetch tool rejected the repository tarball endpoint and cannot provide a buildable checkout.
-- The pinned .NET SDK 8.0.426 and `/tmp/libprocshim.so` were not found in the current runner. Gate 1 has not started; no gameplay source changes or gameplay gates are claimed.
-- Recovery steps and exact observed failures are documented in `docs/DOTNET_BUILD_RUNBOOK.md` under “Repeated workspace/checkout unavailability” and linked from `AGENT_INSTRUCTIONS.md`.
-- The existing “Crisis Response Gates 1–7” hourly automation is paused to avoid repeating this same environment failure. It may be resumed once a usable project checkout and toolchain are available.
+Mission 01 reached `Mission.Start` and `BeginMission` with original source actors: 2 TeamOperators and 5 Occupants (8 CharacterBody instances). Blackboard property mappings resolved after the short-name type lookup fix. Gate 7 passed using the headless test adapters documented in the runbook.
 
-## Gameplay gates requested
+The test silences audio and mixer output and suppresses scene-level MissionUI, interior canvas callbacks, FogOfWarElement, and vocalization presentation. It checks real mission and actor startup; it does not claim visual/audio parity, full AI behavior-tree execution, browser/WASM, or iPhone Safari acceptance.
 
-1. Load, initialize, and destroy the original Operator prefab; preserve authored components and 19 limb identities.
-2. Load Occupant and prove body, limbs, health, and equipment are independent of Operator.
-3. Connect original movement/input, animation, and arm IK.
-4. Equip original weapon; verify aim, trigger, and reload.
-5. Verify projectile-to-limb collision, damage, and original physiology.
-6. Verify unconsciousness/death, ragdoll, weapon drop, and destruction.
-7. Run these systems with real actors in a normally initialized mission.
+## Verified checks at the exact tested code checkpoint
+
+- `runtime/Checks --mission-contract`: passed; Mission 01 started, 2 Operators, 5 Occupants, no Blackboard property-mapping errors.
+- `runtime/Checks --spawner-contract`: passed; original Occupant spawning, independent trauma/physiology ownership, movement force, and animation parameter contracts.
+- `scripts/package_ammunition_closure.py game/assets/weapon-runtime.json.gz <full-package> --check`: passed; 29/29 5.56 FMJ closure assets resolved, no unresolved assets or stale script/builtin maps.
+- `python3 -m unittest scripts.extract_runtime_scene_test`: 6 passed.
+- `runtime/EngineChecks`: 69 assertions passed.
+- `runtime/FoundationChecks`: 121 assertions passed.
+- Full `runtime/Crisis.Runtime.csproj` rebuild with SDK 8.0.426 and `/tmp/libprocshim.so`: 0 errors, 45 warnings.
+- `git diff --check`: passed before commit.
+
+## Errors found and fixed in this turn
+
+- Missing original `OperatorSpawner` source prevented Operators from appearing; restored it into the compiled source set.
+- Prefab clones did not run `Awake` before the spawning callback consumed physiology; active clones now complete `Awake`/`OnEnable` before `Instantiate` returns.
+- Original zero-scale UI roots and sheared arm-bone transforms failed `SetParent`; runtime transform handling now preserves local pose for singular parents and extracts closest TRS for shear.
+- Missing Unity built-in class ID 120 left the original weapon reticle without its `LineRenderer`; prefab loading now supplies it.
+- Behavior Designer trees omitted optional task/node metadata and stored component mappings by short type name; deserialization now uses safe metadata defaults and resolves short names across loaded assemblies.
+- EngineChecks expected `Renderer.material` to return the shared source object; its assertion now reflects the Unity per-renderer copy while checking the remaining material identities.
+
+## Remaining issues / next step
+
+- Gate 8 combined acceptance has not run. Start it only after confirming the requested scope, then verify the complete two-actor flow, exact-source WASM/browser behavior, and iPhone Safari acceptance.
+- The original Marksman `.308` round prefab still references a missing projectile mesh GUID. The already-approved `.308` casing-only mapping is not authorization to substitute that projectile mesh.
+- Mission import still reports unsupported presentation/physics records and unresolved external assets in the incomplete package. Review the diagnostic inventory before claiming full asset closure.
+- One known untracked corrupt package fragment remains at `scene-data/.crisis-response-scenes.json.gz.QEOasz`; it was excluded from the commit.
 
 ## Next action
 
-Restore the `develop/wasm` checkout and pinned .NET 8.0.426 runner in Work Mode. Verify branch/head/worktree, then start Gate 1 by tracing the authentic Operator prefab’s source-backed load/initialization/destruction path and its complete serialized-reference closure. Avoid Codespaces through 2026-11-01 where practical.
+Prepare Gate 8’s combined two-actor acceptance using the exact tested source checkpoint. Resolve the original Marksman projectile dependency from source provenance without substituting the separately missing mesh, then run the exact-source WASM/browser checks and request iPhone Safari acceptance only when the browser gate passes.
