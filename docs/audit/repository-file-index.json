@@ -9120,7 +9120,7 @@
       "bytes": 10891,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
-      "matchesLatestSourceInventory": false,
+      "matchesLatestSourceInventory": true,
       "packageRole": "build-or-validation-input",
       "path": "scripts/audit_tools_test.py",
       "sha256": "9e5faef718ffa8ec05c46580355221904d0d3a62968240a98ac57a7c0be02dda"
@@ -9396,13 +9396,13 @@
       "sha256": "304380ecc32b2de2b1fe18a72667625459363ce42552ecaf98e4879a594f4660"
     },
     {
-      "bytes": 6204,
+      "bytes": 6730,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
-      "matchesLatestSourceInventory": true,
+      "matchesLatestSourceInventory": false,
       "packageRole": "build-or-validation-input",
       "path": "scripts/index_repository_files.py",
-      "sha256": "00b4c9875082027066aedd86049d6ac96e7c4ab3bfb2e62925387d819066214e"
+      "sha256": "af4df7154370ba0ac4292cf36041cfe0edba69e28bfeeb2c09ba138fc7ccc2d8"
     },
     {
       "bytes": 3388,
@@ -16992,7 +16992,7 @@
       "sha256": "7a72a008c918982a5f11c9a0e809e76e6738d1567f03a69861242365f567d9c5"
     }
   ],
-  "repositoryHead": "d59cba1dc5bfb4b5b0898ead711c1e7eedc53002",
+  "repositoryHead": "c3bccc1d5d2b24d05402309a1b0a744be2bd9347",
   "reviewedCandidates": [
     {
       "decision": "keep-and-package",
@@ -17026,9 +17026,9 @@
   "schemaVersion": 1,
   "scope": "Every tracked or non-ignored working-tree file in this repository, excluding this generated index. Hashes identify file contents; file contents remain in their repository/package source paths.",
   "sitePackage": {
-    "manifestSha256": "4c7b6e96c57767494843444352ec32bce79407856d33bc8f69b695482c0e2d74",
+    "manifestSha256": "6095e6d4aec52067fefa40043e36563e3cc7adc5af078f44a6ccca9b9880b829",
     "outputFileCount": 766,
-    "sourceCommit": "d59cba1dc5bfb4b5b0898ead711c1e7eedc53002",
+    "sourceCommit": "c3bccc1d5d2b24d05402309a1b0a744be2bd9347",
     "sourceInventoryCount": 893
   }
 }

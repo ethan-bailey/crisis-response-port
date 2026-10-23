@@ -116,7 +116,16 @@ def main():
     args = parser.parse_args()
     result = json.dumps(generate(args.site_manifest.resolve()), indent=2, sort_keys=True) + "\n"
     if args.check:
-        if not args.output.is_file() or args.output.read_text() != result:
+        if not args.output.is_file():
+            raise SystemExit("Repository file index is incomplete or stale; regenerate and review before packaging")
+        current = json.loads(args.output.read_text())
+        expected = json.loads(result)
+        # The index commit itself necessarily advances HEAD after generation.
+        # Compare file and package evidence while retaining repositoryHead as
+        # the exact source checkpoint recorded when the index was generated.
+        current.pop("repositoryHead", None)
+        expected.pop("repositoryHead", None)
+        if current != expected:
             raise SystemExit("Repository file index is incomplete or stale; regenerate and review before packaging")
     else:
         args.output.parent.mkdir(parents=True, exist_ok=True)
