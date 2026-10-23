@@ -5,6 +5,52 @@ pins .NET SDK **8.0.426** in the root `global.json`; a newer SDK is not a
 substitute. This host has also shown a runner-only `/proc` process-stat failure
 before compilation. The exact SDK and existing process shim below resolved it.
 
+## Repeated workspace/checkout unavailability
+
+A Work Mode turn can start with a different scratch mount. Do not assume a
+repository path remembered from a prior turn still exists. Before any project
+command, confirm that the current working directory is the repository root:
+
+```sh
+pwd
+git rev-parse --show-toplevel
+git status --short --branch
+find /workspace/scratch -maxdepth 5 -type d -name .git -print
+```
+
+If the expected checkout is absent, make one bounded recovery attempt:
+
+1. Search the current scratch mount for the project checkout. Do not treat a
+   separate `.sites-checkout`, an old feature-branch ZIP, or a source archive
+   as the live `develop/wasm` checkout.
+2. If shell Git authentication is already configured, test the live remote once
+   with `git ls-remote`. If it fails with
+   `could not read Username ... No such device or address`, the noninteractive
+   runner cannot prompt for credentials. Do not retry the same shell fetch.
+3. Use the connected GitHub API to verify the live branch/PR state or read
+   individual files. This is useful for inspection, but it does not provide a
+   buildable local repository. The GitHub fetch connector rejects repository
+   tarball endpoints and does not download binary archives.
+4. Check for the pinned SDK and the process shim. Do not start a .NET build
+   without the repository and SDK preflight in this runbook.
+
+If the checkout or required SDK still cannot be recovered, classify it as a
+critical environment blocker. Do not edit source through stale archives, make
+a status-only commit, or repeat the same fetch hourly. Record the exact failed
+paths/commands and live GitHub SHA, pause any recurring work automation, and
+resume when the correct checkout and required toolchain are mounted. Avoid
+Codespaces through 2026-11-01 unless the owner requests it or a required gate
+cannot run by another practical means.
+
+Observed on 2026-10-23: the prior
+`/workspace/scratch/c5901021c6f6/crisis-response-port` checkout was absent;
+the current mount contained only a separate Sites checkout and an older feature
+archive. Shell `git ls-remote` could not prompt for GitHub credentials, the
+GitHub connector rejected the tarball URL, and the pinned .NET SDK/process shim
+were not present. The connector could still confirm `develop/wasm` at
+`5bb158f0bb18ab3fbf17fcd478f2266226cd057e`. This was not a source/compiler
+failure.
+
 ## Preflight
 
 Run from the repository root:
