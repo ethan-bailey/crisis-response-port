@@ -7,7 +7,7 @@
 - Pinned SDK: .NET 8.0.426 at `/workspace/.dotnet-8.0.426`; process shim at `/workspace/libprocshim.so`. Read `docs/DOTNET_BUILD_RUNBOOK.md` before .NET commands.
 - Avoid Codespaces through 2026-11-01. Repository visibility/Actions policy: public repository; GitHub Actions enabled (verified 2026-10-24; see `docs/REPOSITORY_VISIBILITY_AND_ACTIONS.md`).
 - Original scene package is excluded from Git at `/tmp/cpr-original/scene-data/crisis-response-scenes-with-gameplay-resources.json`.
-- Current owner-only Site deployment: version 35, source package built from game source `c3456c437c34042865f5064e086e5101c89db7dd` (includes aim-fire gate fix `56d17ca540c3784d30fa6ac1769ad072b638cdbf`), Sites source commit `11cf75b379e50e2c64f5064e086e5101c89db7dd`, `https://crisis-response-runtime.craftysnipe13.chatgpt.site`.
+- Current owner-only Site deployment: version 35, source package built from game source `c3456c437c34042865f796a63ed46bb76f4571b5` (includes aim-fire gate fix `56d17ca540c3784d30fa6ac1769ad072b638cdbf`), Sites source commit `11cf75b379e50e2c64f5064e086e5101c89db7dd`, `https://crisis-response-runtime.craftysnipe13.chatgpt.site`.
 
 ## Gate status
 
@@ -30,7 +30,7 @@ See `docs/evidence/GATE8_ACCEPTANCE_PROGRESS_2026-10-24.md` for results, scope, 
 - Mission outcome contract: seven rooms cleared, five Occupants spawned, all ragdoll, original success and end-menu path passed.
 - Browser input tests: 19/19. WASM package tests: 13/13.
 - Release WASM publish: passed with the optional `wasm-tools` optimization warning.
-- Exact package verify at current deployment source: game source `c3456c437c34042865f5064e086e5101c89db7dd`, 766 files, 199 Blazor resources, 195 valid WASM binaries. Browser input suite passed 19/19; package checks passed 13/13.
+- Exact package verify at current deployment source: game source `c3456c437c34042865f796a63ed46bb76f4571b5`, 766 files, 199 Blazor resources, 195 valid WASM binaries. Browser input suite passed 19/19; package checks passed 13/13.
 - Sites deployment: succeeded, version 35. Site access remains owner-only. The deployment archive SHA-256 is `19fe82b3d9a4978d2265bd1890c7b3aa0f9551240450b27736280f70e5b9665d`.
 
 ## Errors and known limits
