@@ -73,3 +73,8 @@ A separate generated file named `CrisisResponseMobile_iPhone.zip` is a from-scra
 - The WebAssembly engine-replacement plan is now tracked in [issue #4](https://github.com/ethan-bailey/crisis-response-port/issues/4).
 
 The goal is to preserve original logic and assets wherever possible, document unavoidable changes, and validate behavior subsystem by subsystem. Do not claim full parity without evidence and tests.
+
+
+## Repository settings
+
+The repository is public and GitHub Actions is enabled as of 2026-10-24. See [the persistent visibility and Actions policy](docs/REPOSITORY_VISIBILITY_AND_ACTIONS.md).
