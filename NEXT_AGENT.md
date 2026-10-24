@@ -5,7 +5,7 @@
 - Development branch: `develop/wasm`.
 - Latest pushed game source: `e91c7050f1424149aacdb61af1eba1388da2f959`.
 - Pinned SDK: .NET 8.0.426 at `/workspace/.dotnet-8.0.426`; process shim at `/workspace/libprocshim.so`. Read `docs/DOTNET_BUILD_RUNBOOK.md` before .NET commands.
-- Avoid Codespaces through 2026-11-01. GitHub Actions remain disabled.
+- Avoid Codespaces through 2026-11-01. Repository visibility/Actions policy: public repository; GitHub Actions enabled (verified 2026-10-24; see `docs/REPOSITORY_VISIBILITY_AND_ACTIONS.md`).
 - Original scene package is excluded from Git at `/tmp/cpr-original/scene-data/crisis-response-scenes-with-gameplay-resources.json`.
 - Current private Site deployment: version 33, `https://crisis-response-runtime.craftysnipe13.chatgpt.site`.
 
