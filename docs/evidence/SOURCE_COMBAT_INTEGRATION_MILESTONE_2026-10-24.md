@@ -31,7 +31,7 @@ All .NET commands used SDK 8.0.426 with `/workspace/libprocshim.so` as recorded 
 - `dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj --no-restore -- --mission-ai-contract /tmp/cpr-scenes-full-source.json` — passed Mission 01 startup; five original behavior trees had deserialized roots and ran for 60 simulation ticks. The run spawned four Occupants and recorded 204 force commands. Behavior-tree liveness and recorded forces do not establish autonomous decisions, navigation, or PhysX integration.
 - `dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj --no-restore -- --mission-ai-outcome-contract /tmp/cpr-scenes-full-source.json` — passed the source room-clear and success path: seven rooms cleared, four Occupants entered ragdoll, all-disabled fired once, and the authored end menu appeared. Audio used a silent test adapter.
 
-These checks do not exercise a browser or physical iPhone. Current mission contract counts (four Occupants, five live behavior trees) differ from earlier dated acceptance notes (five Occupants, six trees); reconcile the fixture/package and expected authored count before using counts as an acceptance criterion.
+These checks do not exercise a browser or physical iPhone. Occupant count variation from four to five is expected: original `SerializableOccupantSettings` defaults to `minCount=3`, `maxCount=6`, and `OccupantSpawner.CreateSpecificGroup` calls integer `Random.Range(minCount, maxCount)` (upper bound exclusive). It is not a fixed-count acceptance criterion. The older four-tree result is from a different package or fixture; only compare tree counts when the scene package and loaded prefab set match.
 
 ## Remaining gate state
 

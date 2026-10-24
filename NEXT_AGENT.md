@@ -12,11 +12,11 @@
 
 `docs/evidence/SOURCE_COMBAT_INTEGRATION_MILESTONE_2026-10-24.md` records successful current-checkout source contracts regenerated from the checksum-pinned recovery archive. Actor lifecycle, arm/weapon, spawner physiology, source projectile-to-limb injury, Mission 01 startup/AI-tree initialization, and room-clear/end-menu outcome checks passed. The source projectile increased an original Occupant's wounds, damaged tissue, and body shock.
 
-This is a headless source integration milestone, not full gate closure. The regenerated package has six unresolved references to one absent original .308 Mesh GUID (`b4b69dc6c74eeb54cbd22d28e37f9a19`, fileID `4300000`); it is outside the M4 5.56 mission test. The fresh mission run spawned four Occupants and five running behavior trees, unlike earlier evidence that records five Occupants and six trees; reconcile this discrepancy before treating the counts as acceptance criteria.
+This is a headless source integration milestone, not full gate closure. The regenerated package has six unresolved references to one absent original .308 Mesh GUID (`b4b69dc6c74eeb54cbd22d28e37f9a19`, fileID `4300000`); it is outside the M4 5.56 mission test. Occupant counts of four and five across runs are both consistent with the original `SerializableOccupantSettings` default count range 3–6 and integer `Random.Range(minCount, maxCount)` behavior. The current recovered scene has five running trees; older results with four trees came from a different package or fixture and should not be compared as a fixed count.
 
 ## Gate state and next work
 
-- Gate 0 open: the six .308 Mesh references are classified; finish the full source-to-runtime dependency matrix and retain the .308 block until original identity is recovered or a distinct substitution is approved and verified.
+- Gate 0: first-playable dependency matrix added at `docs/evidence/GATE0_FIRST_PLAYABLE_DEPENDENCY_MATRIX_2026-10-24.md`; bounded M4 source path classified and full runtime build passed. Broader gate remains open for page startup, native physics, visual actors, and AI navigation.
 - Gate 1 passed within its scoped headless source-character acceptance.
 - Gates 2 and 3 partial: browser sequence composition, real rendered injury effects, native PhysX, and complete live hit/state/event integration remain.
 - Gate 4 partial: source mission startup/spawn/outcome pass headlessly; automatic normal-page startup, authored visible actors, and real physics remain.
@@ -27,4 +27,4 @@ This is a headless source integration milestone, not full gate closure. The rege
 
 ## Exact next action
 
-Continue Gate 0 dependency closure by reconciling why the fresh source Mission 01 package initializes four Occupants/five behavior trees while prior evidence records five/six, then close the source-to-runtime matrix for the first playable scenario. Keep the .308 Mesh identity unresolved; do not substitute a candidate as original. Then continue the foundation-first plan. Do not deploy or change Site access. Keep the play-area hold behavior deferred and recorded.
+Continue Gate 2 by connecting original sequencer playback to the normal browser actor path, preserving the original IKArmController/IKArmSequencer callbacks and actor ownership. Keep the explicit browser limitation visible: this workspace has Playwright packages but no Chromium/WebKit binaries, so code contracts can run but browser acceptance cannot be claimed until a real browser is available. Continue Gates 3–7 in dependency order; classify missing native PhysX/render/audio as blockers and keep those behaviors gated. Do not deploy or change Site access. Keep the play-area hold behavior deferred and recorded. The randomized 3–6 Occupant count is expected; do not treat it as a failure. Keep the absent .308 Mesh identity explicit and do not silently substitute.
