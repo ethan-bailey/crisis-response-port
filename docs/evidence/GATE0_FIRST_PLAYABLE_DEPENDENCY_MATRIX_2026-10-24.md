@@ -26,4 +26,13 @@ The generated package has six references to one absent original Mesh GUID `b4b69
 
 ## Gate 0 disposition
 
-No dependency above is left unclassified for the bounded M4 source-fire fixture. Gate 0 remains open for the first playable scenario because normal-page startup, native physics, visible original actors, and fully supported source navigation/presentation have no exact browser/native acceptance at this checkpoint. The current environment has Playwright packages but no installed Chromium or WebKit executable; the previous cloud Chrome attempt could not create WebGL. Do not treat source contracts or the iPhone boot/playable report as substitutes for these distinct runtime capabilities.
+No dependency above is left unclassified for the bounded M4 source-fire fixture. Gate 0 remains open for the first playable scenario because normal-page startup, native physics, visible original actors, and fully supported source navigation/presentation have no exact browser/native acceptance at this checkpoint. `game/source-occupant-spawner.mjs` is not invoked by `game/index.html`; its API requires original settings/spawn data/campaign state, Unity RNG, a ballistic-mask collision query, and an original prefab-instantiation callback. The page does not currently provide that complete mission context. Calling it with defaults would invent source behavior, so Gate 4 remains gated until the real inputs and callbacks are wired.
+
+The current environment has Playwright packages but no installed Chromium or WebKit executable; the previous cloud Chrome attempt could not create WebGL. Do not treat source contracts or the iPhone boot/playable report as substitutes for these distinct runtime capabilities.
+
+## Verification in this gate pass
+
+- `dotnet build runtime/Crisis.Runtime.csproj --no-restore --no-incremental -v:q` — passed with 48 warnings and zero errors on the current checkout.
+- `node --test scripts/aim_fire_gate_test.mjs scripts/browser_input_test.mjs scripts/aim_direction_test.mjs` — passed, 29/29. These checks do not claim the deferred play-area hold behavior is fixed.
+- `node scripts/test_original_occupant_spawn.mjs` — passed source scene spawner, original group/area validation, RNG/collision-mask requirements, group preflight, and obstacle constraints.
+- Browser probe: Playwright package resolves, but its Chromium and WebKit executable paths do not exist in this runner. The prior cloud Chrome WebGL failure is unchanged; no browser gameplay claim is made.

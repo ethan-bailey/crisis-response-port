@@ -16,10 +16,10 @@ This is a headless source integration milestone, not full gate closure. The rege
 
 ## Gate state and next work
 
-- Gate 0: first-playable dependency matrix added at `docs/evidence/GATE0_FIRST_PLAYABLE_DEPENDENCY_MATRIX_2026-10-24.md`; bounded M4 source path classified and full runtime build passed. Broader gate remains open for page startup, native physics, visual actors, and AI navigation.
+- Gate 0: first-playable dependency matrix added at `docs/evidence/GATE0_FIRST_PLAYABLE_DEPENDENCY_MATRIX_2026-10-24.md`; bounded M4 source path classified, full runtime build passed, and spawner/input contracts passed. Broader gate remains open for page startup, native physics, visible original actors, and AI navigation.
 - Gate 1 passed within its scoped headless source-character acceptance.
 - Gates 2 and 3 partial: browser sequence composition, real rendered injury effects, native PhysX, and complete live hit/state/event integration remain.
-- Gate 4 partial: source mission startup/spawn/outcome pass headlessly; automatic normal-page startup, authored visible actors, and real physics remain.
+- Gate 4 partial: source mission startup/spawn/outcome pass headlessly; automatic normal-page startup, authored visible actors, and real physics remain. The source spawner module requires original settings, spawn data, campaign state, Unity RNG, collision query, and prefab-instantiation callbacks not supplied by `game/index.html`; do not call it with fabricated defaults.
 - Gate 5 open: original behavior trees deserialize and stay enabled, but autonomous perception, navigation, decisions, and combat are unverified. The plan's NPC-AI-ready-for-preview milestone has not been reached.
 - Gate 6 partial: source room-clear/success path passes headlessly; browser full-mission play remains.
 - Gate 7 open: original presentation/content fidelity remains.
