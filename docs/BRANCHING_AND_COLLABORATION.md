@@ -2,7 +2,7 @@
 
 > **Current active branch/PR/preview audit:** [REPOSITORY_OPERATIONS_2026-10-17.md](REPOSITORY_OPERATIONS_2026-10-17.md). The branch creation facts and legacy transition below remain historical; do not infer a current SHA, open PR, or deployment from them.
 
-**Effective October 16, 2026.** This is the authoritative, contributor-facing collaboration policy for the **private** `ethan-bailey/crisis-response-port` repository. For live code/test status read `NEXT_AGENT.md` on `develop/wasm`.
+**Effective October 16, 2026; repository settings updated October 24, 2026.** This is the authoritative, contributor-facing collaboration policy for the public `ethan-bailey/crisis-response-port` repository. GitHub Actions is enabled; see [`REPOSITORY_VISIBILITY_AND_ACTIONS.md`](REPOSITORY_VISIBILITY_AND_ACTIONS.md). For live code/test status read `NEXT_AGENT.md` on `develop/wasm`.
 
 ## Branch roles
 
@@ -25,7 +25,7 @@ Work in this repository is done by one agent at a time, so branching is organise
 - There is **one active feature workstream at a time**. Additional scoped work is recorded as issues or in `NEXT_AGENT.md`, not started as parallel branches.
 - Feature branches are **short-lived**: branch from current `develop/wasm`, land one reviewable slice, merge, retire.
 - A branch that must live beyond one session **merges current `develop/wasm` into itself at the start of each session**, resolving overlaps while they are small - the repeated PR #42 merge probes of October 2026 are the failure mode this rule exists to prevent.
-- An externally blocked merge gate (for example exhausted CI quota) does not justify stockpiling work on a long-lived branch: verified slices stay small and mergeable, with local verification as the temporary gate, and the blockage is recorded in the handoff.
+- An externally blocked merge gate does not justify stockpiling work on a long-lived branch: verified slices stay small and mergeable, with available local or configured workflow verification as appropriate, and the blockage is recorded in the handoff.
 
 ## Legacy transition
 
@@ -33,11 +33,11 @@ Work in this repository is done by one agent at a time, so branching is organise
 - **PR #21** original animation composition was source-integrated at `c110c738646f48f793a1e35822639676b0b21975`, and combined-tree tests passed [#38901664939](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38901664939). The PR was previously closed, not GitHub-merged.
 - **PR #19** reproducible packaging and **PR #20** original source/UI audit now target `develop/wasm`. Review against already imported files; avoid bulk-merging duplicate scripts.
 - **PR #7** remains a separate Unity feasibility effort. Do not merge Unity into the original-code WASM runtime.
-- Never delete original evidence, force-reset shared history or change repository visibility.
+- Never delete original evidence or force-reset shared history. Repository visibility follows the current owner decision in `REPOSITORY_VISIBILITY_AND_ACTIONS.md`.
 
 ## Standard contribution cycle
 
-1. Choose an issue and record its scope, status and upstream original-file dependencies. **Check the actual current `develop/wasm` SHA and in-progress Actions**; don't act on an old handoff.
+1. Choose an issue and record its scope, status and upstream original-file dependencies. **Check the actual current `develop/wasm` SHA and relevant workflow runs**; don't act on an old handoff.
 2. Branch from current integration. PR base = `develop/wasm`. One reviewable feature or bug fix per PR. Include source archive checksum, original developer paths and SHA/GUID/fileID, executable methods, engine-adapter changes, tests, known gaps and revert path using the PR template.
 3. All original C# files and recovered assets remain unchanged unless a provably necessary source-specific compatibility patch is documented. Browser/Unity API compatibility adapters must not replace gameplay, invent animations, skip damage calculations or synthesize shaders.
 4. PR-level cheap source/Node/package checks run for code changes. Reuse full .NET 8 WASM/PhysX/Chromium/WebKit **only** at significant integrated milestones. Do not rerun heavy builds for documentation changes or start duplicate runs.
@@ -70,4 +70,4 @@ Labels represent observable status, not aspirational completeness. Historical in
 - **Long-form source/test evidence:** `docs/WORKSPACE_STATUS.md`, `docs/COMPLETE_WASM_PORT_ROADMAP.md`, source-specific reports.
 - **Releases and device testing:** `docs/VERCEL_MANUAL_DEPLOYMENTS.md`.
 
-Do not create a competing authoritative "next agent" file per feature branch. Tests and source provenance outrank documentation assertions. The source archive and licensed game assets remain private.
+Do not create a competing authoritative "next agent" file per feature branch. Tests and source provenance outrank documentation assertions. The repository is public; treat every tracked file and Git history as publicly visible. Keep any separately stored licensed materials protected under their own access controls.
