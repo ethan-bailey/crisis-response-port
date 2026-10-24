@@ -16,7 +16,7 @@ The separate `--mission-ai-outcome-contract` run passed: Mission 01 started, all
 - `python3 -m unittest discover -s scripts -p 'package_wasm_site_test.py'`: passed, 13/13.
 - `dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release`: passed under SDK 8.0.426. The optional `wasm-tools` optimization recommendation remained.
 - `scripts/package_wasm_site.py build` and `verify`: passed at source commit `e91c705…`, 766 files, 199 hashed Blazor boot resources, and 195 valid WASM binaries.
-- Private Crisis Response Runtime Site deployment succeeded as version 34 at `https://crisis-response-runtime.craftysnipe13.chatgpt.site`.
+- Private Crisis Response Runtime Site deployment succeeded as version 33 at `https://crisis-response-runtime.craftysnipe13.chatgpt.site`.
 
 The exact-source interactive browser check is still blocked. The Site remains owner-only; its ChatGPT sign-in authenticated to an account that is not on the Site's owner access list, so the runtime page was not exposed. The local Playwright package is present but its Chromium and WebKit executables are absent. Do not change Site sharing to work around this. Continue after authenticating the Cloud Browser as the Site owner.
 

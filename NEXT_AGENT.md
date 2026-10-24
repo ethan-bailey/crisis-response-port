@@ -7,7 +7,7 @@
 - Pinned SDK: .NET 8.0.426 at `/workspace/.dotnet-8.0.426`; process shim at `/workspace/libprocshim.so`. Read `docs/DOTNET_BUILD_RUNBOOK.md` before .NET commands.
 - Avoid Codespaces through 2026-11-01. GitHub Actions remain disabled.
 - Original scene package is excluded from Git at `/tmp/cpr-original/scene-data/crisis-response-scenes-with-gameplay-resources.json`.
-- Current private Site deployment: version 34, `https://crisis-response-runtime.craftysnipe13.chatgpt.site`.
+- Current private Site deployment: version 33, `https://crisis-response-runtime.craftysnipe13.chatgpt.site`.
 
 ## Gate status
 
@@ -31,7 +31,7 @@ See `docs/evidence/GATE8_ACCEPTANCE_PROGRESS_2026-10-24.md` for results, scope, 
 - Browser input tests: 19/19. WASM package tests: 13/13.
 - Release WASM publish: passed with the optional `wasm-tools` optimization warning.
 - Exact package verify: source commit `e91c705…`, 766 files, 199 Blazor resources, 195 valid WASM binaries.
-- Sites private deployment: succeeded, version 34. Site access is owner-only.
+- Sites private deployment: succeeded, version 33. Site access is owner-only.
 
 ## Errors and known limits
 
@@ -46,4 +46,4 @@ See `docs/evidence/GATE8_ACCEPTANCE_PROGRESS_2026-10-24.md` for results, scope, 
 
 ## Next action
 
-Continue after the user completes the Cloud Browser handoff using the Site owner's ChatGPT identity; then run `scripts/runtime_wasm_smoke.mjs` against the version 34 private Site, capture result and console errors, and add exact-SHA evidence. Do not change the owner-only audience. Physical iPhone Safari acceptance requires an available iPhone. Gate 8 remains open until the browser and device checks pass; keep native physics and rendering limits explicit.
+Continue after the user completes the Cloud Browser handoff using the Site owner's ChatGPT identity; then run `scripts/runtime_wasm_smoke.mjs` against the version 33 private Site, capture result and console errors, and add exact-SHA evidence. Do not change the owner-only audience. Physical iPhone Safari acceptance requires an available iPhone. Gate 8 remains open until the browser and device checks pass; keep native physics and rendering limits explicit.
