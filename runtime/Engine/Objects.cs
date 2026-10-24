@@ -68,7 +68,7 @@ public class GameObject:Object {
             return string.Join("/",names);
         }
     }
-    internal void Attach(Component c) { c.world=world;c.gameObject=this;components.Add(c);world.Register(c); }
+    internal void Attach(Component c) { c.world=world;c.gameObject=this;components.Add(c);world.Register(c);if(c is ParticleSystem particles)particles.Driver=world.ParticleSystemDriver;if(c is AudioSource audio)audio.Driver=world.AudioSourceDriver; }
     public T AddComponent<T>() where T:Component,new() => (T)AddComponent(typeof(T));
     public Component AddComponent(Type type) {
         if(!typeof(Component).IsAssignableFrom(type)||type.IsAbstract) throw new ArgumentException("Not a concrete component");
@@ -273,6 +273,8 @@ public sealed class RuntimeWorld {
     // not yet have a per-instance driver, such as an ejected casing clone.
     public Action<Rigidbody,Vector3,Vector3,ForceMode> PhysicsForceSink;
     public Action<Rigidbody,Vector3,ForceMode> PhysicsTorqueSink;
+    public ParticleSystem.IParticleDriver ParticleSystemDriver;
+    public IAudioSourceDriver AudioSourceDriver;
     readonly HashSet<Object> destroyQueue=[];
     readonly List<CoroutineHandle> routines=[];
     readonly Dictionary<(Type,string),MethodInfo> messages=[];
