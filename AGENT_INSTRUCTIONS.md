@@ -2,6 +2,28 @@
 
 Standing instructions for any agent working in this repository, on any branch or task. These rules describe a repeatable work loop. Follow them until the task reaches a clean end state.
 
+## Owner batch-first rule (2026-10-24)
+
+Apply the batch workflow to every development activity where related work can
+be discovered and verified together: features, bug fixes, integrations,
+dependency recovery, build/package failures, and gate closure. First inspect
+the entire relevant dependency group and collect its actionable failures and
+unknowns. Then apply all related changes that are safe and supported by the
+available original source/material in the same cohesive batch, ordered by
+dependency. Run the combined relevant verification once after the changes.
+Do not split fixable related work into serial micro-fixes or defer a known
+fixable failure to the next gate pass.
+
+This rule does not require a blind all-at-once change. Isolate only the item
+whose batching would create a critical mistake: for example, a destructive or
+irreversible operation with unclear scope, a change that risks data/source
+loss, a required owner decision, or a fix unsupported by authored evidence.
+Record the concrete risk and evidence, keep that item unchanged, and continue
+with the rest of the safe related batch. Normal uncertainty that can be
+resolved by repository inspection, contracts, or a reversible test is not a
+reason to stop the batch. Keep each verification claim tied to the exact tested
+source SHA.
+
 ## Single-line workflow (owner rule, 2026-10-22)
 
 One agent works this repository at a time, so there is one line of development: `develop/wasm` is the project, and every branch is a short errand off it, not a second home.
