@@ -10,7 +10,7 @@
 - **[Source-backed test milestone](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38901664939)** — combined original C#/WASM/Chromium/WebKit tests passed at SHA `1264c0b4579076b82e1b6b21955469313779fe39` (selected source slice only).
 - **[Manual private Vercel release protocol](https://github.com/ethan-bailey/crisis-response-port/blob/develop/wasm/docs/VERCEL_MANUAL_DEPLOYMENTS.md)** — Git commits no longer trigger Vercel deployments.
 
-Original recovered developer code and assets remain private. No invented gameplay, fake placeholders, public asset deployment, or 1:1 parity claims without source verification.
+The repository and its tracked source/history are public. Keep separately stored recovery archives and credentials protected. No invented gameplay, fake placeholders, public game deployment, or 1:1 parity claims without source verification.
 
 ---
 
