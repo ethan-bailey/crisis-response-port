@@ -3,6 +3,7 @@
 ## Checkpoint
 
 - Development branch: `develop/wasm`; latest pushed game source: `1962efb2f99da1cc59f9ad365b0fc4bd1868f735`.
+- Current repository head, including the persistent GitHub write-auth fallback documentation: `8559b45f266807e22521f25e73cc47c272203ff6`.
 - Pinned SDK: .NET 8.0.426 at `/workspace/.dotnet-8.0.426`; process shim at `/workspace/libprocshim.so`. Read `docs/DOTNET_BUILD_RUNBOOK.md` before any .NET command.
 - Avoid Codespaces through 2026-11-01. Repository is public and GitHub Actions is enabled (verified 2026-10-24; see `docs/REPOSITORY_VISIBILITY_AND_ACTIONS.md`).
 - Original scene package remains outside Git at `/tmp/cpr-original/scene-data/crisis-response-scenes-with-gameplay-resources.json`.
