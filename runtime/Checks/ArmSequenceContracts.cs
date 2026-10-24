@@ -56,11 +56,15 @@ public static class ArmSequenceContracts {
         Check(controllerRoot.GetProperty("status").GetString() == "pass" &&
               controllerRoot.GetProperty("callbackObserved").GetBoolean() &&
               controllerRoot.GetProperty("actorIsolation").GetBoolean() &&
-              controllerRoot.GetProperty("triggerCallbackObserved").GetBoolean(),
+              controllerRoot.GetProperty("triggerCallbackObserved").GetBoolean() &&
+              controllerRoot.GetProperty("siblingWaitHeld").GetBoolean() &&
+              controllerRoot.GetProperty("siblingFrameAdvanced").GetBoolean() &&
+              controllerRoot.GetProperty("siblingCallbackAfterAdvance").GetBoolean(),
               "Original IKArmController sequencer must play on FullSource.CharacterBody and dispatch callbacks to its owning actor");
         return JsonSerializer.Serialize(new {
             status = "pass", originalClasses = 6, originalPrefabs = 7, originalFrames = 21,
             fullSourceControllerPlaybackImplemented = true,
+            siblingWaitOrderingImplemented = true,
             browserSequenceCompositionPlaybackImplemented = false,
             originalHandModeExecuted = true
         });
@@ -153,6 +157,33 @@ public static class FullSourceControllerPlaybackContracts {
                 !first.controller.RightSequencer.IsReady || !second.controller.RightSequencer.IsReady)
                 throw new InvalidOperationException($"Original FireWeapon callback did not dispatch through the actor's original arm solver (onTarget={armOnTarget}, firstTrigger={triggerCallbackObserved}, secondIsolated={triggerActorIsolation}, firstReady={first.controller.RightSequencer.IsReady}, secondReady={second.controller.RightSequencer.IsReady})");
 
+            // The left source sequencer must wait until the right sequencer
+            // advances past frame 0, then dispatch its callback on the next
+            // Update. This exercises the original sibling timing contract.
+            var siblingSequence = new IKArmSequenceRuntime();
+            siblingSequence.right.Add(new IKArmAnimationFrame {
+                action = IKArmAction.Wait,
+                time = 0.01f,
+                callback = IKControllerInvoke.LowerWeapon
+            });
+            siblingSequence.left.Add(new IKArmAnimationFrame {
+                action = IKArmAction.WaitForSiblingFrame,
+                waitForSiblingFrame = 0,
+                callback = IKControllerInvoke.FireWeapon
+            });
+            second.controller.Play(siblingSequence);
+            onTarget.Invoke(second.body.rightArm, new object[] { true });
+
+            world.Tick(0.05f);
+            var siblingWaitHeld = !second.body.IsLoweringWeapon && !second.body.QueryTrigger();
+            world.Tick(0.05f);
+            var siblingFrameAdvanced = second.body.IsLoweringWeapon && !second.body.QueryTrigger();
+            world.Tick(0.05f);
+            var siblingCallbackAfterAdvance = second.body.QueryTrigger() &&
+                second.controller.RightSequencer.IsReady && second.controller.LeftSequencer.IsReady;
+            if (!siblingWaitHeld || !siblingFrameAdvanced || !siblingCallbackAfterAdvance)
+                throw new InvalidOperationException($"Original sibling wait/callback ordering failed (held={siblingWaitHeld}, advanced={siblingFrameAdvanced}, callbackAfterAdvance={siblingCallbackAfterAdvance}, rightTarget={second.body.rightArm.OnTarget}, rightReady={second.controller.RightSequencer.IsReady}, leftReady={second.controller.LeftSequencer.IsReady})");
+
             return JsonSerializer.Serialize(new {
                 status = "pass",
                 authoritativeActorType = typeof(Crisis.Runtime.FullSource.CharacterBody).FullName,
@@ -160,6 +191,9 @@ public static class FullSourceControllerPlaybackContracts {
                 callbackObserved,
                 triggerCallbackObserved,
                 actorIsolation = actorIsolation && triggerActorIsolation,
+                siblingWaitHeld,
+                siblingFrameAdvanced,
+                siblingCallbackAfterAdvance,
                 independentControllers = true,
                 sequencerAdvancedToCompletion = true
             });

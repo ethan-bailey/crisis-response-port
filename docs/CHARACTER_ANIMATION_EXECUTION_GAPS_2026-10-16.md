@@ -14,7 +14,7 @@ This file began as a 2026-10-16 source audit. Its original “not compiled/not e
 
 ## Safe next work
 
-Gate 2 must wire the compiled source controller/sequencer to the real normal-page original actor lifecycle and authored mission/equipment inputs. The diagnostic bridge in `runtime/Browser/Program.cs` only composes serialized sequence data; it must not be treated as the gameplay entry point. The source path must preserve callback order, sibling waits, weapon activation/holstering, grenade/gauze ownership, and actor identity. Avoid a second JavaScript sequencer or synthesized source defaults.
+Gate 2 must wire the compiled source controller/sequencer to the real normal-page original actor lifecycle and authored mission/equipment inputs. The diagnostic bridge in `runtime/Browser/Program.cs` only composes serialized sequence data; it must not be treated as the gameplay entry point. Focused contracts now cover sibling-frame waiting and selected callback order; authored transition targets, weapon activation/holstering, grenade/gauze ownership, and live actor identity remain to be verified on the real rig. Avoid a second JavaScript sequencer or synthesized source defaults.
 
 The normal page's `?scene-smoke` mode loads/inspects scene records and binds Global Context. It is not mission gameplay startup. Prior `--mission-ai-*` contracts used a generated full scene package from the pinned private recovery archive and headless adapters; those tests prove only their stated source contracts. Reuse a verified package while present and regenerate only when absent or its inputs change, following `docs/DOTNET_BUILD_RUNBOOK.md`.
 
