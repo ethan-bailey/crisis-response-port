@@ -13,9 +13,9 @@ One agent works this repository at a time, so there is one line of development: 
 - **Sync while you go.** If a branch must live beyond one session, the first work step of each following session - after the step 1 checkpoint - is to merge current `develop/wasm` into the branch and resolve the small overlaps then, while they are fresh. Never let a branch sit unmerged for days while `develop/wasm` also changes.
 - **A blocked gate does not freeze landing.** When an external gate blocks a task, record it once with evidence and use local verification as the standing gate for mergeable slices; do not stockpile work while waiting for an unavailable service.
 
-## Verification gate (owner decision, 2026-10-22)
+## Verification gate and GitHub Actions policy
 
-GitHub Actions is disabled by owner decision for this project. Do not restore minutes, dispatch workflows, or treat Actions checks as a gate. The standing gate for landing work is local verification: a fresh full-source build, the relevant contracts, and provenance checks, with commands and results recorded against the exact tested source SHA in the handoff or evidence docs. Functional smoke requirements remain separate: successful compilation is not proof of browser boot or correct gameplay.
+The repository is public and GitHub Actions is enabled (verified 2026-10-24; see [`docs/REPOSITORY_VISIBILITY_AND_ACTIONS.md`](docs/REPOSITORY_VISIBILITY_AND_ACTIONS.md)). Do not disable Actions or avoid configured workflows because of the superseded quota decision. Use configured workflows when appropriate, while continuing required local verification: a fresh full-source build, relevant contracts, and provenance checks, recorded against the exact tested source SHA. Functional smoke requirements remain separate: successful compilation is not proof of browser boot or correct gameplay.
 
 ## Current execution environment: Codex Work Mode (owner direction, 2026-10-23)
 
@@ -78,4 +78,4 @@ When the owner explicitly asks for continued work without further prompts, do no
 - Create or resume a recurring Codex automation no more often than hourly, starting from the current `NEXT_AGENT.md` checkpoint, and run its first cycle immediately.
 - Each cycle takes stock of branch, HEAD, worktree, open PRs, current blockers, and the next actionable gate. It then completes one bounded batch of substantive work, verifies that batch once, and updates the handoff once.
 - If a gate is externally blocked, record its exact evidence and disposition once, then continue with the next independent actionable item. Do not create repetitive status-only cycles.
-- Keep GitHub Actions disabled. Publish only when the owner has authorized the destination and the required local gates pass. Do not use an unbounded shell loop or repeat a production deployment as a polling mechanism.
+- Keep GitHub Actions enabled. Follow each workflow's trigger and scope; do not dispatch unrelated workflows. Publish only when the owner has authorized the destination and the required gates pass. Do not use an unbounded shell loop or repeat a production deployment as a polling mechanism.
