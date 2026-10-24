@@ -43,7 +43,7 @@ Derived from the 2026-10-16 workflow audit. These rules keep the port moving fas
 
 ## 7. Housekeeping
 
-- The repo stays **private**. No public forks, no public build artifacts, no secrets in logs or docs.
+- Repository visibility and Actions policy: follow [`docs/REPOSITORY_VISIBILITY_AND_ACTIONS.md`](docs/REPOSITORY_VISIBILITY_AND_ACTIONS.md). As verified 2026-10-24, the repository is public and Actions is enabled. Keep secrets out of logs and docs.
 - Heavy operations (full Unity rebuilds, IL2CPP, large uploads) get **one controlled run at a time** with cached outputs reused — never parallel redundant builds.
 
 ## 8. Protect user-approved gameplay usability enhancements
