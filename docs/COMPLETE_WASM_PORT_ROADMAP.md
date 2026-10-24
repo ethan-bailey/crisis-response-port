@@ -2,7 +2,7 @@
 
 ## Current authority
 
-Follow AGENT_INSTRUCTIONS.md, AGENTS.md, and NEXT_AGENT.md for branch, environment, and evidence rules. develop/wasm is the sole development line. Historical PR #42, Codespaces-only, old branch checkpoints, and GitHub Actions build/deploy instructions are superseded. Keep Actions disabled. Use the normal Work Mode checkout; use an existing Codespace only if a required gate cannot run locally. Do not deploy intermediate work.
+Follow AGENT_INSTRUCTIONS.md, AGENTS.md, and NEXT_AGENT.md for branch, environment, and evidence rules. develop/wasm is the sole development line. Historical PR #42, Codespaces-only, and old branch checkpoints are superseded. GitHub Actions remains enabled as documented by AGENT_INSTRUCTIONS.md; use configured workflows where appropriate. Use the normal Work Mode checkout; use an existing Codespace only if a required gate cannot run locally. Do not deploy intermediate work.
 
 GAMEPLAY_COMPLETION_ROADMAP.md owns the ordered behavioral gates. This document tracks the port's source-to-WASM path and the validation needed before publication.
 
@@ -13,7 +13,7 @@ GAMEPLAY_COMPLETION_ROADMAP.md owns the ordered behavioral gates. This document 
 3. Compile the selected original C# dependency graph with pinned .NET SDK 8.0.426, then compile and package the browser/WASM runtime. State which graph was compiled; a successful selected-runtime build is not proof that all recovered game sources compile.
 4. Execute original actors, controls, IK, physical constraints, combat, physiology, mission logic, UI, audio, effects, saves, and mobile lifecycle as listed in the gameplay roadmap. Actor checks must use authored Operator/Occupant prefabs, all 19 limbs, real Mission/global dependencies, and two independently exercised actors.
 5. Capture original behavior as traces from native references. Compare the port with justified numeric tolerances for each required scene and system; explain any differences.
-6. At the final exact source SHA, run the full local WASM build and HTTP smoke, Chromium and WebKit gameplay, and real iPhone 16 Safari full-mission, performance, audio, and background-resume checks. Save command output and device/browser details in the handoff.
+6. At each major playable milestone and before release, run the exact-SHA local WASM build, HTTP smoke, source/Node checks, and package integrity checks. Have the owner test the exact build in iPhone 16 Safari for full mission play, performance, audio, and background resume; record the build/source SHA and device results. Desktop Chromium and WebKit gameplay runs are optional diagnostics and do not block acceptance.
 7. Only after all gates pass on one SHA and publication is authorized, publish the existing owner-private Crisis Response Runtime Site. Preserve its access policy and verify the deployed build matches that exact SHA.
 
 ## Evidence at 2026-10-23

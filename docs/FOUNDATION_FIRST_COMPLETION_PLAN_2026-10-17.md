@@ -41,7 +41,7 @@ Owner: #57 and weapon integration:
 1. Close original IKArmController/IKArmSequencer task/action callback coverage rather than leaving default no-ops.
 2. Connect original arm/hand transforms, attack/reload/equip/lower/draw/grab/weapon-drop interactions and authored animation events.
 3. Bind native equipment ownership and original firearms/magazines/ammunition, preserving correct round-in-chamber UI.
-4. Verify source state and IK event ordering with native, then Chromium/WebKit gameplay tests at exact SHA.
+4. Verify source state and IK event ordering with source contracts. At a major playable milestone, have the owner check the exact build in iPhone Safari; desktop Chromium/WebKit runs are optional diagnostics.
 **Acceptance:** Original equipped character can complete full weapon sequences and interruptions without visual/physical discontinuities.
 
 ### Gate 3 — Physics, injury, ragdoll and life-state graph (P0)
@@ -73,14 +73,14 @@ Owner: new **AI-specific** branch/PR from up-to-date `develop/wasm`, after share
 4. Run source patrol, investigation, pathfinding/obstruction, cover/movement and timing against actual mission geometry; no invented waypoint choices.
 5. Connect draw/aim/fire/reload, threat/compliance/surrender, interruption by injury/unconsciousness/death and teardown to Gates 1–4.
 6. Test independent NPCs in controlled seeded deterministic scenarios, then real automatic mission spawn.
-**Acceptance:** On a normal startup, original Occupants autonomously perceive, navigate, patrol, decide, attack/react and stop safely on incapacitation. Verified native source/AI fixtures and Chromium/WebKit gameplay at one SHA. **This is the NPC-AI-ready-for-preview milestone.**
+**Acceptance:** On a normal startup, original Occupants autonomously perceive, navigate, patrol, decide, attack/react and stop safely on incapacitation. Verified source/AI fixtures and owner iPhone Safari gameplay on one exact SHA at the major milestone. Desktop Chromium/WebKit gameplay is optional diagnostic coverage. **This is the NPC-AI-ready-for-preview milestone.**
 
 ### Gate 6 — Complete playable mission and broad parity (P1)
 
 1. Restore original level collision, objectives, doors/props, campaign states, items/weapons, grenades, scoring, scene transitions and source UI/game mode behavior.
 2. Validate a full mission from start → objective outcome → transition/reset, including both AI and player.
 3. Expand coverage to all original scenes, equipment, character archetypes and interactions. A Mission 01/Marksman demonstration is not entire-game parity.
-**Acceptance:** A complete end-to-end mission passes automated browser assertion and reference behavioral comparisons; additional scenes remain tracked explicitly.
+**Acceptance:** A complete end-to-end mission passes source/runtime assertions, owner iPhone Safari gameplay on the exact milestone build, and reference behavioral comparisons; additional scenes remain tracked explicitly. Desktop browser automation is optional.
 
 ### Gate 7 — Original presentation/content fidelity (P2, or earlier when an execution dependency)
 
@@ -91,11 +91,11 @@ Complete original animation/state transitions, Occupant skins, renderer material
 
 1. Run targeted native/Node source+provenance tests *before* one full integration milestone.
 2. Compile .NET 8 WASM and pinned PhysX at an exact gameplay SHA; prove complete package manifest.
-3. Serve localhost in CI, assert Chromium **and** WebKit boot and playable actions; preserve logs, captures, artifact IDs and tested SHA.
+3. Run source/Node checks and exact-source package integrity checks. At major playable milestones and before release, have the owner manually verify the exact build in iPhone Safari and record results with the tested SHA. Desktop Chromium/WebKit boot and gameplay checks are optional diagnostics and do not block acceptance.
 4. Confirm original mobile analog stick (16% dead zone / 65% walk–sprint breakpoint), icon controls, hand IK, magazine count including chamber, no chamber widget and performance.
 5. Only after passing real smoke tests, use **manual-only** protected Vercel staging and branch-stable preview alias. Verify deployed source manifest; obtain physical iPhone Safari feedback. No automatic push deploys.
 6. Merge reviewed, passing, independently useful source lanes into `develop/wasm`, retaining original assets and verified rollback; do not merge #42/#56/#57 wholesale while dependencies remain blocked.
-**Acceptance:** Verified tested SHA = package source SHA; remote hosting and actual device experience separately stated; no unsupported 1:1-completion claims.
+**Acceptance:** Verified tested SHA = package source SHA; exact-build iPhone Safari results are recorded at major milestones/releases; remote hosting and actual device experience are separately stated; no unsupported 1:1-completion claims. Desktop Chromium/WebKit results may be recorded but are not required.
 
 ## Priority and merge policy
 

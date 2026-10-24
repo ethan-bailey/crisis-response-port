@@ -2,13 +2,13 @@
 
 ## Authority and working line
 
-AGENT_INSTRUCTIONS.md, AGENTS.md, and the latest NEXT_AGENT.md govern execution. Use develop/wasm as the only development line. Prefer small, verified fast-forward commits directly on that branch; use one short-lived PR only when review or isolation materially helps, with at most one open at a time. Keep GitHub Actions disabled. Do not save or deploy a Site version until every required local gate passes on the exact final source SHA and the owners publication instructions authorize it.
+AGENT_INSTRUCTIONS.md, AGENTS.md, and the latest NEXT_AGENT.md govern execution. Use develop/wasm as the only development line. Prefer small, verified fast-forward commits directly on that branch; use one short-lived PR only when review or isolation materially helps, with at most one open at a time. Keep GitHub Actions enabled as documented by AGENT_INSTRUCTIONS.md. Do not save or deploy a Site version until every required local gate passes on the exact final source SHA and the owner's publication instructions authorize it.
 
 Older PR #42, Codespaces-only, checkpoint, and Actions workflow directions in historical notes are superseded. The Work Mode checkout is the normal environment. Use an existing Codespace only when a required gate cannot run in the current workspace; preserve and verify its state if recovery is needed.
 
 ## Completion standard
 
-Parity means source-backed behavior in all six original scenes, not code presence, inventories, compilation, or synthetic tests alone. Keep rules derived from recovered original C# and Unity assets. Capture native reference behavior and compare source and port traces with justified numeric tolerances. Require exact-SHA local build, HTTP smoke, Chromium and WebKit gameplay, and real iPhone 16 Safari full-mission, performance, audio, and background-resume checks.
+Parity means source-backed behavior in all six original scenes, not code presence, inventories, compilation, or synthetic tests alone. Keep rules derived from recovered original C# and Unity assets. Capture native reference behavior and compare source and port traces with justified numeric tolerances. At major playable milestones and before release, require exact-SHA local build, HTTP smoke, source/Node checks, package integrity, and owner manual iPhone 16 Safari checks for full-mission play, performance, audio, and background-resume. Desktop Chromium and WebKit gameplay automation is optional diagnostic coverage; the actual iPhone Safari result is required for the supported target.
 
 ## Ordered gates
 
@@ -21,7 +21,7 @@ Parity means source-backed behavior in all six original scenes, not code presenc
 7. Complete physiology: wound placement, bleeding, circulation, oxygen, pain, shock, consciousness, treatment, death, and UI/AI effects through LimbPhysiology, Physiology, VitalFunctions, and Wound.
 8. Complete mission and progression. Connect CharacterBehavior, TeamOperator, TeamController, Blackboard, Mission, CampaignManager, and ScoreKeeper for navigation, cover, commands, doors, traps, objectives, scoring, win/loss, restart, transitions, and progression.
 9. Close presentation and platform parity: original UI/settings, audio/mixer/spatial behavior, particles, shaders/materials, mirror/glass, camera/light/render order, saves/load/resume, browser storage, and mobile lifecycle. Inventories and dummy shader exports are not implementation.
-10. Run original-vs-port trace comparison across every scene/system with justified tolerances, then complete the exact-SHA browser and mobile gates above.
+10. Run original-vs-port trace comparison across every scene/system with justified tolerances, then complete the exact-SHA source/package and owner iPhone Safari gates above. Desktop browser automation is optional.
 
 ## Current evidence (2026-10-23)
 

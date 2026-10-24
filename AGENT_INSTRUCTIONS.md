@@ -17,6 +17,14 @@ One agent works this repository at a time, so there is one line of development: 
 
 The repository is public and GitHub Actions is enabled (verified 2026-10-24; see [`docs/REPOSITORY_VISIBILITY_AND_ACTIONS.md`](docs/REPOSITORY_VISIBILITY_AND_ACTIONS.md)). Use configured workflows when appropriate; do not disable Actions, while continuing required local verification: a fresh full-source build, relevant contracts, and provenance checks, recorded against the exact tested source SHA. Functional smoke requirements remain separate: successful compilation is not proof of browser boot or correct gameplay.
 
+### Owner browser-acceptance policy (2026-10-24)
+
+- The supported gameplay target is iPhone Safari. Automated desktop Chromium and desktop WebKit runs are optional diagnostic coverage; their absence must not block a gate or release.
+- Keep source/runtime contracts, Node input and provenance checks, exact-source .NET/WASM build and package-integrity checks as required by the gate.
+- The owner prefers hands-on checks at major playable milestones, not every small code change. At each major milestone and before a release, record the exact game source SHA/build identifier and obtain the owner's manual iPhone Safari result for the relevant gameplay checklist.
+- Do not claim user-visible gameplay acceptance for a feature that is not present in the tested build. Manual iPhone Safari evidence covers the target device only; keep source-level assertions for internal state and event ordering.
+- If an exact-build iPhone Safari check has not happened, leave target-device acceptance open. Desktop browser coverage can be added when available but is never a hard blocker. This policy changes validation requirements only; it does not change runtime code, the supported target, or deployment authorization.
+
 ## Current execution environment: Codex Work Mode (owner direction, 2026-10-23)
 
 The active working environment is the repository checkout provided to Codex Work Mode. It is independent of Codespaces, but it is **not** the owner's iPhone or personal computer. Use the checkout directly for repository reads, edits, local builds, and tests. Do not open or restart Codespaces for ordinary code work; use it only if the owner requests it or a required gate cannot run in the current workspace and Codespaces is the necessary available environment.
