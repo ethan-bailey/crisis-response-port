@@ -72,13 +72,13 @@
       "sha256": "3e5df6404789d96c0b5b5f556d3ed02447bee0a97e340f6ec14c1a59c0a23d16"
     },
     {
-      "bytes": 4921,
+      "bytes": 5286,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "NEXT_AGENT.md",
-      "sha256": "ab8c0a9c5eeb1ce51977beb9c03d55022537e88f51e969011cb60316b60e6753"
+      "sha256": "69a15e7c1fe773f979ade9c887bc1a0de1d9beebe1cd43c8689bc43ad6062e32"
     },
     {
       "bytes": 10205,
@@ -180,13 +180,13 @@
       "sha256": "15c326580be4bb745e8478526c6961865f07652fab2c72e380ad6e82ae5ed518"
     },
     {
-      "bytes": 4106,
+      "bytes": 4196,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "docs/CHARACTER_ANIMATION_EXECUTION_GAPS_2026-10-16.md",
-      "sha256": "06bf023c205f33ae419d9ab8d0f5e42ccb3b777c49f18be6c5ac631ab2a058f9"
+      "sha256": "910b2d26e33954db6cc8fbe70ca3795aed78ea30f492d6eadbe97d5deb9e5c1f"
     },
     {
       "bytes": 8406,
@@ -342,13 +342,13 @@
       "sha256": "b423ca0c008930f849d2008e9472459cc479fe164b4fd096c19e1aea4067d213"
     },
     {
-      "bytes": 4236,
+      "bytes": 4253,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "docs/ORIGINAL_CHARACTER_SEQUENCER_EXECUTION.md",
-      "sha256": "5a1739066ec4c35b020307c4b0d5d3e92e8df9b023986f289653fd10b1094629"
+      "sha256": "676f85a85425694f6f4e9a5e36ed07a5ae58c951aa8e12dbda08e8dde47e1adf"
     },
     {
       "bytes": 2906,
@@ -3366,13 +3366,13 @@
       "sha256": "c2f1b5c2e018cd8d340ca73b6d6f16d59049495ec6802656247b018d2e876942"
     },
     {
-      "bytes": 11079,
+      "bytes": 13282,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Checks/ArmSequenceContracts.cs",
-      "sha256": "c9cb0a95acf11b3294cf31902dd1c9dc6331360e7d21a5eb20c7e31101b465ad"
+      "sha256": "c41801ffb6d0211ea8d77559762836cd23b5f114a662e5f3d5cddac6c7bbf28f"
     },
     {
       "bytes": 12137,
@@ -19656,7 +19656,7 @@
       "sha256": "7a72a008c918982a5f11c9a0e809e76e6738d1567f03a69861242365f567d9c5"
     }
   ],
-  "repositoryHead": "74128bc2bdf381539dc14b547c661574930c77a0",
+  "repositoryHead": "fc727026b54d008b6e19aaf7881f272adf90aa79",
   "reviewedCandidates": [
     {
       "decision": "keep-and-package",
@@ -19690,9 +19690,9 @@
   "schemaVersion": 1,
   "scope": "Every tracked or non-ignored working-tree file in this repository, excluding this generated index. Hashes identify file contents; file contents remain in their repository/package source paths.",
   "sitePackage": {
-    "manifestSha256": "a04deb67cab885b8bb37b79b988cfeb5263fa6ec5cae106f2447c417ba083357",
+    "manifestSha256": "c0b4e0487d718f597cfa6314470df9dd851d2b8a22750cf4737028b1b6f8f1d4",
     "outputFileCount": 767,
-    "sourceCommit": "74128bc2bdf381539dc14b547c661574930c77a0",
+    "sourceCommit": "fc727026b54d008b6e19aaf7881f272adf90aa79",
     "sourceInventoryCount": 1173
   }
 }
