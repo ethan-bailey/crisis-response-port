@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 11114)
+Total output lines: 460
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -114,7 +117,7 @@ import { createOriginalHandRenderers } from "./original-hand-renderers.mjs";
 import {createOriginalArmRig} from "./original-arm-rig-import.mjs";
 import { loadOriginalParticleSources } from "./original-particle-event-binding.mjs";
 import { AimDirection } from "./aim-direction.mjs";
-import { AimFireGate } from "./aim-fire-gate.mjs";
+import { AimFireGate, resolveFireInput } from "./aim-fire-gate.mjs";
 import { promiseCache, decodeScene } from "./loading.mjs";
 import { BrowserInput } from "./browser-input.mjs";
 import { createOriginalM4MagazineHud } from "./magazine-hud.mjs";
@@ -145,65 +148,7 @@ async function initializeOriginalRuntime(){
  while(performance.now()<deadline){
   const host=frame.contentWindow;
   if(host?.__runtimeError)throw new Error(host.__runtimeError);
-  if(host?.__runtimeReady){runtimeCall=(method,...args)=>host.runtimeCall(method,...args);return;}
-  await new Promise(resolve=>setTimeout(resolve,50));
- }
- throw new Error("Original C# runtime did not become ready; verify runtime-web is served with this build.");
-}
-for (const button of document.querySelectorAll("button[data-action]")) input.bindButton(button, button.dataset.action);
-// Original InputMapping.cs bindings, plus arrow-key movement aliases.
-input.bindKeyboard(window, {KeyA:"left", ArrowLeft:"left", KeyD:"right", ArrowRight:"right",
- ShiftLeft:"sprint", KeyR:"magazine", Tab:"switchWeapons", KeyS:"kneel", KeyW:"stand"});
-input.bindMovementStick(document.querySelector("#movementStick"),document.querySelector("#movementStick .stick-thumb"),{onAim(vertical){if(Math.abs(pointerNdc.y-vertical)>0.001){pointerNdc.y=vertical;aimDirty=true;aimGeneration++;}}});
-input.bindLifecycle(window, document);
-document.addEventListener("contextmenu",event=>event.preventDefault());
-document.addEventListener("selectstart",event=>event.preventDefault());
-const controlsHelp=document.querySelector("#controlsHelp"),controlsGuide=document.querySelector("#controlsGuide");
-function setControlsGuide(open){controlsGuide.hidden=!open;controlsHelp.setAttribute("aria-expanded",String(open));controlsHelp.setAttribute("aria-label",open?"Hide touch controls":"Show touch controls");}
-controlsHelp.addEventListener("click",()=>setControlsGuide(controlsGuide.hidden));
-for(const type of ["blur","pagehide","resize"])addEventListener(type,()=>{tapPending=0;tapFrame=false;reloadPending=false;magazineHud.resetGesture();});
-document.addEventListener("visibilitychange",()=>{if(document.hidden){tapPending=0;tapFrame=false;reloadPending=false;magazineHud.resetGesture();}});
-function setMeshMaterials(root){root.traverse(o=>{if(o.isMesh){o.material=new THREE.MeshStandardMaterial({color:0x858b91,roughness:1,metalness:0,side:THREE.DoubleSide});o.castShadow=false;o.receiveShadow=true}})}
-async function load(){
- try{
-  markLoaded("start");
-  status.textContent="Loading original character and runtimes…";
-  const json=async url=>{const r=await fetch(url);if(!r.ok)throw new Error(url+": HTTP "+r.status);return r.json();};
-  const runtimeReady=initializeOriginalRuntime().then(()=>markLoaded("inputReady"));
-  const presentationReady=loadPresentationData().then(data=>{presentationData=data;configureCamera(camera,data);return data;});
-  const originalSceneFlowPaths=[
-   {name:"MainMenu",path:"Assets/Scenes/Title.unity"},
-   {name:"Transition",path:"Assets/Scenes/Transition.unity"},
-   {name:"Mission 01 (build index 1)",path:"Assets/Scenes/Mission 01.unity"},
-   {name:"Marksman",path:"Assets/Scenes/Marksman range.unity"}
-  ];
-  const originalSceneFlowReady=runtimeReady.then(async()=>{
-   // The complete recovered Unity package expands to ~220 MB. Scene validation
-   // is diagnostic work, not required by the playable mesh/runtime path, so
-   // keep it off the iPhone startup path unless explicitly requested.
-   if(!new URLSearchParams(location.search).has("scene-smoke")){
-    window.__originalSceneFlow=[];
-    markLoaded("sceneFlowReady");
-    return [];
-   }
-   const scenePackage=(await loadOriginalScenePackage()).replace('"m_Name":false','"m_Name":"No"').replace('"m_Name":true','"m_Name":"Yes"');
-   const loaded=[];
-   for(const stage of originalSceneFlowPaths){
-    const report=JSON.parse(await runtimeCall("LoadScene",scenePackage,stage.path));
-    if(report.scene!==stage.path)throw new Error("Scene loader returned "+report.scene+" for "+stage.path);
-    loaded.push({name:stage.name,path:stage.path,report});
-      if(stage.path==="Assets/Scenes/Mission 01.unity"){const globalInit=JSON.parse(await runtimeCall("InitializeGlobalContext"));if(!globalInit.initialized)throw new Error("Global.Initialize did not bind Global.Context");}
-   }
-   window.__originalSceneFlow=loaded;
-   markLoaded("sceneFlowReady");
-   return loaded;
-  });
-  const presentationRuntimeReady=Promise.all([originalSceneFlowReady,presentationReady]).then(async([_,data])=>{await runtimeCall("InitializePresentation",JSON.stringify(data));markLoaded("presentationReady");});
-  const weaponReady=loadWeaponData().then(data=>{weaponData=data;return data;});
-  // Original 14 entry/exit effect prefab records, 26 ParticleSystem modules and
-  // original renderer materials. These remain unrendered until source parity.
-  const particleSourceReady=loadOriginalParticleSources();
-  const ballisticsReady=fetch("./assets/ballistics.json.gz").then(r=>{if(!r.ok)throw new Error("Original material settings unavailable");return new Response(r.body.pipeThrough(new DecompressionStream("gzip"))).json();}).then(data=>{ballisticsData=data;return JSON.stringify(data);});
+  if(host?.__runtimeReady){runtimeCall=(me…1114 tokens truncated…assets/ballistics.json.gz").then(r=>{if(!r.ok)throw new Error("Original material settings unavailable");return new Response(r.body.pipeThrough(new DecompressionStream("gzip"))).json();}).then(data=>{ballisticsData=data;return JSON.stringify(data);});
   const armPhysicsReady=json("./assets/original-full-character-physics.json");
   const limbComponentsReady=json("./assets/original-character-limb-components.json");
   const limbBallisticsReady=json("./assets/original-limb-ballistic-materials.json");
@@ -392,7 +337,7 @@ async function frame(now){
  const fireAimReady=aimFireGate.update(pointerNdc.x,pointerNdc.y,now,weaponState?.aimConverged===true);
  const tapRequested=tapPending>0&&aimReady&&fireAimReady;
  if(tapRequested){tapPending--;tapFrame=true;}
- rawActions.fire=aimReady&&fireAimReady&&(input.pressed('fire')||tapRequested);
+ rawActions.fire=resolveFireInput({heldFire:input.pressed('fire'),tapRequested,aimReady,fireAimReady});
  rawActions.magazine=reloadPending||input.pressed("magazine");reloadPending=false;
  originalInputState=JSON.parse(await runtimeCall("Tick",elapsed,JSON.stringify(rawActions)));
  for(const action of Object.keys(keys))keys[action]=originalInputState[action].Pressed;

@@ -33,3 +33,10 @@ export class AimFireGate {
 
   reset() { this.last = null; this.locked = false; this.slowSince = null; }
 }
+
+// A held trigger follows gradual aim changes. One-shot tap fire waits until
+// the new aim has been applied by a source update.
+export function resolveFireInput({ heldFire, tapRequested, aimReady, fireAimReady }) {
+  if (!fireAimReady) return false;
+  return heldFire || (tapRequested && aimReady);
+}

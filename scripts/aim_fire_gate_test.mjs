@@ -1,6 +1,19 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { AimFireGate } from '../game/aim-fire-gate.mjs';
+import { AimFireGate, resolveFireInput } from '../game/aim-fire-gate.mjs';
+
+test('held fire continues while a slow aim update is being applied', () => {
+  assert.equal(resolveFireInput({heldFire:true,tapRequested:false,aimReady:false,fireAimReady:true}),true);
+});
+
+test('tap fire waits for the new aim to be applied', () => {
+  assert.equal(resolveFireInput({heldFire:false,tapRequested:true,aimReady:false,fireAimReady:true}),false);
+  assert.equal(resolveFireInput({heldFire:false,tapRequested:true,aimReady:true,fireAimReady:true}),true);
+});
+
+test('fast-retarget lock still blocks a held trigger', () => {
+  assert.equal(resolveFireInput({heldFire:true,tapRequested:false,aimReady:false,fireAimReady:false}),false);
+});
 
 test('slow aim corrections keep sustained fire enabled', () => {
   const gate = new AimFireGate();
