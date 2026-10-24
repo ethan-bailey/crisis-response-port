@@ -37,7 +37,7 @@ export function createUpperBody(data,manifest,nodeById,character,weapon,runtimeC
  let result=null,solutions=[],weaponResult=null;
  const api={
   shoulder:arms.find(a=>a.right).upper,
-  async update({position,velocity,direction,moving,sprinting,kneeling,aim,aspect,fire,reload,physicsStep=1/60},camera){
+  async update({position,velocity,direction,moving,sprinting,kneeling,aim,aspect,fire,requireAimConvergence=false,reload,physicsStep=1/60},camera){
    character.updateWorldMatrix(true,true);
    const frame={position:unityVector(position),velocity:[velocity,0,0],direction,eye:unityVector(worldPosition(eye)),torso:unityVector(worldPosition(torso)),muzzle:unityVector(worldPosition(muzzle)),shoulder:unityVector(worldPosition(api.shoulder)),
     weaponRight:unityVector(new THREE.Vector3(1,0,0).applyQuaternion(weapon.root.getWorldQuaternion(new THREE.Quaternion()))),moving,sprinting,kneeling,aim:unityVector(aim),aspect,arms:[]};
@@ -47,7 +47,7 @@ export function createUpperBody(data,manifest,nodeById,character,weapon,runtimeC
    worldEuler(weapon.root,yaw,result.pose.weaponAngle);character.updateWorldMatrix(true,true);
    const operatorTransforms={};
    for(const [id,node] of sourceNodes){const p=worldPosition(node),q=node.getWorldQuaternion(new THREE.Quaternion());operatorTransforms[id]={p:unityVector(p),q:[-q.x,-q.y,q.z,q.w]};}
-   weaponResult=JSON.parse(await runtimeCall('StepWeapons',JSON.stringify({position:unityVector(position),velocity:[velocity,0,0],direction,weaponPose:weaponWorld(),operatorTransforms,fire,reload,armAngles:armRig?.angles()??{}})));
+   weaponResult=JSON.parse(await runtimeCall('StepWeapons',JSON.stringify({position:unityVector(position),velocity:[velocity,0,0],direction,aim:unityVector(aim),weaponPose:weaponWorld(),operatorTransforms,fire,requireAimConvergence,reload,armAngles:armRig?.angles()??{}})));
    effects.update(weaponResult.events,weaponResult.magazinePose,weaponResult.sourceTime);
    // Original ArmIKSolver.Update now runs against the source C# bone hierarchy.
    // Apply its actual world rotations and original Hand.SetMode object states.

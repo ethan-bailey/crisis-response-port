@@ -12,10 +12,11 @@ test('slow aim corrections keep sustained fire enabled', () => {
 test('rapid retarget blocks fire until aim settles, then unlocks', () => {
   const gate = new AimFireGate();
   gate.update(0, 0, 0);
-  assert.equal(gate.update(0, 1, 50), false, 'A fast sky-to-floor sweep blocks fire');
-  assert.equal(gate.update(0, 1, 100), false);
-  assert.equal(gate.update(0, 1, 200), false, 'Settle interval has not elapsed');
-  assert.equal(gate.update(0, 1, 350), true, 'Fire resumes after a stable aim');
+  assert.equal(gate.update(0, 1, 50, false), false, 'A fast sky-to-floor sweep blocks fire');
+  assert.equal(gate.update(0, 1, 100, false), false);
+  assert.equal(gate.update(0, 1, 200, false), false, 'Fire stays blocked while source aim has not converged');
+  assert.equal(gate.update(0, 1, 350, false), false, 'Stable pointer alone cannot release the source aim gate');
+  assert.equal(gate.update(0, 1, 400, true), true, 'Fire resumes once stable and original weapon aim has converged');
 });
 
 test('fast reposition across a long frame gap is still treated as rapid', () => {
@@ -30,7 +31,7 @@ test('slow adjustment after a rapid sweep does not unlock until nearly settled',
   gate.update(0, 1, 50);
   assert.equal(gate.update(0, 1.02, 100), false);
   assert.equal(gate.update(0, 1.04, 200), false);
-  assert.equal(gate.update(0, 1.04, 350), true);
+  assert.equal(gate.update(0, 1.04, 350, true), true);
 });
 
 test('reset allows a fresh first aim sample', () => {

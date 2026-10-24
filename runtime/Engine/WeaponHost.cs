@@ -92,6 +92,8 @@ public sealed class WeaponHost {
  readonly OriginalArmPhysicsHost armPhysics;
  readonly Dictionary<string,Transform> weaponTransforms=[];readonly Dictionary<string,Transform> operatorTransforms=[];readonly Dictionary<string,Transform> magazineTransforms=[];
  public readonly WeaponEffects effects=new();
+ float aimAlignment;
+ bool aimConverged=true;
  public float Kick=>weapon.RecoilKick;public float Climb=>weapon.RecoilClimb;public bool Manipulating=>body.IsManipulatingEquipment;
  public static Vector3 V(JsonElement a)=>new(a[0].GetSingle(),a[1].GetSingle(),a[2].GetSingle());
  static Vector3 Vec(JsonElement a)=>new(a.GetProperty("x").GetSingle(),a.GetProperty("y").GetSingle(),a.GetProperty("z").GetSingle());
@@ -167,8 +169,14 @@ public sealed class WeaponHost {
   SetWorld(weapon.transform,f.GetProperty("weaponPose"));
   body.rightArm.Step();body.leftArm.Step();
   armPhysics.Step(f,world);
+  aimConverged=true;aimAlignment=0f;
+  if(f.TryGetProperty("aim",out var aimValue)){
+   var aim=V(aimValue);aimAlignment=Vector3.Angle(aim-weapon.Muzzle.position,weapon.transform.right);
+   aimConverged=body.rightArm.OnTarget&&body.leftArm.OnTarget&&aimAlignment<=2f;
+  }
   // Original CharacterBody.QueryTrigger clears one-frame requests; manipulation blocks new pulls.
-  if(f.GetProperty("fire").GetBoolean()&&!body.IsManipulatingEquipment)body.PullTrigger();
+  bool waitForSourceAim=f.TryGetProperty("requireAimConvergence",out var requireAim)&&requireAim.GetBoolean();
+  if(f.GetProperty("fire").GetBoolean()&&(!waitForSourceAim||aimConverged)&&!body.IsManipulatingEquipment)body.PullTrigger();
   if(task==null&&f.GetProperty("reload").GetBoolean()){body.PendingAction=CharacterBody.CharacterAction.SwitchMagazine;task=reload;task.OnStart();}
   if(task!=null&&task.OnUpdate()!=TaskStatus.Running){task.OnEnd();task=null;}
   if(task==null&&body.PendingAction==CharacterBody.CharacterAction.WorkBolt){task=workBolt;task.OnStart();}
@@ -183,7 +191,7 @@ public sealed class WeaponHost {
    upper=a.upperArm.transform.eulerAngles.z,lower=a.lowerArm.transform.eulerAngles.z,
    bones=new{upper=Pose(a.upperArm.transform),lower=Pose(a.lowerArm.transform),hand=Pose(a.hand.transform)},
    handObjects=a.hand.SourceVisuals.Select(pair=>new{id=pair.Key,active=pair.Value.activeSelf}).ToArray()};// Presentation timing must use the same scaled Unity Time.time as the recovered weapon/effect events.
-  return new{sourceTime=Time.time,ballistics=Ballistics?.Snapshot(),magazinePose=new{p=new[]{mp.x,mp.y,mp.z},q=new[]{mq.x,mq.y,mq.z,mq.w},visible=weapon.ComponentMagazine.gameObject.activeSelf},shots=body.ShotsFired,
+  return new{sourceTime=Time.time,ballistics=Ballistics?.Snapshot(),magazinePose=new{p=new[]{mp.x,mp.y,mp.z},q=new[]{mq.x,mq.y,mq.z,mq.w},visible=weapon.ComponentMagazine.gameObject.activeSelf},shots=body.ShotsFired,aimAlignment,aimConverged,
    // The only currently executable original weapon host is the recovered M4A1.
    // Send source-owned magazine capacity and chamber state to the browser.
    // Future weapon hosts must supply their own actual equipped weapon identity;

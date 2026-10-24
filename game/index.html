@@ -389,7 +389,7 @@ async function frame(now){
  }const elapsed=last===null?0:(now-last)/1000;const dt=Math.min(elapsed,.05);last=now;if(loaded){frameBusy=true;try{
  const aimReady=aimGeneration===settledAimGeneration;
  if(tapFrame){rawActions.fire=false;tapFrame=false;}
- const fireAimReady=aimFireGate.update(pointerNdc.x,pointerNdc.y,now);
+ const fireAimReady=aimFireGate.update(pointerNdc.x,pointerNdc.y,now,weaponState?.aimConverged===true);
  const tapRequested=tapPending>0&&aimReady&&fireAimReady;
  if(tapRequested){tapPending--;tapFrame=true;}
  rawActions.fire=aimReady&&fireAimReady&&(input.pressed('fire')||tapRequested);
@@ -447,7 +447,7 @@ async function frame(now){
   aimQuad.position.set(playerX+facingDirection*20,2.5,1.5);
  }
  const aimGenerationForUpdate=aimGeneration;
- await upperBody.update({position:new THREE.Vector3(playerX,playerY,physicsState.z),velocity,direction:facingDirection,moving:Math.abs(velocity)>.1,sprinting:keys.sprint,kneeling:isKneeling,aim:new THREE.Vector3(aimPoint.x,aimPoint.y,physicsState.z),aspect:camera.aspect,fire:keys.fire,reload:originalInputState.magazine.Down,physicsStep:contactPhysics.data.fixedDeltaTime},camera);
+ await upperBody.update({position:new THREE.Vector3(playerX,playerY,physicsState.z),velocity,direction:facingDirection,moving:Math.abs(velocity)>.1,sprinting:keys.sprint,kneeling:isKneeling,aim:new THREE.Vector3(aimPoint.x,aimPoint.y,physicsState.z),aspect:camera.aspect,fire:keys.fire,requireAimConvergence:aimFireGate.locked,reload:originalInputState.magazine.Down,physicsStep:contactPhysics.data.fixedDeltaTime},camera);
  if(aimGeneration===aimGenerationForUpdate)settledAimGeneration=aimGenerationForUpdate;
  weaponState=upperBody.weaponSnapshot();magazineHud.render(weaponState);weaponStatus.textContent=(weaponState.weaponId??"Equipped weapon")+" · "+weaponState.magazine+" + "+(weaponState.chamberLive?1:0)+" · reserve "+weaponState.reserve+(weaponState.reloading?" · reloading":"");
  positionLabel.textContent="X "+playerX.toFixed(2)+" · speed "+Math.abs(velocity).toFixed(2)+" m/s"+(keys.sprint?" · sprint input":"");

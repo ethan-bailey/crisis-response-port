@@ -10,7 +10,7 @@ export class AimFireGate {
     this.slowSince = null;
   }
 
-  update(x, y, nowMs) {
+  update(x, y, nowMs, aimConverged = true) {
     if (this.last === null) {
       this.last = { x, y, nowMs };
       return true;
@@ -24,7 +24,7 @@ export class AimFireGate {
       this.slowSince = null;
     } else if (this.locked && speed <= this.settledSpeed) {
       if (this.slowSince === null) this.slowSince = nowMs;
-      if (nowMs - this.slowSince >= this.settleMs) this.locked = false;
+      if (nowMs - this.slowSince >= this.settleMs && aimConverged) this.locked = false;
     } else if (this.locked) {
       this.slowSince = null;
     }
