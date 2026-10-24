@@ -233,7 +233,15 @@ export class BrowserInput {
         if (start.touch) clearHoldFireTimer();
       }
       if (start.touch) {
-        if (dragging) aimAtTouch(event);
+        if (dragging) {
+          // A stationary hold may already be firing. Stop that trigger as soon
+          // as the finger moves to choose a new aim point.
+          if (holdFired) {
+            this.set('fire', `aim:${pointer}`, false);
+            holdFired = false;
+          }
+          aimAtTouch(event);
+        }
       } else onAim(event);
     });
     for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) this.listen(surface, type, release);

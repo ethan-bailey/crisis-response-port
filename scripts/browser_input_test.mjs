@@ -115,6 +115,19 @@ test('holding a stationary touch starts continuous fire and release stops it',as
  assert.deepEqual(taps,[],'A hold must not also trigger the tap action');
 });
 
+test('moving after a stationary hold stops fire before retargeting',async()=>{
+ const input=new BrowserInput(),surface=new Surface(),aims=[];
+ input.bindAim(surface,e=>aims.push([e.clientX,e.clientY]),()=>{},{holdFireDelayMs:10});
+ surface.send('pointerdown',{pointerId:1,clientX:100,clientY:100});
+ await new Promise(resolve=>setTimeout(resolve,20));
+ assert.equal(input.pressed('fire'),true,'A stationary hold starts fire at the held point');
+ surface.send('pointermove',{pointerId:1,clientX:140,clientY:100});
+ assert.equal(input.pressed('fire'),false,'Moving to change aim immediately releases fire');
+ assert.deepEqual(aims,[[100,100],[140,100]],'The finger movement updates aim without firing');
+ surface.send('pointerup',{pointerId:1,clientX:140,clientY:100});
+ assert.equal(input.pressed('fire'),false,'Release does not restart fire');
+});
+
 test('touch drag cancels hold-to-fire timer and pointer cancellation clears fire',async()=>{
  const input=new BrowserInput(),surface=new Surface();
  input.bindAim(surface,()=>{},()=>{},{holdFireDelayMs:10});
