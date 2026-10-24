@@ -15,7 +15,7 @@ One agent works this repository at a time, so there is one line of development: 
 
 ## Verification gate and GitHub Actions policy
 
-The repository is public and GitHub Actions is enabled (verified 2026-10-24; see [`docs/REPOSITORY_VISIBILITY_AND_ACTIONS.md`](docs/REPOSITORY_VISIBILITY_AND_ACTIONS.md)). Do not disable Actions or avoid configured workflows because of the superseded quota decision. Use configured workflows when appropriate, while continuing required local verification: a fresh full-source build, relevant contracts, and provenance checks, recorded against the exact tested source SHA. Functional smoke requirements remain separate: successful compilation is not proof of browser boot or correct gameplay.
+The repository is public and GitHub Actions is enabled (verified 2026-10-24; see [`docs/REPOSITORY_VISIBILITY_AND_ACTIONS.md`](docs/REPOSITORY_VISIBILITY_AND_ACTIONS.md)). Use configured workflows when appropriate; do not disable Actions, while continuing required local verification: a fresh full-source build, relevant contracts, and provenance checks, recorded against the exact tested source SHA. Functional smoke requirements remain separate: successful compilation is not proof of browser boot or correct gameplay.
 
 ## Current execution environment: Codex Work Mode (owner direction, 2026-10-23)
 
