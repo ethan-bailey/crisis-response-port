@@ -101,14 +101,19 @@ made the exact SDK report `8.0.426` successfully.
 Run from the repository root:
 
 ```sh
-SDK_ROOT=/tmp/codex-dotnet-8.0.426
+SDK_ROOT=/workspace/.dotnet-8.0.426
+if [ ! -x "$SDK_ROOT/dotnet" ]; then
+  SDK_ROOT=/tmp/codex-dotnet-8.0.426
+fi
 if [ ! -x "$SDK_ROOT/dotnet" ]; then
   SDK_ROOT=/workspace/scratch/c5901021c6f6/.dotnet-8.0.426
 fi
 test -x "$SDK_ROOT/dotnet"
 export DOTNET_ROOT="$SDK_ROOT"
 export PATH="$DOTNET_ROOT:$PATH"
-if [ -f /tmp/libprocshim.so ]; then
+if [ -f /workspace/libprocshim.so ]; then
+  export LD_PRELOAD=/workspace/libprocshim.so
+elif [ -f /tmp/libprocshim.so ]; then
   export LD_PRELOAD=/tmp/libprocshim.so
 fi
 dotnet --version
@@ -117,9 +122,11 @@ dotnet --version
 The version must print `8.0.426`. If `dotnet` aborts before printing a version
 with a `Process.GetStat`, process/thread metadata, or `/proc` error, classify it
 as a host startup failure. Keep the source unchanged. Reuse the existing shim
-if it is present; do not repeatedly retry the same failing invocation. If the
-SDK or shim is absent, record that as an environment blocker and continue with
-independent work.
+if it is present; do not repeatedly retry the same failing invocation. This
+workspace has the pinned SDK at `/workspace/.dotnet-8.0.426` and the compiled
+shim at `/workspace/libprocshim.so`; check those paths first in later sessions.
+If the SDK or shim is absent, record that as an environment blocker and
+continue with independent work.
 
 ## Restore, then verify
 
@@ -155,18 +162,35 @@ build option, while the prior publish command using it failed argument parsing.
 Use the exact command for the operation rather than copying flags between
 `build`, `run`, and `publish`.
 
+When a check project's source has changed, build that check project before a
+`dotnet run --no-build` invocation. `--no-build` intentionally reuses the
+existing output and can execute a stale check harness even after the runtime
+library itself was rebuilt.
+
+The static site package also needs the generated browser PhysX adapter. If
+`package_wasm_site.py` reports missing `game/vendor/physx-js-webidl.mjs`, restore
+the lockfile-pinned dependency and regenerate its vendor output before
+rebuilding the package:
+
+```sh
+npm ci --prefix game --ignore-scripts
+npm run --prefix game vendor
+```
+
 ## Diagnostic triage
 
 | Symptom | Classification | First response |
 | --- | --- | --- |
 | `global.json` SDK resolution error or `dotnet --version` is not 8.0.426 | SDK selection | Use the SDK path from preflight and keep the root pin unchanged. |
-| `Process.GetStat`, process/thread metadata, or `/proc` exception before MSBuild starts | Runner startup | Set the existing `LD_PRELOAD=/tmp/libprocshim.so`; do not edit C# or project files. |
+| `Process.GetStat`, process/thread metadata, or `/proc` exception before MSBuild starts | Runner startup | Set the existing `LD_PRELOAD=/workspace/libprocshim.so` (fall back to `/tmp/libprocshim.so`); do not edit C# or project files. |
 | `NETSDK1004` / missing `project.assets.json` | Restore state | Restore that exact `.csproj`, then run/build with `--no-restore`. |
 | `NETSDK1112` during WebAssembly publish | Missing runtime pack | Repeat publish with restore enabled. |
 | Missing `Crisis.Runtime.FullSource.Projectile` in FoundationChecks | Check-project source boundary | Confirm `runtime/FoundationChecks/FoundationSourceBoundaryStubs.cs` declares the compile-only boundary type. Keep the stub out of production runtime sources. |
 | `DebugUtils` / `Process.get_ProcessName` exception from direct MSBuild | Runner startup | Prefer the pinned `dotnet` CLI with the process shim. Do not record it as a compiler diagnostic. |
 | `MSB1025` from direct MSBuild while the runner cannot read process metadata | Runner startup | Use the pinned `dotnet` CLI with the existing process shim; do not repeatedly retry direct MSBuild or edit project/source files. |
 | `wasm-tools` workload optimization warning with successful publish | Optional workload warning | Record the warning; it did not prevent the verified publish. Install workloads only if a later required gate specifically needs them. |
+| `package_wasm_site.py` reports a missing `game/vendor/physx-js-webidl.mjs` | Generated browser dependency | Run the lockfile-pinned `npm ci --prefix game --ignore-scripts` and `npm run --prefix game vendor`, then rebuild to a new package output directory. |
+| `--no-build` check output differs from changed check source | Stale check harness | Build that exact Checks `.csproj` before rerunning its binary; rebuilding only `Crisis.Runtime.csproj` does not rebuild a separate check executable. |
 | `NullReferenceException` in original `PlayerController.Update` at `InteriorMode.UI.InteractionMenu.Visible` | Headless fixture omitted original InteriorMode UI | Do not classify as an input/compiler failure. The controller reads the authored menu before completing movement input; verify that the original UI was initialized before the callback. On 2026-10-23, activating the entire authored UI and manually invoking `Awake` stalled the headless mission during actor spawning, so do not repeat that workaround without isolating its startup dependency. |
 | `NotSupportedException: Sheared capsule transforms require native PhysX shape geometry` during projectile raycast | Runtime query geometry limitation | Preserve the exact source transforms and record the missing native PhysX dependency. Do not silently replace the ray hit or deform the actor hierarchy. The original FullSource projectile-to-limb callbacks exist; this exception is in the analytic capsule query path. |
 | `CSxxxx` diagnostics after compilation begins | Source/compiler result | Preserve the exact exit status and full diagnostics; compare only against a baseline built from the same compiler graph. |

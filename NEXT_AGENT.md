@@ -3,51 +3,47 @@
 ## Checkpoint
 
 - Development branch: `develop/wasm`.
-- Runtime source tested: `1a50b671c8766a7e610134d65666357691e7cb98` (`Record Gate 8 source fire findings`), with uncommitted Gate 8 projectile/injury probe updates in the current workspace.
-- Open PRs: none (GitHub connector query, 2026-10-23).
-- Pinned SDK: .NET 8.0.426; runner shim: `/tmp/libprocshim.so`.
+- Latest pushed game source: `e91c7050f1424149aacdb61af1eba1388da2f959`.
+- Pinned SDK: .NET 8.0.426 at `/workspace/.dotnet-8.0.426`; process shim at `/workspace/libprocshim.so`. Read `docs/DOTNET_BUILD_RUNBOOK.md` before .NET commands.
 - Avoid Codespaces through 2026-11-01. GitHub Actions remain disabled.
-- Preserve the excluded original scene package cache at `/tmp/cpr-original/scene-data/`; do not add it to Git.
+- Original scene package is excluded from Git at `/tmp/cpr-original/scene-data/crisis-response-scenes-with-gameplay-resources.json`.
+- Current private Site deployment: version 34, `https://crisis-response-runtime.craftysnipe13.chatgpt.site`.
 
 ## Gate status
 
 1. **Operator lifecycle — passed.** See `docs/evidence/GATE1_CHARACTER_ACCEPTANCE_2026-10-23.md`.
 2. **Occupant lifecycle and ownership — passed in source contracts.**
 3. **Movement and animation — partial.** Source contracts pass; native physics and visible animation remain unverified.
-4. **Equipment and firing — partial.** Original equipment/reload contracts pass. The Gate 8 source contract fires through the original trigger and weapon path.
-5. **Hit and injury chain — partial.** The Gate 8 headless probe reaches an Occupant Abdomen and verifies original wound, tissue-volume, and shock updates. Wound decal rasterization remains unverified.
-6. **Body-state outcomes — partial.** Source unconsciousness/ragdoll/death paths are exercised; live physical outcomes remain open.
+4. **Equipment and firing — partial.** Original weapon, ammunition, trigger, and reload contracts pass. A shot was verified through original source on Gate 8.
+5. **Hit and injury chain — partial.** The original FullSource projectile hit the selected Occupant's Torso and increased wound, tissue-damage, and shock physiology. Visual wound pixels remain unverified.
+6. **Body-state outcomes — partial.** The original Mission outcome contract reaches ragdoll, success, and authored end-menu paths with headless adapters; native physical outcomes remain unverified.
 7. **Mission and NPC flow — passed at the bounded headless source-runtime scope.** See `docs/evidence/GATE7_MISSION_NPC_ACCEPTANCE_2026-10-23.md`.
-8. **Combined acceptance — open.** Live projectile-to-limb injury/body-state, exact-source WASM/browser, and iPhone Safari acceptance remain outstanding.
+8. **Combined acceptance — open.** Exact-source package and private deployment pass. Interactive browser testing needs the Site owner's ChatGPT identity in the Cloud Browser. Physical iPhone Safari, native PhysX, wound decal rendering, and particle rendering/simulation are not verified.
 
-## Gate 8 checkpoint and landed changes
+## Latest verification
 
-Evidence: `docs/evidence/GATE8_SOURCE_FIRE_DISCOVERY_2026-10-23.md` and `docs/evidence/GATE8_SOURCE_PROJECTILE_INJURY_2026-10-24.md`.
+See `docs/evidence/GATE8_ACCEPTANCE_PROGRESS_2026-10-24.md` for results, scope, and error dispositions.
 
-Commit `15d5a0b` fixes ammunition resource loading to use the original serialized prefab graph. The original M4A1 now resolves `5.56-FMJ`, its source Calibre and FullSource Projectile, and reports ready to fire. The original limb and ballistic masks include layer 14; a direct source-mask torso ray query succeeds. The source trigger/update path increments `ShotsFired` to 1.
+- Full runtime build: 0 errors, 48 warnings.
+- Checks project build: 0 errors, 0 warnings.
+- Mission projectile contract: selected Occupant Torso hit; wound 0→1, damaged tissue volume 0→93.34122, shock 0→271.9045. One-shot target remained conscious/alive.
+- Mission outcome contract: seven rooms cleared, five Occupants spawned, all ragdoll, original success and end-menu path passed.
+- Browser input tests: 19/19. WASM package tests: 13/13.
+- Release WASM publish: passed with the optional `wasm-tools` optimization warning.
+- Exact package verify: source commit `e91c705…`, 766 files, 199 Blazor resources, 195 valid WASM binaries.
+- Sites private deployment: succeeded, version 34. Site access is owner-only.
 
-The follow-up trace corrected a false zero-projectile report: the probe had queried the global/transport `Projectile` type instead of `Crisis.Runtime.FullSource.Projectile`. The source projectile is created, registered, owned by the Operator, and enters the original source collision path. An unstaged shot hits an authored roof collider; the contract stages the source Operator inside the roof and aims at an Occupant abdomen. It verifies one Occupant abdomen hit, one wound, tissue volume 3.9282825, and body shock 9.895712 in a passing run. For headless execution, wound decals are disabled on the mission's source limbs so original physiology can run without pretending to rasterize pixels. Native PhysX, decal rendering, particle rendering/simulation, downstream body-state outcomes, WASM/browser, and iPhone Safari remain open.
+## Errors and known limits
 
-## Verification on tested runtime source `1a50b67` plus current workspace changes
-
-- `dotnet build runtime/Crisis.Runtime.csproj --no-restore --no-incremental -v:q`: passed, 0 errors, 48 warnings.
-- Current workspace: `dotnet build runtime/Crisis.Runtime.csproj --no-restore --no-incremental -v:q`: passed, 0 errors, 48 existing warnings.
-- `--ammunition-resource-contract <package> 5.56-FMJ`: passed; original FullSource ammo, Calibre, projectile, cached lookup, clone lifetime, and fallback checks.
-- `--mission-ai-projectile-contract <package>`: Mission 01 started; source fire prerequisites passed; shot count 0→1; original FullSource projectile hit an Occupant abdomen; original wound/tissue/shock state increased.
-- Standard package-driven `Crisis.Runtime.Checks` passed runtime, prefab, arm sequence, presentation, weapon, and ballistic contracts, then stopped at `Program.cs:328` with `Exception: Unresolved supported fields` importing Marksman range.
-- `git diff --check`: passed.
-- Current workspace `git diff --check`: passed.
-
-## Errors and dispositions
-
-- Diagnostic compile errors (`Mission.scene`, MissionHelper namespace/type, global-vs-FullSource ammunition, and nonexistent `Physiology.Unconscious`/`Dead` members) were fixed with the original Mission object name, explicit FullSource types, and source `Conscious`/`Alive` members.
-- Headless particle emission and casing force/torque failures are handled by recording adapters; this does not implement native simulation or rendering.
-- Unbound texture-transfer driver stopped the first original limb hit in the headless test. The contract disables only wound decals on its source mission instance to verify tissue/physiology state; real wound-pixel output still needs a GL backend.
-- `victim.Position.x` compile error and anonymous-object member syntax error during probe edits were fixed.
-- Prefab clone runtime delegate failure is fixed by excluding delegate fields from Unity-style serialized cloning.
-- `Unresolved supported fields` in Marksman range remains open.
-- The `Projectile` global/source type ambiguity caused a false zero-projectile observation; explicit FullSource aliases and the spawn event now trace the actual original projectile.
+- First projectile probe hit the authored roof before any victim. The contract now stages a short clear lane, moves other Occupants away in the fixture, and fails unless the selected victim receives wound, tissue, and shock changes.
+- Missing generated `game/vendor/physx-js-webidl.mjs` was fixed by the lockfile-pinned `npm ci --prefix game --ignore-scripts` and `npm run --prefix game vendor` commands.
+- Build a changed Checks `.csproj` before running its binary with `--no-build`; otherwise old check code may run. This is documented in the .NET runbook.
+- The first Sites source helper ran from the game repo without `.openai/hosting.json`; opening from `/tmp/cpr-site-open-debug` succeeded. No access policy was altered.
+- Chrome reached the private Site sign-in, but the authenticated ChatGPT identity did not have owner access. Do not make the Site public or add an external viewer. The user must authorize the owner identity in the Cloud Browser before browser acceptance can continue.
+- Local Playwright libraries exist, but Chromium and WebKit binaries are absent. No physical iPhone/Safari is mounted.
+- Headless injury testing disables wound decals and records particle/force commands. It does not prove rendered pixels, particle simulation, or native PhysX. The separate outcome fixture does not prove that a projectile injury itself caused unconsciousness or death.
+- The standard package-driven `Crisis.Runtime.Checks` suite has a separate known blocker: unresolved supported fields while importing Marksman range (`Program.cs:328`); see earlier handoff evidence. The focused Gate 8 contracts above are separate passing runs.
 
 ## Next action
 
-Continue Gate 8 from the original wound/injury response into body-state outcomes, then exact-source WASM/browser and iPhone Safari acceptance. Add real graphics and physics backends before claiming visual wound or native physics parity. Do not publish until the combined acceptance gates pass.
+Continue after the user completes the Cloud Browser handoff using the Site owner's ChatGPT identity; then run `scripts/runtime_wasm_smoke.mjs` against the version 34 private Site, capture result and console errors, and add exact-SHA evidence. Do not change the owner-only audience. Physical iPhone Safari acceptance requires an available iPhone. Gate 8 remains open until the browser and device checks pass; keep native physics and rendering limits explicit.
