@@ -4,7 +4,7 @@
 
 - Development branch: `develop/wasm`.
 - Latest gameplay source: `e009c00d240b63e67d29f9499d4740bbc6669f55` (`Keep held fire active during slow aim updates`; exact source tree `6b8011f1b30691981a9a484fe8865b545ff6d68d`).
-- The owner physically played Site v37 on iPhone Safari; this is the device smoke evidence. During that test, they reported the original touch-and-hold-on-screen behavior: aiming changes stopped sustained fire. That report was initially misread as holding the Fire button. The current patch fixes the separate held-Fire-button path; it does not fix or claim to fix touch-and-hold on the play area. Per owner direction, defer the screen-hold behavior for later investigation and proceed.
+- The owner physically tested Site v37 on iPhone Safari and reported the original touch-and-hold-on-screen behavior: aiming changes stopped sustained fire. That report was initially misread as holding the Fire button. The current patch fixes the separate held-Fire-button path; it does not fix or claim to fix touch-and-hold on the play area. Per owner direction, defer the screen-hold behavior for later investigation. The owner then tested current Site v39 on iPhone Safari and confirmed it starts and is playable.
 - Owner-only Crisis Response Runtime Site version **39** is live at `https://crisis-response-runtime.craftysnipe13.chatgpt.site`.
 - Site v39 records game source `e009c00d240b63e67d29f9499d4740bbc6669f55`, Site source commit `f81db068d09485cbb54cd7d0035065a0e5ab2222`, deployment ID `appgdep_6add110fbaf08191bfbba54cf6e5e112`, and archive SHA-256 `0631b0e712ee11f92eb6184372e02dce0f70300ab2aec519e694c055e26e1a64`. Site access remains owner-only (custom allowlist, no external visitors).
 - Site release manifest SHA-256: `75e4b73805fa0a518228b6d82d2a41d329d5b505a46518691fe9cb55d517a52a`.
@@ -12,7 +12,7 @@
 
 ## Gate 8 status
 
-Gate 8 is **pending the owner’s iPhone Safari smoke of Site v39**. Build, package, Site tests, and owner-only release are complete. The owner previously played Site v37 on iPhone Safari, confirming device play and reporting the touch-and-hold issue. The owner will now test v39 to verify current-source startup and gameplay before closing the gate. Cloud Chrome could not create a WebGL context (`GL_VENDOR = Disabled`); Chromium/WebKit gameplay smoke is not claimed. If the owner accepts the iPhone smoke as the manual browser/device check, record that waiver when closing Gate 8. The touch-and-hold-on-screen issue remains deferred: v39 changes the separate Fire-button hold path and is not expected to fix that report. No Gate 9 exists in the current completion plan. Gate 7 visual wound/particle fidelity and native PhysX parity remain separate incomplete work.
+Gate 8 is **closed under the owner-approved manual iPhone smoke path**. Build, package, tests, owner-only release, and current-source device smoke are complete. The owner confirmed Site v39 starts and is playable on iPhone Safari. Cloud Chrome could not create a WebGL context (`GL_VENDOR = Disabled`), so desktop Chromium/WebKit gameplay smoke is not claimed; the owner accepted iPhone Safari testing for this gate. The original touch-and-hold-on-screen issue remains deferred: v39 changes the separate Fire-button hold path and is not expected to fix that report. No Gate 9 exists in the current completion plan. Gate 7 visual wound/particle fidelity and native PhysX parity remain separate incomplete work.
 
 ## Verification on source `e009c00d240b63e67d29f9499d4740bbc6669f55`
 
@@ -20,8 +20,8 @@ Gate 8 is **pending the owner’s iPhone Safari smoke of Site v39**. Build, pack
 - `dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release --output /tmp/cpr-publish-e009/wwwroot`: **passed** with pinned SDK 8.0.426. The optional `wasm-tools` optimization workload was not installed.
 - `scripts/package_wasm_site.py build` and `verify`: **passed**, 767 files, 199 Blazor resources, and 195 WASM files; build manifest records game source `e009c00…`.
 - Site package tests: `node --test tests/*.test.mjs` — **33/33 passed**.
-- Site v39 deployment returned `succeeded`; saved-version source commit and archive checksum were verified. Owner iPhone Safari gameplay smoke is confirmed on v37; v39 was not retested on device. Cloud Chrome failed to create WebGL before gameplay startup, so no desktop gameplay smoke is claimed.
+- Site v39 deployment returned `succeeded`; saved-version source commit and archive checksum were verified. The owner tested v39 on iPhone Safari and confirmed it starts and is playable. Cloud Chrome failed to create WebGL before gameplay startup, so no desktop gameplay smoke is claimed; the owner accepted the iPhone check for this gate.
 
 ## Next action
 
-Ask the owner to open Site v39 on iPhone Safari and report whether it starts and is playable. Record that result, then close Gate 8 if the owner accepts the iPhone smoke in lieu of desktop Chromium/WebKit. Keep the touch-and-hold-on-screen behavior deferred; the held Fire-button fix does not resolve it. Do not change Site access settings. Gate 7 wound/particle rendering and native PhysX parity remain separate work.
+Proceed to Gate 7 wound/particle rendering and native PhysX parity. Keep the touch-and-hold-on-screen behavior deferred; the held Fire-button fix does not resolve it. Do not change Site access settings.
