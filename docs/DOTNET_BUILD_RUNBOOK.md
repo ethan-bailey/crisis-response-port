@@ -233,9 +233,21 @@ vocalization callbacks. It verifies mission/actor startup and gameplay ownership
 it does not verify rendered UI, audible output, AI behavior-tree parity, or
 browser/iPhone acceptance.
 
-Before running the mission contract, restore the package and source prerequisites
-recorded by earlier gates. Then use the pinned SDK and process shim from this
-runbook:
+Before running a mission contract, reuse the verified original-source scene
+package already generated in the current workspace. Do not re-extract it for
+each contract. The trimmed WASM bundle
+(`scene-data/crisis-response-scenes.json.gz`) omits
+`Assets/Resources/Global context.prefab` and is not a valid input for contracts
+that instantiate Global Context; an error such as “asset not found” means the
+wrong package was selected. Generate the source package once from the
+checksum-pinned recovery project with `scripts/extract_runtime_scene.py`, then
+reuse that output for subsequent mission, AI, projectile, and outcome commands.
+If the workspace or package is new, recheck the recovery archive SHA-256 before
+extracting. Keep generated source packages and private recovery archives out of
+Git. When an error is actionable, fix it and continue this gate pass; preserve
+the successful resolution here for reuse.
+
+Then use the pinned SDK and process shim from this runbook:
 
 ```sh
 dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj --no-restore -- \
