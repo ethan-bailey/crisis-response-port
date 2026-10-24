@@ -338,7 +338,7 @@ if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("S
         }
         if(!hasVersion||!hasKeys||!hasPre||!hasPost||!hasRotation)throw new NotSupportedException("Serialized AnimationCurve is missing version, keys, wrap, or rotation metadata");
         if(version!=2)throw new NotSupportedException($"Unsupported AnimationCurve serializedVersion {version}");
-        if(!Enum.IsDefined(typeof(WrapMode),pre)||!Enum.IsDefined(typeof(WrapMode),post))throw new NotSupportedException("Unsupported AnimationCurve wrap mode");
+        if(!Enum.IsDefined(typeof(WrapMode),pre)||!Enum.IsDefined(typeof(WrapMode),post))throw new NotSupportedException("Unsupported AnimationCurve infinity mode");
         var keys=new List<Keyframe>();
         foreach(var element in keysElement.EnumerateArray()){
             if(element.ValueKind!=JsonValueKind.Object)throw new NotSupportedException("AnimationCurve key must be an object");
@@ -359,7 +359,19 @@ if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("S
             if(keyVersion!=2)throw new NotSupportedException($"Unsupported AnimationCurve key serializedVersion {keyVersion}");
             keys.Add(new Keyframe(time,valueAtTime,inSlope,outSlope){tangentMode=tangentMode,serializedVersion=keyVersion});
         }
-        return new AnimationCurve(keys.ToArray()){preWrapMode=(WrapMode)pre,postWrapMode=(WrapMode)post,serializedPreInfinity=pre,serializedPostInfinity=post,serializedVersion=version,serializedRotationOrder=rotation};
+        // Unity 2017 serializes its curve infinity metadata with value 2 for
+        // the authored constant/clamped behavior used by the recovered game.
+        // It is not the public WrapMode.Loop value despite sharing the same
+        // integer. Preserve the source integers separately and map the runtime
+        // evaluation behavior explicitly, matching the existing ammunition
+        // and weapon curve loaders.
+        var clampOutside=pre==2&&post==2;
+        return new AnimationCurve(keys.ToArray()){
+            preWrapMode=pre==2?WrapMode.ClampForever:(WrapMode)pre,
+            postWrapMode=post==2?WrapMode.ClampForever:(WrapMode)post,
+            clampOutside=clampOutside,
+            serializedPreInfinity=pre,serializedPostInfinity=post,
+            serializedVersion=version,serializedRotationOrder=rotation};
     }
     static float ReadAnimationFloat(JsonElement value,string field){
         if(value.ValueKind==JsonValueKind.Number)return value.GetSingle();

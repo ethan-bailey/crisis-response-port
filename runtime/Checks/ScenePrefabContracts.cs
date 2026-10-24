@@ -7,6 +7,7 @@ public sealed class ScenePrefabProbe : MonoBehaviour {
     public Transform child;
     public BoxCollider colliderReference;
     public HingeJoint joint;
+    public AnimationCurve interpolation;
     public List<Transform> linkedTransforms=[];
     public bool ready;
     [NonSerialized] public bool awokeWithBoundReferences;
@@ -22,7 +23,7 @@ public static class ScenePrefabContracts {
         var records=new object[]{
             new {fileID="1",classID=1,className="GameObject",fields=new {m_Name="Probe",m_Layer=0,m_TagString="Untagged",m_StaticEditorFlags=0,m_IsActive=true}},
             new {fileID="2",classID=4,className="Transform",fields=new {m_GameObject=Ref("1"),m_LocalPosition=new{x=0f,y=0f,z=0f},m_LocalScale=new{x=1f,y=1f,z=1f},m_LocalRotation=new{x=0f,y=0f,z=0f,w=1f},m_Father=Ref("0"),m_Children=new[]{Ref("5")}}},
-            new {fileID="3",classID=114,className="MonoBehaviour",fields=new {m_GameObject=Ref("1"),m_Enabled=true,m_Script=new{fileID="11500000",guid,type=3},child=Ref("5"),colliderReference=Ref("6"),joint=Ref("8"),linkedTransforms=new[]{Ref("5")},ready=true}},
+            new {fileID="3",classID=114,className="MonoBehaviour",fields=new {m_GameObject=Ref("1"),m_Enabled=true,m_Script=new{fileID="11500000",guid,type=3},child=Ref("5"),colliderReference=Ref("6"),joint=Ref("8"),interpolation=new{serializedVersion=2,m_Curve=new[]{new{serializedVersion=2,time=0f,value=0f,inSlope=0f,outSlope=0f,tangentMode=0},new{serializedVersion=2,time=1f,value=1f,inSlope=0f,outSlope=0f,tangentMode=0}},m_PreInfinity=2,m_PostInfinity=2,m_RotationOrder=4},linkedTransforms=new[]{Ref("5")},ready=true}},
             new {fileID="7",classID=54,className="Rigidbody",fields=new {m_GameObject=Ref("1"),m_Enabled=true,m_Mass=2f,m_Drag=.1f,m_AngularDrag=.2f,m_UseGravity=true,m_IsKinematic=false,m_Interpolate=1,m_Constraints=0,m_CollisionDetection=0}},
             new {fileID="4",classID=1,className="GameObject",fields=new {m_Name="Child",m_Layer=0,m_TagString="Untagged",m_StaticEditorFlags=0,m_IsActive=true}},
             new {fileID="5",classID=4,className="Transform",fields=new {m_GameObject=Ref("4"),m_LocalPosition=new{x=0f,y=1f,z=0f},m_LocalScale=new{x=1f,y=1f,z=1f},m_LocalRotation=new{x=0f,y=0f,z=0f,w=1f},m_Father=Ref("2"),m_Children=Array.Empty<object>()}},
@@ -42,6 +43,7 @@ public static class ScenePrefabContracts {
         Check(template!=null&&template.child!=null,"Original prefab records load without unresolved component fields");
         Check(ReferenceEquals(template.child,templateChild)&&ReferenceEquals(template.colliderReference,templateChild.GetComponent<BoxCollider>())&&ReferenceEquals(template.linkedTransforms[0],templateChild)&&ReferenceEquals(template.joint.connectedBody,prefab.GetComponent<Rigidbody>()),"Serialized references bind to the exact prefab graph objects");
         Check(prefab.GetComponent<Rigidbody>().mass==2f&&template.joint.useSpring&&template.joint.spring.spring==12f&&template.joint.axis.x==1f,"Serialized rigidbody and hinge state retains original values");
+        Check(template.interpolation?.length==2&&template.interpolation.serializedPreInfinity==2&&template.interpolation.serializedPostInfinity==2&&template.interpolation.preWrapMode==WrapMode.ClampForever&&template.interpolation.postWrapMode==WrapMode.ClampForever&&template.interpolation.Evaluate(2f)==1f,"Unity 2017 constant infinity metadata must clamp an authored transition curve instead of looping it");
         var spriteRenderer=templateChild.GetComponent<SpriteRenderer>();
         Check(spriteRenderer!=null&&spriteRenderer.maskInteraction==2&&spriteRenderer.wasSpriteAssigned,"Original SpriteRenderer mask interaction and sprite-assignment state are retained");
         Check(!template.awokeWithBoundReferences&&!prefab.activeInHierarchy,"Prefab asset loading defers gameplay callbacks and remains outside the active scene");
@@ -54,6 +56,7 @@ public static class ScenePrefabContracts {
         Check(!ReferenceEquals(a.child,b.child)&&!ReferenceEquals(a.colliderReference,b.colliderReference),"Cloned actors own independent child and collider components");
         Check(ReferenceEquals(a.child,a.colliderReference.transform)&&ReferenceEquals(b.child,b.colliderReference.transform)&&ReferenceEquals(a.joint.connectedBody,first.GetComponent<Rigidbody>())&&ReferenceEquals(b.joint.connectedBody,second.GetComponent<Rigidbody>()),"Each actor's component links resolve within its own clone");
         Check(a.joint.useSpring&&b.joint.useSpring&&a.joint.spring.spring==12f&&b.joint.spring.spring==12f,"Cloned actors retain the serialized original joint state");
+        Check(!ReferenceEquals(a.interpolation,b.interpolation)&&a.interpolation.Evaluate(2f)==1f&&b.interpolation.Evaluate(2f)==1f,"Cloned actors retain independent clamped transition curves");
         Check(first.GetComponent<Rigidbody>().PhysicsForceSink==null&&second.GetComponent<Rigidbody>().PhysicsForceSink==null,"Runtime physics delegates are not copied from a prefab asset into independent instances");
         Check(first.transform.childCount==1&&second.transform.childCount==1,"Prefab hierarchy survives independent actor clones");
         return "PASS: source prefab record references, deferred Awake, and two independent actor clones";

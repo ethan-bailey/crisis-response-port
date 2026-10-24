@@ -312,6 +312,34 @@ var runLifecycle=args.Contains("--prefab-lifecycle");if(runLifecycle||args.Conta
     if(runLifecycle&&(ReferenceEquals(physiologies[0],physiologies[1])||ReferenceEquals(controllers[0],controllers[1])||ReferenceEquals(rightSolvers[0],rightSolvers[1])||ReferenceEquals(leftSolvers[0],leftSolvers[1])||(equipmentRefs[0]!=null&&ReferenceEquals(equipmentRefs[0],equipmentRefs[1]))))
         throw new InvalidOperationException("Operator and Occupant share physiology, IK controller, arm solvers, or initialized equipment");
     if(runLifecycle){
+        var operatorBody=(Crisis.Runtime.FullSource.CharacterBody)bodies[0];
+        var operatorController=controllers[0];
+        if(rightSolvers[0].interpolation?.length!=2||leftSolvers[0].interpolation?.length!=2)
+            throw new InvalidOperationException($"Original Operator arm interpolation curves were not deserialized (right={rightSolvers[0].interpolation?.length}, left={leftSolvers[0].interpolation?.length})");
+        operatorController.Unarmed();
+        if(!operatorController.IsPlaying||
+           !ReferenceEquals(rightSolvers[0].TransitionTarget.parent,operatorBody.Pelvis.transform)||
+           !ReferenceEquals(leftSolvers[0].TransitionTarget.parent,operatorBody.Pelvis.transform))
+            throw new InvalidOperationException("Original Operator did not start its authored two-arm pelvis transition on the actor-owned rig");
+        var timeSetter=typeof(UnityEngine.Time).GetProperty(nameof(UnityEngine.Time.time),System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.Public|System.Reflection.BindingFlags.NonPublic)!.GetSetMethod(true)!;
+        var deltaSetter=typeof(UnityEngine.Time).GetProperty(nameof(UnityEngine.Time.deltaTime),System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.Public)!.GetSetMethod(true)!;
+        var controllerUpdate=typeof(Crisis.Runtime.FullSource.IKArmController).GetMethod("Update",flags)!;
+        var solverUpdate=typeof(Crisis.Runtime.FullSource.ArmIKSolver).GetMethod("Update",flags)!;
+        var sequenceStart=UnityEngine.Time.time;
+        for(var tick=1;tick<=40&&operatorController.IsPlaying;tick++){
+            const float step=.05f;
+            timeSetter.Invoke(null,new object[]{sequenceStart+tick*step});
+            deltaSetter.Invoke(null,new object[]{step});
+            controllerUpdate.Invoke(operatorController,null);
+            solverUpdate.Invoke(rightSolvers[0],null);
+            solverUpdate.Invoke(leftSolvers[0],null);
+        }
+        if(operatorController.IsPlaying||!operatorController.RightSequencer.IsReady||!operatorController.LeftSequencer.IsReady||
+           !rightSolvers[0].OnTarget||!leftSolvers[0].OnTarget||
+           !ReferenceEquals(rightSolvers[0].ikTarget.parent,operatorBody.Pelvis.transform)||
+           !ReferenceEquals(leftSolvers[0].ikTarget.parent,operatorBody.Pelvis.transform))
+            throw new InvalidOperationException($"Original Operator authored pelvis transitions did not reach both targets and complete (playing={operatorController.IsPlaying}, rightReady={operatorController.RightSequencer.IsReady}, leftReady={operatorController.LeftSequencer.IsReady}, rightOnTarget={rightSolvers[0].OnTarget}, leftOnTarget={leftSolvers[0].OnTarget}, rightParent={rightSolvers[0].ikTarget.parent?.name}, leftParent={leftSolvers[0].ikTarget.parent?.name})");
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(new{prefab="Operator",authoredIKSequence="Unarmed",transitionTarget="Pelvis",rightOnTarget=rightSolvers[0].OnTarget,leftOnTarget=leftSolvers[0].OnTarget,bothSequencersReady=true}));
         if(limbGraphs[0].Length!=limbGraphs[1].Length||limbGraphs[0].Where((limb,index)=>ReferenceEquals(limb,limbGraphs[1][index])).Any())
             throw new InvalidOperationException("Operator and Occupant share one or more original Limb components");
         var operatorBloodBefore=physiologies[0].BloodVolume;var occupantBloodBefore=physiologies[1].BloodVolume;physiologies[0].RemoveBlood(100f);
@@ -320,7 +348,7 @@ var runLifecycle=args.Contains("--prefab-lifecycle");if(runLifecycle||args.Conta
         equipmentRefs[0].gauze=1;
         if(equipmentRefs[1].gauze!=0)throw new InvalidOperationException("Operator equipment fixture mutation changed Occupant equipment state");
     }
-    Console.WriteLine(runLifecycle?"Operator and Occupant lifecycle and component ownership passed in one RuntimeWorld.":"Operator and Occupant prefab instantiation and component ownership passed in one RuntimeWorld.");
+    Console.WriteLine(runLifecycle?"Operator and Occupant lifecycle, component ownership, and Operator authored two-arm transition completion passed in one RuntimeWorld.":"Operator and Occupant prefab instantiation and component ownership passed in one RuntimeWorld.");
     foreach(var actor in actors){UnityEngine.Object.DestroyImmediate(actor.Item3);UnityEngine.Object.DestroyImmediate(actor.Item2);}
     return;
 }
