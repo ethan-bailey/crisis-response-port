@@ -7,7 +7,7 @@
 - Pinned SDK: .NET 8.0.426 at `/workspace/.dotnet-8.0.426`; process shim at `/workspace/libprocshim.so`. Read `docs/DOTNET_BUILD_RUNBOOK.md` before .NET commands.
 - Avoid Codespaces through 2026-11-01. Repository visibility/Actions policy: public repository; GitHub Actions enabled (verified 2026-10-24; see `docs/REPOSITORY_VISIBILITY_AND_ACTIONS.md`).
 - Original scene package is excluded from Git at `/tmp/cpr-original/scene-data/crisis-response-scenes-with-gameplay-resources.json`.
-- Current private Site deployment: version 33, `https://crisis-response-runtime.craftysnipe13.chatgpt.site`.
+- Current owner-only Site deployment: version 35, source package built from game source `c3456c437c34042865f5064e086e5101c89db7dd` (includes aim-fire gate fix `56d17ca540c3784d30fa6ac1769ad072b638cdbf`), Sites source commit `11cf75b379e50e2c64f5064e086e5101c89db7dd`, `https://crisis-response-runtime.craftysnipe13.chatgpt.site`.
 
 ## Gate status
 
@@ -30,8 +30,8 @@ See `docs/evidence/GATE8_ACCEPTANCE_PROGRESS_2026-10-24.md` for results, scope, 
 - Mission outcome contract: seven rooms cleared, five Occupants spawned, all ragdoll, original success and end-menu path passed.
 - Browser input tests: 19/19. WASM package tests: 13/13.
 - Release WASM publish: passed with the optional `wasm-tools` optimization warning.
-- Exact package verify: source commit `e91c705…`, 766 files, 199 Blazor resources, 195 valid WASM binaries.
-- Sites private deployment: succeeded, version 33. Site access is owner-only.
+- Exact package verify at current deployment source: game source `c3456c437c34042865f5064e086e5101c89db7dd`, 766 files, 199 Blazor resources, 195 valid WASM binaries. Browser input suite passed 19/19; package checks passed 13/13.
+- Sites deployment: succeeded, version 35. Site access remains owner-only. The deployment archive SHA-256 is `19fe82b3d9a4978d2265bd1890c7b3aa0f9551240450b27736280f70e5b9665d`.
 
 ## Errors and known limits
 
@@ -39,11 +39,11 @@ See `docs/evidence/GATE8_ACCEPTANCE_PROGRESS_2026-10-24.md` for results, scope, 
 - Missing generated `game/vendor/physx-js-webidl.mjs` was fixed by the lockfile-pinned `npm ci --prefix game --ignore-scripts` and `npm run --prefix game vendor` commands.
 - Build a changed Checks `.csproj` before running its binary with `--no-build`; otherwise old check code may run. This is documented in the .NET runbook.
 - The first Sites source helper ran from the game repo without `.openai/hosting.json`; opening from `/tmp/cpr-site-open-debug` succeeded. No access policy was altered.
-- Chrome reached the private Site sign-in, but the authenticated ChatGPT identity did not have owner access. Do not make the Site public or add an external viewer. The user must authorize the owner identity in the Cloud Browser before browser acceptance can continue.
+- Cloud Browser can reach the owner-only Site. After reloading version 35, it still shows “Loading recovered scene and original Operator prefab…” and “Loading original weapons…,” with M4 ammunition unavailable. The page did not expose the underlying console exception in its accessibility tree; capture browser console/network diagnostics before another source change. Keep Site access owner-only.
 - Local Playwright libraries exist, but Chromium and WebKit binaries are absent. No physical iPhone/Safari is mounted.
 - Headless injury testing disables wound decals and records particle/force commands. It does not prove rendered pixels, particle simulation, or native PhysX. The separate outcome fixture does not prove that a projectile injury itself caused unconsciousness or death.
 - The standard package-driven `Crisis.Runtime.Checks` suite has a separate known blocker: unresolved supported fields while importing Marksman range (`Program.cs:328`); see earlier handoff evidence. The focused Gate 8 contracts above are separate passing runs.
 
 ## Next action
 
-Continue after the user completes the Cloud Browser handoff using the Site owner's ChatGPT identity; then run `scripts/runtime_wasm_smoke.mjs` against the version 33 private Site, capture result and console errors, and add exact-SHA evidence. Do not change the owner-only audience. Physical iPhone Safari acceptance requires an available iPhone. Gate 8 remains open until the browser and device checks pass; keep native physics and rendering limits explicit.
+Next: capture the live version 35 browser console and failed network request for the indefinite loading state, fix its root cause, then rerun `scripts/runtime_wasm_smoke.mjs` against the owner-only Site. Do not change its audience. Physical iPhone Safari acceptance requires an available iPhone. Gate 8 remains open until browser and device checks pass; keep native physics and rendering limits explicit.
