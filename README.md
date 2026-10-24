@@ -2,7 +2,7 @@
 
 > **Current status (2026-10-22):** develop/wasm is the integrated C#→WebAssembly branch. PR #42 is merged. Open draft work remains in PR #56 and #57 against develop/wasm, and PR #7 against main. The latest hosting attempt compiled source SHA 35f077f293305694f5a279bc073f23e159aba0fe but failed the local browser smoke; no new Site was published. See NEXT_AGENT.md for exact evidence and next steps.
 
-> **Owner policy:** GitHub Actions is disabled. Local builds, contracts, and provenance checks are the standing verification gate. ChatGPT Sites is the primary host; a manual Vercel deployment is fallback only, with automatic Vercel deployments kept off.
+> **Repository settings (2026-10-24):** The repository is public and GitHub Actions is enabled. See [the persistent visibility and Actions policy](docs/REPOSITORY_VISIBILITY_AND_ACTIONS.md). Local builds and contracts remain required verification; configured workflows may also run. ChatGPT Sites is the primary host; automatic Vercel deployments remain off.
 
 ## Work here
 
@@ -14,7 +14,7 @@
 - **[Source-backed test milestone](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38901664939)** — combined original C#/WASM/Chromium/WebKit tests passed at SHA `1264c0b4579076b82e1b6b21955469313779fe39` (selected source slice only).
 - **[Hosting and manual Vercel fallback policy](docs/VERCEL_MANUAL_DEPLOYMENTS.md)** — ChatGPT Sites is primary; Vercel is manual fallback only; automatic Vercel deployments remain disabled.
 
-Recovered source and the repository remain private. Public hosting is limited to an owner-authorized, byte-verified package that passes the local and live smoke gates. Do not expose repository source or recovery archives, invent gameplay, or claim parity without source verification.
+The repository and its tracked source/history are public. Keep separately stored recovery archives and credentials protected. Public game hosting is limited to an owner-authorized, byte-verified package that passes the local and live smoke gates. Do not invent gameplay or claim parity without source verification.
 
 ---
 
@@ -27,7 +27,7 @@ This repository tracks a source-preserving, evidence-driven effort to make the o
 
 - Browser draft work [PR #9](https://github.com/ethan-bailey/crisis-response-port/pull/9) preserves recovered original gameplay and assets; **latest verified selected-source C#/WASM/PhysX/Chromium/WebKit build passed** at [run 38814978462](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38814978462). This is an incomplete game, not 100% parity.
 - An [owner-only playable older build](https://crisis-response-runtime.craftysnipe13.chatgpt.site) exists; it **does not include** the latest tested glass renderer. The completed build artifact for PR #9 has not been privately deployed or tested on actual iPhone hardware.
-- The original impact-particle source manifest and the exact **Particle shard, Tetraedron, Splinter** meshes are now recovered in the private browser branch, with hash-verified source geometry and local regression tests. Particle simulation and actual rendering still remain to be implemented.
+- The original impact-particle source manifest and exact **Particle shard, Tetraedron, Splinter** meshes are recovered on the public browser branch, with hash-verified source geometry and local regression tests. Particle simulation and actual rendering still remain to be implemented.
 - The original Shader Forge window files exported by AssetRipper are **dummy shader replacements**. Mirror/light/refraction shader parity is blocked pending actual reference; native particle module inventory is complete but particle rendering remains unfinished.
 - The Unity feasibility branch and `main` are separate; the user requires no invented gameplay subsystems, no public distribution and selective non-destructive rollbacks.
 
