@@ -122,11 +122,12 @@ dotnet --version
 The version must print `8.0.426`. If `dotnet` aborts before printing a version
 with a `Process.GetStat`, process/thread metadata, or `/proc` error, classify it
 as a host startup failure. Keep the source unchanged. Reuse the existing shim
-if it is present; do not repeatedly retry the same failing invocation. This
-workspace has the pinned SDK at `/workspace/.dotnet-8.0.426` and the compiled
-shim at `/workspace/libprocshim.so`; check those paths first in later sessions.
-If the SDK or shim is absent, record that as an environment blocker and
-continue with independent work.
+if it is present; do not repeatedly retry the same failing invocation. One
+runner verified the pinned SDK at `/workspace/.dotnet-8.0.426` and the compiled
+shim at `/workspace/libprocshim.so` on 2026-10-23. These are runner-local paths
+and may not exist in a later Work Mode checkout. Check them in the current
+environment before use. If the SDK or shim is absent, record that as an
+environment blocker and continue with independent work.
 
 ## Restore, then verify
 

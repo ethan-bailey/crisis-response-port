@@ -16,6 +16,19 @@ MANIFEST=ROOT/'docs/audit/actor-migration-boundary.json'
 def check(root=ROOT):
     manifest=json.loads((root/'docs/audit/actor-migration-boundary.json').read_text())
     errors=[]
+    reviewed=manifest.get('reviewedExceptions',{})
+    if not isinstance(reviewed,dict):
+        errors.append('Reviewed legacy exceptions must be a file-to-review mapping')
+        reviewed={}
+    for name,decision in reviewed.items():
+        if name not in manifest['frozenLegacyFiles']:
+            errors.append(f'Reviewed legacy exception is not frozen: {name}')
+            continue
+        if not isinstance(decision,dict) or decision.get('acceptedSha256')!=manifest['frozenLegacyFiles'][name]:
+            errors.append(f'Reviewed legacy exception does not match its frozen hash: {name}')
+            continue
+        if not str(decision.get('reason','')).strip() or not str(decision.get('evidence','')).strip():
+            errors.append(f'Reviewed legacy exception needs a reason and evidence: {name}')
     for name,expected in manifest['frozenLegacyFiles'].items():
         path=root/name
         if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest()!=expected:

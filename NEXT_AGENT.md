@@ -2,30 +2,31 @@
 
 ## Checkpoint
 
-- Branch: `develop/wasm`; base before the 2026-10-24 browser-acceptance policy update: `fcb71f36c53dace48b0f4044be5234cf5a1e4059`.
-- Gameplay source: `e009c00d240b63e67d29f9499d4740bbc6669f55` (source tree `6b8011f1b30691981a9a484fe8865b545ff6d68d`). Current owner-only Site v39 remains live at `https://crisis-response-runtime.craftysnipe13.chatgpt.site`; this work did not deploy.
-- Owner confirmed Site v39 starts and is playable on iPhone Safari. Gate 8 is closed under that approved manual smoke path. Cloud desktop WebGL gameplay was not verified.
-- Owner policy (2026-10-24): desktop Chromium/WebKit automated gameplay checks are optional diagnostics, not gate/release blockers. Keep source/runtime, Node, exact-SHA WASM build and package checks required. The owner prefers hands-on testing at major milestones, not every small change; at each major playable milestone and before release, record exact game SHA/build and obtain owner manual iPhone Safari results. The tested build must contain the feature being accepted. This changes validation policy only, not runtime code or deployment authorization.
-- Owner-reported touch-and-hold-on-screen behavior can stop sustained fire during aim changes. This is distinct from the held Fire-button fix and is deferred per owner direction.
-- Pinned SDK: .NET 8.0.426 at `/workspace/.dotnet-8.0.426`; process shim `/workspace/libprocshim.so`. Read `docs/DOTNET_BUILD_RUNBOOK.md` before .NET commands.
+- Branch: `develop/wasm`. At the start of this pass, local and remote HEAD both matched `c7d7be436dab840a1fb8a0c2565d4c75c678adc0`; there were no open pull requests.
+- Gameplay source remains `e009c00d240b63e67d29f9499d4740bbc6669f55` (tree `6b8011f1b30691981a9a484fe8865b545ff6d68d`). Site v39 remains owner-only; the owner confirmed it starts and is playable on iPhone Safari. No deployment occurred in this pass.
+- The supported target is iPhone Safari. Desktop Chromium/WebKit automation is optional diagnostic coverage. Obtain the owner’s exact-build iPhone result at major playable milestones and before release. Do not claim acceptance for features absent from the tested build.
+- The owner-reported play-area hold behavior can stop sustained fire during aim changes. Keep it documented and deferred; do not conflate it with held-Fire-button behavior.
 
-## Latest verified milestone
+## Latest verified work
 
-`docs/evidence/SOURCE_COMBAT_INTEGRATION_MILESTONE_2026-10-24.md` records successful current-checkout source contracts regenerated from the checksum-pinned recovery archive. Actor lifecycle, arm/weapon, spawner physiology, source projectile-to-limb injury, Mission 01 startup/AI-tree initialization, and room-clear/end-menu outcome checks passed. The source projectile increased an original Occupant's wounds, damaged tissue, and body shock.
+- `node --test scripts/*_test.mjs`: 78/78 passed on the checkout code at start of this pass.
+- `python3 -m unittest discover -s scripts -p 'package_wasm_site_test.py'`: 13/13 passed.
+- The first audit-tools run found two failures because `WeaponHost.cs` had a reviewed aim-convergence bridge delta that was absent from the frozen file hash. Updated the freeze manifest, recorded the scope in `docs/audit/actor-migration-boundary-review-2026-10-24.md`, and made the guard validate exception metadata. The targeted audit suite now passes 13/13; `check_actor_migration.py` reports zero violations.
+- `npm ci --prefix game --ignore-scripts` followed by `npm run --prefix game vendor` restored the ignored lockfile-pinned PhysX browser adapter required by packaging. The reusable fix is in `docs/DOTNET_BUILD_RUNBOOK.md`.
+- The current runner does not have the pinned .NET 8.0.426 SDK or process shim mounted. No .NET build, WASM publish, or exact-source package build was run in this pass. The old `/workspace/.dotnet-8.0.426` and `/workspace/libprocshim.so` references are now explicitly marked runner-local historical paths.
 
-This is a headless source integration milestone, not full gate closure. The regenerated package has six unresolved references to one absent original .308 Mesh GUID (`b4b69dc6c74eeb54cbd22d28e37f9a19`, fileID `4300000`); it is outside the M4 5.56 mission test. Occupant counts of four and five across runs are both consistent with the original `SerializableOccupantSettings` default count range 3–6 and integer `Random.Range(minCount, maxCount)` behavior. The current recovered scene has five running trees; older results with four trees came from a different package or fixture and should not be compared as a fixed count.
+## Gate state
 
-## Gate state and next work
-
-- Gate 0: first-playable dependency matrix added at `docs/evidence/GATE0_FIRST_PLAYABLE_DEPENDENCY_MATRIX_2026-10-24.md`; bounded M4 source path classified, full runtime build passed, and spawner/input contracts passed. Broader gate remains open for page startup, native physics, visible original actors, and AI navigation.
-- Gate 1 passed within its scoped headless source-character acceptance.
-- Gates 2 and 3 partial: original sequence playback in the game path, real rendered injury effects, native PhysX, and complete live hit/state/event integration remain. Desktop browser automation is optional; source contracts and milestone iPhone Safari evidence remain the acceptance path.
-- Gate 4 partial: source mission startup/spawn/outcome pass headlessly; automatic normal-page startup, authored visible actors, and real physics remain. The source spawner module requires original settings, spawn data, campaign state, Unity RNG, collision query, and prefab-instantiation callbacks not supplied by `game/index.html`; do not call it with fabricated defaults.
-- Gate 5 open: original behavior trees deserialize and stay enabled, but autonomous perception, navigation, decisions, and combat are unverified. The plan's NPC-AI-ready-for-preview milestone has not been reached.
-- Gate 6 partial: source room-clear/success path passes headlessly; owner iPhone Safari full-mission acceptance remains after the full flow is present in a test build.
-- Gate 7 open: original presentation/content fidelity remains.
-- Gate 8 closed for Site v39 under the owner-approved manual iPhone check; it does not close Gates 0–7. No Gate 9 exists in the foundation-first plan.
+- Gate 0: open. The bounded M4 source path is classified; normal-page startup, native physics, visible original actors, and supported navigation/presentation remain.
+- Gate 1: passed within the scoped headless original-character acceptance.
+- Gate 2: partial. Original source sequence playback is not connected to the normal game path; visual/physical continuity remains unverified.
+- Gate 3: partial. A source shot reaches original limb physiology in headless evidence; native PhysX, rendered wounds, and full live state/event integration remain.
+- Gate 4: partial. Original mission startup and headless spawning/outcome pass; the normal page lacks the complete original mission inputs and instantiation callbacks.
+- Gate 5: open. Original trees load and tick, but autonomous perception, navigation, decisions, and combat are not verified.
+- Gate 6: partial. Source room-clear and success contracts pass; a complete player/AI mission flow remains.
+- Gate 7: open. Original presentation and content fidelity remain.
+- Gate 8: closed for existing Site v39 under the owner-approved manual iPhone smoke path. This does not close Gates 0–7 or accept later features.
 
 ## Exact next action
 
-Continue Gate 2 by connecting original sequencer playback to the normal game path, preserving original IKArmController/IKArmSequencer callbacks and actor ownership. Keep source/runtime contracts and package checks, then request the owner’s iPhone Safari check at the next major playable milestone for features present in that build; no desktop browser installation is needed. Continue Gates 3–7 in dependency order; classify missing native PhysX/render/audio as blockers and keep those behaviors gated. Do not deploy or change Site access. Keep the play-area hold behavior deferred and recorded. The randomized 3–6 Occupant count is expected; do not treat it as a failure. Keep the absent .308 Mesh identity explicit and do not silently substitute.
+Locate or restore pinned .NET SDK 8.0.426 and the documented process shim in the active environment, then build and run the relevant source contracts on the current exact SHA. Continue Gate 2 by integrating original `IKArmSequencer` playback and callbacks into the real game path; do not synthesize defaults for missing mission context. Keep working through Gates 3–7 in dependency order, commit and push verified work, and do not deploy.

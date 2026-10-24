@@ -119,6 +119,23 @@ class RuntimePackageInputTests(unittest.TestCase):
 
 
 class BoundaryTests(unittest.TestCase):
+    def test_reviewed_legacy_exception_is_bound_to_the_frozen_hash(self):
+        root = actor.ROOT
+        with tempfile.TemporaryDirectory() as d:
+            target = Path(d)
+            manifest = json.loads((root/'docs/audit/actor-migration-boundary.json').read_text())
+            files = list(manifest['frozenLegacyFiles']) + [
+                'docs/audit/actor-migration-boundary.json',
+                'runtime/Crisis.Runtime.csproj']
+            for name in files:
+                destination = target/name
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(root/name, destination)
+            self.assertEqual(actor.check(target), [])
+            manifest['reviewedExceptions']['runtime/Engine/WeaponHost.cs']['acceptedSha256'] = '0' * 64
+            (target/'docs/audit/actor-migration-boundary.json').write_text(json.dumps(manifest))
+            self.assertTrue(any('does not match its frozen hash' in e for e in actor.check(target)))
+
     def test_record_and_struct_transport_owners_are_rejected(self):
         root = actor.ROOT
         with tempfile.TemporaryDirectory() as d:
