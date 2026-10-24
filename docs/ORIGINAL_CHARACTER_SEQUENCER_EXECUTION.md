@@ -1,39 +1,30 @@
-# Original gameplay continuation — CharacterBody → IK sequencer
+# Original CharacterBody and IK sequencer — current execution status
 
-Integration target: `develop/wasm`. Preserve the existing executable ArmController, source IK solver, hand renderer, movement, ballistics, and magazine UI. This is a **work queue**, not a declaration that a new gameplay system has been integrated.
+## Verified checkpoint
 
-## Next implementation slices (in dependency order)
+The current source checkpoint is `638cf4a5a470a2f514446c055b73a1a3b57cf048` (followed by documentation-only handoff commit `bf21daa9320072338c5eef64823e3ecbbb3104e2`). Do not use the older 2026-10-16 planning status below as current evidence.
 
-1. **Original CharacterBody lifecycle, not a substitute.** Recover the complete CharacterBody source from the pinned private recovery artifact, preserve its SHA256 and isolate the exact Kinematic/ragdoll transitions plus required serialized Operator references. Resolve real dependent members (Torso, Pelvis, arm solvers, active/inactive equipment, grenade flags, directional pose, and physiology) against original source. Extend the current executable source slice without disguising weapon transport views as CharacterBody.
-2. **IKArmSequencer original playback.** The recovered file is `source-reference/Original/Animation/IKArmSequencer.cs`. Compile the original constructor, SetSibling, Update, Play, NewFrame, TargetTransform, Invoke, and HasFinishedFrame with real `IKArmAnimationFrame`, `IKArmAction`, `IKArmType`, `IKArmTarget`, `IKControllerInvoke`, original source transforms and `ArmIKSolver`. Maintain source frame completion order: callback on following Update, then NewFrame; sibling waits use HasFinishedFrame.
-3. **IKArmController original callbacks.** Source file `source-reference/Original/Animation/IKArmController.cs`. Compile Awake/Update/Play and weapon/holster/grenade transitions after their original CharacterBody/equipment prerequisites are executable. Preserve IK_ action callbacks, especially weapon activation, physical grabPoint parenting, grenade and gauze event ownership. No fake grenade/equipment behavior.
-4. **Physics, physiology and contacts.** Connect CharacterBody's original non-kinematic transitions to the already executable source ArmController and PhysX arm bodies; add original layer/material filtering and contact dispatch. Compare ragdoll/hinge traces with Unity reference when obtainable.
-5. **Source-based verification.** Add focused native C# tests for sequence advance, callbacks, sibling waits, switching/holstering, real ragdoll transitions; then run one integrated .NET 8 WASM + Chromium/WebKit game milestone. Preserve tested exact SHA, package evidence and explicit unsupported behavior.
-6. **Private device release only on request.** Reuse verified artifact staging and the branch's stable Vercel preview alias. Actual iPhone Safari must be separately tested.
+- `runtime/Original/CharacterBody.Full.cs` supplies the original `Crisis.Runtime.FullSource.CharacterBody` implementation in the full runtime assembly. It compiles; its presence does not prove every source branch is exercised by the normal browser game.
+- `runtime/Original/FullSource/IKArmSequencer.cs` and `IKArmController.cs` are compiled into the full runtime. Their method bodies match the preserved source-reference files, apart from namespace adaptation and the actor-identity guard in `IKArmController.Play`.
+- The headless `FullSourceControllerPlaybackContracts` fixture verifies actor-owned controller/sequencer instances, source callback ordering for `LowerWeapon` and `FireWeapon`, completion, and isolation between two fixture actors. The fixture does not exercise a complete authored character rig, transition targets, sibling waits, or rendered/physical continuity.
+- The source arm-sequence bundle preserves seven original prefabs and 21 authored frames. Runtime contracts verify source list composition, frame data, callback ordering, and bounds. The browser `ComposeOriginalArmSequences` bridge is a diagnostic composition/serialization endpoint and deliberately returns `playbackImplemented: false`; it is not a browser gameplay scheduler.
+- The current full runtime build and Release WASM publish passed at the gameplay-source checkpoint above. These builds establish compilation only.
 
-## Keep these existing implementations
+## Gate 2 — remaining acceptance
 
-- Integrated original physical ArmController — merged PR #37. Original hand rendering/source solver — merged PR #31.
-- Existing source M4 ballistics, magazine, chamber, reload and muzzle effects are already working at their documented verification scope.
-- No duplicate whole-repo audits, replacement game mechanics, automatic Vercel deploy or public source/artifact release.
+Gate 2 remains partial. The normal `game/index.html` path does not load a complete original mission package or instantiate the original Operator through the complete source lifecycle. Its optional `?scene-smoke` path only loads/inspects scenes and initializes Global Context. The separate browser sequence bridge composes source records but does not play them. Do not implement a second JavaScript sequencer or invent missing actor/equipment defaults to make that diagnostic report playback.
 
-## Immediate bounded code entry point
+The next safe implementation requires the real authored mission/prefab inputs and a normal game-path owner for the original `FullSource.CharacterBody`, `IKArmController`, `IKArmSequencer`, solvers, weapon/hand targets, and callbacks. Then add focused contracts for transition completion, sibling waits, switch/holster interruption, and authored callback side effects, followed by an exact-build iPhone Safari milestone check. Desktop browser automation is optional under the owner policy.
 
-Start at `source-reference/Original/Animation/IKArmSequencer.cs` and `source-reference/Original/Animation/IKArmController.cs`, and locate the real recovered CharacterBody and equipment dependencies in the pinned private recovery artifact. The in-repo `runtime/Original/Weapons/ArmTransition.cs` is **selected original ArmIKSolver behavior only**; do not mistake it for the original controller/sequencer. Source method hashes and exact adapter changes belong next to the executable code.
+The original scene package used by prior headless mission contracts is generated from the pinned recovery archive; it is not the compact tracked site scene package. Reuse an existing verified package while it exists. Regenerate it only when it is absent or inputs change, using `docs/DOTNET_BUILD_RUNBOOK.md`. Do not repeatedly extract the archive just to rerun unrelated checks.
 
-**Implementation status of this document:** planning only; no compile, new browser behavior, or iPhone release claimed.
+## Preserved source timing contract
 
-## Source-confirmed step 1/2 boundary (2026-10-16)
+`IKArmSequencer.Play` enters frame 0 immediately. Once an action completes, the following `Update` invokes its callback before advancing with `NewFrame`. `WaitForSiblingFrame` uses `HasFinishedFrame`; `Transition` waits for the source solver's `OnTarget`; `WaitUntilLowered` uses source aim alignment. Preserve these semantics when wiring the real actor lifecycle. No synthetic timing, grenade, gauze, equipment, or physics behavior is accepted as source parity.
 
-Direct inspection of `source-reference/Original/Animation/IKArmSequencer.cs` confirms these **mandatory executable dependencies** before integration:
+## Evidence pointers
 
-- `CharacterBody.WeaponAimAlignment()`, `ActiveWeapon`, `holster`, `stunGrenadeAnchor`, `chestRigIKTarget`, `pistolIKTarget`, `ApplyGauzePosition(out Vector3)`, `Head`, `Pelvis`, plus `GetComponent<TeamOperator>()` for medic targets.
-- `WeaponBase.leftHandAnchor/rightHandAnchor` and controller `PreviousWeapon/PendingWeapon`.
-- Original `IKArmAnimationFrame`, `IKArmAction`, `IKArmType`, `IKArmTarget`, `IKControllerInvoke` definitions and the real source `ArmIKSolver` transition methods.
-- Its **source timing contract**: `Play()` enters frame 0 immediately; the first `Update()` detecting completion sets `frameDone`; the following `Update()` invokes the callback before `NewFrame(++CurrentFrame)`. Sibling waits use `HasFinishedFrame()` and not an independent timer. `Transition` waits for `solver.OnTarget` and `WaitUntilLowered` waits for alignment <= 10 degrees.
-
-The file `runtime/Original/Weapons/ArmTransition.cs` currently contains a selected `ArmIKSolver` source slice, not a real original global `CharacterBody` substitute. The original sequencer source is **recovered but not compiled in the integrated game**; adding it before resolving these original dependencies would falsely report step 2 as complete. The full recovered CharacterBody source is now present verbatim in `source-reference/Original/CharacterBody.cs` (62,958 bytes); the private recovery artifact was retrieved. This preserves source but is not executable runtime integration. No executable gameplay or engine adapter changes have been made in this checkpoint.
-
-## PR cleanup checkpoint
-
-The one-shot `recover-original-character-body.yml` workflow was removed once source-reference contained the recovered file. The extraction is not required for every PR or branch push. Do not claim `CharacterBody` or `IKArmSequencer` runs in game based only on preserved source. This PR is source preservation plus dependency handoff, not a completed feature.
+- `runtime/Checks/ArmSequenceContracts.cs` — composition and controller callback contracts.
+- `runtime/Original/FullSource/IKArmSequencer.cs` and `IKArmController.cs` — compiled source implementation.
+- `docs/evidence/SOURCE_COMBAT_INTEGRATION_MILESTONE_2026-10-24.md` — exact scene-package command and prior headless mission/combat contract results; those results do not prove browser or native-physics parity.
+- `docs/evidence/GATE0_FIRST_PLAYABLE_DEPENDENCY_MATRIX_2026-10-24.md` — first-playable dependency classification and normal-page startup limits.

@@ -1,5 +1,12 @@
 # Arm physics closure checkpoint — 2026-10-16
 
+Historical engine checkpoint. The source controller/sequencer are now compiled
+and selected headless callbacks pass; see
+[`ORIGINAL_CHARACTER_SEQUENCER_EXECUTION.md`](ORIGINAL_CHARACTER_SEQUENCER_EXECUTION.md).
+The pending items below remain relevant to full source ragdoll and native
+physics acceptance, but their older “IK playback is not compiled” wording has
+been superseded.
+
 PR #30 continues the requested seven-step original-code WASM plan. It now contains recovered original physics data and an isolated real PhysX engine prerequisite. **It does not fix the missing in-game hand, compile ArmController, or provide a new playable build.**
 
 **Verified engine milestone:** [Actions #38936091879](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38936091879) PASS at exact source `2fec10a41d65fc1f5dbf1791a020420e381e09e8`: **22 numerical contracts per browser in both Chromium and WebKit**. Private artifact `12061391992`, expires 2026-11-15; ZIP SHA256 `c264e3ca1188d213c183e2e9aa42edd22dad373a89867c8be4e3e45644d7e30a`. [Fast source/package run #38936097518](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38936097518) PASS at the same SHA. These test the isolated kernel, not original controller execution or a new playable game.

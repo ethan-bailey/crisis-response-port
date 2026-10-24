@@ -1,5 +1,11 @@
 # Step 2: exact source dependency closure for original IKArmSequencer
 
+Historical dependency snapshot, superseded by the current source/runtime status in
+[`ORIGINAL_CHARACTER_SEQUENCER_EXECUTION.md`](ORIGINAL_CHARACTER_SEQUENCER_EXECUTION.md).
+The sequencer and controller are now compiled in `runtime/Original/FullSource/`
+and selected headless callbacks pass; this 2026-10-16 table does not describe
+their current compilation state or establish normal-page playback.
+
 This is a dependency checklist for executing **unmodified** `source-reference/Original/Animation/IKArmSequencer.cs` and `IKArmController.cs`. Do not add an alternative animation state machine.
 
 ## Source entrypoints and temporal behavior

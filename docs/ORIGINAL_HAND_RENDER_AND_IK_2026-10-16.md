@@ -1,5 +1,11 @@
 # Original hand renderers and source IK update
 
+Historical checkpoint. The FullSource IK controller/sequencer are now compiled
+and have selected headless callback evidence. Current status and remaining
+normal-page limits are in
+[`ORIGINAL_CHARACTER_SEQUENCER_EXECUTION.md`](ORIGINAL_CHARACTER_SEQUENCER_EXECUTION.md);
+the older uncompiled-dependency statements below describe the earlier build.
+
 ## Cause and implementation
 
 The visible hand omission is independent of the ragdoll physics bridge. `export_operator_manifest.py` selects `LimbRenderer` scripts, but all four original Operator hand variants are ordinary `MeshRenderer` components using Unity's built-in Quad. They therefore had hierarchy nodes and source hand-mode references but no geometry or textures in the browser.

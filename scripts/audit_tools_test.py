@@ -2,6 +2,8 @@ import copy
 import json
 from pathlib import Path
 import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -38,6 +40,25 @@ class DiagnosticDiffTests(unittest.TestCase):
         report=summarize('MSBUILD : error MSB1009: Project file does not exist.', 'head',1)
         self.assertEqual(report['uniqueErrorCount'],1)
         self.assertEqual(report['compilerDiagnostics'][0]['code'],'MSB1009')
+
+
+class CharacterAnimationSourceClosureTests(unittest.TestCase):
+    def test_audit_follows_current_fullsource_paths(self):
+        root = Path(__file__).resolve().parents[1]
+        result = subprocess.run(
+            [sys.executable, str(root / 'scripts/audit_character_animation_source_closure.py')],
+            cwd=root, text=True, capture_output=True, check=True)
+        report = json.loads(result.stdout)
+        self.assertEqual(report['status'], 'pass')
+        closure = report['source_character_animation_closure']
+        self.assertEqual(
+            closure['IKArmSequencer.cs']['runtimeFile'],
+            'runtime/Original/FullSource/IKArmSequencer.cs')
+        self.assertEqual(
+            closure['IKArmController.cs']['runtimeFile'],
+            'runtime/Original/FullSource/IKArmController.cs')
+        for item in closure.values():
+            self.assertEqual(item['runtimeMethodsMissing'], [])
 
 
 class UnitySerializedDependencyTests(unittest.TestCase):

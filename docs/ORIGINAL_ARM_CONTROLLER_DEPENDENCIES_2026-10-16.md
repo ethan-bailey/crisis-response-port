@@ -1,5 +1,12 @@
 # Original arm-controller playback — source-preserving dependency checkpoint
 
+Historical 2026-10-16 checkpoint. Current compilation and headless playback
+evidence is summarized in
+[`ORIGINAL_CHARACTER_SEQUENCER_EXECUTION.md`](ORIGINAL_CHARACTER_SEQUENCER_EXECUTION.md).
+The old “deliberately not compiled” status below is not current; the compiled
+FullSource controller/sequencer still lack full normal-page authored-rig and
+visual/physical continuity acceptance.
+
 2026-10-16, [issue #22](https://github.com/ethan-bailey/crisis-response-port/issues/22), `feature/22-arm-controller`. This is a **verified source recovery and native compile prerequisite**, NOT an animation/controller playback implementation.
 
 ## Recovered from the original game, no inferred game mechanics
