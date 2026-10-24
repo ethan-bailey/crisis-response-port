@@ -237,6 +237,26 @@ extracting. Keep generated source packages and private recovery archives out of
 Git. When an error is actionable, fix it and continue this gate pass; preserve
 the successful resolution here for reuse.
 
+## Durable original recovery archive
+
+The authoritative original project recovery archive is privately saved in the
+ChatGPT Library as `crisis-response-recovery-direct-v3-1.zip`. Search the
+Library by that exact filename when a fresh workspace needs the archive, then
+materialize it locally and verify SHA-256
+`cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d` before
+extracting. This is the same archive formerly available as GitHub Actions
+artifact `11903811738` from the private release
+`recovery-preservation-2026-10-15`. The pinned archive was recovered and
+checksum-verified on 2026-10-24, then saved to the Library because the previous
+instructions referred only to ephemeral `/tmp` paths. Never commit this
+archive or its extracted proprietary game project to the public repository.
+
+After verification, extract only the exported project tree needed by the
+runtime scene extractor, generate `/tmp/cpr-scenes-full-source.json`, and
+reuse that generated package for contracts in the current workspace. The
+archive is persistent; extracted files and generated scene packages remain
+workspace-local and must be regenerated when absent.
+
 Then use the pinned SDK and process shim from this runbook:
 
 ```sh

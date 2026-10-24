@@ -18,6 +18,7 @@
 - Optional Playwright smoke was unavailable because Playwright is not installed. Desktop browser automation is optional and this did not block the batch.
 - The tracked scene package contains 1,504 assets and both character prefabs, but not Global Context or M4A1 resource prefabs. It is not the private full gameplay-resource package; do not retry spawner/equipment contracts against it.
 - A clean worktree requires restoring ignored PhysX vendor files with `npm ci --prefix game --ignore-scripts` and `npm run --prefix game vendor`. The checksum-verified SDK 8.0.426 archive plus tracked process shim is the working .NET recovery path; do not use `dotnet-install.sh` or GitHub CLI setup.
+- The complete original project recovery ZIP is now durably saved in the private ChatGPT Library as `crisis-response-recovery-direct-v3-1.zip`; SHA-256 `cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d` verified on 2026-10-24. Search the Library by exact filename and verify the hash after materializing. Keep the archive and extracted proprietary project out of this public repository. Full instructions are in `docs/DOTNET_BUILD_RUNBOOK.md`.
 
 ## Gate state
 
