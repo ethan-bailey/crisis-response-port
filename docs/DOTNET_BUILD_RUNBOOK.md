@@ -23,32 +23,16 @@ If the expected checkout is absent, make one bounded recovery attempt:
 1. Search the current scratch mount for the project checkout. Do not treat a
    separate `.sites-checkout`, an old feature-branch ZIP, or a source archive
    as the live `develop/wasm` checkout.
-2. If shell Git authentication is already configured, test the live remote once
-   with `git ls-remote`. If it fails with
-   `could not read Username ... No such device or address`, the noninteractive
-   runner cannot prompt for credentials. Do not retry the same shell fetch.
-
-   Shell CLI login is separate from the connected GitHub app and is local to
-   the current runner. A successful `gh auth login` in another chat or runner
-   does not install `gh` or transfer its credentials here. Before offering the
-   device-login URL, confirm `gh` exists and run `gh auth status`. Once logged
-   in, run `gh auth setup-git`, then verify the target remote with one
-   `git ls-remote`. Do not copy or print access tokens. On 2026-10-23, an earlier
-   runner completed GitHub CLI device authorization, but this runner has no
-   `gh` executable or CLI credential file; the connected GitHub API is still
-   authorized. A device code cannot be generated until `gh` is available in
-   the target environment. On 2026-10-23, installing GitHub CLI 2.45.0 from
-   Ubuntu's apt snapshot and completing device authorization restored shell
-   access. `gh auth setup-git` followed by `git ls-remote` verified the private
-   repo. The CLI warned that credentials were saved in plain text under
-   `/root/.config/gh/hosts.yml`; do not copy or commit that file. This fixes the
-   current runner only. To avoid repeating device authorization, use a
-   persistent development environment with GitHub CLI and a secure credential
-   store; a fresh Work Mode scratch runner does not inherit either.
-3. Use the connected GitHub API to verify the live branch/PR state or read
-   individual files. This is useful for inspection, but it does not provide a
-   buildable local repository. The GitHub fetch connector rejects repository
-   tarball endpoints and does not download binary archives.
+2. The public repository can be cloned/fetched over HTTPS without GitHub CLI
+   authorization when network access permits. Use the connected GitHub API to
+   verify the live branch/PR state. For commits, use the connector Git Data API
+   sequence in `AGENT_INSTRUCTIONS.md`, then fetch the updated public branch
+   with Git. Do not install/authorize `gh` or repeat device login when the
+   connected GitHub API is available. Connector-only file inspection is not a
+   buildable checkout.
+3. Do not try to recover a full repository tarball through the GitHub fetch
+   connector; it rejects repository archive endpoints. Clone the live public
+   branch into the current workspace instead.
 4. Check for the pinned SDK and the process shim. Do not start a .NET build
    without the repository and SDK preflight in this runbook.
 
@@ -60,7 +44,8 @@ resume when the correct checkout and required toolchain are mounted. Avoid
 Codespaces through 2026-11-01 unless the owner requests it or a required gate
 cannot run by another practical means.
 
-Observed on 2026-10-23: the prior
+Historical incident record (2026-10-23; do not repeat its GitHub CLI recovery
+steps): the prior
 `/workspace/scratch/c5901021c6f6/crisis-response-port` checkout was absent;
 the current mount contained only a separate Sites checkout and an older feature
 archive. Shell `git ls-remote` could not prompt for GitHub credentials, the
@@ -72,9 +57,12 @@ failure.
 ## Preflight
 
 If the SDK archive has to be restored, use the pinned official archive and
-verify its known SHA-256 before extracting. Avoid `dotnet-install.sh` on this
-runner because its tar extraction tries to restore archive ownership, which the
-container rejects. The successful extraction path was:
+verify its known SHA-256 before extracting. This checksum-verified archive path
+is the proven SDK setup; do not retry `dotnet-install.sh`, which attempted to
+restore archive ownership and failed in this container. The `dotnet` CLI is
+still required for `build`, `run`, `restore`, and `publish`; avoid the failing
+SDK installer and GitHub CLI login, not those .NET build commands. The
+successful extraction path was:
 
 ```sh
 curl -fL https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.426/dotnet-sdk-8.0.426-linux-x64.tar.gz \
@@ -98,22 +86,17 @@ The shim only redirects the current process's `/proc/<pid>/stat` read to
 `/proc/self/stat`. It is not production code. On 2026-10-23, that preflight
 made the exact SDK report `8.0.426` successfully.
 
-Run from the repository root:
+Run from the repository root after the archive extraction above. Use the
+verified SDK at `/tmp/codex-dotnet-8.0.426`; do not search remembered
+generated-workspace paths. A file path in an earlier handoff is not proof that
+it is mounted in this runner.
 
 ```sh
-SDK_ROOT=/workspace/.dotnet-8.0.426
-if [ ! -x "$SDK_ROOT/dotnet" ]; then
-  SDK_ROOT=/tmp/codex-dotnet-8.0.426
-fi
-if [ ! -x "$SDK_ROOT/dotnet" ]; then
-  SDK_ROOT=/workspace/scratch/c5901021c6f6/.dotnet-8.0.426
-fi
+SDK_ROOT=/tmp/codex-dotnet-8.0.426
 test -x "$SDK_ROOT/dotnet"
 export DOTNET_ROOT="$SDK_ROOT"
 export PATH="$DOTNET_ROOT:$PATH"
-if [ -f /workspace/libprocshim.so ]; then
-  export LD_PRELOAD=/workspace/libprocshim.so
-elif [ -f /tmp/libprocshim.so ]; then
+if [ -f /tmp/libprocshim.so ]; then
   export LD_PRELOAD=/tmp/libprocshim.so
 fi
 dotnet --version
@@ -122,12 +105,12 @@ dotnet --version
 The version must print `8.0.426`. If `dotnet` aborts before printing a version
 with a `Process.GetStat`, process/thread metadata, or `/proc` error, classify it
 as a host startup failure. Keep the source unchanged. Reuse the existing shim
-if it is present; do not repeatedly retry the same failing invocation. One
-runner verified the pinned SDK at `/workspace/.dotnet-8.0.426` and the compiled
-shim at `/workspace/libprocshim.so` on 2026-10-23. These are runner-local paths
-and may not exist in a later Work Mode checkout. Check them in the current
-environment before use. If the SDK or shim is absent, record that as an
-environment blocker and continue with independent work.
+if it is present; do not repeatedly retry the same failing invocation. The
+SDK archive and shim paths are runner-local and may not exist in a later Work
+Mode checkout. Check current paths before use. If the SDK is absent, use the
+verified archive extraction above; if only the shim is absent, compile it from
+the tracked source above. Do not record either as a blocker until these proven
+recovery steps have been attempted once.
 
 ## Restore, then verify
 
