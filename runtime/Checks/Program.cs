@@ -97,7 +97,24 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-outcome-c
     if(bodies.Length<2||!bodies.Any(body=>body.GetComponent<Crisis.Runtime.FullSource.TeamOperator>()!=null)||!bodies.Any(body=>body.GetComponent<Crisis.Runtime.FullSource.Occupant>()!=null))
         throw new InvalidOperationException($"Mission 01 actor flow did not produce an Operator and Occupant; bodies={bodies.Length}");
     if(args[0]=="--mission-projectile-contract"||args[0]=="--mission-ai-projectile-contract"){
-        Console.WriteLine(MissionProjectileContracts.Describe(world,missionComponent,bodies));
+        var report=MissionProjectileContracts.Describe(world,missionComponent,bodies);
+        Console.WriteLine(report);
+        using var reportDocument=JsonDocument.Parse(report);
+        var attempt=reportDocument.RootElement.GetProperty("fireAttempt");
+        var result=attempt.GetProperty("result").GetString();
+        if(result!="source-projectile-hit-selected-occupant")
+            throw new InvalidOperationException($"Mission projectile contract failed: {result}");
+        var selectedTarget=attempt.GetProperty("selectedTarget").GetString();
+        var selectedHit=attempt.GetProperty("victimHits").EnumerateArray()
+            .FirstOrDefault(hit=>hit.GetProperty("body").GetString()==selectedTarget);
+        if(selectedHit.ValueKind!=JsonValueKind.Object)
+            throw new InvalidOperationException("Mission projectile contract did not report the selected Occupant hit");
+        var damageBefore=selectedHit.GetProperty("damageBefore");
+        var damageAfter=selectedHit.GetProperty("damageAfter");
+        if(damageAfter.GetProperty("wounds").GetInt32()<=damageBefore.GetProperty("wounds").GetInt32()
+            ||damageAfter.GetProperty("damagedTissueVolume").GetSingle()<=damageBefore.GetProperty("damagedTissueVolume").GetSingle()
+            ||damageAfter.GetProperty("bodyShock").GetSingle()<=damageBefore.GetProperty("bodyShock").GetSingle())
+            throw new InvalidOperationException("Mission projectile contract hit the selected Occupant without verified wound, tissue, and shock increases");
         return;
     }
     if(args[0]=="--mission-outcome-contract"||args[0]=="--mission-ai-outcome-contract"){

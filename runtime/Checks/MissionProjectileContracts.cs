@@ -71,6 +71,7 @@ public static class MissionProjectileContracts
         var selectedVictim=victims.OrderBy(victim=>MathF.Abs(victim.transform.position.x-2f))
             .FirstOrDefault(victim=>MathF.Abs(victim.transform.position.x-2f)>6f);
         var selectedTarget=selectedVictim?.GetComponent<Target>();
+        var selectedVictimPositionBefore=selectedVictim?.transform.position;
         var damageBefore=world.Objects.OfType<SourceLimb>()
             .Where(limb=>victims.Contains(limb.Body))
             .ToDictionary(limb=>limb,limb=>DescribeDamageState(limb.Body,limb));
@@ -80,11 +81,21 @@ public static class MissionProjectileContracts
             // no GL rasterizer, and must not pretend that decals were drawn.
             foreach(var limb in world.Objects.OfType<SourceLimb>())
                 typeof(SourceLimb).GetField("useWoundDecals",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)?.SetValue(limb,false);
-            // Stage this already-initialized source actor just inside the
-            // authored roof edge; the serialized spawn is outside it, where a
-            // shot toward the Occupants correctly collides with the roof box.
-            shooter.transform.position=new Vector3(2f,shooter.transform.position.y,shooter.transform.position.z);
+            // Stage this already-initialized source actor in a clear lane
+            // before the authored roof edge; the serialized spawn is outside
+            // it, where shots toward these Occupants collide with the roof.
+            shooter.transform.position=new Vector3(4f,shooter.transform.position.y,shooter.transform.position.z);
             shooter.IsKneeling=true;
+            // Move the selected original Occupant into a short clear corridor
+            // before the authored overhead tiles, and move other original
+            // Occupants out of that fixture lane. Keep every full CharacterBody
+            // hierarchy and its original limb colliders; the long serialized
+            // spawn path crosses the roof before reaching the selected victim.
+            int stagedOccupant=0;
+            foreach(var otherVictim in victims.Where(victim=>!ReferenceEquals(victim,selectedVictim)))
+                otherVictim.transform.position=new Vector3(40f+stagedOccupant++*2f,otherVictim.transform.position.y,otherVictim.transform.position.z);
+            var stagedVictimPosition=selectedVictim.transform.position;
+            selectedVictim.transform.position=new Vector3(7f,stagedVictimPosition.y+.75f,stagedVictimPosition.z);
             // Give the original aimer a real Mission 01 target through its
             // recovered Blackboard/Target inputs, then let CharacterBody's
             // original weapon-pose update apply that aim.
@@ -139,12 +150,16 @@ public static class MissionProjectileContracts
                 damageBefore=damageBefore.TryGetValue(victim.LastHitLimb,out var before)?before:null,
                 damageAfter=DescribeDamageState(victim,victim.LastHitLimb)
             }).ToArray();
-            string result=hits.Length>0?"source-projectile-hit-occupant":shotsAfter>shotsBefore&&projectiles.Length==0?"source-shot-fired-no-live-projectile-observed":"source-shot-fired-no-occupant-hit";
+            bool selectedVictimWasHit=hits.Any(hit=>hit.body==selectedVictim.name);
+            string result=selectedVictimWasHit?"source-projectile-hit-selected-occupant":shotsAfter>shotsBefore&&projectiles.Length==0?"source-shot-fired-no-live-projectile-observed":"source-shot-fired-no-occupant-hit";
             return new{
                 sourcePullTriggerCalled=true,
                 selectedTarget=selectedTarget?.name,
                 shooterKneeling=shooter.IsKneeling,
                 targetComponentAvailable=selectedTarget!=null,
+                selectedVictimPositionBefore=selectedVictimPositionBefore.HasValue?Pos(selectedVictimPositionBefore.Value):null,
+                selectedVictimPositionAfter=Pos(selectedVictim.transform.position),
+                selectedVictimWasHit,
                 currentWorldMatchesMissionWorld=ReferenceEquals(RuntimeWorld.Current,world),
                 ammunitionProjectileCount=weapon.ammunition.projectileCount,
                 ammunitionProjectileType=weapon.ammunition.projectile.GetType().FullName,
