@@ -1,12 +1,12 @@
 {
   "countsByPackageRole": {
-    "build-or-validation-input": 107,
-    "game-source-or-asset": 136,
-    "repository-only": 999,
-    "runtime-build-source": 647,
+    "build-or-validation-input": 111,
+    "game-source-or-asset": 137,
+    "repository-only": 1010,
+    "runtime-build-source": 922,
     "scene-package-source": 3
   },
-  "fileCount": 1892,
+  "fileCount": 2183,
   "files": [
     {
       "bytes": 1658,
@@ -36,22 +36,22 @@
       "sha256": "a0e2b0be8186bd17d66f8bee2a5d4cb85f0f1a4224426175e3a331e2bd8cb9d7"
     },
     {
-      "bytes": 2219,
+      "bytes": 2428,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "AGENTS.md",
-      "sha256": "6fa6b2505a0ed075f0f721609f43a71b051e08d8393687eba0df478314301748"
+      "sha256": "79fae045fc0cabfd16aeaf11d0ab5c9177d695cb7fa518134bebfc1a03598e1e"
     },
     {
-      "bytes": 11877,
+      "bytes": 16447,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "AGENT_INSTRUCTIONS.md",
-      "sha256": "2625b743f1377025c415edfd5ac7ea03bf50d066781c76f6affc8ec976db00fc"
+      "sha256": "1075de7df75383963e23938f1734830b2face267e7d86912d23adb139d5c4696"
     },
     {
       "bytes": 5887,
@@ -72,22 +72,22 @@
       "sha256": "3e5df6404789d96c0b5b5f556d3ed02447bee0a97e340f6ec14c1a59c0a23d16"
     },
     {
-      "bytes": 4467,
+      "bytes": 4921,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "NEXT_AGENT.md",
-      "sha256": "866d7410dcd35a68eb18dde5a7b0406668728f81521eb463c9dac114232f6114"
+      "sha256": "ab8c0a9c5eeb1ce51977beb9c03d55022537e88f51e969011cb60316b60e6753"
     },
     {
-      "bytes": 9885,
+      "bytes": 10205,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "README.md",
-      "sha256": "6c091308b0bf170883ae1d0bc088ce233589782b0c13612be0fefa8b90f95a16"
+      "sha256": "5d46425b8a28bdc3a20cb405f2c2d98bb8a9f948b7f5e7c8236432932ffaffcd"
     },
     {
       "bytes": 17175,
@@ -126,13 +126,13 @@
       "sha256": "c81e7ee3e5531746c2a8f4bd767bb85613daf7f3679f786040996900f5091d37"
     },
     {
-      "bytes": 6424,
+      "bytes": 6809,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "docs/ARM_PHYSICS_CLOSURE_CHECKPOINT_2026-10-16.md",
-      "sha256": "e508eecea78e8b26510ab905cb31492d63458713504c412cd4c90418e12f7b2c"
+      "sha256": "fdeac3a309323db44c4fb442bd521852877c10d5566893daca7a8c3869551437"
     },
     {
       "bytes": 3250,
@@ -144,13 +144,13 @@
       "sha256": "f0fdac5d1da1958b0fc891e0c4d1fd28718fc1657f8482bfdb6351e1c8477f2c"
     },
     {
-      "bytes": 8308,
+      "bytes": 8643,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "docs/BRANCHING_AND_COLLABORATION.md",
-      "sha256": "44c09cd00e21bacc7afae66346c478017c7d9f21bf098ae4c9471b56ec9d6c80"
+      "sha256": "d17ef79d57cbd313c34f2ee4d6ba1bd64bafa46ec161ea97348dd6974ed6fce8"
     },
     {
       "bytes": 6753,
@@ -180,13 +180,13 @@
       "sha256": "15c326580be4bb745e8478526c6961865f07652fab2c72e380ad6e82ae5ed518"
     },
     {
-      "bytes": 4868,
+      "bytes": 4106,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "docs/CHARACTER_ANIMATION_EXECUTION_GAPS_2026-10-16.md",
-      "sha256": "0bbfdd4a8d591c107c0ef332f03f5dc0be57e60d3585d13269876e363b84d59f"
+      "sha256": "06bf023c205f33ae419d9ab8d0f5e42ccb3b777c49f18be6c5ac631ab2a058f9"
     },
     {
       "bytes": 8406,
@@ -207,31 +207,31 @@
       "sha256": "d1505fc293c83e03a1937f2b380b98e1a5a2db0e8ad3c88c743bd3e03435b737"
     },
     {
-      "bytes": 4192,
+      "bytes": 4399,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "docs/COMPLETE_WASM_PORT_ROADMAP.md",
-      "sha256": "2e2faa04c8cbd4ebcdc81ceea90a36bbd36cce4b91e073949aa5a50cac4f35b9"
+      "sha256": "8629b3ec59ab2214bdecc2504214206a22c6ed4e0324ad021b20668b3e9867a2"
     },
     {
-      "bytes": 5126,
+      "bytes": 23624,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "docs/DOTNET_BUILD_RUNBOOK.md",
-      "sha256": "ee2f34207e2e2cfa9ffe27315c6eb19baea55781b54ca53f1f8e753d129a483b"
+      "sha256": "7dc1d2ac67042f513202da59428d3d756de3d28dcb6efa917e81e4cd186cdace"
     },
     {
-      "bytes": 13311,
+      "bytes": 13940,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "docs/FOUNDATION_FIRST_COMPLETION_PLAN_2026-10-17.md",
-      "sha256": "d79659aad87e2b908a8641ff7b8237938ad32c625d7fb6e6ba028779dbc3b408"
+      "sha256": "26adf42866d560e48ae586d75d4574edf19ee8775ab18821905fae9e45911ffb"
     },
     {
       "bytes": 9086,
@@ -252,13 +252,13 @@
       "sha256": "92821aed6f0527ce0cfd1820e92cf9f00b217bf7079366d423b18546fcadc08a"
     },
     {
-      "bytes": 5369,
+      "bytes": 5693,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "docs/GAMEPLAY_COMPLETION_ROADMAP.md",
-      "sha256": "fb3bf16520f1b8c7440dee471b558ad03e6adfbf0f4e6418d42ccdc45541d767"
+      "sha256": "084b112d69095168d24f83abc60e6d6d36364f834e40629e6be0722e300c4374"
     },
     {
       "bytes": 3765,
@@ -279,13 +279,13 @@
       "sha256": "1321f9828105284c3dc989ee133abc0c65dfb3d0e5ca564cac7ce9513372a19a"
     },
     {
-      "bytes": 3655,
+      "bytes": 4054,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "docs/IK_SEQUENCER_SOURCE_DEPENDENCIES_2026-10-16.md",
-      "sha256": "acaf03ac77cabb13a1e9011ed1bc4370e90dc81f8caf8248554e18d7015ab5f3"
+      "sha256": "58d2e0227948d935ddfa9d2fa071b5f547c86a94af104fce3e540c9df2efe2c6"
     },
     {
       "bytes": 1955,
@@ -333,22 +333,22 @@
       "sha256": "110280289b816f383d6b153569dc6e75df9f0778361f3b3b764deb9122f4e64e"
     },
     {
-      "bytes": 6693,
+      "bytes": 7084,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "docs/ORIGINAL_ARM_CONTROLLER_DEPENDENCIES_2026-10-16.md",
-      "sha256": "317c35ba00c801f8c7c593b64ccdbe837608a34c66c2369a75dd046486c87833"
+      "sha256": "b423ca0c008930f849d2008e9472459cc479fe164b4fd096c19e1aea4067d213"
     },
     {
-      "bytes": 5792,
+      "bytes": 4236,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "docs/ORIGINAL_CHARACTER_SEQUENCER_EXECUTION.md",
-      "sha256": "a59f48d6133e7389887f0bd89cfe8c0f9ec04f01020e420b36fa0fe6e8376139"
+      "sha256": "5a1739066ec4c35b020307c4b0d5d3e92e8df9b023986f289653fd10b1094629"
     },
     {
       "bytes": 2906,
@@ -360,22 +360,22 @@
       "sha256": "3cc9d13b018332d2432c0e5322070ae81cb50884cfc17ac215a8667b08066665"
     },
     {
-      "bytes": 4522,
+      "bytes": 4870,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "docs/ORIGINAL_HAND_RENDER_AND_IK_2026-10-16.md",
-      "sha256": "2a57950a838fda398cd391a88cc8f6eabe77656a7fda7e57b895c3d371cf1994"
+      "sha256": "ae46694dbfb2726911285d390554ba7968148843ecb710d92ef08174c9a78e00"
     },
     {
-      "bytes": 5027,
+      "bytes": 5465,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "docs/ORIGINAL_HAND_WASM_CHECKPOINT_2026-10-16.md",
-      "sha256": "e20e1bb1f3558ac8a6387daf86dbd8f5bb6103063eabc9ab9f2145ae9c772317"
+      "sha256": "aeb9c64158b04cf2a48fad200f4ad403ece9789901b0d59f1f5578c308397540"
     },
     {
       "bytes": 3947,
@@ -630,6 +630,15 @@
       "sha256": "6d589997210201dcb57fe4fab3fa7512cdd5b7f894cf35335509249c1bd3ad34"
     },
     {
+      "bytes": 1735,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": false,
+      "matchesLatestSourceInventory": false,
+      "packageRole": "repository-only",
+      "path": "docs/REPOSITORY_VISIBILITY_AND_ACTIONS.md",
+      "sha256": "5981f3a0e7dfcf5336efc0a5b25e1f842c1d431efcf48164f8751378b04f3374"
+    },
+    {
       "bytes": 5599,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
@@ -801,13 +810,22 @@
       "sha256": "d77ea2e5ad112414fd0580ecc70e6cfd65c63126fcb16ef9984adebb57dff1ea"
     },
     {
-      "bytes": 1166,
+      "bytes": 1361,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": false,
+      "matchesLatestSourceInventory": false,
+      "packageRole": "repository-only",
+      "path": "docs/audit/actor-migration-boundary-review-2026-10-24.md",
+      "sha256": "8c1f51d4a4eb1906128e47c2843baa8d1f3a9953826bb647c8d3bde1f98a338e"
+    },
+    {
+      "bytes": 1812,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "docs/audit/actor-migration-boundary.json",
-      "sha256": "45e8955decd80b1f0b9e2dcf5eb73768ad726fbda898af5599a5b4c06e886016"
+      "sha256": "fd081afe028097797fe109489dab0f3bdec9bbdf8630452d7f280bcc43f2f7e2"
     },
     {
       "bytes": 42741,
@@ -828,13 +846,94 @@
       "sha256": "4cfc77b2f491b856df46403296c4c1e16c47d8963ad7ec9daa6049d6d4d29c8b"
     },
     {
-      "bytes": 1823604,
+      "bytes": 2105844,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": false,
       "matchesLatestSourceInventory": false,
       "packageRole": "repository-only",
       "path": "docs/audit/source-dependencies.json",
-      "sha256": "16af7ee487eca13d9f79d7b608bd20c4cefd63a3d6412a13f225f6167b6d1dd5"
+      "sha256": "72e2210ff393cc45f5bde9d51bcdac5f66ed87d8ee427379550440addec64d33"
+    },
+    {
+      "bytes": 1381,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": false,
+      "matchesLatestSourceInventory": false,
+      "packageRole": "repository-only",
+      "path": "docs/evidence/CHARACTERBODY_FULL_COMPILE_2026-10-23.json",
+      "sha256": "94ae9abc98eb0c4acc62aae6ca3595ffd933e69605b62b3374f333cba999b45d"
+    },
+    {
+      "bytes": 8218,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": false,
+      "matchesLatestSourceInventory": false,
+      "packageRole": "repository-only",
+      "path": "docs/evidence/GATE0_FIRST_PLAYABLE_DEPENDENCY_MATRIX_2026-10-24.md",
+      "sha256": "e5b9f754d5893ff3bc2b0567e84729801730f69b962848428910667439ef9faa"
+    },
+    {
+      "bytes": 5013,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": false,
+      "matchesLatestSourceInventory": false,
+      "packageRole": "repository-only",
+      "path": "docs/evidence/GATE1_CHARACTER_ACCEPTANCE_2026-10-23.md",
+      "sha256": "ae245736ec770fe9bfd576441a293da33b387ad6b6cd09244092847bfe279c91"
+    },
+    {
+      "bytes": 4493,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": false,
+      "matchesLatestSourceInventory": false,
+      "packageRole": "repository-only",
+      "path": "docs/evidence/GATE7_MISSION_NPC_ACCEPTANCE_2026-10-23.md",
+      "sha256": "874106351b3c6de335b8da22fb0034d11d80a68ecf748f78a2642db5f8e853c0"
+    },
+    {
+      "bytes": 6790,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": false,
+      "matchesLatestSourceInventory": false,
+      "packageRole": "repository-only",
+      "path": "docs/evidence/GATE8_ACCEPTANCE_ATTEMPT_2026-10-23.md",
+      "sha256": "e596564c0cf48f1315815b93112b9c8bfee1a83a00d35471fd8efd8b9bc28689"
+    },
+    {
+      "bytes": 3972,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": false,
+      "matchesLatestSourceInventory": false,
+      "packageRole": "repository-only",
+      "path": "docs/evidence/GATE8_ACCEPTANCE_PROGRESS_2026-10-24.md",
+      "sha256": "7c51850b61a03eda835c9d0f638f55a728bf9d9f2284d56e1265ef9909f12ea3"
+    },
+    {
+      "bytes": 4664,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": false,
+      "matchesLatestSourceInventory": false,
+      "packageRole": "repository-only",
+      "path": "docs/evidence/GATE8_SOURCE_FIRE_DISCOVERY_2026-10-23.md",
+      "sha256": "1697c4c519e7d9886312103db91077f558e0b612bc846487cd447909bfe60021"
+    },
+    {
+      "bytes": 3880,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": false,
+      "matchesLatestSourceInventory": false,
+      "packageRole": "repository-only",
+      "path": "docs/evidence/GATE8_SOURCE_PROJECTILE_INJURY_2026-10-24.md",
+      "sha256": "6a52d094de0498708c847bc54a08c215dacad75f36da0ecedd3d40b731dc2352"
+    },
+    {
+      "bytes": 9318,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": false,
+      "matchesLatestSourceInventory": false,
+      "packageRole": "repository-only",
+      "path": "docs/evidence/GATES_2_TO_6_PROGRESS_2026-10-23.md",
+      "sha256": "c4219f13e2ec9c000f127c6b6df5bdecb864deb1982260883bf25767d74f9b79"
     },
     {
       "bytes": 4407,
@@ -880,6 +979,15 @@
       "packageRole": "repository-only",
       "path": "docs/evidence/REA-full-source-texture-gate-2026-10-20.md",
       "sha256": "81ed9fdcf51c8a4908057cb86ba65043d2513c14ca90f5675a39aa00c4ed4824"
+    },
+    {
+      "bytes": 6473,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": false,
+      "matchesLatestSourceInventory": false,
+      "packageRole": "repository-only",
+      "path": "docs/evidence/SOURCE_COMBAT_INTEGRATION_MILESTONE_2026-10-24.md",
+      "sha256": "a8160f7cd3b9b2db831f10cacbfa37223fb2283142fd9b03e34c7567653bd41f"
     },
     {
       "bytes": 1840,
@@ -1944,6 +2052,15 @@
       "sha256": "5547b27df5a6dfbdfe0a8f600c60f727358239840af957f2d23df6b89755221d"
     },
     {
+      "bytes": 1547,
+      "copiedAtSamePathToLatestPackage": true,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "game-source-or-asset",
+      "path": "game/aim-fire-gate.mjs",
+      "sha256": "abdcafd1b529dfbc1928da33b688bda51aaab3d8e1435c86b59020dadb9a54b2"
+    },
+    {
       "bytes": 1286,
       "copiedAtSamePathToLatestPackage": true,
       "inLatestSourceInventory": true,
@@ -2745,13 +2862,13 @@
       "sha256": "a8f1d7fd0b2ade76cb348e550429703c7ba71281dd3713bcbfa374169b96d197"
     },
     {
-      "bytes": 2617010,
+      "bytes": 2618756,
       "copiedAtSamePathToLatestPackage": true,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "game-source-or-asset",
       "path": "game/assets/weapon-runtime.json.gz",
-      "sha256": "99317e167238a99a2badb248e0d9ba4817bd0b1ac37eadb6d7b7edaff0bdee3b"
+      "sha256": "7df251b476573f822cae0c0faa672d022045b3c6b2b6f05f20a15e8b06da2564"
     },
     {
       "bytes": 78188,
@@ -2952,13 +3069,13 @@
       "sha256": "81e18bbdbf1adae25201df1499a01e58b5149c4f06c7b3bba0d0f588647b7a26"
     },
     {
-      "bytes": 11565,
+      "bytes": 11852,
       "copiedAtSamePathToLatestPackage": true,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "game-source-or-asset",
       "path": "game/browser-input.mjs",
-      "sha256": "6a906f5155ae0d7138e360d1b0d1171ede330feeb5685781752aadc790dada40"
+      "sha256": "40568b6b504c89ad5b47acd6b26eb6838f4d985f845199fd29950fa7c64db4c0"
     },
     {
       "bytes": 5576,
@@ -2970,13 +3087,13 @@
       "sha256": "765d19a5d1bd2b6783affd5aaffdfd91ee2a1289008965eb83f8c76d7f4678ac"
     },
     {
-      "bytes": 43808,
+      "bytes": 44456,
       "copiedAtSamePathToLatestPackage": true,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "game-source-or-asset",
       "path": "game/index.html",
-      "sha256": "aeeca782ecd46febb3a6d3e9aaca4b1e8fa29dc3b27be579b3760d5a8def99cc"
+      "sha256": "2fa0c79b1366ddaaa777361e4d8cc92a771b971d408097105f02ff4d8f3e07f7"
     },
     {
       "bytes": 700,
@@ -3060,13 +3177,13 @@
       "sha256": "d47cc79389f27f3f23fed9ffbbc474fba76b91747bde771f65f54bbc3528f719"
     },
     {
-      "bytes": 7164,
+      "bytes": 7235,
       "copiedAtSamePathToLatestPackage": true,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "game-source-or-asset",
       "path": "game/presentation.mjs",
-      "sha256": "93d6df2fe168bac39cc0518a82067b377a29563841089a02e79bcfd2ac628a90"
+      "sha256": "09310e80ffa891ad2cdf2f03199d6fc3ce9416fb317b8e4a02df39b0c25d5711"
     },
     {
       "bytes": 3369,
@@ -3222,13 +3339,13 @@
       "sha256": "3a04d8212b33684a413463b483c7e8831c48c9c301b6a9a18276f05a1793df88"
     },
     {
-      "bytes": 4635,
+      "bytes": 4668,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Browser/wwwroot/index.html",
-      "sha256": "5cd2a72ae546b6c40da0e3c67405829ac20acda5714af9cb0aebbecd9a7b45db"
+      "sha256": "f83468939b01f607b92b722b7428a8c45ccd0a4fb2cd5fd5ebf2317e34455ab5"
     },
     {
       "bytes": 1564,
@@ -3267,6 +3384,15 @@
       "sha256": "cd4b49db1ae1b06096dafee1a08daf08301d39cd77ac842f9336ef32323df615"
     },
     {
+      "bytes": 4073,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Checks/BehaviorDesignerContracts.cs",
+      "sha256": "1daa64536f467e7af0d62f9847602bc4bd0e445f2094465717c584c229891960"
+    },
+    {
       "bytes": 268,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
@@ -3274,6 +3400,15 @@
       "packageRole": "runtime-build-source",
       "path": "runtime/Checks/Crisis.Runtime.Checks.csproj",
       "sha256": "8613654f1ced5be9603d75c418fe7b6ac6246524582a453be7f8a7114d4a86fe"
+    },
+    {
+      "bytes": 19755,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Checks/MissionProjectileContracts.cs",
+      "sha256": "005b26c8b825ee1cb4e1e2348dedcd9560f191636357ff93823e24c9a5a8828b"
     },
     {
       "bytes": 1249,
@@ -3285,13 +3420,13 @@
       "sha256": "3c822f3a4257eb54c5ef4c10172be5531506fdd1dd88c13ffcf5e1105a168804"
     },
     {
-      "bytes": 13387,
+      "bytes": 38242,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Checks/Program.cs",
-      "sha256": "0b9870fe87e54563fa063f11e77b510d601c3452b4cc13fe889b2e9f41502c8c"
+      "sha256": "9213f977f0d785e4348a06d8af96e9d79b62658fd07965a6976cc4de45eae2cd"
     },
     {
       "bytes": 3215,
@@ -3303,22 +3438,22 @@
       "sha256": "ff672eb89333172640e7f2bf87e6a3bbf237960649a2b4ae0be1e60489ee0599"
     },
     {
-      "bytes": 6333,
+      "bytes": 6661,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Checks/ScenePrefabContracts.cs",
-      "sha256": "f7777a23740c004d76d085815735426410ea380a027fc9555257744e79016f10"
+      "sha256": "7c0c17a46487bafce413789013919805a3eabb66caf3f2544226e95c2cf9b17d"
     },
     {
-      "bytes": 11142,
+      "bytes": 24822,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Checks/SpawnerGameplayContracts.cs",
-      "sha256": "74a7958bfba2cb948d38404b7ddd30e241549a3934a58318c98b194258990f24"
+      "sha256": "9959119a82a011534c8356859d9266be293ecd26d1983d15ad78d9dc64aa338d"
     },
     {
       "bytes": 5715,
@@ -3339,13 +3474,13 @@
       "sha256": "273c4d131db04cb17d0fe087a2ae7e4df94dafb472e57f0c2fe6e5c9e0c1cf7e"
     },
     {
-      "bytes": 10078,
+      "bytes": 10431,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Engine/AmmunitionLoader.cs",
-      "sha256": "9a22017e1493fe3e623e87bd1800ac3c709a35eebd628e9ddf1ce15613a21631"
+      "sha256": "a8cf23953236823aee724c00ab6f755d2c75da869be0793f4d13855d6c7ce230"
     },
     {
       "bytes": 3283,
@@ -3519,13 +3654,13 @@
       "sha256": "07d71084c43685fc1bb644fb5e28f42a30cb5809dc841075f858c0d76d59c735"
     },
     {
-      "bytes": 22505,
+      "bytes": 25983,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Engine/Objects.cs",
-      "sha256": "c24fbaf76b2771f060c6947aa9228e00b2491a54eb8c7b87bf63402e3d14d82a"
+      "sha256": "bc6b8ae3958337e35f4b50ba9866006074a9a303c9985fd8c5d9ab6f429ab54d"
     },
     {
       "bytes": 5915,
@@ -3591,22 +3726,22 @@
       "sha256": "a2007cd573aaaf9caecc34f4f0ffb6c29cf01eba0b4a795176a23bd629f935b1"
     },
     {
-      "bytes": 7169,
+      "bytes": 7210,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Engine/Physics.cs",
-      "sha256": "d3847aa535af35d72924045f6800ca6bb7ff06525e426fb0d879386316db97a9"
+      "sha256": "d8d263884cbbe3ca18f72ccca1c2b1fdbcafc6312910118dd4968f69fea6d4d6"
     },
     {
-      "bytes": 5422,
+      "bytes": 5912,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Engine/PhysicsComponents.cs",
-      "sha256": "48f5f543868a678c9bc439e53c1c866980d03801876dd6bdaba163039e0d0eed"
+      "sha256": "f6cd99ebbbb8cda34405ddf4093dd25b7517965158dd35671872bd921bf6d7b8"
     },
     {
       "bytes": 1504,
@@ -3618,13 +3753,13 @@
       "sha256": "2b59b31389d6f893e49822c1fb354fcccae5c24c8ec878d6667a7a131edcec3f"
     },
     {
-      "bytes": 7442,
+      "bytes": 8375,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Engine/PrefabCloner.cs",
-      "sha256": "befc4b2c6963b021f37b87672229dbada56e8f269b2bfb5f489cdda5deb4e993"
+      "sha256": "91d0073806ff155c4df9cba949b2e1fa74cf7d24a136f8768fe7aac9475676a1"
     },
     {
       "bytes": 6937,
@@ -3672,22 +3807,22 @@
       "sha256": "b95243ff39c962910185d4e0c96c2a61b149a43ade206c5adc5777ca345665ef"
     },
     {
-      "bytes": 3289,
+      "bytes": 3371,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Engine/RenderTexture.cs",
-      "sha256": "b7359377dd40a9a4a69d753e5cb7f06bdba87479e5085cf2b309f5ebda51c115"
+      "sha256": "c545e6f7137c8f622b9821a827f4f8d2cec6607527b64e9bda849ccbe9be5d32"
     },
     {
-      "bytes": 9524,
+      "bytes": 11275,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Engine/Rendering/GraphicsPrimitives.cs",
-      "sha256": "39d5b107f9376b79b1da756147bf141488f8547b21331376a71916497986922e"
+      "sha256": "ca11e4069064abc056459ba543f66f169613c8b25210662d952f69f811d89b77"
     },
     {
       "bytes": 4232,
@@ -3708,13 +3843,13 @@
       "sha256": "67e7f7d523af6b6f54037c9eaf83dc3fb3cb90cba23b8c54610f1cf9a0642c4a"
     },
     {
-      "bytes": 10097,
+      "bytes": 10494,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Engine/Rendering/Texture2D.cs",
-      "sha256": "4c207852da53d06db9a114cd175132701c6275f870d1d8730c9f71bbbd0d3e88"
+      "sha256": "cd8c2516e1e36012bd4e5d518e0b3e50fa41c573664a68c4a48c07f357a4098c"
     },
     {
       "bytes": 6686,
@@ -3726,13 +3861,13 @@
       "sha256": "67bff2f8519fba672ad6cee79acddb6517db9a45ac6bcdc9dd550ea80637c43c"
     },
     {
-      "bytes": 2620,
+      "bytes": 3878,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Engine/Resources.cs",
-      "sha256": "ce167a1ca4d79279164540987db803e32ccad6b5fc4e6113ecdfe3c8fe615677"
+      "sha256": "8d5fc4cbe72568394c408647c770d8f2033493ff43a332f8693c1e08980b9498"
     },
     {
       "bytes": 12994,
@@ -3744,13 +3879,13 @@
       "sha256": "c1a2284e66dd045070be1863424a1a82c6c84ff190ef7424ff5986a600d87a54"
     },
     {
-      "bytes": 43550,
+      "bytes": 46626,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Engine/SceneLoader.cs",
-      "sha256": "45b36f0c8e15c6726117a8d7b3335d40a5301c3a480efde0fbd642b5e78a81ef"
+      "sha256": "dd862009b59a9f8529359c64a14e2cc8df1d495dc0352607b087d5c6101997ec"
     },
     {
       "bytes": 1914,
@@ -3771,22 +3906,22 @@
       "sha256": "965380d052de41c6049c88b909e10ce477643019810dc6266bce169a14350cb7"
     },
     {
-      "bytes": 22960,
+      "bytes": 24410,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Engine/SerializedAssetResolver.cs",
-      "sha256": "80241b94a1c8e6e8065667f4d950587a051b5ee472b737b433e448964233649b"
+      "sha256": "43f6771bc43852d3713f737e6f94d3a537e369d59005f34948e2ec43835d2f34"
     },
     {
-      "bytes": 9315,
+      "bytes": 9325,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Engine/SerializedEngineTypes.cs",
-      "sha256": "82aa298c6d6262e146dd9bb47c12f7a745003cd265e2de053fc49c10ad1362cd"
+      "sha256": "97f2323755a800b4aa9597469a9684f7ffc58c2661d00c9d3cd56bb1da87dc0c"
     },
     {
       "bytes": 2988,
@@ -3834,13 +3969,13 @@
       "sha256": "616c4770ee9a55ef64575d628cf801d18797737493f81adedce81d76f5992759"
     },
     {
-      "bytes": 22839,
+      "bytes": 23329,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Engine/WeaponHost.cs",
-      "sha256": "4c018c8445cac4d703f7f9751fdea072cc3e0e7c582134a7bb3ba3ee51e6931d"
+      "sha256": "7e495504f486790a5736371784318cb2734d6306d04df3075f5bef101834da11"
     },
     {
       "bytes": 1310,
@@ -3861,40 +3996,40 @@
       "sha256": "1140831e236f50017ed3bdc416bd0c11d741ebe42ba1888c9022366961116492"
     },
     {
-      "bytes": 6673,
+      "bytes": 6832,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/EngineChecks/TextureTransferContracts.cs",
-      "sha256": "2ebb49d28a8d02aab4c80b85e8bcba900d39e55d1cf684353c99a595427b429d"
+      "sha256": "4e97db7d6605498617711bceb2c70b17a3936e2b5b865cc219eeb3c83a784489"
     },
     {
-      "bytes": 401,
+      "bytes": 904,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/EngineChecks/UnityActionSourceBoundary.cs",
-      "sha256": "00b3932034945b3620ee4e5ec85959cc6202bc5d170eca22038761854fb1e2a9"
+      "sha256": "c13563799fcef20e17b43a1abce2120c9d82677be28f744b611062961d3cd837"
     },
     {
-      "bytes": 1203,
+      "bytes": 1324,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/FoundationChecks/Crisis.Runtime.FoundationChecks.csproj",
-      "sha256": "14bb7b6470a1f52b6f71a65e2212d9cbab5a72f3ea10c1b9c2cd90401c44d4e7"
+      "sha256": "8279f1de79be15825d2a0e2e403468981d35a790bdd5b2d7610510b7fbc5b7d7"
     },
     {
-      "bytes": 588,
+      "bytes": 967,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/FoundationChecks/FoundationSourceBoundaryStubs.cs",
-      "sha256": "8ab38208fe4e8770be41e1108faaad693d1c8ef739c7b2da07e47c45d02e123c"
+      "sha256": "b64b9eac24c82245f08adc4dc40359da45039fe7c9def36289905d740b9f2b44"
     },
     {
       "bytes": 5534,
@@ -4185,6 +4320,24 @@
       "sha256": "01f004ad8289b51836f7a60a7329dc7b5e80771eaaa6d5675537718cb10b773d"
     },
     {
+      "bytes": 2490,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/ConditionalEvaluator.cs",
+      "sha256": "a44a5f917c79e62c9db260e19ddd7cff83b30864b6900fe5664517d987ee96a7"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/ConditionalEvaluator.cs.meta",
+      "sha256": "0accf7b259555662c1150e3dbdd24a3ec0ee280defd51543dbdaa9b74f155ac4"
+    },
+    {
       "bytes": 171,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
@@ -4192,6 +4345,24 @@
       "packageRole": "runtime-build-source",
       "path": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/Decorator.cs",
       "sha256": "2efeb52899fffde91ea88b0e72a6a356e881ce4d6a8f0f86c71243cad139c24d"
+    },
+    {
+      "bytes": 332,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/EntryTask.cs",
+      "sha256": "676025f4d79dcbe6f3c474819a5d7042c8eec94c426136815e56735a54addff1"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/EntryTask.cs.meta",
+      "sha256": "e18766228c0aca320061096d72381f3657c3a0f8f7e86d5f4f32c217c7edf1b8"
     },
     {
       "bytes": 340,
@@ -4239,6 +4410,24 @@
       "sha256": "e4061e06b433a49a450f9c0894e1dc8b112ecdfe27e511a3fee32cf3331d600f"
     },
     {
+      "bytes": 1253,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/RandomProbability.cs",
+      "sha256": "6aae140acf00e3e17f9a303d4b17636b37ea46e1bff4bc221828e205cddd80d5"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/RandomProbability.cs.meta",
+      "sha256": "b203c6f58f5cbd7fa0b430a6aec82845f57a180d097ebbf348bbcc28d79c2136"
+    },
+    {
       "bytes": 412,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
@@ -4255,6 +4444,24 @@
       "packageRole": "runtime-build-source",
       "path": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/RequiredFieldAttribute.cs",
       "sha256": "913eff7765f069a7da6e29bebf4a8e608196d30c8fce432b05f41e27d7fc2ff4"
+    },
+    {
+      "bytes": 1454,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/RestartBehaviorTree.cs",
+      "sha256": "306d4e047ce3f38619119315d3665c7fe62300cb59cffc5a445f8c03b27af2a1"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/RestartBehaviorTree.cs.meta",
+      "sha256": "48c407c61ab2a3324993908630ee5fa674d6cb18cf70944a1920a6f5e0628cb5"
     },
     {
       "bytes": 229,
@@ -4356,13 +4563,13 @@
       "sha256": "7fd0660a0b588691999c42690454a2dd6bdb79d5366383cd642db32dcdf94e5e"
     },
     {
-      "bytes": 23160,
+      "bytes": 23400,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/Behavior.cs",
-      "sha256": "7b1da8ad4e4b75d1ecaa6ca5dee958ef8659ed37c82c70f5d736be43001cd03c"
+      "sha256": "13b4c6f43964d1aaa720aad8fb5e6ca75f96f9ca44087b41e7bed2b7288ee1ae"
     },
     {
       "bytes": 64399,
@@ -4527,13 +4734,13 @@
       "sha256": "873c1f2435cb7c522806c15d3bd32a74fa688fbf3c5a2116e6d73600adb3d132"
     },
     {
-      "bytes": 3788,
+      "bytes": 4040,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/SharedVariable.cs",
-      "sha256": "bf94f4b67978e215e142a489a0e977cde812c4529d24147d3da72044a3c9f69c"
+      "sha256": "0508ac8500c42723369a2b76f7b394e23bd0a7b1fe302fd28e6cbca8b08aa892"
     },
     {
       "bytes": 973,
@@ -4554,13 +4761,13 @@
       "sha256": "458196edb433b93f6aa64519b9be563eaf8e1572afb4bb0df9a08d2fe4e651bd"
     },
     {
-      "bytes": 3878,
+      "bytes": 4584,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/TaskUtility.cs",
-      "sha256": "89e290e2b782e8a425e39c51352e6b676177a7b00986b660dd2787f1d528c39b"
+      "sha256": "0b7e25e2d21ce7945e7f5905105c85b87c1decba2853085c2690ee1949ddea1c"
     },
     {
       "bytes": 257,
@@ -4590,13 +4797,13 @@
       "sha256": "61c890281344372f9f971f8eb7b430a5c075de7dcf1937191941783c47110969"
     },
     {
-      "bytes": 29755,
+      "bytes": 31133,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Original/BehaviorDesigner/BinaryDeserialization.cs",
-      "sha256": "661b86ad61a6306eaa93eedd6659f4c0a5800ce1762d16a942fb928342e7bb3c"
+      "sha256": "7a690654fa2c3962becb4295b932eb16f75fcc5e6dfdf7e1d9d145ef93af40ab"
     },
     {
       "bytes": 26450,
@@ -4608,13 +4815,13 @@
       "sha256": "6091fb6ac732633fb1cb4f83a3bc1000631f70758326f9312749f399017df855"
     },
     {
-      "bytes": 20763,
+      "bytes": 23550,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Original/BehaviorDesigner/source-provenance.json",
-      "sha256": "576cf5129ce98424df4120d6ec4c4431f7285a07106c8e00e989231b9add7873"
+      "sha256": "955fc5be34716f377c6039770ab0220f48281b950bfcc31b5529a099a27df05d"
     },
     {
       "bytes": 3358,
@@ -4633,6 +4840,2337 @@
       "packageRole": "runtime-build-source",
       "path": "runtime/Original/BuildingController.cs",
       "sha256": "5bd1596db99116cc4aca2a9843e1f8a5f17d5771411c77a0c7b2742ff1574275"
+    },
+    {
+      "bytes": 1796,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Occupants/Surrender.cs",
+      "sha256": "9c4ab31e442e3aaa991c2d4ab74550f951a8d55f5aa3cfb572e254e9dbac8c6d"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Occupants/Surrender.cs.meta",
+      "sha256": "2025abceff84f644d29a938ebf4c5e19a8fcf01f26b6a43f1ec439835970bdc9"
+    },
+    {
+      "bytes": 812,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/AllPacified.cs",
+      "sha256": "7576b306cfc988663cd214d25486a8868b05ee19c84a73134fc109439260fc91"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/AllPacified.cs.meta",
+      "sha256": "52036a6882987c9e1975c8550ad8dbb15f21520ce141da5fccfec4a46dfefc3d"
+    },
+    {
+      "bytes": 5216,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ApplyGauze.cs",
+      "sha256": "f06d9b353015d06831eacceb6b910627b690281beb48ac58fd356eceae332091"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ApplyGauze.cs.meta",
+      "sha256": "ab6245bbef57f36eb0989bc5e11d5948f8241f87e0922e641e86517dc9dbdafe"
+    },
+    {
+      "bytes": 2419,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ApplyGauzeCondition.cs",
+      "sha256": "5a72c3c3c17ff41b940cbec0bea6da5dda09c362654caff15e7d4faf642b1a27"
+    },
+    {
+      "bytes": 1465,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ApproachingRoom.cs",
+      "sha256": "f53ceda05321b634b48af1b043044c868c51b87c27c9ccc90c2724c809b2f62f"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ApproachingRoom.cs.meta",
+      "sha256": "2a9abc23e5aa2dcd8ae8693340aa6a58c29af0021e8259634f491cd1e806f06e"
+    },
+    {
+      "bytes": 3344,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/CheckVitals.cs",
+      "sha256": "694d0f46de187e4d615784a72c53a5396363ff823dc89abb17e6290f410d61d9"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/CheckVitals.cs.meta",
+      "sha256": "5d5fc028ce63f4f9f9a50ed2ca02b9b61c605be1cda5e67e0920fb79d51d5406"
+    },
+    {
+      "bytes": 1553,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/CorrectFollowFacing.cs",
+      "sha256": "962b6fccb2a6cc6d3cf5dec6f3045224ea24b68bd99a3efee1f294ae6f9255c0"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/CorrectFollowFacing.cs.meta",
+      "sha256": "fe37adf761bef009da1c5f34aca095a91ca7226ebb99e8c3373bd00350e74c29"
+    },
+    {
+      "bytes": 1020,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/CorrectLeadFacing.cs",
+      "sha256": "b50f111c94dcd6a908e11f12bbe1b5a29c097cf58d113f56e8836e75fec18261"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/CorrectLeadFacing.cs.meta",
+      "sha256": "dda62fdd4399801dfbc19a94e900d86093afca1088ac980a0aa39e28c5217f38"
+    },
+    {
+      "bytes": 3860,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/DisarmTrap.cs",
+      "sha256": "14d216f035f48d170553992f272b7c51ac4bfc1cddc54312781bfb1353f81d04"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/DisarmTrap.cs.meta",
+      "sha256": "71481492acc331ba52675373a10a81b3627b789ca2e8a554292c877b84cf504e"
+    },
+    {
+      "bytes": 1276,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/DisarmTrapCondition.cs",
+      "sha256": "b6bb6ef19a6665b95f02bda27a07f39602a9c08cb2476f406e0dd3951f5e5212"
+    },
+    {
+      "bytes": 4593,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ExamineDoor.cs",
+      "sha256": "2db80567d560c826439acb05112704a17627f39ad5380bd15af5c1afe7c5508d"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ExamineDoor.cs.meta",
+      "sha256": "22366a4d1b2775586869b2a024e52cd35d59830bf287bb14886f16e2dc28d6b3"
+    },
+    {
+      "bytes": 1455,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ExamineDoorCondition.cs",
+      "sha256": "f07313dd4e19c01460e15aa4c68d097684956ea88b2634adca3ed23f82cbec81"
+    },
+    {
+      "bytes": 2801,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/Follow.cs",
+      "sha256": "f8f40ab7d4e08e6e82306cdba9194dddd4ba5c085fce4ab485ea13ebae618cce"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/Follow.cs.meta",
+      "sha256": "281389aea57b81816b5628c57a02535706406af1414425a14a6002ba4e081838"
+    },
+    {
+      "bytes": 1541,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/FollowMove.cs",
+      "sha256": "07d353aa4d9fce0e4207377c27c7e2b61a855622e7d6aaaa084824e6ff208cc8"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/FollowMove.cs.meta",
+      "sha256": "b269c037952bae1b019f43b22b3a0b6247c66cf764f3241353c077fe2be20d6f"
+    },
+    {
+      "bytes": 1158,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/FollowerWithinDistance.cs",
+      "sha256": "e3a2657765bc48151056903b551cfb3589e25b68e3ee8cf905227dadb167bef1"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/FollowerWithinDistance.cs.meta",
+      "sha256": "a3e230a4642cccde47e2c0cf863fd331043904e958abfb200bd439fead7cf37e"
+    },
+    {
+      "bytes": 2255,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/GetWeapon.cs",
+      "sha256": "8439ef711993fc633b16be2d99182228629e38e34350f75e3c5307be93b9057f"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/GetWeapon.cs.meta",
+      "sha256": "5da573abb8f382a498dff610856118ef877745bc5d15a496db2c4d9675e4496f"
+    },
+    {
+      "bytes": 4707,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/HandleDoor.cs",
+      "sha256": "1010cb80c4a15571ff961ddc74b4f1f258d37ae6ef601b6621a5164322f5bc5e"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/HandleDoor.cs.meta",
+      "sha256": "7faa785fc29355be48edbde62dafb03daeb6462080e3500be786f03e7c024edb"
+    },
+    {
+      "bytes": 977,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/HasCover.cs",
+      "sha256": "ab4597966176b5176d1202a308e41232903e133ba6fdbc02479f62100e739143"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/HasCover.cs.meta",
+      "sha256": "72f64926ecc6fe31a8c573b43b44129d473d4bf2a23056508076a964aae6082b"
+    },
+    {
+      "bytes": 686,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/HasFollower.cs",
+      "sha256": "af646d9c725983f87145d7eb5e473918562e189ab49afb42b0ba4fa376f92aee"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/HasFollower.cs.meta",
+      "sha256": "74dd48e1cde80a7cc814242ee8d35ccb6eac0703597bae489e0049e22195178f"
+    },
+    {
+      "bytes": 682,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/HasLeader.cs",
+      "sha256": "ca5cbce6a8936b7da71e036de6cd079614308291a5423a091a7be22c6656699c"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/HasLeader.cs.meta",
+      "sha256": "abe05b31e0d6d4037379b4477640c5f03698a095f1ad1750d7e8f57f8dc34475"
+    },
+    {
+      "bytes": 947,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/HasReachedTeamTargetPosition.cs",
+      "sha256": "7ea5554cefcc2c2af9cda8b8446b73fbe7e2d685aeb4855c1abca0c7dc38ec45"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/HasReachedTeamTargetPosition.cs.meta",
+      "sha256": "08ab3a6e51de31e90c5a06508105815bb04ceb9f405ef91724af5eb1cbad1701"
+    },
+    {
+      "bytes": 689,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/HoldingPosition.cs",
+      "sha256": "2c3e489f001814b097dd29b8ac858e19de325d761717cd4902ac08b429f7987f"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/HoldingPosition.cs.meta",
+      "sha256": "01b146a1b279b1dc05e00e5f8922a5c6d850b680f705be631341656ad94e6969"
+    },
+    {
+      "bytes": 2783,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/IdleMove.cs",
+      "sha256": "03e2d33e913d140dd64771d1c56ac942846db449d86f20fb6d2033d44c009bb1"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/IdleMove.cs.meta",
+      "sha256": "158160fc22df807d385c7bf7509108f4c1be5d32cd93784b1464f582bedca121"
+    },
+    {
+      "bytes": 673,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/IsRearGuard.cs",
+      "sha256": "cccf2e6f79b2e1a5f76df814c420e6504bc746604f3d220a1c23c7c017c65ae6"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/IsRearGuard.cs.meta",
+      "sha256": "70cb28524a5479354cfee93bfbdeda6801a13ecd2f676484fbcb9cfa0358c62c"
+    },
+    {
+      "bytes": 5028,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/Lead.cs",
+      "sha256": "f7e398bc1f97c5d9b5dd2a4feee9444a81f3560d6ff31984369ad56494568935"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/Lead.cs.meta",
+      "sha256": "8491129e3a18a3ba5f699775a5b745284c68d6bad7b2aea6afc1576ed80b1c05"
+    },
+    {
+      "bytes": 872,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ReadyStunGrenade.cs",
+      "sha256": "72b01e137460d570830b04e542d27dee7f405515d3d13dfdeddd425126e8893b"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ReadyStunGrenade.cs.meta",
+      "sha256": "97570b39401b6807acd722faa5c41f72e2530407d522da4a29d8a11a8cba27ef"
+    },
+    {
+      "bytes": 3187,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/RemoveObstacle.cs",
+      "sha256": "dbbd9b9b7345903f0cfc345e6d5d69fc01ffb6c891cb7bfbfa6f555345aed9b9"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/RemoveObstacle.cs.meta",
+      "sha256": "7db1441227ca0b032d7e8df45b9ecc4f5e79a3911ae50ba71ed53016cfb364c7"
+    },
+    {
+      "bytes": 1065,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/RemoveObstacleCondition.cs",
+      "sha256": "15422fffb3471b57b4092cf1bef7f1160b3dcefe0a8c603234d93c001067a2cf"
+    },
+    {
+      "bytes": 7337,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/Restrain.cs",
+      "sha256": "0387bb2d3115e57efbaa8a2026c75ff05c451a8b757069ea6d4d1f2a989f881f"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/Restrain.cs.meta",
+      "sha256": "e213bec0f36f3ad02de0b78cfc4438ea080a0458a0abbda57e16ac3c99c00998"
+    },
+    {
+      "bytes": 2135,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/RestrainCondition.cs",
+      "sha256": "e8ca486470fb59edebcfc91bb4f460293c60bb405cba1586212daaeaeea44014"
+    },
+    {
+      "bytes": 1060,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/RoomBeyondDoorIsChecked.cs",
+      "sha256": "d8172cc1f8c9891b04fcfe7760630a17f14d9583aa146b193c0ca70bd367acb4"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/RoomBeyondDoorIsChecked.cs.meta",
+      "sha256": "acc01782dbb7b9a640e28bb230a5251eef691238f01d54fd60959d4fafc52133"
+    },
+    {
+      "bytes": 3381,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/SecureWeapon.cs",
+      "sha256": "58d50798d1766f3511ee6de3c64c5ce87e34656239f1a270646c7130ea2434c9"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/SecureWeapon.cs.meta",
+      "sha256": "85cfa66ed3898eebbcc52cbf019a8e5af7bd0f7c1c23040319cacb952a5d5d91"
+    },
+    {
+      "bytes": 1887,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/SecureWeaponCondition.cs",
+      "sha256": "37e2db8dd31ed97e29c71431987ed1020218c462594de1d5d1be146f4f164653"
+    },
+    {
+      "bytes": 822,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetAimMode.cs",
+      "sha256": "78a0181a7744cbd08a137a64c7b3d3b647f475ac5343f0e75fbd505e69c5ae82"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetAimMode.cs.meta",
+      "sha256": "73bf7cdbf54bd79f4b6aac799915f6bbd733673fd84e6b5c0644f7fdbe428a6b"
+    },
+    {
+      "bytes": 2058,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetFollowMovePosition_DEPRECATED.cs",
+      "sha256": "dc262753e515ef81026728328565e63e1108e3f5b417f929e798aae86d22d765"
+    },
+    {
+      "bytes": 776,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetHoldPosition.cs",
+      "sha256": "e81f7d4218acc29a35fd5ef2f94ec215b895a6602baa9372b15a5a7b55dc4776"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetHoldPosition.cs.meta",
+      "sha256": "3aad0ca3fe31f445dbf3816a3fe67ccbe658f26a7dd8d1a84b62b8ea34f8b3c8"
+    },
+    {
+      "bytes": 706,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetReloading.cs",
+      "sha256": "0fc1d5c3d53ab6065717cfaad833ff8ff4034a9510aabee4bb422ff15b8c1a53"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetReloading.cs.meta",
+      "sha256": "7ec54fbfabc408343fbfdde90c34f6d488d2a5acc4f2ec9d244f64b019fcdf63"
+    },
+    {
+      "bytes": 694,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetTask.cs",
+      "sha256": "affb47547022d290d665ec66050e34e692bef473f73a00bfb392c583eff188ed"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetTask.cs.meta",
+      "sha256": "487fce186efa10366645de030f5d9539615a8546e48e6f8dce079e02ab959e0a"
+    },
+    {
+      "bytes": 711,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetUseSights.cs",
+      "sha256": "8150c4086d18ca883f8ee69701778899f8e80066120c4f76b3eedad47b380979"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/SetUseSights.cs.meta",
+      "sha256": "9cfca27cab2fbf3cf31def73387eca3922d4e455e5f2c3c5317877dbac0a0eae"
+    },
+    {
+      "bytes": 1106,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ShouldUseStun.cs",
+      "sha256": "5a5f7ceddc06cafd2fbb8fdce4bb6cc054c8453dc70d3a2916c71a392612f0f9"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ShouldUseStun.cs.meta",
+      "sha256": "6f093306bd9d1395d01e2c70bc0fd43cf8addc7404a5be80f4ca693dc7098e3c"
+    },
+    {
+      "bytes": 833,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/TeamDoubleBack.cs",
+      "sha256": "82b4bf26eacacf283c32486465265d697eea35ab892ef9780eb8e3fb503ae571"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/TeamDoubleBack.cs.meta",
+      "sha256": "fd97c2cd8dc6e368b3add348187bffe57f7b2b1985313f18a208874be8c33fe1"
+    },
+    {
+      "bytes": 923,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ThrowStunThroughDoor.cs",
+      "sha256": "c839652f535f997179466735283fe7815388f111506ddb1b6cdecc0a8199bb51"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ThrowStunThroughDoor.cs.meta",
+      "sha256": "1229dec98d47632277b6e5d03882885df4f8e40c6789205081d94f85c7373abf"
+    },
+    {
+      "bytes": 1315,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/WaitForCover.cs",
+      "sha256": "cdad8ec0a4aa8fcb0fe48d6498adda2a6babb5a3afb565cb294bea8d3df50808"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/WaitForCover.cs.meta",
+      "sha256": "bc50ef37705f5ffdcd4d0c524017ab0a962b0c635c75acb37204ed4b9a731223"
+    },
+    {
+      "bytes": 1425,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/WaitForFollower.cs",
+      "sha256": "db914fcc733786def291d0278380ffc547507adf8467691c2c52834315de69f2"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/WaitForFollower.cs.meta",
+      "sha256": "246f8e693bab4d9331feb556e28a8a2f433ef7a1184b2b031806f8e10993845b"
+    },
+    {
+      "bytes": 896,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/WaitForStunDetonation.cs",
+      "sha256": "fda394f5128acab076631e3dbf7d4f315c887b5940997a34e929beee5a156d73"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/WaitForStunDetonation.cs.meta",
+      "sha256": "5a6faeffc4bf77268463ce18312322400181424be08d73675fdaae4bee6512bb"
+    },
+    {
+      "bytes": 574,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/BehaviorDesigner.Runtime/SharedAudioStimuli.cs",
+      "sha256": "84638423d017352b5c1155a62570d9f0a209b27f4fefe7571894cabad67b3e53"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/BehaviorDesigner.Runtime/SharedAudioStimuli.cs.meta",
+      "sha256": "6bee5629e18cf7f2baa90280ee1da2dd05e69394c51737ffbebda6f18d87e731"
+    },
+    {
+      "bytes": 522,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/BehaviorDesigner.Runtime/SharedDoor.cs",
+      "sha256": "00585d9c833f4fab58c3c1e7c07dcac2d3069666d1488599fa5d6bb7bed36143"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/BehaviorDesigner.Runtime/SharedDoor.cs.meta",
+      "sha256": "8ac3080758adcfd8bdd1f179b58412bc0df72b0b6bd574f24f2f41fffb74ec1d"
+    },
+    {
+      "bytes": 560,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/BehaviorDesigner.Runtime/SharedFleeSource.cs",
+      "sha256": "4b9fc13827a00c51ad026383e6d26e6cd141f6777e83f93000207f3a498395c4"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/BehaviorDesigner.Runtime/SharedFleeSource.cs.meta",
+      "sha256": "0e8159d24517c5dc4bca3150799ff3662706b4fb45773502f1d60b00cd2dc52b"
+    },
+    {
+      "bytes": 576,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/BehaviorDesigner.Runtime/SharedGameObject.cs",
+      "sha256": "564b3e378f36a350f1b6e3817c858d19f61ed9059adeff9241ddb1c3d5e514b7"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/BehaviorDesigner.Runtime/SharedGameObject.cs.meta",
+      "sha256": "76a29cb1c934328b1326bd522fc2e66ca85e81ce071c733f3130119bc74cb4a6"
+    },
+    {
+      "bytes": 529,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/BehaviorDesigner.Runtime/SharedGrenade.cs",
+      "sha256": "5c34f7912d2a0df03842ddaafdc44d503b4b72c07c0191e877fb9b08f8ea5746"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/BehaviorDesigner.Runtime/SharedGrenade.cs.meta",
+      "sha256": "608ff272c4c922c0a0db0f0ba73a648b24601ce93c81dfcbfca194c37a088838"
+    },
+    {
+      "bytes": 520,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/BehaviorDesigner.Runtime/SharedTarget.cs",
+      "sha256": "17e0a5ef7ea63f11ac56d0a7d1647d413b6804a13b81f0eefd0e9e25666ccd5a"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/BehaviorDesigner.Runtime/SharedTarget.cs.meta",
+      "sha256": "f3658ece8a8a1319c7dd0fb752debd64776352d848e1877c46e87a5d7ea6e65d"
+    },
+    {
+      "bytes": 1214,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/AimAtTarget.cs",
+      "sha256": "1b90b804b996b7cc25c28eb99daa9629bfda3a3eb1965b367e63ab7e09f37f7d"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/AimAtTarget.cs.meta",
+      "sha256": "e60b5f16346bc79baeef0943e4dd4eac1548b8ee9085f3fe8b5346f8670c7c14"
+    },
+    {
+      "bytes": 5237,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/Ambush.cs",
+      "sha256": "ba1583f1655bf59f976f0f34c693fe7cb7b8c75d43fd4cda7e3601d57670ee39"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/Ambush.cs.meta",
+      "sha256": "573a54613aff50f490a225a3e72fee15be6ff8802e2379297f25a7aca2ea29d5"
+    },
+    {
+      "bytes": 1197,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/AmmoState.cs",
+      "sha256": "c32605cf5d24b61688f52f468f496162a7c9758f948fb996f9a931202faac2bb"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/AmmoState.cs.meta",
+      "sha256": "6054c7454c68036a2bfdcdcb18601ab86cd58315d11e351d308fad2d7308b975"
+    },
+    {
+      "bytes": 1724,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/AttackTarget.cs",
+      "sha256": "1167a52d19baacb3b12a983187df7981cace3407665cab5641a13bfd0e1cc687"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/AttackTarget.cs.meta",
+      "sha256": "9541f27ea50a717d37b7979ae79b00386699e7788434e71fbbcbea0e63ba4d05"
+    },
+    {
+      "bytes": 2369,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/AudioDistance.cs",
+      "sha256": "f4974437c323c4718df7f1d8e1caa242da9f1f3457ff71fc840c43b461388af0"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/AudioDistance.cs.meta",
+      "sha256": "b4b1e6e790937b86cb6ea1bfaf3668f8eb860f0405b7e8eb5a623d5e6ce3f46a"
+    },
+    {
+      "bytes": 1734,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/AuditoryPerceive.cs",
+      "sha256": "31161d6cdf049b90cb04bf14ec5a55dbc3ab30739f9beba11056165119015201"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/AuditoryPerceive.cs.meta",
+      "sha256": "7a8cdf1db4a5fc64cbf76d46e511338f0c4c62a0ceeb69502e4f53a540671cc3"
+    },
+    {
+      "bytes": 943,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/BoltState.cs",
+      "sha256": "378573e2f0424fc5d004f0b04ee40d962c53b9874cc1022d6f740accb69fdb32"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/BoltState.cs.meta",
+      "sha256": "4ff877ce797bbd112b3c931b4b05ec0b146b38fc9aca8b39aa0236f7f206badc"
+    },
+    {
+      "bytes": 1341,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/ChamberState.cs",
+      "sha256": "e5dce9044b48353526bb6017602bc02e576ed5554cab6460944a57ef492f56f1"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/ChamberState.cs.meta",
+      "sha256": "d2418c77a5ab268818fac5c7b812f8e0dddd3585858b06660e2a54cb28e14880"
+    },
+    {
+      "bytes": 8930,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/ChangeMagazine.cs",
+      "sha256": "1cf403387eb32ff3fdc4359c5e4d4847dcc4cea6bd905b4e5a3ae7d6de091ac3"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/ChangeMagazine.cs.meta",
+      "sha256": "da64eaf5c34f02ebfe561407ef5a3368f2141cc2868fcefb5250a400a75b479e"
+    },
+    {
+      "bytes": 983,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/ChangeMagazineCondition.cs",
+      "sha256": "f30281eddbcb4b5a4832258004a7e7fd21c591f1f9a990cbda50d63507eab55a"
+    },
+    {
+      "bytes": 716,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/ClearSwapMagazine.cs",
+      "sha256": "906e24cec8b71b359f6375140f59191f4c28ec6111d9f98d4d059af5a8732d6d"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/ClearSwapMagazine.cs.meta",
+      "sha256": "f27dfa3203362a9c4a00826cc7d8df6c564b8ede225a4cb709d8325c82cb0d5e"
+    },
+    {
+      "bytes": 678,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/ClearWorkBolt.cs",
+      "sha256": "617a86a9ad29c86638c67b26be8cb504d655801c195f35deea111185a3b3c99a"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/ClearWorkBolt.cs.meta",
+      "sha256": "684f56a86c3f877d3ca3a6723a7865955da8c89c9b1902bef4680b20490b0a17"
+    },
+    {
+      "bytes": 1820,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/DetectClosedDoor.cs",
+      "sha256": "876a00d13c2c89977d2ad080a9090641b9e5b226905ab06019537a620faf2d00"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/DetectClosedDoor.cs.meta",
+      "sha256": "e841ce6d83a6d220d061bcf9700b6266ad0e05020cc1c5bd72ba702952c9f27d"
+    },
+    {
+      "bytes": 1078,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/DoorState.cs",
+      "sha256": "e3743782f2ec7085c04e29ccfbaded46c8318d0375d2636809134d199788f030"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/DoorState.cs.meta",
+      "sha256": "909191a1353129cec099b4e757acb6311ea12494fe45d7a434c0a7cd37d8ef2f"
+    },
+    {
+      "bytes": 2457,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/Engage.cs",
+      "sha256": "29a5a8e84306feb40c61323f7983edb99f1851c0aee7b9b469fe6731936b8d2d"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/Engage.cs.meta",
+      "sha256": "810965e758db11126beab3db8b4f99d54e576d95eed86ffeb44bb0b3c3158645"
+    },
+    {
+      "bytes": 1223,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/EngageCondition.cs",
+      "sha256": "1279e71b16c79e0a5f8b2aba0a22af76bc460b7ac823b8eec1af78114f51e2fa"
+    },
+    {
+      "bytes": 1043,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/EngageWhenCornered.cs",
+      "sha256": "248c265306a245453522f2b75de77325855d306e9685b3d6d5373d9a345978aa"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/EngageWhenCornered.cs.meta",
+      "sha256": "84edc5b0423e0ab5f1c1eb4d8c4e8d20019c659f90844c1aca510397beaa97ad"
+    },
+    {
+      "bytes": 1274,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/EquipmentAction.cs",
+      "sha256": "438e0ddefd4d64a4cced72d38545bbd9d9b26edce5e6e1796741ecd726af35a0"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/EquipmentAction.cs.meta",
+      "sha256": "d0b0ad61d294872a497247f0f6c47bb19fd4b0ece730eb83dd87f2966283491f"
+    },
+    {
+      "bytes": 878,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FaceAudio.cs",
+      "sha256": "e01f0ec6880affc657893b3ac3e3884e0c1d5644f5b48c3ea02d4c634e283386"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FaceAudio.cs.meta",
+      "sha256": "60d49838eeb476f75ed7b5f77887419d11d62f653dc6dc40fd3a0a89ee53c505"
+    },
+    {
+      "bytes": 960,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FacingAudio.cs",
+      "sha256": "f3ba826e126dcb8ebc25cd3cf8077bcfbbb9d416ba631d2c83dbedf23d5efaf7"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FacingAudio.cs.meta",
+      "sha256": "68bc97d9bd0f5540987c2bcdcd1cd6792824a10da89a8324d030e916d3a8713d"
+    },
+    {
+      "bytes": 937,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FacingDoor.cs",
+      "sha256": "694459ed89bc7c67a278d19df9d926365e2ac6d77b4e8f67101a99872d6728a3"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FacingDoor.cs.meta",
+      "sha256": "285ee0e356b770383fe9139b28580716098c71d8f685b4b1c4c397122ef01f67"
+    },
+    {
+      "bytes": 933,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FacingMovePosition.cs",
+      "sha256": "6d9ad2468220f81492e60c455a9038da447dbe1f319cc3cf96a1bb8ac91ded3d"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FacingMovePosition.cs.meta",
+      "sha256": "54d91e742b218554c37e4989bf02c4a20cb5c3a3bf066dcc4a40f06fe2cd9ce2"
+    },
+    {
+      "bytes": 956,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FacingTarget.cs",
+      "sha256": "57550ebc905bd1bdde01289a8c8390eec923444c6af5c3b3532e4d3c67d049a8"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FacingTarget.cs.meta",
+      "sha256": "45c42aac5ca8673eb4c2dfa11d06507c1cbb35e0fab9ea14b440d5d48a2d9836"
+    },
+    {
+      "bytes": 1499,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FindDoor.cs",
+      "sha256": "47b76838734fbdb63a43d435b5d853f86ae86e07af3d547e468e1ef8a766a0c9"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FindDoor.cs.meta",
+      "sha256": "e7f821f1b246a8f5ca42c151491a4567731b98d950f8232be7324b904d1ce51a"
+    },
+    {
+      "bytes": 1152,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FindWeapon.cs",
+      "sha256": "a1e167e6327a19d82ca0f056315e69cdefa112cf379aa2477ec680af620dbe5b"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FindWeapon.cs.meta",
+      "sha256": "4ebb21806bc10c2a30cdd68bc11112c7f5703f7ba32c40f7f525e662a2697f1e"
+    },
+    {
+      "bytes": 3381,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FinishEnemy.cs",
+      "sha256": "1e92f09937cc2c32e37764fd57957f0eabbdc19b2e903ac4bb40b24b98c167f5"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FinishEnemy.cs.meta",
+      "sha256": "b8112a3711a7ca145dff0b9ba27ef4fccdebba0ecc33adf6c862e08fcac378b0"
+    },
+    {
+      "bytes": 2934,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FireAtAudio.cs",
+      "sha256": "e69169dbb4a276c5feb2efbfe24591567c8932584730bc44215844634e062032"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FireAtAudio.cs.meta",
+      "sha256": "f337bd19dbc08806d4bbfb9d5c511261771ea712f62fef78b18f0656e0857720"
+    },
+    {
+      "bytes": 1845,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FireAtAudioCondition.cs",
+      "sha256": "00bfd0b661711eeb3175cd5a11ddff50309ed86f69735b37289710dc4bda756b"
+    },
+    {
+      "bytes": 1567,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FireWeapon.cs",
+      "sha256": "858f616fe023d5349b30bbbb9bc7d51b50d06d9c4acd89d4f69d861cdbd23468"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FireWeapon.cs.meta",
+      "sha256": "54c2b9acc341ae6d9b5f6bb3a285896c0ae7f299c58b6faac94c204397a176f4"
+    },
+    {
+      "bytes": 5359,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/Flee.cs",
+      "sha256": "991574a16f03b68462505d337c9cd9726ee14d34eea2006d9d99bfb9653d0cf5"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/Flee.cs.meta",
+      "sha256": "c4e05752a2b97303ff763da1cf401cbf863997e0f4ce0cefb168f6519e06d19c"
+    },
+    {
+      "bytes": 1114,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FleeFromAudio.cs",
+      "sha256": "c690be9f7a61adf41b4f115bca567b9c671e88b062b6c5d02b563381ce615207"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FleeFromAudio.cs.meta",
+      "sha256": "763ce444fcefbe02d9ff425731041ff2528458f50a55bf9efd6c467609ac44d6"
+    },
+    {
+      "bytes": 1439,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FleeSourceClose.cs",
+      "sha256": "91040855117691b1d645fada1664d5994d5b0d252c93237d8aaff40ddc0d8077"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FleeSourceClose.cs.meta",
+      "sha256": "139fcd2542c9f72bb6d6143d22da88d1edf26155d69efd4cd4e8e8d81ac16026"
+    },
+    {
+      "bytes": 1086,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FleeSourceType.cs",
+      "sha256": "88f9fa60af8b72a7712f88b94e1d33807eff725392b852bb3687de95ad147dd8"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FleeSourceType.cs.meta",
+      "sha256": "4b3167b55ae07acafaf9802dcf91f953e407a7a5f6cd8f83bd318319cb2a6e29"
+    },
+    {
+      "bytes": 669,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FlipDirection.cs",
+      "sha256": "dc2ae34397e113eba50fdff68138d6a8d1a65992f1aa29d7ab9ebf11524e0e67"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FlipDirection.cs.meta",
+      "sha256": "fea2ec3a7ff037534bbedd0bd9fe62780a671cef2947c229ad8379034c0539f8"
+    },
+    {
+      "bytes": 1650,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FriendlyInLineOfFire.cs",
+      "sha256": "2bc77607828b2fd7d758b930c9b66180320f3e8d33f5ddda3a8e24e4fc813c35"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/FriendlyInLineOfFire.cs.meta",
+      "sha256": "3c8ffb96e754884106f4b088312a04df09ec13a79c79fd582ab7564ce24b7760"
+    },
+    {
+      "bytes": 755,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/HasAudio.cs",
+      "sha256": "1fcdd34290443332138ea92a0237d6fe4ae5a2bc815b063b055340b866647121"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/HasAudio.cs.meta",
+      "sha256": "cbb19126f5d85b387622c66087c1e3e058d461957eeb0ebe701737938e03edfd"
+    },
+    {
+      "bytes": 774,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/HasFleeSource.cs",
+      "sha256": "9fe7f8cff14872928ae49d3078d994c75f1e347f9611356be939c163200eb7b1"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/HasFleeSource.cs.meta",
+      "sha256": "34e21c8fb9387848fc24dd876f1451a517c7e8db13f9961c7d268bb904e6f86f"
+    },
+    {
+      "bytes": 2022,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/HasObstacle.cs",
+      "sha256": "7874288b7b1b6016657d4e3a716056b66d70e61f6586a7da08fca5ab945e8d3b"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/HasObstacle.cs.meta",
+      "sha256": "6eb3591d7e171b4529e4c531b189770db39ac85d66ac86d3427cea302ec639f4"
+    },
+    {
+      "bytes": 1330,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/HasTarget.cs",
+      "sha256": "e9731ed2f97628024a96482ebce684df79bc8422358d237b5f4b64b32a07da7b"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/HasTarget.cs.meta",
+      "sha256": "0a5787c394c429d54e90fef4179196dd6dcb7f1d3945dc3446eae9cde457c3e8"
+    },
+    {
+      "bytes": 692,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/HeadLook.cs",
+      "sha256": "c64cc8fcc42fde2f4f085a472dbe5917300f347f58c1f29e6d030788b4cc080f"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/HeadLook.cs.meta",
+      "sha256": "5a2e560878b9b20faa80908656afbf9b634dbe06ee090ca8b6f92b3cf22905e9"
+    },
+    {
+      "bytes": 987,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/InvestigateAudio.cs",
+      "sha256": "5690b1457280246a420d60607c3a3f6708ae9df7e6d7d0f4952d8cdf7ef96adc"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/InvestigateAudio.cs.meta",
+      "sha256": "5db4d7b2758a7230b35877377d3c99b6479f4f543fc28c510c29f55d72079bb5"
+    },
+    {
+      "bytes": 731,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/IsConscious.cs",
+      "sha256": "06a912667aafe5e450c8b7b6f8e8a4065547d69b72f8a9c705e8cbc3e0907b5e"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/IsConscious.cs.meta",
+      "sha256": "2499a84a5ad9b456d5e0f289446ca277f635be7d6ac4bb16e67923de0683c28b"
+    },
+    {
+      "bytes": 713,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/IsPlayer.cs",
+      "sha256": "3f83b934d84149e5b396e1f37315bb9c0736236f2a8e0866a3228d1177dfa2a3"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/IsPlayer.cs.meta",
+      "sha256": "09a6733ec4110f9087413b4f88e2332f77131fa71bc29f736ad53456dfc5ba4c"
+    },
+    {
+      "bytes": 763,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/Kneel.cs",
+      "sha256": "94b145ff585f9b4378bb7f3c61da6276bc4033ce4c7882933c0b1634039a8e1f"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/Kneel.cs.meta",
+      "sha256": "02faf4b3d787112e6b1d8cd611933b88080228474c68108dbd894f9da775ddae"
+    },
+    {
+      "bytes": 1234,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/MagazineState.cs",
+      "sha256": "18b1e6cd589abe8a0b9c4406cb7f288325a0f136c7d9324f90a914590a5c7f1f"
+    },
+    {
+      "bytes": 2738,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/ManipulateDoor.cs",
+      "sha256": "6d5f8d7f97c3f55177ba7a28725ddc7740f4594ec369cf06cc271b7a2fe5b4fd"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/ManipulateDoor.cs.meta",
+      "sha256": "9d5de4a305557da5ff598c63b300a745a312efb515611659cb475fa1e390a8d9"
+    },
+    {
+      "bytes": 1983,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/MoveToDoor.cs",
+      "sha256": "7bf2a95db1a101d1b0a702ab964eb3abd7cd1cbfd7ca0831d4f07c03ce654c91"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/MoveToDoor.cs.meta",
+      "sha256": "d02bcb9f730dad31a04f9aadaa64db62a895a92e522f98b7873d22c030aa68ca"
+    },
+    {
+      "bytes": 2231,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/MoveToPosition.cs",
+      "sha256": "a9d1a558689493192264401d76e48f64475b869e5bb3c46f38a9cbdc0f1bf6cc"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/MoveToPosition.cs.meta",
+      "sha256": "b3488dbc8441d50d1258faafb6c73150caec89ea57e52f0b8d80bff20e0c2c47"
+    },
+    {
+      "bytes": 1817,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/MuzzleFree.cs",
+      "sha256": "206ee864e448d3c142013565b51060c84d197c79a18895d2849b658c6f8924ac"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/MuzzleFree.cs.meta",
+      "sha256": "5db9177fdc72dcb88caaa8837a0260360e6300f075fc15757f7e825142f776e2"
+    },
+    {
+      "bytes": 1438,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/PrepareDoorForStun.cs",
+      "sha256": "e611df6a6e7af2140bab518bfdd55f4187c756188722dbe621c9aa8133293314"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/PrepareDoorForStun.cs.meta",
+      "sha256": "1ed114ca5ae0bcb471252b8b6bc0a762124523178e0c139957c97a49289dec80"
+    },
+    {
+      "bytes": 697,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/RaiseWeaponAtTarget.cs",
+      "sha256": "afe00be27354e0d9ff680ec45d393bd06dae428bcc7ece93899cb0c732353f8e"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/RaiseWeaponAtTarget.cs.meta",
+      "sha256": "1babab11a4ea6d5a950f63ed133b94341bea67822d017724bb95d0f34c11a702"
+    },
+    {
+      "bytes": 588,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/Reload.cs",
+      "sha256": "c12f1c6b52747c415216321705802bf10dd2ebf49a6e8969a421e023daaa0731"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/Reload.cs.meta",
+      "sha256": "c81846ef7dfcbc6c39ee26c5b3011e5a953277b316705de814d952db5f50d1a8"
+    },
+    {
+      "bytes": 696,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/RequestedApplyGauze.cs",
+      "sha256": "259ee9c81146052662d8fc0b499947965001d5632a6ddb779790918b079af958"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/RequestedApplyGauze.cs.meta",
+      "sha256": "c994de8bd96715638c498590d2f27e80277b4cd59dea7a23a5bf97da35789e7a"
+    },
+    {
+      "bytes": 720,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/RequestedCheckVitals.cs",
+      "sha256": "677021840926465e61081b79000029dd581226167a786c68759b151dfa16cf3f"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/RequestedCheckVitals.cs.meta",
+      "sha256": "6167d9fa295a7e49f53519d80509832ecd367e9b9a9ff491583c0a1e5dd26b35"
+    },
+    {
+      "bytes": 775,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/RequestedReload.cs",
+      "sha256": "0eb8ecb5faa6fb255ac9c90d6ead3a0542c62c82e95295a8ae23e7829228755f"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/RequestedReload.cs.meta",
+      "sha256": "97c9c6d8af48ffc02b54711b05a43d656c3c4279a46aa6c0e3b6a4c1fa85a78a"
+    },
+    {
+      "bytes": 697,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/RequestedRestrain.cs",
+      "sha256": "7eeb725ea909bdcea59edea0109d58cc8a2e14e730efca6f9aa4bee1d4265cc4"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/RequestedRestrain.cs.meta",
+      "sha256": "1075d06baa1caeed8d986ef985f681a465d86da4a21bc54a4a2590a878b25082"
+    },
+    {
+      "bytes": 722,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/RequestedSecureWeapon.cs",
+      "sha256": "a0e719fa43a8c9b1066a55018ddac4d01438b3594dda8a1b7cea582555c4ee33"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/RequestedSecureWeapon.cs.meta",
+      "sha256": "7c2de7f40fe39fd8a66fcdfd502396ec2b2d3328375fc4701d1cbf0e00a05cd1"
+    },
+    {
+      "bytes": 772,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/SeesGrenade.cs",
+      "sha256": "3286e75dd5fc92e9f01edf7c3d39f7554a6732f00e40cb1162ec0289ed5b86bc"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/SeesGrenade.cs.meta",
+      "sha256": "e06641b58e05e217d4e64a2831865e895f0474e7562e98edaa317a8f474ca548"
+    },
+    {
+      "bytes": 1181,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/SelectFleeDoorPosition.cs",
+      "sha256": "79862e7e13418e1bd6523972f81f0895548d225d226f79533b6b8ba8797a3880"
+    },
+    {
+      "bytes": 1833,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/SelectFleePosition.cs",
+      "sha256": "6fcd90c880a91862a70bf9ff6b5de23bc87aca996766fcddddbf88941a94aa87"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/SelectFleePosition.cs.meta",
+      "sha256": "ee7458fc8895bc172ae42535ca68a3ac8751f169459a3306ce2b89576354bcca"
+    },
+    {
+      "bytes": 3543,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/SelectMovePosition.cs",
+      "sha256": "e178ca1cb5e078a4d98bb646d1289766a19200a8bc03bb9cef8d7f5daff2a7ee"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/SelectMovePosition.cs.meta",
+      "sha256": "5eb3c0f8121b17d1c718ed29434cfdd2b20700478cbdf27a4f844c1c438b01c5"
+    },
+    {
+      "bytes": 890,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/SelectPatrolPosition.cs",
+      "sha256": "d23cff76043e1b54494c4490c18a823f5b95a59bb379cc61dbce444197269da3"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/SelectPatrolPosition.cs.meta",
+      "sha256": "f5288cdf27e88459dede7745c775c3a1eb97c466c15cb62598a38195f60c00ba"
+    },
+    {
+      "bytes": 2280,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/SetFleeSource.cs",
+      "sha256": "883096a05474a4f8b34606f8820cb06213a15cb8061251a7c739a864dad8dd18"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/SetFleeSource.cs.meta",
+      "sha256": "47acd258221ae21b4a1f3bc719db4c9abec29e0f114c0d18554fb5fbae7b9266"
+    },
+    {
+      "bytes": 923,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/SprintWhenInvestigating.cs",
+      "sha256": "13d68ff71ac0c758c395c6a307ee96fedabef7369811d5cc995db8ec52768a7b"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/SprintWhenInvestigating.cs.meta",
+      "sha256": "b24bfebdd68c67226eb8de2d9dcfa7a5d613d5ad032b8b05b57aae14dc1e673c"
+    },
+    {
+      "bytes": 1533,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/Step.cs",
+      "sha256": "629b63e2774d049b77d609852fe83720143a5be9dda5f2e14980a6dc29544453"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/Step.cs.meta",
+      "sha256": "ee295d53110d70f3e118697837e9718c09883422eaf1eaa7f7372da09e54879f"
+    },
+    {
+      "bytes": 853,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/SwitchWeapon.cs",
+      "sha256": "a7aa130c38d4d640dc291c1d3a9c435aa799d469569b636434c514a192156b06"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/SwitchWeapon.cs.meta",
+      "sha256": "0a5560ed7fb6cfffa8fba55d2f8184710cac2efd610c0a375d2da08609f7fac3"
+    },
+    {
+      "bytes": 1129,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/SwitchWeaponCondition.cs",
+      "sha256": "e36377689a20434913f0c198ea74ea6afb72476497fd04f23e1fd285caf584fe"
+    },
+    {
+      "bytes": 940,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/TargetConscious.cs",
+      "sha256": "0d3084e68e876baa6bbdf153b71390b1dbaf7052ae35d5767dd48ae54a85ff31"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/TargetConscious.cs.meta",
+      "sha256": "52f8f8ef05bf76ff5db4e0c16f7feda38a0117fc577ac6bf4c18b5a743269916"
+    },
+    {
+      "bytes": 942,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/TargetUnconscious.cs",
+      "sha256": "be69efb7f2c29078b6d2b7d5276e6f2ff2562a179997121036efcebb84314e54"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/TargetUnconscious.cs.meta",
+      "sha256": "c94039dbb70fbfa1f92d12a311b5695666a99db7fc3ec9bf5f230de92a7b0884"
+    },
+    {
+      "bytes": 1203,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/TestEngageDistance.cs",
+      "sha256": "7feda038a213a6303e4be1910f2342a8c96c0c28dc6c01663f8f666b7f772514"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/TestEngageDistance.cs.meta",
+      "sha256": "8fea4fb668c9f7801033fdec56d0b8b7df953d05bacb53e5a19349692dac2d54"
+    },
+    {
+      "bytes": 787,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/TestSetting.cs",
+      "sha256": "7df8826ed00fd99f60a0e93d57d9f4ca52c7e10b1de07ecf2567176f23fe34b4"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/TestSetting.cs.meta",
+      "sha256": "a9c78a57d46c47668c852a3de0679087e16264d66383b473e39ca4eb9813f2da"
+    },
+    {
+      "bytes": 1413,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/TurnAround.cs",
+      "sha256": "6e3a8d59535e26ee0403163c8e218aeedd1eb35c5a783ddefe24c63a4f62ef72"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/TurnAround.cs.meta",
+      "sha256": "89922eeded23185ba1d3687d13aa9c29f351d8c51fd3dbc611b2a25ca203b965"
+    },
+    {
+      "bytes": 4139,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/VisualPerceive.cs",
+      "sha256": "557ff87d9958f582d74382a7528b49738ebbad09d1366d7538e180173f6a0270"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/VisualPerceive.cs.meta",
+      "sha256": "42c54e735d00b2416089c8e5307339aecad6fdab74f07dcf37acd15918b6c6c9"
+    },
+    {
+      "bytes": 1355,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WeaponAligned.cs",
+      "sha256": "bb9b8554583aefb89b3f2dfb9a5729d2f3a4c621da03507eea32e5e464414373"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WeaponAligned.cs.meta",
+      "sha256": "9d3ba65fef2f37af3d4915197505190cb6583ee6e98dc7f720c9b27016229872"
+    },
+    {
+      "bytes": 2510,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WeaponAngle.cs",
+      "sha256": "3a8294d74060343f88aae5f0564d6770a49bc4c0999d72d7e89e2beba6bc5dc2"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WeaponAngle.cs.meta",
+      "sha256": "c8607bba639d301fe49b02a6d4253819e5e46f4acab2d6ee089f0d3603c3bf6b"
+    },
+    {
+      "bytes": 950,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WeaponHasAmmo.cs",
+      "sha256": "de776f9bf7ccbb1d7bd142d29a8738f2505c19a06e20b19d24108cbc8e5fdab8"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WeaponHasAmmo.cs.meta",
+      "sha256": "445ab42e22a60d4a239e1ee1990325ba52deda870ade7948bd5d110fb0a0ff59"
+    },
+    {
+      "bytes": 1352,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WeaponNotAligned.cs",
+      "sha256": "360167300124b2e9acdd7c348b17ade7b81eef6e52320e2a5ec214aa8b0057b0"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WeaponNotAligned.cs.meta",
+      "sha256": "ec99453a5083858c92dc84f226f0541e3696e6c55c07f5675987a0a5d084c0ea"
+    },
+    {
+      "bytes": 1066,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WeaponNotLive.cs",
+      "sha256": "b92040038a58b1f68541c90e8c392a376fe234822e9bdbcf45ed02a6da25d372"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WeaponNotLive.cs.meta",
+      "sha256": "366f14f97d03cf82dc24634916cf29ee8af9b69f010e5d5442acde5155153322"
+    },
+    {
+      "bytes": 1317,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WillAmbush.cs",
+      "sha256": "81c1ac7dbac9c60abec45285fba2d2d112623c760b8d1b9463b67d26fd8e6f3d"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WillAmbush.cs.meta",
+      "sha256": "ed9d5509aad22f93cf35ea09d8de3ed9e999ef09117c2873e064e125b478e33f"
+    },
+    {
+      "bytes": 1200,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WillBlindFire.cs",
+      "sha256": "0c598b52f9eaac3fa2dfb306213ff11ad45160834237c7a94194ea7885bda609"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WillBlindFire.cs.meta",
+      "sha256": "c0da4ae5a7994acaf449b248a1013f13515ca06931413dd032078ef01dfca656"
+    },
+    {
+      "bytes": 1726,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WillFinishEnemy.cs",
+      "sha256": "472f72d3c09b94af66b6cbb47b93ebe65001732ca5f724c098e615146659b3f9"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WillFinishEnemy.cs.meta",
+      "sha256": "593d13091062ae1c00c33fd02664f23c97c84e6f2290eb62ea3d551894f25ab6"
+    },
+    {
+      "bytes": 836,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WillFlee.cs",
+      "sha256": "724ee7b408f5422dd91fb9273261a3381cb9d8a388cd98eac7b3cf73823ea409"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WillFlee.cs.meta",
+      "sha256": "05a506f1ccfc90971e1cf19d6c8cc999d833f9a20ce432471161e3ea4bb974ff"
+    },
+    {
+      "bytes": 1234,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WillSurrender.cs",
+      "sha256": "639ef7168135a18f533740152e3f680a81bbcfc29269abf775f48ce80309920f"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WillSurrender.cs.meta",
+      "sha256": "1b0cb14bf825878f89564d39f0050ec7bf1bad8b3ca7c4a99ee8a0c9d70846fa"
+    },
+    {
+      "bytes": 3310,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WorkBolt.cs",
+      "sha256": "ea6530e438299a8170d309b7d9232664a71e80c50a4751289991968ec42bdf98"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WorkBolt.cs.meta",
+      "sha256": "073a1506631c34b9540a78fa403fce6efe5dd523f32bfa77bf102d73397fac15"
+    },
+    {
+      "bytes": 1332,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/CharacterBehavior/WorkBoltCondition.cs",
+      "sha256": "8f48cba6ae069a2550664c8bb9119d81006371fec7a1e7a2cf7c1db897fac689"
+    },
+    {
+      "bytes": 121356,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/CharacterBehavior/source-provenance.json",
+      "sha256": "c44f8c6f60535fd054f792d2351f6c9827bd52cb2ba02cde38b62e32f717a7da"
     },
     {
       "bytes": 63183,
@@ -6021,6 +8559,24 @@
       "sha256": "2e48af8cc207858be5d8370cc2eb6d6814df0d624a52912276a88d5654638ca4"
     },
     {
+      "bytes": 136,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/FullSource/DoorReference.cs",
+      "sha256": "5fef18b51905d51ed157308c00520c16ad7228813bd95c22d0a80786a8579eea"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/FullSource/DoorReference.cs.meta",
+      "sha256": "125ddba5d50771fb65c9d14994e88c6daf19da2eb4bccec68e7ee89942531d1d"
+    },
+    {
       "bytes": 4659,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
@@ -6966,6 +9522,15 @@
       "sha256": "c296014796309be2751325c62a66f64957b76a89fb288bf6c07072397c4d16cb"
     },
     {
+      "bytes": 2535,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/FullSource/OperatorSpawner.cs",
+      "sha256": "6f55ed4bca5cadab06cf19c5c4f70775d737d30fcef0afff6fc1a8502709a655"
+    },
+    {
       "bytes": 12842,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
@@ -7623,13 +10188,13 @@
       "sha256": "9371b6101cededd3870d9b26af9b93f125c7d9e46e4fb1a111e3cb338552139f"
     },
     {
-      "bytes": 1808,
+      "bytes": 1938,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Original/FullSource/Serializer.cs",
-      "sha256": "1fe54f492260f75f48b2f97b5ad1825928690d183d18bce1469112877bcea76f"
+      "sha256": "a94ba7fca473ce16f10677594d48f9206f9b223ed07e59faecc07ab36a265cce"
     },
     {
       "bytes": 1535,
@@ -7684,6 +10249,24 @@
       "packageRole": "runtime-build-source",
       "path": "runtime/Original/FullSource/StagingDebugUI.cs",
       "sha256": "dc9c61aaf0f43ce842fa586535ae0ce88e533da406d43242b092bad1b75b1ce9"
+    },
+    {
+      "bytes": 6281,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/FullSource/StaticBehavior.cs",
+      "sha256": "35911d6014334326b8ad0b66ba58b8b6d5be71deaad469cf4a1bda6fb7fbf940"
+    },
+    {
+      "bytes": 286,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/FullSource/StaticBehavior.cs.meta",
+      "sha256": "6877f3279231ed8f0b6d83f460042b7ff121ff824f46e09fc69532536fe5999e"
     },
     {
       "bytes": 638,
@@ -8568,13 +11151,13 @@
       "sha256": "ab2c2d4e8b658c15d3c5f71d8e8fc4efb5af64245fc3c290e9b37ef42c95f71d"
     },
     {
-      "bytes": 4508,
+      "bytes": 4720,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Original/FullSource/Usage/Statistics.cs",
-      "sha256": "d245893d8a48ce1c61d1c11c2eb1e1fae9da977bb47692f1ec5c3d08f8549675"
+      "sha256": "c6de828abbc45d8df9ce76dcfb052aefe298cb090fc7a62493291e26372cff93"
     },
     {
       "bytes": 1067,
@@ -8676,13 +11259,13 @@
       "sha256": "80fa5cc7cec3e68b475dca2a4b0eab695629a0f3c237e60f33656b7656b3fc2e"
     },
     {
-      "bytes": 4596,
+      "bytes": 4661,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Original/FullSource/WeaponComponent.cs",
-      "sha256": "ee0b87b0e23882d4216995d1afe78d9763c4260496416b6b3c18ca979bc4b550"
+      "sha256": "6f074ce25f92a3944bd69388a01503ecf7dfb790f488e257c2374bf0a0e367c2"
     },
     {
       "bytes": 1016,
@@ -8712,13 +11295,13 @@
       "sha256": "157dc009ada87b4ab84e5f41cb9683344654c5c38b2f8d7a10fc7b304391cd36"
     },
     {
-      "bytes": 2821,
+      "bytes": 2886,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "runtime-build-source",
       "path": "runtime/Original/FullSource/WeaponComponentSlot.cs",
-      "sha256": "03f4529ec6ade08b048653aea29c40162a72b07f9e7a74e489a71f1df7c29160"
+      "sha256": "321c8534371b87b8a3ac01fbfd7f1c4b0a3aa2fcd3d0a38128ac0ec4809279d5"
     },
     {
       "bytes": 822,
@@ -8791,6 +11374,15 @@
       "packageRole": "runtime-build-source",
       "path": "runtime/Original/FullSource/WeaponType.cs",
       "sha256": "a38d3fdc112c35c2dfc0e97b8de2d11568d9995d42b6e9a65be07ec9db72dbcb"
+    },
+    {
+      "bytes": 918,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "runtime-build-source",
+      "path": "runtime/Original/FullSource/WeaponUI.cs",
+      "sha256": "8f7812115fb09b980e757d188dc444512a6c4e770b91a604e27172c7b00defc1"
     },
     {
       "bytes": 2086,
@@ -9063,6 +11655,15 @@
       "sha256": "33ecdfc6ad0294f055a383f262d919eb8ad80d4e02268778f87a1108792a43cd"
     },
     {
+      "bytes": 2465,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "build-or-validation-input",
+      "path": "scripts/aim_fire_gate_test.mjs",
+      "sha256": "756d9464a20a8eced37eabb248c8d05f24e43657b8c9eafca829088f6e1b8f50"
+    },
+    {
       "bytes": 2463,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
@@ -9090,13 +11691,13 @@
       "sha256": "f932fb81344af5e5d9656b445f32641519b91aeef56d28b6c37891c3d97e0124"
     },
     {
-      "bytes": 2955,
+      "bytes": 3234,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "build-or-validation-input",
       "path": "scripts/audit_character_animation_source_closure.py",
-      "sha256": "106da7c2fa0d9f227ee3b75c909a983c42b83379a86e90283f26055bd6478a29"
+      "sha256": "bffedde4b42ad36bcad72f244a23bd5c3fa76aa8ee83423da536ebe06cf03254"
     },
     {
       "bytes": 5710,
@@ -9153,13 +11754,13 @@
       "sha256": "856e23e4e29139bffc85d784124b2a4e8b0c0a9adfb1936bffc64c1c19b950fc"
     },
     {
-      "bytes": 10891,
+      "bytes": 12840,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "build-or-validation-input",
       "path": "scripts/audit_tools_test.py",
-      "sha256": "9e5faef718ffa8ec05c46580355221904d0d3a62968240a98ac57a7c0be02dda"
+      "sha256": "c3b06434ef81496c59578b6d8349639428b84d068401ff55a943fd928acf3c85"
     },
     {
       "bytes": 2070,
@@ -9171,13 +11772,13 @@
       "sha256": "9cd6e2bd336dbee7cdd21eb2c0a0cdb50dbc1f42b19c18d1694235be00fef6af"
     },
     {
-      "bytes": 14146,
+      "bytes": 14995,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "build-or-validation-input",
       "path": "scripts/browser_input_test.mjs",
-      "sha256": "a4a399b24ff7b130703b9e63af6f48feb603dbb056ffeb904087cf97310f0d41"
+      "sha256": "5c358729ab9d19eaddaff720d9af249ff6d98523a834f51f0f7e9068cd1f34b6"
     },
     {
       "bytes": 1618,
@@ -9198,13 +11799,13 @@
       "sha256": "8fef4564c8c9e9eb24ef5ced280121134c83557b1d06544bd70af17a82960b6a"
     },
     {
-      "bytes": 2210,
+      "bytes": 3024,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "build-or-validation-input",
       "path": "scripts/check_actor_migration.py",
-      "sha256": "43dff62e135dd537923304df6df21cef3c5bbf363887647acb2346d04f7dc83b"
+      "sha256": "571c9db41a9009062ce90eeef74e83d9764661ec811a076cb8a39cef668ffb0a"
     },
     {
       "bytes": 4820,
@@ -9232,6 +11833,15 @@
       "packageRole": "build-or-validation-input",
       "path": "scripts/contact_physics_smoke.mjs",
       "sha256": "a0d9383aa1c9ec13fa2a8fac5f0391e812dff59b51f04c703beb96c2a518ffda"
+    },
+    {
+      "bytes": 2661,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "build-or-validation-input",
+      "path": "scripts/env/procstat-namespace-shim.c",
+      "sha256": "1cd6bb340b47af1486aec85278c42c9218aff3a08d63e4777c3f6ea570cb59dc"
     },
     {
       "bytes": 5410,
@@ -9369,22 +11979,22 @@
       "sha256": "cfc42e7802cac0cc89003fff3a876b5217830d3eed124d9d691e8f209bff8074"
     },
     {
-      "bytes": 16919,
+      "bytes": 18101,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "build-or-validation-input",
       "path": "scripts/extract_runtime_scene.py",
-      "sha256": "a1adc7537d58751455ed8b315d542dea396278dc744a7bc2bcdd3e47d6ef92fa"
+      "sha256": "ffcd3e8373a158cd386bd67ad99f764528046e393366fc2262990d7cfe8636ce"
     },
     {
-      "bytes": 2310,
+      "bytes": 5215,
       "copiedAtSamePathToLatestPackage": false,
       "inLatestSourceInventory": true,
       "matchesLatestSourceInventory": true,
       "packageRole": "build-or-validation-input",
       "path": "scripts/extract_runtime_scene_test.py",
-      "sha256": "d683d1ca1089c9219a9839f6e19ffe0237cedf87681d1c75e660dcdebc43b81c"
+      "sha256": "722f1c7774117ae0106af15ffebf924bdf39d017b3d7ed2156c9f5da98042f13"
     },
     {
       "bytes": 10398,
@@ -9452,9 +12062,9 @@
     {
       "bytes": 8623,
       "copiedAtSamePathToLatestPackage": false,
-      "inLatestSourceInventory": false,
-      "matchesLatestSourceInventory": false,
-      "packageRole": "repository-only",
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "build-or-validation-input",
       "path": "scripts/inventory_original_player_meshes.py",
       "sha256": "a5de13ca4104892d02b52d26d478ef62442aea8f059aefb8d866686a3e420cf0"
     },
@@ -9889,6 +12499,15 @@
       "packageRole": "build-or-validation-input",
       "path": "scripts/vendor_physics.mjs",
       "sha256": "51d43cf0fd539ad5251f1fa1d8cc2a80ac0748544cd280b9533d822fa6fc1c3a"
+    },
+    {
+      "bytes": 2949,
+      "copiedAtSamePathToLatestPackage": false,
+      "inLatestSourceInventory": true,
+      "matchesLatestSourceInventory": true,
+      "packageRole": "build-or-validation-input",
+      "path": "scripts/verify_characterbehavior_sources.py",
+      "sha256": "e25ff4361a82639ef197d58176a178278029b10d9d77141ff23ae7c360cdfefd"
     },
     {
       "bytes": 8715,
@@ -17037,7 +19656,7 @@
       "sha256": "7a72a008c918982a5f11c9a0e809e76e6738d1567f03a69861242365f567d9c5"
     }
   ],
-  "repositoryHead": "f335a065f7012cb71c12cf49ced0e86c10d05226",
+  "repositoryHead": "74128bc2bdf381539dc14b547c661574930c77a0",
   "reviewedCandidates": [
     {
       "decision": "keep-and-package",
@@ -17071,9 +19690,9 @@
   "schemaVersion": 1,
   "scope": "Every tracked or non-ignored working-tree file in this repository, excluding this generated index. Hashes identify file contents; file contents remain in their repository/package source paths.",
   "sitePackage": {
-    "manifestSha256": "a3ff9a51dc4f61d456a2854a670957f3cc75fc3124cf09683fa8d8d5abc8eca9",
-    "outputFileCount": 766,
-    "sourceCommit": "20bfc1d4996dcd8c9e6abd042e74d4e3721cd935",
-    "sourceInventoryCount": 893
+    "manifestSha256": "a04deb67cab885b8bb37b79b988cfeb5263fa6ec5cae106f2447c417ba083357",
+    "outputFileCount": 767,
+    "sourceCommit": "74128bc2bdf381539dc14b547c661574930c77a0",
+    "sourceInventoryCount": 1173
   }
 }

@@ -2,33 +2,33 @@
 
 ## Checkpoint
 
-- Branch: `develop/wasm`; verified remote and local source checkpoint: `638cf4a5a470a2f514446c055b73a1a3b57cf048`.
-- No deployment occurred. Site v39 remains the owner-accepted iPhone Safari build; this pass changed only isolated check boundaries and the generated source inventory, not gameplay code.
-- The supported gameplay target is iPhone Safari. Desktop Chromium/WebKit automation is optional diagnostic coverage. Ask for an exact-build device check at the next major playable milestone or before a release; do not claim acceptance for features absent from the tested build.
-- The previously reported play-area hold behavior can stop sustained fire during aim changes. Keep that correction documented and deferred; do not conflate it with holding the Fire button.
+- Branch: `develop/wasm`; latest verified gameplay/build source checkpoint: `74128bc2bdf381539dc14b547c661574930c77a0`. The final handoff/index commit is documentation and repository-index metadata only.
+- No deployment occurred. Site v39 remains the owner-accepted iPhone Safari build. The current pass changed audit tooling and documentation; it did not change gameplay behavior.
+- Supported gameplay target: iPhone Safari. Desktop Chromium/WebKit automation is optional diagnostics. Obtain owner testing for the exact build at the next major playable milestone and before release; do not claim acceptance for features absent from the tested build.
+- Keep the owner-reported play-area hold behavior distinct from holding the Fire button; it remains documented for later.
 
 ## Latest verified work
 
-- Recovered pinned .NET SDK 8.0.426 from the checksum-verified archive and compiled the tracked `/proc` namespace shim. `dotnet --version` reported 8.0.426.
-- Fixed two isolated-check project boundaries: EngineChecks now declares only the compile-time audio surface it needs; FoundationChecks has compile-only FullSource ammunition/calibre/projectile stubs. These do not add gameplay behavior.
-- Regenerated `docs/audit/source-dependencies.json` after its freshness check found tracked-source additions; `python3 scripts/inventory_source_dependencies.py --check` now passes (806 sources, 1,704 symbols, 1,383 reachable files, 127 ambiguous names requiring ownership review).
-- Passed on source SHA `638cf4a5a470a2f514446c055b73a1a3b57cf048`: Node suite 78/78; package-builder unit suite 13/13; actor migration audit with 0 violations; EngineChecks 69 assertions; FoundationChecks 121 assertions; runtime source contracts for primitives, prefab lifecycle, seven original arm sequence prefabs/21 frames, presentation, weapons, and ballistics.
-- .NET runtime build and Release browser WASM publish passed (48 existing compiler warnings, 0 errors). Exact-source package build and separate verify passed: 767 files, 199 hashed Blazor resources, 195 validated WASM files. Package output is ephemeral at `/tmp/cpr-site-638cf4a` and was not deployed.
-- In the clean verification worktree, ignored PhysX vendor files were restored with `npm ci --prefix game --ignore-scripts` and `npm run --prefix game vendor`; this is already documented in `docs/DOTNET_BUILD_RUNBOOK.md`. Do not expect ignored vendor files to appear in a fresh worktree.
-- The original gameplay recovery scene package (`cpr-scenes-full-source.json` / `crisis-response-scenes-with-gameplay-resources.json`) was absent from the checkout and `/tmp` search at the start of this pass. Do not repeat that search without new evidence; package-dependent mission/AI contracts need the approved artifact.
+- Fixed `scripts/audit_character_animation_source_closure.py`, which still searched the obsolete `runtime/Original/Animation` path and asserted the current FullSource controller/sequencer were absent. It now checks the preserved source files against `runtime/Original/FullSource/{IKArmController,IKArmSequencer}.cs` and `runtime/Original/CharacterBody.Full.cs`, reports required method coverage and hashes, and does not claim gameplay or visual parity.
+- Added a regression test for the audit path mapping. `python3 -m unittest discover -s scripts -p 'audit_tools_test.py'` passes 14/14; the audit reports no missing required methods for the controller, sequencer, or CharacterBody.
+- Refreshed the current sequencer status and marked earlier 2026-10-16 dependency notes as historical/superseded. Headless tests cover selected `LowerWeapon` and `FireWeapon` callbacks and actor isolation. Browser `ComposeOriginalArmSequences` remains composition-only, explicitly reports `playbackImplemented: false`, and must not be represented as normal gameplay playback.
+- Verified `python3 scripts/inventory_source_dependencies.py --check`: 806 sources, 1,704 symbols, 1,383 reachable files, 127 ambiguous names requiring ownership review.
+- .NET 8.0.426 runtime build and Release WASM publish pass at source SHA `74128bc2bdf381539dc14b547c661574930c77a0` (48 existing warnings, zero errors). Exact-source package build and verify pass: 767 files, 199 hashed Blazor resources, 195 valid WASM files. Output is `/tmp/cpr-site-74128bc`; it was not deployed.
+- `scripts/index_repository_files.py` regenerated and checked against that package manifest: 2,183 repository files indexed. Ignored PhysX files must be restored in a fresh worktree with `npm ci --prefix game --ignore-scripts` then `npm run --prefix game vendor`; this is already documented.
+- Earlier verified runtime/source contracts on unchanged gameplay source `638cf4a5a470a2f514446c055b73a1a3b57cf048`: Node 78/78, package-builder tests 13/13, EngineChecks 69 assertions, FoundationChecks 121 assertions, and runtime contracts for prefab lifecycle, original arm sequence data, presentation, weapons, and ballistics.
 
 ## Gate state
 
-- Gate 0: open. The regenerated lexical inventory is current, but dependency ownership and full CharacterBody closure remain incomplete; missing authored scene package prevents package-driven closure.
-- Gate 1: passed within the scoped headless original-character acceptance; this is not full game parity.
-- Gate 2: partial. Original source IK controller/sequencer callbacks and actor isolation pass headless contracts. Browser sequence composition playback remains explicitly unimplemented; physical/visual weapon continuity remains unverified.
-- Gate 3: partial. Source projectile-to-physiology evidence exists; native PhysX, rendered wounds, and full live state/event integration remain.
-- Gate 4: partial. Original mission startup/spawning/outcome evidence exists in prior exact-source reports; normal-page authored mission inputs and callbacks remain incomplete.
-- Gate 5: open. Original behavior trees load and tick, but autonomous perception, navigation, decisions, and combat are not verified.
+- Gate 0: open. Dependency inventory is current and the bounded M4 source-fire dependencies are classified; normal-page original actor flow, native physics, authored visible actors, and broader source navigation/presentation remain.
+- Gate 1: passed within scoped headless original-character acceptance; this is not full game parity.
+- Gate 2: partial. FullSource controller/sequencer compile and selected callback/actor-isolation contracts pass. The normal page does not play composed sequences on the real authored actor/rig; source mission/prefab startup and visual/physical continuity remain.
+- Gate 3: partial. Source projectile-to-physiology evidence exists; native PhysX, rendered wounds, and complete live state/event integration remain.
+- Gate 4: partial. Headless source mission startup/spawning/outcome evidence exists; normal-page authored mission inputs and instantiation callbacks remain incomplete.
+- Gate 5: open. Original trees load and tick; autonomous perception, navigation, decisions, and combat remain unverified.
 - Gate 6: partial. Source room-clear/success contracts pass headlessly; complete normal-path player/AI mission flow remains.
 - Gate 7: open. Original presentation and content fidelity remain.
-- Gate 8: closed for the previously owner-accepted Site v39 under the agreed manual iPhone smoke path. This pass additionally verified build and package integrity at SHA `638cf4a5a470a2f514446c055b73a1a3b57cf048`; no deploy or new visible gameplay behavior occurred.
+- Gate 8: closed for the previously owner-accepted Site v39. Build and exact-source package integrity are additionally verified at `74128bc2bdf381539dc14b547c661574930c77a0`; no user-visible gameplay changed, no new device check is implied, and no deploy occurred.
 
 ## Exact next action
 
-Continue in dependency order. Start Gate 2 by tracing the remaining browser sequence-composition playback gap from `runtime/Checks/ArmSequenceContracts.cs` into the real game path, and implement only if it can use original sequence/callback behavior without invented defaults. If this depends on the missing authored package, record the specific dependency once and move to the next unblocked Gate 0 or Gate 3 task. Keep using the recovered .NET SDK archive plus tracked process shim, restore ignored PhysX vendor files in any fresh worktree, use the connected GitHub API for commits/pushes, and do not deploy.
+Continue Gate 2/Gate 4 at the real normal-page actor flow: trace the original scene package, authored prefab, and initialization callbacks needed to instantiate `FullSource.CharacterBody` with its original `IKArmController`, solvers, weapon targets, and equipment. Reuse an existing verified full scene package if present; do not repeatedly search/extract the recovery archive, and do not invent defaults. If required authored material is unavailable, record that specific blocker once and continue with the next unblocked Gate 3 or Gate 7 integration task. Use the checksum-verified .NET SDK 8.0.426 plus tracked process shim, restore ignored PhysX files in fresh worktrees, commit/push through the GitHub API, and never deploy.
