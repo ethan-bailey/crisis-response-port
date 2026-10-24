@@ -7,8 +7,8 @@ import { loadOriginalScenePackage } from '../scene-data/scene-package-loader.mjs
 import { BrowserInput } from './browser-input.mjs';
 window.__bootReady=Blazor.start();
 window.startOriginalRuntime=async()=>{
-await window.__bootReady;
  try{
+  await window.__bootReady;
   const call=(method,...args)=>DotNet.invokeMethodAsync('Crisis.Runtime.Browser',method,...args);
   window.runtimeCall=call;
   if(new URLSearchParams(location.search).has("bridge")){await call("ResetInput");window.__runtimeReady=true;return;}
@@ -42,4 +42,5 @@ await window.__bootReady;
   requestAnimationFrame(frame);
  }catch(error){document.querySelector('#contracts').textContent=String(error);window.__runtimeError=String(error)}
 };
+window.startOriginalRuntime();
 </script><script src="_framework/blazor.webassembly.js" autostart="false"></script></body></html>
