@@ -2,7 +2,7 @@
 
 ## Checkpoint
 
-- Branch: `develop/wasm`; live head was `eb8afdcfa2772d6d65ba736cc94ae29fe7543b0c` before this batch. Record the pushed source and final handoff SHAs below after the GitHub API commits.
+- Branch: `develop/wasm`; verified source checkpoint: `e035b9fe8dd40d44dadc0ddbcc5a5f6bb1ccc95b`. A following handoff/runbook/index commit contains no gameplay changes.
 - No deployment occurred. Site v39 remains the owner-accepted iPhone Safari build. This pass changed a source contract and status documentation only; it did not alter gameplay behavior.
 - Supported target: iPhone Safari. Desktop Chromium/WebKit automation is optional diagnostics. Obtain owner testing for the exact build at the next major playable milestone and before release; do not claim acceptance for features absent from the tested build.
 - Keep the owner-reported play-area hold behavior distinct from holding the Fire button; it remains documented for later.
@@ -13,6 +13,8 @@
 - Extended the real recovered-prefab lifecycle gate: the actual Operator now runs its original two-arm `IKArmController.Unarmed` sequence to the authored Pelvis target. Both actor-owned solvers reach `OnTarget`, both IK targets bind to the Operator's Pelvis, and both sequencers complete while the independent Occupant exists in the same world.
 - Added a focused prefab regression proving clamped out-of-range curve evaluation and independent curve clones. See `docs/evidence/GATE2_AUTHORED_IK_TRANSITION_2026-10-24.md`.
 - General runtime contracts, the recovered Operator/Occupant lifecycle contract, EngineChecks (69), FoundationChecks (121), related non-browser JS contracts, full Release runtime build, and Release WASM publish pass with .NET SDK 8.0.426. The full build retains 48 existing warnings and zero errors.
+- Exact-source package build and verify pass at `e035b9fe8dd40d44dadc0ddbcc5a5f6bb1ccc95b`: 767 files, 199 hashed Blazor resources, 195 valid WASM files. Package is `/tmp/cpr-site-e035b9-final`; it was not deployed.
+- Package invocation correction is persistent in `docs/DOTNET_BUILD_RUNBOOK.md`: when `dotnet publish --output <DIR>` is used, pass `<DIR>/wwwroot` (not `<DIR>`) to `package_wasm_site.py --published`.
 - Optional Playwright smoke was unavailable because Playwright is not installed. Desktop browser automation is optional and this did not block the batch.
 - The tracked scene package contains 1,504 assets and both character prefabs, but not Global Context or M4A1 resource prefabs. It is not the private full gameplay-resource package; do not retry spawner/equipment contracts against it.
 - A clean worktree requires restoring ignored PhysX vendor files with `npm ci --prefix game --ignore-scripts` and `npm run --prefix game vendor`. The checksum-verified SDK 8.0.426 archive plus tracked process shim is the working .NET recovery path; do not use `dotnet-install.sh` or GitHub CLI setup.

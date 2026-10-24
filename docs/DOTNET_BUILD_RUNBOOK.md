@@ -138,6 +138,12 @@ runtime pack can be resolved:
 dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release
 ```
 
+When `dotnet publish` is given an explicit `--output <DIR>`, the Blazor static
+site is written beneath `<DIR>/wwwroot`. Pass that inner directory to the site
+packager, for example `--published /tmp/cpr-publish/wwwroot`. Passing the outer
+publish directory makes `package_wasm_site.py` fail at
+`runtime-web/index.html`; do not retry the same outer path.
+
 `NETSDK1112` after `publish --no-restore` has meant that the required WASM
 runtime pack was not present in the restored assets. Retry publish with restore
 enabled; do not assume a successful native build restored the browser pack.

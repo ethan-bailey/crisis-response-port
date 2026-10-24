@@ -38,13 +38,22 @@ independent cloned curves.
 - EngineChecks: 69 assertions passed.
 - FoundationChecks: 121 assertions passed.
 - Release runtime build and Blazor WebAssembly publish: passed.
+- Exact-source package at `e035b9fe8dd40d44dadc0ddbcc5a5f6bb1ccc95b`:
+  767 files, 199 hashed Blazor resources, and 195 valid WASM files; verified
+  twice by the package validator.
 - Related non-browser animation, source-step, aim/fire, arm-physics, and
   particle-binding tests: passed.
+- Package and audit-tool unit suites: 27 tests passed.
 
 The optional Playwright arm-sequence smoke did not run because Playwright is not
 installed in this workspace. Desktop browser automation is optional under the
 standing acceptance policy, so this is not a gate blocker. No deployment was
 performed.
+
+The first package invocation passed the outer `dotnet publish --output`
+directory and failed because `runtime-web/index.html` is under its `wwwroot`
+child. The runbook now records the corrected `--published <DIR>/wwwroot`
+command; the fresh package output passed.
 
 ## Remaining boundary
 
