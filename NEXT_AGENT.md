@@ -12,7 +12,7 @@
 
 ## Gate 8 status
 
-Gate 8 build, package, Site tests, and owner-only release are complete. The owner completed physical iPhone Safari gameplay smoke on Site v37, confirming the game ran on-device and surfacing the deferred screen-hold issue. Per owner direction, accept that device smoke for this gate and move on; v39 contains a separate held-Fire-button change and was not retested on iPhone. Cloud Chrome opened v39 but could not create a WebGL context (`GL_VENDOR = Disabled`); this runner limitation blocked desktop gameplay smoke. Do not claim Chromium/WebKit verification. No Gate 9 exists in the current completion plan. Gate 7 visual wound/particle fidelity and native PhysX parity remain separate incomplete work.
+Gate 8 is **not complete** under the repository acceptance criteria. Build, package, Site tests, and owner-only release are complete. The owner completed physical iPhone Safari smoke on Site v37, confirming the game ran on-device and surfacing the deferred screen-hold issue; Site v39, which records source `e009c00…`, has not been tested on iPhone. Cloud Chrome opened v39 but could not create a WebGL context (`GL_VENDOR = Disabled`), and no Chromium/WebKit gameplay smoke passed. Gate 8 requires playable browser smoke and physical iPhone feedback against the release source; the v37 test does not establish v39 behavior. No Gate 9 exists in the current completion plan. Gate 7 visual wound/particle fidelity and native PhysX parity remain separate incomplete work.
 
 ## Verification on source `e009c00d240b63e67d29f9499d4740bbc6669f55`
 
@@ -24,4 +24,4 @@ Gate 8 build, package, Site tests, and owner-only release are complete. The owne
 
 ## Next action
 
-Continue to the next planned gate. Keep the touch-and-hold-on-screen behavior on the deferred issue list; the held Fire-button fix does not resolve it. Do not change Site access settings. Preserve the browser-smoke limitation and the fact that the owner tested v37, not v39. Gate 7 wound/particle rendering and native PhysX parity remain separate work.
+To close Gate 8, obtain playable Chromium and WebKit smoke plus owner iPhone Safari feedback on the exact v39 source, or record an explicit owner waiver for any omitted check. The existing v37 phone test is valid evidence that v37 ran on-device but does not test v39. Keep the touch-and-hold-on-screen behavior deferred; the held Fire-button fix does not resolve it. Do not change Site access settings. After Gate 8, continue Gate 7 wound/particle rendering and native PhysX parity.
