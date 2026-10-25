@@ -73,6 +73,10 @@ test('FullSource particle command transport validates provenance, actions and so
   const command={type:'particleCommand',time:4.5,systemId:12,sourceGuid:effect.guid,
     sourceFileId:emitter.sourceEmitterFileID,sourcePath:'Assets/Resources/effects/ballistic hits/Concrete entry.prefab',
     sourceAssetSha256:'a'.repeat(64),hierarchyPath:'Root/Emitter',
+    sourceFields:{m_ParticleSystem:{serializedVersion:6}},
+    renderer:{sourceGuid:'0123456789abcdef0123456789abcdef',sourceFileId:'19900000',
+      sourcePath:'Assets/Resources/effects/ballistic hits/Concrete entry.prefab',sourceAssetSha256:'a'.repeat(64),
+      fields:{m_RenderMode:0}},
     position:[1,2,3],rotation:[0,0,0,1],command:{action:'emit',count:3,maxParticles:512,
       startSpeed:[2,4],radius:.2,angle:25}};
   binder.observeSourceCommands([command],5,0);
@@ -94,8 +98,13 @@ test('FullSource particle commands reject missing source identity and malformed 
   const command={type:'particleCommand',time:4.5,sourceGuid:effect.guid,
     sourceFileId:emitter.sourceEmitterFileID,sourcePath:'Assets/Effects/Test.prefab',
     sourceAssetSha256:'a'.repeat(64),hierarchyPath:'Root/Emitter',
+    sourceFields:{m_ParticleSystem:{serializedVersion:6}},
+    renderer:{sourceGuid:'0123456789abcdef0123456789abcdef',sourceFileId:'19900000',
+      sourcePath:'Assets/Effects/Test.prefab',sourceAssetSha256:'a'.repeat(64),fields:{m_RenderMode:0}},
     position:[1,2,3],rotation:[0,0,0,1],command:{action:'play'}};
   assert.throws(()=>binder.observeSourceCommands([{...command,sourceAssetSha256:'bad'}],5),/provenance/);
+  assert.throws(()=>binder.observeSourceCommands([{...command,sourceFields:{}}],5),/ParticleSystem module fields/);
+  assert.throws(()=>binder.observeSourceCommands([{...command,renderer:{...command.renderer,fields:{}}}],5),/ParticleSystemRenderer fields/);
   assert.throws(()=>binder.observeSourceCommands([{...command,time:6}],5),/after simulation-clock/);
   assert.throws(()=>binder.observeSourceCommands([{...command,command:{action:'emit',count:-1,startSpeed:[1,2]}}],5),/invalid count/);
   assert.throws(()=>binder.observeSourceCommands([{...command,command:{action:'restart'}}],5),/unknown/);
@@ -111,6 +120,8 @@ test('normal page forwards the FullSource actor particle snapshot into the sourc
   const queue=readFileSync(new URL('../runtime/Engine/BrowserParticleEventQueue.cs',import.meta.url),'utf8');
   const loader=readFileSync(new URL('../runtime/Engine/SceneLoader.cs',import.meta.url),'utf8');
   assert.match(queue,/sourceAssetSha256 = system\.OriginalAssetSha256/);
+  assert.match(queue,/sourceFields = system\.OriginalSerializedFields/);
+  assert.match(queue,/fields = sourceRenderer\.OriginalSerializedFields/);
   assert.match(loader,/component\.OriginalAssetSha256=package\.GetAssetSha256\(assetPath\)/);
 });
 

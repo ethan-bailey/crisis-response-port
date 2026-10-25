@@ -140,6 +140,16 @@ export function createOriginalParticleEventBinding(particles,materials) {
         typeof event.sourcePath==='string'&&event.sourcePath.startsWith('Assets/')&&
         SHA.test(event.sourceAssetSha256||''),
         'FullSource particle command is missing original component provenance');
+      requireSource(event.sourceFields&&typeof event.sourceFields==='object'&&
+        Object.keys(event.sourceFields).length>0,
+        'FullSource particle command is missing the original ParticleSystem module fields');
+      const renderer=event.renderer;
+      requireSource(renderer&&GUID.test(renderer.sourceGuid||'')&&
+        /^\d+$/.test(String(renderer.sourceFileId||''))&&
+        typeof renderer.sourcePath==='string'&&renderer.sourcePath===event.sourcePath&&
+        SHA.test(renderer.sourceAssetSha256||'')&&renderer.sourceAssetSha256===event.sourceAssetSha256&&
+        renderer.fields&&typeof renderer.fields==='object'&&Object.keys(renderer.fields).length>0,
+        'FullSource particle command is missing the original ParticleSystemRenderer fields');
       requireSource(typeof event.hierarchyPath==='string'&&event.hierarchyPath.length>0&&
         Array.isArray(event.position)&&event.position.length===3&&event.position.every(Number.isFinite)&&
         Array.isArray(event.rotation)&&event.rotation.length===4&&event.rotation.every(Number.isFinite),

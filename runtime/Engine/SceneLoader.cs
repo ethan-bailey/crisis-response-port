@@ -244,6 +244,10 @@ public static class SceneLoader {
                 if(!field.IsStatic&&!field.IsInitOnly&&field.GetCustomAttribute<NonSerializedAttribute>()==null&&(field.IsPublic||field.GetCustomAttribute<SerializeField>()!=null))yield return field;
     }
     static void AssignBuiltinFields(Component component,JsonElement fields,SceneLoadResult result,string id,int classID){
+        // The browser particle adapter needs the complete authored module and
+        // renderer records after the CPU importer has populated supported fields.
+        if(classID is 198 or 199)
+            foreach(var field in fields.EnumerateObject())component.OriginalSerializedFields[field.Name]=field.Value.Clone();
         var consumed=new HashSet<string>(StringComparer.Ordinal){"serializedVersion","m_ObjectHideFlags","m_PrefabParentObject","m_PrefabInternal","m_GameObject","m_Enabled"};
         void SetField(string source,string target,Type type){
             if(!fields.TryGetProperty(source,out var value))return;

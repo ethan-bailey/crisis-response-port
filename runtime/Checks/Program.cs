@@ -93,6 +93,10 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
         !string.IsNullOrEmpty(item.GetProperty("sourceFileId").GetString())&&
         !string.IsNullOrEmpty(item.GetProperty("sourcePath").GetString())&&
         item.GetProperty("sourceAssetSha256").GetString() is {Length:64} sourceAssetHash&&sourceAssetHash.All(Uri.IsHexDigit)&&
+        item.GetProperty("sourceFields").ValueKind==JsonValueKind.Object&&item.GetProperty("sourceFields").EnumerateObject().Any()&&
+        item.GetProperty("renderer").ValueKind==JsonValueKind.Object&&
+        item.GetProperty("renderer").GetProperty("sourceAssetSha256").GetString()==sourceAssetHash&&
+        item.GetProperty("renderer").GetProperty("fields").EnumerateObject().Any()&&
         float.IsFinite(item.GetProperty("time").GetSingle())&&
         item.GetProperty("time").GetSingle()<=actualShotSourceTime+.0001f);
     var weaponShotEvents=actualShotEvents.Where(item=>item.GetProperty("sourcePath").GetString()==actualFirePath||item.GetProperty("sourcePath").GetString()==actualCrackPath).ToArray();
