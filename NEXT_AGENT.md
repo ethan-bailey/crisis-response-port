@@ -1,27 +1,19 @@
 # Current handoff — 2026-10-25
 
-## Current release
+## Current source and Site
 
-- `develop/wasm` runtime source checkpoint: `d8e52908a0f2c0b2fe72153fa565180c9cdc3302` (a final handoff-only commit may follow).
-- Crisis Response Runtime Site version **48** is deployed at `https://crisis-response-runtime.craftysnipe13.chatgpt.site` and remains owner-only. The Site source commit is `31577880b67109bec25a6e5c846c1e2a790e9e60`; its manifest identifies runtime source `d8e5290`.
-- The Mission source loader sends six checksum-verified compressed assets concurrently, then feeds them to WASM in manifest order using base64 JSON text for the .NET `byte[]` JS interop method. Concurrent fetches reduce per-file round-trip delay while bounding compressed download memory to at most six assets. The change addresses the iPhone `ByteArrayJsonConverter` exception and slow 1,919-request Mission load.
-- Mission loading now shows asset and MiB progress outside the hidden play HUD, provides Cancel via `AbortController`, and restores the start control after cancellation for retry. A touchend guard blocks rapid double-tap zoom on the game canvas.
-- Runtime errors retain the scrollable, copyable details panel with iOS selection fallback and retry action.
+- `develop/wasm` contains the latest code checkpoint `3ab872704121ed4ce6822923f9597c43aa960176`. The handoff update may be a docs-only commit after this runtime checkpoint.
+- Site version **48** remains live at `https://crisis-response-runtime.craftysnipe13.chatgpt.site`, owner-only. It contains runtime source `d8e5290`; the latest joystick aim and loading-progress fixes are not deployed yet.
+- The loading flow now reports every accepted asset and announces the actor initialization phase after all 1,919 files finish. The prior v48 downloader fetches six assets concurrently and ingests them to WASM in manifest order.
+- Joystick vertical aim now derives from raw vertical displacement independently of horizontal displacement, so diagonal/horizontal movement cannot pull elevation toward center.
 
-## Verification
+## Verification and blockers
 
-- Pinned .NET 8.0.426 Release WebAssembly publish passed at the loader-fix source checkpoint; no C# code changed afterward.
-- Loader and UI contract checks passed **6/6**, including already-aborted source delivery. Extracted game module syntax and `git diff --check` passed.
-- Final package integrity verified **2,673 files**, 199 Blazor resources, 195 WASM files, and the 1,919-asset Mission profile. The optional 220 MB-uncompressed scene-smoke archive remains excluded.
-- Site version 48 reports deployment `succeeded`; archive manifest, game progress/cancel UI, base64 loader, and `.openai/hosting.json` were verified before publication.
-
-## Remaining acceptance and limits
-
-- Playwright and iPhone Safari acceptance are still open. Ask the owner to reload the live Site, tap **Start original Mission · 99 MB**, confirm progress advances, and try movement, aim, and fire after Mission ready.
-- If progress stops, tap **Cancel**, retry once, and if it errors tap **Copy details** and paste the result into ChatGPT. On clipboard failure, long-press the selected stack and choose **Copy**.
-- Rapid double-tap zoom suppression is implemented on the game canvas but has not been manually verified on iPhone Safari.
-- The original Mission browser audio adapter is silent. Some Unity components, NPC physics, and gameplay scripts remain unsupported or unverified. Do not claim full Unity parity.
+- `node --test scripts/*test.mjs`: **81 passed, 0 failed** at source checkpoint `3ab872704121ed4ce6822923f9597c43aa960176`.
+- `git diff --check` passed before checkpointing.
+- Full .NET/WASM build and refreshed Site archive are blocked in this workspace: `dotnet` is not installed (`dotnet: command not found`), and the ephemeral checkout has no published build output or recovered Mission source package. Do not deploy these source edits without rebuilding and verifying the release package.
+- No Playwright/browser run or exact-build iPhone Safari acceptance was available. Test version 48 on iPhone for the reported slowdown and 1,900-asset pause, then test the updated build after it is published.
 
 ## Next action
 
-Have the owner test Site version 48 on iPhone Safari, especially download progress, cancellation/retry, double-tap zoom, movement, aim, and fire.
+Restore the pinned .NET SDK 8.0.426 and build/package the exact current `develop/wasm` source; then publish privately and have the owner test Mission download completion and joystick aim independence on iPhone Safari.
