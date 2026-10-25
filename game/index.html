@@ -54,6 +54,15 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 .playing #hud #title,.playing #hud #status,.playing #hud #position{display:none}
 #weaponStatus{font-size:10px!important;margin:0!important}
 #error{top:auto;bottom:108px;max-height:30vh;overflow:auto;padding:7px;font-size:11px;line-height:1.3}
+#error[hidden]{display:none}
+#error:not([hidden]){display:flex;position:absolute;z-index:12;left:max(10px,env(safe-area-inset-left));right:max(10px,env(safe-area-inset-right));top:max(64px,calc(env(safe-area-inset-top) + 56px));bottom:max(104px,calc(env(safe-area-inset-bottom) + 96px));max-height:min(72vh,560px);flex-direction:column;gap:8px;padding:12px;border:1px solid #e17a7a;border-radius:12px;background:#251517f5;color:#fff0f0;box-shadow:0 16px 48px #000b;pointer-events:auto;touch-action:pan-y}
+#errorHeader{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+#errorActions{display:flex;gap:6px;flex-wrap:wrap}
+#errorActions button{min-height:42px;min-width:52px;padding:7px 10px;font-size:12px;touch-action:manipulation}
+#errorActions #retryError[hidden]{display:none}
+#errorHint,#copyErrorStatus{margin:0;color:#f1caca;font-size:12px;line-height:1.35}
+#copyErrorStatus{min-height:1.2em;color:#d9e8f1}
+#errorDetails{flex:1;min-height:0;margin:0;padding:9px;border-radius:7px;background:#140e0f;color:#fff1f1;white-space:pre-wrap;overflow:auto;overflow-wrap:anywhere;font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;user-select:text;-webkit-user-select:text;touch-action:pan-y}
 /* Thumb joystick: center spring, walk ring and sprint rim. Landscape safe area. */
 #movementStick{position:relative;display:block;width:144px;height:144px;min-width:144px;flex:none;border-radius:50%;border:2px solid #90a5b89c;background:radial-gradient(circle at center,#263a4a75 0 23%,#14212bc9 25% 64%,#233448dc 65% 100%);box-shadow:inset 0 0 0 2px #b8d4ea18,0 6px 18px #03080ca8;touch-action:none;user-select:none;-webkit-user-select:none;pointer-events:auto;--stick-power:0}
 #movementStick:before{content:"";position:absolute;inset:18%;height:auto;left:18%;right:18%;top:18%;border:1px dashed #98b1c65e;border-radius:50%;transform:none;background:none}
@@ -114,7 +123,14 @@ html,body,#stage,canvas,#controls,#movementStick,#controlsHelp,#controlsGuide{-w
 <p><strong>Fire:</strong> tap the current aim point again, or hold the crosshair button.</p>
 <p><strong>Reload:</strong> pull the magazine down. Use the stance buttons to kneel or stand.</p>
 </aside>
-<div id="error"></div><div id="rotateNotice">Rotate your phone to landscape to view the port prototype.</div>
+<section id="error" role="alert" aria-labelledby="errorTitle" hidden>
+ <header id="errorHeader"><strong id="errorTitle">Something went wrong</strong><div id="errorActions">
+  <button id="copyError" type="button">Copy details</button><button id="retryError" type="button" hidden>Retry Mission</button><button id="dismissError" type="button">Close</button>
+ </div></header>
+ <p id="errorHint">You can scroll through the full details or copy them and paste them into ChatGPT.</p>
+ <pre id="errorDetails" tabindex="0" aria-label="Error details"></pre>
+ <p id="copyErrorStatus" role="status" aria-live="polite"></p>
+</section><div id="rotateNotice">Rotate your phone to landscape to view the port prototype.</div>
 <div id="controls"><div class="cluster"><div id="movementStick" role="group" tabindex="0" aria-label="Movement joystick. Push left or right to walk; push past the rim to sprint. Push up or down to aim. Release to stop."><span class="stick-thumb" aria-hidden="true"></span><span class="stick-label" aria-hidden="true">MOVE</span></div></div><div class="cluster"><button id="magazineTouch" type="button" aria-label="M4 magazine ammunition unavailable"><span class="mag-body"><img class="mag-image" data-mag-image alt="" draggable="false"><span class="mag-window" data-mag-rounds aria-hidden="true"></span><span class="mag-count" data-mag-count aria-hidden="true">–</span></span></button><button id="kneel" class="action-icon" data-action="kneel" aria-label="Kneel" title="Kneel"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="18" cy="5" r="3"/><path d="M17 9l-6 7 8 3 5 8M11 16l-6 9h9M19 19h9"/></svg></button><button id="stand" class="action-icon" data-action="stand" aria-label="Stand up" title="Stand"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="5" r="3"/><path d="M16 9v10m0-7-7 6m7-6 7 6m-7 1-6 10m6-10 6 10"/></svg></button><button id="fire" class="action-icon" data-action="fire" aria-label="Hold to fire" title="Fire"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="9"/><circle cx="16" cy="16" r="3"/><path d="M16 1v7m0 16v7M1 16h7m16 0h7"/></svg></button></div></div>
 <script type="module">
 
@@ -136,7 +152,7 @@ import { posePosition } from "./animation-pose.mjs";
 import { SourceCharacterAnimator } from "./source-character-animator.mjs";
 
 const weaponStatus=document.querySelector("#weaponStatus"),startOriginalMissionButton=document.querySelector("#startOriginalMission");
-const stage=document.querySelector("#stage"), status=document.querySelector("#status"), positionLabel=document.querySelector("#position"), errorBox=document.querySelector("#error");
+const stage=document.querySelector("#stage"), status=document.querySelector("#status"), positionLabel=document.querySelector("#position"), errorBox=document.querySelector("#error"),errorDetails=document.querySelector("#errorDetails"),errorHint=document.querySelector("#errorHint"),copyErrorStatus=document.querySelector("#copyErrorStatus"),retryErrorButton=document.querySelector("#retryError");
 const scene=new THREE.Scene(); scene.background=new THREE.Color(0x11151b);
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false}); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(innerWidth,innerHeight); renderer.outputColorSpace=THREE.SRGBColorSpace; stage.appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xe8f0ff,0x55505a,2.0));
@@ -148,7 +164,20 @@ const character=new THREE.Group();character.name="Original Operator prefab";scen
 const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(2,0,0),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,contactPhysicsModule=null,contactPhysicsData=null,physicsState=null,physicsTime=0,sprintBlend=0,gaitPhase=0,upperBody=null,presentationData=null,weaponData=null,ballisticsData=null,hasAimPointer=false,aimDirty=false,aimGeneration=0,settledAimGeneration=-1,tapPending=0,tapFrame=false,reloadPending=false,weaponState=null,handRenderers=null,armRig=null,sourceActorMode=false,sourceActorSnapshot=null,projectFullSourceSnapshot=()=>{};const lockedAim=new AimDirection(),aimFireGate=new AimFireGate();
 const loadStart=performance.now(),loadingTimings={};window.__loadingTimings=loadingTimings;
 const markLoaded=name=>loadingTimings[name]=performance.now()-loadStart;
-function showError(e){errorBox.style.display="block";errorBox.textContent=String(e?.message||e)+"\n"+String(e?.stack||"");status.textContent="Build failed to load; see error details."}
+function showError(e,{retry,hint}={}){
+ const message=String(e?.message||e),stack=String(e?.stack||"");
+ errorDetails.textContent=stack&& !stack.includes(message)?`${message}\n${stack}`:stack||message;
+ errorBox.hidden=false;copyErrorStatus.textContent="";errorHint.textContent=hint||"You can scroll through the full details or copy them and paste them into ChatGPT.";
+ retryErrorButton.hidden=typeof retry!=="function";
+ retryErrorButton.onclick=typeof retry==="function"?()=>{errorBox.hidden=true;retry();}:null;
+ status.textContent=hint||"Something went wrong. Open the error panel to copy the details.";
+}
+document.querySelector("#copyError").addEventListener("click",async()=>{
+ const text=errorDetails.textContent;
+ try{if(!navigator.clipboard?.writeText)throw new Error("Clipboard API unavailable");await navigator.clipboard.writeText(text);copyErrorStatus.textContent="Copied. Paste the details into ChatGPT.";}
+ catch{const selection=window.getSelection(),range=document.createRange();range.selectNodeContents(errorDetails);selection?.removeAllRanges();selection?.addRange(range);copyErrorStatus.textContent="Details selected. Long-press and choose Copy, then paste them into ChatGPT.";}
+});
+document.querySelector("#dismissError").addEventListener("click",()=>{errorBox.hidden=true;copyErrorStatus.textContent="";});
 const rawActions={left:false,right:false,sprint:false,fire:false,kneel:false,stand:false,magazine:false,switchWeapons:false};
 const input = new BrowserInput({onPress(action){if(action==="magazine")reloadPending=true;},onChange(action,pressed){rawActions[action]=pressed;document.querySelector(`[data-action="${action}"]`)?.classList.toggle("active",pressed)}});
 const magazineHud=createOriginalM4MagazineHud(document.querySelector("#magazineTouch"),{onReload:()=>{reloadPending=true;}});
@@ -398,7 +427,7 @@ async function load(){
   window.__gameState=()=>({loaded,originalInputActive:!!runtimeCall,originalInput:originalInputState,playerX,playerY,velocity,pelvisLocalPosition:nodeByPath.get("Pelvis").position.toArray(),physics:physicsState,physicsTime,sprintBlend,gaitPhase,loadingTimings,presentation:upperBody.snapshot(),originalPhysicalArms:armRig?.snapshot(),originalHands:handRenderers?.snapshot(),projection:{type:camera.type,fov:camera.fov,near:camera.near,far:camera.far,position:camera.position.toArray()},facingDirection,aimPoint:[aimPoint.x,aimPoint.y,physicsState.z],aimFireLocked:aimFireGate.locked,limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,weaponActionsImplemented:true,weaponState,aimDirection:lockedAim.vector,weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
   status.textContent="Original C# camera and arm IK · tap or drag to aim; tap same spot to fire.";
   positionLabel.textContent="Walk 1.5 m/s · Sprint 4.2 m/s · original spawn X −3";
-  startOriginalMissionButton.addEventListener("click",async()=>{
+  const startOriginalMission=async()=>{
    startOriginalMissionButton.disabled=true;sourceActorMode=false;
    try{
     status.textContent="Downloading the original Mission, UI and Operator dependencies…";
@@ -415,8 +444,9 @@ async function load(){
     status.textContent=`EntryTeam Mission ready · ${session.sourceActors} original actors · ${(delivery.compressedBytes/1048576).toFixed(1)} MiB verified`;
     positionLabel.textContent="Original Mission · source actor and weapon callbacks";
     window.__fullSourceMission={delivery,session:{mission:session.mission.scene,actor:session.actor,sourceActors:session.sourceActors}};
-   }catch(error){sourceActorMode=false;startOriginalMissionButton.disabled=false;status.textContent="Original Mission did not start; the lightweight scene remains active.";showError(error);}
-  });
+   }catch(error){sourceActorMode=false;startOriginalMissionButton.disabled=false;showError(error,{hint:"Original Mission did not start; the lightweight scene remains active.",retry:()=>{startOriginalMissionButton.hidden=false;startOriginalMissionButton.click();}});}
+  };
+  startOriginalMissionButton.addEventListener("click",startOriginalMission);
   startOriginalMissionButton.disabled=false;
  }catch(e){showError(e)}
 }
