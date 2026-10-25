@@ -77,6 +77,11 @@ public static class BrowserEntryTeamMission
             .SetValue(context.OperatorSpawnData, team);
 
         SceneLoadResult mission = SceneLoader.Load(package, "Assets/Scenes/Mission 01.unity", world);
+        // The Global Context prefab only contains the boot-time clips. Mission
+        // scene clips are part of the same already verified source package and
+        // must be marked available before original actors can emit footsteps,
+        // weapon, or equipment one-shots during source ticks.
+        foreach (var clip in world.Objects.OfType<AudioClip>()) clip.ReportLoadState(AudioDataLoadState.Loaded);
         var missionRoot = world.Objects.OfType<Mission>().Single();
         missionRoot.sandboxStartMode = Mission.MissionView.EntryTeam;
         world.Objects.OfType<MissionUI>().Single().missionIntro = null;
