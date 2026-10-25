@@ -3,42 +3,41 @@
 ## Exact pushed checkpoint
 
 - Branch: `develop/wasm`.
-- Remote implementation commit: `0fdc57e2b1e39962c0b006961cbe6f6072db36a9`; pushed through the GitHub Git Data API with an expected-head lease from `5cdfcff7a0a3504b81b2b59fe66372b5c82ad4de`.
-- Local checkout is synchronized to that remote head and clean before this handoff edit. The remote implementation commit contains three ordered commits: particle callback transport, reuse of a verified bounded profile when the raw archive is incomplete, and this batch's preceding handoff.
-- Package/build manifest was produced from exactly `0fdc57e2b1e39962c0b006961cbe6f6072db36a9`. Manifest SHA-256: `a16aa1832b3a11a6755ee5c27b397d265e20dbd4e1de7411de566dc58474538f`.
+- Source commit: `1a87525f00a392407c3cff657169f654455185ab` (`Preserve verified prefab asset identity in particle events`); local checkout and `origin/develop/wasm` are synchronized and clean before this handoff edit.
+- Release WASM output was built from that exact source commit with .NET SDK `8.0.426`.
+- Exact source package: `/tmp/cpr-particle-site-package-1a87525`.
+- Build manifest SHA-256: `b09ddb4091647669a3ba0db65cca17ba10cc1fce10223530561fcdbac59107ca`.
+- Package integrity verification passed: 2,679 files, 199 Blazor resources, 195 WASM files, and the bounded `global-ui-mission-operator` profile (1,919 assets; 97,767,549 compressed bytes / 205,514,345 source bytes). Scene smoke data is excluded.
 - No Site version was saved or deployed in this batch.
 
 ## Completed this batch
 
-1. Completed and hash-pinned the bounded Mission particle dependency inventory: 51 ParticleSystems/renderers in 27 prefabs, 32 systems in the Mission scene GUID closure, 19 more in 9 dynamically referenced prefabs, plus the complete material, texture, mesh, shader, module, curve, burst and owner-reference records. Human and machine-readable inventories are in `docs/MISSION_PARTICLE_DEPENDENCY_CLOSURE_2026-10-25.md` and `docs/mission-particle-dependency-inventory-2026-10-25.json.gz`.
-2. Bound `BrowserParticleEventQueue` before the incremental source scene loads. Source `Emit`, `Simulate` and `Play` callbacks reach FullSource actor snapshots with Unity time, source component GUID/file ID/path/hash, hierarchy, pose and bounded-drop accounting. Prefab clones retain original component identity.
-3. The exact Mission source contract fired the original M4 and verified particle-command provenance and clock. It observed 1 particle event and 0 dropped requests, along with the weapon audio, casing force/torque and PhysX round trip.
-4. Fixed package profile closure: the compact raw scene archive lacks `Assets/Resources/Version.prefab`, while the already integrity-checked version-62 bounded profile contains it. `package_wasm_site.py` can now reuse and re-verify the prebuilt profile instead of generating an incomplete closure from the archive.
+1. Completed the particle dependency inventory before rendering work: 51 ParticleSystems/renderers in 27 prefabs; 32 systems in the Mission scene GUID closure and 19 in 9 dynamically referenced prefabs; material, texture, mesh, shader, module, curve, burst, and owner-reference dependencies are recorded in [`docs/MISSION_PARTICLE_DEPENDENCY_CLOSURE_2026-10-25.md`](docs/MISSION_PARTICLE_DEPENDENCY_CLOSURE_2026-10-25.md) and `docs/mission-particle-dependency-inventory-2026-10-25.json.gz`.
+2. Wired FullSource `Emit`, `Simulate`, and `Play` callbacks from the source actor snapshot into the browser particle observer. Commands carry source time, GUID, file ID, asset path, verified source-asset SHA-256, hierarchy, world pose, and bounded-drop accounting. Clones preserve source provenance.
+3. Closed the hidden source-asset-hash gap. `SceneLoader` resolves the containing verified source prefab's SHA-256 and GUID for each prefab component, and clones retain that identity. The browser observer validates the source asset hash. The real Mission fire-input contract now verifies this identity on an actual M4 particle command.
 
-## Verification evidence for `0fdc57e2b1e39962c0b006961cbe6f6072db36a9`
+## Verification evidence for `1a87525f00a392407c3cff657169f654455185ab`
 
-- SDK `8.0.426`; pinned SDK archive SHA-256 `bb691c98abc8797eedbd48d3a766bc734214aed746e52e2691d8bbb268c60764`; process-stat shim `/tmp/libprocshim.so` used as documented in `docs/DOTNET_BUILD_RUNBOOK.md`.
 - Full runtime Release build: **0 errors, 48 existing warnings**.
-- Release Browser WebAssembly publish: exit 0. The only publish note was optional `wasm-tools` optimization unavailable.
-- EngineChecks: **73 passed**.
-- FullSource Mission actor/weapon contract against the exact version-62 bounded profile: **passed**, including a real shot, 1 particle event with original GUID/fileID/path, zero drops, original weapon clips, casing callbacks, and physics state round trip.
-- Python: **41 passed**. Node: **97 passed**. Particle inventory Node regression: **4 passed**. The exporter reproduced decompressed inventory SHA-256 `636935d6bf545dd0bf3610008bbc8759fae1fc765553852b8110da9eacc82407`.
-- Release package independently verified from the pushed SHA: **2,679 files**, 199 Blazor resources, 195 WASM files, 1,919 source assets (**97,767,549 compressed / 205,514,345 uncompressed bytes**). The 6 original casing dependency hashes and all packaged files/resources passed integrity checks.
-
-## Release/acceptance status
-
-- Callback transport is implemented; **particle module simulation and rendering remain open**. The browser binder is still impact-only (14 prefabs / 26 systems) and reports zero rendered particles. Do not describe this batch as visual particle parity.
-- Browser/WebGL PhysX smoke and physical iPhone Safari acceptance were not run. Do not claim either passed.
-- The Site remains private at version 62; owner-only access was verified. Its configured source repository is a separate `cloudflare_artifact` repository on branch `main`. This pushed `develop/wasm` commit is not that branch's source head, and the Site credential response had `publish_on_push_accepted=false`. Do not save/deploy the GitHub archive under a mismatched Site source commit. Sync and build the chosen source through the Site repository workflow before a later private deployment.
+- Release Browser WebAssembly publish: **exit 0**. Optional `wasm-tools` optimization was unavailable; publish completed without it.
+- FullSource Mission actor/weapon firing contract against `/tmp/cpr-incremental-mission-profile-v3`: **passed**. It produced one source shot and one particle event, verified the source asset SHA/GUID/file ID/path and source clock, dropped zero particle events, and passed audio, casing force/torque, movement, absolute-aim, and physics-state round-trip assertions.
+- Node: **100 passed**. Python: **43 passed**. EngineChecks: **73 passed**. FoundationChecks: **121 passed**.
+- Package build and independent verification passed for the exact commit and manifest above.
 
 ## Remaining gates in dependency order
 
-1. **Finish particle rendering.** Use the complete inventory to implement source module evaluation (curves, bursts, shape, color, lifetime, time scale, pause and cleanup), all 51 systems and 27 owner paths, renderer modes 0/1/4, materials/textures/meshes, and explicit built-in shader/mesh handling. Add contracts for each original emission path before claiming rendered parity.
-2. **Synchronize and publish the exact checked build.** Push the selected code tree through the Site's own `main` source workflow, build/package from that pushed commit, verify package integrity, and deploy only that saved private version. Preserve the current owner-only audience.
-3. **Browser acceptance on the exact deployed package.** Exercise normal Mission and memory route, asset delivery completion, actual particle drawing, WebGL and physics/casing behavior. Browser automation binaries were unavailable in this batch; use them if the next environment provides the supported runner.
-4. **iPhone Safari acceptance.** On that exact deployed version, check the full profile, memory, movement/sprint wall, absolute aim, weapon/audio timing and ceiling, zoom resistance and error readability.
-5. **Remaining gameplay parity and completion.** Before each implementation batch, inventory the complete source closure for projectile/damage, ragdoll/joints, NPC behavior, remaining animation/IK, and interaction/menu systems. Then rebuild and integrity-check the exact source package; report measured parity and exclusions.
+1. **Original particle simulation and rendering.** The browser module currently observes commands and honestly reports `renderedParticles: 0` / `sourceVisualParity: false`. Use the completed 51-system dependency inventory to implement and contract enabled modules, curves, bursts, shape, color, lifetime, source time scale/pause/cleanup, all owner paths, billboard/mesh renderer modes (0/1/4), source materials/textures/meshes, and built-in shader/mesh behavior. Verify each original emission path before claiming visual parity. Keep unsupported source behavior explicit.
+2. **Site source synchronization and exact private deployment.** The Site is owner-private at version 62 and its configured source is a separate `cloudflare_artifact` repository on branch `main`, with automatic publish disabled. The GitHub `develop/wasm` commit is not that Site branch's source commit. Locate the supported Sites source-workflow helper, synchronize the selected code into Site `main`, build/package from that resulting source commit, verify integrity, then save/deploy the matching private version. Preserve the owner-only audience.
+3. **Browser acceptance on that exact deployed package.** Exercise normal Mission startup, full and bounded memory routes, asset delivery completion, particle drawing, WebGL, physics/casings, input, audio, and readable error handling with a supported browser runner.
+4. **Physical iPhone Safari acceptance on the same version.** Check full profile completion and memory, joystick walk/sprint resistance, absolute aim, weapon/audio timing and ceiling, tap-zoom resistance, and error readability.
+5. **Remaining gameplay parity.** Inventory each complete source dependency closure before implementation batches for projectile/damage, ragdoll/joints, NPC behavior, remaining animation/IK, and interactions/menus. Run the affected source contracts, rebuild the exact package, and record measured parity and exclusions.
+
+## Concrete blockers and constraints
+
+- The Site's code source is the separate Site-owned `cloudflare_artifact` repo; direct publication of the GitHub archive would have a mismatched source identity. The Site source helper is not present in the current workspace, so no Site sync or deployment was attempted.
+- Automated Playwright/browser binaries and physical iPhone Safari are unavailable in this environment. Those acceptance gates need the supported browser runner and the user's device.
+- Native Unity particle module rendering and full source visual parity are not implemented yet; do not treat callback transport as rendered effects.
 
 ## Immediate next action
 
-Continue from `develop/wasm` at `0fdc57e2b1e39962c0b006961cbe6f6072db36a9`: implement source-driven particle module simulation and rendering over the completed 51-system/27-prefab dependency inventory. Keep the Site publication gate separate until its own source branch matches the tested archive.
+Continue on `develop/wasm` after this handoff commit. Start with the inventoried particle simulation/rendering dependencies in gate 1. Keep Site sync/deployment blocked until its supported source workflow is available; then rebuild and verify from the exact Site-owned source commit before saving a private version. Update this file with the exact new commit, tests, package manifest digest, and next dependency-ordered action.
