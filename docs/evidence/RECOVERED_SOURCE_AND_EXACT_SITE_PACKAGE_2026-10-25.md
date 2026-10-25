@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 7430)
+Total output lines: 434
+
 # Recovered Mission source and exact Site package — 2026-10-25
 
 ## Recovery inputs
@@ -238,35 +241,7 @@ Site version
 deployed successfully as `appgdep_6ade453e1bc88191ab7fa788db01b156`. Owner
 role and custom/one-user access were confirmed before deployment; audience
 settings did not change. The FullSource Mission audio driver remains silent by
-design; original source AudioSource-to-browser event delivery is the next
-audio parity gate.
-
-## FullSource AudioSource bridge and Site version 54
-
-At exact game source commit `b159d007ccd4574c8d7f420388631ae31b40d916`, the
-opt-in FullSource Mission installs a bounded browser audio event driver for all
-original `AudioSource` objects. Source one-shots retain clip path, volume, and
-`Time.time`; the actor bridge drains events with each source tick. Browser
-playback resolves the original clip path to the existing weapon manifest and
-rejects stale, suspended, or unloaded shots immediately. The source gunfire
-clip path `Assets/AudioClip/5.56x45mm-01-unsuppressed.wav` matches the browser
-`audioFire` entry exactly. Unsupported loop/play/stop routing and unknown
-source clips are counted, not substituted.
-
-The source Mission contract passed with bounded 64-event queue behavior and
-one dropped overflow event. Node passed **85/85**, Python **39/39**, isolated
-EngineChecks **69**, and FoundationChecks **121**. Browser Release publish
-succeeded with zero errors; the optional `wasm-tools` workload was unavailable.
-The first package attempt exposed a missing generated PhysX adapter in the
-fresh worktree. Running `npm ci --prefix game --ignore-scripts` and
-`npm run --prefix game vendor` restored the lockfile-pinned 2.7.3 dependency;
-no project source change was needed for that environment setup.
-
-Exact package verification passed at game source SHA
-`b159d007ccd4574c8d7f420388631ae31b40d916`; manifest SHA-256 is
-`157efaf1b376dacb88fbadf973c10301bbb5564dd8078996d986f2d51478a7c5`. The
-package contains 2,674 files, 199 Blazor resources, 195 WASM files, and 1,919
-source assets (97,767,549 compressed bytes; 205,514,345 source bytes). Sites
+design; ori…430 tokens truncated…urce bytes). Sites
 artifact tests passed **36/36**. The artifact repo commit is
 `684ffbddc2d9fe1846563105407ab1c231b42de8`; its archive SHA-256 is
 `0dbfc4fdc6f24941106a5f6c3ad88511b6132431754a379126bfee95d04c2052`. Streaming
@@ -422,3 +397,13 @@ The exact-site package verifier passed for source `f8a4be5`: manifest SHA-256 `8
 Site version **59** (`appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_65e4632e53e8819182bf3cfb91836450`) deployed successfully as `appgdep_6ade54d6735c8191a3526b133d2271e3` on 2026-10-25 to `https://crisis-response-runtime.craftysnipe13.chatgpt.site`; the Site remains owner-only/custom. Sites reports stored archive metadata hash `sha256:9d5c3d1e4bc9ec71b8c0ad69ab87ba21151ca34ee1093b7ef4acdc8327e82342` for 2,676 archived files; that is distinct from the local compressed tarball SHA above. The first post-deploy 15-minute error-only Worker query returned zero events, without request/session evidence.
 
 The iPhone memory report has not yet been rerun against version 59. The CUA browser session could not be inspected because it exceeded the native message-frame limit; the prior WebGL-disabled and missing Chromium blockers also remain. Current loader behavior is already bounded: six in-flight fetches, hash verification for compressed and decompressed bytes, ordered one-at-a-time .NET asset delivery, cancellation checks, and slowest fetch/bridge timing. Do not change concurrency based on guesswork; use the next iPhone report to target the observed tail.
+
+## Bounded memory sampling and Site version 60
+
+The first clean hosted browser smoke against Site version 59 confirmed single source delivery: `global-ui-mission-operator` completed all 1,919 assets in 82.8 seconds with zero sample errors. It also exposed a diagnostic payload defect: the memory page sampled on every progress callback, yielding 4,241 samples and a 1,473,134-character report. The CUA accessibility frame overflow happened near completion because it serialized this large textarea; the completed report was copied and parsed, with `error: null`. Peak managed bytes were 205,217,552 in Chrome/Linux (8 GB device-memory hint), not iPhone Safari.
+
+At exact source SHA `b5b22b95b9793e9957efe632c2bb2f6cbc812ce9`, the sampler now waits for package initialization, samples at most once per second, and forces a final sample on both completion and failure. Regression coverage is in `scripts/runtime_memory_check_test.mjs`. Exact-source verification: Node **88/88**, Python **39/39**, EngineChecks **69**, FoundationChecks **121**, Release Browser publish succeeded, and `--browser-entryteam-session-contract` passed. The exact package manifest SHA-256 is `664c70350007a664161f60ace5e3f63f33c4f413afa8769bcdf9748d866b8cfc` (2,674 files; 199 Blazor resources; 195 WASM files; 1,919 Mission assets, 97,767,549 compressed asset bytes and 205,514,345 source asset bytes). Site tests passed **36/36**.
+
+Artifact commit: `f7d9052e454c1dfcc50ab0ada54cf485a360b86f`. Archive `/tmp/cpr-site-runtime-b5b22b9.tar.gz`, local SHA-256 `23c59002bdf24dc4e7c39214e2921e34627bfe3a3e0c4b809985de2e09c11800`; extracted audit matched **2,674/2,674** entries by byte length and SHA-256, zero errors, plus the expected build manifest and hosting descriptor. Site version **60** (`appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_f3b95faad99481918b8ab4e1b7d2fbeb`) deployed successfully as `appgdep_6ade57a06b9c8191b8d7117045458229` on 2026-10-25. The owner-only/custom Site audience was preserved. Worker error-only query over the first 20 minutes returned zero events.
+
+The version 60 hosted Chrome 155/Linux x86_64 smoke completed **1,919/1,919** in **73.786 seconds**, with zero sample errors and `error: null`; it generated **67 samples / 27,486 characters**, down from version 59's 4,241 samples / 1.47 MB. Peak managed bytes were 226,752,560, managed heap 209,453,056, and JS heap 113,379,525. `measureUserAgentSpecificMemory` was unavailable. This confirms the diagnostic sampler and source-delivery path in hosted Chrome only. iPhone Safari timing, the normal Mission renderer/WebGL, gameplay controls, and delayed gun audio remain open.
