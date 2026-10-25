@@ -169,3 +169,37 @@ The existing Site was confirmed custom/owner-only (one user, no groups) before
 deployment and remains so; no audience settings changed. iPhone acceptance is
 still owner-run. Record delivery of asset 1,919, load time, stalled range if
 any, and memory before making a performance claim.
+
+## Absolute FullSource aim contract and Site version 52
+
+The source-side Mission contract was extended and pushed at game source SHA
+`fb966cbf277ffe071d9d31a3360e4063834c2eef`. It asserts the browser source
+actor keeps `WeaponPointer`'s screen-ray updater disabled, sets a fixed
+absolute world point, ticks left then right movement with browser mouse X at
+opposite extremes, and verifies the original pointer retains the same world
+target. This confirms source movement and browser mouse X cannot overwrite the
+absolute target in the FullSource bridge.
+
+At this exact source tree, Node checks passed **81/81**, Python checks passed
+**39/39**, and `--browser-entryteam-session-contract` passed with analog
+movement, absolute aim, original input, and PhysX state round trip. Browser
+Release publish passed with zero errors (optional wasm-tools optimization was
+unavailable). Exact package build and independent verification passed; source
+SHA is `fb966cbf277ffe071d9d31a3360e4063834c2eef`, manifest SHA-256 is
+`587b94e77dcfa6573ffc6212b7d4c0535f5199b07d7886553f2dd2451841b42c`.
+
+The Site artifact repository is at commit
+`9c9cc86533dec18147bf6c40a3aab0747eb9d138`; the archive SHA-256 is
+`47bdb1c9f3be61efb548e31790fe5c412c0d109a3296a0c22c351193b1c7af51`. A
+streaming audit verified all 2,673 manifest files, sizes, and SHA-256 values,
+with no unexpected payload entries. Site version
+`appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_6e4944b82db0819198d0195173569abe`
+deployed successfully as `appgdep_6ade43c2850081918d427bb426ce45ba`. The Site
+was confirmed owner-only before deployment and its audience did not change.
+
+The gun-audio follow-up remains: normal page playback has a bounded Web Audio
+path that rejects suspended, unloaded, and stale events and applies gain plus
+compression, while the FullSource Mission test driver is intentionally silent.
+Add deterministic tests around those guarantees, then continue source-owned
+audio/event integration. Owner iPhone acceptance must still reproduce or
+clear the delayed, loud, out-of-sync shot report.

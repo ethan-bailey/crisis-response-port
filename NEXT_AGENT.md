@@ -2,74 +2,71 @@
 
 ## Verified checkpoint
 
-- Development branch: `develop/wasm`; exact pushed game source SHA:
-  `f7d96a413f05c7106c9f57de4c646cdbef3309b3`.
-- The current batch connects the eased touch-stick walk magnitude to the
-  original FullSource `CharacterBody` movement cap. The browser passes the
-  bounded magnitude to the bridge; the bridge retains it across source fixed
-  steps, restores authored walk/sprint speeds in `finally`, and exposes the
-  active cap in its snapshot. The Mission contract verifies a 0.5 magnitude
-  produces a sub-60%-of-full-walk acceleration and preserves authored speed.
-- Exact Mission UI/source actor contract passed, including original input
-  press/release, movement force, analog movement magnitude, and PhysX position /
-  velocity round trip. Browser input tests already verify vertical stick aim
-  stays unchanged when horizontal movement changes and that horizontal stick
-  does not change the aim axis.
-- At `f7d96a4`, Node checks passed **81/81**, Python checks **39/39**; Browser
-  Release publish succeeded with zero errors. The optional wasm-tools optimizer
-  is unavailable in this environment. Package build and independent verify
-  passed at the exact source SHA; manifest SHA-256:
-  `09c660d5e426f656c95fea1daf31363371e8e3b8e689a42a5b01e8a2084e89f2`.
-- Exact package: 2,673 files, 199 Blazor resources, 195 WASM files, 1,919
-  profile assets; 97,767,549 compressed asset bytes and 205,514,345 source
-  bytes. Separate archive audit verified every packaged file's size and hash.
-- Site artifact-repository commit:
-  `563963f14b613eb85df2992e35db1984e66e6cf2`; archive SHA-256:
-  `e803b0e5a21eac7c42d2a5cd70d98a7284ac464a14aa37abab3840a1858e2396`.
-  Exact package is deployed privately as Site version
-  `appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_1b4447e9d2608191a24b97b6ad379ee0`,
-  deployment `appgdep_6ade425248d88191b7d5129cc459a5c5` (succeeded). The Site
-  remains custom/owner-only (one user, no groups); its audience was not changed.
-- Full checkpoint evidence is in
+- Development branch: `develop/wasm`; exact pushed source SHA:
+  `fb966cbf277ffe071d9d31a3360e4063834c2eef`.
+- FullSource actor mode receives the eased touch-stick movement magnitude.
+  The bridge carries it across delayed fixed steps, scales original
+  `CharacterBody` walk/sprint caps, then restores authored speeds in `finally`.
+  The Mission contract confirms half magnitude yields less than 60% of full
+  walk force and authored speeds are restored.
+- The absolute-aim source contract passes. It fixes `WeaponPointer.WorldPoint`
+  and ticks left/right movement with browser mouse X at both extremes; the
+  chosen world target remains unchanged. Existing browser-input tests verify
+  vertical joystick aiming remains independent of horizontal travel.
+- Exact Mission UI/source actor contract passed for source input press/release,
+  movement force, analog movement, absolute aim, and PhysX position/velocity
+  round trip. Node passed **81/81** and Python passed **39/39** at this source
+  tree. Browser Release publish succeeded with zero errors; optional
+  `wasm-tools` optimization was unavailable.
+- Package build and independent verify passed at this exact source SHA.
+  Manifest SHA-256:
+  `587b94e77dcfa6573ffc6212b7d4c0535f5199b07d7886553f2dd2451841b42c`.
+  Package contains 2,673 files, 199 Blazor resources, 195 WASM files, and
+  1,919 Mission profile assets (97,767,549 compressed bytes; 205,514,345
+  source bytes). A separate streaming archive audit verified every manifest
+  file size and SHA-256.
+- Sites source commit:
+  `9c9cc86533dec18147bf6c40a3aab0747eb9d138`; archive SHA-256:
+  `47bdb1c9f3be61efb548e31790fe5c412c0d109a3296a0c22c351193b1c7af51`.
+  Deployed privately as version
+  `appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_6e4944b82db0819198d0195173569abe`,
+  deployment `appgdep_6ade43c2850081918d427bb426ce45ba` (succeeded) at
+  `https://crisis-response-runtime.craftysnipe13.chatgpt.site`. Before deploy,
+  Sites confirmed owner role and custom access with one allowed user and no
+  groups; no audience settings changed.
+- Detailed recovery and integrity evidence:
   `docs/evidence/RECOVERED_SOURCE_AND_EXACT_SITE_PACKAGE_2026-10-25.md`.
 
 ## Remaining gates — dependency order
 
-1. **iPhone acceptance (owner-run, independent of source work):** on the
-   private Site, tap Start once, let the Mission load, and use Copy report.
-   Capture whether asset 1,919 arrives, total time, stalled asset range, and
-   memory. Diagnostics now separate fetch/hash, base64, and WASM bridge time.
-   Do not treat the earlier “Warning: truncated output” image as a Site error;
-   it was the ChatGPT display truncation banner.
-2. **Finish page-to-source actor ownership:** continue auditing the opt-in
-   source mission's input, absolute aim, fire/reload, movement, physics, pose,
-   and effects paths. Keep normal startup and its transport weapon host
-   separately identified until the actor integration is complete. Add focused
-   source-contract evidence for each migrated edge.
-3. **Audio playback parity:** the page's current Web Audio adapter drops stale,
-   unloaded, or suspended one-frame events and clamps output through a gain and
-   compressor. The FullSource Mission harness itself deliberately binds silent
-   audio drivers. Preserve the user's delayed / excessively loud / unsynced
-   iPhone report as an acceptance case; after the current actor ownership
-   section, wire the original actor callbacks into the bounded browser audio
-   path and verify that exact failure case.
-4. **Gameplay parity:** native PhysX solve, rendered pixels, animation/IK,
-   source NPC/component coverage, projectiles and original effects still need
-   their own evidence. Playwright/browser binaries and iPhone automation are
-   not available here; use source tests/builds in the meantime and defer only
-   the device-dependent acceptance.
-5. **Release closure:** after any source edit, commit and push to
-   `develop/wasm`, run the regression gates, publish Browser Release, rebuild
-   and independently verify the exact package, then refresh the Site archive
-   from that package. Deploy only after source and archive integrity pass; keep
-   the existing owner-only audience.
+1. **iPhone acceptance:** On the owner-private Site, tap Start once and let
+   Mission load. Use Copy report and capture asset 1,919 completion, total
+   time, stalled range, and memory. Diagnostics split fetch/hash, base64, and
+   WASM bridge costs. The earlier “Warning: truncated output” image was a
+   ChatGPT display truncation banner, not a game exception.
+2. **Source actor ownership:** Continue parity audit of fire/reload, physics,
+   pose/IK, rendering, and effects. Opt-in FullSource Mission uses source
+   movement/weapon callbacks; default page startup still uses browser movement
+   and the transport weapon host. Add source contracts for migrated edges.
+3. **Gun audio:** Browser Web Audio currently drops stale, unloaded, or
+   suspended one-frame events and clamps output through gain/compression. The
+   FullSource harness intentionally binds silent audio drivers. Preserve the
+   user's delayed, loud, unsynced gunshot report as the iPhone acceptance case.
+   Audit the event path and add a contract for stale/suspended/late playback,
+   then wire original actor events into the browser audio path.
+4. **Gameplay parity:** Native PhysX solve, rendered pixels, animation/IK,
+   source NPC/component coverage, projectile behavior, and original effects
+   need separate source-backed evidence. Playwright/browser binaries and
+   iPhone automation are unavailable here; continue all independent checks.
+5. **Release closure:** After each source change, commit/push `develop/wasm`,
+   run regression checks, publish Browser Release, rebuild and independently
+   verify the exact package/archive, then deploy. Preserve the owner-only
+   audience.
 
-## Next action for the scheduled continuation
+## Next action
 
-Add a source-side absolute-aim contract: set a fixed world aim point, tick the
-source actor while moving left/right and with different browser mouse X values,
-then assert the original `WeaponPointer.WorldPoint` remains the chosen absolute
-point. If the contract exposes an overwrite, fix the ordering and re-run the
-Mission UI and input contracts. Regardless of owner-run iPhone acceptance,
-continue the next independent source-actor ownership edge; do not stop at a
-deferred gate.
+Audit browser gun-audio callbacks and add deterministic checks for the existing
+stale-event rejection, suspended-context rejection, and output ceiling before
+changing playback. Then keep moving through source-actor ownership and gameplay
+parity; defer only the physical-device acceptance, never the independent code
+work.
