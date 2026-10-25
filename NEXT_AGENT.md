@@ -1,91 +1,75 @@
 # Current handoff — 2026-10-25
 
-## Checkpoint
+## Verified checkpoint
 
-- Branch: `develop/wasm`; current pushed source SHA:
-  `d65f867d0dca48205b3b50e6133b76251fc189ba`.
-- This source adds per-asset transfer and WASM bridge timings, visible transfer
-  stages, a top-slowest-assets report, and a copyable diagnostic report. Exact
-  package and Site archive were verified and deployed to the existing private
-  Site as version 50. No Site audience change was made.
-- Full source identities, package hashes, Site source commit, deployment ID,
-  and tests are recorded in
+- Development branch: `develop/wasm`; exact pushed game source SHA:
+  `f7d96a413f05c7106c9f57de4c646cdbef3309b3`.
+- The current batch connects the eased touch-stick walk magnitude to the
+  original FullSource `CharacterBody` movement cap. The browser passes the
+  bounded magnitude to the bridge; the bridge retains it across source fixed
+  steps, restores authored walk/sprint speeds in `finally`, and exposes the
+  active cap in its snapshot. The Mission contract verifies a 0.5 magnitude
+  produces a sub-60%-of-full-walk acceleration and preserves authored speed.
+- Exact Mission UI/source actor contract passed, including original input
+  press/release, movement force, analog movement magnitude, and PhysX position /
+  velocity round trip. Browser input tests already verify vertical stick aim
+  stays unchanged when horizontal movement changes and that horizontal stick
+  does not change the aim axis.
+- At `f7d96a4`, Node checks passed **81/81**, Python checks **39/39**; Browser
+  Release publish succeeded with zero errors. The optional wasm-tools optimizer
+  is unavailable in this environment. Package build and independent verify
+  passed at the exact source SHA; manifest SHA-256:
+  `09c660d5e426f656c95fea1daf31363371e8e3b8e689a42a5b01e8a2084e89f2`.
+- Exact package: 2,673 files, 199 Blazor resources, 195 WASM files, 1,919
+  profile assets; 97,767,549 compressed asset bytes and 205,514,345 source
+  bytes. Separate archive audit verified every packaged file's size and hash.
+- Site artifact-repository commit:
+  `563963f14b613eb85df2992e35db1984e66e6cf2`; archive SHA-256:
+  `e803b0e5a21eac7c42d2a5cd70d98a7284ac464a14aa37abab3840a1858e2396`.
+  Exact package is deployed privately as Site version
+  `appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_1b4447e9d2608191a24b97b6ad379ee0`,
+  deployment `appgdep_6ade425248d88191b7d5129cc459a5c5` (succeeded). The Site
+  remains custom/owner-only (one user, no groups); its audience was not changed.
+- Full checkpoint evidence is in
   `docs/evidence/RECOVERED_SOURCE_AND_EXACT_SITE_PACKAGE_2026-10-25.md`.
-- The slow tail and iPhone Safari acceptance remain unmeasured; diagnostics
-  now identify whether network/hash or WASM interop time dominates. Keep the
-  transfer budget and integrity checks until device data supports an
-  optimization.
 
-## Gates closed
+## Remaining gates — dependency order
 
-- Recovery archive SHA-256:
-  `cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d`.
-  It contains original Mission 01 and Marksman range scenes, Global Context,
-  and Operator. Regenerated source-index SHA-256 is
-  `92e84fff24b79ae9b482cfe50dc33346fe8d5d7f2afb948e7bb4cacf5fb7dafb`; it
-  differs from older expected index `6586b293…`, so do not claim those indexes
-  are byte-identical.
-- .NET SDK 8.0.426 was restored and used with the tracked process-stat shim.
-  Runtime profile verification and the Mission UI incremental contract passed
-  on the full 1,919-asset profile. EngineChecks, FoundationChecks, Runtime
-  Release build, and Browser Release publish passed at runtime source SHA
-  `f30f36e`; Runtime build reported 0 errors and 48 warnings. Optional
-  `wasm-tools` optimization was unavailable.
-- `python3 -m unittest discover -s scripts -p '*test.py'`: **39/39 passed** on
-  `d65f867`.
-- `node --test scripts/*test.mjs`: **81/81 passed** on `d65f867`.
-- `scripts/package_wasm_site.py build` and independent `verify` passed on
-  `d65f867`; package source SHA is exact, with 2,673 files, 199 Blazor
-  resources, 195 valid WASM files, and 1,919 Mission profile assets.
-- Final Sites archive SHA-256:
-  `62d28c833f390d8ed0cc89bc0c0a513352f26850af8ac447dea7cc6c5a94fdf9`.
-  A separate archive audit verified all 2,673 package manifest entries, every
-  byte count and SHA-256, plus the Sites hosting manifest. The manifest records
-  game source `d65f867`; the pushed Sites artifact-repository commit is
-  `b59e6617e9252e431356ffcab55aac142274e719`.
-- Site deployment succeeded: version
-  `appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_e330bf53211081918e941b4c257130cd`,
-  deployment `appgdep_6ade3fd53780819188345cb08bc77bca`, owner-only URL
-  `https://crisis-response-runtime.craftysnipe13.chatgpt.site`.
-- Exact default Site command `scripts/package_wasm_site.py build` with the
-  recovered source package passed, followed by independent `verify`. It records
-  source SHA `925fa4b…`, includes the exact requested path
-  `scene-data/fullsource/global-ui-mission-operator/manifest.json`, has 2,673
-  files, 199 Blazor resources and 195 valid WASM files, and verifies all
-  1,919 profile assets. Profile totals: 97,767,549 compressed asset bytes and
-  205,514,345 source bytes. This fixes a packager default that previously
-  produced `global-ui-operator` with five roots, while the page requests
-  `global-ui-mission-operator` and requires the Mission 01 scene root.
-- The former `Warning: truncated output ...` screenshot text is a ChatGPT
-  display-truncation notice, not a game runtime exception. The former JS
-  `JsonException` is handled by sending one bounded base64 string per asset
-  through Blazor interop.
+1. **iPhone acceptance (owner-run, independent of source work):** on the
+   private Site, tap Start once, let the Mission load, and use Copy report.
+   Capture whether asset 1,919 arrives, total time, stalled asset range, and
+   memory. Diagnostics now separate fetch/hash, base64, and WASM bridge time.
+   Do not treat the earlier “Warning: truncated output” image as a Site error;
+   it was the ChatGPT display truncation banner.
+2. **Finish page-to-source actor ownership:** continue auditing the opt-in
+   source mission's input, absolute aim, fire/reload, movement, physics, pose,
+   and effects paths. Keep normal startup and its transport weapon host
+   separately identified until the actor integration is complete. Add focused
+   source-contract evidence for each migrated edge.
+3. **Audio playback parity:** the page's current Web Audio adapter drops stale,
+   unloaded, or suspended one-frame events and clamps output through a gain and
+   compressor. The FullSource Mission harness itself deliberately binds silent
+   audio drivers. Preserve the user's delayed / excessively loud / unsynced
+   iPhone report as an acceptance case; after the current actor ownership
+   section, wire the original actor callbacks into the bounded browser audio
+   path and verify that exact failure case.
+4. **Gameplay parity:** native PhysX solve, rendered pixels, animation/IK,
+   source NPC/component coverage, projectiles and original effects still need
+   their own evidence. Playwright/browser binaries and iPhone automation are
+   not available here; use source tests/builds in the meantime and defer only
+   the device-dependent acceptance.
+5. **Release closure:** after any source edit, commit and push to
+   `develop/wasm`, run the regression gates, publish Browser Release, rebuild
+   and independently verify the exact package, then refresh the Site archive
+   from that package. Deploy only after source and archive integrity pass; keep
+   the existing owner-only audience.
 
-## Remaining gates, in dependency order
+## Next action for the scheduled continuation
 
-1. **Measure iPhone startup with version 50.** On Safari, tap Start Mission
-   once and leave the page open. The progress panel reports asset ranges and
-   separates fetch/hash from WASM bridge time. Tap Copy report if the load
-   completes, errors, or stalls; record memory and whether asset 1,919 arrives.
-   Device acceptance is deferred to the owner, while independent code work
-   continues.
-2. **Close page-to-actor parity.** The opt-in Mission mode already routes
-   touch/keyboard action levels through `FullSourceActorBridge`, feeds its
-   source acceleration commands into the capsule physics adapter, sends the
-   resulting state back to `CharacterBody`, and applies original weapon
-   callbacks. Normal page startup still uses browser-side movement and the
-   transport weapon host. Audit and migrate the remaining ownership edges in
-   dependency order, with source-contract tests for each edge.
-3. **Gameplay parity.** Verify native PhysX solve and rendered output, gun
-   audio timing/volume, animation/IK, NPC/source component coverage, and
-   projectile effects against original contracts. Index unsupported Unity
-   components with dispositions.
-4. **Release completion.** Rebuild and integrity-verify the exact final package
-   after every source change, run the regression suites, and deploy only to the
-   existing owner-private Site. Never widen Site access.
-
-## Exact next action
-
-Continue with the source-actor ownership audit while the owner runs the iPhone
-startup check on Site version 50. Use that report to pick a measured transfer
-optimization batch; do not label the current 98 MB delivery as a speed fix.
+Add a source-side absolute-aim contract: set a fixed world aim point, tick the
+source actor while moving left/right and with different browser mouse X values,
+then assert the original `WeaponPointer.WorldPoint` remains the chosen absolute
+point. If the contract exposes an overwrite, fix the ordering and re-run the
+Mission UI and input contracts. Regardless of owner-run iPhone acceptance,
+continue the next independent source-actor ownership edge; do not stop at a
+deferred gate.

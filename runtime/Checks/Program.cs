@@ -29,6 +29,18 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
     var fullWalkForce=authoredWalkSpeed*Time.fixedDeltaTime*750f;
     if(!(forceX>0f&&forceX<fullWalkForce*.6f)||MathF.Abs(session.Actor.walkSpeed-authoredWalkSpeed)>.001f)
         throw new InvalidOperationException($"The eased browser stick magnitude did not scale the original walk speed cap and restore the authored speed: forceX={forceX}, fullWalkForce={fullWalkForce}, authoredWalkSpeed={session.Actor.walkSpeed}, snapshot={state}");
+    var originalPointer=session.Actor.GetComponent<Crisis.Runtime.FullSource.PlayerController>()?.WeaponPointer
+        ??throw new InvalidOperationException("Browser EntryTeam actor has no original WeaponPointer");
+    if(originalPointer.enabled)
+        throw new InvalidOperationException("Browser source actor must keep the authored screen-ray pointer disabled; absolute browser aim owns its world target");
+    var absoluteAim=new Vector3(5f,2.5f,0f);
+    bridge.SetAimWorldPoint(absoluteAim.x,absoluteAim.y,absoluteAim.z);
+    bridge.Step(1f/60f,"{\"left\":true}",0f,360f);
+    if((originalPointer.WorldPoint-absoluteAim).magnitude>.001f)
+        throw new InvalidOperationException($"Horizontal movement or browser mouse X overwrote the absolute aim target while moving left: {originalPointer.WorldPoint}");
+    bridge.Step(1f/60f,"{\"right\":true}",1280f,360f);
+    if((originalPointer.WorldPoint-absoluteAim).magnitude>.001f)
+        throw new InvalidOperationException($"Horizontal movement or browser mouse X overwrote the absolute aim target while moving right: {originalPointer.WorldPoint}");
     var before=session.Actor.transform.position;
     var synced=JsonSerializer.Serialize(bridge.SynchronizePhysics(before.x+.25f,before.y,before.z,1f,0f,0f));
     using var roundTrip=JsonDocument.Parse(synced);
@@ -36,7 +48,7 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
     var velocity=roundTrip.RootElement.GetProperty("velocity");
     if(MathF.Abs(position[0].GetSingle()-(before.x+.25f))>.001f||MathF.Abs(velocity[0].GetSingle()-1f)>.001f)
         throw new InvalidOperationException("Browser PhysX position and velocity did not round trip into the source player actor");
-    Console.WriteLine(JsonSerializer.Serialize(new{status="passed",mission=session.Mission.scene,actor=session.Actor.name,sourceActors=session.SourceActorCount,interactionMenu=true,input="original press/release",movementForce=commands.GetArrayLength(),analogMovement="0.5 eased cap reaches source CharacterBody and restores authored speed",physics="position/velocity round trip"}));
+    Console.WriteLine(JsonSerializer.Serialize(new{status="passed",mission=session.Mission.scene,actor=session.Actor.name,sourceActors=session.SourceActorCount,interactionMenu=true,input="original press/release",movementForce=commands.GetArrayLength(),analogMovement="0.5 eased cap reaches source CharacterBody and restores authored speed",aim="absolute WeaponPointer world target unchanged by horizontal movement and mouse X",physics="position/velocity round trip"}));
     return;
 }
 OriginalSourcePackage LoadSourcePackage(string path){

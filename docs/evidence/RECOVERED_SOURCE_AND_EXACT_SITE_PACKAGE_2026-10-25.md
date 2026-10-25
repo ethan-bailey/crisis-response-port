@@ -135,3 +135,37 @@ game surface; interactive buttons use `touch-action:manipulation`. The recent
 version adds visible progress and a report button for the greyed-out Start
 Mission state. These UI protections still need iPhone Safari acceptance; no
 Playwright or iPhone automation was available in this environment.
+
+## FullSource analog movement and Site version 51
+
+At game source SHA `f7d96a413f05c7106c9f57de4c646cdbef3309b3`, the opt-in
+FullSource actor bridge now receives the eased movement magnitude calculated
+by the browser joystick. The bridge applies that magnitude to the original
+`CharacterBody` walk and sprint caps across delayed source fixed steps, then
+restores the authored values even when the source tick throws. Its snapshot
+records the effective caps and magnitude. The `--browser-entryteam-session-contract`
+passed the Mission 01 UI contract, source input press/release, source movement
+force, half-magnitude cap, authored speed restoration, and PhysX state round
+trip. Existing browser-input tests assert horizontal joystick travel does not
+alter vertical aim and changing horizontal travel while aiming does not pull
+the aim point back toward center.
+
+At `f7d96a4`, Node checks passed **81/81** and Python checks passed **39/39**.
+Browser Release publish passed with zero errors; optional `wasm-tools`
+optimization was unavailable. Exact package build and independent verify
+passed with source SHA `f7d96a413f05c7106c9f57de4c646cdbef3309b3`, manifest
+SHA-256 `09c660d5e426f656c95fea1daf31363371e8b3e689a42a5b01e8a2084e89f2`,
+2,673 files, 199 Blazor resources, 195 WASM files, and 1,919 Mission profile
+assets (97,767,549 compressed bytes; 205,514,345 source bytes). A separate
+archive extraction verified every manifest file's byte count and SHA-256.
+
+The Sites artifact repository is at commit
+`563963f14b613eb85df2992e35db1984e66e6cf2`; exact archive SHA-256 is
+`e803b0e5a21eac7c42d2a5cd70d98a7284ac464a14aa37abab3840a1858e2396`. Site
+version
+`appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_1b4447e9d2608191a24b97b6ad379ee0`
+deployed successfully as deployment `appgdep_6ade425248d88191b7d5129cc459a5c5`.
+The existing Site was confirmed custom/owner-only (one user, no groups) before
+deployment and remains so; no audience settings changed. iPhone acceptance is
+still owner-run. Record delivery of asset 1,919, load time, stalled range if
+any, and memory before making a performance claim.
