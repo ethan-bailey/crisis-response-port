@@ -2,7 +2,7 @@
 
 ## Scope
 
-Base branch `develop/wasm` was fetched at `6f91910f45db36a1caac39168a1fa3b2ad494c2a` before editing. This batch closes the authored UI import gaps needed to start Mission 01 in EntryTeam mode with its original UI active, and fixes bridge input levels for shared physical keys.
+Base branch `develop/wasm` was fetched at `6f91910f45db36a1caac39168a1fa3b2ad494c2a` before editing. The tested source commit is `6613a675eec4968929939b5f4db4cbe87f4df7f5`. This batch closes the authored UI import gaps needed to start Mission 01 in EntryTeam mode with its original UI active, and fixes bridge input levels for shared physical keys.
 
 ## Changes
 

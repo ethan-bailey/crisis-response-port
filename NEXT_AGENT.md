@@ -2,10 +2,10 @@
 
 ## Checkpoint
 
-- Work branch: `develop/wasm`; fetched base before this batch was
-  `6f91910f45db36a1caac39168a1fa3b2ad494c2a`. After committing and pushing,
-  update this checkpoint with the verified code commit SHA and final branch
-  head.
+- Work branch: `develop/wasm`; verified source commit for the latest batch is
+  `6613a675eec4968929939b5f4db4cbe87f4df7f5` (based on
+  `6f91910f45db36a1caac39168a1fa3b2ad494c2a`). Fetch the live branch before
+  resuming; a handoff-only commit may sit immediately after the source commit.
 - Never deploy. Site v39 remains the last owner-accepted iPhone Safari build.
   Desktop browser automation is optional. Request owner iPhone Safari testing
   at the next major playable milestone and before release; do not claim device
