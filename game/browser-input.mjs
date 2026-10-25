@@ -86,8 +86,8 @@ export class BrowserInput {
       this.set('sprint', source, false);
       if (thumb) thumb.style.transform = '';
       surface.style?.setProperty?.('--stick-power', '0');
-      onAim(0);
-      surface.classList.remove('active', 'sprinting');
+      onAim(0, false);
+      surface.classList.remove('active', 'sprinting', 'detent', 'break-left', 'break-right');
       if (released !== null && surface.hasPointerCapture?.(released)) surface.releasePointerCapture(released);
     };
     const move = event => {
@@ -107,8 +107,9 @@ export class BrowserInput {
       // Give the user most of the visible stick travel to choose walking speed.
       // Sprint is a separate deliberate over-pull, with hysteresis to prevent
       // accidental activation and flicker around the trigger point.
-      const walkFullAt = 0.70, sprintEnter = 1.75, sprintExit = 1.5;
-      const magnitude = Math.max(0, Math.min(1, (travel - deadZone) / (walkFullAt - deadZone)));
+      const walkFullAt = 1, sprintEnter = 1.42, sprintExit = 1.24;
+      const walkProgress = Math.max(0, Math.min(1, (travel - deadZone) / (walkFullAt - deadZone)));
+      const magnitude = walkProgress * walkProgress;
       const overtravel = Math.abs(rawX) > 1;
       const previousSprint = this.movementStickSprinting;
       this.movementStickSprinting = previousSprint ? Math.abs(rawX) > sprintExit : Math.abs(rawX) >= sprintEnter;
@@ -121,10 +122,14 @@ export class BrowserInput {
       this.set('right', source, this.movementStickAxis > 0);
       const sprinting = this.movementStickSprinting;
       this.set('sprint', source, sprinting);
+      surface.classList.toggle('detent', overtravel && !sprinting);
       surface.classList.toggle('sprinting', sprinting);
+      surface.classList.toggle('break-right', sprinting && rawX > 0);
+      surface.classList.toggle('break-left', sprinting && rawX < 0);
       surface.style?.setProperty?.('--stick-power', String(sprinting ? 1 : magnitude));
       if (thumb) {
-        thumb.style.transform = `translate3d(${horizontal * travelX}px,${vertical * travelY}px,0)`;
+        const x = Math.abs(rawX) <= 1 ? horizontal : Math.sign(rawX) * (1 + Math.min(0.35, (Math.abs(rawX) - 1) * 0.60));
+        thumb.style.transform = `translate3d(${x * travelX}px,${vertical * travelY}px,0)`;
       }
       event.preventDefault();
     };

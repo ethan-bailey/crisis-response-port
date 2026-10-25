@@ -61,6 +61,10 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 #movementStick .stick-thumb{position:absolute;left:calc(50% - 24px);top:calc(50% - 24px);width:48px;height:48px;border-radius:50%;border:2px solid #d6e9f2e8;background:radial-gradient(circle at 35% 30%,#5385a6,#25445f);box-shadow:0 3px 7px #0309119c,inset 0 0 0 6px #c9e7fc12;pointer-events:none;z-index:2;transition:transform .12s cubic-bezier(.2,.9,.2,1)}
 #movementStick.active .stick-thumb{transition:none;background:radial-gradient(circle at 35% 30%,#62a3cc,#275374)}
 #movementStick.sprinting{border-color:#e6c48c;box-shadow:inset 0 0 0 2px #e9d4aa30,0 0 16px #e6c48c24}
+#movementStick.detent:after{border-color:#e6c48c;transform:scale(.96)}
+#movementStick.sprinting:after{border-color:#ffe0a5;border-right-color:transparent;transform:scale(1.04)}
+#movementStick.sprinting.break-left:after{border-right-color:#a4ceec5a;border-left-color:transparent}
+#movementStick.sprinting .stick-thumb{filter:brightness(1.18);box-shadow:0 0 16px #ffe0a5a8}
 #movementStick .stick-label{position:absolute;left:0;right:0;bottom:-16px;text-align:center;font:700 9px/1 system-ui;color:#b3c6d8;letter-spacing:.08em;pointer-events:none}
 #controls .cluster:last-child{grid-template-columns:repeat(3,52px);grid-template-rows:repeat(2,46px)}
 #kneel{grid-area:1 / 2}#stand{grid-area:1 / 3}#fire{grid-area:2 / 2 / 3 / 4}
@@ -80,6 +84,10 @@ html,body,#stage,canvas,#controls,#movementStick,#controlsHelp,#controlsGuide{-w
 #movementStick .stick-thumb{position:absolute;left:calc(50% - 24px);top:calc(50% - 24px);width:48px;height:48px;border-radius:50%;border:2px solid #d6e9f2e8;background:radial-gradient(circle at 35% 30%,#5385a6,#25445f);box-shadow:0 3px 7px #0309119c,inset 0 0 0 6px #c9e7fc12;pointer-events:none;z-index:2;transition:transform .12s cubic-bezier(.2,.9,.2,1)}
 #movementStick.active .stick-thumb{transition:none;background:radial-gradient(circle at 35% 30%,#62a3cc,#275374)}
 #movementStick.sprinting{border-color:#e6c48c;box-shadow:inset 0 0 0 2px #e9d4aa30,0 0 16px #e6c48c24}
+#movementStick.detent:after{border-color:#e6c48c;transform:scale(.96)}
+#movementStick.sprinting:after{border-color:#ffe0a5;border-right-color:transparent;transform:scale(1.04)}
+#movementStick.sprinting.break-left:after{border-right-color:#a4ceec5a;border-left-color:transparent}
+#movementStick.sprinting .stick-thumb{filter:brightness(1.18);box-shadow:0 0 16px #ffe0a5a8}
 #movementStick .stick-label{position:absolute;left:0;right:0;bottom:-16px;text-align:center;font:700 9px/1 system-ui;color:#b3c6d8;letter-spacing:.08em;pointer-events:none}
 #controlsHelp{position:absolute;right:max(8px,env(safe-area-inset-right));top:max(8px,env(safe-area-inset-top));z-index:4;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border-radius:50%;background:#101820d9;border-color:#c4d3df70;font-size:20px;opacity:.9;touch-action:manipulation}
 #controlsGuide{position:absolute;z-index:3;top:max(60px,calc(env(safe-area-inset-top) + 56px));right:max(8px,env(safe-area-inset-right));width:min(310px,calc(100vw - 24px));padding:14px 16px;border:1px solid #697887;border-radius:12px;background:#111820f2;box-shadow:0 12px 36px #0009;color:#e9eef5;font-size:13px;line-height:1.45;touch-action:auto}
@@ -155,7 +163,7 @@ for (const button of document.querySelectorAll("button[data-action]")) input.bin
 // Original InputMapping.cs bindings, plus arrow-key movement aliases.
 input.bindKeyboard(window, {KeyA:"left", ArrowLeft:"left", KeyD:"right", ArrowRight:"right",
  ShiftLeft:"sprint", KeyR:"magazine", Tab:"switchWeapons", KeyS:"kneel", KeyW:"stand"});
-input.bindMovementStick(document.querySelector("#movementStick"),document.querySelector("#movementStick .stick-thumb"),{onAim(vertical){if(Math.abs(pointerNdc.y-vertical)>0.001){pointerNdc.y=vertical;aimDirty=true;aimGeneration++;}}});
+let stickAim=0;input.bindMovementStick(document.querySelector("#movementStick"),document.querySelector("#movementStick .stick-thumb"),{onAim(vertical,active=true){if(!active){stickAim=0;return;}const delta=vertical-stickAim;stickAim=vertical;if(Math.abs(delta)>0.001){pointerNdc.y=Math.max(-1,Math.min(1,pointerNdc.y+delta));aimDirty=true;aimGeneration++;}}});
 input.bindLifecycle(window, document);
 document.addEventListener("contextmenu",event=>event.preventDefault());
 document.addEventListener("selectstart",event=>event.preventDefault());
