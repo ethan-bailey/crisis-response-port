@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 7430)
-Total output lines: 434
-
 # Recovered Mission source and exact Site package — 2026-10-25
 
 ## Recovery inputs
@@ -241,7 +238,35 @@ Site version
 deployed successfully as `appgdep_6ade453e1bc88191ab7fa788db01b156`. Owner
 role and custom/one-user access were confirmed before deployment; audience
 settings did not change. The FullSource Mission audio driver remains silent by
-design; ori…430 tokens truncated…urce bytes). Sites
+design; original source AudioSource-to-browser event delivery is the next
+audio parity gate.
+
+## FullSource AudioSource bridge and Site version 54
+
+At exact game source commit `b159d007ccd4574c8d7f420388631ae31b40d916`, the
+opt-in FullSource Mission installs a bounded browser audio event driver for all
+original `AudioSource` objects. Source one-shots retain clip path, volume, and
+`Time.time`; the actor bridge drains events with each source tick. Browser
+playback resolves the original clip path to the existing weapon manifest and
+rejects stale, suspended, or unloaded shots immediately. The source gunfire
+clip path `Assets/AudioClip/5.56x45mm-01-unsuppressed.wav` matches the browser
+`audioFire` entry exactly. Unsupported loop/play/stop routing and unknown
+source clips are counted, not substituted.
+
+The source Mission contract passed with bounded 64-event queue behavior and
+one dropped overflow event. Node passed **85/85**, Python **39/39**, isolated
+EngineChecks **69**, and FoundationChecks **121**. Browser Release publish
+succeeded with zero errors; the optional `wasm-tools` workload was unavailable.
+The first package attempt exposed a missing generated PhysX adapter in the
+fresh worktree. Running `npm ci --prefix game --ignore-scripts` and
+`npm run --prefix game vendor` restored the lockfile-pinned 2.7.3 dependency;
+no project source change was needed for that environment setup.
+
+Exact package verification passed at game source SHA
+`b159d007ccd4574c8d7f420388631ae31b40d916`; manifest SHA-256 is
+`157efaf1b376dacb88fbadf973c10301bbb5564dd8078996d986f2d51478a7c5`. The
+package contains 2,674 files, 199 Blazor resources, 195 WASM files, and 1,919
+source assets (97,767,549 compressed bytes; 205,514,345 source bytes). Sites
 artifact tests passed **36/36**. The artifact repo commit is
 `684ffbddc2d9fe1846563105407ab1c231b42de8`; its archive SHA-256 is
 `0dbfc4fdc6f24941106a5f6c3ad88511b6132431754a379126bfee95d04c2052`. Streaming
