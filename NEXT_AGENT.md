@@ -3,64 +3,65 @@
 ## Durable checkpoint
 
 - Development branch: `develop/wasm`.
-- Tested source and live branch checkpoint: `dc6843cb778b843900911e258075386af6503585` (`feat: add verified incremental source package store`).
-- Checkout was fetched from `origin/develop/wasm` and reset to that exact SHA; worktree was clean before this handoff update.
-- No open pull requests were returned by the GitHub connector at session start.
-- Site v39 remains the last owner-accepted iPhone Safari build. No deployment was performed.
+- Current tested source and live branch checkpoint: `859db220925af2d542a62f055f2e647a2622a936` (`feat: package and deliver source dependencies incrementally`).
+- This checkout was fetched from `origin/develop/wasm` at that exact SHA and was clean before this handoff update.
+- No open pull requests were returned by the GitHub connector at the prior session start; no PR was opened here.
+- Site v39 remains the last owner-accepted iPhone Safari build. Nothing was deployed.
 
-## Completed major system: incremental original source package store
+## Completed source delivery system
 
-`runtime/Engine/OriginalSourcePackage.cs` now supports both existing monolithic
-packages and incremental asset delivery. Incremental package metadata carries
-an asset manifest with each asset's UTF-8 byte length and SHA-256. Assets are
-validated before parsing/registration, identical retries are safe, and missing
-or unmanifested assets fail closed. SceneLoader and SerializedAssetResolver
-consume this shared package view. Resources can use the same `RuntimeWorld` as
-the scene. The WASM RuntimeBridge exposes package initialization, verified
-asset addition with progress, and scene loading on that world.
+The preceding checkpoint (`dc6843cb778b843900911e258075386af6503585`)
+added the verified incremental source store and WASM bridge. This checkpoint
+adds `scripts/package_incremental_source.py`, optional incremental profile
+packaging and integrity checks in `scripts/package_wasm_site.py`, sequential
+browser delivery in `scene-data/scene-package-loader.mjs`, and the opt-in
+`?source-profile-smoke` page path. Default startup is unchanged.
 
-Evidence is in
+Measured from recovered source input SHA-256
+`6586b293eb1455669eba29042469ebd6740b0ad08629fd39ea625237626dd639`:
+
+- Global Context + Interior Mode UI + Interaction Menu + Operator: 1,229
+  assets; 36,969,948 compressed asset bytes; 77,801,511 asset JSON bytes; max
+  asset 3,742,886 JSON bytes / 2,822,414 gzip bytes.
+- Adding Mission 01: 1,918 assets; 97,766,376 compressed asset bytes;
+  205,509,197 asset JSON bytes; max asset 14,858,177 JSON bytes / 3,108,968
+  gzip bytes.
+- Incremental delivery verifies compressed and decompressed size/hash and
+  sends one asset at a time. The WASM store still retains delivered JSON
+  documents, so these profiles are not phone-startup ready. Actual browser/WASM
+  heap was not measured because no browser runtime is available here.
+
+Details: `docs/evidence/INCREMENTAL_SOURCE_DELIVERY_2026-10-25.md` and
 `docs/evidence/INCREMENTAL_SOURCE_PACKAGE_STORE_2026-10-25.md`.
 
-## Exact verification on the tested source
+## Verification
 
-- Pinned SDK .NET `8.0.426`; process shim `/tmp/libprocshim.so`.
-- Full runtime check project build: passed, 0 errors and 48 existing warnings.
-- Incremental package store contract: passed hash/size verification, metadata
-  preservation, idempotent retry, synchronous same-world scene load, rejected
-  modified payload, fail-closed missing asset, and legacy package compatibility.
-- Default runtime checks: passed runtime, prefab, arm, presentation, weapon,
-  and ballistics contracts.
-- WASM Browser project build: passed, 0 errors and 48 existing warnings.
-- EngineChecks: passed 69 assertions.
-- Scene package loader Node checks: passed 3/3.
-- Active `--mission-ui-contract`: passed against
-  `/tmp/cpr-scenes-full-source.json` (input SHA-256
-  `6586b293eb1455669eba29042469ebd6740b0ad08629fd39ea625237626dd639`). The
-  original Mission started; FullSource actor bridge snapshot, EntryTeam UI
-  initialization, and original left press/release passed. Headless AI and audio
-  are not covered by this contract.
-- `git diff --check`: passed.
+On checkpoint `859db220925af2d542a62f055f2e647a2622a936`:
 
-## Remaining integration gates
+- `python3 -m unittest discover -s scripts -p package_wasm_site_test.py -v` —
+  passed 14/14, including profile generation, package inclusion, and per-asset
+  integrity verification.
+- `node --test scripts/scene_package_loader_test.mjs` — passed 4/4.
+- `node --check scene-data/scene-package-loader.mjs` — passed.
+- `python3 -m py_compile scripts/package_incremental_source.py
+  scripts/package_wasm_site.py` — passed.
+- Recovered-source Global/UI/Operator profile: 1,229 assets generated and
+  independently verified; adding Mission 01 was measured at 1,918 assets.
+- `git diff --check` — passed.
 
-The ordinary page still uses browser-side movement and the transport weapon
-host. The opt-in scene smoke still downloads the split monolithic package. The
-new store and WASM bridge are not yet called by page startup, and this batch did
-not produce per-asset source bundles or a bounded dependency-closure manifest.
-The recovered Global Context + Mission UI + Operator closure must be packaged
-for incremental delivery, loaded into one RuntimeWorld, and wired to page input,
-physics, rendering, and weapon callbacks through the same FullSource actor.
-
-Playwright browser smoke was not run because Playwright/browser binaries are
-unavailable here. iPhone Safari acceptance remains open. No deployment was
-performed.
+The active Mission UI actor contract last passed on source checkpoint
+`dc6843cb778b843900911e258075386af6503585` with input package
+`/tmp/cpr-scenes-full-source.json` (same recovered-source hash above). The
+subsequent changes at `859db22` affect packaging and page delivery only; the
+Mission UI contract was not rerun on this exact SHA. Desktop browser transfer,
+peak browser memory, and iPhone Safari acceptance remain open.
 
 ## One next action
 
-Generate a per-asset manifest and bounded dependency profile for the recovered
-Global Context + Mission UI + Operator closure, connect the browser loader to
-the incremental WASM bridge, then run the active Mission UI actor contract and
-measure delivered bytes and peak browser memory before the first input. Keep
-the exact tested SHA and iPhone Safari acceptance state attached to the result;
-do not deploy before the owner-authorized release gates pass.
+Reduce retained WASM memory or narrow the pre-input dependency closure based on
+the measured 77.8 MB / 205.5 MB profiles. Then run the opt-in profile transfer
+in a real browser, measure peak WASM/browser memory and bytes before input, and
+exercise the original Mission UI actor in one RuntimeWorld before connecting
+page input, PhysX, rendering, and weapon callbacks. Keep default startup and
+publication unchanged until that gate passes. Do not deploy without the
+owner-authorized release gates.
