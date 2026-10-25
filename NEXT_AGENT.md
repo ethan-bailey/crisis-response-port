@@ -1,25 +1,45 @@
 # Current handoff — 2026-10-25
 
-## Latest shipped checkpoint: recovered casing physics
+## Checkpoint
 
-- GitHub source `develop/wasm`: `81aeecf0370ff9f4e1e78051cd2f28b789420f91` (documentation commit after tested code commit `399c829078c605e8575e1b9877e113f703857174`). The tested source tree is `3db13f5a5bb13aaf4ead17d06d5269be8692ab70`; the docs-only update does not change game/runtime/scripts.
-- Site source repository `main`: `d2787f3a6ba31318fa06d165a02a2c93632efc58`. It contains the matching game/runtime/scripts and complete tracked source-reference/docs dependency sets needed to build and run checks. The diagnostic 86 MB scene archive and generated Mission `.crg` are omitted from this compact source mirror; `.crg` is rebuilt during packaging. The exact Site branch head was verified before saving.
-- .NET SDK 8.0.426 Release Browser publish from the Site source commit succeeded: **0 errors, 48 existing warnings**. Python **40/40**, Node **93/93**, EngineChecks **69**, FoundationChecks **121** passed. The real source Mission contract passed on the identical game/runtime/scripts tree with one casing force, one torque, original body ID and effective mass 0.002 kg, and finite position/rotation/linear/angular velocity round trip.
-- Package was built and independently verified from Site source SHA `d2787f3a6ba31318fa06d165a02a2c93632efc58`: manifest SHA-256 `02cabd951a2fd1cb23b6ae8fadb649edb96e2cbadf1d0113bb99d1e3ffdb9fb8`; **2,679 files**, 199 Blazor resources, 195 WASM files, 1,919 bounded Mission assets (97,767,549 compressed / 205,514,345 uncompressed source bytes). The package verifies original casing mesh (54 vertices / 52 triangles) and all six source dependency hashes against the source inventory.
-- Deployment tar local SHA-256 `eb80fe7b56cd24f2d587db32a3b01a7f3a79f659a965a7fa8ad4e3a1e82100ba`. Full extraction audit checked all 2,681 files byte-for-byte, with no extra/missing files, symlinks, or unsafe paths. Sites stored it as archive SHA-256 `163f90a28b7bbea0a84d8315dfc8ece781987f611f0799a1e533b82793a378dd` (177,930,240 bytes).
-- Private Site **version 62** deployed successfully at https://crisis-response-runtime.craftysnipe13.chatgpt.site (deployment `appgdep_6ade665f4ac08191abbf0b1a6131894e`). Access remains owner-only.
-- Real browser PhysX trajectory/collision/settle smoke and physical iPhone Safari acceptance are not claimed. Vendored PhysX fails in Node because it is compiled for WebAssembly; Playwright browser binaries are unavailable. The Node casing adapter test uses fakes only. `scripts/original_casing_physics_smoke.mjs` records the browser-runner assertions.
+- Workstream: `develop/wasm`, fetched base `5cdfcff7a0a3504b81b2b59fe66372b5c82ad4de`.
+- Tested implementation commit: `e260006307042521f0eadc4c3e9b571dd631a6ab` (particle event transport, component identity cloning, bounded source profile package reuse).
+- Local branch is two implementation commits ahead of the fetched remote and is not pushed yet. The exact tested tree is committed locally; do not reset or discard it.
+- No Site version was saved or deployed in this batch.
 
-## Dependency-ordered remaining gates
+## Completed this batch
 
-Inventory each full source closure before implementation: source GUIDs and prefab/object graph; serialized fields; materials, textures, audio, curves, and sub-emitters; runtime ordering, time, and cleanup; then the executable source contract and browser evidence. Runtime failures should reveal genuinely hidden edges after this inventory.
+1. Completed and hash-pinned the bounded Mission particle dependency inventory: 51 ParticleSystems/renderers in 27 prefabs, 32 systems in the Mission scene GUID closure, 19 more in 9 dynamically referenced prefabs, plus the full material, texture, mesh, shader, module, curve, burst and owner-reference records. Human and machine-readable inventories are in `docs/MISSION_PARTICLE_DEPENDENCY_CLOSURE_2026-10-25.md` and `docs/mission-particle-dependency-inventory-2026-10-25.json.gz`.
+2. Bound `BrowserParticleEventQueue` before the incremental source scene loads. Source `Emit`, `Simulate` and `Play` callbacks now reach FullSource actor snapshots with Unity time, source component GUID/file ID/path/hash, hierarchy, pose and bounded-drop accounting. Prefab clones retain original component identity.
+3. Added an exact Mission source contract that fires the original M4 and verifies the particle command provenance and clock. It observed 1 particle event and 0 dropped requests, along with the already-covered weapon audio, casing force/torque and PhysX round trip.
+4. Fixed packaging for the complete recovered source profile. The raw `scene-data/crisis-response-scenes.json.gz` archive lacks `Assets/Resources/Version.prefab`, while the already verified version-62 bounded profile contains that dependency. `package_wasm_site.py` can now reuse and re-verify a prebuilt profile byte-for-byte instead of generating an incomplete source closure.
 
-1. **Original particle rendering.** Start with a full Mission-used ParticleSystem dependency inventory: every emitting prefab/component, module enablement and values, curve keys/tangents, burst/continuous ordering, sub-emitter graph, mesh/material/texture references, source-time clock, and lifetime/cleanup. Implement that complete closure and test deterministic emissions against the original source contract.
-2. **Real browser acceptance for current movement/physics/rendering.** Run `/game/` with WebAssembly, WebGL, and browser PhysX available; exercise casing trajectory/collision/settle and verify source state round trip. Do not substitute fake-PhysX tests.
-3. **iPhone Safari acceptance.** On physical iPhone Safari retest both normal Mission and memory-check route: all 1,919 source assets complete, no final-asset stall, memory profile, joystick walk/sprint wall, absolute aim, weapon/audio timing and ceiling, readable errors, rapid taps, and pinch zoom. Save the report for the exact deployed version.
-4. **Remaining gameplay systems.** For each batch, inventory the entire original dependency graph before changes: projectile hit/resolution; physiology/damage; ragdoll/joints; NPC behavior; animation/IK transitions; menus/interactions. Implement one closure at a time with source contract and visible browser verification, then rebuild, verify, and privately deploy the exact tested commit.
-5. **Completion gate.** Close archive extraction, exact-source build/package integrity, browser rendering/physics smoke, and physical iPhone acceptance. Record measured parity and explicit exclusions; the port is not 100% while source systems remain unimplemented.
+## Verification evidence
+
+- SDK `8.0.426`; pinned SDK archive SHA-256 `bb691c98abc8797eedbd48d3a766bc734214aed746e52e2691d8bbb268c60764`; process-stat shim `/tmp/libprocshim.so` used as documented in `docs/DOTNET_BUILD_RUNBOOK.md`.
+- Full runtime Release build: **0 errors, 48 existing warnings**.
+- Release Browser WebAssembly publish: exit 0. The only publish note was optional `wasm-tools` optimization unavailable; no compile/publish error.
+- EngineChecks: **73 passed**.
+- FullSource Mission actor/weapon contract against the exact version-62 bounded profile: **passed**, including real shot, one timestamped particle event with original GUID/fileID/path, 0 particle drops, original weapon clips, casing callbacks and state round trip.
+- Python: **41 passed**. Node: **97 passed**. Particle inventory-specific Node tests: **4 passed**. Particle inventory exporter reproduced the pinned decompressed SHA-256 `636935d6bf545dd0bf3610008bbc8759fae1fc765553852b8110da9eacc82407`.
+- Site package built and independently verified from implementation source commit `e260006307042521f0eadc4c3e9b571dd631a6ab`: **2,679 files**, 199 Blazor resources, 195 WASM files, 1,919 source assets (**97,767,549 compressed / 205,514,345 uncompressed bytes**). Build manifest SHA-256: `68f2554101457159e20e9594eea9cfebed6e067a0f28524ea0f7b17c36f9114e`.
+- `git diff --check` passed before this handoff edit.
+
+## Release/acceptance status
+
+- Callback transport is implemented; **particle module simulation and rendering are still open**. The existing browser binder remains impact-only (14 prefabs / 26 systems) and reports zero rendered particles. Do not describe this batch as visual particle parity.
+- No browser/WebGL PhysX smoke or physical iPhone Safari acceptance was performed. Do not claim either passed.
+- The Sites runtime remains private at version 62. Sites access was verified owner-only. Its configured source repository is a separate `cloudflare_artifact` repository on branch `main`; the tested `develop/wasm` SHA is not that branch's current source commit. No version/deployment call was made because that would misattribute the archive to the wrong Site-source commit. The Site credential response gave no automatic publish window (`publish_on_push_accepted=false`).
+- `git push origin develop/wasm` failed because this shell has no GitHub username credential. Push the committed tree through the connected GitHub Git Data API with an expected-head lease, then fetch and verify the resulting remote tree.
+
+## Remaining gates, dependency order
+
+1. **Finish particle rendering.** Use the complete inventory, then implement source module evaluation (curves, bursts, shape, color, lifetime, time scale, pause, cleanup), all 51 systems and 27 owner paths, renderer modes 0/1/4, materials/textures/meshes and explicit built-in shader/mesh handling. Add source emission contracts before visible rendering claims.
+2. **Land and synchronize the verified source.** Push to `develop/wasm` without rewriting history. For a later Site publication, sync the chosen exact source tree to the Site's own `main` repository using the Site source workflow, then build/package from that pushed commit. Preserve private audience.
+3. **Run browser acceptance on the exact package.** Exercise the normal Mission and memory route, actual particle drawing, WebGL, physics/casing and no stalled asset delivery. Browser automation binaries were unavailable in this batch; use them only if the next environment provides the supported runner.
+4. **iPhone Safari acceptance.** On the exact deployed version, check full profile delivery, memory, movement/sprint wall, absolute aim, weapon/audio timing and ceiling, zoom resistance, and error readability.
+5. **Close remaining gameplay parity and final release.** Inventory each dependent source graph before changing projectile/damage, ragdoll/joints, NPC behavior, remaining animation/IK and interaction/menu systems. Then rebuild and integrity-check the exact source package before any Site publish; report measured parity and explicit exclusions.
 
 ## Immediate next action
 
-Inventory the complete Mission particle dependency graph from the recovered source package before changing particle rendering. Capture GUIDs, serialized modules, curves, sub-emitters, mesh/material/texture references, emission ordering, source clock, and cleanup in one dependency-closure document; then add a deterministic source contract and implement the full closure. Keep the real browser and iPhone acceptance gates scheduled in the same release sequence, not as reasons to stop independent work.
+Push local commits `292c60f` and `e260006` to `develop/wasm` through GitHub Git Data API (expected base `5cdfcff7a0a3504b81b2b59fe66372b5c82ad4de`), verify the remote branch tree, then continue the source-driven particle simulation/rendering batch from the indexed closure. Do not deploy the current transport-only slice.
