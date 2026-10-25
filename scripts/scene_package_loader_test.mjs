@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import { gzipSync } from "node:zlib";
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { test } from "node:test";
-import { loadOriginalScenePackage } from "../scene-data/scene-package-loader.mjs";
+import { deliverIncrementalSourceProfile, loadOriginalScenePackage } from "../scene-data/scene-package-loader.mjs";
 
 const encoder = new TextEncoder();
 const originalFetch = globalThis.fetch;
@@ -54,6 +55,50 @@ test("rejects an invalid chunk path before fetching it", async () => {
   globalThis.fetch = async () => new Response(JSON.stringify(manifest), { status: 200 });
   try {
     await assert.rejects(loadOriginalScenePackage(), /invalid chunk path/);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("delivers verified source assets sequentially to the WASM package bridge", async () => {
+  const hash = bytes => createHash("sha256").update(bytes).digest("hex");
+  const assetPath = "Assets/Resources/Global context.prefab";
+  const assetText = '{"records":[]}';
+  const assetRaw = encoder.encode(assetText);
+  const assetGzip = gzipSync(assetRaw);
+  const metadataText = JSON.stringify({schemaVersion: 1, guidPaths: {},
+    assetManifest: {[assetPath]: {bytes: assetRaw.byteLength, sha256: hash(assetRaw)}}});
+  const metadataRaw = encoder.encode(metadataText);
+  const metadataGzip = gzipSync(metadataRaw);
+  const manifest = {schemaVersion: 1, profile: "fixture", encoding: "gzip-json-assets",
+    sourcePackageSha256: "a".repeat(64), rootAssets: [assetPath], assetCount: 1,
+    compressedAssetBytes: assetGzip.byteLength, uncompressedAssetBytes: assetRaw.byteLength,
+    metadata: {file: "metadata.json.gz", bytes: metadataRaw.byteLength, sha256: hash(metadataRaw),
+      compressedBytes: metadataGzip.byteLength, compressedSha256: hash(metadataGzip)},
+    assets: [{path: assetPath, file: "assets/0123456789abcdef01234567.json.gz", bytes: assetRaw.byteLength,
+      sha256: hash(assetRaw), compressedBytes: assetGzip.byteLength, compressedSha256: hash(assetGzip)}]};
+  const originalFetch = globalThis.fetch;
+  const files = new Map([["manifest.json", encoder.encode(JSON.stringify(manifest))],
+    ["metadata.json.gz", metadataGzip], ["0123456789abcdef01234567.json.gz", assetGzip]]);
+  globalThis.fetch = async url => {
+    const name = new URL(url).pathname.split("/").at(-1);
+    return files.has(name) ? new Response(files.get(name), {status: 200}) : new Response("missing", {status: 404});
+  };
+  const calls = [];
+  const bridge = {invokeMethodAsync: async (method, ...args) => {
+    calls.push([method, ...args]);
+    if (method === "InitializeIncrementalSourcePackage")
+      return JSON.stringify({expectedAssets: 1, receivedAssets: 0, receivedBytes: 0});
+    return JSON.stringify({expectedAssets: 1, receivedAssets: 1, receivedBytes: assetRaw.byteLength});
+  }};
+  try {
+    const result = await deliverIncrementalSourceProfile(bridge, "https://example.test/source/manifest.json");
+    assert.equal(result.assetCount, 1);
+    assert.equal(result.sourceBytes, metadataRaw.byteLength + assetRaw.byteLength);
+    assert.equal(result.maximumAssetBytes, assetRaw.byteLength);
+    assert.deepEqual(calls.map(call => call[0]), ["InitializeIncrementalSourcePackage", "AddIncrementalSourceAsset"]);
+    assert.equal(calls[1][1], assetPath);
+    assert.equal(calls[1][2], assetText);
   } finally {
     globalThis.fetch = originalFetch;
   }

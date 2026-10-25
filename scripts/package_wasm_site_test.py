@@ -34,6 +34,7 @@ class PackageTests(unittest.TestCase):
             "game/package-lock.json": "{}",
             "runtime/Original/Example.cs": "// recovered source fixture",
             "tools/wasm-compile/global.json": '{"sdk":{"version":"8.0.426","rollForward":"disable","allowPrerelease":false}}',
+            "scripts/package_incremental_source.py": Path(__file__).with_name("package_incremental_source.py").read_text(),
         }.items():
             self.write(self.repo / path, value)
         for path, value in {
@@ -74,8 +75,8 @@ class PackageTests(unittest.TestCase):
     def git(self, *args):
         return subprocess.check_output(["git", "-C", str(self.repo), *args], text=True)
 
-    def build(self):
-        return package(self.repo, self.pub, self.site, {"dotnet": "8.0.426"}, "")
+    def build(self, **kwargs):
+        return package(self.repo, self.pub, self.site, {"dotnet": "8.0.426"}, "", **kwargs)
 
     def test_complete_package_is_verifiable_and_records_scope(self):
         result = self.build()
@@ -120,6 +121,25 @@ class PackageTests(unittest.TestCase):
         self.assertGreater(len(manifest["chunks"]), 1)
         self.assertEqual(rebuilt, source)
         self.assertEqual(manifest["uncompressedBytes"], len(source))
+
+    def test_incremental_profile_is_packaged_and_verified_per_asset(self):
+        root = "Assets/Resources/fixture.prefab"
+        asset = {"records": [{"classID": 1, "fileID": "1", "className": "GameObject",
+                              "fields": {"m_Name": "fixture"}}]}
+        source = {"format": "fixture", "assets": {root: asset}, "guidPaths": {},
+                  "objectReferences": [], "sourceOfTruth": {"fixture": True}}
+        source_path = self.root / "full-source.json.gz"
+        source_path.write_bytes(gzip.compress(json.dumps(source).encode(), mtime=0))
+        result = self.build(incremental_source_package=source_path,
+                            incremental_profile="fixture", incremental_roots=[root])
+        profile = json.loads((self.site / "scene-data/fullsource/fixture/manifest.json").read_text())
+        self.assertEqual(profile["assetCount"], 1)
+        self.assertEqual(result["incrementalSourceProfiles"], [{
+            "profile": "fixture", "assetCount": 1,
+            "compressedBytes": profile["compressedAssetBytes"],
+            "sourceBytes": profile["uncompressedAssetBytes"],
+        }])
+        self.assertTrue((self.site / "scene-data/fullsource/fixture/assets" / profile["assets"][0]["file"].split("/")[-1]).is_file())
 
     def test_modified_binary_fails(self):
         self.build()

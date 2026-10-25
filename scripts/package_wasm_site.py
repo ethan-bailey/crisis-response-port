@@ -168,8 +168,54 @@ def validate_site(site):
     for path in wasm:
         with path.open("rb") as stream:
             require(stream.read(8) == WASM_HEADER, f"Invalid WebAssembly binary: {path.name}")
+    incremental_profiles = []
+    for manifest_path in sorted((site / "scene-data/fullsource").glob("*/manifest.json")):
+        profile_root = manifest_path.parent
+        profile = json.loads(manifest_path.read_text())
+        require(profile.get("schemaVersion") == 1 and profile.get("encoding") == "gzip-json-assets"
+                and profile.get("profile") == profile_root.name
+                and isinstance(profile.get("assets"), list)
+                and len(profile["assets"]) == profile.get("assetCount"),
+                f"Incremental source manifest is invalid: {manifest_path}")
+        profile_asset_paths = {item.get("path") for item in profile["assets"]}
+        require(isinstance(profile.get("rootAssets"), list) and bool(profile["rootAssets"])
+                and set(profile["rootAssets"]).issubset(profile_asset_paths),
+                f"Incremental source profile omits one of its root assets: {manifest_path}")
+        metadata = profile.get("metadata", {})
+        metadata_path = safe_path(profile_root, metadata.get("file", ""))
+        compressed = metadata_path.read_bytes()
+        require(len(compressed) == metadata.get("compressedBytes")
+                and digest(metadata_path) == metadata.get("compressedSha256"),
+                f"Incremental metadata compressed integrity mismatch: {manifest_path}")
+        raw = gzip.decompress(compressed)
+        require(len(raw) == metadata.get("bytes") and hashlib.sha256(raw).hexdigest() == metadata.get("sha256"),
+                f"Incremental metadata source integrity mismatch: {manifest_path}")
+        metadata_json = json.loads(raw)
+        require(len(metadata_json.get("assetManifest", {})) == profile["assetCount"],
+                f"Incremental metadata asset count mismatch: {manifest_path}")
+        total_compressed = total_raw = 0
+        for asset in profile["assets"]:
+            asset_path = safe_path(profile_root, asset.get("file", ""))
+            packed = asset_path.read_bytes()
+            require(len(packed) < SITE_FILE_LIMIT_BYTES
+                    and len(packed) == asset.get("compressedBytes")
+                    and digest(asset_path) == asset.get("compressedSha256"),
+                    f"Incremental asset compressed integrity mismatch: {asset_path}")
+            asset_raw = gzip.decompress(packed)
+            require(len(asset_raw) == asset.get("bytes")
+                    and hashlib.sha256(asset_raw).hexdigest() == asset.get("sha256")
+                    and metadata_json["assetManifest"].get(asset.get("path")) ==
+                    {"bytes": len(asset_raw), "sha256": asset["sha256"]},
+                    f"Incremental asset source integrity mismatch: {asset_path}")
+            total_compressed += len(packed)
+            total_raw += len(asset_raw)
+        require(total_compressed == profile.get("compressedAssetBytes")
+                and total_raw == profile.get("uncompressedAssetBytes"),
+                f"Incremental source totals mismatch: {manifest_path}")
+        incremental_profiles.append({"profile": profile.get("profile"), "assetCount": profile["assetCount"],
+                                     "compressedBytes": total_compressed, "sourceBytes": total_raw})
     return {"wasmFiles": len(wasm), "blazorResources": validate_boot(site),
-            "boundedOperatorSource": has_actor_delivery}
+            "boundedOperatorSource": has_actor_delivery, "incrementalSourceProfiles": incremental_profiles}
 
 
 def verify(site):
@@ -198,7 +244,8 @@ def git(repo, *args):
     return subprocess.check_output(["git", "-C", str(repo), *args], text=True).strip()
 
 
-def package(repo, published, output, toolchain, run_url):
+def package(repo, published, output, toolchain, run_url, incremental_source_package=None,
+            incremental_profile="global-ui-operator", incremental_roots=None):
     repo, published, output = repo.resolve(), published.resolve(), output.resolve()
     require((repo / "game/index.html").is_file(), "Game source missing")
     require(published.is_dir(), "Published wwwroot directory missing")
@@ -247,6 +294,17 @@ def package(repo, published, output, toolchain, run_url):
             "Generated scene report does not match the packaged scene binary")
     shutil.copytree(published, output / "runtime-web")
     shutil.copytree(repo / "scene-data", output / "scene-data")
+    if incremental_source_package is not None:
+        source_builder = repo / "scripts/package_incremental_source.py"
+        require(source_builder.is_file(), "Incremental original source package builder is missing")
+        require(re.fullmatch(r"[A-Za-z0-9_-]{1,64}", incremental_profile) is not None,
+                "Invalid incremental source profile name")
+        source_output = output / "scene-data/fullsource" / incremental_profile
+        command = [sys.executable, str(source_builder), str(Path(incremental_source_package).resolve()),
+                   str(source_output), "--profile", incremental_profile]
+        for root in incremental_roots or []:
+            command.extend(["--root", root])
+        subprocess.run(command, check=True, cwd=repo)
     archive = output / "scene-data/crisis-response-scenes.json.gz"
     if archive.is_file():
         with gzip.open(archive, "rt", encoding="utf-8") as source:
@@ -302,13 +360,19 @@ def main():
     build.add_argument("--published", type=Path, required=True, help="dotnet publish wwwroot")
     build.add_argument("--output", type=Path, required=True)
     build.add_argument("--toolchain", type=Path, required=True)
+    build.add_argument("--incremental-source-package", type=Path,
+                       help="Optional recovered full source JSON package used to build a bounded per-asset profile")
+    build.add_argument("--incremental-profile", default="global-ui-operator")
+    build.add_argument("--incremental-root", action="append", dest="incremental_roots",
+                       help="Override a default profile root; repeat for multiple roots")
     build.add_argument("--run-url", default="")
     check = sub.add_parser("verify")
     check.add_argument("site", type=Path)
     args = parser.parse_args()
     if args.command == "build":
         result = package(args.repo, args.published, args.output,
-                         json.loads(args.toolchain.read_text()), args.run_url)
+                         json.loads(args.toolchain.read_text()), args.run_url,
+                         args.incremental_source_package, args.incremental_profile, args.incremental_roots)
     else:
         result = verify(args.site)
     print(json.dumps(result, sort_keys=True))
