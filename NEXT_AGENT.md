@@ -2,12 +2,9 @@
 
 ## Checkpoint
 
-- Branch: `develop/wasm`; live and local checkpoint before this batch:
-  `5752f38a9c09eb4d0a6c2fffbde8aa35c4773a95`.
-- This batch adds the guarded FullSource actor input/tick/snapshot bridge and
-  contract coverage. Verification was run against the working tree based on the
-  checkpoint above; the pushed commit SHA is recorded in Git history after this
-  handoff is committed.
+- Verified runtime source checkpoint: branch `develop/wasm`, SHA
+  `6e322089e60461afdba1b901ea952d5f1779a3f5`. A handoff-only commit may sit
+  immediately after this source SHA; fetch `develop/wasm` before resuming.
 - Never deploy. Site v39 remains the last owner-accepted iPhone Safari build.
   Desktop browser automation is optional. Ask for owner iPhone Safari testing at
   the next major playable milestone and before release; do not claim behavior
@@ -30,10 +27,11 @@
   these references; the current headless Mission test suppresses that UI graph.
   Normal `game/index.html` still uses browser-side movement/animation and the
   transport `WeaponHost`; the new entry points are not yet wired to that page.
-- Release Browser/WASM build passed; EngineChecks 69 and FoundationChecks 121
-  passed. FullSource Operator/Occupant lifecycle and authored IK, Mission 01
-  startup (2 Operators, 5 Occupants), and M4/Glock spawner/weapon/physiology
-  contracts passed. Details: `docs/evidence/FULLSOURCE_ACTOR_BRIDGE_BATCH_2026-10-25.md`.
+- At tested source SHA `6e322089e60461afdba1b901ea952d5f1779a3f5`, Release
+  Browser/WASM build passed; EngineChecks 69 and FoundationChecks 121 passed.
+  FullSource Operator/Occupant lifecycle and authored IK, Mission 01 startup
+  (2 Operators, 5 Occupants), and M4/Glock spawner/weapon/physiology contracts
+  passed. Details: `docs/evidence/FULLSOURCE_ACTOR_BRIDGE_BATCH_2026-10-25.md`.
 - The recovered full source closure has 1,918 assets / 22,361 records and 39
   assets with unresolved/unsupported references. It must not be shipped whole
   as the phone startup payload. The complete Global/Mission/Operator/UI closure
