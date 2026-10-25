@@ -6,6 +6,7 @@
 - Release history includes a transient truncated upload (`9b09d5b`) and its immediate corrective revert (`ef645fa`). Do not build or deploy `9b09d5b`; it was cut off at an 8 KB upload boundary. The complete source change is rebuilt and reverified after the recovery commit.
 - The lightweight page still starts first. It now offers `Start original Mission · 99 MB`, which sequentially verifies and loads the six-root original Mission profile, starts the authored EntryTeam UI in the same source world, routes aim to the original WeaponPointer, ticks the FullSource actor, synchronizes its position/velocity through browser PhysX, and projects the original actor hierarchy into the page renderer.
 - Profile `global-ui-mission-operator`: 1,919 assets, 22,365 records, 97,767,549 compressed asset bytes plus metadata (about 99 MB decimal), 205,514,345 uncompressed source bytes. It is opt-in and stays off default first paint.
+- The site packager now omits the separate 220 MB-uncompressed diagnostic scene archive by default. Include it only when the optional `?scene-smoke` route is needed, using `--include-original-scene-smoke`; the normal game uses the compact Mission geometry and on-demand FullSource profile.
 
 ## Verification completed on the release candidate
 
@@ -15,6 +16,7 @@
 - Runtime checks passed; FoundationChecks passed 121 assertions; EngineChecks passed 69 assertions.
 - Browser input, source package loader, and magazine UI checks passed 31/31. Actual HTML module syntax passed.
 - Browser runtime build and Release WASM publish passed with .NET SDK 8.0.426.
+- Site package regression suite passed 15 tests, including default omission and explicit opt-in inclusion of the full scene-smoke archive.
 - No Playwright/browser or iPhone Safari run was available. The user explicitly skipped the manual device-test step; leave iPhone acceptance open.
 
 ## Known runtime limits
@@ -26,5 +28,6 @@
 ## Hosting
 
 - Existing owner-private Site: `https://crisis-response-runtime.craftysnipe13.chatgpt.site`. Preserve its owner-only access.
+- A first oversized archive was rejected before saving any Site version; the Site stayed on its prior live version. The diagnostic archive is now excluded from the default package to keep the deployment bounded.
 - Publish only a verified static archive built from the exact final `develop/wasm` source state. Check the Site's current version/source before retrying a publish; do not create duplicate versions for an already successful deployment.
 - Before closing the task, confirm `develop/wasm` is clean and current, the package integrity verifier passes, the Site version is deployed from the same release, and report the browser/device acceptance limits plainly.

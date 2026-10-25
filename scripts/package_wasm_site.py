@@ -117,7 +117,7 @@ def validate_site(site):
                 "game/browser-input.mjs", "game/vendor/physx-js-webidl.mjs",
                 "game/vendor/physx-js-webidl.wasm", "runtime-web/index.html",
                 "runtime-web/browser-input.mjs", "runtime-web/_framework/blazor.webassembly.js",
-                "scene-data/scene-package-loader.mjs", "scene-data/crisis-response-scenes.manifest.json"]
+                "scene-data/scene-package-loader.mjs"]
     for name in required:
         require((site / name).is_file(), f"Missing site input: {name}")
     require(digest(site / "game/browser-input.mjs") == digest(site / "runtime-web/browser-input.mjs"),
@@ -125,16 +125,24 @@ def validate_site(site):
     html = (site / "runtime-web/index.html").read_text()
     require('<base href="/runtime-web/">' in html, "Runtime must be served at /runtime-web/")
     require("scene-package-loader.mjs" in html, "Runtime must load scenes through the split-package loader")
-    scene_manifest = json.loads((site / "scene-data/crisis-response-scenes.manifest.json").read_text())
-    require(scene_manifest.get("encoding") == "independent-gzip-chunks"
-            and bool(scene_manifest.get("chunks")), "Scene package chunk manifest is invalid")
-    for chunk in scene_manifest["chunks"]:
-        name = chunk.get("path", "")
-        require(re.fullmatch(r"crisis-response-scenes-\d{3}\.json\.gz", name) is not None,
-                "Invalid scene package chunk name")
-        path = site / "scene-data" / name
-        require(path.is_file() and path.stat().st_size < SITE_FILE_LIMIT_BYTES,
-                f"Scene package chunk is missing or exceeds Sites' per-file limit: {name}")
+    scene_manifest_path = site / "scene-data/crisis-response-scenes.manifest.json"
+    scene_smoke_included = scene_manifest_path.is_file()
+    scene_chunks = sorted((site / "scene-data").glob("crisis-response-scenes-*.json.gz"))
+    if scene_smoke_included:
+        scene_manifest = json.loads(scene_manifest_path.read_text())
+        require(scene_manifest.get("encoding") == "independent-gzip-chunks"
+                and bool(scene_manifest.get("chunks")), "Scene package chunk manifest is invalid")
+        for chunk in scene_manifest["chunks"]:
+            name = chunk.get("path", "")
+            require(re.fullmatch(r"crisis-response-scenes-\d{3}\.json\.gz", name) is not None,
+                    "Invalid scene package chunk name")
+            path = site / "scene-data" / name
+            require(path.is_file() and path.stat().st_size < SITE_FILE_LIMIT_BYTES,
+                    f"Scene package chunk is missing or exceeds Sites' per-file limit: {name}")
+        require(len(scene_chunks) == len(scene_manifest["chunks"]),
+                "Scene package has unlisted diagnostic chunks")
+    else:
+        require(not scene_chunks, "Scene smoke chunks are present without their manifest")
     actor_bundle = site / "scene-data/fullsource/operator-prefab.json.gz"
     actor_manifest_path = site / "scene-data/fullsource/operator-prefab.manifest.json"
     has_actor_delivery = actor_bundle.exists() or actor_manifest_path.exists()
@@ -217,6 +225,7 @@ def validate_site(site):
         incremental_profiles.append({"profile": profile.get("profile"), "assetCount": profile["assetCount"],
                                      "compressedBytes": total_compressed, "sourceBytes": total_raw})
     return {"wasmFiles": len(wasm), "blazorResources": validate_boot(site),
+            "sceneSmokeIncluded": scene_smoke_included,
             "boundedOperatorSource": has_actor_delivery, "incrementalSourceProfiles": incremental_profiles}
 
 
@@ -247,7 +256,8 @@ def git(repo, *args):
 
 
 def package(repo, published, output, toolchain, run_url, incremental_source_package=None,
-            incremental_profile="global-ui-operator", incremental_roots=None):
+            incremental_profile="global-ui-operator", incremental_roots=None,
+            include_original_scene_smoke=False):
     repo, published, output = repo.resolve(), published.resolve(), output.resolve()
     require((repo / "game/index.html").is_file(), "Game source missing")
     require(published.is_dir(), "Published wwwroot directory missing")
@@ -295,7 +305,8 @@ def package(repo, published, output, toolchain, run_url, incremental_source_pack
     require(scene_report.get("binarySha256") == digest(scene_binary),
             "Generated scene report does not match the packaged scene binary")
     shutil.copytree(published, output / "runtime-web")
-    shutil.copytree(repo / "scene-data", output / "scene-data")
+    scene_ignore = None if include_original_scene_smoke else shutil.ignore_patterns(SCENE_ARCHIVE)
+    shutil.copytree(repo / "scene-data", output / "scene-data", ignore=scene_ignore)
     if incremental_source_package is not None:
         source_builder = repo / "scripts/package_incremental_source.py"
         require(source_builder.is_file(), "Incremental original source package builder is missing")
@@ -317,7 +328,8 @@ def package(repo, published, output, toolchain, run_url, incremental_source_pack
             subprocess.run([sys.executable, str(actor_package), str(archive),
                             str(output / "scene-data/fullsource/operator-prefab.json.gz")],
                            check=True, cwd=repo)
-    split_scene_package(output / "scene-data")
+    if include_original_scene_smoke:
+        split_scene_package(output / "scene-data")
     runtime_index = output / "runtime-web/index.html"
     html = runtime_index.read_text()
     require(html.count('<base href="/">') == 1, "Unexpected compiled runtime base path")
@@ -346,6 +358,7 @@ def package(repo, published, output, toolchain, run_url, incremental_source_pack
         "binaryValidation": validation, "externalImports": external,
         "scope": {"originalGameComplete": False, "nativeParityVerified": False,
                   "physicalIPhoneTested": False, "browserTestedThisBuild": False,
+                  "originalSceneSmokeIncluded": include_original_scene_smoke,
                   "hosting": "Not deployed; owner-restricted hosting required",
                   "mountPath": "/", "entrypoint": "/game/",
                   "offlineComplete": False},
@@ -367,6 +380,8 @@ def main():
     build.add_argument("--incremental-profile", default="global-ui-operator")
     build.add_argument("--incremental-root", action="append", dest="incremental_roots",
                        help="Override a default profile root; repeat for multiple roots")
+    build.add_argument("--include-original-scene-smoke", action="store_true",
+                       help="Include the 220 MB uncompressed full-scene diagnostic archive (omitted by default)")
     build.add_argument("--run-url", default="")
     check = sub.add_parser("verify")
     check.add_argument("site", type=Path)
@@ -374,7 +389,8 @@ def main():
     if args.command == "build":
         result = package(args.repo, args.published, args.output,
                          json.loads(args.toolchain.read_text()), args.run_url,
-                         args.incremental_source_package, args.incremental_profile, args.incremental_roots)
+                         args.incremental_source_package, args.incremental_profile, args.incremental_roots,
+                         args.include_original_scene_smoke)
     else:
         result = verify(args.site)
     print(json.dumps(result, sort_keys=True))

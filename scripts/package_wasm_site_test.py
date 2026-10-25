@@ -79,9 +79,10 @@ class PackageTests(unittest.TestCase):
         return package(self.repo, self.pub, self.site, {"dotnet": "8.0.426"}, "", **kwargs)
 
     def test_complete_package_is_verifiable_and_records_scope(self):
-        result = self.build()
+        result = self.build(include_original_scene_smoke=True)
         self.assertEqual(result["wasmFiles"], 4)
         self.assertEqual(result["blazorResources"], 3)
+        self.assertTrue(result["sceneSmokeIncluded"])
         self.assertFalse((self.site / "runtime-web/index.html.br").exists())
         self.assertFalse((self.site / "runtime-web/index.html.gz").exists())
         self.assertFalse((self.site / "game/package-lock.json").exists())
@@ -108,6 +109,15 @@ class PackageTests(unittest.TestCase):
         report = json.loads((self.site / "game/assets/mission01.report.json").read_text())
         self.assertEqual(report["sourceSha256"], hashlib.sha256((self.repo / "game/assets/mission01.obj").read_bytes()).hexdigest())
         self.assertEqual(report["binarySha256"], hashlib.sha256(scene).hexdigest())
+        self.assertEqual(verify(self.site), result)
+
+    def test_default_package_omits_the_large_diagnostic_scene_archive(self):
+        result = self.build()
+        self.assertFalse(result["sceneSmokeIncluded"])
+        self.assertFalse((self.site / "scene-data/crisis-response-scenes.manifest.json").exists())
+        self.assertEqual(list((self.site / "scene-data").glob("crisis-response-scenes-*.json.gz")), [])
+        manifest = json.loads((self.site / MANIFEST).read_text())
+        self.assertFalse(manifest["scope"]["originalSceneSmokeIncluded"])
         self.assertEqual(verify(self.site), result)
 
     def test_scene_split_keeps_utf8_boundaries_as_bytes(self):
