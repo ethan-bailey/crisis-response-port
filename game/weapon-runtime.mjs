@@ -98,5 +98,7 @@ export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,part
     currentSourceSpriteGuid:active.find(item=>item.firstFrameApplied)?.originalSpriteGuid||null};
  }
  function audioSnapshot(){return audioStats.snapshot();}
- return {update,playSourceAudioEvents:dispatchSourceAudio,flashSnapshot,audioSnapshot,impactMeshSnapshot:originalImpactMeshes.snapshot,windowSnapshot:originalWindows.snapshot,particleSourceSnapshot:originalParticleEvents.snapshot};
+ return {update,playSourceAudioEvents:dispatchSourceAudio,
+  observeSourceParticleCommands:(events,sourceTime,dropped)=>originalParticleEvents.observeSourceCommands(events,sourceTime,dropped),
+  flashSnapshot,audioSnapshot,impactMeshSnapshot:originalImpactMeshes.snapshot,windowSnapshot:originalWindows.snapshot,particleSourceSnapshot:originalParticleEvents.snapshot};
 }

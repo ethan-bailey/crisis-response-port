@@ -72,6 +72,7 @@ export function createUpperBody(data,manifest,nodeById,character,weapon,runtimeC
   },
   weaponSnapshot(){return weaponResult;},
   playSourceAudioEvents(events,sourceTime){effects.playSourceAudioEvents(events,sourceTime);},
+  observeSourceParticleCommands(events,sourceTime,dropped){effects.observeSourceParticleCommands(events,sourceTime,dropped);},
   snapshot(){return {active:!!result,camera:result?.camera,pose:result?.pose,arms:solutions,originalIKUpdate:true,originalHandSetMode:true,originalPhysicalArmController:weaponResult?.physicalArms?.sourceControllerExecuted===true,physicalArmState:armRig?.snapshot()??null,originalFullBodySource:armRig?.sourceGraph()??null,worldHeadDirection:new THREE.Vector3(1,0,0).applyQuaternion(head.getWorldQuaternion(new THREE.Quaternion())).toArray(),worldShoulder:worldPosition(api.shoulder).toArray(),worldMuzzle:worldPosition(muzzle).toArray(),armTargets:anchors.map(a=>worldPosition(a).toArray()),originalMuzzleFlash:effects.flashSnapshot(),weaponAudio:effects.audioSnapshot(),originalImpactMeshes:effects.impactMeshSnapshot,originalWindows:effects.windowSnapshot(),originalParticleSource:effects.particleSourceSnapshot()};}
  };
  return api;

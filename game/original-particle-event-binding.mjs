@@ -1,5 +1,7 @@
 // Source-backed event-to-prefab binding for recovered original Unity 2017
-// ballistic ParticleSystems. This module NEVER simulates/draws replacements.
+// ballistic ParticleSystems, plus validation of source ParticleSystem driver
+// commands delivered by the FullSource actor. This module NEVER simulates or
+// draws replacements.
 // Original C# materialEffect events, Time.time, and recovered source module
 // data are authoritative. A faithful engine/render adapter may consume
 // resolveEmitters() only after individual module/shader behavior is validated.
@@ -89,8 +91,10 @@ export function createOriginalParticleEventBinding(particles,materials) {
   }
   requireSource(byMaterial.size===8, 'not all original effect materials are bound');
 
-  let received=0,unrendered=0;
+  let received=0,unrendered=0,sourceCommands=0,sourceCommandDrops=0;
+  const sourceCommandActions={emit:0,simulate:0,play:0};
   const recent=[];
+  const recentCommands=[];
   function resolveEmitters(event) {
     if(event?.type!=='materialEffect')return null;
     const value=event.value;
@@ -122,13 +126,49 @@ export function createOriginalParticleEventBinding(particles,materials) {
       if(recent.length>MAX_DIAGNOSTICS)recent.shift();
     }
   }
+  function observeSourceCommands(events,sourceTime,droppedEvents=0) {
+    requireSource(Array.isArray(events),'FullSource particle command snapshot is not an array');
+    requireSource(Number.isFinite(sourceTime),'FullSource particle command snapshot lacks Unity Time.time');
+    requireSource(Number.isInteger(droppedEvents)&&droppedEvents>=0,
+      'FullSource particle dropped-event count is invalid');
+    sourceCommandDrops=Math.max(sourceCommandDrops,droppedEvents);
+    for(const event of events) {
+      requireSource(event?.type==='particleCommand','unexpected FullSource particle command type');
+      requireSource(Number.isFinite(event.time)&&event.time<=sourceTime+0.0001,
+        'FullSource particle command occurs after simulation-clock snapshot');
+      requireSource(GUID.test(event.sourceGuid||'')&&/^\d+$/.test(String(event.sourceFileId||''))&&
+        typeof event.sourcePath==='string'&&event.sourcePath.startsWith('Assets/')&&
+        SHA.test(event.sourceComponentSha256||''),
+        'FullSource particle command is missing original component provenance');
+      requireSource(typeof event.hierarchyPath==='string'&&event.hierarchyPath.length>0&&
+        Array.isArray(event.position)&&event.position.length===3&&event.position.every(Number.isFinite)&&
+        Array.isArray(event.rotation)&&event.rotation.length===4&&event.rotation.every(Number.isFinite),
+        'FullSource particle command has invalid hierarchy or world pose');
+      const command=event.command;
+      requireSource(command&&Object.hasOwn(sourceCommandActions,command.action),
+        'unknown FullSource particle command action');
+      if(command.action==='emit') requireSource(Number.isInteger(command.count)&&command.count>=0&&
+        Array.isArray(command.startSpeed)&&command.startSpeed.length===2&&command.startSpeed.every(Number.isFinite),
+        'FullSource Emit command has invalid count or source speed');
+      if(command.action==='simulate') requireSource(Number.isFinite(command.simulationTime)&&
+        typeof command.withChildren==='boolean'&&typeof command.restart==='boolean'&&
+        typeof command.fixedTimeStep==='boolean','FullSource Simulate command is malformed');
+      sourceCommands++;
+      sourceCommandActions[command.action]++;
+      recentCommands.push({action:command.action,source:event.sourceGuid,
+        component:event.sourceFileId,path:event.sourcePath,time:event.time});
+      if(recentCommands.length>MAX_DIAGNOSTICS)recentCommands.shift();
+    }
+  }
   function snapshot() {
     return {sourcePrefabs:sourceEffects.size,sourceEmitters:systemCount,
       billboardEmitters:billboards,meshEmitters:meshes,
       receivedEvents:received,unrenderedEmitterRequests:unrendered,
+      sourceCommands,sourceCommandDrops,sourceCommandActions:{...sourceCommandActions},
+      recentSourceCommands:recentCommands.slice(),
       renderedParticles:0,sourceVisualParity:false,
       blocker:'Native Unity particle modules and shaders not yet executed',
       recent:recent.slice()};
   }
-  return {resolveEmitters,observe,snapshot};
+  return {resolveEmitters,observe,observeSourceCommands,snapshot};
 }

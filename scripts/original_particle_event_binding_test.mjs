@@ -67,6 +67,49 @@ test('source observer bounds diagnostics across repeated native impact events',(
   assert.equal(state.recent[0].sourceTime,.3);
 });
 
+test('FullSource particle command transport validates provenance, actions and source clock',()=>{
+  const binder=createOriginalParticleEventBinding(particles,materials);
+  const effect=particles.effects[0],emitter=effect.emitters[0];
+  const command={type:'particleCommand',time:4.5,systemId:12,sourceGuid:effect.guid,
+    sourceFileId:emitter.sourceEmitterFileID,sourcePath:'Assets/Resources/effects/ballistic hits/Concrete entry.prefab',
+    sourceComponentSha256:emitter.originalEmitterFieldSha256,hierarchyPath:'Root/Emitter',
+    position:[1,2,3],rotation:[0,0,0,1],command:{action:'emit',count:3,maxParticles:512,
+      startSpeed:[2,4],radius:.2,angle:25}};
+  binder.observeSourceCommands([command],5,0);
+  binder.observeSourceCommands([{...command,time:5,command:{action:'simulate',simulationTime:.02,
+    withChildren:true,restart:true,fixedTimeStep:false}}],5,2);
+  binder.observeSourceCommands([{...command,time:5,command:{action:'play'}}],5,2);
+  const state=binder.snapshot();
+  assert.equal(state.sourceCommands,3);
+  assert.equal(state.sourceCommandDrops,2);
+  assert.deepEqual(state.sourceCommandActions,{emit:1,simulate:1,play:1});
+  assert.equal(state.recentSourceCommands.length,3);
+  assert.equal(state.renderedParticles,0);
+  assert.equal(state.sourceVisualParity,false);
+});
+
+test('FullSource particle commands reject missing source identity and malformed action payloads',()=>{
+  const binder=createOriginalParticleEventBinding(particles,materials);
+  const effect=particles.effects[0],emitter=effect.emitters[0];
+  const command={type:'particleCommand',time:4.5,sourceGuid:effect.guid,
+    sourceFileId:emitter.sourceEmitterFileID,sourcePath:'Assets/Effects/Test.prefab',
+    sourceComponentSha256:emitter.originalEmitterFieldSha256,hierarchyPath:'Root/Emitter',
+    position:[1,2,3],rotation:[0,0,0,1],command:{action:'play'}};
+  assert.throws(()=>binder.observeSourceCommands([{...command,sourceComponentSha256:'bad'}],5),/provenance/);
+  assert.throws(()=>binder.observeSourceCommands([{...command,time:6}],5),/after simulation-clock/);
+  assert.throws(()=>binder.observeSourceCommands([{...command,command:{action:'emit',count:-1,startSpeed:[1,2]}}],5),/invalid count/);
+  assert.throws(()=>binder.observeSourceCommands([{...command,command:{action:'restart'}}],5),/unknown/);
+});
+
+test('normal page forwards the FullSource actor particle snapshot into the source observer',()=>{
+  const html=readFileSync(new URL('../game/index.html',import.meta.url),'utf8');
+  const presentation=readFileSync(new URL('../game/presentation.mjs',import.meta.url),'utf8');
+  const weaponRuntime=readFileSync(new URL('../game/weapon-runtime.mjs',import.meta.url),'utf8');
+  assert.match(html,/observeSourceParticleCommands\(sourceActorSnapshot\.particleEvents,sourceActorSnapshot\.sourceTime,sourceActorSnapshot\.droppedParticleEvents\)/);
+  assert.match(presentation,/observeSourceParticleCommands\(events,sourceTime,dropped\)\{effects\.observeSourceParticleCommands/);
+  assert.match(weaponRuntime,/observeSourceParticleCommands:\(events,sourceTime,dropped\)=>originalParticleEvents\.observeSourceCommands/);
+});
+
 test('missing or corrupted native material/particle manifest cannot fall back to invented assets',()=>{
   assert.throws(()=>createOriginalParticleEventBinding({...particles,effects:particles.effects.slice(1)},materials),
     /expected 14/);
