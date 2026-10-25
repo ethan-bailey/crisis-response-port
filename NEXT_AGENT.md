@@ -1,67 +1,76 @@
 # Current handoff — 2026-10-25
 
-## Source checkpoint and deployed Site
+## Checkpoint
 
-- Branch: `develop/wasm`.
-- Tested source change: `64cd6c3e94b8f197ecc82100d705a91418053370` (`fix: restore Mission page startup and error UI`), based on live branch head `4e4e0887c2b71da230c881e95c9b630fde743706`.
-- The change restores the full `game/index.html` document shell, which had been truncated in an earlier change. This brings back the Mission controls, selectable error panel, M4 magazine wiring, initialization path, and opt-in `scene-smoke` guard. Loading status now explicitly switches to “initializing original Mission actors…” after verified delivery completes.
-- Site v49 remains owner-only and unchanged at source `2c62158f49f71903971d35838cd28cc5e427a629` (package source `19165a5`). No new Site package was published.
+- Project branch: `develop/wasm`; starting source SHA for this verified batch:
+  `f30f36e2d99661aaca221d529b1c831c9dda2d7a`.
+- Worktree began clean. Live GitHub `develop/wasm` matched this SHA.
+- No runtime source change was made in this batch. The source recovery, pinned
+  .NET SDK, Mission contract and Site package gates that earlier handoffs called
+  blocked were reconstituted and verified locally; details are in
+  `docs/evidence/RECOVERED_SOURCE_AND_EXACT_SITE_PACKAGE_2026-10-25.md`.
+- **Do not publish the current 98 MB Mission profile as a fix for the reported
+  slow download.** Exact build/package integrity now passes, but user-reported
+  slow tail near 1,900 assets and iPhone Safari startup acceptance have not
+  been verified as solved. Keep Site access owner-private.
 
-## Verification at the tested source change
+## Gates closed at source SHA `f30f36e`
 
-- `node --test scripts/*test.mjs`: **81/81 passed**.
-- `python3 -m unittest discover -s scripts -p '*test.py'`: **38/38 passed**.
-- EngineChecks: **69 assertions passed**.
-- FoundationChecks: **121 assertions passed**.
-- Runtime checks passed, including ballistics and original-source checks.
-- `dotnet build runtime/Crisis.Runtime.csproj -c Release --no-restore -v:q`: succeeded, **0 warnings, 0 errors**.
-- `dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release -o /tmp/cpr-publish-restore-shell`: succeeded using checksum-verified .NET SDK **8.0.426** and the tracked `/proc` shim. WASM optimization workload was unavailable; publish completed successfully.
-- `git diff --check`: passed.
+- Recovered source archive SHA-256:
+  `cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d`.
+  The archive contains `Mission 01.unity`, `Marksman range.unity`, Global
+  Context, and Operator prefab inputs. The regenerated full source index SHA is
+  `92e84fff24b79ae9b482cfe50dc33346fe8d5d7f2afb948e7bb4cacf5fb7dafb`, not
+  the older index SHA `6586b293…` recorded in the original delivery evidence.
+  Use the regenerated index's own identity; do not assert byte identity with
+  the older index.
+- Pinned .NET SDK 8.0.426 restored and selected with the tracked process shim.
+- Mission 01 source profile: 1,919 assets / 22,365 records, 97,767,549
+  compressed asset bytes, 205,514,345 source bytes. Integrity and C# incremental
+  profile contract passed. The Mission UI incremental contract passed: Mission
+  started, authored UI initialized, two original Operators and four original
+  Occupants loaded, and left press/release and actor bridge checks passed.
+- EngineChecks, FoundationChecks, Runtime build and Browser publish passed.
+  Runtime Release build: 0 errors; 48 warnings. Browser publish succeeded
+  without optional wasm-tools optimizations.
+- `scripts/package_wasm_site.py build` plus independent `verify` passed for
+  both the default 1,230-asset profile and the Mission 01 1,919-asset profile.
+  The exact Mission artifact contains 2,673 files, 199 Blazor resources and 195
+  valid WASM files; it records source commit `f30f36e…`. No deployment was
+  performed.
+- The UI failure shown as “Warning: truncated output ...” is a ChatGPT display
+  truncation notice, not evidence of a game runtime exception. The prior
+  `JsonException` for a JS byte array is handled in current source by sending a
+  bounded base64 string through Blazor interop. Do not re-open either as an
+  unresolved gate without new device evidence.
 
-## Blocked release gate and acceptance
+## Remaining gates, in dependency order
 
-- The checked-out repository does not contain `scene-data/fullsource/global-ui-mission-operator/`; the 1,919-asset Mission source profile and metadata needed to reproduce and integrity-verify the exact Site package are absent. A recovered `crisis-response-recovery-direct-v3-1.zip` was verified at SHA-256 `cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d`, but it is a Unity asset export and contains neither the generated profile nor `cpr-scenes-full-source.json` (the expected source-index SHA-256 is `6586b293eb1455669eba29042469ebd6740b0ad08629fd39ea625237626dd639` in `docs/evidence/INCREMENTAL_SOURCE_DELIVERY_2026-10-25.md`). The package build/integrity gate is therefore **not satisfied**, and this source change was **not published**. Recover the exact source index or a complete profile and manifest through an approved durable source, verify every compressed and decompressed asset, rebuild and verify the Site archive for this exact source checkpoint, then publish only that verified archive.
-- Playwright/browser binaries and exact-build iPhone Safari acceptance are still unavailable. Owner should verify Mission startup and completion, error copy/readability, and aim independence after a verified deployment.
-- Gun audio remains open: the Mission audio bridge is silent. Some Unity components and NPC systems also remain unsupported or unverified.
+1. **Preserve exact-source package evidence on the pushed checkpoint.** Commit
+   and push the evidence/handoff update, verify remote SHA, then rebuild the
+   package against that resulting SHA because package inventory includes docs.
+2. **Mission download/startup on target iPhone.** The 1,919-asset package still
+   totals about 98 MB compressed (205 MB source). Have the owner test the exact
+   pushed build on iPhone Safari, including progress through the former 1,900
+   asset point, completion, start button, and memory. If tail latency/hang
+   remains, collect a per-asset timing trace and optimize the transfer in a
+   bounded, testable batch before publishing another build. No Playwright
+   browser binaries are available in this runner.
+3. **Page-to-actor parity.** The default page still has unfinished wiring for
+   input, physics, rendering and weapon callbacks through the same source actor.
+   Close each against the active Mission UI contract and exact source build.
+4. **Gameplay parity.** Verify remaining native PhysX solve/render output,
+   weapon/audio synchronization and volume, animation/IK, NPC/source component
+   coverage, and projectile effects against original source contracts. Keep
+   unsupported Unity components explicitly indexed with dispositions.
+5. **Release.** Build and package the exact final code and source profile, run
+   integrity verification, obtain target-device acceptance, then deploy only to
+   the confirmed existing owner-private Site and record deployment/version
+   identity. Never widen access.
 
-## Next action
+## Exact next action
 
-Recover the exact source index or a complete Mission profile and manifest, then verify all assets and build/verify the exact-source WASM Site package before any publication. If unavailable, keep publication blocked and continue independent gameplay gates.
-
-## User-reported iPhone load screen — 2026-10-25
-
-- The supplied screenshot shows a black page containing only “Warning: truncated output (original token count: 14171) Total output lines: 582”; the browser chrome identifies the in-app browser as ChatGPT. This exact phrasing is a ChatGPT output-truncation notice, not a .NET/JavaScript exception emitted by the game runtime. The screenshot alone does not establish whether the game page loaded successfully behind that UI or whether the notice was rendered as page content.
-- Read-only Site checks: v49 deployment `appgdep_6addd0d050cc8191a1d35cd94f432895` reports `succeeded` at `https://crisis-response-runtime.craftysnipe13.chatgpt.site` (updated 2026-10-25 09:50 UTC). Worker error logs returned no events for the previous 240 minutes. Deployment status has no screenshot asset. The Site is owner-only, and the web retrieval tool cannot access its URL, so these checks do not verify the rendered page or the user's session.
-- No runtime change or publication was made from this screenshot because it does not identify a game-side exception and the exact source package gate remains blocked. Continue with direct owner-session page verification using the provided screenshot/visible UI; capture a game error panel or browser console/network error if present. Keep v49 intact unless concrete evidence identifies a new source fault. Publication remains blocked pending exact source index/profile recovery and package integrity verification.
-
-## Source profile availability recheck — 2026-10-25 10:41 EDT
-
-- Confirmed against live `develop/wasm` head `7d28858d0724682f258e6df9573e8a1cbc44ce97`: GitHub Contents API returns 404 for `scene-data/fullsource/`. The repository's `scene-data/` root contains `crisis-response-scenes.json.gz` (86,196,480 bytes), `marksman-range.json`, and the loader, but not the required Mission FullSource profile directory. This confirms the existing package-source blocker remains; the gzip scene file is not evidence of the missing indexed 1,919-asset profile and does not clear package integrity.
-- No build or publication was attempted. Next gate is still exact profile/index recovery, then per-asset validation and archive integrity before any Site operation.
-
-## Parity gates and exact checkpoint — 2026-10-25 10:41 EDT
-
-The working checkout was cloned from live `develop/wasm` at `9651b39b41f6c649b3529d5abfc3c5a8b0cad556`; worktree was clean before verification. On that exact SHA:
-
-- `node --test scripts/*test.mjs`: **81/81 passed**.
-- `python3 -m unittest discover -s scripts -p '*test.py'`: **38/38 passed** after expanding the sparse checkout to include required source-reference fixtures. A first sparse-only invocation had 8 missing-fixture errors and is not counted as a pass.
-- .NET SDK is not installed in this fresh workspace (`dotnet: command not found`); no .NET build, WASM publish, or exact package verification was run here. Prior successful SDK 8.0.426 results above belong to their explicitly named earlier source checkpoint only.
-
-### Remaining gates, in dependency order
-
-1. **Recover authoritative Mission source inputs.** Obtain the exact `cpr-scenes-full-source.json` (expected SHA-256 `6586b293eb1455669eba29042469ebd6740b0ad08629fd39ea625237626dd639`) or a complete matching 1,919-asset Mission FullSource profile, manifest, and provenance from an approved durable source. The current branch has no `scene-data/fullsource/` directory; its existing 86,196,480-byte monolithic gzip is not a substitute. Do not synthesize or silently replace source data.
-2. **Batch-build and verify source delivery.** Generate the incremental profile from those inputs; validate every compressed and decompressed asset against its expected size/hash, all 1,919 paths and roots, metadata/index hashes, and aggregate byte totals. Then investigate the reported slow tail/hang near 1,900 assets with measured request/progress traces; preserve bounded delivery, cancellation, ordering, and fail-closed integrity. Existing loader unit coverage is not an iPhone network test.
-3. **Build the exact browser source and Site package.** On the same code SHA and profile, use pinned .NET SDK 8.0.426, run the full runtime/WASM build and relevant runtime contracts, assemble the site archive, and verify its complete file count and integrity manifest. No publish before these pass.
-4. **Close actor authority and page wiring in one dependency-aware batch.** Load the authored Mission with the recovered original Operator/Occupant objects, then route page movement, absolute aim (independent of X), physics state/forces, rendering, and weapon callbacks through those same original actor instances. Verify the authored Mission UI and lifecycle; do not use the transport weapon/character as a competing authority.
-5. **Reach gameplay parity against original contracts.** Batch remaining source-backed character physiology, animation/IK, projectile-to-limb combat, wound/ragdoll/weapon-drop, NPC behavior/spawning, and audio bridge work by shared actor lifecycle and dependencies. Preserve unresolved Unity-only or unavailable native services as explicit dispositions with observable contracts; report gun audio separately until shot timing/volume is verified.
-6. **Exact-build acceptance.** Run browser transfer and runtime smoke on the exact package; obtain owner iPhone Safari acceptance for Mission startup/completion, controls, aim, movement/sprint, combat, error readability, and memory/throughput. Desktop Playwright is optional under owner policy; mobile acceptance remains the target-device check.
-7. **Publish and verify.** Only after gates 1–6 applicable to the release pass, save/deploy the verified archive to the existing owner-private Site, confirm deployment status and exact source/archive hashes, then retest the deployed build. No deployment was attempted in this batch.
-
-**Next action:** recover the authoritative source index/profile. Meanwhile, the Node and Python contract suites pass at `9651b39`; the full build is blocked in this workspace by the missing .NET SDK, and the package/release gate is blocked by missing Mission source inputs.
-
-## Follow-up validation — 2026-10-25 12:20 EDT
-
-- Re-cloned the live branch into the current workspace and confirmed clean `develop/wasm` at `4d9143e6aa6e390bb684c0031f8c3b5d25ad4b00` (docs-only update from the previously tested code checkpoint).
-- Re-ran `node --test scripts/*test.mjs`: **81/81 passed**; `python3 -m unittest discover -s scripts -p '*test.py'`: **38/38 passed** on this exact SHA.
-- Connected GitHub reports no workflow runs for this docs-only SHA. This workspace still has no `dotnet` executable, and the Mission profile/index is still absent, so full-source build, WASM package build, and package integrity remain open. No runtime files changed and nothing was published.
-- Continue from the ordered gates above; first dependency is authoritative source index/profile recovery. Preserve 100% integrity verification before publication.
+Commit/push this documentation checkpoint, verify the remote ref, and rebuild
+and independently verify the Mission 01 Site package against that pushed SHA.
+Then move to the target-device startup/throughput gate; do not count the 98 MB
+transfer profile as a download-performance fix.
