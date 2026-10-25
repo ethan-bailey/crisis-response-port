@@ -2,17 +2,18 @@
 
 ## Checkpoint
 
-- Branch: `develop/wasm`.
-- Tested and packaged game source: `df62cd34d0f5331435bd085707dcded41f6c77f1`.
-  This contains the deliberate sprint joystick change and restores the
-  Three.js import map required by the bounded WASM Site packager.
+- Branch: `develop/wasm`; current source `f527059d064b6958555033c6673ce83a345f997b`.
+- This restores the complete `game/index.html` from checkpoint
+  `e009c00d240b63e67d29f9499d4740bbc6669f55`, then adds the verified Three.js
+  import map. A previous truncated tool output had accidentally been committed
+  as the first lines of the page and removed roughly half its content.
+- The restored game page is 44,654 bytes, has no truncation-warning text, and
+  package integrity verification passed: 769 manifest files; 199 Blazor
+  resources; 195 WASM files.
 - Joystick implementation commit: `f8f2391574894c967df49dadc1d712fe641f0b6d`.
-- Checks recorded at the source checkpoint: browser/touch input 19/19;
-  source movement 5/5; WASM Site package tests 14/14; Release WASM publish
-  with pinned .NET SDK 8.0.426 passed. Optional `wasm-tools` workload was
-  unavailable.
-- The verified source package contains 769 files. Integrity verification
-  passed before deployment.
+  Browser/touch input 19/19, source movement 5/5, and WASM package tests 14/14
+  were recorded at the preceding source checkpoint. Release WASM publish used
+  pinned .NET SDK 8.0.426; optional `wasm-tools` was unavailable.
 
 ## Joystick change
 
@@ -26,16 +27,17 @@ are unchanged. Behavior and acceptance steps are recorded in
 
 ## Deployment
 
-- The existing Crisis Response Runtime Site was deployed successfully as
-  version 40 at https://crisis-response-runtime.craftysnipe13.chatgpt.site.
-- Site source commit: `f9120014253e87927e3107703c356704398ede56`. Its
-  release manifest identifies game source `df62cd34d0f5331435bd085707dcded41f6c77f1`.
-- Deployment status: succeeded. The published archive SHA-256 is
-  `8cb17aab51caa50560a1b428dbbcc09e102acb0baf40465e0ba3a9b06905fbd5`.
+- Corrected build deployed successfully as Site version 41 at
+  https://crisis-response-runtime.craftysnipe13.chatgpt.site.
+- Site source commit: `b3c484a11ad7269ebbd15aacae68a6b0e9050103`; packaged game
+  source: `f527059d064b6958555033c6673ce83a345f997b`.
+- Corrected archive SHA-256:
+  `e5196c922cc94f11f3634689cebb0f20de8e69119f1199ae86a54e6ad8a644e2`.
 - Access remains custom and owner-only; no access settings were changed.
-- Browser Playwright PhysX smoke and iPhone Safari acceptance remain open.
-  The browser smoke could not run here because Playwright and browser binaries
-  were unavailable. Do not claim device acceptance from the deployment.
+- A cloud browser opened the page and confirmed the truncation warning is gone.
+  That browser has WebGL disabled and reports “Error creating WebGL context,”
+  so it cannot validate the rendered game. Playwright PhysX smoke and iPhone
+  Safari acceptance remain open.
 
 ## Recent iPhone memory result
 
@@ -49,13 +51,14 @@ Delivery metadata and final sample byte counters disagreed; see
 
 The owner reported delayed gunshot audio that later plays extremely loudly and
 out of sync with firing. A fix was requested for after this deployment section;
-it is not part of version 40. Investigate the weapon audio event lifecycle,
+it is not part of version 41. Investigate the weapon audio event lifecycle,
 queueing, and gain/voice cleanup before making a targeted fix.
 
 ## Next work
 
-1. Have the owner check version 40 on iPhone Safari, including slow walk,
-   deliberate sprint engagement/release, aiming while moving, and firing.
+1. Have the owner check version 41 on iPhone Safari, especially that the scene
+   renders and the character appears; then assess slow walk, deliberate sprint
+   engagement/release, aiming while moving, and firing.
 2. Run the Playwright PhysX browser smoke when Playwright and browser binaries
    are available.
 3. Draft and implement the deferred gun audio timing/volume fix, then verify
