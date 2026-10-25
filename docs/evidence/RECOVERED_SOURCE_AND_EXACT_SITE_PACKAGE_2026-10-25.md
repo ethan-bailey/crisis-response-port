@@ -203,3 +203,84 @@ compression, while the FullSource Mission test driver is intentionally silent.
 Add deterministic tests around those guarantees, then continue source-owned
 audio/event integration. Owner iPhone acceptance must still reproduce or
 clear the delayed, loud, out-of-sync shot report.
+
+## Early gun-audio preload and Site version 53
+
+At game source SHA `ea08c803d797eecbf4788f3364d8ed06b3e324c0`, the browser
+audio runtime now starts fetching and decoding the original weapon clips as
+soon as `weapon-runtime.json.gz` is available, before material preparation and
+the heavier presentation dependencies finish. A previously fired shot still
+cannot play late: stale, suspended, or unloaded events are rejected at the
+call site. Per-shot gain is clamped, the master gain remains 0.16, and the
+compressor remains in the output chain. This shortens the preload window but
+does not establish iPhone latency or loudness acceptance.
+
+`scripts/weapon_audio_runtime_test.mjs` verifies stale/future, suspended, and
+unloaded event rejection; a suspended shot stays dropped after unlock; and
+gain is bounded. Full Node checks passed **84/84**, Python checks **39/39**,
+and the Mission source actor UI/input/analog/absolute aim/PhysX contract passed.
+Browser Release publish passed with zero errors; optional `wasm-tools`
+optimization was not available.
+
+The exact package build and independent verify passed at game source SHA
+`ea08c803d797eecbf4788f3364d8ed06b3e324c0`; manifest SHA-256
+`b1100ef64bcf42eca9c717d50d2056f95d9a15dcfd5659a4a41c966ab1e70c08`.
+Package totals are 2,674 files, 199 Blazor resources, 195 WASM files, and
+1,919 source assets (97,767,549 compressed bytes; 205,514,345 source bytes).
+Site-side tests passed **36/36**. The Site artifact repository is commit
+`c51eff030c22d650f2ff2c6710627ad0a0510ce4`; archive SHA-256
+`ad36621fd1b63ace6249133c656de90eeb6ea1d91548b0e0e1222543c663d7b4`.
+Streaming archive audit verified all 2,674 manifest files, sizes, hashes, and
+no unexpected payload entries.
+
+Site version
+`appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_cb0b6657250081919e4a7e206bf8f055`
+deployed successfully as `appgdep_6ade453e1bc88191ab7fa788db01b156`. Owner
+role and custom/one-user access were confirmed before deployment; audience
+settings did not change. The FullSource Mission audio driver remains silent by
+design; original source AudioSource-to-browser event delivery is the next
+audio parity gate.
+
+## FullSource AudioSource bridge and Site version 54
+
+At exact game source commit `b159d007ccd4574c8d7f420388631ae31b40d916`, the
+opt-in FullSource Mission installs a bounded browser audio event driver for all
+original `AudioSource` objects. Source one-shots retain clip path, volume, and
+`Time.time`; the actor bridge drains events with each source tick. Browser
+playback resolves the original clip path to the existing weapon manifest and
+rejects stale, suspended, or unloaded shots immediately. The source gunfire
+clip path `Assets/AudioClip/5.56x45mm-01-unsuppressed.wav` matches the browser
+`audioFire` entry exactly. Unsupported loop/play/stop routing and unknown
+source clips are counted, not substituted.
+
+The source Mission contract passed with bounded 64-event queue behavior and
+one dropped overflow event. Node passed **85/85**, Python **39/39**, isolated
+EngineChecks **69**, and FoundationChecks **121**. Browser Release publish
+succeeded with zero errors; the optional `wasm-tools` workload was unavailable.
+The first package attempt exposed a missing generated PhysX adapter in the
+fresh worktree. Running `npm ci --prefix game --ignore-scripts` and
+`npm run --prefix game vendor` restored the lockfile-pinned 2.7.3 dependency;
+no project source change was needed for that environment setup.
+
+Exact package verification passed at game source SHA
+`b159d007ccd4574c8d7f420388631ae31b40d916`; manifest SHA-256 is
+`157efaf1b376dacb88fbadf973c10301bbb5564dd8078996d986f2d51478a7c5`. The
+package contains 2,674 files, 199 Blazor resources, 195 WASM files, and 1,919
+source assets (97,767,549 compressed bytes; 205,514,345 source bytes). Sites
+artifact tests passed **36/36**. The artifact repo commit is
+`684ffbddc2d9fe1846563105407ab1c231b42de8`; its archive SHA-256 is
+`0dbfc4fdc6f24941106a5f6c3ad88511b6132431754a379126bfee95d04c2052`. Streaming
+archive audit matched every manifest file and found no unexpected payloads.
+
+The exact verified archive deployed privately as Site version 54
+`appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_3423555d530c8191b12d12169f7b776c`,
+deployment `appgdep_6ade483c9bf88191b3b227310295e96f` (succeeded) at
+`https://crisis-response-runtime.craftysnipe13.chatgpt.site`. Owner role and
+custom access with one allowed user and no groups were confirmed before
+publishing; no audience settings changed.
+
+This closes only event delivery for supported FullSource one-shots. It does
+not prove the real weapon callback, loop/mixer/spatial behavior, default-page
+FullSource ownership, or iPhone audio acceptance. Next test an actual source
+gunfire/reload callback and preserve the delayed/loud iPhone report as the
+device acceptance case.
