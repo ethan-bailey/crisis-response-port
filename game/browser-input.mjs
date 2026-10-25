@@ -9,6 +9,7 @@ export class BrowserInput {
     this.movementStickAxis = 0;
     this.movementStickAim = 0;
     this.movementStickOvertravel = false;
+    this.movementStickSprinting = false;
   }
 
   pressed(action) { return (this.sources.get(action)?.size || 0) > 0; }
@@ -79,6 +80,7 @@ export class BrowserInput {
       this.movementStickAxis = 0;
       this.movementStickAim = 0;
       this.movementStickOvertravel = false;
+      this.movementStickSprinting = false;
       this.set('left', source, false);
       this.set('right', source, false);
       this.set('sprint', source, false);
@@ -101,19 +103,26 @@ export class BrowserInput {
       const scale = length > 1 ? 1 / length : 1;
       const horizontal = rawX * scale;
       const vertical = rawY * scale;
-      const magnitude = Math.max(0, (Math.abs(horizontal) - deadZone) / (1 - deadZone));
+      const travel = Math.abs(horizontal);
+      // Give the user most of the visible stick travel to choose walking speed.
+      // Sprint is a separate deliberate over-pull, with hysteresis to prevent
+      // accidental activation and flicker around the trigger point.
+      const walkFullAt = 0.70, sprintEnter = 1.75, sprintExit = 1.5;
+      const magnitude = Math.max(0, Math.min(1, (travel - deadZone) / (walkFullAt - deadZone)));
       const overtravel = Math.abs(rawX) > 1;
+      const previousSprint = this.movementStickSprinting;
+      this.movementStickSprinting = previousSprint ? Math.abs(rawX) > sprintExit : Math.abs(rawX) >= sprintEnter;
       this.movementStickOvertravel = overtravel;
-      this.movementStickAxis = Math.sign(rawX) * (overtravel ? 1 : magnitude);
+      this.movementStickAxis = Math.sign(rawX) * magnitude;
       const aimPower = Math.max(0, (Math.abs(vertical) - deadZone) / (1 - deadZone));
       this.movementStickAim = -Math.sign(vertical) * aimPower;
       onAim(this.movementStickAim);
       this.set('left', source, this.movementStickAxis < 0);
       this.set('right', source, this.movementStickAxis > 0);
-      const sprinting = overtravel;
+      const sprinting = this.movementStickSprinting;
       this.set('sprint', source, sprinting);
       surface.classList.toggle('sprinting', sprinting);
-      surface.style?.setProperty?.('--stick-power', String(overtravel ? 1 : magnitude));
+      surface.style?.setProperty?.('--stick-power', String(sprinting ? 1 : magnitude));
       if (thumb) {
         thumb.style.transform = `translate3d(${horizontal * travelX}px,${vertical * travelY}px,0)`;
       }
@@ -147,7 +156,7 @@ export class BrowserInput {
     if ([...sources].some(source => source !== 'stick:movement'))
       return { magnitude: 1, sprint: keyboardSprint };
     const power = Math.abs(this.movementStickAxis);
-    return { magnitude: power, sprint: keyboardSprint || this.movementStickOvertravel };
+    return { magnitude: power, sprint: keyboardSprint || this.movementStickSprinting };
   }
 
   bindKeyboard(target, bindings) {

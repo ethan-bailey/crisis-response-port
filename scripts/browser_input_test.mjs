@@ -207,7 +207,7 @@ test('circular joystick restores vertical aim and only moves horizontally',()=>{
  move('pointermove',150,120); // inside the dead zone
  assert.equal(input.movementMagnitude(1),0);
  move('pointermove',177,120); // half travel, scaled walk
- assert.ok(Math.abs(input.movementMagnitude(1)-((37/74)-.16)/.84)<1e-8);
+ assert.ok(Math.abs(input.movementMagnitude(1)-((37/74)-.16)/(.70-.16))<1e-8);
  move('pointermove',240,120); // full right; sprint beyond rim
  assert.equal(input.movementMagnitude(1),1);
  assert.equal(input.movementStickOvertravel,true);
@@ -222,7 +222,7 @@ test('circular joystick restores vertical aim and only moves horizontally',()=>{
  input.dispose();
 });
 
-test('joystick travel scales walk; sprint begins only beyond the rim',()=>{
+test('joystick travel scales walk; sprint requires a deliberate over-pull and has hysteresis',()=>{
  const {input,move,classes}=analogStickFixture();
  const walk=1.5,sprint=4.2;
  move('pointerdown',140,120);
@@ -231,19 +231,23 @@ test('joystick travel scales walk; sprint begins only beyond the rim',()=>{
   const p=input.movementProfile(1,walk,sprint,false);
   assert.ok(p.magnitude>=0&&p.magnitude<=1);
  }
- move('pointermove',214,120); // exactly at the rim
+ move('pointermove',214,120); // full walk at the visible rim
  const below=input.movementProfile(1,walk,sprint);
- move('pointermove',215,120); // beyond the rim
+ move('pointermove',270,120); // over-pull threshold (1.75x travel)
  const above=input.movementProfile(1,walk,sprint);
  assert.equal(below.sprint,false);
  assert.equal(above.sprint,true);
  assert.equal(below.magnitude,1);
  assert.equal(above.magnitude,1);
- move('pointermove',240,120);
+ move('pointermove',260,120); // stays sprinting until below the release threshold
+ assert.equal(input.movementProfile(1,walk,sprint).sprint,true);
+ move('pointermove',250,120); // release threshold (1.5x travel)
+ assert.equal(input.movementProfile(1,walk,sprint).sprint,false);
+ move('pointermove',270,120);
  assert.deepEqual(input.movementProfile(1,walk,sprint),{magnitude:1,sprint:true});
  assert.equal(classes.has('sprinting'),true);
  assert.equal(input.pressed('sprint'),true,'full-pull sprint must reach original InputHandler');
- move('pointerup',240,120);
+ move('pointerup',270,120);
  assert.equal(input.pressed('sprint'),false,'spring release must reset source sprint action');
  assert.equal(classes.has('sprinting'),false);
 });
