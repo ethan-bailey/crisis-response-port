@@ -58,3 +58,10 @@ The working checkout was cloned from live `develop/wasm` at `9651b39b41f6c649b35
 7. **Publish and verify.** Only after gates 1–6 applicable to the release pass, save/deploy the verified archive to the existing owner-private Site, confirm deployment status and exact source/archive hashes, then retest the deployed build. No deployment was attempted in this batch.
 
 **Next action:** recover the authoritative source index/profile. Meanwhile, the Node and Python contract suites pass at `9651b39`; the full build is blocked in this workspace by the missing .NET SDK, and the package/release gate is blocked by missing Mission source inputs.
+
+## Follow-up validation — 2026-10-25 12:20 EDT
+
+- Re-cloned the live branch into the current workspace and confirmed clean `develop/wasm` at `4d9143e6aa6e390bb684c0031f8c3b5d25ad4b00` (docs-only update from the previously tested code checkpoint).
+- Re-ran `node --test scripts/*test.mjs`: **81/81 passed**; `python3 -m unittest discover -s scripts -p '*test.py'`: **38/38 passed** on this exact SHA.
+- Connected GitHub reports no workflow runs for this docs-only SHA. This workspace still has no `dotnet` executable, and the Mission profile/index is still absent, so full-source build, WASM package build, and package integrity remain open. No runtime files changed and nothing was published.
+- Continue from the ordered gates above; first dependency is authoritative source index/profile recovery. Preserve 100% integrity verification before publication.
