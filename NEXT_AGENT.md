@@ -1,33 +1,27 @@
-# Crisis Response Port — current handoff
+# Current handoff — 2026-10-25
 
-## Source checkpoint
+## Current release
 
-- Work targets `develop/wasm`, with the earlier verified tree at `e5bf54fdf39afb77efab363c194e7cf680f5d583`.
-- Release history includes a transient truncated upload (`9b09d5b`) and its immediate corrective revert (`ef645fa`). Do not build or deploy `9b09d5b`; it was cut off at an 8 KB upload boundary. The complete source change is rebuilt and reverified after the recovery commit.
-- The lightweight page still starts first. It now offers `Start original Mission · 99 MB`, which sequentially verifies and loads the six-root original Mission profile, starts the authored EntryTeam UI in the same source world, routes aim to the original WeaponPointer, ticks the FullSource actor, synchronizes its position/velocity through browser PhysX, and projects the original actor hierarchy into the page renderer.
-- Profile `global-ui-mission-operator`: 1,919 assets, 22,365 records, 97,767,549 compressed asset bytes plus metadata (about 99 MB decimal), 205,514,345 uncompressed source bytes. It is opt-in and stays off default first paint.
-- The site packager now omits the separate 220 MB-uncompressed diagnostic scene archive by default. Include it only when the optional `?scene-smoke` route is needed, using `--include-original-scene-smoke`; the normal game uses the compact Mission geometry and on-demand FullSource profile.
+- `develop/wasm` runtime source checkpoint: `c15c91f662d67cc1f640c527c17efa88c5b80be7` (a final handoff-only commit may follow).
+- Crisis Response Runtime Site version **47** is deployed at `https://crisis-response-runtime.craftysnipe13.chatgpt.site` and remains owner-only. The Site source commit is `b87a46983edca40b4fc317db1a81fda9123c3d45`; its manifest identifies runtime source `c15c91f`.
+- The Mission source loader sends compressed assets as base64 JSON text to the existing .NET `byte[]` JS interop method. This addresses the iPhone `ByteArrayJsonConverter` exception.
+- Mission loading now shows asset and MiB progress outside the hidden play HUD, provides Cancel via `AbortController`, and restores the start control after cancellation for retry. A touchend guard blocks rapid double-tap zoom on the game canvas.
+- Runtime errors retain the scrollable, copyable details panel with iOS selection fallback and retry action.
 
-## Verification completed on the release candidate
+## Verification
 
-- Incremental Mission profile integrity passed; lazy hydrated document release passed.
-- Mission UI contract passed: Mission 01 started, original InteractionMenu active, original input press/release and source movement/physics bridge checks passed.
-- Browser EntryTeam startup contract passed: original actor/UI, movement acceleration and position/velocity round trip.
-- Runtime checks passed; FoundationChecks passed 121 assertions; EngineChecks passed 69 assertions.
-- Browser input, source package loader, and magazine UI checks passed 31/31. Actual HTML module syntax passed.
-- Browser runtime build and Release WASM publish passed with .NET SDK 8.0.426.
-- Site package regression suite passed 15 tests, including default omission and explicit opt-in inclusion of the full scene-smoke archive.
-- No Playwright/browser or iPhone Safari run was available. The user explicitly skipped the manual device-test step; leave iPhone acceptance open.
+- Pinned .NET 8.0.426 Release WebAssembly publish passed at the loader-fix source checkpoint; no C# code changed afterward.
+- Loader and UI contract checks passed **6/6**, including already-aborted source delivery. Extracted game module syntax and `git diff --check` passed.
+- Final package integrity verified **2,673 files**, 199 Blazor resources, 195 WASM files, and the 1,919-asset Mission profile. The optional 220 MB-uncompressed scene-smoke archive remains excluded.
+- Site version 47 reports deployment `succeeded`; archive manifest, game progress/cancel UI, base64 loader, and `.openai/hosting.json` were verified before publication.
 
-## Known runtime limits
+## Remaining acceptance and limits
 
-- Mission 01 still reports unsupported/unresolved recovered Unity components and built-ins, including Sprite, Mesh, Shader, ReflectionProbe, some Camera fields, audio components, and gameplay scripts. This is not full Unity parity.
-- Browser Mission startup uses a silent source audio adapter, disables unsupported behavior-tree/vocalization hooks, and ignores non-player rigidbody force commands. Only the controlled player's physics state is integrated with browser PhysX. NPC interaction and Mission audio are not verified.
-- Existing gunshot stale-event/gain hardening remains pending iPhone Safari acceptance. Source Mission gun audio is silent until the source audio bridge is implemented.
+- Playwright and iPhone Safari acceptance are still open. Ask the owner to reload the live Site, tap **Start original Mission · 99 MB**, confirm progress advances, and try movement, aim, and fire after Mission ready.
+- If progress stops, tap **Cancel**, retry once, and if it errors tap **Copy details** and paste the result into ChatGPT. On clipboard failure, long-press the selected stack and choose **Copy**.
+- Rapid double-tap zoom suppression is implemented on the game canvas but has not been manually verified on iPhone Safari.
+- The original Mission browser audio adapter is silent. Some Unity components, NPC physics, and gameplay scripts remain unsupported or unverified. Do not claim full Unity parity.
 
-## Hosting
+## Next action
 
-- Existing owner-private Site: `https://crisis-response-runtime.craftysnipe13.chatgpt.site`. Preserve its owner-only access.
-- A first oversized archive was rejected before saving any Site version; the Site stayed on its prior live version. The diagnostic archive is now excluded from the default package to keep the deployment bounded.
-- Publish only a verified static archive built from the exact final `develop/wasm` source state. Check the Site's current version/source before retrying a publish; do not create duplicate versions for an already successful deployment.
-- Before closing the task, confirm `develop/wasm` is clean and current, the package integrity verifier passes, the Site version is deployed from the same release, and report the browser/device acceptance limits plainly.
+Have the owner test Site version 47 on iPhone Safari, especially download progress, cancellation/retry, double-tap zoom, movement, aim, and fire.
