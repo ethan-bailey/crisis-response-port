@@ -1,6 +1,12 @@
 # Current handoff — 2026-10-25
 
 ## Latest source checkpoint
+### Exact build and package follow-through for `dec5bbe6aba706f9812c651ce39f9eb1d855df4d`
+
+- Fresh .NET SDK 8.0.426 restore/build passed: 0 errors, 48 existing warnings. Release Browser publish passed; optional wasm-tools optimization unavailable. The real Mission source actor contract passed with the casing pose/time/mass assertions.
+- The first package attempt found the generated pinned PhysX adapter absent in the clean checkout. `npm ci --prefix game --ignore-scripts` and `npm run --prefix game vendor` restored it. Exact package build and independent verify then passed: manifest SHA-256 `1b303b886c5b21fa31b69cc643a02a04c8bc21703172ecafcbbcfa2ba9f431c4`; 2,675 files, 199 Blazor resources, 195 WASM files, 1,919 mission assets; 97,767,549 compressed and 205,514,345 source bytes.
+- No deployment was made from this package because the current browser does not consume `physics.worldCommands`; deployment would not implement visible casing motion. Next gate is to wire those source events into a dynamic browser PhysX body and the recovered source mesh/material, add trajectory/lifetime tests, then rebuild and verify again.
+
 
 - Current tested source commit: `dec5bbe6aba706f9812c651ce39f9eb1d855df4d`. The casing callback transport now includes source world position, rotation, and Time.time alongside body ID, mass, force/torque vectors, and ForceMode.
 - On this exact code tree, the real `--browser-entryteam-session-contract` passed. It asserts one matched Casing body for VelocityChange force + Impulse torque, finite source pose/time, and authored effective mass 0.002 kg (2 g). `git diff --check` passed. Do not claim the package below applies to this new source commit: exact-source package rebuild/verification is pending.
