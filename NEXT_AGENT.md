@@ -27,3 +27,9 @@
 ## Next action
 
 Recover the exact source index or a complete Mission profile and manifest, then verify all assets and build/verify the exact-source WASM Site package before any publication. If unavailable, keep publication blocked and continue independent gameplay gates.
+
+## User-reported iPhone load screen — 2026-10-25
+
+- The supplied screenshot shows a black page containing only “Warning: truncated output (original token count: 14171) Total output lines: 582”; the browser chrome identifies the in-app browser as ChatGPT. This exact phrasing is a ChatGPT output-truncation notice, not a .NET/JavaScript exception emitted by the game runtime. The screenshot alone does not establish whether the game page loaded successfully behind that UI or whether the notice was rendered as page content.
+- Read-only Site checks: v49 deployment `appgdep_6addd0d050cc8191a1d35cd94f432895` reports `succeeded` at `https://crisis-response-runtime.craftysnipe13.chatgpt.site` (updated 2026-10-25 09:50 UTC). Worker error logs returned no events for the previous 240 minutes. Deployment status has no screenshot asset. The Site is owner-only, and the web retrieval tool cannot access its URL, so these checks do not verify the rendered page or the user's session.
+- No runtime change or publication was made from this screenshot because it does not identify a game-side exception and the exact source package gate remains blocked. Continue with direct owner-session page verification using the provided screenshot/visible UI; capture a game error panel or browser console/network error if present. Keep v49 intact unless concrete evidence identifies a new source fault. Publication remains blocked pending exact source index/profile recovery and package integrity verification.
