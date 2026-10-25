@@ -2,9 +2,10 @@
 // ballistic ParticleSystems, plus validation of source ParticleSystem driver
 // commands delivered by the FullSource actor. This module NEVER simulates or
 // draws replacements.
-// Original C# materialEffect events, Time.time, and recovered source module
-// data are authoritative. A faithful engine/render adapter may consume
-// resolveEmitters() only after individual module/shader behavior is validated.
+// This source/provenance binder does not itself simulate or draw particles.
+// Original C# materialEffect events and Time.time are authoritative; the
+// separate renderer consumes its recovered controller and module mappings.
+import {evaluateOriginalImpactEmission,evaluateSourceParticleFields} from './source-particle-values.mjs';
 const GUID=/^[0-9a-f]{32}$/;
 const SHA=/^[0-9a-f]{64}$/;
 const MAX_DIAGNOSTICS=32;
@@ -19,14 +20,15 @@ async function loadGzip(url) {
   return new Response(r.body.pipeThrough(new DecompressionStream('gzip'))).json();
 }
 export async function loadOriginalParticleSources() {
-  const [particles,materials]=await Promise.all([
+  const [particles,materials,controllers]=await Promise.all([
     loadGzip('./assets/ballistics/original-particles-source.json.gz'),
-    loadGzip('./assets/ballistics/original-particle-materials-source.json.gz')
+    loadGzip('./assets/ballistics/original-particle-materials-source.json.gz'),
+    loadGzip('./assets/ballistics/original-particle-controllers-source.json.gz')
   ]);
-  return {particles,materials};
+  return {particles,materials,controllers};
 }
 
-export function createOriginalParticleEventBinding(particles,materials) {
+export function createOriginalParticleEventBinding(particles,materials,controllers) {
   requireSource(particles?.version===1&&particles.effects?.length===14,
     'expected 14 recovered impact effect prefabs');
   requireSource(materials?.version===1&&
@@ -39,14 +41,32 @@ export function createOriginalParticleEventBinding(particles,materials) {
     'source original particle shader provenance is absent');
   requireSource(SHA.test(materials.particleManifestSha256||''),
     'original particle manifest hash is absent');
+  requireSource(controllers?.schemaVersion===1&&controllers.kind==='original-impact-particle-controller-closure'&&
+    controllers.counts?.effects===14&&controllers.counts?.BallisticHitEffect===14&&
+    controllers.counts?.SingleEmissionEffect===26,
+    'original impact emission controller closure is missing or incomplete');
+  requireSource(SHA.test(controllers.sourcePackageSha256||''),
+    'original particle controller closure is not bound to its verified source package');
 
-  const sourceEffects=new Map(),byMaterial=new Map();
+  const sourceEffects=new Map(),controllerEffects=new Map(),byMaterial=new Map();
+  for(const effect of controllers.effects||[]) {
+    requireSource(GUID.test(effect.guid)&&SHA.test(effect.sourcePrefabSha256||'')&&
+      !controllerEffects.has(effect.guid),'duplicate or malformed original emission controller prefab');
+    const root=effect.controllers?.filter(c=>c.scriptGuid==='f9f9f8d0f023b657c5276ea277044f46')||[];
+    const emitters=effect.controllers?.filter(c=>c.scriptGuid==='7f9bb5f5ef1d9fb3ca6dbc9296820005')||[];
+    requireSource(root.length===1&&emitters.length>0&&emitters.every(c=>c.particleSystemFileID&&c.particleRendererFileID),
+      'original emission controller is not paired to its particle system/renderer: '+effect.guid);
+    controllerEffects.set(effect.guid,effect);
+  }
   let systemCount=0,billboards=0,meshes=0;
   for(const source of particles.effects) {
     requireSource(GUID.test(source.guid)&&!sourceEffects.has(source.guid),
       'duplicate or malformed original particle prefab GUID');
     requireSource(SHA.test(source.sourcePrefabSha256||'')&&
       source.emitters?.length>0, 'unverified prefab or empty emitters: '+source.guid);
+    const controllerEffect=controllerEffects.get(source.guid);
+    requireSource(controllerEffect&&controllerEffect.sourcePrefabSha256===source.sourcePrefabSha256,
+      'original particle and spawn-controller prefab provenance differs: '+source.guid);
     requireSource(Array.isArray(source.roles)&&
       source.roles.every(role=>role==='entryEffect'||role==='exitEffect'),
       'unsupported original effect phase: '+source.guid);
@@ -79,6 +99,11 @@ export function createOriginalParticleEventBinding(particles,materials) {
         byMaterial.get(material).add(source.guid);
       }
     }
+    const controllerEmitters=controllerEffect.controllers.filter(c=>c.scriptGuid==='7f9bb5f5ef1d9fb3ca6dbc9296820005');
+    requireSource(controllerEmitters.length===source.emitters.length&&source.emitters.every(e=>
+      controllerEmitters.some(c=>String(c.particleSystemFileID)===String(e.sourceEmitterFileID)&&
+        String(c.particleRendererFileID)===String(e.sourceRendererFileID))),
+      'original spawn-controller component mapping differs from particle manifest: '+source.guid);
     sourceEffects.set(source.guid,source);
   }
   requireSource(systemCount===26&&billboards===14&&meshes===12,
@@ -111,6 +136,33 @@ export function createOriginalParticleEventBinding(particles,materials) {
     requireSource(Array.isArray(value.direction)&&value.direction.length===3&&
       value.direction.every(Number.isFinite),'invalid native effect world direction');
     return source.emitters;
+  }
+  function sampleSourceEffect(sourceGuid,normalizedAge,random={}) {
+    const source=sourceEffects.get(sourceGuid);
+    requireSource(source,'cannot sample an unrecovered original prefab: '+sourceGuid);
+    return source.emitters.map(emitter=>({
+      sourceEmitterFileID:emitter.sourceEmitterFileID,
+      sourceRendererFileID:emitter.sourceRendererFileID,
+      renderMode:emitter.renderer.m_RenderMode,
+      materialGuids:(emitter.renderer.m_Materials||[]).map(ref=>ref.guid).filter(Boolean),
+      controller:controllerEffects.get(sourceGuid).controllers.find(c=>c.scriptGuid==='7f9bb5f5ef1d9fb3ca6dbc9296820005'&&
+        String(c.particleSystemFileID)===String(emitter.sourceEmitterFileID)).serializedFields,
+      fields:evaluateSourceParticleFields(emitter,normalizedAge,random)
+    }));
+  }
+  function evaluateImpactEffect(event,settings={}) {
+    const emitters=resolveEmitters(event);
+    if(!emitters)return [];
+    const source=sourceEffects.get(event.value.source);
+    const controllers=controllerEffects.get(source.guid).controllers;
+    return emitters.map(emitter=>{
+      const controller=controllers.find(c=>c.scriptGuid==='7f9bb5f5ef1d9fb3ca6dbc9296820005'&&
+        String(c.particleSystemFileID)===String(emitter.sourceEmitterFileID));
+      requireSource(controller,'original SingleEmissionEffect controller is missing for '+emitter.sourceEmitterFileID);
+      return {sourceGuid:source.guid,sourceEmitterFileID:emitter.sourceEmitterFileID,
+        hierarchyPath:controller.hierarchyPath,renderer:emitter.renderer,
+        emission:evaluateOriginalImpactEmission(controller,event.value,event.value.phase,settings)};
+    });
   }
   function observe(events,sourceTime) {
     for(const event of events) {
@@ -172,6 +224,7 @@ export function createOriginalParticleEventBinding(particles,materials) {
   }
   function snapshot() {
     return {sourcePrefabs:sourceEffects.size,sourceEmitters:systemCount,
+      sourceEmissionControllers:controllers.counts.SingleEmissionEffect,
       billboardEmitters:billboards,meshEmitters:meshes,
       receivedEvents:received,unrenderedEmitterRequests:unrendered,
       sourceCommands,sourceCommandDrops,sourceCommandActions:{...sourceCommandActions},
@@ -180,5 +233,5 @@ export function createOriginalParticleEventBinding(particles,materials) {
       blocker:'Native Unity particle modules and shaders not yet executed',
       recent:recent.slice()};
   }
-  return {resolveEmitters,observe,observeSourceCommands,snapshot};
+  return {resolveEmitters,sampleSourceEffect,evaluateImpactEffect,observe,observeSourceCommands,snapshot};
 }

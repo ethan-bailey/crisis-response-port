@@ -17,7 +17,7 @@ public sealed class BallisticHitEffect:MonoBehaviour {
  void Play(Projectile p,string phase){spawnTime=Time.time;Lifetime=BallisticRuntimeHost.Current.particlesLifetime;
   // BallisticHitEffect.PlayAudio's exact sample choice/energy volume rule.
   string clip=audioClips.Length==0?null:audioClips[UnityEngine.Random.Range(0,audioClips.Length)];
-  BallisticRuntimeHost.Current.Emit("materialEffect",new{source=SourceID,phase,id=p.Id,clip,volume=Mathf.Clamp01(p.Energy/300f),position=new[]{transform.position.x,transform.position.y,transform.position.z},direction=new[]{transform.forward.x,transform.forward.y,transform.forward.z},energy=p.Energy,p.Velocity});
+  BallisticRuntimeHost.Current.Emit("materialEffect",new{source=SourceID,phase,id=p.Id,clip,volume=Mathf.Clamp01(p.Energy/300f),position=new[]{transform.position.x,transform.position.y,transform.position.z},direction=new[]{transform.forward.x,transform.forward.y,transform.forward.z},energy=p.Energy,p.Velocity,metricDiameter=p.MetricDiameter,projectileDiameter=p.Diameter,displacedMaterialVolume=p.DisplacedMaterialVolume,particleCountScaler=p.particleCountScaler});
  }
  public void Step(){if(Time.time-spawnTime>=Lifetime)Object.Destroy(gameObject);}
 }

@@ -4,6 +4,7 @@ import { createOriginalImpactMeshRenderer } from './original-impact-mesh.mjs';
 import { sourceEffectAge } from './source-effect-clock.mjs';
 import { createOriginalWindowVisuals } from './original-window-visuals.mjs';
 import { createOriginalParticleEventBinding } from './original-particle-event-binding.mjs';
+import { createOriginalParticleRenderer } from './original-particle-renderer.mjs';
 import { createWeaponAudioRuntime, createSourceWeaponAudioDispatcher } from './weapon-audio-runtime.mjs';
 export async function loadWeaponData(){
  const r=await fetch('./assets/weapon-runtime.json.gz');if(!r.ok)throw new Error('Original weapon settings unavailable');
@@ -22,7 +23,9 @@ export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,part
  const dispatchSourceAudio=createSourceWeaponAudioDispatcher(data.audio,audio);
  const originalImpactMeshes=createOriginalImpactMeshRenderer(scene);
  const originalWindows=createOriginalWindowVisuals(scene,ballisticsData,sourceWindows);
- const originalParticleEvents=createOriginalParticleEventBinding(particleSources.particles,particleSources.materials);
+ const originalParticleEvents=createOriginalParticleEventBinding(particleSources.particles,particleSources.materials,particleSources.controllers);
+ const originalParticleRenderer=createOriginalParticleRenderer(scene,particleSources,originalParticleEvents,{
+  particlesLifetime:ballisticsData.settings.particlesLifetime,emissionsModifier:1,chunkSizeMultiplier:1});
  // Preload and retain the exact original SpriteAtlas texture. The old code
  // deferred assigning a clone using Promise.then for EVERY shot. Because its
  // short original animation is timed by C# Time.time, the new flash could age
@@ -84,6 +87,7 @@ export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,part
   originalImpactMeshes.update(events);
   originalWindows.update(events);
   originalParticleEvents.observe(events,sourceTime);
+  originalParticleRenderer.update(events,sourceTime);
   for(let i=active.length-1;i>=0;i--){const item=active[i],time=sourceEffectAge(sourceTime,item.start);
    if(time>=duration){item.disposed=true;scene.remove(item.group);item.mesh.geometry.dispose();item.material.dispose();item.texture?.dispose();active.splice(i,1);continue;}
    applyOriginalSpriteFrame(item,time);
@@ -100,5 +104,7 @@ export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,part
  function audioSnapshot(){return audioStats.snapshot();}
  return {update,playSourceAudioEvents:dispatchSourceAudio,
   observeSourceParticleCommands:(events,sourceTime,dropped)=>originalParticleEvents.observeSourceCommands(events,sourceTime,dropped),
-  flashSnapshot,audioSnapshot,impactMeshSnapshot:originalImpactMeshes.snapshot,windowSnapshot:originalWindows.snapshot,particleSourceSnapshot:originalParticleEvents.snapshot};
+  flashSnapshot,audioSnapshot,impactMeshSnapshot:originalImpactMeshes.snapshot,windowSnapshot:originalWindows.snapshot,
+  particleSourceSnapshot:()=>({...originalParticleEvents.snapshot(),renderer:originalParticleRenderer.snapshot()}),
+  dispose:originalParticleRenderer.dispose};
 }

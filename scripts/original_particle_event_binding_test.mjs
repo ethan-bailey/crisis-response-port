@@ -2,18 +2,20 @@ import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {readFileSync} from 'node:fs';
 import {gunzipSync} from 'node:zlib';
+import {createHash} from 'node:crypto';
 import {createOriginalParticleEventBinding} from '../game/original-particle-event-binding.mjs';
 
 const read=path=>JSON.parse(gunzipSync(readFileSync(new URL(path,import.meta.url))).toString('utf8'));
 const particles=read('../game/assets/ballistics/original-particles-source.json.gz');
 const materials=read('../game/assets/ballistics/original-particle-materials-source.json.gz');
+const controllers=read('../game/assets/ballistics/original-particle-controllers-source.json.gz');
 const nativeEvent=(source,phase,time=5)=>({
   type:'materialEffect',time,
   value:{source,phase,position:[1,2,-3],direction:[0,0,1],energy:123,Velocity:15}
 });
 
 test('native source map resolves all 14 original effect prefabs and 26 component identities',()=>{
-  const binder=createOriginalParticleEventBinding(particles,materials);
+  const binder=createOriginalParticleEventBinding(particles,materials,controllers);
   const initial=binder.snapshot();
   assert.equal(initial.sourcePrefabs,14);
   assert.equal(initial.sourceEmitters,26);
@@ -30,8 +32,39 @@ test('native source map resolves all 14 original effect prefabs and 26 component
   }
 });
 
-test('real C# event timing and original prefab role are preserved, nothing is drawn',()=>{
-  const binder=createOriginalParticleEventBinding(particles,materials);
+test('particle source binding samples authored curve fields while preserving emitter and material identity',()=>{
+  const binder=createOriginalParticleEventBinding(particles,materials,controllers);
+  const source=particles.effects[0],sampled=binder.sampleSourceEffect(source.guid,.5,{startSpeed:.25,color:.75});
+  assert.equal(sampled.length,source.emitters.length);
+  assert.deepEqual(sampled.map(x=>x.sourceEmitterFileID),source.emitters.map(x=>x.sourceEmitterFileID));
+  for(let i=0;i<sampled.length;i++){
+    assert.equal(sampled[i].renderMode,source.emitters[i].renderer.m_RenderMode);
+    assert.deepEqual(sampled[i].materialGuids,source.emitters[i].renderer.m_Materials.map(x=>x.guid).filter(Boolean));
+    assert.ok(Number.isFinite(sampled[i].fields.speed));
+    assert.ok(Number.isFinite(sampled[i].fields.size));
+    assert.ok(Number.isFinite(sampled[i].fields.lifetime));
+    assert.ok(Number.isFinite(sampled[i].fields.rotation));
+    assert.equal(sampled[i].controller.m_Script.guid,'7f9bb5f5ef1d9fb3ca6dbc9296820005');
+  }
+  assert.throws(()=>binder.sampleSourceEffect('0'.repeat(32),.5),/unrecovered original prefab/);
+});
+
+test('impact events resolve the complete source prefab controller graph and authored emission commands',()=>{
+  const binder=createOriginalParticleEventBinding(particles,materials,controllers);
+  const source=particles.effects.find(e=>e.source.endsWith('Concrete entry.prefab'));
+  const event=nativeEvent(source.guid,'entry',2);
+  Object.assign(event.value,{Velocity:1200,energy:500,metricDiameter:.009,projectileDiameter:9,
+    displacedMaterialVolume:1.25,particleCountScaler:1});
+  const plans=binder.evaluateImpactEffect(event,{particlesLifetime:20,emissionsModifier:1,chunkSizeMultiplier:1});
+  assert.equal(plans.length,source.emitters.length);
+  assert.equal(plans.reduce((sum,p)=>sum+p.emission.count,0),8);
+  assert.deepEqual(plans.map(p=>p.hierarchyPath),['Concrete entry/Smoke emitter','Concrete entry/Chunk emitter']);
+  assert.ok(plans.every(p=>p.sourceGuid===source.guid&&p.renderer));
+  assert.throws(()=>binder.evaluateImpactEffect(nativeEvent(source.guid,'unknown')),/phase/);
+});
+
+test('source binding observer preserves native event timing and prefab role',()=>{
+  const binder=createOriginalParticleEventBinding(particles,materials,controllers);
   const e=particles.effects[0];
   const event=nativeEvent(e.guid,e.roles[0]==='entryEffect'?'entry':'exit',11.75);
   binder.observe([event,{type:'flight',time:11.75,value:{}}],11.75);
@@ -47,7 +80,7 @@ test('real C# event timing and original prefab role are preserved, nothing is dr
 test('unknown native GUID, mismatched phase and invalid clock fail visibly',()=>{
   const source=particles.effects[0];
   const phase=source.roles[0]==='entryEffect'?'entry':'exit';
-  const binder=createOriginalParticleEventBinding(particles,materials);
+  const binder=createOriginalParticleEventBinding(particles,materials,controllers);
   assert.throws(()=>binder.observe([nativeEvent('0'.repeat(32),phase)],5),/unknown recovered prefab/);
   assert.throws(()=>binder.observe([nativeEvent(source.guid,'unknown')],5),/phase/);
   assert.throws(()=>binder.observe([nativeEvent(source.guid,phase,6)],5),/after simulation-clock/);
@@ -57,7 +90,7 @@ test('unknown native GUID, mismatched phase and invalid clock fail visibly',()=>
 
 test('source observer bounds diagnostics across repeated native impact events',()=>{
   const source=particles.effects[0],phase=source.roles[0]==='entryEffect'?'entry':'exit';
-  const binder=createOriginalParticleEventBinding(particles,materials);
+  const binder=createOriginalParticleEventBinding(particles,materials,controllers);
   const events=Array.from({length:35},(_,n)=>nativeEvent(source.guid,phase,n/10));
   binder.observe(events,3.5);
   const state=binder.snapshot();
@@ -68,7 +101,7 @@ test('source observer bounds diagnostics across repeated native impact events',(
 });
 
 test('FullSource particle command transport validates provenance, actions and source clock',()=>{
-  const binder=createOriginalParticleEventBinding(particles,materials);
+  const binder=createOriginalParticleEventBinding(particles,materials,controllers);
   const effect=particles.effects[0],emitter=effect.emitters[0];
   const command={type:'particleCommand',time:4.5,systemId:12,sourceGuid:effect.guid,
     sourceFileId:emitter.sourceEmitterFileID,sourcePath:'Assets/Resources/effects/ballistic hits/Concrete entry.prefab',
@@ -93,7 +126,7 @@ test('FullSource particle command transport validates provenance, actions and so
 });
 
 test('FullSource particle commands reject missing source identity and malformed action payloads',()=>{
-  const binder=createOriginalParticleEventBinding(particles,materials);
+  const binder=createOriginalParticleEventBinding(particles,materials,controllers);
   const effect=particles.effects[0],emitter=effect.emitters[0];
   const command={type:'particleCommand',time:4.5,sourceGuid:effect.guid,
     sourceFileId:emitter.sourceEmitterFileID,sourcePath:'Assets/Effects/Test.prefab',
@@ -123,12 +156,43 @@ test('normal page forwards the FullSource actor particle snapshot into the sourc
   assert.match(queue,/sourceFields = system\.OriginalSerializedFields/);
   assert.match(queue,/fields = sourceRenderer\.OriginalSerializedFields/);
   assert.match(loader,/component\.OriginalAssetSha256=package\.GetAssetSha256\(assetPath\)/);
+  assert.match(weaponRuntime,/originalParticleRenderer\.update\(events,sourceTime\)/);
+  const renderer=readFileSync(new URL('../game/original-particle-renderer.mjs',import.meta.url),'utf8');
+  assert.match(renderer,/binder\.evaluateImpactEffect\(event,settings\)/);
+  assert.match(renderer,/renderedParticles:active\.length/);
 });
 
 test('missing or corrupted native material/particle manifest cannot fall back to invented assets',()=>{
-  assert.throws(()=>createOriginalParticleEventBinding({...particles,effects:particles.effects.slice(1)},materials),
+  assert.throws(()=>createOriginalParticleEventBinding({...particles,effects:particles.effects.slice(1)},materials,controllers),
     /expected 14/);
   const invalid={...materials,effectsByMaterial:{...materials.effectsByMaterial}};
   invalid.effectsByMaterial[Object.keys(invalid.effectsByMaterial)[0]]=['unverified'];
-  assert.throws(()=>createOriginalParticleEventBinding(particles,invalid),/linkage mismatch/);
+  assert.throws(()=>createOriginalParticleEventBinding(particles,invalid,controllers),/linkage mismatch/);
+});
+
+test('particle binding refuses partial or mismatched source controller closure',()=>{
+  assert.throws(()=>createOriginalParticleEventBinding(particles,materials),/controller closure/);
+  const partial={...controllers,effects:controllers.effects.slice(1)};
+  assert.throws(()=>createOriginalParticleEventBinding(particles,materials,partial),/controller/);
+  const bad={...controllers,effects:controllers.effects.map((effect,i)=>i?effect:{...effect,sourcePrefabSha256:'f'.repeat(64)})};
+  assert.throws(()=>createOriginalParticleEventBinding(particles,materials,bad),/provenance differs/);
+});
+
+test('controller closure is source-hash bound to all effect prefabs and recovered controller implementations',()=>{
+  const bytes=readFileSync(new URL('../game/assets/ballistics/original-particle-controllers-source.json.gz',import.meta.url));
+  assert.equal(createHash('sha256').update(bytes).digest('hex'),'0dec7b3eb1f7a20d95aa5ee58befbf0dd8226232ce4a0a795d41f5dc579382ce');
+  assert.equal(controllers.sourcePackageSha256,'92e84fff24b79ae9b482cfe50dc33346fe8d5d7f2afb948e7bb4cacf5fb7dafb');
+  assert.deepEqual(controllers.counts,{effects:14,BallisticHitEffect:14,SingleEmissionEffect:26});
+  for(const [name,path] of Object.entries({BallisticHitEffect:'../runtime/Original/FullSource/BallisticHitEffect.cs',
+    SingleEmissionEffect:'../runtime/Original/FullSource/SingleEmissionEffect.cs'})){
+    const hash=createHash('sha256').update(readFileSync(new URL(path,import.meta.url))).digest('hex');
+    assert.equal(hash,controllers.sourceFilesSha256[name]);
+  }
+  for(const effect of controllers.effects){
+    const source=particles.effects.find(e=>e.guid===effect.guid);
+    assert.equal(effect.sourcePrefabSha256,source.sourcePrefabSha256);
+    const emitters=effect.controllers.filter(c=>c.scriptGuid==='7f9bb5f5ef1d9fb3ca6dbc9296820005');
+    assert.equal(emitters.length,source.emitters.length);
+    assert.ok(emitters.every(c=>c.particleSystemFileID&&c.particleRendererFileID&&c.serializedFields.entryRatio!==undefined));
+  }
 });

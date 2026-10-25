@@ -113,6 +113,12 @@ public static class BallisticContracts {
       e.GetProperty("value").GetProperty("phase").GetString()=="entry"&&
       float.IsFinite(e.GetProperty("time").GetSingle()));
     Check(originalEntryEffectDelivered,"Original impact prefab GUID/phase/time lost in source event bridge");
+    var emissionInputs=emitted.First(e=>e.GetProperty("value").GetProperty("source").GetString()==sourceEntry.properties.entryEffect.SourceID).GetProperty("value");
+    Check(float.IsFinite(emissionInputs.GetProperty("metricDiameter").GetSingle())&&emissionInputs.GetProperty("metricDiameter").GetSingle()>0&&
+      float.IsFinite(emissionInputs.GetProperty("projectileDiameter").GetSingle())&&emissionInputs.GetProperty("projectileDiameter").GetSingle()>0&&
+      float.IsFinite(emissionInputs.GetProperty("displacedMaterialVolume").GetSingle())&&emissionInputs.GetProperty("displacedMaterialVolume").GetSingle()>=0&&
+      float.IsFinite(emissionInputs.GetProperty("particleCountScaler").GetSingle())&&emissionInputs.GetProperty("particleCountScaler").GetSingle()>=0,
+      "Original emission controller inputs (diameter, displaced volume, particle scaler) lost in material effect event");
   } finally {
     PerformanceManager.Instance.MaxEnvironmentHitEffects=originalEffectLimit;
   }
