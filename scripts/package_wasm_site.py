@@ -16,6 +16,15 @@ import sys
 from pathlib import Path, PurePosixPath
 
 MANIFEST = "build-manifest.json"
+DEFAULT_INCREMENTAL_PROFILE = "global-ui-mission-operator"
+DEFAULT_INCREMENTAL_ROOTS = [
+    "Assets/Resources/Global context.prefab",
+    "Assets/GameObject/Interior mode UI.prefab",
+    "Assets/Resources/ui/Interaction menu.prefab",
+    "Assets/Resources/characters/Operator.prefab",
+    "Assets/Resources/Version.prefab",
+    "Assets/Scenes/Mission 01.unity",
+]
 WASM_HEADER = b"\x00asm\x01\x00\x00\x00"
 SCENE_ARCHIVE = "crisis-response-scenes.json.gz"
 SCENE_MANIFEST = "crisis-response-scenes.manifest.json"
@@ -259,7 +268,7 @@ def git(repo, *args):
 
 
 def package(repo, published, output, toolchain, run_url, incremental_source_package=None,
-            incremental_profile="global-ui-operator", incremental_roots=None,
+            incremental_profile=DEFAULT_INCREMENTAL_PROFILE, incremental_roots=None,
             include_original_scene_smoke=False):
     repo, published, output = repo.resolve(), published.resolve(), output.resolve()
     require((repo / "game/index.html").is_file(), "Game source missing")
@@ -318,7 +327,7 @@ def package(repo, published, output, toolchain, run_url, incremental_source_pack
         source_output = output / "scene-data/fullsource" / incremental_profile
         command = [sys.executable, str(source_builder), str(Path(incremental_source_package).resolve()),
                    str(source_output), "--profile", incremental_profile]
-        for root in incremental_roots or []:
+        for root in (incremental_roots if incremental_roots is not None else DEFAULT_INCREMENTAL_ROOTS):
             command.extend(["--root", root])
         subprocess.run(command, check=True, cwd=repo)
     archive = output / "scene-data/crisis-response-scenes.json.gz"
@@ -380,7 +389,7 @@ def main():
     build.add_argument("--toolchain", type=Path, required=True)
     build.add_argument("--incremental-source-package", type=Path,
                        help="Optional recovered full source JSON package used to build a bounded per-asset profile")
-    build.add_argument("--incremental-profile", default="global-ui-operator")
+    build.add_argument("--incremental-profile", default=DEFAULT_INCREMENTAL_PROFILE)
     build.add_argument("--incremental-root", action="append", dest="incremental_roots",
                        help="Override a default profile root; repeat for multiple roots")
     build.add_argument("--include-original-scene-smoke", action="store_true",

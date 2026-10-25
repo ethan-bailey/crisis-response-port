@@ -151,6 +151,32 @@ class PackageTests(unittest.TestCase):
         }])
         self.assertTrue((self.site / "scene-data/fullsource/fixture/assets" / profile["assets"][0]["file"].split("/")[-1]).is_file())
 
+    def test_default_incremental_profile_matches_mission_page_and_includes_scene_root(self):
+        roots = [
+            "Assets/Resources/Global context.prefab",
+            "Assets/GameObject/Interior mode UI.prefab",
+            "Assets/Resources/ui/Interaction menu.prefab",
+            "Assets/Resources/characters/Operator.prefab",
+            "Assets/Resources/Version.prefab",
+            "Assets/Scenes/Mission 01.unity",
+        ]
+        source = {"format": "fixture", "assets": {
+            root: {"records": [{"classID": 1, "fileID": str(index), "className": "GameObject",
+                                "fields": {"m_Name": root}}]}
+            for index, root in enumerate(roots, 1)
+        }, "guidPaths": {}, "objectReferences": [], "sourceOfTruth": {"fixture": True}}
+        source_path = self.root / "mission-source.json.gz"
+        source_path.write_bytes(gzip.compress(json.dumps(source).encode(), mtime=0))
+
+        self.build(incremental_source_package=source_path)
+
+        profile_path = self.site / "scene-data/fullsource/global-ui-mission-operator/manifest.json"
+        self.assertTrue(profile_path.is_file())
+        profile = json.loads(profile_path.read_text())
+        self.assertEqual(profile["profile"], "global-ui-mission-operator")
+        self.assertEqual(profile["rootAssets"], roots)
+        self.assertIn("Assets/Scenes/Mission 01.unity", profile["rootAssets"])
+
     def test_modified_binary_fails(self):
         self.build()
         (self.site / "game/vendor/physx-js-webidl.wasm").write_bytes(b"corrupt")
