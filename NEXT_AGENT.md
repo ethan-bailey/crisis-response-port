@@ -2,23 +2,23 @@
 
 ## Current source and Site
 
-- Live `develop/wasm` head before this handoff-only update: `79e9fc6cdf5a8ff7d216085e704027d1fbaffdff`. Runtime code checkpoint under verification: `3ab872704121ed4ce6822923f9597c43aa960176`.
-- Site version **48** remains live at `https://crisis-response-runtime.craftysnipe13.chatgpt.site`, owner-only. It contains runtime source `d8e5290`; the latest joystick aim and loading-progress fixes are not deployed.
-- Loading UI reports each accepted asset and shows an actor-initialization phase after all 1,919 files finish. The downloader fetches six assets concurrently and ingests them in manifest order.
-- Joystick vertical aim derives from raw vertical displacement independently of horizontal displacement, so diagonal/horizontal movement cannot pull elevation toward center.
+- Live `develop/wasm` runtime source checkpoint: `3ab872704121ed4ce6822923f9597c43aa960176`; current handoff-only branch head before this update: `19165a5eca158b1dbf22566d1799a999845798be`.
+- Crisis Response Runtime Site version **49** is deployed successfully at `https://crisis-response-runtime.craftysnipe13.chatgpt.site` and remains owner-only. Site source commit `2c62158f49f71903971d35838cd28cc5e427a629`; package manifest identifies source `19165a5`.
+- Mission download uses six concurrent checksum-verified fetches and ordered WASM ingestion. Loading progress reports every asset and displays a separate actor-initialization phase. Joystick elevation uses only raw vertical input; horizontal/diagonal movement no longer pulls aim toward center.
 
-## Verification at runtime source checkpoint `3ab872704121ed4ce6822923f9597c43aa960176`
+## Verification
 
-- `node --test scripts/*test.mjs`: **81 passed, 0 failed**.
-- EngineChecks: **69 assertions passed**. FoundationChecks completed successfully. Full runtime `dotnet build runtime/Crisis.Runtime.csproj --no-restore --no-incremental -v:q`: **0 errors, 48 warnings**.
-- Pinned .NET SDK **8.0.426** recovered from the checksum-verified official archive. Direct CLI startup hit the known `/proc` issue; the tracked `procstat-namespace-shim.c` workaround allowed the SDK to run. Release WASM publish completed to `/tmp/cpr-publish/wwwroot`.
-- Runtime Checks project exited successfully, reporting original actor, presentation, Calibre provenance, weapon, and ballistics contracts passing.
+- At runtime source `3ab872704121ed4ce6822923f9597c43aa960176`, `node --test scripts/*test.mjs` passed **81/81**; EngineChecks passed **69 assertions**; FoundationChecks and Runtime Checks completed successfully; full runtime build passed with **0 errors**.
+- In this run, the checksum-verified pinned .NET SDK **8.0.426** and tracked `/proc` shim were restored. `dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release --output /tmp/cpr-publish` succeeded at exact source checkpoint `19165a5eca158b1dbf22566d1799a999845798be`. Lockfile-pinned PhysX adapter was regenerated using `npm ci --prefix game --ignore-scripts` and `npm run --prefix game vendor`.
+- Owner-authorized retrieval recovered the v48 Mission profile: all 1,919 compressed asset hashes and sizes verified against its manifest, then all decompressed asset hashes/sizes verified. The package was reconstructed from those verified source assets and dependency metadata.
+- `scripts/package_wasm_site.py build` and `verify` passed for source `19165a5eca158b1dbf22566d1799a999845798be`: **2,673 files**, 199 Blazor resources, 195 WASM files, 1,919 profile assets, 97,767,549 compressed asset bytes, 205,514,345 source bytes. Scene smoke archive remains excluded.
+- Site version 49 publication status: `succeeded`.
 
-## Remaining blockers
+## Remaining acceptance
 
-- The recovered incremental Mission source bundle (`global-ui-mission-operator`, 1,919 assets) is absent from this fresh checkout. The owner-private live Site returns HTTP 401 without its private access token. Its previous deployment archive is not mounted here. Therefore a complete Site package including the Mission bundle cannot be assembled or integrity-verified; do not deploy a partial package.
-- No Playwright/browser run or exact-build iPhone Safari acceptance was available.
+- No Playwright/browser run or exact-build iPhone Safari acceptance is available in this workspace. The owner should reload Site v49 and test Mission download to completion, including the former final-19-asset pause, then check joystick aim while moving diagonally/horizontally.
+- Gun audio remains an acknowledged product issue: source Mission audio bridge is silent; no audio fix was part of this batch. Some Unity components/NPC systems remain unsupported or unverified.
 
 ## Next action
 
-Recover the exact Mission source package through the authorized private Site artifact path, then package and integrity-verify the exact `develop/wasm` runtime source before private deployment; have the owner test download completion and joystick aim independence on iPhone Safari.
+Have the owner validate Site v49 on iPhone Safari for Mission completion and aim independence; then continue the next gameplay completion roadmap gate from the exact live `develop/wasm` head.
