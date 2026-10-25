@@ -67,6 +67,16 @@ export async function createContactPhysics(data,{x=-3,y=1.5,z=1.5}={},options={}
    const low=kneelRatio>=.5;
    if(low!==previousKneeling||facing!==previousFacing)dimensions(low,facing);
   },
+  synchronizeActorState({x,y,z,velocity,verticalVelocity=0,depthVelocity=0}){
+   const values=[x,y,z,velocity,verticalVelocity,depthVelocity];
+   if(values.some(value=>!Number.isFinite(value)))throw new TypeError('FullSource actor physics snapshot must contain finite position and velocity values');
+   const nextPose=pose([x,y,z]);
+   body.setGlobalPose(nextPose,true);
+   P.destroy(nextPose);
+   const nextVelocity=vec([velocity,verticalVelocity,depthVelocity]);
+   body.setLinearVelocity(nextVelocity,true);
+   P.destroy(nextVelocity);
+  },
   addAcceleration(ax){force.set_x(ax);body.addForce(force,P.PxForceModeEnum.eACCELERATION,true);},
   step(dt){scene.simulate(dt);scene.fetchResults(true);return api.snapshot();},
   snapshot(){const p=body.getGlobalPose().get_p(),v=body.getLinearVelocity();return {x:p.get_x(),y:p.get_y(),z:p.get_z(),velocity:v.get_x(),verticalVelocity:v.get_y(),kneelRatio,sleeping:body.isSleeping(),boxes:statics.length,backend:api.backend};},

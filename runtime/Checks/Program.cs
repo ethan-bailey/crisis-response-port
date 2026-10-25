@@ -136,8 +136,15 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-ui-contra
         var inputHandler=Crisis.Runtime.FullSource.Global.Context.InputHandler;
         fullSourceBridge.Step(1f/60f,"{\"left\":true}",0f,0f);
         if(!leftAction.Pressed)throw new InvalidOperationException($"FullSource bridge did not deliver the original left-action press to InputHandler (rawKey={UnityEngine.Input.GetKey(leftAction.key)}, key={leftAction.key}, enabled={leftAction.Enabled}, handlerEnabled={inputHandler.isActiveAndEnabled}, suspended={inputHandler.GetType().GetField("inputSuspended",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)!.GetValue(inputHandler)})");
-        fullSourceBridge.Step(1f/60f,"{}",0f,0f);
+        using var physicsFrame=JsonDocument.Parse(JsonSerializer.Serialize(fullSourceBridge.Step(1f/60f,"{}",0f,0f)));
         if(leftAction.Pressed||!leftAction.Up)throw new InvalidOperationException("FullSource bridge did not deliver the original left-action release to InputHandler");
+        var physics=physicsFrame.RootElement.GetProperty("physics");
+        var commands=physics.GetProperty("commands");
+        if(physics.GetProperty("fixedSteps").GetInt32()!=1||commands.GetArrayLength()!=1||commands[0].GetProperty("mode").GetString()!="Acceleration"||commands[0].GetProperty("force")[0].GetSingle()>=0f)
+            throw new InvalidOperationException("FullSource left movement did not emit one actor-owned acceleration command for the browser PhysX step");
+        using var synchronized=JsonDocument.Parse(JsonSerializer.Serialize(fullSourceBridge.SynchronizePhysics(1.25f,2.5f,1.5f,-.5f,0f,0f)));
+        if(MathF.Abs(synchronized.RootElement.GetProperty("position")[0].GetSingle()-1.25f)>.0001f||MathF.Abs(synchronized.RootElement.GetProperty("velocity")[0].GetSingle()+.5f)>.0001f)
+            throw new InvalidOperationException("Browser PhysX result was not synchronized back to the original FullSource actor Rigidbody and Transform");
     }else try{
         fullSourceBridge.Step(1f/60f,"{\"left\":true}",0f,0f);
         throw new InvalidOperationException("FullSource bridge tick accepted Mission 01's intentionally incomplete, headless player UI");

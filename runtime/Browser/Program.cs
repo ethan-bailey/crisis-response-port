@@ -46,6 +46,7 @@ public static class RuntimeBridge {
         return JsonSerializer.Serialize(fullSourceActor.Snapshot());
     }
     [JSInvokable] public static string TickFullSourceActorBridge(float elapsedSeconds,string actionsJson,float mouseX,float mouseY)=>JsonSerializer.Serialize((fullSourceActor??throw new InvalidOperationException("FullSource actor bridge is not initialized")).Step(elapsedSeconds,actionsJson,mouseX,mouseY));
+    [JSInvokable] public static string SynchronizeFullSourceActorPhysics(float x,float y,float z,float velocityX,float velocityY,float velocityZ)=>JsonSerializer.Serialize((fullSourceActor??throw new InvalidOperationException("FullSource actor bridge is not initialized")).SynchronizePhysics(x,y,z,velocityX,velocityY,velocityZ));
     [JSInvokable] public static string VerifyAmmunition(string package,string path)=>JsonSerializer.Serialize(AmmunitionLoader.VerifyOriginalPrefab(package,path));
     [JSInvokable] public static string VerifyResource(string package,string name)=>JsonSerializer.Serialize(AmmunitionLoader.VerifyOriginalResource(package,name));
     [JSInvokable] public static string VerifySceneRay()=>scene==null?throw new InvalidOperationException("No scene loaded"):JsonSerializer.Serialize(SceneLoader.VerifyImportedRay(scene));

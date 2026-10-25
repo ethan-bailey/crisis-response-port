@@ -16,8 +16,12 @@ public sealed class FullSourceActorBridge
     readonly CharacterBody body;
     readonly PlayerController controller;
     readonly Crisis.Runtime.FullSource.InputHandler input;
+    readonly Rigidbody rigidbody;
     readonly Dictionary<string, FieldInfo> actions;
     HashSet<KeyCode> drivenKeys=[];
+    readonly List<object> physicsCommands=[];
+    readonly Action<Vector3,Vector3,ForceMode> priorActorPhysicsSink;
+    int lastFixedSteps;
 
     public FullSourceActorBridge(RuntimeWorld world, CharacterBody body)
     {
@@ -42,6 +46,14 @@ public sealed class FullSourceActorBridge
         controller = candidates[0];
         if (!body.IsPlayer)
             throw new InvalidOperationException("Requested FullSource CharacterBody is not the original player actor");
+
+        rigidbody = body.Rigidbody ? body.Rigidbody : throw new InvalidOperationException("FullSource player actor has no authored Rigidbody");
+        priorActorPhysicsSink = rigidbody.PhysicsForceSink;
+        rigidbody.PhysicsForceSink = (force, position, mode) =>
+        {
+            priorActorPhysicsSink?.Invoke(force, position, mode);
+            CaptureActorForce(force, position, mode);
+        };
 
         if (input.Keys == null)
             throw new InvalidOperationException("FullSource InputHandler has no authored InputMapping");
@@ -80,7 +92,38 @@ public sealed class FullSourceActorBridge
         foreach(var key in drivenKeys.Concat(nextKeys).Distinct())Input.SetKey(key,nextKeys.Contains(key));
         drivenKeys=nextKeys;
         Input.mousePosition = new Vector3(mouseX, mouseY, 0f);
+        physicsCommands.Clear();
+        var fixedTimeBefore = Time.fixedTime;
         world.Tick(elapsedSeconds);
+        lastFixedSteps = Math.Max(0, (int)MathF.Round((Time.fixedTime - fixedTimeBefore) / Time.fixedDeltaTime));
+        return Snapshot();
+    }
+
+    void CaptureActorForce(Vector3 force, Vector3 position, ForceMode mode)
+    {
+        if (mode != ForceMode.Acceleration || force.y != 0f || force.z != 0f)
+            throw new NotSupportedException($"FullSource player physics command is not supported by the browser capsule bridge (mode={mode}, force={force})");
+        physicsCommands.Add(new
+        {
+            force = new[] { force.x, force.y, force.z },
+            position = new[] { position.x, position.y, position.z },
+            mode = mode.ToString()
+        });
+    }
+
+    /// <summary>
+    /// Feed the browser PhysX result back into the original actor before its
+    /// next source update. Source CharacterBody remains the owner of movement
+    /// decisions; PhysX owns collision integration.
+    /// </summary>
+    public object SynchronizePhysics(float x, float y, float z, float velocityX, float velocityY, float velocityZ)
+    {
+        var values = new[] { x, y, z, velocityX, velocityY, velocityZ };
+        if (values.Any(value => !float.IsFinite(value)))
+            throw new ArgumentException("Browser PhysX state must contain only finite values");
+        world.MakeCurrent();
+        body.transform.position = new Vector3(x, y, z);
+        rigidbody.velocity = new Vector3(velocityX, velocityY, velocityZ);
         return Snapshot();
     }
 
@@ -131,7 +174,12 @@ public sealed class FullSourceActorBridge
             direction = body.Direction,
             kneeling = body.IsKneeling,
             weapon = body.ActiveWeapon ? body.ActiveWeapon.name : null,
-            poses
+            poses,
+            physics = new
+            {
+                fixedSteps = lastFixedSteps,
+                commands = physicsCommands.ToArray()
+            }
         };
     }
 }
