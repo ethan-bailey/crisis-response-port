@@ -3,11 +3,19 @@
 ## Durable checkpoint
 
 - Development branch: `develop/wasm`.
-- Exact tested source: `f0f69828015ffbccb0e932e077b8972f2dd0d192`
+- Runtime feature checkpoint: `f0f69828015ffbccb0e932e077b8972f2dd0d192`
   (`feat: report WASM source profile memory on mobile`).
-- This handoff is a docs-only follow-up on that source commit.
-- No deployment was made. Site v39 remains the last owner-accepted iPhone Safari
-  build. No PR was opened.
+- Packaging fix: `9c1551b65a8fc302e332ff9f02d52c91c6d53403`
+  (`fix: align FullSource actor package manifest path`).
+- The packaging fix changes the actor sidecar path to the name expected by the
+  site verifier. The actual 238-asset Operator bundle and site package tests
+  passed after the fix.
+- A separate owner-private diagnostic Site is published as version 1:
+  https://crisis-response-memory-check-20261024.craftysnipe13.chatgpt.site
+  The existing Crisis Response Runtime Site remains unchanged.
+- Site package source commit:
+  `1d37f7bf54c5442e6066186b330cddb224c7a8ea`, a compact Site checkout based
+  on development source `9c1551b65a8fc302e332ff9f02d52c91c6d53403`.
 
 ## Completed system: incremental source delivery through Mission UI and actor
 
@@ -24,7 +32,7 @@ the serialized GUID closure. The mission contract accepts either a monolithic
 JSON package or generated incremental profile directory, so the original
 Mission UI and actors are exercised through the actual incremental C# store.
 
-Evidence: [`docs/evidence/INCREMENTAL_SOURCE_DELIVERY_2026-10-25.md`](docs/evidence/INCREMENTAL_SOURCE_DELIVERY_2026-10-25.md).
+Evidence: [incremental source delivery](docs/evidence/INCREMENTAL_SOURCE_DELIVERY_2026-10-25.md).
 Recovered input SHA-256: `6586b293eb1455669eba29042469ebd6740b0ad08629fd39ea625237626dd639`.
 
 - Global Context + Interior Mode UI + Interaction Menu + Operator + Version:
@@ -36,38 +44,28 @@ Recovered input SHA-256: `6586b293eb1455669eba29042469ebd6740b0ad08629fd39ea6252
   left press/release, movement force, and browser-physics state round trip
   passed. This is headless; it does not run native PhysX or render pixels.
 
-## Phone memory check
+## iPhone source memory check
 
-Instructions: [`docs/evidence/PHONE_SOURCE_MEMORY_CHECK_2026-10-25.md`](docs/evidence/PHONE_SOURCE_MEMORY_CHECK_2026-10-25.md).
-The opt-in `?source-profile-smoke` route reports live delivery progress and
-copyable JSON with managed heap samples, JS heap when available, elapsed time,
-and delivered profile totals. Safari may not expose total process memory; the
-report marks unavailable measures as `null`. It uses the 1,230-asset
-Global/UI/Operator/Version profile and does not load Mission or start gameplay.
-No preview was published, so an exact-build URL is not available yet.
+Instructions and exact URL: [phone source memory check](docs/evidence/PHONE_SOURCE_MEMORY_CHECK_2026-10-25.md).
 
-## Verification on `f0f69828015ffbccb0e932e077b8972f2dd0d192`
+Use:
+https://crisis-response-memory-check-20261024.craftysnipe13.chatgpt.site/game/?source-profile-smoke
 
-- Pinned .NET SDK 8.0.426 Checks build — passed, 0 errors and 48 existing
-  warnings.
-- `--mission-ui-incremental-contract /tmp/cpr-incremental-mission-profile-v3`
-  — passed against all 1,919 assets in the incremental Mission profile.
-- `--verify-incremental-source-profile /tmp/cpr-incremental-global-profile-v3`
-  — passed all 1,230 assets and 7,598 records; parsed documents were released
-  after inspection.
-- `--source-package-store-contract` and default runtime contracts — passed.
-- Python package tests — passed 14/14; `py_compile` passed.
-- Node scene loader tests — passed 4/4, including progress reporting; loader
-  syntax and extracted inline page module syntax checks passed.
-- `git diff --check` — passed.
-- Browser WASM build — passed, 0 errors and 48 existing warnings.
-- Real browser transfer, peak device memory, iPhone Safari acceptance, and
-  deployment were not performed.
+The route loads the 1,230-asset Global/UI/Operator/Version profile and does not
+start gameplay. The user should leave the page alone until **Complete**, copy
+the JSON report, and return it here. Do not aim, shoot, or move during this
+memory check.
+
+The exact Site package passed integrity verification: 2,001 files, 199 Blazor
+resources, 195 valid WASM files, the bounded Operator bundle, and the
+1,230-asset incremental profile. The pinned .NET 8.0.426 browser publish
+completed. Python site-package tests passed 14/14. Site version 1 is
+owner-private. Playwright browser smoke and physical iPhone Safari memory
+acceptance have not run; both remain open.
 
 ## One next action
 
-Publish a preview from the exact tested source, then run `?source-profile-smoke`
-on iPhone Safari and return its JSON report. Keep the existing public site
-unchanged. If the profile fits, connect page movement, PhysX, rendering, and
-weapon callbacks to the FullSource actor already exercised by the Mission
-profile contract.
+Run the exact private URL above on iPhone Safari and paste its complete JSON
+report into the project chat. Use that report to decide whether the 36.97 MB
+pre-input profile fits on the device before wiring page movement, physics,
+rendering, and weapon callbacks through the FullSource actor.
