@@ -93,22 +93,8 @@ public sealed class FullSourceActorBridge
         drivenKeys=nextKeys;
         Input.mousePosition = new Vector3(mouseX, mouseY, 0f);
         physicsCommands.Clear();
-        // The browser currently owns a PhysX actor for the controlled player.
-        // Keep unrelated Mission actors ticking without throwing when their
-        // original source code emits a force that has no browser actor sink.
-        foreach (var actorBody in world.Objects.OfType<Rigidbody>())
-            if (!ReferenceEquals(actorBody, rigidbody)) actorBody.PhysicsForceSink ??= (_, _, _) => { };
         var fixedTimeBefore = Time.fixedTime;
-        world.Tick(elapsedSeconds, () =>
-        {
-            // Starting an authored UI/resource prefab can construct a helper
-            // RuntimeWorld and reset the process-wide Unity input adapter.
-            // Reapply the browser levels after lifecycle/fixed callbacks, just
-            // before the original InputHandler.Update consumes them.
-            world.MakeCurrent();
-            foreach (var key in drivenKeys.Concat(nextKeys).Distinct()) Input.SetKey(key, nextKeys.Contains(key));
-            Input.mousePosition = new Vector3(mouseX, mouseY, 0f);
-        });
+        world.Tick(elapsedSeconds);
         lastFixedSteps = Math.Max(0, (int)MathF.Round((Time.fixedTime - fixedTimeBefore) / Time.fixedDeltaTime));
         return Snapshot();
     }
@@ -141,13 +127,59 @@ public sealed class FullSourceActorBridge
         return Snapshot();
     }
 
-    /// <summary>Supply the browser-rendered AimQuad hit to the original WeaponPointer.</summary>
-    public void SetAimWorldPoint(float x, float y, float z)
+    void RequirePlayablePlayerUI()
     {
-        var point = new Vector3(x, y, z);
-        if (!float.IsFinite(x) || !float.IsFinite(y) || !float.IsFinite(z))
-            throw new ArgumentException("Browser aim target must contain only finite values");
+        var mission = Global.Context.Mission;
+        var interior = mission?.InteriorMode;
+        var ui = interior?.UI;
+        if (ui?.InteractionMenu == null)
+            throw new NotSupportedException("FullSource actor stepping requires the recovered Mission InteriorMode UI and InteractionMenu; refusing to tick a partial player context");
+    }
+
+    public object Snapshot()
+    {
         world.MakeCurrent();
-        var pointer = controller.WeaponPointer ?? throw new InvalidOperationException("Original PlayerController has no WeaponPointer");
-        typeof(Crisis.Runtime.FullSource.WeaponPointer)
-            .GetField("localPoint", BindingFlags.Instance | Bindin
+        var poses = new List<object>();
+        var stack = new Stack<(Transform transform, string path)>();
+        stack.Push((body.transform, body.transform.name));
+        while (stack.Count > 0)
+        {
+            var (transform, path) = stack.Pop();
+            var position = transform.localPosition;
+            var rotation = transform.localRotation;
+            var scale = transform.localScale;
+            poses.Add(new
+            {
+                path,
+                p = new[] { position.x, position.y, position.z },
+                q = new[] { rotation.x, rotation.y, rotation.z, rotation.w },
+                s = new[] { scale.x, scale.y, scale.z }
+            });
+            for (var i = transform.childCount - 1; i >= 0; i--)
+            {
+                var child = transform.GetChild(i);
+                stack.Push((child, path + "/" + child.name));
+            }
+        }
+
+        var velocity = body.Rigidbody ? body.Rigidbody.velocity : Vector3.zero;
+        return new
+        {
+            owner = "FullSource.CharacterBody",
+            playerController = controller.GetInstanceID(),
+            actor = body.name,
+            position = new[] { body.transform.position.x, body.transform.position.y, body.transform.position.z },
+            rotation = new[] { body.transform.rotation.x, body.transform.rotation.y, body.transform.rotation.z, body.transform.rotation.w },
+            velocity = new[] { velocity.x, velocity.y, velocity.z },
+            direction = body.Direction,
+            kneeling = body.IsKneeling,
+            weapon = body.ActiveWeapon ? body.ActiveWeapon.name : null,
+            poses,
+            physics = new
+            {
+                fixedSteps = lastFixedSteps,
+                commands = physicsCommands.ToArray()
+            }
+        };
+    }
+}

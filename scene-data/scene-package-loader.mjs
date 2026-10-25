@@ -128,4 +128,34 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
   const seenPaths = new Set();
   for (const [index, asset] of manifest.assets.entries()) {
     if (typeof asset.path !== "string" || !/^assets\/[0-9a-f]{24}\.json\.gz$/.test(asset.file)
-        || seen
+        || seenPaths.has(asset.path) || !/^[0-9a-f]{64}$/.test(asset.sha256 ?? "")
+        || !/^[0-9a-f]{64}$/.test(asset.compressedSha256 ?? "")
+        || !Number.isSafeInteger(asset.bytes) || asset.bytes < 0
+        || !metadataObject.assetManifest[asset.path]
+        || metadataObject.assetManifest[asset.path].bytes !== asset.bytes
+        || metadataObject.assetManifest[asset.path].sha256 !== asset.sha256
+        || metadataObject.assetManifest[asset.path].compressedBytes !== asset.compressedBytes
+        || metadataObject.assetManifest[asset.path].compressedSha256 !== asset.compressedSha256
+        || !Number.isSafeInteger(asset.compressedBytes) || asset.compressedBytes > 25 * 1024 * 1024)
+      throw new Error("Incremental source profile contains an invalid asset entry");
+    seenPaths.add(asset.path);
+    const compressed = await fetchCompressedAsset(new URL(asset.file, base), asset, `Source asset ${asset.path}`);
+    const result = JSON.parse(await bridge.invokeMethodAsync("AddIncrementalSourceGzipAsset", asset.path, new Uint8Array(compressed)));
+    deliveredAssetBytes += asset.bytes;
+    if (result.expectedAssets !== manifest.assets.length || result.receivedAssets !== index + 1
+        || result.receivedBytes !== deliveredAssetBytes || result.receivedCompressedBytes !== compressedAssetBytes + compressed.byteLength)
+      throw new Error(`WASM source store rejected asset ${asset.path}`);
+    compressedBytes += compressed.byteLength;
+    sourceBytes += asset.bytes;
+    compressedAssetBytes += compressed.byteLength;
+    sourceAssetBytes += asset.bytes;
+    maximumAssetBytes = Math.max(maximumAssetBytes, asset.bytes);
+    if (onProgress && ((index + 1) % 25 === 0 || index + 1 === manifest.assets.length))
+      await onProgress({receivedAssets:index + 1,expectedAssets:manifest.assets.length,
+        compressedAssetBytes,sourceAssetBytes,maximumAssetBytes});
+  }
+  if (compressedAssetBytes !== manifest.compressedAssetBytes || sourceAssetBytes !== manifest.uncompressedAssetBytes)
+    throw new Error("Incremental source profile byte totals do not match its manifest");
+  return {profile: manifest.profile, rootAssets: manifest.rootAssets, assetCount: manifest.assetCount,
+    compressedBytes, sourceBytes, maximumAssetBytes, sequentialDelivery: true};
+}

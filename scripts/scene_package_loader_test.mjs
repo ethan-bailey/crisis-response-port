@@ -104,7 +104,7 @@ test("delivers verified source assets sequentially to the WASM package bridge", 
     assert.equal(calls[1][0], "AddIncrementalSourceGzipAsset");
     assert.equal(calls[1][1], assetPath);
     assert.deepEqual(new Uint8Array(gzipSync(assetRaw)), calls[1][2]);
-    assert.deepEqual(progress, [{receivedAssets:1,expectedAssets:1,compressedAssetBytes:assetGzip.byteLength,totalCompressedAssetBytes:assetGzip.byteLength,sourceAssetBytes:assetRaw.byteLength,totalSourceAssetBytes:assetRaw.byteLength,maximumAssetBytes:assetRaw.byteLength}]);
+    assert.deepEqual(progress, [{receivedAssets:1,expectedAssets:1,compressedAssetBytes:assetGzip.byteLength,sourceAssetBytes:assetRaw.byteLength,maximumAssetBytes:assetRaw.byteLength}]);
   } finally {
     globalThis.fetch = originalFetch;
   }
