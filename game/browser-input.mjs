@@ -71,7 +71,7 @@ export class BrowserInput {
   // two-axis visual tracking; only horizontal displacement changes movement.
   // A spring return, dead zone, per-pointer capture and lifecycle reset prevent
   // ghost locomotion. Sprint is inferred from stick travel, never a touch button.
-  bindMovementStick(surface, thumb, { deadZone = 0.16, onAim = () => {} } = {}) {
+  bindMovementStick(surface, thumb, { deadZone = 0.16, onAim = () => {}, onAimStart = () => {} } = {}) {
     let pointer = null;
     const source = 'stick:movement';
     const reset = () => {
@@ -139,6 +139,7 @@ export class BrowserInput {
       pointer = event.pointerId;
       surface.setPointerCapture?.(pointer);
       surface.classList.add('active');
+      onAimStart();
       move(event);
     });
     this.listen(surface, 'pointermove', move);

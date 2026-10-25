@@ -15,8 +15,8 @@ export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,part
  // much later, out of sync with the shot. Drop those one-frame events instead.
  const AudioContext=window.AudioContext||window.webkitAudioContext,context=AudioContext?new AudioContext():null,buffers=new Map(),loadingAudio=new Set();
  const outputGain=context?.createGain()||null,limiter=context?.createDynamicsCompressor()||null;
- const audioStats={played:0,droppedSuspended:0,droppedUnloaded:0,decodeErrors:0,unlockFailures:0};
- if(outputGain&&limiter){outputGain.gain.value=.28;limiter.threshold.value=-8;limiter.knee.value=6;limiter.ratio.value=10;limiter.attack.value=.003;limiter.release.value=.15;outputGain.connect(limiter).connect(context.destination);}
+ const audioStats={played:0,droppedSuspended:0,droppedUnloaded:0,droppedStale:0,decodeErrors:0,unlockFailures:0};
+ if(outputGain&&limiter){outputGain.gain.value=.16;limiter.threshold.value=-8;limiter.knee.value=6;limiter.ratio.value=10;limiter.attack.value=.003;limiter.release.value=.15;outputGain.connect(limiter).connect(context.destination);}
  function loadAudio(key,url){
   if(buffers.has(key)||loadingAudio.has(key))return;
   loadingAudio.add(key);
@@ -92,7 +92,9 @@ export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,part
  function update(events,magazinePose,sourceTime){
   if(magazinePose){const {p,q,visible}=magazinePose;magRoot.visible=visible;magRoot.position.set(p[0],p[1],-p[2]);magRoot.quaternion.set(-q[0],-q[1],q[2],q[3]);}
   for(const e of events){
-   if(e.type==='audio')playAudio(e.value,data.audio[e.value]?.volume??1);
+   const eventAge=sourceTime-Number(e.time);
+   if((e.type==='audio'||e.type==='materialEffect')&&(!Number.isFinite(eventAge)||eventAge<-.05||eventAge>.12)){audioStats.droppedStale++;continue;}
+   if(e.type==='audio')playAudio(e.value,(data.audio[e.value]?.volume??1)*(e.value==='audioFire'?0.6:1));
    if(e.type==='materialEffect')playAudio(e.value.clip,e.value.volume);
    if(e.type==='shot')flash(e.value,e.time);
   }

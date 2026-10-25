@@ -163,7 +163,7 @@ for (const button of document.querySelectorAll("button[data-action]")) input.bin
 // Original InputMapping.cs bindings, plus arrow-key movement aliases.
 input.bindKeyboard(window, {KeyA:"left", ArrowLeft:"left", KeyD:"right", ArrowRight:"right",
  ShiftLeft:"sprint", KeyR:"magazine", Tab:"switchWeapons", KeyS:"kneel", KeyW:"stand"});
-let stickAim=0;input.bindMovementStick(document.querySelector("#movementStick"),document.querySelector("#movementStick .stick-thumb"),{onAim(vertical,active=true){if(!active){stickAim=0;return;}const delta=vertical-stickAim;stickAim=vertical;if(Math.abs(delta)>0.001){pointerNdc.y=Math.max(-1,Math.min(1,pointerNdc.y+delta));aimDirty=true;aimGeneration++;}}});
+let stickAimBaseY=pointerNdc.y;input.bindMovementStick(document.querySelector("#movementStick"),document.querySelector("#movementStick .stick-thumb"),{onAimStart(){stickAimBaseY=pointerNdc.y;},onAim(vertical,active=true){if(!active)return;const targetY=Math.max(-1,Math.min(1,stickAimBaseY+vertical*.5));if(Math.abs(pointerNdc.y-targetY)>0.001){pointerNdc.y=targetY;aimDirty=true;aimGeneration++;}}});
 input.bindLifecycle(window, document);
 document.addEventListener("contextmenu",event=>event.preventDefault());
 document.addEventListener("selectstart",event=>event.preventDefault());
