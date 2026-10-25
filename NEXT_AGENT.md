@@ -20,10 +20,10 @@
 
 ## Blocked release gate and acceptance
 
-- The checked-out repository does not contain `scene-data/fullsource/global-ui-mission-operator/`; the 1,919-asset Mission source profile and metadata needed to reproduce and integrity-verify the exact Site package are absent. Therefore the package build/integrity gate is **not satisfied**, and this source change was **not published**. Recover the owner-authorized source package through its approved durable connector, verify all compressed and decompressed assets against the manifest, rebuild and verify the Site archive for this exact source checkpoint, then publish only that verified archive.
+- The checked-out repository does not contain `scene-data/fullsource/global-ui-mission-operator/`; the 1,919-asset Mission source profile and metadata needed to reproduce and integrity-verify the exact Site package are absent. A recovered `crisis-response-recovery-direct-v3-1.zip` was verified at SHA-256 `cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d`, but it is a Unity asset export and contains neither the generated profile nor `cpr-scenes-full-source.json` (the expected source-index SHA-256 is `6586b293eb1455669eba29042469db6740b0ad08629fd39ea625237626dd639` in `docs/evidence/INCREMENTAL_SOURCE_DELIVERY_2026-10-25.md`). The package build/integrity gate is therefore **not satisfied**, and this source change was **not published**. Recover the exact source index or a complete profile and manifest through an approved durable source, verify every compressed and decompressed asset, rebuild and verify the Site archive for this exact source checkpoint, then publish only that verified archive.
 - Playwright/browser binaries and exact-build iPhone Safari acceptance are still unavailable. Owner should verify Mission startup and completion, error copy/readability, and aim independence after a verified deployment.
 - Gun audio remains open: the Mission audio bridge is silent. Some Unity components and NPC systems also remain unsupported or unverified.
 
 ## Next action
 
-Recover and integrity-verify the Mission source profile, then build and verify the exact-source WASM Site package before any publication. If that package gate remains blocked, continue independent gameplay gates and preserve the blocker details in this handoff.
+Recover the exact source index or a complete Mission profile and manifest, then verify all assets and build/verify the exact-source WASM Site package before any publication. If unavailable, keep publication blocked and continue independent gameplay gates.
