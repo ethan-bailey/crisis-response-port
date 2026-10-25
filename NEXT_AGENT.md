@@ -1,42 +1,40 @@
 # Current handoff — 2026-10-25
 
-## Exact verified build checkpoint
+## Latest committed source checkpoint
 
-- Tested source branch and commit: `develop/wasm` at `a308a722cb4e466447ad82d6d7b59cd0107f892e` (`Preserve authored particle module records for browser rendering`). Local and remote trees matched at test time.
-- Release WebAssembly publish used .NET SDK `8.0.426` and completed successfully with **0 errors and 48 existing warnings**. Optional `wasm-tools` optimization was unavailable.
-- Exact package: `/tmp/cpr-particle-site-package-a308a72`.
-- `build-manifest.json` SHA-256: `3aaeea77049e88ac46591dc4b3b2054253eef9ad6ed2da253452f1e18da2327a`.
-- Independent integrity verification passed: 2,679 files, 199 Blazor resources, 195 WASM files, bounded `global-ui-mission-operator` profile of 1,919 assets (97,767,549 compressed / 205,514,345 source bytes). Scene-smoke assets are excluded.
-- This handoff edit is documentation-only after the tested source checkpoint. No Site version was saved or deployed.
+- Branch: `develop/wasm`.
+- Exact GitHub source commit: `0c07e395b4915452cca57acb786d4e602ecf4bd4` (`Render source-authored ballistic impact particles`). Local HEAD and the live branch matched after the push.
+- This source commit has not been built into a new WASM package, saved as a Site version, or deployed.
+- The exact last verified WASM build remains commit `a308a722cb4e466447ad82d6d7b59cd0107f892e`; its package is `/tmp/cpr-particle-site-package-a308a72`, with `build-manifest.json` SHA-256 `3aaeea77049e88ac46591dc4b3b2054253eef9ad6ed2da253452f1e18da2327a`. That evidence predates the current particle-controller and rendering changes and must not be reused as current-build evidence.
 
-## Completed implementation batches
+## Work completed at `0c07e395`
 
-1. Inventoried the full bounded particle dependency set before implementation: 51 ParticleSystems/renderers in 27 prefabs; 32 systems in the Mission scene GUID closure and 19 in 9 dynamically referenced prefabs, plus material, texture, mesh, shader, module, curve, burst and owner-reference data. See [`docs/MISSION_PARTICLE_DEPENDENCY_CLOSURE_2026-10-25.md`](docs/MISSION_PARTICLE_DEPENDENCY_CLOSURE_2026-10-25.md) and `docs/mission-particle-dependency-inventory-2026-10-25.json.gz`.
-2. Wired FullSource `Emit`, `Simulate`, and `Play` callbacks from the source actor snapshot into the browser observer. Events carry source time, component GUID/file ID/path, verified containing-asset SHA-256, hierarchy, world pose, and bounded-drop accounting.
-3. Closed the prefab provenance gap: `SceneLoader` resolves each prefab component's original GUID and verified asset hash; clone operations preserve it. The browser observer rejects missing or malformed identity.
-4. Closed the renderer-input gap: the importer now retains complete serialized `ParticleSystem` and sibling `ParticleSystemRenderer` field records after mapping supported CPU fields. The bounded event includes both authored field maps, and the browser observer requires matching source-prefab identity and nonempty fields.
+1. Preserved the bounded 1,919-asset `global-ui-mission-operator` dependency inventory and the complete particle asset, material, texture, mesh, shader, module, curve, burst, and owner-reference closure. See `docs/MISSION_PARTICLE_DEPENDENCY_CLOSURE_2026-10-25.md` and `docs/mission-particle-dependency-inventory-2026-10-25.json.gz`.
+2. Added a source-verified controller closure for all 14 ballistic impact prefabs: 14 `BallisticHitEffect` roots and 26 `SingleEmissionEffect` components, each paired by original file ID to its particle system and renderer. The exported gzip SHA-256 is `0dec7b3eb1f7a20d95aa5ee58befbf0dd8226232ce4a0a795d41f5dc579382ce`; its source profile SHA-256 is `92e84fff24b79ae9b482cfe50dc33346fe8d5d7f2afb948e7bb4cacf5fb7dafb`.
+3. Added tested Unity MinMaxCurve/Gradient evaluation, source-authored entry/exit counts, speed ranges, lifetime and chunk sizing, plus source field delivery through `materialEffect` events.
+4. Added WebGL drawing for the 26 impact emitters using source textures/materials/meshes and the authored cone-base shape (type 4) and circle-edge shape (type 10). `sourceVisualParity` remains false: Unity's live random seed/state is not transported; rendering mode 1, other shape paths, native shader equivalence, the broader 51-system lifecycle and browser pixels are not complete.
 
-## Verification for `a308a722cb4e466447ad82d6d7b59cd0107f892e`
+## Verification actually completed for current source
 
-- FullSource Mission actor/weapon firing contract against `/tmp/cpr-incremental-mission-profile-v3`: **passed**. A real M4 shot produced one source particle event with valid source asset hash and nonempty authored module and renderer data; zero particle events were dropped. Weapon audio, casing force/torque, movement, absolute aim, and physics-state round trip also passed.
-- Node: **100 passed**. Python: **43 passed**. EngineChecks: **74 passed**. FoundationChecks: **121 passed**. Incremental source-store identity contract passed.
-- Release WASM publish, exact package build, and independent package verification passed for the tested source commit and manifest above.
+- `node --test scripts/*_test.mjs`: **116 passed, 0 failed**.
+- `python3 -m unittest discover -s scripts -p '*test.py'`: **41 passed, 0 failed**.
+- `git diff --check`: passed before commit.
+- Re-exported the controller closure from `/tmp/cpr-incremental-mission-profile-v3`; output hash exactly matched the committed gzip above.
+- Current environment has no `dotnet` executable (`dotnet --version` returns command not found). Therefore EngineChecks, FoundationChecks, Release WASM publish, and a current-source package build/integrity verification were not run. The existing `/tmp/libprocshim.so` does not provide the missing SDK/compiler.
 
-## Remaining gates in dependency order
+## Dependency-ordered gates and concrete next actions
 
-1. **Implement original particle simulation and drawing.** The current browser module still observes source events and explicitly reports `renderedParticles: 0` and `sourceVisualParity: false`. Use the complete inventory and newly transported source fields to implement enabled module evaluation, curves, bursts, shapes, color, lifetime, time scale/pause/cleanup, all 51 owner paths, renderer modes 0/1/4, source materials/textures/meshes, and built-in shader/mesh behavior. Add source-driven contracts per emission path before claiming visual parity.
-2. **Sync the selected source to the Site-owned repository.** The Site is owner-private at version 62; its configured source is a separate `cloudflare_artifact` repository on `main`, and automatic publish is disabled. The GitHub `develop/wasm` SHA above is not that repository's head. Locate/use the supported Sites source workflow; then rebuild and verify the package against the exact Site source commit. Do not upload this archive under a mismatched source SHA.
-3. **Save and deploy the checked private version.** Preserve owner-only audience. Save/deploy only after Site source HEAD, build commit, and archive source identity match and package integrity passes.
-4. **Browser acceptance on that deployed version.** Verify normal Mission startup, full and bounded-memory routes, delivery completion, particle drawing, WebGL, physics/casings, input, audio and error readability with the supported browser runner.
-5. **Physical iPhone Safari acceptance on that version.** Verify full-profile loading/memory, walk/sprint joystick resistance, absolute aim, weapon/audio timing and ceiling, tap-zoom resistance, and readable errors.
-6. **Remaining gameplay parity.** Before each batch, inventory the complete source dependency closure for projectile/damage, ragdoll/joints, NPC behavior, remaining animation/IK, and interaction/menu systems; implement against source contracts and report measured parity and exclusions.
+1. **Build and verify the exact current source.** Use a runner with pinned .NET SDK `8.0.426` and the documented process shim, run EngineChecks and FoundationChecks, publish `runtime/Browser/Crisis.Runtime.Browser.csproj` in Release, package its `wwwroot` into a new unique output directory, and run `package_wasm_site.py verify`. Record the full package path, source SHA, and manifest SHA. Do not use any older `/tmp/cpr-particle-site-package-*` directory as evidence for this commit. If no such runner is available, provision the SDK in this execution environment before continuing; the local blocker is specifically the absent `dotnet` binary.
+2. **Close the rest of particle parity against the already complete dependency inventory.** Extend runtime contracts beyond the 26 one-shot impact emitters to all 51 systems and all owners; transport Unity random seed/state; implement shape type 2, mode-1 rendering, and source active modules (bursts, color/size/rotation, force, inherited/clamped velocity, and collision); then close blood/wound emitters, tracer, weapon-smoke, bounce, pause/time-scale, and destruction ordering. Add source-backed per-path regression cases before claiming parity.
+3. **Sync only the selected, verified source to the private Sites source repository.** Site ID `appgprj_6acfef7174888191bc2bc2f269f60acc`, owner-only URL `https://crisis-response-runtime.craftysnipe13.chatgpt.site`, Site source branch `main`; its history differs from GitHub `develop/wasm`. The supported Sites write-credential plus `site-workflow.mjs` helper is available. Push a full source overlay while preserving the Site `.git` and `.openai/hosting.json`; verify the remote HEAD, build from that exact checkout, and integrity-check the resulting archive before saving anything.
+4. **Save and deploy that exact verified private archive.** Automatic publish-on-push is disabled. Use the private Sites save-and-deploy operation only after Site source HEAD, tested build commit, and archive all identify the same source; preserve owner-only access.
+5. **Run browser acceptance on that deployed version.** Verify Mission startup, full and bounded-memory delivery, end-of-load behavior, particle drawing, WebGL, physics/casings, input/aim/movement, weapon/audio timing, tap-zoom resistance, and readable errors using an available browser runner.
+6. **Run physical iPhone Safari acceptance.** Use the user's device to check long-session memory, joystick/sprint resistance, absolute aim, weapons/audio, zoom behavior, and error visibility. The physical device is not available to this runner.
+7. **Continue toward gameplay parity.** Inventory complete source dependencies before each batch for projectile/damage, ragdoll/joints, NPC behavior, remaining animation/IK, and interaction/menu systems. Implement and verify each batch, then rebuild and integrity-check the exact resulting source before publishing.
 
-## Concrete blockers
+## Conditions that must not be blurred
 
-- Current workspace lacks the supported Sites source-workflow helper. Sites connector exposes credential and publish operations but no source-repository push operation. Do not use a mismatched archive or handle the short-lived credential outside its supported helper.
-- Playwright/browser binaries and physical iPhone Safari are unavailable in this environment. Those acceptance checks require the supported runner and the user's device.
-- FullSource particle module simulation and visible particle rendering are still unimplemented. Callback transport and authored-field delivery do not constitute visual parity.
-
-## Immediate next action
-
-Continue on `develop/wasm` from the verified particle-field transport checkpoint. Implement the first source-driven visual particle slice using recovered authored module and renderer fields, expanding the complete 51-system dependency set in batches. Keep the Site deployment gate closed until its supported repository workflow can publish the exact tested source; after any code batch, rebuild and integrity-verify the matching package, then update this handoff with exact hashes and the next dependency-ordered action.
+- The current source changes are committed and pushed to GitHub, but have not been compiled into WASM or packaged.
+- The prior `a308a72` package is valid evidence only for `a308a72`; it is not the current build.
+- Browser and physical iPhone checks are unavailable here. Continue independent source implementation and tests while arranging those runners; record results by exact source and deployed-version IDs.
+- Never save or deploy a Site version before exact-source Release build and package integrity verification pass.
