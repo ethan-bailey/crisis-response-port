@@ -1,4 +1,4 @@
-# FullSource actor bridge dependency batch — 2026-10-25
+# FullSource actor bridge dependency batch — 2026-10-24
 
 ## Landed slice
 

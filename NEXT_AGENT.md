@@ -31,7 +31,7 @@
   Browser/WASM build passed; EngineChecks 69 and FoundationChecks 121 passed.
   FullSource Operator/Occupant lifecycle and authored IK, Mission 01 startup
   (2 Operators, 5 Occupants), and M4/Glock spawner/weapon/physiology contracts
-  passed. Details: `docs/evidence/FULLSOURCE_ACTOR_BRIDGE_BATCH_2026-10-25.md`.
+  passed. Details: `docs/evidence/FULLSOURCE_ACTOR_BRIDGE_BATCH_2026-10-24.md`.
 - The recovered full source closure has 1,918 assets / 22,361 records and 39
   assets with unresolved/unsupported references. It must not be shipped whole
   as the phone startup payload. The complete Global/Mission/Operator/UI closure
