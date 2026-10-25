@@ -128,7 +128,8 @@ export class BrowserInput {
       surface.classList.toggle('break-left', sprinting && rawX < 0);
       surface.style?.setProperty?.('--stick-power', String(sprinting ? 1 : magnitude));
       if (thumb) {
-        const x = Math.abs(rawX) <= 1 ? horizontal : Math.sign(rawX) * (1 + Math.min(0.35, (Math.abs(rawX) - 1) * 0.60));
+        const outsideX = (rect.width / 2 + thumbWidth / 2 + 6) / travelX;
+        const x = !overtravel ? horizontal : sprinting ? Math.sign(rawX) * outsideX : Math.sign(rawX);
         thumb.style.transform = `translate3d(${x * travelX}px,${vertical * travelY}px,0)`;
       }
       event.preventDefault();
