@@ -196,9 +196,15 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
       }
       const assets=batch.slice(deliveryStart,deliveryOffset);
       const fetched=fetchedBatch.slice(deliveryStart,deliveryOffset);
-      const encodeStarted=monotonicNow();
-      const encodedAssets=fetched.map(item=>bytesToBase64(new Uint8Array(item.compressed)));
-      const base64EncodeMs=monotonicNow()-encodeStarted;
+      const prepareStarted=monotonicNow();
+      const compressedLengths=fetched.map(item=>item.compressed.byteLength);
+      const compressedBatch=new Uint8Array(deliveryBytes);
+      let compressedOffset=0;
+      for(const item of fetched){
+        compressedBatch.set(new Uint8Array(item.compressed),compressedOffset);
+        compressedOffset+=item.compressed.byteLength;
+      }
+      const transportPrepareMs=monotonicNow()-prepareStarted;
       if(onProgress)await onProgress({stage:"adding",receivedAssets:batchStart+deliveryStart,
         expectedAssets:manifest.assets.length,compressedAssetBytes,sourceAssetBytes,
         totalCompressedAssetBytes:manifest.compressedAssetBytes,totalSourceAssetBytes:manifest.uncompressedAssetBytes,
@@ -206,7 +212,7 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
         profileElapsedMs:monotonicNow()-profileStarted,batchElapsedMs:monotonicNow()-batchStarted});
       const bridgeStarted=monotonicNow();
       const result=JSON.parse(await bridge.invokeMethodAsync("AddIncrementalSourceGzipAssetBatch",
-        assets.map(asset=>asset.path),encodedAssets));
+        assets.map(asset=>asset.path),compressedLengths,compressedBatch));
       const bridgeBatchMs=monotonicNow()-bridgeStarted;
       throwIfAborted(signal);
       if(!Array.isArray(result.items)||result.items.length!==assets.length)
@@ -231,7 +237,7 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
           stage:"delivered",compressedAssetBytes,sourceAssetBytes,maximumAssetBytes,
           totalCompressedAssetBytes:manifest.compressedAssetBytes,totalSourceAssetBytes:manifest.uncompressedAssetBytes,
           asset:{path:asset.path,compressedBytes:compressed.byteLength,sourceBytes:asset.bytes,
-            fetchAndHashMs,base64EncodeMs:base64EncodeMs/assets.length,bridgeMs:bridgeBatchMs/assets.length,
+            fetchAndHashMs,transportPrepareMs:transportPrepareMs/assets.length,bridgeMs:bridgeBatchMs/assets.length,
             bridgeBatchMs,bridgeBatchAssets:assets.length},
           profileElapsedMs:monotonicNow()-profileStarted,batchElapsedMs:monotonicNow()-batchStarted});
       }

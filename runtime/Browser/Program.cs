@@ -55,19 +55,25 @@ public static class RuntimeBridge {
         bool added=source.AddVerifiedGzipAsset(assetPath,compressedAsset);
         return JsonSerializer.Serialize(new{added,expectedAssets=source.ExpectedAssetCount,receivedAssets=source.AssetCount,receivedBytes=source.DeliveredBytes,receivedCompressedBytes=source.DeliveredCompressedBytes});
     }
-    [JSInvokable] public static string AddIncrementalSourceGzipAssetBatch(string[] assetPaths,byte[][] compressedAssets){
+    [JSInvokable] public static string AddIncrementalSourceGzipAssetBatch(string[] assetPaths,int[] compressedLengths,byte[] compressedBatch){
         var source=originalSourcePackage??throw new InvalidOperationException("Incremental source package is not initialized");
-        if(assetPaths is null||compressedAssets is null||assetPaths.Length==0||assetPaths.Length!=compressedAssets.Length||assetPaths.Length>16)
-            throw new InvalidDataException("Incremental source batch has invalid asset arrays");
+        if(assetPaths is null||compressedLengths is null||compressedBatch is null||assetPaths.Length==0||
+            assetPaths.Length!=compressedLengths.Length||assetPaths.Length>16)
+            throw new InvalidDataException("Incremental source batch has invalid paths, lengths, or payload");
         long batchBytes=0;
-        foreach(var compressed in compressedAssets){
-            if(compressed is null)throw new InvalidDataException("Incremental source batch contains a null asset");
-            batchBytes=checked(batchBytes+compressed.LongLength);
+        foreach(int length in compressedLengths){
+            if(length<=0)throw new InvalidDataException("Incremental source batch contains an empty asset");
+            batchBytes=checked(batchBytes+length);
             if(batchBytes>32L*1024*1024)throw new InvalidDataException("Incremental source batch exceeds the 32 MiB transport limit");
         }
+        if(batchBytes!=compressedBatch.LongLength)
+            throw new InvalidDataException("Incremental source batch lengths do not match its payload");
         var results=new object[assetPaths.Length];
+        int payloadOffset=0;
         for(int i=0;i<assetPaths.Length;i++){
-            bool added=source.AddVerifiedGzipAsset(assetPaths[i],compressedAssets[i]);
+            int length=compressedLengths[i];
+            bool added=source.AddVerifiedGzipAsset(assetPaths[i],compressedBatch.AsSpan(payloadOffset,length).ToArray());
+            payloadOffset+=length;
             results[i]=new{added,expectedAssets=source.ExpectedAssetCount,receivedAssets=source.AssetCount,
                 receivedBytes=source.DeliveredBytes,receivedCompressedBytes=source.DeliveredCompressedBytes};
         }

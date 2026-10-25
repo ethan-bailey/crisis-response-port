@@ -99,7 +99,9 @@ test("delivers verified source assets through the WASM package bridge", async ()
       return JSON.stringify({expectedAssets: 1, receivedAssets: 0, receivedBytes: 0, receivedCompressedBytes: 0});
     assert.equal(method,"AddIncrementalSourceGzipAssetBatch");
     assert.deepEqual(args[0],[assetPath]);
-    assert.deepEqual(args[1].map(value=>Buffer.from(value,"base64")),[Buffer.from(assetGzip)]);
+    assert.deepEqual(args[1],[assetGzip.byteLength]);
+    assert.ok(args[2] instanceof Uint8Array);
+    assert.deepEqual(Buffer.from(args[2]),Buffer.from(assetGzip));
     return JSON.stringify({items:[{added:true,expectedAssets:1,receivedAssets:1,receivedBytes:assetRaw.byteLength,
       receivedCompressedBytes:assetGzip.byteLength}]});
   }};
@@ -117,9 +119,9 @@ test("delivers verified source assets through the WASM package bridge", async ()
     assert.deepEqual(calls.map(call => call[0]), ["InitializeIncrementalSourcePackage", "AddIncrementalSourceGzipAssetBatch"]);
     assert.equal(calls[1][0], "AddIncrementalSourceGzipAssetBatch");
     assert.deepEqual(calls[1][1],[assetPath]);
-    assert.equal(typeof calls[1][2][0], "string");
-    assert.ok(calls[1][2][0].length > 32768, "base64 payload should cover more than one encoding chunk");
-    assert.deepEqual(Buffer.from(calls[1][2][0], "base64"), Buffer.from(gzipSync(assetRaw)));
+    assert.deepEqual(calls[1][2],[assetGzip.byteLength]);
+    assert.ok(calls[1][3] instanceof Uint8Array);
+    assert.deepEqual(Buffer.from(calls[1][3]),Buffer.from(gzipSync(assetRaw)));
     assert.deepEqual(progress.map(value=>value.stage),["fetching","adding","delivered"]);
     assert.deepEqual(progress[0].pendingAssetPaths,[assetPath]);
     assert.deepEqual(progress[1].pendingAssetPaths,[assetPath]);
@@ -133,9 +135,9 @@ test("delivers verified source assets through the WASM package bridge", async ()
     }, {receivedAssets:1,expectedAssets:1,compressedAssetBytes:assetGzip.byteLength,sourceAssetBytes:assetRaw.byteLength,
       maximumAssetBytes:assetRaw.byteLength,totalCompressedAssetBytes:assetGzip.byteLength,totalSourceAssetBytes:assetRaw.byteLength,
       asset:{path:assetPath,compressedBytes:assetGzip.byteLength,sourceBytes:assetRaw.byteLength,
-        fetchAndHashMs:completed.asset.fetchAndHashMs,base64EncodeMs:completed.asset.base64EncodeMs,
+        fetchAndHashMs:completed.asset.fetchAndHashMs,transportPrepareMs:completed.asset.transportPrepareMs,
         bridgeMs:completed.asset.bridgeMs,bridgeBatchMs:completed.asset.bridgeBatchMs,bridgeBatchAssets:1}});
-    for(const value of [completed.asset.fetchAndHashMs,completed.asset.base64EncodeMs,completed.asset.bridgeMs,
+    for(const value of [completed.asset.fetchAndHashMs,completed.asset.transportPrepareMs,completed.asset.bridgeMs,
       completed.profileElapsedMs,completed.batchElapsedMs]) assert.ok(Number.isFinite(value) && value >= 0);
   } finally {
     globalThis.fetch = originalFetch;
@@ -173,7 +175,9 @@ test("amortizes WASM interop over a bounded ordered batch of small source assets
     if(method==="InitializeIncrementalSourcePackage")return JSON.stringify({expectedAssets:2,receivedAssets:0,receivedBytes:0,receivedCompressedBytes:0});
     assert.equal(method,"AddIncrementalSourceGzipAssetBatch");
     assert.deepEqual(args[0],entries.map(item=>item.path));
-    assert.deepEqual(args[1].map(value=>Buffer.from(value,"base64")),entries.map(item=>Buffer.from(item.compressed)));
+    assert.deepEqual(args[1],entries.map(item=>item.compressed.byteLength));
+    assert.ok(args[2] instanceof Uint8Array);
+    assert.deepEqual(Buffer.from(args[2]),Buffer.concat(entries.map(item=>Buffer.from(item.compressed))));
     const items=entries.map(item=>{
       receivedAssets++;receivedBytes+=item.bytes;receivedCompressedBytes+=item.compressedBytes;
       return {added:true,expectedAssets:2,receivedAssets,receivedBytes,receivedCompressedBytes};
