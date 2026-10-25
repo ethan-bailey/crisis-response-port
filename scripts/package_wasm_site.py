@@ -177,6 +177,7 @@ def validate_site(site):
         with path.open("rb") as stream:
             require(stream.read(8) == WASM_HEADER, f"Invalid WebAssembly binary: {path.name}")
     incremental_profiles = []
+    incremental_operator_root = False
     for manifest_path in sorted((site / "scene-data/fullsource").glob("*/manifest.json")):
         profile_root = manifest_path.parent
         profile = json.loads(manifest_path.read_text())
@@ -189,6 +190,7 @@ def validate_site(site):
         require(isinstance(profile.get("rootAssets"), list) and bool(profile["rootAssets"])
                 and set(profile["rootAssets"]).issubset(profile_asset_paths),
                 f"Incremental source profile omits one of its root assets: {manifest_path}")
+        incremental_operator_root |= "Assets/Resources/characters/Operator.prefab" in profile["rootAssets"]
         metadata = profile.get("metadata", {})
         metadata_path = safe_path(profile_root, metadata.get("file", ""))
         compressed = metadata_path.read_bytes()
@@ -226,7 +228,8 @@ def validate_site(site):
                                      "compressedBytes": total_compressed, "sourceBytes": total_raw})
     return {"wasmFiles": len(wasm), "blazorResources": validate_boot(site),
             "sceneSmokeIncluded": scene_smoke_included,
-            "boundedOperatorSource": has_actor_delivery, "incrementalSourceProfiles": incremental_profiles}
+            "boundedOperatorSource": has_actor_delivery or incremental_operator_root,
+            "incrementalSourceProfiles": incremental_profiles}
 
 
 def verify(site):
