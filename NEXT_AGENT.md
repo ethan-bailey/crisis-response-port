@@ -38,3 +38,23 @@ Recover the exact source index or a complete Mission profile and manifest, then 
 
 - Confirmed against live `develop/wasm` head `7d28858d0724682f258e6df9573e8a1cbc44ce97`: GitHub Contents API returns 404 for `scene-data/fullsource/`. The repository's `scene-data/` root contains `crisis-response-scenes.json.gz` (86,196,480 bytes), `marksman-range.json`, and the loader, but not the required Mission FullSource profile directory. This confirms the existing package-source blocker remains; the gzip scene file is not evidence of the missing indexed 1,919-asset profile and does not clear package integrity.
 - No build or publication was attempted. Next gate is still exact profile/index recovery, then per-asset validation and archive integrity before any Site operation.
+
+## Parity gates and exact checkpoint — 2026-10-25 10:41 EDT
+
+The working checkout was cloned from live `develop/wasm` at `9651b39b41f6c649b3529d5abfc3c5a8b0cad556`; worktree was clean before verification. On that exact SHA:
+
+- `node --test scripts/*test.mjs`: **81/81 passed**.
+- `python3 -m unittest discover -s scripts -p '*test.py'`: **38/38 passed** after expanding the sparse checkout to include required source-reference fixtures. A first sparse-only invocation had 8 missing-fixture errors and is not counted as a pass.
+- .NET SDK is not installed in this fresh workspace (`dotnet: command not found`); no .NET build, WASM publish, or exact package verification was run here. Prior successful SDK 8.0.426 results above belong to their explicitly named earlier source checkpoint only.
+
+### Remaining gates, in dependency order
+
+1. **Recover authoritative Mission source inputs.** Obtain the exact `cpr-scenes-full-source.json` (expected SHA-256 `6586b293eb1455669eba29042469ebd6740b0ad08629fd39ea625237626dd639`) or a complete matching 1,919-asset Mission FullSource profile, manifest, and provenance from an approved durable source. The current branch has no `scene-data/fullsource/` directory; its existing 86,196,480-byte monolithic gzip is not a substitute. Do not synthesize or silently replace source data.
+2. **Batch-build and verify source delivery.** Generate the incremental profile from those inputs; validate every compressed and decompressed asset against its expected size/hash, all 1,919 paths and roots, metadata/index hashes, and aggregate byte totals. Then investigate the reported slow tail/hang near 1,900 assets with measured request/progress traces; preserve bounded delivery, cancellation, ordering, and fail-closed integrity. Existing loader unit coverage is not an iPhone network test.
+3. **Build the exact browser source and Site package.** On the same code SHA and profile, use pinned .NET SDK 8.0.426, run the full runtime/WASM build and relevant runtime contracts, assemble the site archive, and verify its complete file count and integrity manifest. No publish before these pass.
+4. **Close actor authority and page wiring in one dependency-aware batch.** Load the authored Mission with the recovered original Operator/Occupant objects, then route page movement, absolute aim (independent of X), physics state/forces, rendering, and weapon callbacks through those same original actor instances. Verify the authored Mission UI and lifecycle; do not use the transport weapon/character as a competing authority.
+5. **Reach gameplay parity against original contracts.** Batch remaining source-backed character physiology, animation/IK, projectile-to-limb combat, wound/ragdoll/weapon-drop, NPC behavior/spawning, and audio bridge work by shared actor lifecycle and dependencies. Preserve unresolved Unity-only or unavailable native services as explicit dispositions with observable contracts; report gun audio separately until shot timing/volume is verified.
+6. **Exact-build acceptance.** Run browser transfer and runtime smoke on the exact package; obtain owner iPhone Safari acceptance for Mission startup/completion, controls, aim, movement/sprint, combat, error readability, and memory/throughput. Desktop Playwright is optional under owner policy; mobile acceptance remains the target-device check.
+7. **Publish and verify.** Only after gates 1–6 applicable to the release pass, save/deploy the verified archive to the existing owner-private Site, confirm deployment status and exact source/archive hashes, then retest the deployed build. No deployment was attempted in this batch.
+
+**Next action:** recover the authoritative source index/profile. Meanwhile, the Node and Python contract suites pass at `9651b39`; the full build is blocked in this workspace by the missing .NET SDK, and the package/release gate is blocked by missing Mission source inputs.
