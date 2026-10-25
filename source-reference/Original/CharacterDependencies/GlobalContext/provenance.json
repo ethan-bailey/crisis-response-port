@@ -1,0 +1,24 @@
+{
+  "sourceArchive": "crisis-response-recovery-direct-v3-1.zip",
+  "sourceArchiveSha256": "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
+  "archiveHashVerifiedThisSession": false,
+  "sourceExportPath": "export/ExportedProject/Assets/Resources/Global context.prefab",
+  "sourceExportPathObserved": "/tmp/cpr-recovery-artifact-11903811738/export/ExportedProject/Assets/Resources/Global context.prefab",
+  "unityGuid": "64a19dee4df3d6e42a4ce00a87b8cebe",
+  "assets": [
+    {
+      "path": "GlobalContext.prefab",
+      "repositoryPath": "source-reference/Original/CharacterDependencies/GlobalContext/GlobalContext.prefab",
+      "bytes": 111428,
+      "sha256": "42f863d231c8e32521df43e2e0b895df7eb9701afbc8fa7f58ec62e5717b5085"
+    },
+    {
+      "path": "GlobalContext.prefab.meta",
+      "repositoryPath": "source-reference/Original/CharacterDependencies/GlobalContext/GlobalContext.prefab.meta",
+      "bytes": 237,
+      "sha256": "47d01bc5124fff9c1e9a265c5c3bbbecac60ef12f0306cc778b372e6fa6af1be"
+    }
+  ],
+  "copyVerification": "Both repository files were byte-compared with the recovered export files in this session.",
+  "scope": "Original serialized Global Context prefab and GUID metadata only; referenced asset closure is not included."
+}
