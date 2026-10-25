@@ -55,6 +55,24 @@ public static class RuntimeBridge {
         bool added=source.AddVerifiedGzipAsset(assetPath,compressedAsset);
         return JsonSerializer.Serialize(new{added,expectedAssets=source.ExpectedAssetCount,receivedAssets=source.AssetCount,receivedBytes=source.DeliveredBytes,receivedCompressedBytes=source.DeliveredCompressedBytes});
     }
+    [JSInvokable] public static string AddIncrementalSourceGzipAssetBatch(string[] assetPaths,byte[][] compressedAssets){
+        var source=originalSourcePackage??throw new InvalidOperationException("Incremental source package is not initialized");
+        if(assetPaths is null||compressedAssets is null||assetPaths.Length==0||assetPaths.Length!=compressedAssets.Length||assetPaths.Length>16)
+            throw new InvalidDataException("Incremental source batch has invalid asset arrays");
+        long batchBytes=0;
+        foreach(var compressed in compressedAssets){
+            if(compressed is null)throw new InvalidDataException("Incremental source batch contains a null asset");
+            batchBytes=checked(batchBytes+compressed.LongLength);
+            if(batchBytes>32L*1024*1024)throw new InvalidDataException("Incremental source batch exceeds the 32 MiB transport limit");
+        }
+        var results=new object[assetPaths.Length];
+        for(int i=0;i<assetPaths.Length;i++){
+            bool added=source.AddVerifiedGzipAsset(assetPaths[i],compressedAssets[i]);
+            results[i]=new{added,expectedAssets=source.ExpectedAssetCount,receivedAssets=source.AssetCount,
+                receivedBytes=source.DeliveredBytes,receivedCompressedBytes=source.DeliveredCompressedBytes};
+        }
+        return JsonSerializer.Serialize(new{items=results});
+    }
     [JSInvokable] public static string GetIncrementalSourceMemorySnapshot(){
         var source=originalSourcePackage??throw new InvalidOperationException("Incremental source package is not initialized");
         var gc=GC.GetGCMemoryInfo();

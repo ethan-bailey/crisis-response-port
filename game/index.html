@@ -470,6 +470,7 @@ async function load(){
       trace.progress={receivedAssets:progress.receivedAssets,expectedAssets:progress.expectedAssets,
        compressedAssetBytes:progress.compressedAssetBytes,totalCompressedAssetBytes:progress.totalCompressedAssetBytes,
        sourceAssetBytes:progress.sourceAssetBytes,totalSourceAssetBytes:progress.totalSourceAssetBytes,
+       batchCompressedBytes:progress.batchCompressedBytes,
        profileElapsedMs:progress.profileElapsedMs};
       if(progress.stage==="delivered"&&progress.asset){
        const sample={...progress.asset,receivedAssets:progress.receivedAssets,elapsedMs:progress.profileElapsedMs};
@@ -482,7 +483,7 @@ async function load(){
       }
       const mib=`${(progress.compressedAssetBytes/1048576).toFixed(1)} / ${(progress.totalCompressedAssetBytes/1048576).toFixed(1)} MiB`;
       if(progress.stage==="fetching")missionProgressText.textContent=`Downloading Mission assets ${progress.receivedAssets+1}–${Math.min(progress.expectedAssets,progress.receivedAssets+progress.pendingAssetPaths.length)} of ${progress.expectedAssets} · ${mib}`;
-      else if(progress.stage==="adding")missionProgressText.textContent=`Adding source asset ${progress.receivedAssets+1}/${progress.expectedAssets} to WASM · ${progress.asset.path} · fetch/hash ${progress.asset.fetchAndHashMs.toFixed(0)} ms`;
+      else if(progress.stage==="adding")missionProgressText.textContent=`Adding verified source assets ${progress.receivedAssets+1}–${Math.min(progress.expectedAssets,progress.receivedAssets+progress.pendingAssetPaths.length)} of ${progress.expectedAssets} to WASM · ${((progress.batchCompressedBytes||0)/1048576).toFixed(2)} MiB in this batch · ${mib} verified`;
       else missionProgressText.textContent=`Verified ${progress.receivedAssets}/${progress.expectedAssets} Mission assets · ${mib} · latest fetch/hash ${progress.asset.fetchAndHashMs.toFixed(0)} ms, WASM add ${progress.asset.bridgeMs.toFixed(0)} ms`;
      }
     });

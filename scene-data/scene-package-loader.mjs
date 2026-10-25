@@ -182,44 +182,61 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
       pendingAssetPaths:batch.map(asset=>asset.path),profileElapsedMs:monotonicNow()-profileStarted});
     const fetchedBatch = await Promise.all(batch.map(asset =>
       fetchCompressedAsset(new URL(asset.file, base), asset, `Source asset ${asset.path}`,signal)));
-    for (let offset = 0; offset < batch.length; offset++) {
+    // Keep each interop payload small while amortizing Blazor/.NET dispatch over
+    // several files. A single large file is still transported by itself.
+    let deliveryOffset=0;
+    while(deliveryOffset<batch.length){
       throwIfAborted(signal);
-      const index = batchStart + offset;
-      const asset = batch[offset];
-      const {compressed, fetchAndHashMs} = fetchedBatch[offset];
-      if (onProgress) await onProgress({stage:"adding",receivedAssets:index,
+      const deliveryStart=deliveryOffset;
+      let deliveryBytes=0;
+      while(deliveryOffset<batch.length&&deliveryOffset-deliveryStart<16){
+        const nextBytes=fetchedBatch[deliveryOffset].compressed.byteLength;
+        if(deliveryOffset>deliveryStart&&deliveryBytes+nextBytes>1024*1024)break;
+        deliveryBytes+=nextBytes;deliveryOffset++;
+      }
+      const assets=batch.slice(deliveryStart,deliveryOffset);
+      const fetched=fetchedBatch.slice(deliveryStart,deliveryOffset);
+      const encodeStarted=monotonicNow();
+      const encodedAssets=fetched.map(item=>bytesToBase64(new Uint8Array(item.compressed)));
+      const base64EncodeMs=monotonicNow()-encodeStarted;
+      if(onProgress)await onProgress({stage:"adding",receivedAssets:batchStart+deliveryStart,
         expectedAssets:manifest.assets.length,compressedAssetBytes,sourceAssetBytes,
         totalCompressedAssetBytes:manifest.compressedAssetBytes,totalSourceAssetBytes:manifest.uncompressedAssetBytes,
-        pendingAssetPaths:[asset.path],asset:{path:asset.path,compressedBytes:compressed.byteLength,
-          sourceBytes:asset.bytes,fetchAndHashMs},profileElapsedMs:monotonicNow()-profileStarted,
-        batchElapsedMs:monotonicNow()-batchStarted});
-      const encodeStarted = monotonicNow();
-      const encoded = bytesToBase64(new Uint8Array(compressed));
-      const base64EncodeMs = monotonicNow() - encodeStarted;
-      const bridgeStarted = monotonicNow();
-      const result = JSON.parse(await bridge.invokeMethodAsync("AddIncrementalSourceGzipAsset", asset.path, encoded));
-      const bridgeMs = monotonicNow() - bridgeStarted;
+        pendingAssetPaths:assets.map(asset=>asset.path),batchCompressedBytes:deliveryBytes,
+        profileElapsedMs:monotonicNow()-profileStarted,batchElapsedMs:monotonicNow()-batchStarted});
+      const bridgeStarted=monotonicNow();
+      const result=JSON.parse(await bridge.invokeMethodAsync("AddIncrementalSourceGzipAssetBatch",
+        assets.map(asset=>asset.path),encodedAssets));
+      const bridgeBatchMs=monotonicNow()-bridgeStarted;
       throwIfAborted(signal);
-      deliveredAssetBytes += asset.bytes;
-      if (result.expectedAssets !== manifest.assets.length || result.receivedAssets !== index + 1
-          || result.receivedBytes !== deliveredAssetBytes || result.receivedCompressedBytes !== compressedAssetBytes + compressed.byteLength)
-        throw new Error(`WASM source store rejected asset ${asset.path}`);
-      compressedBytes += compressed.byteLength;
-      sourceBytes += asset.bytes;
-      compressedAssetBytes += compressed.byteLength;
-      sourceAssetBytes += asset.bytes;
-      maximumAssetBytes = Math.max(maximumAssetBytes, asset.bytes);
-      rememberSlowest(slowestFetches, {path: asset.path, durationMs: fetchAndHashMs, compressedBytes: compressed.byteLength});
-      rememberSlowest(slowestBridgeCalls, {path: asset.path, durationMs: bridgeMs, sourceBytes: asset.bytes});
-      if (onProgress) {
-        await onProgress({receivedAssets:index + 1,expectedAssets:manifest.assets.length,
-          stage:"delivered",
-          compressedAssetBytes,sourceAssetBytes,maximumAssetBytes,
+      if(!Array.isArray(result.items)||result.items.length!==assets.length)
+        throw new Error("WASM source store returned an invalid incremental asset batch");
+      for(let offset=0;offset<assets.length;offset++){
+        const index=batchStart+deliveryStart+offset;
+        const asset=assets[offset];
+        const {compressed,fetchAndHashMs}=fetched[offset];
+        const item=result.items[offset];
+        deliveredAssetBytes+=asset.bytes;
+        if(!item.added||item.expectedAssets!==manifest.assets.length||item.receivedAssets!==index+1
+            ||item.receivedBytes!==deliveredAssetBytes
+            ||item.receivedCompressedBytes!==compressedAssetBytes+compressed.byteLength)
+          throw new Error(`WASM source store rejected asset ${asset.path}`);
+        compressedBytes+=compressed.byteLength;
+        sourceBytes+=asset.bytes;
+        compressedAssetBytes+=compressed.byteLength;
+        sourceAssetBytes+=asset.bytes;
+        maximumAssetBytes=Math.max(maximumAssetBytes,asset.bytes);
+        rememberSlowest(slowestFetches,{path:asset.path,durationMs:fetchAndHashMs,compressedBytes:compressed.byteLength});
+        if(onProgress)await onProgress({receivedAssets:index+1,expectedAssets:manifest.assets.length,
+          stage:"delivered",compressedAssetBytes,sourceAssetBytes,maximumAssetBytes,
           totalCompressedAssetBytes:manifest.compressedAssetBytes,totalSourceAssetBytes:manifest.uncompressedAssetBytes,
           asset:{path:asset.path,compressedBytes:compressed.byteLength,sourceBytes:asset.bytes,
-            fetchAndHashMs,base64EncodeMs,bridgeMs},
+            fetchAndHashMs,base64EncodeMs:base64EncodeMs/assets.length,bridgeMs:bridgeBatchMs/assets.length,
+            bridgeBatchMs,bridgeBatchAssets:assets.length},
           profileElapsedMs:monotonicNow()-profileStarted,batchElapsedMs:monotonicNow()-batchStarted});
       }
+      rememberSlowest(slowestBridgeCalls,{path:assets.map(asset=>asset.path).join(" | "),
+        durationMs:bridgeBatchMs,assets:assets.length,compressedBytes:deliveryBytes});
     }
   }
   if (compressedAssetBytes !== manifest.compressedAssetBytes || sourceAssetBytes !== manifest.uncompressedAssetBytes)
