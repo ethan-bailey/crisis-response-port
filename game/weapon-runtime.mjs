@@ -4,38 +4,21 @@ import { createOriginalImpactMeshRenderer } from './original-impact-mesh.mjs';
 import { sourceEffectAge } from './source-effect-clock.mjs';
 import { createOriginalWindowVisuals } from './original-window-visuals.mjs';
 import { createOriginalParticleEventBinding } from './original-particle-event-binding.mjs';
+import { createWeaponAudioRuntime } from './weapon-audio-runtime.mjs';
 export async function loadWeaponData(){
  const r=await fetch('./assets/weapon-runtime.json.gz');if(!r.ok)throw new Error('Original weapon settings unavailable');
  const data=await new Response(r.body.pipeThrough(new DecompressionStream('gzip'))).json();
+ // Start downloading and decoding the original gunshot clip as soon as the
+ // small weapon manifest is available. Waiting until the full character,
+ // physics, and presentation graph is ready made the first shots silent.
+ Object.defineProperty(data,'audioRuntime',{value:createWeaponAudioRuntime(data.audio),enumerable:false});
+ for(const [name,info] of Object.entries(data.audio||{}))data.audioRuntime.load(name,info.url);
  data.renderMaterials=await loadSourceCutoutMaterials();return data;
 }
 export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,particleSources){
- // Keep the original clips, but unlock them only from a real user gesture.
- // A source started while iOS suspends AudioContext can wait there and play
- // much later, out of sync with the shot. Drop those one-frame events instead.
- const AudioContext=window.AudioContext||window.webkitAudioContext,context=AudioContext?new AudioContext():null,buffers=new Map(),loadingAudio=new Set();
- const outputGain=context?.createGain()||null,limiter=context?.createDynamicsCompressor()||null;
- const audioStats={played:0,droppedSuspended:0,droppedUnloaded:0,droppedStale:0,decodeErrors:0,unlockFailures:0};
- if(outputGain&&limiter){outputGain.gain.value=.16;limiter.threshold.value=-8;limiter.knee.value=6;limiter.ratio.value=10;limiter.attack.value=.003;limiter.release.value=.15;outputGain.connect(limiter).connect(context.destination);}
- function loadAudio(key,url){
-  if(buffers.has(key)||loadingAudio.has(key))return;
-  loadingAudio.add(key);
-  fetch(url).then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.arrayBuffer();})
-   .then(bytes=>context.decodeAudioData(bytes)).then(buffer=>buffers.set(key,buffer))
-   .catch(()=>{audioStats.decodeErrors++;}).finally(()=>loadingAudio.delete(key));
- }
- if(context)for(const [name,info] of Object.entries(data.audio))loadAudio(name,info.url);
- if(context)for(const info of Object.values(ballisticsData?.effects||{}))for(const url of info.audio)if(!buffers.has(url))loadAudio(url,url);
- function unlockAudio(){if(!context||context.state==='running')return;context.resume().catch(()=>{audioStats.unlockFailures++;});}
- if(context)addEventListener('pointerdown',unlockAudio,{capture:true,passive:true});
- function playAudio(key,volume=1){
-  if(!context||context.state!=='running'){audioStats.droppedSuspended++;return;}
-  const buffer=buffers.get(key);
-  if(!buffer){audioStats.droppedUnloaded++;return;}
-  const source=context.createBufferSource(),gain=context.createGain();source.buffer=buffer;
-  gain.gain.value=Math.max(0,Math.min(1,Number(volume)||0));source.connect(gain).connect(outputGain);
-  source.onended=()=>{source.disconnect();gain.disconnect();};source.start();audioStats.played++;
- }
+ const audio=data.audioRuntime||createWeaponAudioRuntime(data.audio);
+ for(const info of Object.values(ballisticsData?.effects||{}))for(const url of info.audio)audio.load(url,url);
+ const audioStats={snapshot:()=>audio.snapshot()};
  const originalImpactMeshes=createOriginalImpactMeshRenderer(scene);
  const originalWindows=createOriginalWindowVisuals(scene,ballisticsData,sourceWindows);
  const originalParticleEvents=createOriginalParticleEventBinding(particleSources.particles,particleSources.materials);
@@ -93,9 +76,8 @@ export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,part
   if(magazinePose){const {p,q,visible}=magazinePose;magRoot.visible=visible;magRoot.position.set(p[0],p[1],-p[2]);magRoot.quaternion.set(-q[0],-q[1],q[2],q[3]);}
   for(const e of events){
    const eventAge=sourceTime-Number(e.time);
-   if((e.type==='audio'||e.type==='materialEffect')&&(!Number.isFinite(eventAge)||eventAge<-.05||eventAge>.12)){audioStats.droppedStale++;continue;}
-   if(e.type==='audio')playAudio(e.value,(data.audio[e.value]?.volume??1)*(e.value==='audioFire'?0.6:1));
-   if(e.type==='materialEffect')playAudio(e.value.clip,e.value.volume);
+   if(e.type==='audio')audio.play(e.value,(data.audio[e.value]?.volume??1)*(e.value==='audioFire'?0.6:1),eventAge);
+   if(e.type==='materialEffect')audio.play(e.value.clip,e.value.volume,eventAge);
    if(e.type==='shot')flash(e.value,e.time);
   }
   originalImpactMeshes.update(events);
@@ -114,6 +96,6 @@ export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,part
     activeDrawable:active.filter(item=>item.firstFrameApplied).length,
     currentSourceSpriteGuid:active.find(item=>item.firstFrameApplied)?.originalSpriteGuid||null};
  }
- function audioSnapshot(){return {...audioStats,contextState:context?.state||'unavailable',outputGain:outputGain?.gain.value??0};}
+ function audioSnapshot(){return audioStats.snapshot();}
  return {update,flashSnapshot,audioSnapshot,impactMeshSnapshot:originalImpactMeshes.snapshot,windowSnapshot:originalWindows.snapshot,particleSourceSnapshot:originalParticleEvents.snapshot};
 }
