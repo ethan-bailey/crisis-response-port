@@ -5,6 +5,7 @@ using Crisis.Runtime.Weapons;
 public class TutorialSoftTarget:Component {}
 public partial class Projectile {
  public int Id {get;set;} public int SwarmId {get;set;} public int FlightMask {get;set;}
+ public float particleCountScaler {get;set;}=1f;
  public float ForceMultiplier {get;set;} public float SpawnTime {get;set;} public float Spin {get;set;} public float RiflingTwistRate {get;set;}
  public bool Finished {get;set;} public bool FiredWithPrecision {get;set;} public bool IsStray {get;set;}
  public Vector3 InteractionPosition {get;set;} public Vector3 Tumble {get;set;} public Vector3 NextPosition {get;set;}
