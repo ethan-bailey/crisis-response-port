@@ -27,6 +27,7 @@ internal static class SerializedAssetResolver {
             throw new KeyNotFoundException($"Package has no asset for GUID {guid} ({fileID})");
         string path=pathValue.GetString();
         if(!package.TryGetAsset(path,out var asset))throw new KeyNotFoundException($"Package GUID {guid} points to missing asset {path}");
+        try {
         var assetRecords=asset.GetProperty("records");
         if(assetRecords.GetArrayLength()==0&&expectedType==typeof(Texture2D)&&asset.TryGetProperty("dataBase64",out var encodedTexture))
             return ResolvePngTexture(package,asset,guid,fileID,path,Convert.FromBase64String(encodedTexture.GetString()),world,cache);
@@ -52,6 +53,7 @@ internal static class SerializedAssetResolver {
         if(created is Audio.AudioMixerGroup mixerGroup)mixerGroup.audioMixer=ResolveSiblingMixer(assetRecords,guid,path,world,cache);
         if(created is Audio.AudioMixerSnapshot mixerSnapshot)mixerSnapshot.audioMixer=ResolveSiblingMixer(assetRecords,guid,path,world,cache);
         world.Register(created);cache[key]=created;return created;
+        } finally { package.ReleaseParsedAsset(path); }
     }
     static Audio.AudioMixer ResolveSiblingMixer(JsonElement assetRecords,string guid,string path,RuntimeWorld world,Dictionary<string,Object> cache){
         const string mixerID="24100000";string key=guid+":"+mixerID;

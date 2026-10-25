@@ -42,12 +42,17 @@ public static class RuntimeBridge {
         originalSourcePackage=OriginalSourcePackage.CreateIncremental(metadataJson);
         incrementalSourceWorld=new RuntimeWorld();
         Resources.Configure(originalSourcePackage,incrementalSourceWorld);
-        return JsonSerializer.Serialize(new{expectedAssets=originalSourcePackage.ExpectedAssetCount,receivedAssets=originalSourcePackage.AssetCount,receivedBytes=originalSourcePackage.DeliveredBytes});
+        return JsonSerializer.Serialize(new{expectedAssets=originalSourcePackage.ExpectedAssetCount,receivedAssets=originalSourcePackage.AssetCount,receivedBytes=originalSourcePackage.DeliveredBytes,receivedCompressedBytes=originalSourcePackage.DeliveredCompressedBytes});
     }
     [JSInvokable] public static string AddIncrementalSourceAsset(string assetPath,string assetJson){
         var source=originalSourcePackage??throw new InvalidOperationException("Incremental source package is not initialized");
         bool added=source.AddVerifiedAsset(assetPath,assetJson);
-        return JsonSerializer.Serialize(new{added,expectedAssets=source.ExpectedAssetCount,receivedAssets=source.AssetCount,receivedBytes=source.DeliveredBytes});
+        return JsonSerializer.Serialize(new{added,expectedAssets=source.ExpectedAssetCount,receivedAssets=source.AssetCount,receivedBytes=source.DeliveredBytes,receivedCompressedBytes=source.DeliveredCompressedBytes});
+    }
+    [JSInvokable] public static string AddIncrementalSourceGzipAsset(string assetPath,byte[] compressedAsset){
+        var source=originalSourcePackage??throw new InvalidOperationException("Incremental source package is not initialized");
+        bool added=source.AddVerifiedGzipAsset(assetPath,compressedAsset);
+        return JsonSerializer.Serialize(new{added,expectedAssets=source.ExpectedAssetCount,receivedAssets=source.AssetCount,receivedBytes=source.DeliveredBytes,receivedCompressedBytes=source.DeliveredCompressedBytes});
     }
     [JSInvokable] public static string LoadIncrementalSourceScene(string path){
         var source=originalSourcePackage??throw new InvalidOperationException("Incremental source package is not initialized");

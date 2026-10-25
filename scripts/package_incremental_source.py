@@ -63,7 +63,8 @@ def build(source_path, output_dir, profile, roots):
         entry = {"path": path, "file": "assets/" + name, "bytes": len(raw),
                  "sha256": digest(raw), "compressedBytes": len(compressed),
                  "compressedSha256": digest(compressed)}
-        asset_manifest[path] = {"bytes": len(raw), "sha256": digest(raw)}
+        asset_manifest[path] = {"bytes": len(raw), "sha256": digest(raw),
+                                "compressedBytes": len(compressed), "compressedSha256": digest(compressed)}
         deliveries.append(entry)
 
     metadata = {key: source[key] for key in (
@@ -71,6 +72,7 @@ def build(source_path, output_dir, profile, roots):
         "builtinObjects", "builtinResourceRecords", "builtinPlayerResourceRecords", "sourceOfTruth"
     ) if key in source}
     metadata["seeds"] = roots
+    metadata["schemaVersion"] = 1
     metadata["assetManifest"] = asset_manifest
     metadata["objectReferences"] = [ref for ref in references if ref.get("source") in selected]
     metadata["unresolvedGuids"] = [item for item in source.get("unresolvedGuids", [])

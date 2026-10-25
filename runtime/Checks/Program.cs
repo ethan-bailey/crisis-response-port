@@ -6,6 +6,10 @@ if(args.Length==1&&args[0]=="--source-package-store-contract"){
     Console.WriteLine(OriginalSourcePackageContracts.Run());
     return;
 }
+if(args.Length==2&&args[0]=="--verify-incremental-source-profile"){
+    Console.WriteLine(OriginalSourcePackageContracts.VerifyProfile(args[1]));
+    return;
+}
 if(args.Length==2&&args[0]=="--builtin-resource-contract"){
     using var builtinPackage=JsonDocument.Parse(File.ReadAllText(args[1]));
     Console.WriteLine(RuntimeContracts.RunBuiltinResource(builtinPackage.RootElement));

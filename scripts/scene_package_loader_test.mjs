@@ -66,8 +66,10 @@ test("delivers verified source assets sequentially to the WASM package bridge", 
   const assetText = '{"records":[]}';
   const assetRaw = encoder.encode(assetText);
   const assetGzip = gzipSync(assetRaw);
+  const assetCompressedHash = hash(assetGzip);
   const metadataText = JSON.stringify({schemaVersion: 1, guidPaths: {},
-    assetManifest: {[assetPath]: {bytes: assetRaw.byteLength, sha256: hash(assetRaw)}}});
+    assetManifest: {[assetPath]: {bytes: assetRaw.byteLength, sha256: hash(assetRaw),
+      compressedBytes: assetGzip.byteLength, compressedSha256: assetCompressedHash}}});
   const metadataRaw = encoder.encode(metadataText);
   const metadataGzip = gzipSync(metadataRaw);
   const manifest = {schemaVersion: 1, profile: "fixture", encoding: "gzip-json-assets",
@@ -76,7 +78,7 @@ test("delivers verified source assets sequentially to the WASM package bridge", 
     metadata: {file: "metadata.json.gz", bytes: metadataRaw.byteLength, sha256: hash(metadataRaw),
       compressedBytes: metadataGzip.byteLength, compressedSha256: hash(metadataGzip)},
     assets: [{path: assetPath, file: "assets/0123456789abcdef01234567.json.gz", bytes: assetRaw.byteLength,
-      sha256: hash(assetRaw), compressedBytes: assetGzip.byteLength, compressedSha256: hash(assetGzip)}]};
+      sha256: hash(assetRaw), compressedBytes: assetGzip.byteLength, compressedSha256: assetCompressedHash}]};
   const originalFetch = globalThis.fetch;
   const files = new Map([["manifest.json", encoder.encode(JSON.stringify(manifest))],
     ["metadata.json.gz", metadataGzip], ["0123456789abcdef01234567.json.gz", assetGzip]]);
@@ -88,17 +90,19 @@ test("delivers verified source assets sequentially to the WASM package bridge", 
   const bridge = {invokeMethodAsync: async (method, ...args) => {
     calls.push([method, ...args]);
     if (method === "InitializeIncrementalSourcePackage")
-      return JSON.stringify({expectedAssets: 1, receivedAssets: 0, receivedBytes: 0});
-    return JSON.stringify({expectedAssets: 1, receivedAssets: 1, receivedBytes: assetRaw.byteLength});
+      return JSON.stringify({expectedAssets: 1, receivedAssets: 0, receivedBytes: 0, receivedCompressedBytes: 0});
+    return JSON.stringify({expectedAssets: 1, receivedAssets: 1, receivedBytes: assetRaw.byteLength,
+      receivedCompressedBytes: assetGzip.byteLength});
   }};
   try {
     const result = await deliverIncrementalSourceProfile(bridge, "https://example.test/source/manifest.json");
     assert.equal(result.assetCount, 1);
     assert.equal(result.sourceBytes, metadataRaw.byteLength + assetRaw.byteLength);
     assert.equal(result.maximumAssetBytes, assetRaw.byteLength);
-    assert.deepEqual(calls.map(call => call[0]), ["InitializeIncrementalSourcePackage", "AddIncrementalSourceAsset"]);
+    assert.deepEqual(calls.map(call => call[0]), ["InitializeIncrementalSourcePackage", "AddIncrementalSourceGzipAsset"]);
+    assert.equal(calls[1][0], "AddIncrementalSourceGzipAsset");
     assert.equal(calls[1][1], assetPath);
-    assert.equal(calls[1][2], assetText);
+    assert.deepEqual(new Uint8Array(gzipSync(assetRaw)), calls[1][2]);
   } finally {
     globalThis.fetch = originalFetch;
   }

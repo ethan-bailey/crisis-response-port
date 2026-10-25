@@ -192,6 +192,9 @@ public static class SceneLoader {
         }catch{
             foreach(var root in world.Objects.OfType<GameObject>().Where(g=>g&&!existingObjects.Contains(g)&&ReferenceEquals(g.world,world)&&g.transform.parent==null).ToArray())world.DestroyNow(root);
             throw;
+        }finally{
+            package.ReleaseParsedAsset(assetPath);
+            if(!prefab)package.ReleaseParsedAsset("ProjectSettings/TimeManager.asset");
         }
     }
     static bool IsWithin(Transform value,Transform root){for(var t=value;t!=null;t=t.parent)if(ReferenceEquals(t,root))return true;return false;}

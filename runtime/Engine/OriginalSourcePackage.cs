@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.IO.Compression;
 
 namespace Crisis.Runtime;
 
@@ -13,9 +14,11 @@ public sealed class OriginalSourcePackage {
     readonly JsonDocument metadataDocument;
     readonly JsonElement legacyRoot;
     readonly JsonElement manifest;
-    readonly Dictionary<string,JsonDocument> assets=new(StringComparer.Ordinal);
+    sealed class StoredAsset { public byte[] compressed; public JsonDocument document; }
+    readonly Dictionary<string,StoredAsset> assets=new(StringComparer.Ordinal);
     readonly Dictionary<string,string> assetHashes=new(StringComparer.Ordinal);
     long deliveredBytes;
+    long deliveredCompressedBytes;
 
     OriginalSourcePackage(JsonDocument metadataDocument,JsonElement manifest) {
         this.metadataDocument=metadataDocument;
@@ -60,7 +63,9 @@ public sealed class OriginalSourcePackage {
                 if(string.IsNullOrWhiteSpace(item.Name)||item.Value.ValueKind!=JsonValueKind.Object||
                    !item.Value.TryGetProperty("bytes",out var bytes)||!bytes.TryGetInt64(out var byteLength)||byteLength<0||
                    !item.Value.TryGetProperty("sha256",out var sha)||sha.ValueKind!=JsonValueKind.String||
-                   !IsSha256(sha.GetString()))
+                   !IsSha256(sha.GetString())||
+                   !item.Value.TryGetProperty("compressedBytes",out var compressedBytes)||!compressedBytes.TryGetInt64(out var compressedLength)||compressedLength<0||
+                   !item.Value.TryGetProperty("compressedSha256",out var compressedSha)||compressedSha.ValueKind!=JsonValueKind.String||!IsSha256(compressedSha.GetString()))
                     throw new InvalidDataException($"Invalid incremental source manifest entry for {item.Name}");
             }
             return new OriginalSourcePackage(document,manifest);
@@ -70,6 +75,7 @@ public sealed class OriginalSourcePackage {
     public int AssetCount=>legacyRoot.ValueKind==JsonValueKind.Object?legacyRoot.GetProperty("assets").EnumerateObject().Count():assets.Count;
     public int ExpectedAssetCount=>legacyRoot.ValueKind==JsonValueKind.Object?AssetCount:manifest.EnumerateObject().Count();
     public long DeliveredBytes=>deliveredBytes;
+    public long DeliveredCompressedBytes=>deliveredCompressedBytes;
     public IEnumerable<string> AssetPaths=>legacyRoot.ValueKind==JsonValueKind.Object?legacyRoot.GetProperty("assets").EnumerateObject().Select(item=>item.Name):manifest.EnumerateObject().Select(item=>item.Name);
     public bool IsIncremental=>metadataDocument!=null;
 
@@ -84,28 +90,73 @@ public sealed class OriginalSourcePackage {
         string actualHash=Convert.ToHexString(SHA256.HashData(utf8)).ToLowerInvariant();
         if(!CryptographicOperations.FixedTimeEquals(Encoding.ASCII.GetBytes(actualHash),Encoding.ASCII.GetBytes(expectedHash)))
             throw new InvalidDataException($"Original source asset SHA-256 mismatch for {assetPath}");
-        if(assets.TryGetValue(assetPath,out _)) {
-            if(assetHashes[assetPath]==actualHash)return false;
-            throw new InvalidDataException($"Conflicting duplicate original source asset {assetPath}");
+        if(assets.TryGetValue(assetPath,out _))return assetHashes[assetPath]==actualHash?false:throw new InvalidDataException($"Conflicting duplicate original source asset {assetPath}");
+        ValidateAssetJson(assetPath,utf8);
+        using var buffer=new MemoryStream();
+        using(var gzip=new GZipStream(buffer,CompressionLevel.Optimal,leaveOpen:true))gzip.Write(utf8);
+        byte[] compressed=buffer.ToArray();
+        assets.Add(assetPath,new StoredAsset{compressed=compressed});assetHashes.Add(assetPath,actualHash);
+        deliveredBytes=checked(deliveredBytes+utf8.LongLength);deliveredCompressedBytes=checked(deliveredCompressedBytes+compressed.LongLength);return true;
+    }
+
+    public bool AddVerifiedGzipAsset(string assetPath,byte[] compressed) {
+        if(!IsIncremental)throw new InvalidOperationException("Assets can only be added to an incremental source package");
+        ArgumentException.ThrowIfNullOrWhiteSpace(assetPath);ArgumentNullException.ThrowIfNull(compressed);
+        if(!manifest.TryGetProperty(assetPath,out var descriptor))throw new KeyNotFoundException($"Asset {assetPath} is absent from the source manifest");
+        long expectedCompressedBytes=descriptor.GetProperty("compressedBytes").GetInt64();
+        if(expectedCompressedBytes>25L*1024*1024)throw new InvalidDataException($"Original compressed asset exceeds the 25 MiB per-file limit: {assetPath}");
+        if(compressed.LongLength!=expectedCompressedBytes)throw new InvalidDataException($"Original compressed asset byte length mismatch for {assetPath}");
+        string expectedCompressedHash=descriptor.GetProperty("compressedSha256").GetString();
+        string actualCompressedHash=Convert.ToHexString(SHA256.HashData(compressed)).ToLowerInvariant();
+        if(!CryptographicOperations.FixedTimeEquals(Encoding.ASCII.GetBytes(actualCompressedHash),Encoding.ASCII.GetBytes(expectedCompressedHash)))
+            throw new InvalidDataException($"Original compressed asset SHA-256 mismatch for {assetPath}");
+        if(assets.TryGetValue(assetPath,out _))return assetHashes[assetPath]==descriptor.GetProperty("sha256").GetString()?false:throw new InvalidDataException($"Conflicting duplicate original source asset {assetPath}");
+        long expectedBytes=descriptor.GetProperty("bytes").GetInt64();
+        if(expectedBytes>32L*1024*1024)throw new InvalidDataException($"Original source asset exceeds the 32 MiB per-asset limit: {assetPath}");
+        using var input=new MemoryStream(compressed,writable:false);
+        using var gzip=new GZipStream(input,CompressionMode.Decompress);
+        using var output=new MemoryStream((int)expectedBytes);
+        var buffer=new byte[64*1024];int read;
+        while((read=gzip.Read(buffer,0,buffer.Length))>0){
+            if(output.Length+read>expectedBytes)throw new InvalidDataException($"Original source asset expands beyond its manifest size: {assetPath}");
+            output.Write(buffer,0,read);
         }
-        var parsed=JsonDocument.Parse(utf8);
-        if(parsed.RootElement.ValueKind!=JsonValueKind.Object||!parsed.RootElement.TryGetProperty("records",out var records)||records.ValueKind!=JsonValueKind.Array) {
-            parsed.Dispose();throw new InvalidDataException($"Original source asset {assetPath} has no records array");
-        }
-        assets.Add(assetPath,parsed);assetHashes.Add(assetPath,actualHash);deliveredBytes=checked(deliveredBytes+utf8.LongLength);return true;
+        byte[] utf8=output.ToArray();
+        if(utf8.LongLength!=expectedBytes)throw new InvalidDataException($"Original source asset byte length mismatch for {assetPath}: expected {expectedBytes}, received {utf8.LongLength}");
+        string actualHash=Convert.ToHexString(SHA256.HashData(utf8)).ToLowerInvariant();
+        string expectedHash=descriptor.GetProperty("sha256").GetString();
+        if(!CryptographicOperations.FixedTimeEquals(Encoding.ASCII.GetBytes(actualHash),Encoding.ASCII.GetBytes(expectedHash)))
+            throw new InvalidDataException($"Original source asset SHA-256 mismatch for {assetPath}");
+        ValidateAssetJson(assetPath,utf8);
+        assets.Add(assetPath,new StoredAsset{compressed=compressed.ToArray()});assetHashes.Add(assetPath,actualHash);
+        deliveredBytes=checked(deliveredBytes+utf8.LongLength);deliveredCompressedBytes=checked(deliveredCompressedBytes+compressed.LongLength);return true;
+    }
+
+    static void ValidateAssetJson(string assetPath,byte[] utf8){
+        using var parsed=JsonDocument.Parse(utf8);
+        if(parsed.RootElement.ValueKind!=JsonValueKind.Object||!parsed.RootElement.TryGetProperty("records",out var records)||records.ValueKind!=JsonValueKind.Array)
+            throw new InvalidDataException($"Original source asset {assetPath} has no records array");
     }
 
     public bool ContainsAsset(string path)=>legacyRoot.ValueKind==JsonValueKind.Object?legacyRoot.GetProperty("assets").TryGetProperty(path,out _):assets.ContainsKey(path);
 
     public JsonElement GetAsset(string path) {
         if(legacyRoot.ValueKind==JsonValueKind.Object)return legacyRoot.GetProperty("assets").GetProperty(path);
-        if(!assets.TryGetValue(path,out var document))throw new KeyNotFoundException($"Original source asset {path} has not been delivered; {assets.Count} of {ExpectedAssetCount} manifest assets are present");
-        return document.RootElement;
+        if(!assets.TryGetValue(path,out var stored))throw new KeyNotFoundException($"Original source asset {path} has not been delivered; {assets.Count} of {ExpectedAssetCount} manifest assets are present");
+        stored.document??=ParseStoredAsset(path,stored.compressed);
+        return stored.document.RootElement;
+    }
+
+    public void ReleaseParsedAsset(string path){if(assets.TryGetValue(path,out var stored)&&stored.document!=null){stored.document.Dispose();stored.document=null;}}
+
+    static JsonDocument ParseStoredAsset(string path,byte[] compressed){
+        using var input=new MemoryStream(compressed,writable:false);using var gzip=new GZipStream(input,CompressionMode.Decompress);
+        using var output=new MemoryStream();gzip.CopyTo(output);return JsonDocument.Parse(output.ToArray());
     }
 
     public bool TryGetAsset(string path,out JsonElement asset) {
         if(legacyRoot.ValueKind==JsonValueKind.Object)return legacyRoot.GetProperty("assets").TryGetProperty(path,out asset);
-        if(assets.TryGetValue(path,out var document)){asset=document.RootElement;return true;}
+        if(assets.ContainsKey(path)){asset=GetAsset(path);return true;}
         asset=default;return false;
     }
 

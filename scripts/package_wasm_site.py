@@ -204,8 +204,10 @@ def validate_site(site):
             asset_raw = gzip.decompress(packed)
             require(len(asset_raw) == asset.get("bytes")
                     and hashlib.sha256(asset_raw).hexdigest() == asset.get("sha256")
-                    and metadata_json["assetManifest"].get(asset.get("path")) ==
-                    {"bytes": len(asset_raw), "sha256": asset["sha256"]},
+                    and metadata_json["assetManifest"].get(asset.get("path"), {}).get("bytes") == len(asset_raw)
+                    and metadata_json["assetManifest"].get(asset.get("path"), {}).get("sha256") == asset["sha256"]
+                    and metadata_json["assetManifest"].get(asset.get("path"), {}).get("compressedBytes") == len(packed)
+                    and metadata_json["assetManifest"].get(asset.get("path"), {}).get("compressedSha256") == asset["compressedSha256"],
                     f"Incremental asset source integrity mismatch: {asset_path}")
             total_compressed += len(packed)
             total_raw += len(asset_raw)
