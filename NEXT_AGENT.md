@@ -2,16 +2,19 @@
 
 ## Checkpoint
 
-- Branch: `develop/wasm`; tested and pushed source SHA:
-  `925fa4baf6abb56bc2e5e86eeaf1f903d2cf674a`.
-- This commit fixes the Site packager's default incremental Mission profile and
-  adds a regression test. Runtime/game code is unchanged from
-  `f30f36e2d99661aaca221d529b1c831c9dda2d7a`.
-- Full evidence, source identities, and build commands are in
+- Branch: `develop/wasm`; current pushed source SHA:
+  `d65f867d0dca48205b3b50e6133b76251fc189ba`.
+- This source adds per-asset transfer and WASM bridge timings, visible transfer
+  stages, a top-slowest-assets report, and a copyable diagnostic report. Exact
+  package and Site archive were verified and deployed to the existing private
+  Site as version 50. No Site audience change was made.
+- Full source identities, package hashes, Site source commit, deployment ID,
+  and tests are recorded in
   `docs/evidence/RECOVERED_SOURCE_AND_EXACT_SITE_PACKAGE_2026-10-25.md`.
-- Do not treat the 98 MB Mission transfer as a performance fix. The slow tail
-  near 1,900 assets and exact iPhone Safari startup remain unverified. Site
-  access remains owner-private; nothing was deployed.
+- The slow tail and iPhone Safari acceptance remain unmeasured; diagnostics
+  now identify whether network/hash or WASM interop time dominates. Keep the
+  transfer budget and integrity checks until device data supports an
+  optimization.
 
 ## Gates closed
 
@@ -29,7 +32,21 @@
   `f30f36e`; Runtime build reported 0 errors and 48 warnings. Optional
   `wasm-tools` optimization was unavailable.
 - `python3 -m unittest discover -s scripts -p '*test.py'`: **39/39 passed** on
-  `925fa4b`.
+  `d65f867`.
+- `node --test scripts/*test.mjs`: **81/81 passed** on `d65f867`.
+- `scripts/package_wasm_site.py build` and independent `verify` passed on
+  `d65f867`; package source SHA is exact, with 2,673 files, 199 Blazor
+  resources, 195 valid WASM files, and 1,919 Mission profile assets.
+- Final Sites archive SHA-256:
+  `62d28c833f390d8ed0cc89bc0c0a513352f26850af8ac447dea7cc6c5a94fdf9`.
+  A separate archive audit verified all 2,673 package manifest entries, every
+  byte count and SHA-256, plus the Sites hosting manifest. The manifest records
+  game source `d65f867`; the pushed Sites artifact-repository commit is
+  `b59e6617e9252e431356ffcab55aac142274e719`.
+- Site deployment succeeded: version
+  `appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_e330bf53211081918e941b4c257130cd`,
+  deployment `appgdep_6ade3fd53780819188345cb08bc77bca`, owner-only URL
+  `https://crisis-response-runtime.craftysnipe13.chatgpt.site`.
 - Exact default Site command `scripts/package_wasm_site.py build` with the
   recovered source package passed, followed by independent `verify`. It records
   source SHA `925fa4b…`, includes the exact requested path
@@ -46,33 +63,29 @@
 
 ## Remaining gates, in dependency order
 
-1. **Make a testable Site version.** Existing Crisis Response Runtime is
-   owner-private. Sites reports its artifact source repository uses branch
-   `main` on a separate Cloudflare artifact repository, distinct from the game
-   repository's `develop/wasm`. Use the supported Sites source workflow to
-   align the archive-backed source commit and exact package before deploying;
-   do not pass the game SHA as that repository's commit.
-2. **iPhone download/start acceptance.** Test exact pushed build on iPhone
-   Safari, including progress through asset 1,900, completion, Start Mission,
-   and memory. If the slow tail/pause persists, capture per-asset duration and
-   memory, then optimize that measured path while preserving bounded memory,
-   ordered delivery, cancellation, and hash checks. No Playwright browser
-   binaries are installed here.
-3. **Page-to-actor parity.** Normal page startup still uses browser movement and
-   the transport weapon host. Continue wiring page input, physics, rendering,
-   and weapon callbacks through the same original source actor; verify each
-   slice with the Mission UI contract and exact package.
-4. **Gameplay parity.** Verify native PhysX solve and rendered output, gun
+1. **Measure iPhone startup with version 50.** On Safari, tap Start Mission
+   once and leave the page open. The progress panel reports asset ranges and
+   separates fetch/hash from WASM bridge time. Tap Copy report if the load
+   completes, errors, or stalls; record memory and whether asset 1,919 arrives.
+   Device acceptance is deferred to the owner, while independent code work
+   continues.
+2. **Close page-to-actor parity.** The opt-in Mission mode already routes
+   touch/keyboard action levels through `FullSourceActorBridge`, feeds its
+   source acceleration commands into the capsule physics adapter, sends the
+   resulting state back to `CharacterBody`, and applies original weapon
+   callbacks. Normal page startup still uses browser-side movement and the
+   transport weapon host. Audit and migrate the remaining ownership edges in
+   dependency order, with source-contract tests for each edge.
+3. **Gameplay parity.** Verify native PhysX solve and rendered output, gun
    audio timing/volume, animation/IK, NPC/source component coverage, and
    projectile effects against original contracts. Index unsupported Unity
    components with dispositions.
-5. **Release.** Build and integrity-verify the exact final package, obtain
-   target-device acceptance, deploy only to the existing owner-private Site,
-   then record the deployment/version identity. Never widen Site access.
+4. **Release completion.** Rebuild and integrity-verify the exact final package
+   after every source change, run the regression suites, and deploy only to the
+   existing owner-private Site. Never widen Site access.
 
 ## Exact next action
 
-Use the supported Sites source workflow to align the current pushed game
-checkpoint and verified Mission archive with the existing private Site's
-archive-backed source branch. Then arrange the owner iPhone Safari startup and
-throughput check. Do not label the current 98 MB delivery as a speed fix.
+Continue with the source-actor ownership audit while the owner runs the iPhone
+startup check on Site version 50. Use that report to pick a measured transfer
+optimization batch; do not label the current 98 MB delivery as a speed fix.

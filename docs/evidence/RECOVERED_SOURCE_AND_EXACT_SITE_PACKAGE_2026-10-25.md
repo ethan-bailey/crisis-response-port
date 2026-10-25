@@ -87,3 +87,51 @@ asset 1,900 is fixed. Next acceptance is exact iPhone Safari startup with
 per-asset timing and memory captured. If it reproduces, optimize the measured
 requests while preserving cancellation, bounded memory, order, and fail-closed
 hash checks.
+
+## Per-asset diagnostics and Site version 50
+
+At game source SHA `d65f867d0dca48205b3b50e6133b76251fc189ba`, the loader now
+reports three stages (`fetching`, `adding`, and `delivered`), per-asset fetch
+and hash time, base64 encoding time, and Blazor bridge time. The game UI shows
+the current asset or pending download range and retains the last 64 samples
+plus the ten slowest fetches and ten slowest bridge calls. “Copy report” copies
+this bounded report; if clipboard access is unavailable, it displays selectable
+JSON. This makes the previous near-1,900-asset stall diagnosable, but does not
+claim a performance improvement before iPhone measurements.
+
+On `d65f867`, the Node suite passed **81/81**, Python suite passed **39/39**,
+the exact default package build passed, and independent package verification
+passed: 2,673 files, 199 Blazor resources, 195 valid WASM files, 1,919 source
+assets. Package location:
+`/tmp/cpr-site-package-d65f867`; its manifest records source SHA
+`d65f867d0dca48205b3b50e6133b76251fc189ba`.
+
+The Sites artifact repository was opened and updated through its supported
+source workflow. Its pushed `main` commit is
+`b59e6617e9252e431356ffcab55aac142274e719`; the separately generated archive
+`/tmp/cpr-site-runtime-d65f867.tar.gz` has SHA-256
+`62d28c833f390d8ed0cc89bc0c0a513352f26850af8ac447dea7cc6c5a94fdf9`. An
+independent streaming extraction audit found all 2,673 files in the package
+manifest, verified every byte count and SHA-256, and confirmed the required
+Sites hosting manifest. The manifest's package source SHA is the game commit,
+not the separate Sites-repository commit.
+
+The owner-private Site deployment succeeded on 2026-10-25:
+
+- Version: `appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_e330bf53211081918e941b4c257130cd`
+- Deployment: `appgdep_6ade3fd53780819188345cb08bc77bca`
+- URL: `https://crisis-response-runtime.craftysnipe13.chatgpt.site`
+- Audience remained custom/owner-only; no access settings changed.
+
+The Site-side regression suite was reconciled to the current package: browser
+input tests now match the exact package control behavior, release metadata
+identifies the new build manifest, and the large original scene smoke archive
+test explicitly checks the default omission when `sceneSmokeIncluded` is false.
+All **36/36** Site-side tests then passed. The omitted 220 MB full-scene smoke
+archive remains a deferred parity check, not a release-integrity failure.
+
+The page already sets a non-zoomable viewport and `touch-action:none` for the
+game surface; interactive buttons use `touch-action:manipulation`. The recent
+version adds visible progress and a report button for the greyed-out Start
+Mission state. These UI protections still need iPhone Safari acceptance; no
+Playwright or iPhone automation was available in this environment.
