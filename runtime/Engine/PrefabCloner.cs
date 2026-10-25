@@ -17,6 +17,7 @@ public static class PrefabCloner {
         void Allocate(Transform source,Transform targetParent){
             var sourceGO=source.gameObject;
             var target=new GameObject(sourceGO.name,world,source is RectTransform){layer=sourceGO.layer,tag=sourceGO.tag,isStatic=sourceGO.isStatic};
+            CopySourceIdentity(sourceGO,target);
             target.SetActive(sourceGO.activeSelf);map[sourceGO]=target;map[source]=target.transform;
             target.transform.SetParent(targetParent,false);
             target.transform.localPosition=source.localPosition;target.transform.localRotation=source.localRotation;target.transform.localScale=source.localScale;
@@ -26,6 +27,9 @@ public static class PrefabCloner {
             }
             foreach(var component in sourceGO.components.Where(c=>c&&c is not Transform)){
                 var copy=target.AddComponent(component.GetType());map[component]=copy;
+                CopySourceIdentity(component,copy);
+                foreach(var field in component.OriginalSerializedFields)
+                    copy.OriginalSerializedFields[field.Key]=field.Value.Clone();
                 if(copy is MonoBehaviour behaviour)clonedBehaviours.Add(behaviour);
                 if(component is Behaviour b&&copy is Behaviour copied)copied.enabled=b.enabled;
             }
@@ -80,6 +84,12 @@ public static class PrefabCloner {
             if(map.TryGetValue(root,out var failed))world.DestroyNow(failed);
             throw;
         }
+    }
+    static void CopySourceIdentity(Object source,Object target){
+        target.OriginalAssetGuid=source.OriginalAssetGuid;
+        target.OriginalAssetFileID=source.OriginalAssetFileID;
+        target.OriginalAssetPath=source.OriginalAssetPath;
+        target.OriginalSerializedSha256=source.OriginalSerializedSha256;
     }
     static IEnumerable<FieldInfo> SerializedFields(Type type){
         for(var t=type;t!=null&&t!=typeof(Object)&&t!=typeof(Component)&&t!=typeof(Behaviour)&&t!=typeof(MonoBehaviour);t=t.BaseType)

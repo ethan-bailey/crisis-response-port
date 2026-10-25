@@ -162,7 +162,7 @@ public sealed class FullSourceActorBridge
         if (!hasMovementInput && !accelerationStillPending) pendingMovementMagnitude = 1f;
         movementInputWasActive = hasMovementInput;
         lastFixedSteps = Math.Max(0, (int)MathF.Round((Time.fixedTime - fixedTimeBefore) / Time.fixedDeltaTime));
-        return Snapshot(audioEventQueue?.Drain() ?? []);
+        return Snapshot(audioEventQueue?.Drain() ?? [], (world.ParticleSystemDriver as BrowserParticleEventQueue)?.Drain() ?? []);
     }
 
     void CaptureActorForce(Vector3 force, Vector3 position, ForceMode mode)
@@ -337,9 +337,9 @@ public sealed class FullSourceActorBridge
             throw new NotSupportedException("FullSource actor stepping requires the recovered Mission InteriorMode UI and InteractionMenu; refusing to tick a partial player context");
     }
 
-    public object Snapshot() => Snapshot([]);
+    public object Snapshot() => Snapshot([], []);
 
-    object Snapshot(object[] audioEvents)
+    object Snapshot(object[] audioEvents, object[] particleEvents)
     {
         world.MakeCurrent();
         var poses = new List<object>();
@@ -394,6 +394,8 @@ public sealed class FullSourceActorBridge
             }).Where(item => item != null).ToArray(),
             audioEvents,
             droppedAudioEvents = audioEventQueue?.DroppedEvents ?? 0,
+            particleEvents,
+            droppedParticleEvents = (world.ParticleSystemDriver as BrowserParticleEventQueue)?.DroppedEvents ?? 0,
             controlSpeed = new {walkCap = lastTickWalkSpeedCap,sprintCap = lastTickSprintSpeedCap,movementMagnitude = pendingMovementMagnitude}
         };
     }

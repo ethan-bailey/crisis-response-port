@@ -41,6 +41,7 @@ public static class RuntimeBridge {
     [JSInvokable] public static string InitializeIncrementalSourcePackage(string metadataJson){
         originalSourcePackage=OriginalSourcePackage.CreateIncremental(metadataJson);
         incrementalSourceWorld=new RuntimeWorld();
+        incrementalSourceWorld.ParticleSystemDriver=new Crisis.Runtime.BrowserParticleEventQueue();
         Resources.Configure(originalSourcePackage,incrementalSourceWorld);
         return JsonSerializer.Serialize(new{expectedAssets=originalSourcePackage.ExpectedAssetCount,receivedAssets=originalSourcePackage.AssetCount,receivedBytes=originalSourcePackage.DeliveredBytes,receivedCompressedBytes=originalSourcePackage.DeliveredCompressedBytes});
     }

@@ -8,7 +8,7 @@
   </PropertyGroup>
   <!-- No recovered gameplay, transport actor, Behavior Designer or full graph. -->
   <ItemGroup>
-    <Compile Include="../Engine/Math.cs;../Engine/Objects.cs;../Engine/ClockInput.cs;../Engine/Physics.cs;../Engine/CharacterPhysics.cs;../Engine/PhysicsComponents.cs;../Engine/PrefabCloner.cs;../Engine/AnimationCurve.cs;../Engine/SerializedEngineTypes.cs;../Engine/SerializationTypes.cs;../Engine/ArmPhysicsComponents.cs;../Engine/SpringJoint.cs;../Engine/Rendering/**/*.cs;../Engine/Mesh.cs;../Engine/GL.cs;../Engine/RenderTexture.cs;../Engine/BoxCollider2D.cs;../Engine/UnityEventTyped.cs;../Engine/ReflectionProbe.cs;../Engine/ParticleSystem.cs;../Engine/ParticleSystem.OriginalSerializedFields.cs;../Engine/Animator.cs;../Engine/CoreSerializedAssetTypes.cs;../Engine/AnimatorGraphDriver.cs" />
+    <Compile Include="../Engine/Math.cs;../Engine/Objects.cs;../Engine/ClockInput.cs;../Engine/Physics.cs;../Engine/CharacterPhysics.cs;../Engine/PhysicsComponents.cs;../Engine/PrefabCloner.cs;../Engine/AnimationCurve.cs;../Engine/SerializedEngineTypes.cs;../Engine/SerializationTypes.cs;../Engine/ArmPhysicsComponents.cs;../Engine/SpringJoint.cs;../Engine/Rendering/**/*.cs;../Engine/Mesh.cs;../Engine/GL.cs;../Engine/RenderTexture.cs;../Engine/BoxCollider2D.cs;../Engine/UnityEventTyped.cs;../Engine/ReflectionProbe.cs;../Engine/ParticleSystem.cs;../Engine/ParticleSystem.OriginalSerializedFields.cs;../Engine/BrowserParticleEventQueue.cs;../Engine/Animator.cs;../Engine/CoreSerializedAssetTypes.cs;../Engine/AnimatorGraphDriver.cs" />
     <Compile Include="../Original/KeyCode.cs" />
     <Compile Include="UnityActionSourceBoundary.cs" />
     <Compile Include="Program.cs" />

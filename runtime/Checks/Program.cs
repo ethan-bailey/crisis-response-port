@@ -43,7 +43,7 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
     var sourceWeapon=session.Actor.ActiveWeapon??throw new InvalidOperationException("FullSource Mission actor has no original active weapon");
     var actualFirePath=sourceWeapon.audioFire.sample?.OriginalAssetPath??string.Empty;
     var actualCrackPath=sourceWeapon.audioSupersonic.sample?.OriginalAssetPath??string.Empty;
-    var particleDriver=new MissionContractParticleEmissionDriver();
+    var particleDriver=new Crisis.Runtime.BrowserParticleEventQueue();
     world.ParticleSystemDriver??=particleDriver;
     foreach(var particles in world.Objects.OfType<ParticleSystem>())particles.Driver=particleDriver;
     var casingPhysicsCommands=new List<JsonElement>();
@@ -66,12 +66,15 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
     var triggerPulledField=typeof(Crisis.Runtime.FullSource.CharacterBody).GetField("triggerPulled",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)!;
     var triggerPulledAtPulse=(bool)triggerPulledField.GetValue(session.Actor)!;
     var actualShotEvents=new List<JsonElement>();
+    var actualParticleEvents=new List<JsonElement>();
     var actualShotSourceTime=actualFireCapture.RootElement.GetProperty("sourceTime").GetSingle();
     actualShotEvents.AddRange(actualFireCapture.RootElement.GetProperty("audioEvents").EnumerateArray().Select(value=>value.Clone()));
+    actualParticleEvents.AddRange(actualFireCapture.RootElement.GetProperty("particleEvents").EnumerateArray().Select(value=>value.Clone()));
     for(var step=0;step<4&&session.Actor.ShotsFired==shotsBefore;step++){
         using var shotResolution=JsonDocument.Parse(JsonSerializer.Serialize(bridge.Step(1f/60f,"{}",640f,360f)));
         actualShotSourceTime=shotResolution.RootElement.GetProperty("sourceTime").GetSingle();
         actualShotEvents.AddRange(shotResolution.RootElement.GetProperty("audioEvents").EnumerateArray().Select(value=>value.Clone()));
+        actualParticleEvents.AddRange(shotResolution.RootElement.GetProperty("particleEvents").EnumerateArray().Select(value=>value.Clone()));
         casingPhysicsCommands.AddRange(shotResolution.RootElement.GetProperty("physics").GetProperty("worldCommands").EnumerateArray().Select(value=>value.Clone()));
         casingSourceStates.AddRange(shotResolution.RootElement.GetProperty("casings").EnumerateArray().Select(value=>value.Clone()));
     }
@@ -79,10 +82,18 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
         using var cyclingResolution=JsonDocument.Parse(JsonSerializer.Serialize(bridge.Step(1f/60f,"{}",640f,360f)));
         actualShotSourceTime=cyclingResolution.RootElement.GetProperty("sourceTime").GetSingle();
         actualShotEvents.AddRange(cyclingResolution.RootElement.GetProperty("audioEvents").EnumerateArray().Select(value=>value.Clone()));
+        actualParticleEvents.AddRange(cyclingResolution.RootElement.GetProperty("particleEvents").EnumerateArray().Select(value=>value.Clone()));
         casingPhysicsCommands.AddRange(cyclingResolution.RootElement.GetProperty("physics").GetProperty("worldCommands").EnumerateArray().Select(value=>value.Clone()));
         casingSourceStates.AddRange(cyclingResolution.RootElement.GetProperty("casings").EnumerateArray().Select(value=>value.Clone()));
     }
     var capturedShotPaths=actualShotEvents.Select(item=>item.GetProperty("sourcePath").GetString()).ToArray();
+    var particleIdentityVerified=actualParticleEvents.Any(item=>
+        item.GetProperty("type").GetString()=="particleCommand"&&
+        !string.IsNullOrEmpty(item.GetProperty("sourceGuid").GetString())&&
+        !string.IsNullOrEmpty(item.GetProperty("sourceFileId").GetString())&&
+        !string.IsNullOrEmpty(item.GetProperty("sourcePath").GetString())&&
+        float.IsFinite(item.GetProperty("time").GetSingle())&&
+        item.GetProperty("time").GetSingle()<=actualShotSourceTime+.0001f);
     var weaponShotEvents=actualShotEvents.Where(item=>item.GetProperty("sourcePath").GetString()==actualFirePath||item.GetProperty("sourcePath").GetString()==actualCrackPath).ToArray();
     var capturedWeaponPaths=capturedShotPaths;
     var casingForceCommands=casingPhysicsCommands.Where(item=>item.GetProperty("source").GetString()=="Casing"&&item.GetProperty("operation").GetString()=="force"&&item.GetProperty("mode").GetString()=="VelocityChange").ToArray();
@@ -102,10 +113,10 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
         state.GetProperty("velocity").EnumerateArray().All(value=>float.IsFinite(value.GetSingle()))&&
         state.GetProperty("angularVelocity").EnumerateArray().All(value=>float.IsFinite(value.GetSingle()))));
     if(actualFirePath!="Assets/AudioClip/5.56x45mm-01-unsuppressed.wav"||actualCrackPath!="Assets/AudioClip/5.56x45mm-crack-interior.wav"||
-       !armWasReady||!fireEnabledAfterAuthoredStart||session.Actor.ShotsFired<=shotsBefore||particleDriver.EmissionRequests==0||!casingStateIsTransportable||!casingRoundTripIsTransportable||weaponShotEvents.Length<2||!capturedShotPaths.Contains(actualFirePath)||!capturedShotPaths.Contains(actualCrackPath)||weaponShotEvents.Any(item=>item.GetProperty("action").GetString()!="oneShot"||
+       !armWasReady||!fireEnabledAfterAuthoredStart||session.Actor.ShotsFired<=shotsBefore||!particleIdentityVerified||particleDriver.DroppedEvents!=0||!casingStateIsTransportable||!casingRoundTripIsTransportable||weaponShotEvents.Length<2||!capturedShotPaths.Contains(actualFirePath)||!capturedShotPaths.Contains(actualCrackPath)||weaponShotEvents.Any(item=>item.GetProperty("action").GetString()!="oneShot"||
        !float.IsFinite(item.GetProperty("volume").GetSingle())||item.GetProperty("volume").GetSingle()<0||item.GetProperty("volume").GetSingle()>1||
        MathF.Abs(actualShotSourceTime-item.GetProperty("time").GetSingle())>.1f))
-        throw new InvalidOperationException($"Real fire input did not produce one source shot with mapped audio and casing physics callbacks (armReady={armWasReady},fireEnabledAfterAuthoredStart={fireEnabledAfterAuthoredStart},shotsBefore={shotsBefore},shotsAfter={session.Actor.ShotsFired},particleEmissions={particleDriver.EmissionRequests},casingForces={casingForceCommands.Length},casingTorques={casingTorqueCommands.Length},casingCallbacks={JsonSerializer.Serialize(casingPhysicsCommands)},capturedPaths={JsonSerializer.Serialize(capturedShotPaths)},fireKey={playerInput.fire.key},fireEnabled={playerInput.fire.Enabled},fireInAll={playerInput.All.Contains(playerInput.fire)},mouseHeldAtPulse={mouseHeldAtPulse},inputSuspendedAtPulse={inputSuspendedAtPulse},menuVisible={session.Mission.world.Objects.OfType<Crisis.Runtime.FullSource.Mission>().Single().InteriorMode!.UI.InteractionMenu.Visible},missionPaused={session.Mission.world.Objects.OfType<Crisis.Runtime.FullSource.Mission>().Single().Paused},fireDownAtPulse={fireDownAtPulse},firePressedAtPulse={firePressedAtPulse},triggerPulledAtPulse={triggerPulledAtPulse},mode={sourceWeapon.ActiveFireMode},held={sourceWeapon.IsHeld},owner={sourceWeapon.Owner?.name},hammerReady={sourceWeapon.HammerReady},boltLive={sourceWeapon.cyclingBolt.Live},weaponReady={sourceWeapon.ReadyToFire})");
+        throw new InvalidOperationException($"Real fire input did not produce one source shot with mapped audio, particle, and casing callbacks (armReady={armWasReady},fireEnabledAfterAuthoredStart={fireEnabledAfterAuthoredStart},shotsBefore={shotsBefore},shotsAfter={session.Actor.ShotsFired},particleEvents={actualParticleEvents.Count},particleIdentityVerified={particleIdentityVerified},droppedParticleEvents={particleDriver.DroppedEvents},casingForces={casingForceCommands.Length},casingTorques={casingTorqueCommands.Length},casingCallbacks={JsonSerializer.Serialize(casingPhysicsCommands)},capturedPaths={JsonSerializer.Serialize(capturedShotPaths)},fireKey={playerInput.fire.key},fireEnabled={playerInput.fire.Enabled},fireInAll={playerInput.All.Contains(playerInput.fire)},mouseHeldAtPulse={mouseHeldAtPulse},inputSuspendedAtPulse={inputSuspendedAtPulse},menuVisible={session.Mission.world.Objects.OfType<Crisis.Runtime.FullSource.Mission>().Single().InteriorMode!.UI.InteractionMenu.Visible},missionPaused={session.Mission.world.Objects.OfType<Crisis.Runtime.FullSource.Mission>().Single().Paused},fireDownAtPulse={fireDownAtPulse},firePressedAtPulse={firePressedAtPulse},triggerPulledAtPulse={triggerPulledAtPulse},mode={sourceWeapon.ActiveFireMode},held={sourceWeapon.IsHeld},owner={sourceWeapon.Owner?.name},hammerReady={sourceWeapon.HammerReady},boltLive={sourceWeapon.cyclingBolt.Live},weaponReady={sourceWeapon.ReadyToFire})");
     var originalPointer=session.Actor.GetComponent<Crisis.Runtime.FullSource.PlayerController>()?.WeaponPointer
         ??throw new InvalidOperationException("Browser EntryTeam actor has no original WeaponPointer");
     if(originalPointer.enabled)
@@ -125,7 +136,7 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
     var velocity=roundTrip.RootElement.GetProperty("velocity");
     if(MathF.Abs(position[0].GetSingle()-(before.x+.25f))>.001f||MathF.Abs(velocity[0].GetSingle()-1f)>.001f)
         throw new InvalidOperationException("Browser PhysX position and velocity did not round trip into the source player actor");
-    Console.WriteLine(JsonSerializer.Serialize(new{status="passed",mission=session.Mission.scene,actor=session.Actor.name,weapon=sourceWeapon.name,weaponFirePath=actualFirePath,weaponAudioPaths=capturedWeaponPaths,sourceShotAudioEvents=actualShotEvents.Count,sourceParticleEmissions=particleDriver.EmissionRequests,sourceCasingForceRequests=casingForceCommands.Length,sourceCasingTorqueRequests=casingTorqueCommands.Length,sourceShots=session.Actor.ShotsFired-shotsBefore,armReady=armWasReady,weaponInputEnabled=fireEnabledAfterAuthoredStart,sourceActors=session.SourceActorCount,interactionMenu=true,input="original press/hold/release",movementForce=commands.GetArrayLength(),analogMovement="0.5 eased cap reaches source CharacterBody and restores authored speed",aim="absolute WeaponPointer world target unchanged by horizontal movement and mouse X",audio="real original fire input drives the source firing mechanism and emits mapped fire/crack clips with bounded volume and source time",physics="position/velocity round trip; original casing force and torque requests transported with source body, mass, and ForceMode"}));
+    Console.WriteLine(JsonSerializer.Serialize(new{status="passed",mission=session.Mission.scene,actor=session.Actor.name,weapon=sourceWeapon.name,weaponFirePath=actualFirePath,weaponAudioPaths=capturedWeaponPaths,sourceShotAudioEvents=actualShotEvents.Count,sourceParticleEvents=actualParticleEvents.Count,particleIdentityVerified,droppedParticleEvents=particleDriver.DroppedEvents,sourceCasingForceRequests=casingForceCommands.Length,sourceCasingTorqueRequests=casingTorqueCommands.Length,sourceShots=session.Actor.ShotsFired-shotsBefore,armReady=armWasReady,weaponInputEnabled=fireEnabledAfterAuthoredStart,sourceActors=session.SourceActorCount,interactionMenu=true,input="original press/hold/release",movementForce=commands.GetArrayLength(),analogMovement="0.5 eased cap reaches source CharacterBody and restores authored speed",aim="absolute WeaponPointer world target unchanged by horizontal movement and mouse X",audio="real original fire input drives the source firing mechanism and emits mapped fire/crack clips with bounded volume and source time",particleTransport="original ParticleSystem Emit/Simulate/Play commands carry prefab/component identity, pose, and source time",physics="position/velocity round trip; original casing force and torque requests transported with source body, mass, and ForceMode"}));
     return;
 }
 OriginalSourcePackage LoadSourcePackage(string path){
