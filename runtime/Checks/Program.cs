@@ -15,8 +15,9 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
     var world=new RuntimeWorld();
     var session=Crisis.Runtime.Browser.BrowserEntryTeamMission.Start(package,world);
     var bridge=new FullSourceActorBridge(world,session.Actor);
+    var authoredWalkSpeed=session.Actor.walkSpeed;
     bridge.SetAimWorldPoint(5f,2.5f,0f);
-    bridge.Step(1f/60f,"{\"right\":true}",640f,360f);
+    bridge.Step(1f/60f,"{\"right\":true}",640f,360f,.5f);
     var state=JsonSerializer.Serialize(bridge.Step(1f/60f,"{\"right\":false}",640f,360f));
     using var snapshot=JsonDocument.Parse(state);
     var commands=snapshot.RootElement.GetProperty("physics").GetProperty("commands");
@@ -24,6 +25,10 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
         throw new InvalidOperationException("Browser EntryTeam session did not retain the authored Mission UI contract");
     if(commands.GetArrayLength()!=1||commands[0].GetProperty("mode").GetString()!="Acceleration")
         throw new InvalidOperationException($"Original player movement did not emit the expected source acceleration command: {state}");
+    var forceX=commands[0].GetProperty("force")[0].GetSingle();
+    var fullWalkForce=authoredWalkSpeed*Time.fixedDeltaTime*750f;
+    if(!(forceX>0f&&forceX<fullWalkForce*.6f)||MathF.Abs(session.Actor.walkSpeed-authoredWalkSpeed)>.001f)
+        throw new InvalidOperationException($"The eased browser stick magnitude did not scale the original walk speed cap and restore the authored speed: forceX={forceX}, fullWalkForce={fullWalkForce}, authoredWalkSpeed={session.Actor.walkSpeed}, snapshot={state}");
     var before=session.Actor.transform.position;
     var synced=JsonSerializer.Serialize(bridge.SynchronizePhysics(before.x+.25f,before.y,before.z,1f,0f,0f));
     using var roundTrip=JsonDocument.Parse(synced);
@@ -31,7 +36,7 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
     var velocity=roundTrip.RootElement.GetProperty("velocity");
     if(MathF.Abs(position[0].GetSingle()-(before.x+.25f))>.001f||MathF.Abs(velocity[0].GetSingle()-1f)>.001f)
         throw new InvalidOperationException("Browser PhysX position and velocity did not round trip into the source player actor");
-    Console.WriteLine(JsonSerializer.Serialize(new{status="passed",mission=session.Mission.scene,actor=session.Actor.name,sourceActors=session.SourceActorCount,interactionMenu=true,input="original press/release",movementForce=commands.GetArrayLength(),physics="position/velocity round trip"}));
+    Console.WriteLine(JsonSerializer.Serialize(new{status="passed",mission=session.Mission.scene,actor=session.Actor.name,sourceActors=session.SourceActorCount,interactionMenu=true,input="original press/release",movementForce=commands.GetArrayLength(),analogMovement="0.5 eased cap reaches source CharacterBody and restores authored speed",physics="position/velocity round trip"}));
     return;
 }
 OriginalSourcePackage LoadSourcePackage(string path){

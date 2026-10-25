@@ -21,7 +21,12 @@ public sealed class FullSourceActorBridge
     HashSet<KeyCode> drivenKeys=[];
     readonly List<object> physicsCommands=[];
     readonly Action<Vector3,Vector3,ForceMode> priorActorPhysicsSink;
+    readonly FieldInfo accelerationField;
     int lastFixedSteps;
+    float pendingMovementMagnitude = 1f;
+    bool movementInputWasActive;
+    float lastTickWalkSpeedCap;
+    float lastTickSprintSpeedCap;
 
     public FullSourceActorBridge(RuntimeWorld world, CharacterBody body)
     {
@@ -48,6 +53,8 @@ public sealed class FullSourceActorBridge
             throw new InvalidOperationException("Requested FullSource CharacterBody is not the original player actor");
 
         rigidbody = body.Rigidbody ? body.Rigidbody : throw new InvalidOperationException("FullSource player actor has no authored Rigidbody");
+        accelerationField = typeof(CharacterBody).GetField("acceleration", BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? throw new MissingFieldException(typeof(CharacterBody).FullName, "acceleration");
         priorActorPhysicsSink = rigidbody.PhysicsForceSink;
         rigidbody.PhysicsForceSink = (force, position, mode) =>
         {
@@ -67,12 +74,14 @@ public sealed class FullSourceActorBridge
     /// InputHandler.Update and PlayerController.Update then run in RuntimeWorld's
     /// normal lifecycle order; source CharacterBody/weapon callbacks own results.
     /// </summary>
-    public object Step(float elapsedSeconds, string actionsJson, float mouseX, float mouseY)
+    public object Step(float elapsedSeconds, string actionsJson, float mouseX, float mouseY, float movementMagnitude = 1f)
     {
         if (!float.IsFinite(elapsedSeconds) || elapsedSeconds < 0f)
             throw new ArgumentOutOfRangeException(nameof(elapsedSeconds));
         if (!float.IsFinite(mouseX) || !float.IsFinite(mouseY))
             throw new ArgumentException("Browser pointer coordinates must be finite");
+        if (!float.IsFinite(movementMagnitude) || movementMagnitude < 0f || movementMagnitude > 1f)
+            throw new ArgumentOutOfRangeException(nameof(movementMagnitude), "Analog movement magnitude must be between zero and one");
         RequirePlayablePlayerUI();
 
         world.MakeCurrent();
@@ -91,12 +100,44 @@ public sealed class FullSourceActorBridge
         // cannot release a key another true action is holding.
         physicsCommands.Clear();
         var fixedTimeBefore = Time.fixedTime;
-        world.Tick(elapsedSeconds,()=>
+        var hasMovementInput =
+            ((values.TryGetProperty("left", out var leftAction) && leftAction.ValueKind == JsonValueKind.True) ||
+             (values.TryGetProperty("right", out var rightAction) && rightAction.ValueKind == JsonValueKind.True));
+        if (hasMovementInput) pendingMovementMagnitude = movementMagnitude;
+        var hasPendingSourceAcceleration = (float)(accelerationField.GetValue(body) ?? 0f) != 0f;
+        var scaleSourceMovement = pendingMovementMagnitude < 1f &&
+            (hasMovementInput || movementInputWasActive || hasPendingSourceAcceleration);
+        var authoredWalkSpeed = body.walkSpeed;
+        var authoredSprintSpeed = body.sprintSpeed;
+        lastTickWalkSpeedCap = authoredWalkSpeed;
+        lastTickSprintSpeedCap = authoredSprintSpeed;
+        try
         {
-            foreach(var key in drivenKeys.Concat(nextKeys).Distinct())Input.SetKey(key,nextKeys.Contains(key));
-            drivenKeys=nextKeys;
-            Input.mousePosition = new Vector3(mouseX, mouseY, 0f);
-        });
+            if (scaleSourceMovement)
+            {
+                // Keep the original CharacterBody movement and force formula in
+                // charge, but set its per-frame speed cap from the touch stick's
+                // eased walk magnitude. Restore authored values even on errors.
+                body.walkSpeed = authoredWalkSpeed * pendingMovementMagnitude;
+                body.sprintSpeed = authoredSprintSpeed * pendingMovementMagnitude;
+                lastTickWalkSpeedCap = body.walkSpeed;
+                lastTickSprintSpeedCap = body.sprintSpeed;
+            }
+            world.Tick(elapsedSeconds,()=>
+            {
+                foreach(var key in drivenKeys.Concat(nextKeys).Distinct())Input.SetKey(key,nextKeys.Contains(key));
+                drivenKeys=nextKeys;
+                Input.mousePosition = new Vector3(mouseX, mouseY, 0f);
+            });
+        }
+        finally
+        {
+            body.walkSpeed = authoredWalkSpeed;
+            body.sprintSpeed = authoredSprintSpeed;
+        }
+        var accelerationStillPending = (float)(accelerationField.GetValue(body) ?? 0f) != 0f;
+        if (!hasMovementInput && !accelerationStillPending) pendingMovementMagnitude = 1f;
+        movementInputWasActive = hasMovementInput;
         lastFixedSteps = Math.Max(0, (int)MathF.Round((Time.fixedTime - fixedTimeBefore) / Time.fixedDeltaTime));
         return Snapshot();
     }
@@ -192,7 +233,8 @@ public sealed class FullSourceActorBridge
             {
                 fixedSteps = lastFixedSteps,
                 commands = physicsCommands.ToArray()
-            }
+            },
+            controlSpeed = new {walkCap = lastTickWalkSpeedCap,sprintCap = lastTickSprintSpeedCap,movementMagnitude = pendingMovementMagnitude}
         };
     }
 }
