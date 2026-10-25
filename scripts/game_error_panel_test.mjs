@@ -14,8 +14,13 @@ test("game errors are readable, selectable, copyable, and no longer covered by M
   assert.match(html, /navigator\.clipboard\?\.writeText/);
   assert.match(html, /navigator\.clipboard\.writeText\(text\)/);
   assert.match(html, /range\.selectNodeContents\(errorDetails\)/);
-  assert.match(html, /showError\(error,\{hint:[\s\S]*?retry:/);
+  assert.match(html, /showError\(new Error\([\s\S]*?retry:/);
   assert.match(html, /id="missionProgress" role="status" aria-live="polite"/);
+  assert.match(html, /id="copyMissionProgress" type="button">Copy report/);
+  assert.match(html, /navigator\.clipboard\.writeText\(report\)/);
+  assert.match(html, /Mission source transfer diagnostics/);
+  assert.match(html, /fetchAndHashMs\.toFixed\(0\).*bridgeMs\.toFixed\(0\)/);
+  assert.match(html, /slowestBridgeCalls/);
   assert.match(html, /id="cancelMissionLoad" type="button">Cancel/);
   assert.match(html, /signal:sourceLoadController\.signal/);
   assert.match(html, /event\.preventDefault\(\);lastStageTouchEnd=now/);

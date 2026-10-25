@@ -76,6 +76,10 @@ function throwIfAborted(signal) {
   if (signal?.aborted) throw new DOMException("Mission source download cancelled", "AbortError");
 }
 
+function monotonicNow() {
+  return globalThis.performance?.now?.() ?? Date.now();
+}
+
 async function fetchGzipJson(url, expected, label, signal) {
   const response = await fetch(url, {signal});
   if (!response.ok) throw new Error(`${label} unavailable: HTTP ${response.status}`);
@@ -90,12 +94,13 @@ async function fetchGzipJson(url, expected, label, signal) {
 }
 
 async function fetchCompressedAsset(url, expected, label, signal) {
+  const started = monotonicNow();
   const response = await fetch(url, {signal});
   if (!response.ok) throw new Error(`${label} unavailable: HTTP ${response.status}`);
   const compressed = await response.arrayBuffer();
   if (compressed.byteLength !== expected.compressedBytes || await sha256(compressed) !== expected.compressedSha256)
     throw new Error(`${label} compressed size or checksum mismatch`);
-  return compressed;
+  return {compressed, fetchAndHashMs: monotonicNow() - started};
 }
 
 // Blazor's byte[] JS interop path is version-sensitive and the hosted .NET 8
@@ -112,6 +117,7 @@ function bytesToBase64(bytes) {
 
 /** Fetch a small bounded batch in parallel, then deliver verified assets in manifest order. */
 export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onProgress,signal} = {}) {
+  const profileStarted = monotonicNow();
   if (!bridge || typeof bridge.invokeMethodAsync !== "function") throw new TypeError("A Blazor DotNet bridge is required");
   throwIfAborted(signal);
   const manifestResponse = await fetch(manifestUrl, {signal});
@@ -143,9 +149,17 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
   let sourceAssetBytes = 0;
   let maximumAssetBytes = 0;
   let deliveredAssetBytes = 0;
+  const slowestFetches = [];
+  const slowestBridgeCalls = [];
+  const rememberSlowest = (items, sample) => {
+    items.push(sample);
+    items.sort((a, b) => b.durationMs - a.durationMs);
+    if (items.length > 10) items.length = 10;
+  };
   const seenPaths = new Set();
   const downloadConcurrency = 6;
   for (let batchStart = 0; batchStart < manifest.assets.length; batchStart += downloadConcurrency) {
+    const batchStarted = monotonicNow();
     const batch = manifest.assets.slice(batchStart, batchStart + downloadConcurrency);
     for (const asset of batch) {
       if (typeof asset.path !== "string" || !/^assets\/[0-9a-f]{24}\.json\.gz$/.test(asset.file)
@@ -162,14 +176,29 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
       seenPaths.add(asset.path);
     }
     throwIfAborted(signal);
-    const compressedBatch = await Promise.all(batch.map(asset =>
+    if (onProgress) await onProgress({stage:"fetching",receivedAssets:batchStart,
+      expectedAssets:manifest.assets.length,compressedAssetBytes,sourceAssetBytes,
+      totalCompressedAssetBytes:manifest.compressedAssetBytes,totalSourceAssetBytes:manifest.uncompressedAssetBytes,
+      pendingAssetPaths:batch.map(asset=>asset.path),profileElapsedMs:monotonicNow()-profileStarted});
+    const fetchedBatch = await Promise.all(batch.map(asset =>
       fetchCompressedAsset(new URL(asset.file, base), asset, `Source asset ${asset.path}`,signal)));
     for (let offset = 0; offset < batch.length; offset++) {
       throwIfAborted(signal);
       const index = batchStart + offset;
       const asset = batch[offset];
-      const compressed = compressedBatch[offset];
-      const result = JSON.parse(await bridge.invokeMethodAsync("AddIncrementalSourceGzipAsset", asset.path, bytesToBase64(new Uint8Array(compressed))));
+      const {compressed, fetchAndHashMs} = fetchedBatch[offset];
+      if (onProgress) await onProgress({stage:"adding",receivedAssets:index,
+        expectedAssets:manifest.assets.length,compressedAssetBytes,sourceAssetBytes,
+        totalCompressedAssetBytes:manifest.compressedAssetBytes,totalSourceAssetBytes:manifest.uncompressedAssetBytes,
+        pendingAssetPaths:[asset.path],asset:{path:asset.path,compressedBytes:compressed.byteLength,
+          sourceBytes:asset.bytes,fetchAndHashMs},profileElapsedMs:monotonicNow()-profileStarted,
+        batchElapsedMs:monotonicNow()-batchStarted});
+      const encodeStarted = monotonicNow();
+      const encoded = bytesToBase64(new Uint8Array(compressed));
+      const base64EncodeMs = monotonicNow() - encodeStarted;
+      const bridgeStarted = monotonicNow();
+      const result = JSON.parse(await bridge.invokeMethodAsync("AddIncrementalSourceGzipAsset", asset.path, encoded));
+      const bridgeMs = monotonicNow() - bridgeStarted;
       throwIfAborted(signal);
       deliveredAssetBytes += asset.bytes;
       if (result.expectedAssets !== manifest.assets.length || result.receivedAssets !== index + 1
@@ -180,15 +209,23 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
       compressedAssetBytes += compressed.byteLength;
       sourceAssetBytes += asset.bytes;
       maximumAssetBytes = Math.max(maximumAssetBytes, asset.bytes);
-      if (onProgress)
+      rememberSlowest(slowestFetches, {path: asset.path, durationMs: fetchAndHashMs, compressedBytes: compressed.byteLength});
+      rememberSlowest(slowestBridgeCalls, {path: asset.path, durationMs: bridgeMs, sourceBytes: asset.bytes});
+      if (onProgress) {
         await onProgress({receivedAssets:index + 1,expectedAssets:manifest.assets.length,
+          stage:"delivered",
           compressedAssetBytes,sourceAssetBytes,maximumAssetBytes,
-          totalCompressedAssetBytes:manifest.compressedAssetBytes,totalSourceAssetBytes:manifest.uncompressedAssetBytes});
+          totalCompressedAssetBytes:manifest.compressedAssetBytes,totalSourceAssetBytes:manifest.uncompressedAssetBytes,
+          asset:{path:asset.path,compressedBytes:compressed.byteLength,sourceBytes:asset.bytes,
+            fetchAndHashMs,base64EncodeMs,bridgeMs},
+          profileElapsedMs:monotonicNow()-profileStarted,batchElapsedMs:monotonicNow()-batchStarted});
+      }
     }
   }
   if (compressedAssetBytes !== manifest.compressedAssetBytes || sourceAssetBytes !== manifest.uncompressedAssetBytes)
     throw new Error("Incremental source profile byte totals do not match its manifest");
   return {profile: manifest.profile, rootAssets: manifest.rootAssets, assetCount: manifest.assetCount,
     compressedBytes, sourceBytes, maximumAssetBytes,totalCompressedAssetBytes:manifest.compressedAssetBytes,
-    totalSourceAssetBytes:manifest.uncompressedAssetBytes,downloadConcurrency};
+    totalSourceAssetBytes:manifest.uncompressedAssetBytes,downloadConcurrency,
+    elapsedMs:monotonicNow()-profileStarted,slowestFetches,slowestBridgeCalls};
 }

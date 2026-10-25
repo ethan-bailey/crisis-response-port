@@ -106,13 +106,33 @@ test("delivers verified source assets sequentially to the WASM package bridge", 
     assert.equal(result.assetCount, 1);
     assert.equal(result.sourceBytes, metadataRaw.byteLength + assetRaw.byteLength);
     assert.equal(result.maximumAssetBytes, assetRaw.byteLength);
+    assert.ok(Number.isFinite(result.elapsedMs) && result.elapsedMs >= 0);
+    assert.equal(result.slowestFetches.length, 1);
+    assert.equal(result.slowestFetches[0].path, assetPath);
+    assert.equal(result.slowestBridgeCalls.length, 1);
+    assert.equal(result.slowestBridgeCalls[0].path, assetPath);
     assert.deepEqual(calls.map(call => call[0]), ["InitializeIncrementalSourcePackage", "AddIncrementalSourceGzipAsset"]);
     assert.equal(calls[1][0], "AddIncrementalSourceGzipAsset");
     assert.equal(calls[1][1], assetPath);
     assert.equal(typeof calls[1][2], "string");
     assert.ok(calls[1][2].length > 32768, "base64 payload should cover more than one encoding chunk");
     assert.deepEqual(Buffer.from(calls[1][2], "base64"), Buffer.from(gzipSync(assetRaw)));
-    assert.deepEqual(progress, [{receivedAssets:1,expectedAssets:1,compressedAssetBytes:assetGzip.byteLength,sourceAssetBytes:assetRaw.byteLength,maximumAssetBytes:assetRaw.byteLength,totalCompressedAssetBytes:assetGzip.byteLength,totalSourceAssetBytes:assetRaw.byteLength}]);
+    assert.deepEqual(progress.map(value=>value.stage),["fetching","adding","delivered"]);
+    assert.deepEqual(progress[0].pendingAssetPaths,[assetPath]);
+    assert.equal(progress[1].asset.path,assetPath);
+    const completed=progress.at(-1);
+    assert.deepEqual({
+      receivedAssets:completed.receivedAssets,expectedAssets:completed.expectedAssets,
+      compressedAssetBytes:completed.compressedAssetBytes,sourceAssetBytes:completed.sourceAssetBytes,
+      maximumAssetBytes:completed.maximumAssetBytes,totalCompressedAssetBytes:completed.totalCompressedAssetBytes,
+      totalSourceAssetBytes:completed.totalSourceAssetBytes,asset:completed.asset
+    }, {receivedAssets:1,expectedAssets:1,compressedAssetBytes:assetGzip.byteLength,sourceAssetBytes:assetRaw.byteLength,
+      maximumAssetBytes:assetRaw.byteLength,totalCompressedAssetBytes:assetGzip.byteLength,totalSourceAssetBytes:assetRaw.byteLength,
+      asset:{path:assetPath,compressedBytes:assetGzip.byteLength,sourceBytes:assetRaw.byteLength,
+        fetchAndHashMs:completed.asset.fetchAndHashMs,base64EncodeMs:completed.asset.base64EncodeMs,
+        bridgeMs:completed.asset.bridgeMs}});
+    for(const value of [completed.asset.fetchAndHashMs,completed.asset.base64EncodeMs,completed.asset.bridgeMs,
+      completed.profileElapsedMs,completed.batchElapsedMs]) assert.ok(Number.isFinite(value) && value >= 0);
   } finally {
     globalThis.fetch = originalFetch;
   }

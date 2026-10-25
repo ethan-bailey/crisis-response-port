@@ -117,7 +117,7 @@ html,body,#stage,canvas,#controls,#movementStick,#controlsHelp,#controlsGuide{-w
 <div id="stage"></div>
 <div id="hud"><div id="title">Crisis Response · incomplete port</div><div id="status">Loading recovered scene and original Operator prefab…</div><div id="position"></div><div id="weaponStatus">Loading original weapons…</div></div>
 <button id="startOriginalMission" type="button" disabled>Start original Mission · 99 MB</button>
-<div id="missionProgress" role="status" aria-live="polite" hidden><span id="missionProgressText">Preparing original Mission download…</span><button id="cancelMissionLoad" type="button">Cancel</button></div>
+<div id="missionProgress" role="status" aria-live="polite" hidden><span id="missionProgressText">Preparing original Mission download…</span><button id="copyMissionProgress" type="button">Copy report</button><button id="cancelMissionLoad" type="button">Cancel</button></div>
 <div id="help">A/D · Shift · S/W · drag or tap to aim · tap same spot to fire · <a href="../runtime-web/">Runtime checks</a></div>
 <button id="controlsHelp" type="button" aria-label="Show touch controls" aria-expanded="false" aria-controls="controlsGuide">?</button>
 <aside id="controlsGuide" aria-labelledby="controlsGuideTitle" hidden>
@@ -157,6 +157,7 @@ import { SourceCharacterAnimator } from "./source-character-animator.mjs";
 
 const weaponStatus=document.querySelector("#weaponStatus"),startOriginalMissionButton=document.querySelector("#startOriginalMission");
 const missionProgress=document.querySelector("#missionProgress"),missionProgressText=document.querySelector("#missionProgressText");
+const copyMissionProgressButton=document.querySelector("#copyMissionProgress");
 const stage=document.querySelector("#stage"), status=document.querySelector("#status"), positionLabel=document.querySelector("#position"), errorBox=document.querySelector("#error"),errorDetails=document.querySelector("#errorDetails"),errorHint=document.querySelector("#errorHint"),copyErrorStatus=document.querySelector("#copyErrorStatus"),retryErrorButton=document.querySelector("#retryError");
 const scene=new THREE.Scene(); scene.background=new THREE.Color(0x11151b);
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false}); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(innerWidth,innerHeight); renderer.outputColorSpace=THREE.SRGBColorSpace; stage.appendChild(renderer.domElement);
@@ -187,6 +188,11 @@ document.querySelector("#copyError").addEventListener("click",async()=>{
  const text=errorDetails.textContent;
  try{if(!navigator.clipboard?.writeText)throw new Error("Clipboard API unavailable");await navigator.clipboard.writeText(text);copyErrorStatus.textContent="Copied. Paste the details into ChatGPT.";}
  catch{const selection=window.getSelection(),range=document.createRange();range.selectNodeContents(errorDetails);selection?.removeAllRanges();selection?.addRange(range);copyErrorStatus.textContent="Details selected. Long-press and choose Copy, then paste them into ChatGPT.";}
+});
+copyMissionProgressButton.addEventListener("click",async()=>{
+ const report=JSON.stringify(window.__missionSourceDiagnostics||{status:"no Mission source transfer has started"},null,2);
+ try{if(!navigator.clipboard?.writeText)throw new Error("Clipboard API unavailable");await navigator.clipboard.writeText(report);missionProgressText.textContent="Transfer report copied. Paste it into ChatGPT.";}
+ catch{errorDetails.textContent=report;errorBox.hidden=false;errorHint.textContent="Transfer report is shown below. Scroll, select, and copy it.";missionProgressText.textContent="Transfer report opened below.";}
 });
 document.querySelector("#dismissError").addEventListener("click",()=>{errorBox.hidden=true;copyErrorStatus.textContent="";});
 const rawActions={left:false,right:false,sprint:false,fire:false,kneel:false,stand:false,magazine:false,switchWeapons:false};
@@ -440,12 +446,36 @@ async function load(){
   positionLabel.textContent="Walk 1.5 m/s · Sprint 4.2 m/s · original spawn X −3";
   const startOriginalMission=async()=>{
    startOriginalMissionButton.disabled=true;startOriginalMissionButton.textContent="Downloading Mission…";missionProgress.hidden=false;missionProgressText.textContent="Starting source download · 99 MB compressed. Keep this page open; progress will appear here.";sourceLoadController=new AbortController();sourceActorMode=false;
+   window.__missionSourceDiagnostics={profile:"global-ui-mission-operator",status:"downloading",samples:[],slowestFetches:[],slowestBridgeCalls:[]};
    try{
     status.textContent="Downloading the original Mission, UI and Operator dependencies…";
     const delivery=await deliverIncrementalSourceProfile({invokeMethodAsync:runtimeCall},"../scene-data/fullsource/global-ui-mission-operator/manifest.json",{
      signal:sourceLoadController.signal,
-     onProgress:progress=>{missionProgressText.textContent=`Verifying Mission source · ${progress.receivedAssets}/${progress.expectedAssets} assets · ${(progress.compressedAssetBytes/1048576).toFixed(1)} / ${(progress.totalCompressedAssetBytes/1048576).toFixed(1)} MiB`;}
+     onProgress:progress=>{
+      const trace=window.__missionSourceDiagnostics;
+      trace.stage=progress.stage||"delivered";
+      if(progress.pendingAssetPaths)trace.pendingAssetPaths=progress.pendingAssetPaths;
+      trace.progress={receivedAssets:progress.receivedAssets,expectedAssets:progress.expectedAssets,
+       compressedAssetBytes:progress.compressedAssetBytes,totalCompressedAssetBytes:progress.totalCompressedAssetBytes,
+       sourceAssetBytes:progress.sourceAssetBytes,totalSourceAssetBytes:progress.totalSourceAssetBytes,
+       profileElapsedMs:progress.profileElapsedMs};
+      if(progress.stage==="delivered"&&progress.asset){
+       const sample={...progress.asset,receivedAssets:progress.receivedAssets,elapsedMs:progress.profileElapsedMs};
+       trace.samples.push(sample);if(trace.samples.length>64)trace.samples.shift();
+       for(const [name,durationKey] of [["slowestFetches","fetchAndHashMs"],["slowestBridgeCalls","bridgeMs"]]){
+        trace[name].push({path:progress.asset.path,durationMs:progress.asset[durationKey],
+         compressedBytes:progress.asset.compressedBytes,sourceBytes:progress.asset.sourceBytes});
+        trace[name].sort((a,b)=>b.durationMs-a.durationMs);if(trace[name].length>10)trace[name].length=10;
+       }
+      }
+      const mib=`${(progress.compressedAssetBytes/1048576).toFixed(1)} / ${(progress.totalCompressedAssetBytes/1048576).toFixed(1)} MiB`;
+      if(progress.stage==="fetching")missionProgressText.textContent=`Downloading Mission assets ${progress.receivedAssets+1}–${Math.min(progress.expectedAssets,progress.receivedAssets+progress.pendingAssetPaths.length)} of ${progress.expectedAssets} · ${mib}`;
+      else if(progress.stage==="adding")missionProgressText.textContent=`Adding source asset ${progress.receivedAssets+1}/${progress.expectedAssets} to WASM · ${progress.asset.path} · fetch/hash ${progress.asset.fetchAndHashMs.toFixed(0)} ms`;
+      else missionProgressText.textContent=`Verified ${progress.receivedAssets}/${progress.expectedAssets} Mission assets · ${mib} · latest fetch/hash ${progress.asset.fetchAndHashMs.toFixed(0)} ms, WASM add ${progress.asset.bridgeMs.toFixed(0)} ms`;
+     }
     });
+    window.__missionSourceDiagnostics.status="verified";
+    window.__missionSourceDiagnostics.summary=delivery;
     missionProgressText.textContent=`All ${delivery.assetCount} assets verified · initializing original Mission actors…`;
     await new Promise(requestAnimationFrame);
     const session=JSON.parse(await runtimeCall("InitializeIncrementalEntryTeamMission"));
@@ -459,7 +489,7 @@ async function load(){
     status.textContent=`EntryTeam Mission ready · ${session.sourceActors} original actors · ${(delivery.compressedBytes/1048576).toFixed(1)} MiB verified`;
     positionLabel.textContent="Original Mission · source actor and weapon callbacks";
     window.__fullSourceMission={delivery,session:{mission:session.mission.scene,actor:session.actor,sourceActors:session.sourceActors}};
-   }catch(error){sourceActorMode=false;missionProgress.hidden=true;sourceLoadController=null;startOriginalMissionButton.disabled=false;startOriginalMissionButton.textContent="Start original Mission · 99 MB";if(error?.name==="AbortError"){status.textContent="Mission download cancelled; tap Start original Mission to try again.";return;}showError(error,{hint:"Original Mission did not start; the lightweight scene remains active.",retry:()=>{startOriginalMissionButton.hidden=false;startOriginalMissionButton.click();}});}
+   }catch(error){sourceActorMode=false;missionProgress.hidden=true;sourceLoadController=null;startOriginalMissionButton.disabled=false;startOriginalMissionButton.textContent="Start original Mission · 99 MB";if(window.__missionSourceDiagnostics){window.__missionSourceDiagnostics.status=error?.name==="AbortError"?"cancelled":"failed";window.__missionSourceDiagnostics.error={name:error?.name||"Error",message:String(error?.message||error)};}if(error?.name==="AbortError"){status.textContent="Mission download cancelled; tap Start original Mission to try again.";return;}const report=window.__missionSourceDiagnostics?`\n\nMission source transfer diagnostics:\n${JSON.stringify(window.__missionSourceDiagnostics,null,2)}`:"";showError(new Error(`${String(error?.stack||error)}${report}`),{hint:"Original Mission did not start; copy the error and transfer report to help diagnose the failure.",retry:()=>{startOriginalMissionButton.hidden=false;startOriginalMissionButton.click();}});}
   };
   document.querySelector("#cancelMissionLoad").addEventListener("click",()=>sourceLoadController?.abort());
   startOriginalMissionButton.addEventListener("click",startOriginalMission);
