@@ -135,13 +135,41 @@ def validate_site(site):
         path = site / "scene-data" / name
         require(path.is_file() and path.stat().st_size < SITE_FILE_LIMIT_BYTES,
                 f"Scene package chunk is missing or exceeds Sites' per-file limit: {name}")
+    actor_bundle = site / "scene-data/fullsource/operator-prefab.json.gz"
+    actor_manifest_path = site / "scene-data/fullsource/operator-prefab.manifest.json"
+    has_actor_delivery = actor_bundle.exists() or actor_manifest_path.exists()
+    if has_actor_delivery:
+        require(actor_bundle.is_file() and actor_manifest_path.is_file(),
+                "Bounded FullSource Operator bundle is incomplete")
+        actor_manifest = json.loads(actor_manifest_path.read_text())
+        actor_bytes = actor_bundle.read_bytes()
+        require(actor_manifest.get("schemaVersion") == 1
+                and actor_manifest.get("profile") == "operator-prefab"
+                and actor_manifest.get("encoding") == "gzip-json"
+                and actor_manifest.get("rootAssets") == ["Assets/Resources/characters/Operator.prefab"],
+                "FullSource Operator bundle manifest identity is invalid")
+        require(actor_manifest.get("compressedBytes") == len(actor_bytes)
+                and actor_manifest.get("compressedBytes", SITE_FILE_LIMIT_BYTES) <= 12 * 1024 * 1024
+                and actor_manifest.get("packageSha256") == hashlib.sha256(actor_bytes).hexdigest(),
+                "FullSource Operator bundle size or checksum differs from its manifest")
+        actor_json = gzip.decompress(actor_bytes)
+        require(actor_manifest.get("uncompressedBytes") == len(actor_json)
+                and len(actor_json) <= 32 * 1024 * 1024,
+                "FullSource Operator bundle exceeds its decompressed delivery budget")
+        actor_package = json.loads(actor_json)
+        record_count = sum(len(asset.get("records", [])) for asset in actor_package.get("assets", {}).values())
+        require("Assets/Resources/characters/Operator.prefab" in actor_package.get("assets", {})
+                and actor_manifest.get("assetCount") == len(actor_package.get("assets", {}))
+                and actor_manifest.get("recordCount") == record_count,
+                "FullSource Operator bundle omits its authored prefab or source counts differ")
     wasm = list((site / "runtime-web/_framework").rglob("*.wasm"))
     require(wasm, "Actual compiled .NET WebAssembly is missing")
     wasm.append(site / "game/vendor/physx-js-webidl.wasm")
     for path in wasm:
         with path.open("rb") as stream:
             require(stream.read(8) == WASM_HEADER, f"Invalid WebAssembly binary: {path.name}")
-    return {"wasmFiles": len(wasm), "blazorResources": validate_boot(site)}
+    return {"wasmFiles": len(wasm), "blazorResources": validate_boot(site),
+            "boundedOperatorSource": has_actor_delivery}
 
 
 def verify(site):
@@ -219,6 +247,16 @@ def package(repo, published, output, toolchain, run_url):
             "Generated scene report does not match the packaged scene binary")
     shutil.copytree(published, output / "runtime-web")
     shutil.copytree(repo / "scene-data", output / "scene-data")
+    archive = output / "scene-data/crisis-response-scenes.json.gz"
+    if archive.is_file():
+        with gzip.open(archive, "rt", encoding="utf-8") as source:
+            original_format = source.read(80).startswith('{"format":"crisis-unity-records-v2"')
+        if original_format:
+            actor_package = repo / "scripts/package_fullsource_actor.py"
+            require(actor_package.is_file(), "FullSource actor package builder is missing")
+            subprocess.run([sys.executable, str(actor_package), str(archive),
+                            str(output / "scene-data/fullsource/operator-prefab.json.gz")],
+                           check=True, cwd=repo)
     split_scene_package(output / "scene-data")
     runtime_index = output / "runtime-web/index.html"
     html = runtime_index.read_text()
