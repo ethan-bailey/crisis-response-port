@@ -1,71 +1,60 @@
 # Crisis Response Port — current handoff
 
-## Durable checkpoint
+## Current checkpoint
 
 - Development branch: `develop/wasm`.
-- Runtime feature checkpoint: `f0f69828015ffbccb0e932e077b8972f2dd0d192`
-  (`feat: report WASM source profile memory on mobile`).
-- Packaging fix: `9c1551b65a8fc302e332ff9f02d52c91c6d53403`
-  (`fix: align FullSource actor package manifest path`).
-- The packaging fix changes the actor sidecar path to the name expected by the
-  site verifier. The actual 238-asset Operator bundle and site package tests
-  passed after the fix.
-- A separate owner-private diagnostic Site is published as version 1:
-  https://crisis-response-memory-check-20261024.craftysnipe13.chatgpt.site
-  The existing Crisis Response Runtime Site remains unchanged.
-- Site package source commit:
-  `1d37f7bf54c5442e6066186b330cddb224c7a8ea`, a compact Site checkout based
-  on development source `9c1551b65a8fc302e332ff9f02d52c91c6d53403`.
-
-## Completed system: incremental source delivery through Mission UI and actor
-
-The browser delivers each gzip asset as bytes into WASM. The package manifest
-and metadata record raw and compressed sizes and SHA-256 values. C# verifies
-both forms, enforces 32 MiB raw and 25 MiB compressed per-asset limits, stores
-the verified compressed payload, and hydrates JSON on demand. Scene and prefab
-loaders release parsed documents after use and can rehydrate them later.
-
-The source profile generator includes `Assets/Resources/Version.prefab` in its
-default roots. `Version.Instance` loads it through `Resources.Load("Version")`
-during `GlobalContext.Awake`; this dynamic resource dependency is absent from
-the serialized GUID closure. The mission contract accepts either a monolithic
-JSON package or generated incremental profile directory, so the original
-Mission UI and actors are exercised through the actual incremental C# store.
-
-Evidence: [incremental source delivery](docs/evidence/INCREMENTAL_SOURCE_DELIVERY_2026-10-25.md).
-Recovered input SHA-256: `6586b293eb1455669eba29042469ebd6740b0ad08629fd39ea625237626dd639`.
-
-- Global Context + Interior Mode UI + Interaction Menu + Operator + Version:
-  1,230 assets; 36,971,121 compressed asset bytes; 77,806,659 raw JSON bytes.
-- Above plus Mission 01: 1,919 assets; 97,767,549 compressed asset bytes;
-  205,514,345 raw JSON bytes.
-- Incremental Mission contract passed: Mission 01 started; EntryTeam UI
-  initialized; 2 Operators and 5 Occupants spawned; FullSource actor snapshot,
-  left press/release, movement force, and browser-physics state round trip
-  passed. This is headless; it does not run native PhysX or render pixels.
+- Live source checkpoint: `fd44090d513eb4cbe40dffacb8ef3d9cbc955df9`
+  (`fix: prevent stale loud weapon audio on iOS`).
+- Repository was fetched after the GitHub write; local `develop/wasm` matches
+  the remote at that checkpoint. No open pull requests were found.
+- Nothing was deployed. The separate owner-private memory diagnostic Site is
+  still version 1 and does not contain this audio change.
 
 ## iPhone source memory check
 
-Instructions and exact URL: [phone source memory check](docs/evidence/PHONE_SOURCE_MEMORY_CHECK_2026-10-25.md).
+The owner completed the private iPhone Safari check on 2026-10-25. It ran for
+270,623 ms (about 4m31s), delivered all 1,230 assets, and reported no final
+error. Peak managed allocation was 68,869,128 bytes (about 65.7 MiB); managed
+heap peak was 74,776,576 bytes (about 71.3 MiB). JavaScript heap and device
+memory were unavailable, so this is not total Safari or device memory.
 
-Use:
-https://crisis-response-memory-check-20261024.craftysnipe13.chatgpt.site/runtime-web/?source-profile-smoke
+The delivery metadata reported 37,646,794 compressed bytes and 82,624,418
+source bytes. The final per-sample counters reported 36,971,121 compressed
+bytes and 77,806,659 source bytes for 1,230 assets. The report does not explain
+these mismatched totals. Its first sample, at 15 ms, ran before incremental
+source initialization; subsequent samples succeeded and the run completed.
+Full result and instructions: [phone source memory check](docs/evidence/PHONE_SOURCE_MEMORY_CHECK_2026-10-25.md).
 
-Use the `/runtime-web/` path; `/game/` opens the visual game and does not run the memory route. The route loads the 1,230-asset Global/UI/Operator/Version profile and does not
-start gameplay. The user should leave the page alone until **Complete**, copy
-the JSON report, and return it here. Do not aim, shoot, or move during this
-memory check.
+## Gunshot audio fix
 
-The exact Site package passed integrity verification: 2,001 files, 199 Blazor
-resources, 195 valid WASM files, the bounded Operator bundle, and the
-1,230-asset incremental profile. The pinned .NET 8.0.426 browser publish
-completed. Python site-package tests passed 14/14. Site version 1 is
-owner-private. Playwright browser smoke and physical iPhone Safari memory
-acceptance have not run; both remain open.
+At the original sample playback site, the browser could call `start()` while
+iOS had suspended the AudioContext. That can defer audible playback until the
+context resumes, making a shot late. The runtime now drops one-frame audio
+events when the context is not running or the decoded clip is not ready, uses
+a quieter shared output gain plus a compressor, and reports play/drop/decode
+counters in the presentation snapshot. This is a source-level diagnosis; the
+patched audio has not been packaged or accepted on iPhone yet.
+
+Checks run against the exact source content in `fd44090`: Node syntax checks
+for `game/weapon-runtime.mjs` and `game/presentation.mjs`, and
+`git diff --check` all passed. No runtime browser smoke or iPhone audio check
+was run. Do not describe the audio fix as accepted or deploy the package yet.
+
+## Remaining system work
+
+The FullSource actor movement force and physics state round trip passed the
+active Mission UI contract in the prior checkpoint. The normal page still uses
+browser-side movement and the transport weapon host. The memory profile has
+now completed on the owner’s iPhone, but the report’s byte totals need
+reconciliation before claiming exact delivered size. Page input, physics,
+rendering, and weapon callbacks still need to be wired through the same actor.
+Playwright/browser binaries were not available in the earlier environment;
+iPhone Safari remains the target acceptance device.
 
 ## One next action
 
-Run the exact private URL above on iPhone Safari and paste its complete JSON
-report into the project chat. Use that report to decide whether the 36.97 MB
-pre-input profile fits on the device before wiring page movement, physics,
-rendering, and weapon callbacks through the FullSource actor.
+Build and integrity-check a package from exact source
+`fd44090d513eb4cbe40dffacb8ef3d9cbc955df9`, then prepare an iPhone Safari
+gunshot check that exercises the first shot, sustained firing, and returning
+from a suspended/background state. Keep deployment and audio acceptance open
+until the owner tests that exact build.
