@@ -1,5 +1,11 @@
 # Current handoff — 2026-10-25
 
+## Latest source checkpoint
+
+- Current tested source commit: `dec5bbe6aba706f9812c651ce39f9eb1d855df4d`. The casing callback transport now includes source world position, rotation, and Time.time alongside body ID, mass, force/torque vectors, and ForceMode.
+- On this exact code tree, the real `--browser-entryteam-session-contract` passed. It asserts one matched Casing body for VelocityChange force + Impulse torque, finite source pose/time, and authored effective mass 0.002 kg (2 g). `git diff --check` passed. Do not claim the package below applies to this new source commit: exact-source package rebuild/verification is pending.
+- Dependency inventory found the recovered source prefab `source-reference/Original/Assets/Resources/weapons/ammunition/casings/Casing 5.56x45mm.prefab`, mesh GUID `d495eb21fe3efb34eb05d4f2f79b43c5`, brass material GUID `f2f4f981cd6ffb54d8f381d4a33915a8`, source collider, and bounce audio. The browser still does not create/render/simulate the casing body from these callbacks.
+
 ## Exact source checkpoint
 
 - Tested source code commit: `90f81c194b20bec87feb5904a61cf94b16069c7c` on `develop/wasm`. This commit restores the valid UTF-8 GitHub blobs for the casing callback bridge. The parent API commit `2ad8511d6c7eeba6bc73948a90f33fa7a630a5c6` had malformed Program.cs content; it was immediately superseded, never built or published. Local `f20956f` was intact, and `git diff --quiet f20956f origin/develop/wasm` confirmed identical source trees before testing.
