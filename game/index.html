@@ -96,12 +96,15 @@ html,body,#stage,canvas,#controls,#movementStick,#controlsHelp,#controlsGuide{-w
 @media(max-height:430px){#movementStick{width:128px;height:128px;min-width:128px}#movementStick .stick-thumb{width:48px;height:48px;left:calc(50% - 24px);top:calc(50% - 24px)}}
 @media(prefers-reduced-motion:reduce){#movementStick .stick-thumb{transition:none}}
 
+
+#startOriginalMission{position:absolute;left:12px;top:max(60px,calc(env(safe-area-inset-top) + 56px));z-index:5;min-height:44px;padding:9px 12px;border:1px solid #86a9c5;border-radius:10px;background:#152432ed;color:#eef6ff;font-size:13px;font-weight:700;pointer-events:auto;touch-action:manipulation}#startOriginalMission:disabled{opacity:.55}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
 </head>
 <body>
 <div id="stage"></div>
 <div id="hud"><div id="title">Crisis Response · incomplete port</div><div id="status">Loading recovered scene and original Operator prefab…</div><div id="position"></div><div id="weaponStatus">Loading original weapons…</div></div>
+<button id="startOriginalMission" type="button" disabled>Start original Mission · 99 MB</button>
 <div id="help">A/D · Shift · S/W · drag or tap to aim · tap same spot to fire · <a href="../runtime-web/">Runtime checks</a></div>
 <button id="controlsHelp" type="button" aria-label="Show touch controls" aria-expanded="false" aria-controls="controlsGuide">?</button>
 <aside id="controlsGuide" aria-labelledby="controlsGuideTitle" hidden>
@@ -114,7 +117,8 @@ html,body,#stage,canvas,#controls,#movementStick,#controlsHelp,#controlsGuide{-w
 <div id="error"></div><div id="rotateNotice">Rotate your phone to landscape to view the port prototype.</div>
 <div id="controls"><div class="cluster"><div id="movementStick" role="group" tabindex="0" aria-label="Movement joystick. Push left or right to walk; push past the rim to sprint. Push up or down to aim. Release to stop."><span class="stick-thumb" aria-hidden="true"></span><span class="stick-label" aria-hidden="true">MOVE</span></div></div><div class="cluster"><button id="magazineTouch" type="button" aria-label="M4 magazine ammunition unavailable"><span class="mag-body"><img class="mag-image" data-mag-image alt="" draggable="false"><span class="mag-window" data-mag-rounds aria-hidden="true"></span><span class="mag-count" data-mag-count aria-hidden="true">–</span></span></button><button id="kneel" class="action-icon" data-action="kneel" aria-label="Kneel" title="Kneel"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="18" cy="5" r="3"/><path d="M17 9l-6 7 8 3 5 8M11 16l-6 9h9M19 19h9"/></svg></button><button id="stand" class="action-icon" data-action="stand" aria-label="Stand up" title="Stand"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="5" r="3"/><path d="M16 9v10m0-7-7 6m7-6 7 6m-7 1-6 10m6-10 6 10"/></svg></button><button id="fire" class="action-icon" data-action="fire" aria-label="Hold to fire" title="Fire"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="9"/><circle cx="16" cy="16" r="3"/><path d="M16 1v7m0 16v7M1 16h7m16 0h7"/></svg></button></div></div>
 <script type="module">
-import { loadOriginalScenePackage } from "../scene-data/scene-package-loader.mjs";
+
+import { deliverIncrementalSourceProfile, loadOriginalScenePackage } from "../scene-data/scene-package-loader.mjs";
 import { stepBodyMovement, stepCharacterAnimation } from "./source-character-step.mjs";
 import * as THREE from "three";
 import { loadSourceCutoutMaterials, sourceCutoutMaterial } from "./source-cutout-materials.mjs";
@@ -131,7 +135,7 @@ import { loadPresentationData, configureCamera, createUpperBody } from "./presen
 import { posePosition } from "./animation-pose.mjs";
 import { SourceCharacterAnimator } from "./source-character-animator.mjs";
 
-const weaponStatus=document.querySelector("#weaponStatus");
+const weaponStatus=document.querySelector("#weaponStatus"),startOriginalMissionButton=document.querySelector("#startOriginalMission");
 const stage=document.querySelector("#stage"), status=document.querySelector("#status"), positionLabel=document.querySelector("#position"), errorBox=document.querySelector("#error");
 const scene=new THREE.Scene(); scene.background=new THREE.Color(0x11151b);
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false}); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(innerWidth,innerHeight); renderer.outputColorSpace=THREE.SRGBColorSpace; stage.appendChild(renderer.domElement);
@@ -141,7 +145,7 @@ const camera=new THREE.PerspectiveCamera(20,innerWidth/innerHeight,5,20);
 camera.position.set(-3,1.2,9.8);
 const world=new THREE.Group();scene.add(world);
 const character=new THREE.Group();character.name="Original Operator prefab";scene.add(character);
-const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(2,0,0),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,physicsState=null,physicsTime=0,sprintBlend=0,gaitPhase=0,upperBody=null,presentationData=null,weaponData=null,ballisticsData=null,hasAimPointer=false,aimDirty=false,aimGeneration=0,settledAimGeneration=-1,tapPending=0,tapFrame=false,reloadPending=false,weaponState=null,handRenderers=null,armRig=null;const lockedAim=new AimDirection(),aimFireGate=new AimFireGate();
+const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(2,0,0),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,contactPhysicsModule=null,contactPhysicsData=null,physicsState=null,physicsTime=0,sprintBlend=0,gaitPhase=0,upperBody=null,presentationData=null,weaponData=null,ballisticsData=null,hasAimPointer=false,aimDirty=false,aimGeneration=0,settledAimGeneration=-1,tapPending=0,tapFrame=false,reloadPending=false,weaponState=null,handRenderers=null,armRig=null,sourceActorMode=false,sourceActorSnapshot=null,projectFullSourceSnapshot=()=>{};const lockedAim=new AimDirection(),aimFireGate=new AimFireGate();
 const loadStart=performance.now(),loadingTimings={};window.__loadingTimings=loadingTimings;
 const markLoaded=name=>loadingTimings[name]=performance.now()-loadStart;
 function showError(e){errorBox.style.display="block";errorBox.textContent=String(e?.message||e)+"\n"+String(e?.stack||"");status.textContent="Build failed to load; see error details."}
@@ -229,6 +233,7 @@ async function load(){
   const animationReady=json("./assets/operator/animations.json");
   const animatorControllerReady=json("./assets/operator/character-animator-controller.json");
   const physicsReady=Promise.all([import("./contact-physics.mjs"),json("./assets/contact-physics.json"),manifestReady]).then(async([module,data,manifest])=>{
+   contactPhysicsModule=module;contactPhysicsData=data;
    contactPhysics=await module.createContactPhysics(data,{x:playerX,y:playerY,z:manifest.nodes.find(n=>!n.parentGameObjectFileID).position[2]});markLoaded("physicsReady");
   });
   const geometryReady=(async()=>{
@@ -253,6 +258,30 @@ async function load(){
    const group=nodeById.get(node.gameObjectFileID),parent=node.parentGameObjectFileID?nodeById.get(node.parentGameObjectFileID):null;
    (parent||character).add(group);
   }
+  projectFullSourceSnapshot=snapshot=>{
+   if(!snapshot?.position||!snapshot?.rotation||!Array.isArray(snapshot.poses))throw new Error("FullSource actor snapshot has no authored transform hierarchy");
+   character.position.fromArray(snapshot.position);character.quaternion.fromArray(snapshot.rotation);
+   const rootPrefix=(snapshot.actor||"")+"/";
+   for(const pose of snapshot.poses){
+    if(pose.path===snapshot.actor)continue;
+    const path=pose.path.startsWith(rootPrefix)?pose.path.slice(rootPrefix.length):pose.path;
+    const group=nodeByPath.get(path);if(!group)continue;
+    group.position.fromArray(pose.p);group.quaternion.fromArray(pose.q);group.scale.fromArray(pose.s);
+   }
+   playerX=snapshot.position[0];playerY=snapshot.position[1];velocity=snapshot.velocity?.[0]??0;
+   facingDirection=snapshot.direction??facingDirection;isKneeling=!!snapshot.kneeling;
+   character.updateWorldMatrix(true,true);
+  };
+  const aimQuadTarget=async()=>{
+   if(!aimQuad||!rightUpperArm)return;
+   aimQuad.position.set(playerX+facingDirection*20,2.5,1.5);
+   character.updateMatrixWorld(true);aimQuad.updateMatrixWorld(true);camera.updateMatrixWorld(true);
+   aimRaycaster.setFromCamera(pointerNdc,camera);
+   const shoulder=rightUpperArm.getWorldPosition(new THREE.Vector3());
+   if(aimDirty){const hit=aimRaycaster.intersectObject(aimQuad,false)[0];if(hit)lockedAim.set(hit.point.toArray(),shoulder.toArray());aimDirty=false;}
+   const target=lockedAim.target(shoulder.toArray());aimPoint.set(target[0],target[1]);
+   await runtimeCall("SetFullSourceActorAimTarget",target[0],target[1],sourceActorSnapshot?.position?.[2]??0);
+  };
   let textured=0;
   const skinReady=Promise.all(manifest.limbs.map(async limb=>{
    const parent=nodeById.get(limb.gameObjectFileID);if(!parent)return;
@@ -369,6 +398,26 @@ async function load(){
   window.__gameState=()=>({loaded,originalInputActive:!!runtimeCall,originalInput:originalInputState,playerX,playerY,velocity,pelvisLocalPosition:nodeByPath.get("Pelvis").position.toArray(),physics:physicsState,physicsTime,sprintBlend,gaitPhase,loadingTimings,presentation:upperBody.snapshot(),originalPhysicalArms:armRig?.snapshot(),originalHands:handRenderers?.snapshot(),projection:{type:camera.type,fov:camera.fov,near:camera.near,far:camera.far,position:camera.position.toArray()},facingDirection,aimPoint:[aimPoint.x,aimPoint.y,physicsState.z],aimFireLocked:aimFireGate.locked,limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,weaponActionsImplemented:true,weaponState,aimDirection:lockedAim.vector,weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
   status.textContent="Original C# camera and arm IK · tap or drag to aim; tap same spot to fire.";
   positionLabel.textContent="Walk 1.5 m/s · Sprint 4.2 m/s · original spawn X −3";
+  startOriginalMissionButton.addEventListener("click",async()=>{
+   startOriginalMissionButton.disabled=true;sourceActorMode=false;
+   try{
+    status.textContent="Downloading the original Mission, UI and Operator dependencies…";
+    const delivery=await deliverIncrementalSourceProfile({invokeMethodAsync:runtimeCall},"../scene-data/fullsource/global-ui-mission-operator/manifest.json",{
+     onProgress:progress=>{status.textContent=`Verifying original Mission source… ${progress.receivedAssets}/${progress.expectedAssets} assets · ${(progress.compressedAssetBytes/1048576).toFixed(1)} / ${(progress.totalCompressedAssetBytes/1048576).toFixed(1)} MiB`;}
+    });
+    const session=JSON.parse(await runtimeCall("InitializeIncrementalEntryTeamMission"));
+    if(session.snapshot?.owner!=="FullSource.CharacterBody")throw new Error("Original Mission did not return the source-owned player actor");
+    sourceActorSnapshot=session.snapshot;
+    contactPhysics=await contactPhysicsModule.createContactPhysics(contactPhysicsData,{x:sourceActorSnapshot.position[0],y:sourceActorSnapshot.position[1],z:sourceActorSnapshot.position[2]});
+    physicsState=contactPhysics.snapshot();projectFullSourceSnapshot(sourceActorSnapshot);sourceActorMode=true;
+    startOriginalMissionButton.hidden=true;
+    weaponStatus.textContent="Original source weapon callbacks active";
+    status.textContent=`EntryTeam Mission ready · ${session.sourceActors} original actors · ${(delivery.compressedBytes/1048576).toFixed(1)} MiB verified`;
+    positionLabel.textContent="Original Mission · source actor and weapon callbacks";
+    window.__fullSourceMission={delivery,session:{mission:session.mission.scene,actor:session.actor,sourceActors:session.sourceActors}};
+   }catch(error){sourceActorMode=false;startOriginalMissionButton.disabled=false;status.textContent="Original Mission did not start; the lightweight scene remains active.";showError(error);}
+  });
+  startOriginalMissionButton.disabled=false;
  }catch(e){showError(e)}
 }
 function resize(){renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();document.querySelector("#rotateNotice").style.display=innerWidth<innerHeight?"flex":"none"}
@@ -398,6 +447,24 @@ async function frame(now){
  }const elapsed=last===null?0:(now-last)/1000;const dt=Math.min(elapsed,.05);last=now;if(loaded){frameBusy=true;try{
  const aimReady=aimGeneration===settledAimGeneration;
  if(tapFrame){rawActions.fire=false;tapFrame=false;}
+ if(sourceActorMode){
+  rawActions.fire=input.pressed("fire")||tapPending>0;tapPending=0;
+  rawActions.magazine=reloadPending||input.pressed("magazine");reloadPending=false;
+  await aimQuadTarget();
+  const mouseX=(pointerNdc.x+1)*640,mouseY=(1-pointerNdc.y)*360;
+  sourceActorSnapshot=JSON.parse(await runtimeCall("TickFullSourceActorBridge",elapsed,JSON.stringify(rawActions),mouseX,mouseY));
+  const physics=sourceActorSnapshot.physics,step=contactPhysics.data.fixedDeltaTime,commands=physics.commands||[];
+  for(let index=0;index<physics.fixedSteps;index++){
+   const command=commands[index];if(command?.mode==="Acceleration")contactPhysics.addAcceleration(command.force[0]);
+   contactPhysics.setPoseState(!!sourceActorSnapshot.kneeling,sourceActorSnapshot.direction,step);
+   physicsState=contactPhysics.step(step);physicsTime+=step;
+  }
+  const x=physicsState.x,y=physicsState.y,z=physicsState.z,vx=physicsState.velocity;
+  sourceActorSnapshot=JSON.parse(await runtimeCall("SynchronizeFullSourceActorPhysics",x,y,z,vx,0,0));
+  projectFullSourceSnapshot(sourceActorSnapshot);weaponStatus.textContent=`Original source weapon callbacks · ${sourceActorSnapshot.weapon??"unarmed"}`;
+  positionLabel.textContent=`Original Mission · X ${playerX.toFixed(2)} · speed ${Math.abs(velocity).toFixed(2)} m/s`;
+  renderer.render(scene,camera);return;
+ }
  const fireAimReady=aimFireGate.update(pointerNdc.x,pointerNdc.y,now,weaponState?.aimConverged===true);
  const tapRequested=tapPending>0&&aimReady&&fireAimReady;
  if(tapRequested){tapPending--;tapFrame=true;}

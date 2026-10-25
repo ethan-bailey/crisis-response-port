@@ -89,12 +89,14 @@ public sealed class FullSourceActorBridge
         // Several authored actions can share one physical key. Treat keyboard
         // state as the union of their action levels so a later false action
         // cannot release a key another true action is holding.
-        foreach(var key in drivenKeys.Concat(nextKeys).Distinct())Input.SetKey(key,nextKeys.Contains(key));
-        drivenKeys=nextKeys;
-        Input.mousePosition = new Vector3(mouseX, mouseY, 0f);
         physicsCommands.Clear();
         var fixedTimeBefore = Time.fixedTime;
-        world.Tick(elapsedSeconds);
+        world.Tick(elapsedSeconds,()=>
+        {
+            foreach(var key in drivenKeys.Concat(nextKeys).Distinct())Input.SetKey(key,nextKeys.Contains(key));
+            drivenKeys=nextKeys;
+            Input.mousePosition = new Vector3(mouseX, mouseY, 0f);
+        });
         lastFixedSteps = Math.Max(0, (int)MathF.Round((Time.fixedTime - fixedTimeBefore) / Time.fixedDeltaTime));
         return Snapshot();
     }
@@ -125,6 +127,17 @@ public sealed class FullSourceActorBridge
         body.transform.position = new Vector3(x, y, z);
         rigidbody.velocity = new Vector3(velocityX, velocityY, velocityZ);
         return Snapshot();
+    }
+
+    public Vector3 SetAimWorldPoint(float x,float y,float z)
+    {
+        if(!float.IsFinite(x)||!float.IsFinite(y)||!float.IsFinite(z))throw new ArgumentException("Browser aim target must contain only finite values");
+        world.MakeCurrent();
+        var point=new Vector3(x,y,z);
+        var pointer=controller.WeaponPointer??throw new InvalidOperationException("Original PlayerController has no WeaponPointer");
+        typeof(WeaponPointer).GetField("localPoint",BindingFlags.Instance|BindingFlags.NonPublic)!.SetValue(pointer,body.transform.InverseTransformPoint(point));
+        typeof(WeaponPointer).GetProperty(nameof(WeaponPointer.WorldPoint),BindingFlags.Instance|BindingFlags.Public)!.SetValue(pointer,point);
+        return point;
     }
 
     void RequirePlayablePlayerUI()

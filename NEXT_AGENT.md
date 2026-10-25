@@ -1,53 +1,30 @@
 # Crisis Response Port — current handoff
 
-## Checkpoint
+## Source checkpoint
 
-- Branch `develop/wasm`; game source `f3a5620773baaf0e1a4927b45416aadc5034faf3`.
-- Audio hardening: discard audio/material events older than 120 ms or more than
-  50 ms in the future; this prevents a blocked frame from replaying stale
-  gunshots. Master gain is 0.16 (was 0.28); `audioFire` has an additional
-  0.6 multiplier. Suspended-context and unloaded-buffer events continue to be
-  dropped, never queued.
-- Aim-on-stick now uses the aim position present at joystick touch-down as its
-  baseline. Vertical stick motion offsets that position; returning to neutral
-  and release preserve the current pointer aim.
-- Joystick Ease-in, rim detent and large puck behavior from source
-  `a075b24ddcf791bbfe452ea12005523106da46a8` remain in this commit.
-- Browser input checks: 19/19 passed. WASM package tests: 14/14 passed.
-  Package integrity passed for 769 manifest files, 199 Blazor resources and
-  195 WASM files. JavaScript syntax and `git diff --check` passed.
-- No .NET SDK is installed in this workspace. Browser adapter was copied to
-  the existing publish output as its project content mapping specifies; no
-  fresh .NET/WASM compile was run. No iPhone or Playwright run was performed.
+- Work targets `develop/wasm`, with the earlier verified tree at `e5bf54fdf39afb77efab363c194e7cf680f5d583`.
+- Release history includes a transient truncated upload (`9b09d5b`) and its immediate corrective revert (`ef645fa`). Do not build or deploy `9b09d5b`; it was cut off at an 8 KB upload boundary. The complete source change is rebuilt and reverified after the recovery commit.
+- The lightweight page still starts first. It now offers `Start original Mission · 99 MB`, which sequentially verifies and loads the six-root original Mission profile, starts the authored EntryTeam UI in the same source world, routes aim to the original WeaponPointer, ticks the FullSource actor, synchronizes its position/velocity through browser PhysX, and projects the original actor hierarchy into the page renderer.
+- Profile `global-ui-mission-operator`: 1,919 assets, 22,365 records, 97,767,549 compressed asset bytes plus metadata (about 99 MB decimal), 205,514,345 uncompressed source bytes. It is opt-in and stays off default first paint.
 
-## Steps 3–6 disposition
+## Verification completed on the release candidate
 
-The complete actor integration is deferred as one dependency gate. Current
-`game/index.html` does not call `InitializeFullSourceActorBridge`,
-`TickFullSourceActorBridge`, or `SynchronizeFullSourceActorPhysics`. The
-production page still drives movement/aim in browser code, uses the separate
-`StepWeapons` transport host, and updates presentation through a distinct
-host. The bridge requires an original Mission `Global.Context`, active
-`PlayerController`, and authored `InteriorMode.UI.InteractionMenu` in the
-same `RuntimeWorld`; it explicitly refuses to step without that UI. Wiring
-around the missing authored context would create competing simulation state.
-The optional scene-smoke load does not initialize this player bridge. Resolve
-and verify the Mission actor/UI load path before attempting batches 3–6.
+- Incremental Mission profile integrity passed; lazy hydrated document release passed.
+- Mission UI contract passed: Mission 01 started, original InteractionMenu active, original input press/release and source movement/physics bridge checks passed.
+- Browser EntryTeam startup contract passed: original actor/UI, movement acceleration and position/velocity round trip.
+- Runtime checks passed; FoundationChecks passed 121 assertions; EngineChecks passed 69 assertions.
+- Browser input, source package loader, and magazine UI checks passed 31/31. Actual HTML module syntax passed.
+- Browser runtime build and Release WASM publish passed with .NET SDK 8.0.426.
+- No Playwright/browser or iPhone Safari run was available. The user explicitly skipped the manual device-test step; leave iPhone acceptance open.
 
-## Deployment
+## Known runtime limits
 
-No new Site version was deployed. Repository instructions prohibit publishing
-an intermediate build before the required integration gates pass. The existing
-owner-private Runtime Site remains version 43:
-https://crisis-response-runtime.craftysnipe13.chatgpt.site
+- Mission 01 still reports unsupported/unresolved recovered Unity components and built-ins, including Sprite, Mesh, Shader, ReflectionProbe, some Camera fields, audio components, and gameplay scripts. This is not full Unity parity.
+- Browser Mission startup uses a silent source audio adapter, disables unsupported behavior-tree/vocalization hooks, and ignores non-player rigidbody force commands. Only the controlled player's physics state is integrated with browser PhysX. NPC interaction and Mission audio are not verified.
+- Existing gunshot stale-event/gain hardening remains pending iPhone Safari acceptance. Source Mission gun audio is silent until the source audio bridge is implemented.
 
-## Remaining work
+## Hosting
 
-1. Resolve the authored Mission actor and InteractionMenu load path in one
-   RuntimeWorld, then wire page input, physics synchronization, weapon actions,
-   and rendering/IK to that same actor.
-2. Once that gate is implemented, run the integrated mission smoke and
-   exact-source package/build checks; publish only after those required gates
-   pass.
-3. Ask the owner to check gunshot timing/volume, aim retention, and joystick
-   behavior on iPhone Safari. Audio changes have not had device acceptance.
+- Existing owner-private Site: `https://crisis-response-runtime.craftysnipe13.chatgpt.site`. Preserve its owner-only access.
+- Publish only a verified static archive built from the exact final `develop/wasm` source state. Check the Site's current version/source before retrying a publish; do not create duplicate versions for an already successful deployment.
+- Before closing the task, confirm `develop/wasm` is clean and current, the package integrity verifier passes, the Site version is deployed from the same release, and report the browser/device acceptance limits plainly.

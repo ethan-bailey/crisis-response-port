@@ -152,10 +152,12 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
     maximumAssetBytes = Math.max(maximumAssetBytes, asset.bytes);
     if (onProgress && ((index + 1) % 25 === 0 || index + 1 === manifest.assets.length))
       await onProgress({receivedAssets:index + 1,expectedAssets:manifest.assets.length,
-        compressedAssetBytes,sourceAssetBytes,maximumAssetBytes});
+        compressedAssetBytes,sourceAssetBytes,maximumAssetBytes,
+        totalCompressedAssetBytes:manifest.compressedAssetBytes,totalSourceAssetBytes:manifest.uncompressedAssetBytes});
   }
   if (compressedAssetBytes !== manifest.compressedAssetBytes || sourceAssetBytes !== manifest.uncompressedAssetBytes)
     throw new Error("Incremental source profile byte totals do not match its manifest");
   return {profile: manifest.profile, rootAssets: manifest.rootAssets, assetCount: manifest.assetCount,
-    compressedBytes, sourceBytes, maximumAssetBytes, sequentialDelivery: true};
+    compressedBytes, sourceBytes, maximumAssetBytes,totalCompressedAssetBytes:manifest.compressedAssetBytes,
+    totalSourceAssetBytes:manifest.uncompressedAssetBytes,sequentialDelivery: true};
 }

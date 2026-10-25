@@ -10,6 +10,30 @@ if(args.Length==2&&args[0]=="--verify-incremental-source-profile"){
     Console.WriteLine(OriginalSourcePackageContracts.VerifyProfile(args[1]));
     return;
 }
+if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
+    var package=LoadSourcePackage(args[1]);
+    var world=new RuntimeWorld();
+    var session=Crisis.Runtime.Browser.BrowserEntryTeamMission.Start(package,world);
+    var bridge=new FullSourceActorBridge(world,session.Actor);
+    bridge.SetAimWorldPoint(5f,2.5f,0f);
+    bridge.Step(1f/60f,"{\"right\":true}",640f,360f);
+    var state=JsonSerializer.Serialize(bridge.Step(1f/60f,"{\"right\":false}",640f,360f));
+    using var snapshot=JsonDocument.Parse(state);
+    var commands=snapshot.RootElement.GetProperty("physics").GetProperty("commands");
+    if(session.Mission.scene!="Assets/Scenes/Mission 01.unity"||session.Mission.world.Objects.OfType<Crisis.Runtime.FullSource.Mission>().Single().InteriorMode?.UI?.InteractionMenu==null)
+        throw new InvalidOperationException("Browser EntryTeam session did not retain the authored Mission UI contract");
+    if(commands.GetArrayLength()!=1||commands[0].GetProperty("mode").GetString()!="Acceleration")
+        throw new InvalidOperationException($"Original player movement did not emit the expected source acceleration command: {state}");
+    var before=session.Actor.transform.position;
+    var synced=JsonSerializer.Serialize(bridge.SynchronizePhysics(before.x+.25f,before.y,before.z,1f,0f,0f));
+    using var roundTrip=JsonDocument.Parse(synced);
+    var position=roundTrip.RootElement.GetProperty("position");
+    var velocity=roundTrip.RootElement.GetProperty("velocity");
+    if(MathF.Abs(position[0].GetSingle()-(before.x+.25f))>.001f||MathF.Abs(velocity[0].GetSingle()-1f)>.001f)
+        throw new InvalidOperationException("Browser PhysX position and velocity did not round trip into the source player actor");
+    Console.WriteLine(JsonSerializer.Serialize(new{status="passed",mission=session.Mission.scene,actor=session.Actor.name,sourceActors=session.SourceActorCount,interactionMenu=true,input="original press/release",movementForce=commands.GetArrayLength(),physics="position/velocity round trip"}));
+    return;
+}
 OriginalSourcePackage LoadSourcePackage(string path){
     if(File.Exists(path))return OriginalSourcePackage.FromJson(File.ReadAllText(path));
     using var profile=JsonDocument.Parse(File.ReadAllText(Path.Combine(path,"manifest.json")));
