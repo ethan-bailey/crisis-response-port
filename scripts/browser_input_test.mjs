@@ -206,6 +206,11 @@ test('circular joystick restores vertical aim and only moves horizontally',()=>{
  assert.match(thumb.style.transform,/translate3d\(0px,-/);
  move('pointermove',150,120); // inside the dead zone
  assert.equal(input.movementMagnitude(1),0);
+ move('pointermove',240,70); // horizontal movement cannot pull the vertical aim back
+ const diagonalAim=input.movementStickAim;
+ move('pointermove',140,70); // same vertical aim, with no horizontal input
+ assert.ok(Math.abs(input.movementStickAim-diagonalAim)<1e-12);
+ move('pointermove',140,20); // restore full vertical aim for the release assertion
  move('pointermove',177,120); // half travel, scaled walk
  assert.ok(Math.abs(input.movementMagnitude(1)-Math.pow((.5-.16)/(1-.16),2))<1e-8);
  move('pointermove',240,120); // full right; sprint beyond rim

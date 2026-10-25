@@ -115,8 +115,12 @@ export class BrowserInput {
       this.movementStickSprinting = previousSprint ? Math.abs(rawX) > sprintExit : Math.abs(rawX) >= sprintEnter;
       this.movementStickOvertravel = overtravel;
       this.movementStickAxis = Math.sign(rawX) * magnitude;
-      const aimPower = Math.max(0, (Math.abs(vertical) - deadZone) / (1 - deadZone));
-      this.movementStickAim = -Math.sign(vertical) * aimPower;
+      // Aim elevation uses the stick's vertical axis independently. Radially
+      // clamping the puck must not make a horizontal movement input pull aim
+      // back toward center, especially on diagonal drags.
+      const aimVertical = Math.max(-1, Math.min(1, rawY));
+      const aimPower = Math.max(0, (Math.abs(aimVertical) - deadZone) / (1 - deadZone));
+      this.movementStickAim = -Math.sign(aimVertical) * aimPower;
       onAim(this.movementStickAim);
       this.set('left', source, this.movementStickAxis < 0);
       this.set('right', source, this.movementStickAxis > 0);

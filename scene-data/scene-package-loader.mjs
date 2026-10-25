@@ -180,7 +180,7 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
       compressedAssetBytes += compressed.byteLength;
       sourceAssetBytes += asset.bytes;
       maximumAssetBytes = Math.max(maximumAssetBytes, asset.bytes);
-      if (onProgress && ((index + 1) % 25 === 0 || index + 1 === manifest.assets.length))
+      if (onProgress)
         await onProgress({receivedAssets:index + 1,expectedAssets:manifest.assets.length,
           compressedAssetBytes,sourceAssetBytes,maximumAssetBytes,
           totalCompressedAssetBytes:manifest.compressedAssetBytes,totalSourceAssetBytes:manifest.uncompressedAssetBytes});
