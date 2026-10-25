@@ -341,3 +341,66 @@ browser binaries are unavailable in this runner. Owner retest should collect
 the existing bounded delivery/memory report and check gun timing/loudness
 immediately after load and after extended play. Remaining dependency-ordered
 gates and the next action are indexed in `NEXT_AGENT.md`.
+
+## Source fire contract, Mission audio initialization, and Site version 56
+
+At exact game source SHA `bf8ec133d034e7763c075d06cb33b623dc78855c`, the
+browser-entry Mission source contract waits for the original right arm's ready
+state and enabled weapon input window before firing. It sends actual `fire`
+input through the original source actor and observes one source shot, one
+authored particle emission request, two casing force requests, and eleven
+source audio events. The events include firing-pin, muzzle, interior crack,
+and bolt sounds on the source timeline. Mission-scene AudioClip availability
+is initialized after scene load; longer source ticks previously failed because
+those clips had not been marked available.
+
+The test particle and casing drivers are recorders. This proves source
+callback/event behavior, not a native particle simulation, visible browser
+effect, or physical casing trajectory. The default page still has not
+migrated input, movement, physics, rendering, weapon, and audio ownership to
+the same FullSource actor.
+
+At this exact source commit, Node checks passed **85/85**, Python checks
+**39/39**, EngineChecks **69**, FoundationChecks **121**, Browser Release
+publish succeeded with zero errors, and
+`--browser-entryteam-session-contract` passed. Optional `wasm-tools`
+optimization was unavailable. The exact Mission package built and passed
+independent verification: manifest SHA-256
+`7224161f8a768d24144a3e8ef0ec708aff4397c9412081203ff3560c61403ccf`; 2,674
+manifest files, 199 Blazor resources, 195 WASM files, and 1,919 Mission assets
+(97,767,549 compressed bytes; 205,514,345 source bytes).
+
+Site repository tests passed **36/36**. The pushed Site artifact commit is
+`ad3bca8657fa114137df2819f08064e508d6e576`. Its archive
+`/tmp/cpr-site-runtime-bf8ec.tar.gz` has SHA-256
+`0fade0b33450ae11a243802182e35cbd29bd8ea1ac8582030f87852e9adda173`. An
+independent extraction audit matched all 2,674 manifest entries by byte count
+and SHA-256 with zero mismatches. It confirmed only the package build
+manifest and required Site hosting descriptor are additional archive files;
+the descriptor points to project
+`appgprj_6acfef7174888191bc2bc2f269f60acc` and static directory `dist`.
+
+The exact package deployed successfully on 2026-10-25 as Site version 56
+(`appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_6789e55dcfcc8191943ecb736d5d3803`),
+deployment `appgdep_6ade4faf129c8191a6f537cbf6253917`, URL
+`https://crisis-response-runtime.craftysnipe13.chatgpt.site`. The Site was
+confirmed owner-only and its access policy was unchanged. The Site version
+tracks artifact source commit `ad3bca8`; the package manifest records runtime
+source commit `bf8ec13`.
+
+The previous owner iPhone measurements are from an older package and do not
+establish acceptance for version 56. The latest screenshot's text
+“Warning: truncated output” is consistent with tool-output truncation, not an
+application stack trace; verify against live Site Worker logs before treating
+it as a runtime defect. iPhone Safari load-tail, tap zoom, control behavior,
+and delayed/loud gun-audio acceptance remain open. No Playwright/browser
+binaries or physical iPhone are available in this runner.
+
+The delivered loader version sends compressed asset bytes through Blazor as
+base64 text, then the existing .NET `byte[]` parameter decodes them. Its
+regression test verifies a payload larger than one base64-encoding chunk by
+round-tripping the exact gzip bytes. This addresses the observed
+`ByteArrayJsonConverter` interop failure in the source-delivery path; the
+version 56 Worker error query returned zero events over the last 180 minutes,
+which is not proof of a successful iPhone session because no request evidence
+was returned.

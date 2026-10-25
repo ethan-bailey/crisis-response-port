@@ -1,38 +1,39 @@
 # Current handoff — 2026-10-25
 
-## Exact verified checkpoint
+## Exact release checkpoint
 
-- Runtime source: `7739bbccc7583e09461c294975d77612c1499492` on `develop/wasm`.
-- Exact detached Release publish succeeded: `dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release -o /tmp/cpr-publish-7739bb`; zero errors. Optional `wasm-tools` optimization unavailable.
-- Gates at that source: Node **85/85**; Python **39/39**; Mission `--browser-entryteam-session-contract` passed; EngineChecks **69**; FoundationChecks **121**.
-- Mission contract now calls the original `WeaponBase.EmitMuzzleAudio(true)` callback and verifies both original clip mappings, one-shot semantics, bounded volume, and source-time alignment. A controller fire input still produced **0** audio events in the one-step headless check; the real user input → weapon callback path is not yet proven.
-- An exploratory direct `StrikeFiringPin()` reaches the original `EmitMuzzleSmoke` and fails because the source `ParticleSystem` simulation/render driver is unbound (`System.NotSupportedException: Original particle simulation and render driver is not bound`). Do not suppress or fake this effect to make a shot test pass. Original player fire is gated by `rightArm.OnTarget`; trace arm readiness and input sequencing next.
-- Exact package built from source `7739bb...` and passed package `verify`: manifest SHA-256 `bbb7a1184dfe7e4041e27ce139dbe72ff1335aaf9189d26671b71293cca51755`; **2,674** files, 199 Blazor resources, 195 WASM files, 1,919 source assets; 97,767,549 compressed / 205,514,345 source bytes. Package output: `/tmp/cpr-site-package-7739bb-retry`.
-- Site tests **36/36**; streaming archive audit verified all 2,674 files, sizes, and digests with no missing/unexpected entries. Artifact repo commit `55b911ff6d55542cf9609723c2e288f45fe08f63`, archive SHA-256 `b6288693d8f68aae128b76c92a76838c4d9d1d648d01e6b2d6353c2fc128a4fc`.
-- Exact source package deployed privately as Site version **55** (`appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_ae15aba1e49881919e7f6d07e0b2eb57`), deployment `appgdep_6ade4a97891c8191a18ebd5722b1ca14`, URL `https://crisis-response-runtime.craftysnipe13.chatgpt.site`. This deploy contains source `7739bb...`; subsequent docs-only commit does not alter the deployed payload.
-- iPhone Safari and real browser acceptance are outstanding. Previous reports of slow load tail, stall near asset 1,900, and delayed/loud gunshot require owner retest against version 55 with the bounded diagnostic report. No Playwright/browser binaries are installed in this runner.
+- Runtime source branch: `develop/wasm`, exact source commit `bf8ec133d034e7763c075d06cb33b623dc78855c` (confirmed fetched branch head).
+- Source release gates at that commit: Node **85/85**; Python **39/39**; EngineChecks **69**; FoundationChecks **121**; exact browser-entry Mission Release publish succeeded with zero errors; `--browser-entryteam-session-contract` passed.
+- The Mission contract used original player fire input after waiting for the right arm and weapon input gate. It observed one source shot, one authored particle emission, two casing force requests, and source-aligned firing-pin, muzzle, crack, and bolt audio events. The Mission-scene AudioClip availability initialization defect is fixed.
+- Incremental source delivery sends gzip assets as base64 text to the .NET `byte[]` argument, avoiding the observed Blazor byte-array interop `JsonException`; the loader regression decodes and byte-compares a payload larger than one base64 encoding chunk.
+- This proves source callback/event behavior only. Particle and casing sinks in the contract are recorders; native particle simulation/rendering, casing physics, browser presentation, and default-page FullSource ownership remain open.
+- Exact package built from this source passed independent `verify`: manifest SHA-256 `7224161f8a768d24144a3e8ef0ec708aff4397c9412081203ff3560c61403ccf`; 2,674 manifest files, 199 Blazor resources, 195 WASM files, 1,919 Mission source assets; 97,767,549 compressed and 205,514,345 source bytes.
+- Site artifact source commit: `ad3bca8657fa114137df2819f08064e508d6e576`; exact archive `/tmp/cpr-site-runtime-bf8ec.tar.gz`, SHA-256 `0fade0b33450ae11a243802182e35cbd29bd8ea1ac8582030f87852e9adda173`.
+- Archive audit extracted once and independently checked every manifest file size and SHA-256: **2,674/2,674 matched**, zero mismatches. It also confirmed the only non-manifest additions are `dist/build-manifest.json` and the required `dist/.openai/hosting.json`, whose project ID and static directory match this Site.
+- Site version **56** (`appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_6789e55dcfcc8191943ecb736d5d3803`) deployed successfully as `appgdep_6ade4faf129c8191a6f537cbf6253917` to `https://crisis-response-runtime.craftysnipe13.chatgpt.site`. It references artifact commit `ad3bca8` and packages source `bf8ec13`. Owner role and custom owner-only access were confirmed; no access changes were made.
+- Site repository tests passed **36/36** before the archive was created. No deployment or source checks were skipped.
 
-## Remaining gates — dependency order and batches
+## Ordered remaining gates
 
-### Batch A — source weapon fire chain (next)
+### Batch 1 — deployment diagnostics and mobile load
 
-1. Instrument the Mission source contract to report right-arm solver `OnTarget`/transition state before and after original input press/release, weapon mechanism readiness, and each source fixed step. Determine why input does not reach `Body.PullTrigger()`; do not synthesize a queue event as proof of firing.
-2. Bind the original particle-system simulation/render driver, including authored muzzle smoke, as a source-backed runtime dependency; then drive `StrikeFiringPin()` and assert projectile, recoil, smoke, muzzle audio, and crack occur once with aligned source time. If renderer is a separate subsystem, implement a compatible event adapter that preserves every authored particle parameter and verifies browser presentation; do not drop the effect.
-3. Add reload/bolt and weapon-state contracts through original actor callbacks. Keep default page transport weapon host enabled until source input + firing + effects parity contracts pass; then migrate input/weapon ownership in one batch to avoid dual authority.
+1. Inspect production Worker errors and current version 56 package delivery behavior. Treat the user's “Warning: truncated output” screen as captured tool-output truncation unless live Site logs or Safari reproduce an app exception; it is not a stack trace from the game.
+2. Owner acceptance on iPhone Safari: record first-paint/start-button wait, final asset count, total time, tail/stall interval, Safari memory samples, input responsiveness, aim, and immediate/extended-play gun audio. Prior iPhone test reached 1,230/1,230 Global/UI assets in 270.6 seconds and peaked at 68.9 MB managed bytes; an earlier Mission attempt reported about 99 MB, slow tail, and a stall near 1,900 assets. Retest the actual current package and attach bounded diagnostic JSON/screenshots. No iPhone device is attached to this runner.
+3. Use fresh delivery timings to decide whether to tune per-asset concurrency, retries, progress/UI, or package partitioning. Preserve bounded concurrency, manifest-order delivery, cancellation, hash verification, and fail-closed behavior. The Mission package is about 98 MB compressed; do not claim the slow-tail issue fixed until device evidence passes.
 
-### Batch B — delivery and iPhone acceptance
+### Batch 2 — source actor presentation and default-page ownership
 
-4. Owner retests private version 55 on iPhone Safari. Save total load time, asset count and stall interval, memory sample, fire latency/loudness immediately after load and after extended play. Fix measurable failures and rebuild from the exact tested source before publishing.
-5. Revisit per-asset transfer and near-1,900 stall using report timings; optimize only the measured slow stage while preserving bounded concurrency, ordered commit, cancellation, and fail-closed hashes. Rebuild, verify package and archive, and deploy only after all exact-source gates pass.
+4. Implement browser presentation adapters for authored particles and casing physics with preserved source parameters, deterministic lifetime/cleanup, and visible/audio alignment. Current source test recorders do not establish native simulation or rendered effects.
+5. Migrate normal page input, movement, physics, rendering, aim, weapon callbacks, and audio to one FullSource actor in dependency order. Add source/browser contracts for each authority transfer; remove browser/transport duplicates only after the new owner passes the same contract. Absolute aim must remain independent of joystick X.
+6. Close source-backed projectile hit, physiology, ragdoll/joint behavior, NPC behavior, authored animation and IK, and interaction-state parity. Mark each gate passed only with source contract plus browser/device evidence where presentation matters.
 
-### Batch C — parity closure
+### Batch 3 — full release closure
 
-6. Migrate normal page movement/input, physics, rendering and weapon callbacks to one FullSource actor in dependency order; add contracts per callback and remove browser-owned duplicates only after parity evidence.
-7. Close native physics/projectile-hit/physiology/ragdoll/joint, NPC behavior, authored animation/IK, and source effects/presentation gates with source contracts plus browser/device evidence. Isolated checks do not count as native/render parity.
-8. Re-run all source, browser, Site, package, archive, and device gates at one exact source SHA. Update this file with checksums and provenance. Publish only the package verified from that SHA.
+7. Run browser smoke on a runner with Playwright and browser binaries, then rerun all source, package, archive, Site, and device gates against one exact source SHA. Current runner has no Playwright/browser binaries; this is a tooling blocker for automation, not evidence of a passing browser gate.
+8. Update this handoff and evidence log with test output, checksums, exact source/artifact commits, deployed version, and every remaining concrete blocker. Publish only after exact-source build and package/archive integrity pass; preserve owner-only Site access.
 
 ## Immediate next action
 
-Work Batch A item 1 in a clean worktree based on the current branch head. The existing `runtime/Checks/Program.cs` headless Mission contract and the actual `PlayerController` / `CharacterBody.PullTrigger()` / `ArmIKSolver.OnTarget` code are the entry points. Record solver transition and trigger gate per fixed step, run the exact Mission contract, then implement the smallest source-faithful correction. Push tested code and update this handoff before proceeding to the particle driver.
+Version 56 production Worker logs returned zero errors in the last 180 minutes (no request evidence is implied). Resume Batch 1 item 2 by asking the owner to retest the live private Site on iPhone Safari and return the bounded loader report; continue independent source work on particle/casing presentation while device evidence is pending. Do not stop at the external-device gate.
 
-Detailed release and historical evidence: `docs/evidence/RECOVERED_SOURCE_AND_EXACT_SITE_PACKAGE_2026-10-25.md`.
+Historical release evidence and prior acceptance records: `docs/evidence/RECOVERED_SOURCE_AND_EXACT_SITE_PACKAGE_2026-10-25.md`.
