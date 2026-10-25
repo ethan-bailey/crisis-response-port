@@ -6,10 +6,13 @@ const html = await readFile(new URL('../runtime/Browser/wwwroot/index.html', imp
 const app = await readFile(new URL('../runtime/Browser/App.razor', import.meta.url), 'utf8');
 
 test('iPhone memory sampling waits until the incremental source store is initialized', () => {
-  assert.match(html, /let sampling=false,sourceSnapshotAvailable=false/);
-  assert.match(html, /if\(sampling\|\|!sourceSnapshotAvailable\)return/);
+  assert.match(html, /let sampling=false,sourceSnapshotAvailable=false,lastSampleAt=-Infinity/);
+  assert.match(html, /const sample=async\(force=false\)=>/);
+  assert.match(html, /!force&&now-lastSampleAt<1000/);
   assert.match(html, /sourceSnapshotAvailable=true;status\.textContent=.*?await sample\(\)/);
   assert.match(html, /await sample\(\);const timer=setInterval\(sample,1000\)/);
+  assert.match(html, /await sample\(true\);clearInterval\(timer\);renderReport\('complete'/);
+  assert.match(html, /clearInterval\(timer\);await sample\(true\);renderReport\('failed'/);
 });
 
 test('iPhone memory check downloads the same full Mission profile as the Start Mission action', () => {
