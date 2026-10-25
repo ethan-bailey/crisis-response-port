@@ -210,8 +210,12 @@ export function createOriginalParticleEventBinding(particles,materials,controlle
       requireSource(command&&Object.hasOwn(sourceCommandActions,command.action),
         'unknown FullSource particle command action');
       if(command.action==='emit') requireSource(Number.isInteger(command.count)&&command.count>=0&&
-        Array.isArray(command.startSpeed)&&command.startSpeed.length===2&&command.startSpeed.every(Number.isFinite),
-        'FullSource Emit command has invalid count or source speed');
+        Number.isInteger(command.maxParticles)&&command.maxParticles>=0&&command.count<=command.maxParticles&&
+        Array.isArray(command.startSpeed)&&command.startSpeed.length===2&&command.startSpeed.every(Number.isFinite)&&
+        Array.isArray(command.startLifetime)&&command.startLifetime.length===2&&command.startLifetime.every(Number.isFinite)&&
+        Number.isFinite(command.startSizeMultiplier)&&Number.isInteger(command.randomSeed)&&
+        command.randomSeed>=0&&command.randomSeed<=0xffffffff,
+        'FullSource Emit command has invalid count, source state, or random seed');
       if(command.action==='simulate') requireSource(Number.isFinite(command.simulationTime)&&
         typeof command.withChildren==='boolean'&&typeof command.restart==='boolean'&&
         typeof command.fixedTimeStep==='boolean','FullSource Simulate command is malformed');

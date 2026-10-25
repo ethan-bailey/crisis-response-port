@@ -6,9 +6,10 @@ const TEXTURES='./assets/ballistics/';
 const MESHES='./assets/ballistics/particle-meshes/particle-mesh-';
 const MAX_ACTIVE=2048,MAX_PENDING=32;
 const v3=v=>new THREE.Vector3(v[0],v[1],-v[2]);
-function visualRandom(event,emitter,index){
-  let x=(Math.trunc(Number(event.time)*1e6))^Number(String(emitter.sourceEmitterFileID).slice(-8))^Math.imul(index+1,0x9e3779b1);
-  for(const c of String(event.value.source))x=Math.imul(x^c.charCodeAt(0),16777619);
+function visualRandom(event,emitter,index,sourceSeed=null){
+  let x=((sourceSeed===null?0:sourceSeed>>>0))^Math.imul(index+1,0x9e3779b1);
+  if(sourceSeed===null)x^=(Math.trunc(Number(event.time)*1e6))^Number(String(emitter.sourceEmitterFileID).slice(-8));
+  if(sourceSeed===null)for(const c of String(event.value.source))x=Math.imul(x^c.charCodeAt(0),16777619);
   x^=x>>>16;x=Math.imul(x,0x7feb352d);x^=x>>>15;x=Math.imul(x,0x846ca68b);x^=x>>>16;
   const next=()=>{x=(Math.imul(x,1664525)+1013904223)|0;return (x>>>0)/4294967296;};
   return {radius:next(),arc:next(),directionZ:next(),directionArc:next(),
@@ -22,8 +23,9 @@ function visualRandom(event,emitter,index){
 export function createOriginalParticleRenderer(scene,sources,binder,settings={}) {
   const effects=new Map(sources.particles.effects.map(effect=>[effect.guid,effect]));
   const textureLoader=new THREE.TextureLoader(),textures=new Map(),geometries=new Map(),active=[];
-  let disposed=false,loadError=null,assetsReady=false,emitted=0,dropped=0,shapeApproximationParticles=0,lastSourceTime=0;
+  let disposed=false,loadError=null,assetsReady=false,emitted=0,dropped=0,sourceSeededEmitters=0,seedFallbackEmitters=0,lastSourceTime=0;
   const pending=[];
+  const sourceEmissions=new Map();
 
   const referencedTextures=new Set();
   for(const material of Object.values(sources.materials.materials)){
@@ -83,8 +85,11 @@ export function createOriginalParticleRenderer(scene,sources,binder,settings={})
     for(let index=0;index<plans.length;index++){
       const plan=plans[index],emitter=source.emitters.find(e=>String(e.sourceEmitterFileID)===String(plan.sourceEmitterFileID));
       const max=emitter.enabledModules.InitialModule.maxNumParticles||1000;
-      const count=Math.min(plan.emission.count,max,MAX_ACTIVE-active.length);
-      if(count<plan.emission.count)dropped+=plan.emission.count-count;
+      const commandRecord=sourceEmissions.get(`${source.guid}:${emitter.sourceEmitterFileID}`);
+      const hasSourceCommand=!!commandRecord&&Math.abs(event.time-commandRecord.time)<=.5;
+      const requested=hasSourceCommand?commandRecord.count:plan.emission.count;
+      const count=Math.min(requested,max,MAX_ACTIVE-active.length);
+      if(count<requested)dropped+=requested-count;
       const ref=(emitter.renderer.m_Materials||[]).find(r=>r.guid)?.guid;
       if(!ref||!plan.emission.count||!count)continue;
       // Impact renderers currently have recovered controllers only. Their
@@ -108,19 +113,26 @@ export function createOriginalParticleRenderer(scene,sources,binder,settings={})
       const shapeScale=shape.m_Scale;
       const shapeOrigin=v3([shape.m_Position.x,shape.m_Position.y,shape.m_Position.z]).applyQuaternion(emitterWorldRotation);
       base.add(emitterOffset).add(shapeOrigin);
+      const sourceSeed=hasSourceCommand?commandRecord.randomSeed:null;
+      const speedRange=hasSourceCommand?commandRecord.startSpeed:plan.emission.speedRange;
+      const lifetimeRange=hasSourceCommand?commandRecord.startLifetime:null;
+      const sizeMultiplier=hasSourceCommand?commandRecord.startSizeMultiplier:plan.emission.sizeMultiplier;
+      if(hasSourceCommand)sourceSeededEmitters++;else seedFallbackEmitters++;
       for(let i=0;i<count;i++){
-        const random=visualRandom(event,emitter,i);
+        const random=visualRandom(event,emitter,i,sourceSeed);
         const shapeSample=sampleRecoveredParticleShape(shape,random);
         const particleBase=base.clone().add(v3(shapeSample.position.map((n,axis)=>n*shapeScale[['x','y','z'][axis]])).applyQuaternion(fullShapeRotation));
         const particleDirection=v3(shapeSample.direction).applyQuaternion(fullShapeRotation).normalize();
         const authored=evaluateSourceParticleFields(emitter,0,random);
-        const speed=plan.emission.speedRange[0]+
-          (plan.emission.speedRange[1]-plan.emission.speedRange[0])*random.startSpeed;
+        const speed=speedRange[0]+(speedRange[1]-speedRange[0])*random.startSpeed;
+        const lifetime=lifetimeRange
+          ?lifetimeRange[0]+(lifetimeRange[1]-lifetimeRange[0])*random.startLifetime
+          :plan.emission.lifetime;
         const velocity=particleDirection.multiplyScalar(speed);
         const object=mode===0?new THREE.Sprite(material.clone()):new THREE.Mesh(geometry,material.clone());
         const particle={object,material:object.material,geometry,emitter,sourceGuid:source.guid,
-          start:event.time,lifetime:plan.emission.lifetime,base:particleBase,velocity,
-          initialSize:Math.max(.001,authored.size*plan.emission.sizeMultiplier),rotation:authored.rotation,
+          start:event.time,lifetime,base:particleBase,velocity,
+          initialSize:Math.max(.001,authored.size*sizeMultiplier),rotation:authored.rotation,
           random};
         object.name=`Original ${mode===0?'billboard':'mesh'} particle ${plan.sourceEmitterFileID}`;
         object.userData.originalParticleSource={prefab:source.guid,emitter:plan.sourceEmitterFileID,
@@ -156,13 +168,23 @@ export function createOriginalParticleRenderer(scene,sources,binder,settings={})
       updateParticle(particle,sourceTime);
     }
   }
+  function observeCommands(events){
+    for(const event of events||[])if(event?.type==='particleCommand'&&event.command?.action==='emit'&&
+      Number.isInteger(event.command.randomSeed)&&event.command.randomSeed>=0&&
+      /^\d+$/.test(String(event.sourceFileId||'')))
+      sourceEmissions.set(`${event.sourceGuid}:${event.sourceFileId}`,{
+        randomSeed:event.command.randomSeed>>>0,count:event.command.count,time:event.time,
+        startSpeed:event.command.startSpeed,startLifetime:event.command.startLifetime,
+        startSizeMultiplier:event.command.startSizeMultiplier});
+  }
   function snapshot(){return {loaded:loadError===null&&textures.size===referencedTextures.size&&
       [...referencedMeshes].every(guid=>geometries.has(guid)),assetError:loadError,
     sourceMaterialCount:Object.keys(sources.materials.materials).length,sourceTextureCount:referencedTextures.size,
     sourceMeshCount:referencedMeshes.size,sourceEmitters:effects.size?26:0,
     renderedParticles:active.length,emittedParticles:emitted,droppedParticles:dropped,
-    shapeSampledParticles:emitted,sourceVisualParity:false,blocker:'Shape 4/10 geometry is sampled from source fields, but Unity random seed/state, exact shape direction behavior, native shader behavior and browser acceptance are not yet verified'};}
+    shapeSampledParticles:emitted,sourceSeededEmitters,seedFallbackEmitters,sourceVisualParity:false,
+    blocker:'The emitter seed is transported when available, but Unity random-stream reproduction, native shader behavior and browser acceptance are not yet verified'};}
   function dispose(){disposed=true;for(const p of active)disposeParticle(p);active.length=0;
     for(const texture of textures.values())texture.dispose();for(const geometry of geometries.values())geometry.dispose();}
-  return {loading,update,snapshot,dispose};
+  return {loading,update,observeCommands,snapshot,dispose};
 }

@@ -17,6 +17,9 @@ public sealed class BrowserParticleEventQueue : ParticleSystem.IParticleDriver
         action = "emit", count,
         maxParticles = state.maxParticles,
         startSpeed = new[] { state.startSpeed.constantMin, state.startSpeed.constantMax },
+        startLifetime = new[] { state.startLifetime.constantMin, state.startLifetime.constantMax },
+        startSizeMultiplier = state.startSizeMultiplier,
+        randomSeed = state.randomSeed,
         radius = state.radius,
         angle = state.angle
     });

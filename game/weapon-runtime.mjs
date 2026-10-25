@@ -103,7 +103,10 @@ export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,part
  }
  function audioSnapshot(){return audioStats.snapshot();}
  return {update,playSourceAudioEvents:dispatchSourceAudio,
-  observeSourceParticleCommands:(events,sourceTime,dropped)=>originalParticleEvents.observeSourceCommands(events,sourceTime,dropped),
+  observeSourceParticleCommands:(events,sourceTime,dropped)=>{
+   originalParticleEvents.observeSourceCommands(events,sourceTime,dropped);
+   originalParticleRenderer.observeCommands(events);
+  },
   flashSnapshot,audioSnapshot,impactMeshSnapshot:originalImpactMeshes.snapshot,windowSnapshot:originalWindows.snapshot,
   particleSourceSnapshot:()=>({...originalParticleEvents.snapshot(),renderer:originalParticleRenderer.snapshot()}),
   dispose:originalParticleRenderer.dispose};

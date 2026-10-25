@@ -57,6 +57,7 @@ var emitterGo=new GameObject("original emitter module",first);
 var emitter=emitterGo.AddComponent<ParticleSystem>();
 var mainModule=emitter.main;var shapeModule=emitter.shape;
 mainModule.maxParticles=48;mainModule.startSpeed=new ParticleSystem.MinMaxCurve(2f,5f);
+mainModule.startLifetime=new ParticleSystem.MinMaxCurve(4f,7f);mainModule.startSizeMultiplier=1.5f;emitter.randomSeed=123456789;
 shapeModule.radius=.4f;shapeModule.angle=21f;
 Check(emitter.main.maxParticles==48 && emitter.main.startSpeed.constantMax==5f &&
       emitter.shape.radius==.4f && emitter.shape.angle==21f,"particle module value handles mutate shared state");
@@ -71,6 +72,7 @@ var particleCommands=particleQueue.Drain();
 Check(particleCommands.Length==3&&particleQueue.DroppedEvents==0,"source particle emit/simulate/play callbacks drain as bounded browser events");
 var particleJson=System.Text.Json.JsonSerializer.Serialize(particleCommands);
 Check(particleJson.Contains("Assets/Effects/Original.prefab")&&particleJson.Contains("19800000")&&particleJson.Contains("19900000")&&particleJson.Contains(new string('a',64))&&particleJson.Contains("sourceAssetSha256")&&particleJson.Contains("sourceFields")&&particleJson.Contains("m_ParticleSystem")&&particleJson.Contains("m_RenderMode")&&particleJson.Contains("emit")&&particleJson.Contains("simulate")&&particleJson.Contains("play"),"particle events retain original component and renderer fields, asset identity, and command payloads");
+Check(particleJson.Contains("123456789")&&particleJson.Contains("startLifetime")&&particleJson.Contains("startSizeMultiplier"),"particle Emit callbacks preserve the authored lifetime, size multiplier, and source random seed");
 var emitterClone=UnityEngine.Object.Instantiate(emitterGo);
 var clonedEmitter=emitterClone.GetComponent<ParticleSystem>()!;
 Check(clonedEmitter.OriginalAssetGuid==emitter.OriginalAssetGuid&&clonedEmitter.OriginalAssetFileID==emitter.OriginalAssetFileID&&clonedEmitter.OriginalAssetPath==emitter.OriginalAssetPath&&clonedEmitter.OriginalAssetSha256==emitter.OriginalAssetSha256,"instantiated particle components retain original component and source-asset provenance");

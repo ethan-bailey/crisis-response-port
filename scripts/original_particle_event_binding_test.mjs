@@ -111,7 +111,8 @@ test('FullSource particle command transport validates provenance, actions and so
       sourcePath:'Assets/Resources/effects/ballistic hits/Concrete entry.prefab',sourceAssetSha256:'a'.repeat(64),
       fields:{m_RenderMode:0}},
     position:[1,2,3],rotation:[0,0,0,1],command:{action:'emit',count:3,maxParticles:512,
-      startSpeed:[2,4],radius:.2,angle:25}};
+      startSpeed:[2,4],startLifetime:[3,3],startSizeMultiplier:1.25,randomSeed:123456789,
+      radius:.2,angle:25}};
   binder.observeSourceCommands([command],5,0);
   binder.observeSourceCommands([{...command,time:5,command:{action:'simulate',simulationTime:.02,
     withChildren:true,restart:true,fixedTimeStep:false}}],5,2);
@@ -139,7 +140,7 @@ test('FullSource particle commands reject missing source identity and malformed 
   assert.throws(()=>binder.observeSourceCommands([{...command,sourceFields:{}}],5),/ParticleSystem module fields/);
   assert.throws(()=>binder.observeSourceCommands([{...command,renderer:{...command.renderer,fields:{}}}],5),/ParticleSystemRenderer fields/);
   assert.throws(()=>binder.observeSourceCommands([{...command,time:6}],5),/after simulation-clock/);
-  assert.throws(()=>binder.observeSourceCommands([{...command,command:{action:'emit',count:-1,startSpeed:[1,2]}}],5),/invalid count/);
+  assert.throws(()=>binder.observeSourceCommands([{...command,command:{...command.command,action:'emit',count:-1}}],5),/invalid count/);
   assert.throws(()=>binder.observeSourceCommands([{...command,command:{action:'restart'}}],5),/unknown/);
 });
 
@@ -149,10 +150,13 @@ test('normal page forwards the FullSource actor particle snapshot into the sourc
   const weaponRuntime=readFileSync(new URL('../game/weapon-runtime.mjs',import.meta.url),'utf8');
   assert.match(html,/observeSourceParticleCommands\(sourceActorSnapshot\.particleEvents,sourceActorSnapshot\.sourceTime,sourceActorSnapshot\.droppedParticleEvents\)/);
   assert.match(presentation,/observeSourceParticleCommands\(events,sourceTime,dropped\)\{effects\.observeSourceParticleCommands/);
-  assert.match(weaponRuntime,/observeSourceParticleCommands:\(events,sourceTime,dropped\)=>originalParticleEvents\.observeSourceCommands/);
+  assert.match(weaponRuntime,/originalParticleEvents\.observeSourceCommands\(events,sourceTime,dropped\)/);
+  assert.match(weaponRuntime,/originalParticleRenderer\.observeCommands\(events\)/);
   const queue=readFileSync(new URL('../runtime/Engine/BrowserParticleEventQueue.cs',import.meta.url),'utf8');
   const loader=readFileSync(new URL('../runtime/Engine/SceneLoader.cs',import.meta.url),'utf8');
   assert.match(queue,/sourceAssetSha256 = system\.OriginalAssetSha256/);
+  assert.match(queue,/randomSeed = state\.randomSeed/);
+  assert.match(queue,/startLifetime = new\[\] \{ state\.startLifetime\.constantMin, state\.startLifetime\.constantMax \}/);
   assert.match(queue,/sourceFields = system\.OriginalSerializedFields/);
   assert.match(queue,/fields = sourceRenderer\.OriginalSerializedFields/);
   assert.match(loader,/component\.OriginalAssetSha256=package\.GetAssetSha256\(assetPath\)/);

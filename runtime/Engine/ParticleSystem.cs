@@ -73,12 +73,19 @@ namespace UnityEngine
         {
             public readonly int maxParticles;
             public readonly MinMaxCurve startSpeed;
+            public readonly MinMaxCurve startLifetime;
+            public readonly float startSizeMultiplier;
+            public readonly uint randomSeed;
             public readonly float radius;
             public readonly float angle;
-            public EmissionState(int maxParticles, MinMaxCurve startSpeed, float radius, float angle)
+            public EmissionState(int maxParticles, MinMaxCurve startSpeed, MinMaxCurve startLifetime,
+                float startSizeMultiplier, uint randomSeed, float radius, float angle)
             {
                 this.maxParticles = maxParticles;
                 this.startSpeed = startSpeed;
+                this.startLifetime = startLifetime;
+                this.startSizeMultiplier = startSizeMultiplier;
+                this.randomSeed = randomSeed;
                 this.radius = radius;
                 this.angle = angle;
             }
@@ -111,7 +118,8 @@ namespace UnityEngine
             if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
             if (Driver == null)
                 throw new NotSupportedException("Original particle simulation and render driver is not bound");
-            Driver.Emit(this, count, new EmissionState(maximumParticles, startSpeedValue, shapeRadius, shapeAngle));
+            Driver.Emit(this, count, new EmissionState(maximumParticles, startSpeedValue, startLifetimeValue,
+                startSizeMultiplierValue, randomSeed, shapeRadius, shapeAngle));
         }
         public int GetCollisionEvents(GameObject other,List<ParticleCollisionEvent> events){
             ArgumentNullException.ThrowIfNull(other);ArgumentNullException.ThrowIfNull(events);
