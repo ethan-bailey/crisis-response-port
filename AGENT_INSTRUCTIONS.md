@@ -14,6 +14,29 @@ dependency. Run the combined relevant verification once after the changes.
 Do not split fixable related work into serial micro-fixes or defer a known
 fixable failure to the next gate pass.
 
+
+### Pre-implementation dependency inventory
+
+Before changing a gate, inventory its complete in-scope dependency set and close
+recoverable dependencies first. Include, as applicable: original source files and
+asset provenance; prefab/scene reference graphs and serialized fields; required
+runtime APIs and lifecycle/order constraints; physics, animation, input, audio,
+and rendering adapters; and the contracts or visible checks that establish
+acceptance. Trace references outward until the gate's dependency closure is
+clear, rather than stopping at the first missing item exposed by a failure.
+
+Record each dependency as recovered and verified, absent with evidence, blocked
+on a named external input, or out of scope with a reason. Do not begin dependent
+implementation while a recoverable in-scope source item remains uncollected.
+When a required item is genuinely unavailable, preserve provenance and fail
+closed; continue only independent work that does not assume it. After the
+inventory is closed, implement the supported items in dependency order as one
+batch and run the combined checks. Treat runtime failures as evidence of a
+previously hidden dependency: add it to the inventory, trace its related
+references, and batch the newly exposed recoverable items before resuming
+implementation. Do not use serial runtime failures as the routine discovery
+process.
+
 This rule does not require a blind all-at-once change. Isolate only the item
 whose batching would create a critical mistake: for example, a destructive or
 irreversible operation with unclear scope, a change that risks data/source
