@@ -34,7 +34,7 @@ namespace UnityEngine {
   public void Render()=>throw new NotSupportedException("Camera rendering requires a bound render pipeline driver");
  }
  public sealed class Rigidbody:Component {
-  public Vector3 velocity;
+  public Vector3 velocity,angularVelocity;
   public float mass=1f,drag,angularDrag=0.05f;
   public float maxAngularVelocity=7f;
   public bool useGravity=true;

@@ -104,6 +104,12 @@ public class Casing : MonoBehaviour
 		Object.Destroy(rigidBody);
 		Object.Destroy(this);
 	}
+
+	/// <summary>Mirror the original OnCollisionStay disable path after browser PhysX sleeps this casing.</summary>
+	public void DisablePhysicsFromBrowser()
+	{
+		Disable();
+	}
 }
 
 }

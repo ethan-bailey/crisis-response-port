@@ -121,14 +121,30 @@ def validate_boot(site):
     return len(checked)
 
 
-def validate_site(site):
+def validate_site(site, source_inventory=None):
     required = ["index.html", "game/index.html", "game/assets/mission01.crg",
+                "game/assets/casing-556.json", "game/assets/casing-556-normal.png",
+                "game/assets/casing-556-occlusion.png", "game/original-casing-runtime.mjs",
                 "game/browser-input.mjs", "game/vendor/physx-js-webidl.mjs",
                 "game/vendor/physx-js-webidl.wasm", "runtime-web/index.html",
                 "runtime-web/browser-input.mjs", "runtime-web/_framework/blazor.webassembly.js",
                 "scene-data/scene-package-loader.mjs"]
     for name in required:
         require((site / name).is_file(), f"Missing site input: {name}")
+    casing = json.loads((site / "game/assets/casing-556.json").read_text())
+    require(casing.get("format") == "original-unity-casing-mesh-v1"
+            and casing.get("collider", {}).get("massKg") == 0.002
+            and casing.get("count", {}).get("vertices", 0) > 0
+            and casing.get("count", {}).get("triangles", 0) > 0,
+            "Original casing geometry or source Rigidbody identity is invalid")
+    source_hashes = casing.get("source", {}).get("hashes", {})
+    if source_inventory is not None and source_hashes:
+        inventory_hashes = {item.get("path"): item.get("sha256") for item in source_inventory}
+        require(len(source_hashes) == 6, "Original casing dependency inventory is incomplete")
+        for asset_path, source_hash in source_hashes.items():
+            inventory_path = "source-reference/Original/" + asset_path
+            require(inventory_hashes.get(inventory_path) == source_hash,
+                    f"Original casing source provenance differs from package input: {asset_path}")
     require(digest(site / "game/browser-input.mjs") == digest(site / "runtime-web/browser-input.mjs"),
             "Game and compiled runtime have different input adapters")
     html = (site / "runtime-web/index.html").read_text()
@@ -257,7 +273,7 @@ def verify(site):
         listed.add(name)
     actual = {p.relative_to(site).as_posix() for p in files(site)} - {MANIFEST}
     require(actual == listed, f"Unlisted package files: {sorted(actual - listed)}")
-    result = validate_site(site)
+    result = validate_site(site, manifest.get("sourceInventory"))
     require(result == manifest["binaryValidation"], "Binary validation differs from manifest")
     return {"status": "verified", "sourceCommit": manifest["sourceCommit"],
             "files": len(listed), **result}
@@ -293,7 +309,13 @@ def package(repo, published, output, toolchain, run_url, incremental_source_pack
     files(repo / "scene-data")
     files(published)
     inventory = []
-    tracked = git(repo, "ls-files", "-z", "--", "game", "runtime", "scripts", ".github/workflows", "tools/wasm-compile", "scene-data")
+    tracked = git(repo, "ls-files", "-z", "--", "game", "runtime", "scripts", ".github/workflows", "tools/wasm-compile", "scene-data",
+                  "source-reference/Original/Assets/Mesh/5.56x45mm casing.asset",
+                  "source-reference/Original/Assets/Resources/weapons/ammunition/casings/Casing 5.56x45mm.prefab",
+                  "source-reference/Original/Assets/Material/Casing brass rough.mat",
+                  "source-reference/Original/Assets/PhysicMaterial/Shell casing.physicMaterial",
+                  "source-reference/Original/Assets/Texture2D/metal dented normal.png",
+                  "source-reference/Original/Assets/Texture2D/NoiseEffectGrain.png")
     for name in sorted(filter(None, tracked.split("\0"))):
         path = repo / name
         require(path.is_file() and not path.is_symlink(), f"Invalid source input: {name}")
@@ -301,6 +323,12 @@ def package(repo, published, output, toolchain, run_url, incremental_source_pack
     require(inventory, "Empty source inventory")
     shutil.copytree(repo / "game", output / "game",
                     ignore=shutil.ignore_patterns("node_modules", ".git", "package.json", "package-lock.json", "mission01.crg.report.json"))
+    casing_source = repo / "source-reference/Original/Assets/Mesh/5.56x45mm casing.asset"
+    if casing_source.is_file():
+        casing_exporter = repo / "scripts/extract_original_casing_mesh.py"
+        require(casing_exporter.is_file(), "Original casing dependency exporter is missing")
+        subprocess.run([sys.executable, str(casing_exporter), str(output / "game/assets/casing-556.json")],
+                       check=True, cwd=repo)
     # The compact runtime scene is a deterministic build output from the
     # tracked original Unity mesh export. Generate it in the package so the
     # source tree does not need to commit a second copy of the scene geometry.
@@ -354,7 +382,7 @@ def package(repo, published, output, toolchain, run_url, incremental_source_pack
         '<meta name="viewport" content="width=device-width,initial-scale=1">'
         '<meta http-equiv="refresh" content="0;url=game/">'
         '<title>Crisis Response</title><a href="game/">Open game</a></html>\n')
-    validation = validate_site(output)
+    validation = validate_site(output, inventory)
     game_html = (output / "game/index.html").read_text()
     importmap = re.search(r'<script type="importmap">(.*?)</script>', game_html, re.S)
     require(importmap is not None, "Original game import map missing")

@@ -24,6 +24,7 @@ public sealed class FullSourceActorBridge
     readonly Action<Rigidbody,Vector3,Vector3,ForceMode> priorWorldPhysicsForceSink;
     readonly Action<Rigidbody,Vector3,ForceMode> priorWorldPhysicsTorqueSink;
     readonly List<object> worldPhysicsCommands=[];
+    readonly Dictionary<int, GameObject> trackedCasingObjects=[];
     readonly FieldInfo accelerationField;
     readonly BrowserAudioEventQueue audioEventQueue;
     int lastFixedSteps;
@@ -178,6 +179,8 @@ public sealed class FullSourceActorBridge
 
     void CaptureWorldForce(Rigidbody target, Vector3 force, Vector3 position, ForceMode mode)
     {
+        if (target.gameObject.GetComponent<Casing>())
+            trackedCasingObjects[target.GetInstanceID()] = target.gameObject;
         worldPhysicsCommands.Add(new
         {
             body = target.GetInstanceID(),
@@ -238,6 +241,93 @@ public sealed class FullSourceActorBridge
         return point;
     }
 
+    /// <summary>Round-trip recovered casing Rigidbody state through the shared browser PhysX scene.</summary>
+    public object SynchronizeCasingPhysics(string statesJson)
+    {
+        world.MakeCurrent();
+        using var document = JsonDocument.Parse(statesJson);
+        if (document.RootElement.ValueKind != JsonValueKind.Array)
+            throw new ArgumentException("Browser casing physics state must be an array", nameof(statesJson));
+        foreach (var state in document.RootElement.EnumerateArray())
+        {
+            if (!state.TryGetProperty("body", out var idElement) || !idElement.TryGetInt32(out var id) ||
+                !trackedCasingObjects.TryGetValue(id, out var gameObject) || !gameObject)
+                continue;
+            var position = ReadVector3(state, "position");
+            var rotation = ReadQuaternion(state, "rotation");
+            var velocity = ReadVector3(state, "velocity");
+            var angularVelocity = ReadVector3(state, "angularVelocity");
+            gameObject.transform.position = position;
+            gameObject.transform.rotation = rotation;
+            var casing = gameObject.GetComponent<Casing>();
+            var body = gameObject.GetComponent<Rigidbody>();
+            if (casing && body)
+            {
+                body.velocity = velocity;
+                body.angularVelocity = angularVelocity;
+                if (state.TryGetProperty("sleeping", out var sleeping) && sleeping.ValueKind == JsonValueKind.True)
+                {
+                    if (position.z < -2.8f && position.y > 0.5f)
+                    {
+                        UnityEngine.Object.Destroy(gameObject);
+                        trackedCasingObjects.Remove(id);
+                    }
+                    else casing.DisablePhysicsFromBrowser();
+                }
+            }
+        }
+        var active = new List<object>();
+        foreach (var (id, gameObject) in trackedCasingObjects.ToArray())
+        {
+            if (!gameObject)
+            {
+                trackedCasingObjects.Remove(id);
+                continue;
+            }
+            var casing = gameObject.GetComponent<Casing>();
+            var body = gameObject.GetComponent<Rigidbody>();
+            if (casing && body)
+                active.Add(CasingState(id, gameObject, body, false));
+            else if (!casing && !body)
+                active.Add(CasingState(id, gameObject, null, true));
+        }
+        return active;
+    }
+
+    static Vector3 ReadVector3(JsonElement state, string key)
+    {
+        var values = state.GetProperty(key).EnumerateArray().Select(value => value.GetSingle()).ToArray();
+        if (values.Length != 3 || values.Any(value => !float.IsFinite(value)))
+            throw new ArgumentException($"Browser casing {key} must contain three finite values");
+        return new Vector3(values[0], values[1], values[2]);
+    }
+
+    static Quaternion ReadQuaternion(JsonElement state, string key)
+    {
+        var values = state.GetProperty(key).EnumerateArray().Select(value => value.GetSingle()).ToArray();
+        if (values.Length != 4 || values.Any(value => !float.IsFinite(value)))
+            throw new ArgumentException($"Browser casing {key} must contain four finite values");
+        return new Quaternion(values[0], values[1], values[2], values[3]);
+    }
+
+    static object CasingState(int id, GameObject gameObject, Rigidbody body, bool settled)
+    {
+        var position = gameObject.transform.position;
+        var rotation = gameObject.transform.rotation;
+        var velocity = body ? body.velocity : Vector3.zero;
+        var angularVelocity = body ? body.angularVelocity : Vector3.zero;
+        return new
+        {
+            body = id,
+            position = new[] { position.x, position.y, position.z },
+            rotation = new[] { rotation.x, rotation.y, rotation.z, rotation.w },
+            velocity = new[] { velocity.x, velocity.y, velocity.z },
+            angularVelocity = new[] { angularVelocity.x, angularVelocity.y, angularVelocity.z },
+            mass = body ? body.mass : 0f,
+            settled
+        };
+    }
+
     void RequirePlayablePlayerUI()
     {
         var mission = Global.Context.Mission;
@@ -295,6 +385,13 @@ public sealed class FullSourceActorBridge
                 commands = physicsCommands.ToArray(),
                 worldCommands = worldPhysicsCommands.ToArray()
             },
+            casings = trackedCasingObjects.Where(item => item.Value).Select(item =>
+            {
+                var casingBody = item.Value.GetComponent<Rigidbody>();
+                var casing = item.Value.GetComponent<Casing>();
+                return casing && casingBody ? CasingState(item.Key, item.Value, casingBody, false) :
+                    !casing && !casingBody ? CasingState(item.Key, item.Value, null, true) : null;
+            }).Where(item => item != null).ToArray(),
             audioEvents,
             droppedAudioEvents = audioEventQueue?.DroppedEvents ?? 0,
             controlSpeed = new {walkCap = lastTickWalkSpeedCap,sprintCap = lastTickSprintSpeedCap,movementMagnitude = pendingMovementMagnitude}
