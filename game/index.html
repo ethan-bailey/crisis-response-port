@@ -154,6 +154,7 @@ import { createOriginalM4MagazineHud } from "./magazine-hud.mjs";
 import { loadPresentationData, configureCamera, createUpperBody } from "./presentation.mjs";
 import { posePosition } from "./animation-pose.mjs";
 import { SourceCharacterAnimator } from "./source-character-animator.mjs";
+import { bindMobileZoomGuard } from "./mobile-zoom-guard.mjs";
 
 const weaponStatus=document.querySelector("#weaponStatus"),startOriginalMissionButton=document.querySelector("#startOriginalMission");
 const missionProgress=document.querySelector("#missionProgress"),missionProgressText=document.querySelector("#missionProgressText");
@@ -170,11 +171,7 @@ const character=new THREE.Group();character.name="Original Operator prefab";scen
 const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(2,0,0),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,contactPhysicsModule=null,contactPhysicsData=null,physicsState=null,physicsTime=0,sprintBlend=0,gaitPhase=0,upperBody=null,presentationData=null,weaponData=null,ballisticsData=null,hasAimPointer=false,aimDirty=false,aimGeneration=0,settledAimGeneration=-1,tapPending=0,tapFrame=false,reloadPending=false,weaponState=null,handRenderers=null,armRig=null,sourceActorMode=false,sourceActorSnapshot=null,projectFullSourceSnapshot=()=>{};const lockedAim=new AimDirection(),aimFireGate=new AimFireGate();
 const loadStart=performance.now(),loadingTimings={};window.__loadingTimings=loadingTimings;
 let sourceLoadController=null;
-let lastStageTouchEnd=0;
-document.addEventListener("touchend",event=>{
- if(!(event.target instanceof Element)||!event.target.closest("#stage,canvas"))return;
- const now=Date.now();if(now-lastStageTouchEnd<350)event.preventDefault();lastStageTouchEnd=now;
-},{passive:false});
+bindMobileZoomGuard(document);
 const markLoaded=name=>loadingTimings[name]=performance.now()-loadStart;
 function showError(e,{retry,hint}={}){
  const message=String(e?.message||e),stack=String(e?.stack||"");

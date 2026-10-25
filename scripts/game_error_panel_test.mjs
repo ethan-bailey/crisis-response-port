@@ -25,5 +25,6 @@ test("game errors are readable, selectable, copyable, and no longer covered by M
   assert.match(html, /TickFullSourceActorBridge",elapsed,JSON\.stringify\(rawActions\),mouseX,mouseY,sourceMoveMagnitude/);
   assert.match(html, /id="cancelMissionLoad" type="button">Cancel/);
   assert.match(html, /signal:sourceLoadController\.signal/);
-  assert.match(html, /event\.preventDefault\(\);lastStageTouchEnd=now/);
+  assert.match(html, /import \{ bindMobileZoomGuard \} from "\.\/mobile-zoom-guard\.mjs"/);
+  assert.match(html, /bindMobileZoomGuard\(document\)/);
 });
