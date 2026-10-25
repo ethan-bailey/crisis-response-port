@@ -284,3 +284,60 @@ not prove the real weapon callback, loop/mixer/spatial behavior, default-page
 FullSource ownership, or iPhone audio acceptance. Next test an actual source
 gunfire/reload callback and preserve the delayed/loud iPhone report as the
 device acceptance case.
+
+## Source weapon audio callback contract and Site version 55
+
+At exact runtime source SHA `7739bbccc7583e09461c294975d77612c1499492`, the
+Mission contract locates the original M4A1 and invokes its private source
+`WeaponBase.EmitMuzzleAudio(true)` callback. It verifies that the original
+`PropagatingAudioSample`/`AudioSource` path queues both authored clips:
+
+- `Assets/AudioClip/5.56x45mm-01-unsuppressed.wav` for the weapon report.
+- `Assets/AudioClip/5.56x45mm-crack-interior.wav` for the supersonic crack.
+
+The check verifies one-shot disposition, bounded volume, and source-time
+alignment in the browser audio event queue. It proves source clip identity and
+browser mapping for the real source callback; it does **not** prove that a
+player fire input reaches that callback. In the one-step headless Mission
+input check, `controllerFireAudioEvents` remained zero. The original
+`CharacterBody.PullTrigger()` only continues when `rightArm.OnTarget`, so the
+next source gate is to trace arm readiness and input sequencing across source
+fixed steps.
+
+An exploratory direct call to the original `WeaponMechanism.StrikeFiringPin()`
+reached `WeaponBase.EmitMuzzleSmoke` and threw
+`System.NotSupportedException: Original particle simulation and render driver
+is not bound`. The source fire path therefore cannot yet be claimed end-to-end:
+the original particle system adapter must be bound and validated before the
+test can prove projectile, recoil, smoke, and synchronized muzzle audio. Do
+not ignore this failure or replace it with synthetic audio queue injection.
+
+At this source SHA, Node checks passed **85/85**, Python checks **39/39**,
+`--browser-entryteam-session-contract` passed including the source callback
+clip assertions, EngineChecks passed **69**, and FoundationChecks passed
+**121**. Browser Release publish succeeded with zero errors; optional
+`wasm-tools` optimization was unavailable.
+
+The exact package manifest SHA-256 is
+`bbb7a1184dfe7e4041e27ce139dbe72ff1335aaf9189d26671b71293cca51755`.
+Independent verification passed for 2,674 files, 199 Blazor resources, 195
+WASM files, and 1,919 source assets (97,767,549 compressed bytes / 205,514,345
+source bytes). Site checks passed **36/36**. Artifact repository commit is
+`55b911ff6d55542cf9609723c2e288f45fe08f63`; archive SHA-256 is
+`b6288693d8f68aae128b76c92a76838c4d9d1d648d01e6b2d6353c2fc128a4fc`. A
+streaming extraction audit matched every package file and digest, with no
+missing or unexpected payload.
+
+On 2026-10-25, the package built from this exact source SHA was deployed as
+private Site version 55:
+
+- Version: `appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_ae15aba1e49881919e7f6d07e0b2eb57`
+- Deployment: `appgdep_6ade4a97891c8191a18ebd5722b1ca14`
+- URL: `https://crisis-response-runtime.craftysnipe13.chatgpt.site`
+
+The deployment is release-integrity verified, not full gameplay parity. iPhone
+Safari acceptance and browser automation remain outstanding; Playwright and
+browser binaries are unavailable in this runner. Owner retest should collect
+the existing bounded delivery/memory report and check gun timing/loudness
+immediately after load and after extended play. Remaining dependency-ordered
+gates and the next action are indexed in `NEXT_AGENT.md`.
