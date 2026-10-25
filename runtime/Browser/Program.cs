@@ -24,6 +24,8 @@ public static class RuntimeBridge {
     static SceneLoadResult scene;
     static Crisis.Runtime.Presentation.PresentationHost presentation;
     static Crisis.Runtime.FullSourceActorBridge fullSourceActor;
+    static OriginalSourcePackage originalSourcePackage;
+    static RuntimeWorld incrementalSourceWorld;
     [JSInvokable] public static string InitializePresentation(string json){presentation=new(json);return "ready";}
     [JSInvokable] public static string SolvePresentationArms(string json)=>Crisis.Runtime.Presentation.PresentationHost.SolveArms(json);
     [JSInvokable] public static string StepPresentation(string json){if(weapons!=null)presentation.SetWeaponState(weapons.Kick,weapons.Climb);return presentation.Step(json);}
@@ -36,6 +38,22 @@ public static class RuntimeBridge {
         input.Tick(seconds);return JsonSerializer.Serialize(input.Snapshot());
     }
     [JSInvokable] public static string LoadScene(string package,string path){scene=SceneLoader.Load(package,path);return JsonSerializer.Serialize(scene.Report());}
+    [JSInvokable] public static string InitializeIncrementalSourcePackage(string metadataJson){
+        originalSourcePackage=OriginalSourcePackage.CreateIncremental(metadataJson);
+        incrementalSourceWorld=new RuntimeWorld();
+        Resources.Configure(originalSourcePackage,incrementalSourceWorld);
+        return JsonSerializer.Serialize(new{expectedAssets=originalSourcePackage.ExpectedAssetCount,receivedAssets=originalSourcePackage.AssetCount,receivedBytes=originalSourcePackage.DeliveredBytes});
+    }
+    [JSInvokable] public static string AddIncrementalSourceAsset(string assetPath,string assetJson){
+        var source=originalSourcePackage??throw new InvalidOperationException("Incremental source package is not initialized");
+        bool added=source.AddVerifiedAsset(assetPath,assetJson);
+        return JsonSerializer.Serialize(new{added,expectedAssets=source.ExpectedAssetCount,receivedAssets=source.AssetCount,receivedBytes=source.DeliveredBytes});
+    }
+    [JSInvokable] public static string LoadIncrementalSourceScene(string path){
+        var source=originalSourcePackage??throw new InvalidOperationException("Incremental source package is not initialized");
+        scene=SceneLoader.Load(source,path,incrementalSourceWorld??throw new InvalidOperationException("Incremental source world is not initialized"));
+        return JsonSerializer.Serialize(scene.Report());
+    }
     [JSInvokable] public static string InitializeGlobalContext(){if(scene is null)throw new InvalidOperationException("Cannot initialize Global.Context before a scene is loaded");var context=scene.world.Objects.OfType<Crisis.Runtime.FullSource.GlobalContext>().FirstOrDefault();if(context is null)throw new InvalidOperationException("GlobalContext component is absent from the loaded original scene");Crisis.Runtime.FullSource.Global.Instance.Initialize(context.gameObject);return JsonSerializer.Serialize(new{initialized=true});}
     [JSInvokable] public static string InitializeFullSourceActorBridge(string actorName){
         if(scene is null)throw new InvalidOperationException("Cannot bind a FullSource actor before its original world is loaded");

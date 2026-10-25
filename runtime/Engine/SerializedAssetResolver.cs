@@ -8,7 +8,9 @@ namespace UnityEngine;
 /// <summary>Resolves serialized Unity GUID/fileID pairs against the preserved execution package.</summary>
 internal static class SerializedAssetResolver {
     static readonly ConditionalWeakTable<RuntimeWorld,Dictionary<string,Object>> cacheByWorld=new();
-    internal static Object Resolve(JsonElement package,string guid,string fileID,RuntimeWorld world,Type expectedType,bool requireComplete=true) {
+    internal static Object Resolve(JsonElement package,string guid,string fileID,RuntimeWorld world,Type expectedType,bool requireComplete=true) =>
+        Resolve(OriginalSourcePackage.FromJsonElement(package),guid,fileID,world,expectedType,requireComplete);
+    internal static Object Resolve(OriginalSourcePackage package,string guid,string fileID,RuntimeWorld world,Type expectedType,bool requireComplete=true) {
         ArgumentNullException.ThrowIfNull(world);ArgumentNullException.ThrowIfNull(expectedType);
         var cache=cacheByWorld.GetValue(world,_=>new(StringComparer.Ordinal));
         string key=guid+":"+fileID;
@@ -24,7 +26,7 @@ internal static class SerializedAssetResolver {
         if(!package.TryGetProperty("guidPaths",out var paths)||!paths.TryGetProperty(guid,out var pathValue))
             throw new KeyNotFoundException($"Package has no asset for GUID {guid} ({fileID})");
         string path=pathValue.GetString();
-        if(!package.GetProperty("assets").TryGetProperty(path,out var asset))throw new KeyNotFoundException($"Package GUID {guid} points to missing asset {path}");
+        if(!package.TryGetAsset(path,out var asset))throw new KeyNotFoundException($"Package GUID {guid} points to missing asset {path}");
         var assetRecords=asset.GetProperty("records");
         if(assetRecords.GetArrayLength()==0&&expectedType==typeof(Texture2D)&&asset.TryGetProperty("dataBase64",out var encodedTexture))
             return ResolvePngTexture(package,asset,guid,fileID,path,Convert.FromBase64String(encodedTexture.GetString()),world,cache);
@@ -60,7 +62,7 @@ internal static class SerializedAssetResolver {
         foreach(var property in fields.EnumerateObject())mixer.OriginalSerializedFields[property.Name]=property.Value.Clone();
         world.Register(mixer);cache[key]=mixer;return mixer;
     }
-    static Texture2D ResolvePngTexture(JsonElement package,JsonElement asset,string guid,string fileID,string path,byte[] bytes,RuntimeWorld world,Dictionary<string,Object> cache) {
+    static Texture2D ResolvePngTexture(OriginalSourcePackage package,JsonElement asset,string guid,string fileID,string path,byte[] bytes,RuntimeWorld world,Dictionary<string,Object> cache) {
         if(!path.EndsWith(".png",StringComparison.OrdinalIgnoreCase))throw new NotSupportedException($"Binary Texture2D format is unsupported: {path}");
         string sourceHash=Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(bytes)).ToLowerInvariant();
         if(!asset.TryGetProperty("sha256",out var sourceHashValue)||sourceHashValue.GetString()!=sourceHash)
@@ -166,7 +168,7 @@ internal static class SerializedAssetResolver {
         for(int i=12;i+8<=bytes.Length;){string chunk=System.Text.Encoding.ASCII.GetString(bytes,i,4);uint size=System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan(i+4,4));if(chunk=="data")return (float)size/byteRate;i=checked(i+8+(int)size+(int)(size&1));}
         throw new InvalidDataException("Packaged WAVE AudioClip has no data chunk");
     }
-    static Object CreateBuiltin(JsonElement package,string guid,string fileID,string kind,RuntimeWorld world,Dictionary<string,Object> cache) {
+    static Object CreateBuiltin(OriginalSourcePackage package,string guid,string fileID,string kind,RuntimeWorld world,Dictionary<string,Object> cache) {
         if(package.TryGetProperty("builtinResourceRecords",out var resourcePack)&&
            resourcePack.TryGetProperty("records",out var records)&&records.TryGetProperty(fileID,out var record))
             return CreateRecoveredBuiltin(package,guid,fileID,kind,record,world,cache);
@@ -182,7 +184,7 @@ internal static class SerializedAssetResolver {
             _=>throw new NotSupportedException($"Built-in Unity object {guid}:{fileID} of type {kind} is not supported")
         };
     }
-    static Object CreateRecoveredBuiltin(JsonElement package,string guid,string fileID,string expectedKind,JsonElement record,RuntimeWorld world,Dictionary<string,Object> cache) {
+    static Object CreateRecoveredBuiltin(OriginalSourcePackage package,string guid,string fileID,string expectedKind,JsonElement record,RuntimeWorld world,Dictionary<string,Object> cache) {
         string recordKind=record.GetProperty("type").GetString();
         if(recordKind!=expectedKind||record.GetProperty("fileID").GetString()!=fileID)
             throw new InvalidDataException($"Recovered built-in record {guid}:{fileID} has type/ID {recordKind}:{record.GetProperty("fileID").GetString()}, expected {expectedKind}:{fileID}");

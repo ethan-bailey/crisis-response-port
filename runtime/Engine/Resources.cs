@@ -4,29 +4,32 @@ using Crisis.Runtime;
 namespace UnityEngine;
 
 public static class Resources {
-    static string packageText;
+    static OriginalSourcePackage package;
     static readonly Dictionary<string,string> paths=new(StringComparer.OrdinalIgnoreCase);
     static readonly Dictionary<string,Object> cache=new(StringComparer.OrdinalIgnoreCase);
     static RuntimeWorld assetWorld;
     public static void Configure(string executionPackage,RuntimeWorld world=null){
-        using var document=JsonDocument.Parse(executionPackage);paths.Clear();cache.Clear();packageText=executionPackage;
-        foreach(var property in document.RootElement.GetProperty("assets").EnumerateObject()){
-            const string prefix="Assets/Resources/";var path=property.Name;if(!path.StartsWith(prefix,StringComparison.OrdinalIgnoreCase))continue;
+        Configure(OriginalSourcePackage.FromJson(executionPackage),world);
+    }
+    public static void Configure(OriginalSourcePackage sourcePackage,RuntimeWorld world=null){
+        ArgumentNullException.ThrowIfNull(sourcePackage);paths.Clear();cache.Clear();package=sourcePackage;
+        foreach(var path in sourcePackage.AssetPaths){
+            const string prefix="Assets/Resources/";if(!path.StartsWith(prefix,StringComparison.OrdinalIgnoreCase))continue;
             var key=Path.ChangeExtension(path[prefix.Length..],null).Replace('\\','/');
             if(!paths.TryAdd(key,path))throw new InvalidOperationException($"Ambiguous resource path {key}");
         }
         assetWorld=world??new RuntimeWorld(makeCurrent:false,resetClock:false);
     }
     public static Object Load(string path){
-        if(packageText==null)throw new InvalidOperationException("Original resource package is not configured");
+        if(package==null)throw new InvalidOperationException("Original resource package is not configured");
         path=path.Replace('\\','/');if(cache.TryGetValue(path,out var cached)&&cached)return cached;
         if(!paths.TryGetValue(path,out var assetPath))return null;
         if(assetPath.StartsWith("Assets/Resources/characters/",StringComparison.OrdinalIgnoreCase)&&assetPath.EndsWith(".prefab",StringComparison.OrdinalIgnoreCase)){
-            var loaded=SceneLoader.LoadPrefab(packageText,assetPath,assetWorld,requireComplete:true);
+            var loaded=SceneLoader.LoadPrefab(package,assetPath,assetWorld,requireComplete:true);
             cache[path]=loaded.prefabRoot;return loaded.prefabRoot;
         }
         if(assetPath.StartsWith("Assets/Resources/items/",StringComparison.OrdinalIgnoreCase)){
-            var loaded=SceneLoader.LoadPrefab(packageText,assetPath,assetWorld,requireComplete:true);
+            var loaded=SceneLoader.LoadPrefab(package,assetPath,assetWorld,requireComplete:true);
             cache[path]=loaded.prefabRoot;return loaded.prefabRoot;
         }
         if(assetPath.StartsWith("Assets/Resources/weapons/ammunition/",StringComparison.OrdinalIgnoreCase)){
@@ -36,17 +39,17 @@ public static class Resources {
             // field-only loader attached the transport/global AmmunitionBase,
             // so FullSource.AmmunitionBase.GetAmmunition returned null and
             // original WeaponBase.InitializeAmmunition left the weapon empty.
-            var loaded=SceneLoader.LoadPrefab(packageText,assetPath,assetWorld,requireComplete:true);
+            var loaded=SceneLoader.LoadPrefab(package,assetPath,assetWorld,requireComplete:true);
             loaded.prefabRoot.assetObject=true;
             cache[path]=loaded.prefabRoot;return loaded.prefabRoot;
         }
         if(assetPath.StartsWith("Assets/Resources/weapons/",StringComparison.OrdinalIgnoreCase)){
-            var loaded=SceneLoader.LoadPrefab(packageText,assetPath,assetWorld,requireComplete:true);
+            var loaded=SceneLoader.LoadPrefab(package,assetPath,assetWorld,requireComplete:true);
             loaded.prefabRoot.assetObject=true;
             cache[path]=loaded.prefabRoot;return loaded.prefabRoot;
         }
         if(assetPath.StartsWith("Assets/Resources/",StringComparison.OrdinalIgnoreCase)&&assetPath.EndsWith(".prefab",StringComparison.OrdinalIgnoreCase)){
-            var loaded=SceneLoader.LoadPrefab(packageText,assetPath,assetWorld,requireComplete:true);
+            var loaded=SceneLoader.LoadPrefab(package,assetPath,assetWorld,requireComplete:true);
             loaded.prefabRoot.assetObject=true;
             cache[path]=loaded.prefabRoot;return loaded.prefabRoot;
         }

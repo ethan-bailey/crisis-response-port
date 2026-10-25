@@ -16,7 +16,7 @@ public sealed class SceneLoadResult {
     public Dictionary<string,int> unsupportedComponents {get;set;}=[];
     public List<string> unresolvedReferences {get;set;}=[];
     public Dictionary<string,UObject> objects {get;}=[];
-    internal JsonElement package;
+    internal OriginalSourcePackage package;
     internal bool requireComplete;
     public RuntimeWorld world {get;set;}
     public GameObject prefabRoot {get;set;}
@@ -43,38 +43,38 @@ public static class SceneLoader {
             sourceObject=box.name,directDistance=direct.distance,nearestObject=nearest.collider.name,nearestDistance=nearest.distance};
     }
     public static SceneLoadResult Load(string json,string scene,bool resetClock=true){
-        using var document=JsonDocument.Parse(json);
-        return LoadRecords(document.RootElement,scene,new RuntimeWorld(resetClock:resetClock),false,false,false);
+        return Load(OriginalSourcePackage.FromJson(json),scene,new RuntimeWorld(resetClock:resetClock));
     }
     public static SceneLoadResult Load(string json,string scene,RuntimeWorld world,Action<SceneLoadResult> beforeActivate=null){
-        using var document=JsonDocument.Parse(json);
-        return LoadRecords(document.RootElement,scene,world,false,false,false,beforeActivate);
+        return Load(OriginalSourcePackage.FromJson(json),scene,world,beforeActivate);
+    }
+    public static SceneLoadResult Load(OriginalSourcePackage package,string scene,RuntimeWorld world,Action<SceneLoadResult> beforeActivate=null){
+        ArgumentNullException.ThrowIfNull(package);
+        return LoadRecords(package,scene,world,false,false,false,beforeActivate);
     }
     static readonly System.Threading.AsyncLocal<HashSet<string>> prefabLoadStack=new();
     public static SceneLoadResult LoadPrefab(string json,string prefabPath,RuntimeWorld world,bool requireComplete=true){
-        using var document=JsonDocument.Parse(json);
-        return LoadPrefab(document.RootElement,prefabPath,world,requireComplete);
+        return LoadPrefab(OriginalSourcePackage.FromJson(json),prefabPath,world,requireComplete);
     }
-    internal static SceneLoadResult LoadPrefab(JsonElement package,string prefabPath,RuntimeWorld world,bool requireComplete=true){
+    public static SceneLoadResult LoadPrefab(OriginalSourcePackage package,string prefabPath,RuntimeWorld world,bool requireComplete=true){
         var stack=prefabLoadStack.Value??=new HashSet<string>(StringComparer.Ordinal);
         if(!stack.Add(prefabPath))throw new InvalidOperationException($"Cyclic prefab asset dependency: {string.Join(" -> ",stack)} -> {prefabPath}");
         try{return LoadRecords(package,prefabPath,world,true,requireComplete,true);}
         finally{stack.Remove(prefabPath);if(stack.Count==0)prefabLoadStack.Value=null;}
     }
     public static SceneLoadResult LoadPrefabInstance(string json,string prefabPath,RuntimeWorld world,bool requireComplete=true){
-        using var document=JsonDocument.Parse(json);
-        return LoadPrefabInstance(document.RootElement,prefabPath,world,requireComplete);
+        return LoadPrefabInstance(OriginalSourcePackage.FromJson(json),prefabPath,world,requireComplete);
     }
-    internal static SceneLoadResult LoadPrefabInstance(JsonElement package,string prefabPath,RuntimeWorld world,bool requireComplete=true){
+    public static SceneLoadResult LoadPrefabInstance(OriginalSourcePackage package,string prefabPath,RuntimeWorld world,bool requireComplete=true){
         var stack=prefabLoadStack.Value??=new HashSet<string>(StringComparer.Ordinal);
         if(!stack.Add(prefabPath))throw new InvalidOperationException($"Cyclic prefab asset dependency: {string.Join(" -> ",stack)} -> {prefabPath}");
         try{return LoadRecords(package,prefabPath,world,true,requireComplete,false);}
         finally{stack.Remove(prefabPath);if(stack.Count==0)prefabLoadStack.Value=null;}
     }
 
-    static SceneLoadResult LoadRecords(JsonElement package,string assetPath,RuntimeWorld world,bool prefab,bool requireComplete,bool markAsAsset=true,Action<SceneLoadResult> beforeActivate=null){
+    static SceneLoadResult LoadRecords(OriginalSourcePackage package,string assetPath,RuntimeWorld world,bool prefab,bool requireComplete,bool markAsAsset=true,Action<SceneLoadResult> beforeActivate=null){
         ArgumentNullException.ThrowIfNull(world);
-        var asset=package.GetProperty("assets").GetProperty(assetPath);
+        var asset=package.GetAsset(assetPath);
         var records=asset.GetProperty("records").EnumerateArray().Select(r=>r.Clone()).ToArray();
         var result=new SceneLoadResult{scene=assetPath,serializedRecords=records.Length,world=world,requireComplete=requireComplete};
         result.package=package;
@@ -178,7 +178,7 @@ public static class SceneLoader {
                 result.prefabRoot=roots[0].gameObject;
                 foreach(var go in world.Objects.OfType<GameObject>().Where(g=>ReferenceEquals(g.world,world)&&g!=null&&IsWithin(g.transform,roots[0])))go.assetObject=markAsAsset;
             }
-            if(!prefab&&package.GetProperty("assets").TryGetProperty("ProjectSettings/TimeManager.asset",out var timeAsset)){
+            if(!prefab&&package.TryGetAsset("ProjectSettings/TimeManager.asset",out var timeAsset)){
                 var settings=timeAsset.GetProperty("records")[0].GetProperty("fields");
                 Time.fixedDeltaTime=Number(settings,"Fixed Timestep",.02f);Time.maximumDeltaTime=Number(settings,"Maximum Allowed Timestep",.33333334f);Time.timeScale=Number(settings,"m_TimeScale",1);
             }
@@ -203,13 +203,13 @@ public static class SceneLoader {
         ["1367256648"]="ScrollRect",["1392445389"]="Button",["1679637790"]="LayoutElement",
         ["1741964061"]="ContentSizeFitter",["1980459831"]="CanvasScaler",["2109663825"]="Toggle",
     };
-    static string ResolveScriptName(JsonElement package,string guid,string fileID){
+    static string ResolveScriptName(OriginalSourcePackage package,string guid,string fileID){
         if(package.TryGetProperty("scriptTypes",out var bindings)&&bindings.TryGetProperty(guid,out var types)&&types.TryGetProperty(fileID,out var mapped))return mapped.GetString();
         if(guid==UnityUiGuid&&UnityUiTypes.TryGetValue(fileID,out var uiType))return uiType;
         if(package.GetProperty("guidPaths").TryGetProperty(guid,out var source))return Path.GetFileNameWithoutExtension(source.GetString());
         return $"Script:{guid}:{fileID}";
     }
-    static Type ResolveScriptType(JsonElement package,string guid,string fileID){
+    static Type ResolveScriptType(OriginalSourcePackage package,string guid,string fileID){
         string name=ResolveScriptName(package,guid,fileID);
         // The recovered projectile prefab serializes the full original component
         // fields; its selected source implementation lives in FullSource despite
