@@ -23,6 +23,7 @@ public static class RuntimeBridge {
     [JSInvokable] public static string OriginalWindowVisuals()=>JsonSerializer.Serialize(weapons?.Ballistics?.WindowVisuals()??throw new InvalidOperationException("Original windows not initialized"));
     static SceneLoadResult scene;
     static Crisis.Runtime.Presentation.PresentationHost presentation;
+    static Crisis.Runtime.FullSourceActorBridge fullSourceActor;
     [JSInvokable] public static string InitializePresentation(string json){presentation=new(json);return "ready";}
     [JSInvokable] public static string SolvePresentationArms(string json)=>Crisis.Runtime.Presentation.PresentationHost.SolveArms(json);
     [JSInvokable] public static string StepPresentation(string json){if(weapons!=null)presentation.SetWeaponState(weapons.Kick,weapons.Climb);return presentation.Step(json);}
@@ -36,6 +37,15 @@ public static class RuntimeBridge {
     }
     [JSInvokable] public static string LoadScene(string package,string path){scene=SceneLoader.Load(package,path);return JsonSerializer.Serialize(scene.Report());}
     [JSInvokable] public static string InitializeGlobalContext(){if(scene is null)throw new InvalidOperationException("Cannot initialize Global.Context before a scene is loaded");var context=scene.world.Objects.OfType<Crisis.Runtime.FullSource.GlobalContext>().FirstOrDefault();if(context is null)throw new InvalidOperationException("GlobalContext component is absent from the loaded original scene");Crisis.Runtime.FullSource.Global.Instance.Initialize(context.gameObject);return JsonSerializer.Serialize(new{initialized=true});}
+    [JSInvokable] public static string InitializeFullSourceActorBridge(string actorName){
+        if(scene is null)throw new InvalidOperationException("Cannot bind a FullSource actor before its original world is loaded");
+        scene.world.MakeCurrent();
+        var actors=scene.world.Objects.OfType<Crisis.Runtime.FullSource.CharacterBody>().Where(body=>body&&body.name==actorName).ToArray();
+        if(actors.Length!=1)throw new InvalidOperationException($"Expected one loaded FullSource actor named '{actorName}', found {actors.Length}");
+        fullSourceActor=new(scene.world,actors[0]);
+        return JsonSerializer.Serialize(fullSourceActor.Snapshot());
+    }
+    [JSInvokable] public static string TickFullSourceActorBridge(float elapsedSeconds,string actionsJson,float mouseX,float mouseY)=>JsonSerializer.Serialize((fullSourceActor??throw new InvalidOperationException("FullSource actor bridge is not initialized")).Step(elapsedSeconds,actionsJson,mouseX,mouseY));
     [JSInvokable] public static string VerifyAmmunition(string package,string path)=>JsonSerializer.Serialize(AmmunitionLoader.VerifyOriginalPrefab(package,path));
     [JSInvokable] public static string VerifyResource(string package,string name)=>JsonSerializer.Serialize(AmmunitionLoader.VerifyOriginalResource(package,name));
     [JSInvokable] public static string VerifySceneRay()=>scene==null?throw new InvalidOperationException("No scene loaded"):JsonSerializer.Serialize(SceneLoader.VerifyImportedRay(scene));

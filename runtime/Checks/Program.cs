@@ -96,6 +96,19 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-outcome-c
     if(!missionComponent.Started)throw new InvalidOperationException("Original Mission did not reach BeginMission during normal RuntimeWorld startup");
     if(bodies.Length<2||!bodies.Any(body=>body.GetComponent<Crisis.Runtime.FullSource.TeamOperator>()!=null)||!bodies.Any(body=>body.GetComponent<Crisis.Runtime.FullSource.Occupant>()!=null))
         throw new InvalidOperationException($"Mission 01 actor flow did not produce an Operator and Occupant; bodies={bodies.Length}");
+    var activePlayerControllers=world.Objects.OfType<Crisis.Runtime.FullSource.PlayerController>()
+        .Where(controller=>controller&&controller.isActiveAndEnabled&&controller.Body!=null&&controller.Body.IsPlayer).ToArray();
+    if(activePlayerControllers.Length!=1)
+        throw new InvalidOperationException($"FullSource actor bridge requires exactly one active original player actor; found {activePlayerControllers.Length}");
+    var fullSourceBridge=new FullSourceActorBridge(world,activePlayerControllers[0].Body);
+    using(var poseSnapshot=JsonDocument.Parse(JsonSerializer.Serialize(fullSourceBridge.Snapshot())))
+        if(poseSnapshot.RootElement.GetProperty("owner").GetString()!="FullSource.CharacterBody"||
+           poseSnapshot.RootElement.GetProperty("poses").GetArrayLength()<20)
+            throw new InvalidOperationException("FullSource actor bridge did not return the actor-owned authored hierarchy snapshot");
+    try{
+        fullSourceBridge.Step(1f/60f,"{\"left\":true}",0f,0f);
+        throw new InvalidOperationException("FullSource bridge tick accepted Mission 01's intentionally incomplete, headless player UI");
+    }catch(NotSupportedException error) when(error.Message.Contains("InteractionMenu",StringComparison.Ordinal)){}
     if(args[0]=="--mission-projectile-contract"||args[0]=="--mission-ai-projectile-contract"){
         var report=MissionProjectileContracts.Describe(world,missionComponent,bodies);
         Console.WriteLine(report);
@@ -167,7 +180,7 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-outcome-c
     }
     var liveTrees=world.Objects.OfType<BehaviorDesigner.Runtime.BehaviorTree>().Where(tree=>tree.enabled).ToArray();
     if(runOriginalAI&&(liveTrees.Length==0||liveTrees.Any(tree=>tree.GetBehaviorSource().RootTask==null)))throw new InvalidOperationException($"Original mission AI trees did not remain active with deserialized roots: activeTrees={liveTrees.Length}");
-    Console.WriteLine(JsonSerializer.Serialize(new{mission=mission.scene,missionStarted=missionComponent.Started,globalContext=context.gameObject.name,globalContextInstantiated=!ReferenceEquals(context.gameObject,contextPrefab.prefabRoot),sourceActors=bodies.Length,operators=bodies.Count(body=>body.GetComponent<Crisis.Runtime.FullSource.TeamOperator>()!=null),occupants=bodies.Count(body=>body.GetComponent<Crisis.Runtime.FullSource.Occupant>()!=null),ai=runOriginalAI?"original BehaviorTrees enabled for one simulated second":"suppressed in headless mission contract",aiSimulationTicks,aiForceCommands,behaviorTrees=liveTrees.Length,behaviorTreeStatus=liveTrees.Select(tree=>new{root=tree.GetBehaviorSource().RootTask?.GetType().Name,execution=tree.ExecutionStatus.ToString()}).ToArray(),sceneObjects=mission.gameObjects,originalComponents=mission.originalComponents,missionUnsupported=mission.unsupportedComponents,missionUnresolved=mission.unresolvedReferences,globalContextUnsupported=contextPrefab.unsupportedComponents,globalContextUnresolved=contextPrefab.unresolvedReferences,audio="silent test adapter; original decode/playback not verified"}));
+    Console.WriteLine(JsonSerializer.Serialize(new{mission=mission.scene,missionStarted=missionComponent.Started,globalContext=context.gameObject.name,globalContextInstantiated=!ReferenceEquals(context.gameObject,contextPrefab.prefabRoot),sourceActors=bodies.Length,operators=bodies.Count(body=>body.GetComponent<Crisis.Runtime.FullSource.TeamOperator>()!=null),occupants=bodies.Count(body=>body.GetComponent<Crisis.Runtime.FullSource.Occupant>()!=null),fullSourceActorBridge="snapshot passed; step correctly rejected missing authored InteractionMenu UI",ai=runOriginalAI?"original BehaviorTrees enabled for one simulated second":"suppressed in headless mission contract",aiSimulationTicks,aiForceCommands,behaviorTrees=liveTrees.Length,behaviorTreeStatus=liveTrees.Select(tree=>new{root=tree.GetBehaviorSource().RootTask?.GetType().Name,execution=tree.ExecutionStatus.ToString()}).ToArray(),sceneObjects=mission.gameObjects,originalComponents=mission.originalComponents,missionUnsupported=mission.unsupportedComponents,missionUnresolved=mission.unresolvedReferences,globalContextUnsupported=contextPrefab.unsupportedComponents,globalContextUnresolved=contextPrefab.unresolvedReferences,audio="silent test adapter; original decode/playback not verified"}));
     return;
 }
 var runLifecycle=args.Contains("--prefab-lifecycle");if(runLifecycle||args.Contains("--prefab-instantiate")){
