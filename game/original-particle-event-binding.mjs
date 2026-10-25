@@ -138,7 +138,7 @@ export function createOriginalParticleEventBinding(particles,materials) {
         'FullSource particle command occurs after simulation-clock snapshot');
       requireSource(GUID.test(event.sourceGuid||'')&&/^\d+$/.test(String(event.sourceFileId||''))&&
         typeof event.sourcePath==='string'&&event.sourcePath.startsWith('Assets/')&&
-        SHA.test(event.sourceComponentSha256||''),
+        SHA.test(event.sourceAssetSha256||''),
         'FullSource particle command is missing original component provenance');
       requireSource(typeof event.hierarchyPath==='string'&&event.hierarchyPath.length>0&&
         Array.isArray(event.position)&&event.position.length===3&&event.position.every(Number.isFinite)&&

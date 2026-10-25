@@ -51,6 +51,8 @@ public static class OriginalSourcePackageContracts {
             throw new InvalidOperationException("Incremental source package did not initialize empty against its manifest");
         if(!package.AddVerifiedGzipAsset(assetPath,compressed)||package.AssetCount!=1)
             throw new InvalidOperationException("Verified source asset was not added");
+        if(package.GetAssetSha256(assetPath)!=hash||package.GetAssetGuid(assetPath)!="source-guid")
+            throw new InvalidOperationException("Verified source asset checksum or GUID lookup failed");
         if(package.AddVerifiedGzipAsset(assetPath,compressed)||package.AddVerifiedAsset(assetPath,sourceAsset)||package.AssetCount!=1)
             throw new InvalidOperationException("Identical source asset retry was not idempotent");
         var record=package.GetAsset(assetPath).GetProperty("records")[0];
@@ -75,6 +77,6 @@ public static class OriginalSourcePackageContracts {
         var legacy=OriginalSourcePackage.FromJson(JsonSerializer.Serialize(new{assets=new Dictionary<string,JsonElement>{{assetPath,legacyDocument.RootElement}}}));
         if(legacy.AssetCount!=1||legacy.GetAsset(assetPath).GetProperty("records").GetArrayLength()!=2)
             throw new InvalidOperationException("Legacy monolithic package compatibility failed");
-        return JsonSerializer.Serialize(new{status="PASS",verifiedAssetBytes=bytes.Length,verifiedCompressedBytes=compressed.Length,verifiedAssetSha256=hash,metadataLookup=true,duplicateRetry="idempotent",lazyJsonHydration="passed",sceneLoad="same RuntimeWorld",badHash="rejected",missingAsset="fail-closed",legacyPackage="compatible"});
+        return JsonSerializer.Serialize(new{status="PASS",verifiedAssetBytes=bytes.Length,verifiedCompressedBytes=compressed.Length,verifiedAssetSha256=hash,metadataLookup=true,sourceIdentityLookups=true,duplicateRetry="idempotent",lazyJsonHydration="passed",sceneLoad="same RuntimeWorld",badHash="rejected",missingAsset="fail-closed",legacyPackage="compatible"});
     }
 }

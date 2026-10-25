@@ -78,6 +78,16 @@ public sealed class OriginalSourcePackage {
     public long DeliveredCompressedBytes=>deliveredCompressedBytes;
     public IEnumerable<string> AssetPaths=>legacyRoot.ValueKind==JsonValueKind.Object?legacyRoot.GetProperty("assets").EnumerateObject().Select(item=>item.Name):manifest.EnumerateObject().Select(item=>item.Name);
     public bool IsIncremental=>metadataDocument!=null;
+    public string GetAssetSha256(string path) {
+        if(assetHashes.TryGetValue(path,out var hash))return hash;
+        if(manifest.ValueKind==JsonValueKind.Object&&manifest.TryGetProperty(path,out var descriptor)&&descriptor.TryGetProperty("sha256",out var sha))return sha.GetString();
+        return null;
+    }
+    public string GetAssetGuid(string path) {
+        if(!TryGetProperty("guidPaths",out var paths)||paths.ValueKind!=JsonValueKind.Object)return null;
+        foreach(var item in paths.EnumerateObject())if(item.Value.GetString()==path)return item.Name;
+        return null;
+    }
 
     public bool AddVerifiedAsset(string assetPath,string assetJson) {
         if(!IsIncremental)throw new InvalidOperationException("Assets can only be added to an incremental source package");

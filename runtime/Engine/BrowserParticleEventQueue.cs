@@ -44,7 +44,7 @@ public sealed class BrowserParticleEventQueue : ParticleSystem.IParticleDriver
             sourceGuid = system.OriginalAssetGuid,
             sourceFileId = system.OriginalAssetFileID,
             sourcePath = system.OriginalAssetPath,
-            sourceComponentSha256 = system.OriginalSerializedSha256,
+            sourceAssetSha256 = system.OriginalAssetSha256,
             hierarchyPath = string.Join("/", hierarchy),
             position = new[] { position.x, position.y, position.z },
             rotation = new[] { rotation.x, rotation.y, rotation.z, rotation.w },

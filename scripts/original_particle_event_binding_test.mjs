@@ -72,7 +72,7 @@ test('FullSource particle command transport validates provenance, actions and so
   const effect=particles.effects[0],emitter=effect.emitters[0];
   const command={type:'particleCommand',time:4.5,systemId:12,sourceGuid:effect.guid,
     sourceFileId:emitter.sourceEmitterFileID,sourcePath:'Assets/Resources/effects/ballistic hits/Concrete entry.prefab',
-    sourceComponentSha256:emitter.originalEmitterFieldSha256,hierarchyPath:'Root/Emitter',
+    sourceAssetSha256:'a'.repeat(64),hierarchyPath:'Root/Emitter',
     position:[1,2,3],rotation:[0,0,0,1],command:{action:'emit',count:3,maxParticles:512,
       startSpeed:[2,4],radius:.2,angle:25}};
   binder.observeSourceCommands([command],5,0);
@@ -93,9 +93,9 @@ test('FullSource particle commands reject missing source identity and malformed 
   const effect=particles.effects[0],emitter=effect.emitters[0];
   const command={type:'particleCommand',time:4.5,sourceGuid:effect.guid,
     sourceFileId:emitter.sourceEmitterFileID,sourcePath:'Assets/Effects/Test.prefab',
-    sourceComponentSha256:emitter.originalEmitterFieldSha256,hierarchyPath:'Root/Emitter',
+    sourceAssetSha256:'a'.repeat(64),hierarchyPath:'Root/Emitter',
     position:[1,2,3],rotation:[0,0,0,1],command:{action:'play'}};
-  assert.throws(()=>binder.observeSourceCommands([{...command,sourceComponentSha256:'bad'}],5),/provenance/);
+  assert.throws(()=>binder.observeSourceCommands([{...command,sourceAssetSha256:'bad'}],5),/provenance/);
   assert.throws(()=>binder.observeSourceCommands([{...command,time:6}],5),/after simulation-clock/);
   assert.throws(()=>binder.observeSourceCommands([{...command,command:{action:'emit',count:-1,startSpeed:[1,2]}}],5),/invalid count/);
   assert.throws(()=>binder.observeSourceCommands([{...command,command:{action:'restart'}}],5),/unknown/);
@@ -108,6 +108,10 @@ test('normal page forwards the FullSource actor particle snapshot into the sourc
   assert.match(html,/observeSourceParticleCommands\(sourceActorSnapshot\.particleEvents,sourceActorSnapshot\.sourceTime,sourceActorSnapshot\.droppedParticleEvents\)/);
   assert.match(presentation,/observeSourceParticleCommands\(events,sourceTime,dropped\)\{effects\.observeSourceParticleCommands/);
   assert.match(weaponRuntime,/observeSourceParticleCommands:\(events,sourceTime,dropped\)=>originalParticleEvents\.observeSourceCommands/);
+  const queue=readFileSync(new URL('../runtime/Engine/BrowserParticleEventQueue.cs',import.meta.url),'utf8');
+  const loader=readFileSync(new URL('../runtime/Engine/SceneLoader.cs',import.meta.url),'utf8');
+  assert.match(queue,/sourceAssetSha256 = system\.OriginalAssetSha256/);
+  assert.match(loader,/component\.OriginalAssetSha256=package\.GetAssetSha256\(assetPath\)/);
 });
 
 test('missing or corrupted native material/particle manifest cannot fall back to invented assets',()=>{

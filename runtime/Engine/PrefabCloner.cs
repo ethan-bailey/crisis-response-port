@@ -89,6 +89,7 @@ public static class PrefabCloner {
         target.OriginalAssetGuid=source.OriginalAssetGuid;
         target.OriginalAssetFileID=source.OriginalAssetFileID;
         target.OriginalAssetPath=source.OriginalAssetPath;
+        target.OriginalAssetSha256=source.OriginalAssetSha256;
         target.OriginalSerializedSha256=source.OriginalSerializedSha256;
     }
     static IEnumerable<FieldInfo> SerializedFields(Type type){

@@ -156,6 +156,12 @@ public static class SceneLoader {
                     }
                 }
                 if(component!=null){
+                    if(prefab){
+                        component.OriginalAssetGuid=package.GetAssetGuid(assetPath);
+                        component.OriginalAssetFileID=id;
+                        component.OriginalAssetPath=assetPath;
+                        component.OriginalAssetSha256=package.GetAssetSha256(assetPath);
+                    }
                     result.objects[id]=component;
                     if(component is Behaviour b)b.enabled=Flag(fields,"m_Enabled");
                     if(cls!=114&&(prefab||cls is 20 or 23 or 33))builtinFields.Add((component,fields,id,cls));

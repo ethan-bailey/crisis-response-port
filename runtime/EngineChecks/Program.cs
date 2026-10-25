@@ -63,15 +63,15 @@ Check(emitter.main.maxParticles==48 && emitter.main.startSpeed.constantMax==5f &
 Throws<ArgumentOutOfRangeException>(()=>{mainModule.maxParticles=-1;});
 Throws<NotSupportedException>(()=>emitter.Emit(1));
 var particleQueue=new Crisis.Runtime.BrowserParticleEventQueue();first.ParticleSystemDriver=particleQueue;emitter.Driver=particleQueue;
-emitter.OriginalAssetGuid="0123456789abcdef0123456789abcdef";emitter.OriginalAssetFileID="19800000";emitter.OriginalAssetPath="Assets/Effects/Original.prefab";
+emitter.OriginalAssetGuid="0123456789abcdef0123456789abcdef";emitter.OriginalAssetFileID="19800000";emitter.OriginalAssetPath="Assets/Effects/Original.prefab";emitter.OriginalAssetSha256=new string('a',64);
 emitter.Emit(3);emitter.Simulate(.25f,false,true,false);emitter.Play();
 var particleCommands=particleQueue.Drain();
 Check(particleCommands.Length==3&&particleQueue.DroppedEvents==0,"source particle emit/simulate/play callbacks drain as bounded browser events");
 var particleJson=System.Text.Json.JsonSerializer.Serialize(particleCommands);
-Check(particleJson.Contains("Assets/Effects/Original.prefab")&&particleJson.Contains("19800000")&&particleJson.Contains("emit")&&particleJson.Contains("simulate")&&particleJson.Contains("play"),"particle events retain original prefab/component provenance and command payloads");
+Check(particleJson.Contains("Assets/Effects/Original.prefab")&&particleJson.Contains("19800000")&&particleJson.Contains(new string('a',64))&&particleJson.Contains("sourceAssetSha256")&&particleJson.Contains("emit")&&particleJson.Contains("simulate")&&particleJson.Contains("play"),"particle events retain original prefab/component/asset-hash provenance and command payloads");
 var emitterClone=UnityEngine.Object.Instantiate(emitterGo);
 var clonedEmitter=emitterClone.GetComponent<ParticleSystem>()!;
-Check(clonedEmitter.OriginalAssetGuid==emitter.OriginalAssetGuid&&clonedEmitter.OriginalAssetFileID==emitter.OriginalAssetFileID&&clonedEmitter.OriginalAssetPath==emitter.OriginalAssetPath,"instantiated particle components retain original component provenance");
+Check(clonedEmitter.OriginalAssetGuid==emitter.OriginalAssetGuid&&clonedEmitter.OriginalAssetFileID==emitter.OriginalAssetFileID&&clonedEmitter.OriginalAssetPath==emitter.OriginalAssetPath&&clonedEmitter.OriginalAssetSha256==emitter.OriginalAssetSha256,"instantiated particle components retain original component and source-asset provenance");
 for(var i=0;i<257;i++)emitter.Play();
 Check(particleQueue.Drain().Length==256&&particleQueue.DroppedEvents==1,"particle event transport bounds per-tick queue growth and counts dropped requests");
 first.ParticleSystemDriver=null;emitter.Driver=null;
