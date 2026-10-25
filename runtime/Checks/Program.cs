@@ -40,6 +40,20 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
        MathF.Abs(audioEvents[0].GetProperty("volume").GetSingle()-.37f)>.001f||
        MathF.Abs(audioCapture.RootElement.GetProperty("sourceTime").GetSingle()-audioEvents[0].GetProperty("time").GetSingle())>.1f)
         throw new InvalidOperationException($"Original AudioSource callback was not delivered as one bounded, timestamped browser event: {audioCapture.RootElement}");
+    var sourceWeapon=session.Actor.ActiveWeapon??throw new InvalidOperationException("FullSource Mission actor has no original active weapon");
+    var actualFirePath=sourceWeapon.audioFire.sample?.OriginalAssetPath??string.Empty;
+    var actualCrackPath=sourceWeapon.audioSupersonic.sample?.OriginalAssetPath??string.Empty;
+    using var actualFireCapture=JsonDocument.Parse(JsonSerializer.Serialize(bridge.Step(1f/60f,"{\"fire\":true}",640f,360f)));
+    typeof(Crisis.Runtime.FullSource.WeaponBase).GetMethod("EmitMuzzleAudio",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)!
+        .Invoke(sourceWeapon,new object[]{true});
+    using var sourceWeaponCapture=JsonDocument.Parse(JsonSerializer.Serialize(bridge.Step(1f/60f,"{}",640f,360f)));
+    var sourceWeaponEvents=sourceWeaponCapture.RootElement.GetProperty("audioEvents");
+    var capturedWeaponPaths=sourceWeaponEvents.EnumerateArray().Select(item=>item.GetProperty("sourcePath").GetString()).ToArray();
+    if(actualFirePath!="Assets/AudioClip/5.56x45mm-01-unsuppressed.wav"||actualCrackPath!="Assets/AudioClip/5.56x45mm-crack-interior.wav"||
+       !capturedWeaponPaths.Contains(actualFirePath)||!capturedWeaponPaths.Contains(actualCrackPath)||sourceWeaponEvents.EnumerateArray().Any(item=>item.GetProperty("action").GetString()!="oneShot"||
+       !float.IsFinite(item.GetProperty("volume").GetSingle())||item.GetProperty("volume").GetSingle()<0||item.GetProperty("volume").GetSingle()>1||
+       MathF.Abs(sourceWeaponCapture.RootElement.GetProperty("sourceTime").GetSingle()-item.GetProperty("time").GetSingle())>.1f))
+        throw new InvalidOperationException($"Original WeaponBase muzzle audio did not bridge its source fire and supersonic clips with valid volume and time: {sourceWeaponCapture.RootElement}");
     var originalPointer=session.Actor.GetComponent<Crisis.Runtime.FullSource.PlayerController>()?.WeaponPointer
         ??throw new InvalidOperationException("Browser EntryTeam actor has no original WeaponPointer");
     if(originalPointer.enabled)
@@ -59,7 +73,7 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
     var velocity=roundTrip.RootElement.GetProperty("velocity");
     if(MathF.Abs(position[0].GetSingle()-(before.x+.25f))>.001f||MathF.Abs(velocity[0].GetSingle()-1f)>.001f)
         throw new InvalidOperationException("Browser PhysX position and velocity did not round trip into the source player actor");
-    Console.WriteLine(JsonSerializer.Serialize(new{status="passed",mission=session.Mission.scene,actor=session.Actor.name,sourceActors=session.SourceActorCount,interactionMenu=true,input="original press/release",movementForce=commands.GetArrayLength(),analogMovement="0.5 eased cap reaches source CharacterBody and restores authored speed",aim="absolute WeaponPointer world target unchanged by horizontal movement and mouse X",audio="original AudioSource callback includes source path, event volume, and source time",physics="position/velocity round trip"}));
+    Console.WriteLine(JsonSerializer.Serialize(new{status="passed",mission=session.Mission.scene,actor=session.Actor.name,weapon=sourceWeapon.name,weaponFirePath=actualFirePath,weaponAudioPaths=capturedWeaponPaths,controllerFireAudioEvents=actualFireCapture.RootElement.GetProperty("audioEvents").GetArrayLength(),sourceActors=session.SourceActorCount,interactionMenu=true,input="original press/release",movementForce=commands.GetArrayLength(),analogMovement="0.5 eased cap reaches source CharacterBody and restores authored speed",aim="absolute WeaponPointer world target unchanged by horizontal movement and mouse X",audio="original WeaponBase muzzle callback emits mapped source fire/crack clips with bounded volume and source time",physics="position/velocity round trip"}));
     return;
 }
 OriginalSourcePackage LoadSourcePackage(string path){
