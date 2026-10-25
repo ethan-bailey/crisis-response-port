@@ -69,7 +69,15 @@ public class Texture:Object {
 }
 public enum RenderMode { ScreenSpaceOverlay,ScreenSpaceCamera,WorldSpace }
  [Flags] public enum DepthTextureMode {None=0,Depth=1,DepthNormals=2,MotionVectors=4}
-public sealed class Canvas:Behaviour {public RenderMode renderMode;public Camera worldCamera;public float scaleFactor {get;set;}=1f;}
+public sealed class Canvas:Behaviour {
+    public RenderMode renderMode;
+    public Camera worldCamera;
+    public float planeDistance=100f;
+    public bool pixelPerfect,receivesEvents=true,overrideSorting,overridePixelPerfect;
+    public float sortingBucketNormalizedSize;
+    public int additionalShaderChannelsFlag,sortingLayerID,sortingOrder,targetDisplay;
+    public float scaleFactor {get;set;}=1f;
+}
 public class ScriptableObject:Object {
     public static T CreateInstance<T>() where T:ScriptableObject,new()=> (T)CreateInstance(typeof(T));
     public static ScriptableObject CreateInstance(Type type){

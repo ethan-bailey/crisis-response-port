@@ -2,50 +2,50 @@
 
 ## Checkpoint
 
-- Verified runtime source checkpoint: branch `develop/wasm`, SHA
-  `6e322089e60461afdba1b901ea952d5f1779a3f5`. A handoff-only commit may sit
-  immediately after this source SHA; fetch `develop/wasm` before resuming.
+- Work branch: `develop/wasm`; fetched base before this batch was
+  `6f91910f45db36a1caac39168a1fa3b2ad494c2a`. After committing and pushing,
+  update this checkpoint with the verified code commit SHA and final branch
+  head.
 - Never deploy. Site v39 remains the last owner-accepted iPhone Safari build.
-  Desktop browser automation is optional. Ask for owner iPhone Safari testing at
-  the next major playable milestone and before release; do not claim behavior
-  acceptance for features not present in the tested build.
-- Keep the operator's screen-hold behavior distinct from holding the Fire
-  button; it remains documented for later.
-- Batch-first rule applies across development: inspect the relevant dependency
-  group, collect actionable items, apply safe related changes together in
-  dependency order, then run the combined checks once. See
-  `AGENT_INSTRUCTIONS.md`.
+  Desktop browser automation is optional. Request owner iPhone Safari testing
+  at the next major playable milestone and before release; do not claim device
+  acceptance for behavior absent from that tested build.
+- Keep screen-hold aiming distinct from holding the Fire button; it remains
+  documented for later.
+- Batch-first applies across development. Inspect the relevant dependency
+  group, fix safe related issues together in dependency order, then run the
+  combined relevant checks. See `AGENT_INSTRUCTIONS.md`.
 
-## Latest verified batch
+## Latest batch
 
-- Added `runtime/Engine/FullSourceActorBridge.cs` and browser interop methods in
-  `runtime/Browser/Program.cs`. The bridge validates shared RuntimeWorld and
-  actor identity, maps browser actions/pointer input, advances the original
-  world, and snapshots the source actor's authored transform hierarchy.
-- The bridge rejects stepping when the original Mission InteriorMode UI or
-  `InteractionMenu` is absent. The original PlayerController.Update requires
-  these references; the current headless Mission test suppresses that UI graph.
-  Normal `game/index.html` still uses browser-side movement/animation and the
-  transport `WeaponHost`; the new entry points are not yet wired to that page.
-- At tested source SHA `6e322089e60461afdba1b901ea952d5f1779a3f5`, Release
-  Browser/WASM build passed; EngineChecks 69 and FoundationChecks 121 passed.
-  FullSource Operator/Occupant lifecycle and authored IK, Mission 01 startup
-  (2 Operators, 5 Occupants), and M4/Glock spawner/weapon/physiology contracts
-  passed. Details: `docs/evidence/FULLSOURCE_ACTOR_BRIDGE_BATCH_2026-10-24.md`.
-- The recovered full source closure has 1,918 assets / 22,361 records and 39
-  assets with unresolved/unsupported references. It must not be shipped whole
-  as the phone startup payload. The complete Global/Mission/Operator/UI closure
-  needs a compact authored payload and runtime support for the original UI.
-- The private authoritative archive remains in ChatGPT Library as
-  `crisis-response-recovery-direct-v3-1.zip`, SHA-256
-  `cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d`.
-  Retrieve by exact filename and recheck the hash if needed; never commit the
-  archive or extracted proprietary project. Runbook:
-  `docs/DOTNET_BUILD_RUNBOOK.md`.
-- Use pinned .NET SDK 8.0.426 with the existing process shim when available;
-  follow `docs/DOTNET_BUILD_RUNBOOK.md`. Do not retry `dotnet-install.sh` or
-  GitHub CLI login. Push verified changes through the GitHub API and verify
-  with `git fetch`. Do not deploy.
+- Implemented serialized Canvas, RectTransform, CanvasScaler, GraphicRaycaster,
+  Graphic, Image, and Text UI state; retained UI material/sprite references
+  through prefab clones.
+- Fixed external GUID resolution to take precedence over a colliding local
+  file ID. This resolves `WeaponPointer.aimQuadPrefab` to the original Aim quad
+  and prevents recursive Interior mode UI cloning during activation.
+- Fixed `FullSourceActorBridge.Step` so multiple source actions mapped to one
+  physical key are combined as a held-key union; false actions no longer undo
+  another pressed action.
+- Verified the original UI prefab import and clone. Verified Mission 01 in
+  EntryTeam mode with its authored UI active: original InteractionMenu started,
+  2 Operators and 5 Occupants spawned, and bridge left press/release reached
+  the original InputHandler. This is a test-host contract, not browser or
+  device acceptance.
+- Final verification passed: Release runtime build; EngineChecks 69;
+  FoundationChecks 121; runtime lifecycle/input/IK/weapon/ballistics contracts;
+  source UI prefab contract; headless and active-UI Mission contracts; Release
+  Browser/WASM publish. Evidence:
+  `docs/evidence/AUTHORED_UI_IMPORT_AND_BRIDGE_INPUT_2026-10-25.md`.
+- Full Global Context + Mission 01 + Operator source closure remains about
+  1,918 assets / 22,361 records / 122,132,020 source bytes, with 39 assets
+  containing unresolved/unsupported references. Keep it out of default phone
+  startup until payload and memory are bounded. The original browser layout
+  driver and several original built-in assets/components remain unsupported.
+- Do not commit the private archive or extracted proprietary project. Use
+  pinned .NET SDK 8.0.426 and the process shim as documented in
+  `docs/DOTNET_BUILD_RUNBOOK.md`. Do not retry `dotnet-install.sh` or GitHub
+  CLI login. Push through the connected GitHub API and verify with `git fetch`.
 
 ## Gate state
 
@@ -53,35 +53,33 @@
   and broader navigation/presentation remain.
 - Gate 1: passed within scoped headless original-character acceptance; not full
   game parity.
-- Gate 2: partial. Original FullSource controller/sequencer callbacks,
-  Operator two-arm IK, actor isolation, and source actor snapshots pass. Actual
-  page input/ticks still use the transport actor. Original UI initialization,
-  live page projection, weapon/equipment migration, and physical continuity
+- Gate 2: partial. Original controller/sequencer callbacks, Operator two-arm
+  IK, actor isolation, source snapshots, original UI initialization, and
+  source input press/release pass in the test host. `game/index.html` still
+  uses browser-side movement/animation and transport `WeaponHost`; actor
+  snapshot projection, weapon/equipment migration, and physical continuity
   remain.
 - Gate 3: partial. Source projectile-to-physiology evidence exists; native
   PhysX, rendered wounds, and complete live state/event integration remain.
 - Gate 4: partial. Headless mission startup/spawning/outcome evidence exists;
-  authored mission inputs and instantiation callbacks on the normal page remain.
+  authored mission inputs and instantiation callbacks on the normal page
+  remain.
 - Gate 5: open. Original AI perception, navigation, decisions, and combat on
   the playable path remain unverified.
 - Gate 6: partial. Headless room-clear/success contracts pass; complete normal
   path mission flow remains.
 - Gate 7: open. Original presentation and content fidelity remain.
 - Gate 8: closed only for the previously owner-accepted Site v39. No new
-  gameplay behavior or device-acceptance claim is implied; nothing was deployed.
+  gameplay behavior or device-acceptance claim is implied; nothing was
+  deployed.
 
 ## Exact next action
 
-Continue Gate 2 in one dependency batch: extract/measure the compact authored
-Global Context + Mission + player UI dependency payload from the recovered
-package; classify and implement only the original UI components needed for the
-source PlayerController path; then run the original Mission in EntryTeam view
-without suppressing its UI and verify browser action press/release through
-`FullSourceActorBridge.Step`. If that source graph passes, wire the active page
-input/frame loop to that one actor and project its transform snapshot to the
-renderer/physics adapter. Migrate the source weapon callbacks under that same
-actor before retiring transport authority. Keep the payload off default phone
-startup until its size and memory use are bounded. Run lifecycle, input,
-movement, IK, and weapon checks together. Request owner iPhone Safari testing
-when this becomes a major playable milestone. Commit/push through the GitHub
-API, verify the fetched branch head, and never deploy.
+Batch the normal page migration: wire `game/index.html` input and frame ticks to
+the existing FullSource bridge endpoints; project actor-owned transform
+snapshots to rendering and physics; then migrate source weapon callbacks under
+that actor before retiring transport authority. Keep the full source closure
+off default phone startup. Run lifecycle, UI, input, movement, IK, weapon,
+browser build, and package-integrity checks together. Request owner iPhone
+Safari testing at the next major playable milestone. Commit/push through the
+GitHub API, verify the fetched branch head, and never deploy.

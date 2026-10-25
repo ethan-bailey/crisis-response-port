@@ -20,6 +20,10 @@ public static class PrefabCloner {
             target.SetActive(sourceGO.activeSelf);map[sourceGO]=target;map[source]=target.transform;
             target.transform.SetParent(targetParent,false);
             target.transform.localPosition=source.localPosition;target.transform.localRotation=source.localRotation;target.transform.localScale=source.localScale;
+            if(source is RectTransform sourceRect&&target.transform is RectTransform targetRect){
+                targetRect.anchorMin=sourceRect.anchorMin;targetRect.anchorMax=sourceRect.anchorMax;targetRect.anchoredPosition3D=sourceRect.anchoredPosition3D;
+                targetRect.sizeDelta=sourceRect.sizeDelta;targetRect.pivot=sourceRect.pivot;
+            }
             foreach(var component in sourceGO.components.Where(c=>c&&c is not Transform)){
                 var copy=target.AddComponent(component.GetType());map[component]=copy;
                 if(copy is MonoBehaviour behaviour)clonedBehaviours.Add(behaviour);
@@ -53,6 +57,8 @@ public static class PrefabCloner {
             foreach(var field in SerializedFields(source.GetType()))field.SetValue(pair.Value,CopyValue(field.GetValue(source),values));
             if(source is BoxCollider box&&pair.Value is BoxCollider target){target.center=box.center;target.size=box.size;target.isTrigger=box.isTrigger;}
             if(source is Light light&&pair.Value is Light copy)copy.intensity=light.intensity;
+            if(source is Canvas canvas&&pair.Value is Canvas canvasCopy)canvasCopy.scaleFactor=canvas.scaleFactor;
+            if(source is ICloneReferenceState referenceState)referenceState.CopyCloneReferenceState((Component)pair.Value);
         }
         var cloneRoot=(GameObject)map[root];cloneRoot.name=root.name+"(Clone)";
         if(worldPositionStays){cloneRoot.transform.position=root.transform.position;cloneRoot.transform.rotation=root.transform.rotation;}

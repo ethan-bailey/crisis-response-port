@@ -13,21 +13,35 @@ public struct ColorBlock {
 // Unity 2017.2 uGUI component identities used by the recovered original prefabs.
 // Layout/render execution stays presentation-driver owned; these components retain
 // the authored hierarchy and serialized identity without inventing browser layout.
-public sealed class CanvasScaler:MonoBehaviour { }
-public sealed class GraphicRaycaster:MonoBehaviour { }
+public sealed class CanvasScaler:MonoBehaviour {
+    public int uiScaleMode,screenMatchMode,physicalUnit;
+    public float referencePixelsPerUnit=100,scaleFactor=1,fallbackScreenDPI=96,defaultSpriteDPI=96,dynamicPixelsPerUnit=1,matchWidthOrHeight;
+    public Vector2 referenceResolution=new(800,600);
+}
+public sealed class GraphicRaycaster:MonoBehaviour {
+    public bool ignoreReversedGraphics=true;
+    public int blockingObjects;
+    public LayerMask blockingMask=new(){value=-1};
+}
 public sealed class LayoutElement:MonoBehaviour { }
 public sealed class HorizontalLayoutGroup:MonoBehaviour { }
 public sealed class VerticalLayoutGroup:MonoBehaviour { }
 public sealed class ContentSizeFitter:MonoBehaviour { }
 public sealed class Mask:MonoBehaviour { }
-public class Graphic:MonoBehaviour {
+public class Graphic:MonoBehaviour,ICloneReferenceState {
     [SerializeField] Color tint=Color.white;
     public UnityEngine.Material material {get;set;}
+    public bool raycastTarget=true;
     IGraphicDriver driver;
     public Color color {get=>tint;set{tint=value;driver?.SetColor(this,value);}}
     public IGraphicDriver Driver {get=>driver;set{driver=value;if(driver!=null)Present();}}
     protected IGraphicDriver RequiredDriver=>driver??throw new NotSupportedException("uGUI presentation driver is not bound");
     public virtual void Present()=>RequiredDriver.SetColor(this,color);
+    public void CopyCloneReferenceState(Component clone){
+        if(clone is not Graphic target)throw new InvalidOperationException("uGUI Graphic clone has an incompatible component type");
+        target.material=material;target.color=color;
+        if(this is Image sourceImage&&target is Image targetImage)targetImage.sprite=sourceImage.sprite;
+    }
 }
 public class Selectable:MonoBehaviour {
     public bool interactable=true;
@@ -105,7 +119,12 @@ public sealed class Text:Graphic {
     public string text {get=>content;set{content=value??string.Empty;Driver?.SetText(this,content);}}
     public override void Present() {base.Present();RequiredDriver.SetText(this,text);}
 }
-public sealed class Image:Graphic { public Sprite sprite {get;set;} }
+public sealed class Image:Graphic {
+    public Sprite sprite {get;set;}
+    public int imageType,fillMethod,fillOrigin;
+    public bool preserveAspect,fillCenter=true,fillClockwise=true;
+    public float fillAmount=1;
+}
 public sealed class Slider:Selectable {
     [SerializeField] float current;
     public float minValue=0,maxValue=1;

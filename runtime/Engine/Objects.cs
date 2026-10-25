@@ -101,6 +101,9 @@ public class Component:Object {
         for(var t=transform;t!=null;t=t.parent){var c=t.GetComponent<T>();if(c!=null)return c;}return null;
     }
 }
+// Components with non-field serialized asset references can copy those explicit
+// references after a prefab clone has allocated and remapped its component graph.
+public interface ICloneReferenceState { void CopyCloneReferenceState(Component clone); }
 public sealed class CanvasRenderer:Component { }
 public class Behaviour:Component {
     bool value=true;
@@ -222,8 +225,19 @@ public class RectTransform:Transform {
     public Vector2 sizeDelta;
     public Vector2 anchoredPosition;
     float anchoredZ;
+    public Vector2 anchorMin;
+    public Vector2 anchorMax;
+    public Vector2 pivot=new(.5f,.5f);
     public Vector3 anchoredPosition3D {get=>new(anchoredPosition.x,anchoredPosition.y,anchoredZ);set{anchoredPosition=new(value.x,value.y);anchoredZ=value.z;}}
-    public Rect rect=>new(-sizeDelta.x*.5f,-sizeDelta.y*.5f,sizeDelta.x,sizeDelta.y);
+    public Rect rect {
+        get {
+            var parentRect=(parent as RectTransform)?.rect;
+            float parentWidth=parentRect?.width??0,parentHeight=parentRect?.height??0;
+            float width=parentWidth*(anchorMax.x-anchorMin.x)+sizeDelta.x;
+            float height=parentHeight*(anchorMax.y-anchorMin.y)+sizeDelta.y;
+            return new(-pivot.x*width,-pivot.y*height,width,height);
+        }
+    }
     public void SetSizeWithCurrentAnchors(Axis axis,float size){
         if(!float.IsFinite(size))throw new ArgumentOutOfRangeException(nameof(size));
         if(axis==Axis.Horizontal)sizeDelta.x=size;

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Crisis.Runtime;
 
@@ -59,6 +60,30 @@ public static class ScenePrefabContracts {
         Check(!ReferenceEquals(a.interpolation,b.interpolation)&&a.interpolation.Evaluate(2f)==1f&&b.interpolation.Evaluate(2f)==1f,"Cloned actors retain independent clamped transition curves");
         Check(first.GetComponent<Rigidbody>().PhysicsForceSink==null&&second.GetComponent<Rigidbody>().PhysicsForceSink==null,"Runtime physics delegates are not copied from a prefab asset into independent instances");
         Check(first.transform.childCount==1&&second.transform.childCount==1,"Prefab hierarchy survives independent actor clones");
+        const string uiPath="Assets/GameObject/UiContract.prefab";
+        const string unityUiGuid="f5f67c52d1564df4a8936ccd202a3bd8";
+        object UiScript(string fileID)=>new {fileID,guid=unityUiGuid,type=3};
+        object Vec2(float x,float y)=>new{x,y};
+        var uiRecords=new object[]{
+            new {fileID="10",classID=1,className="GameObject",fields=new {m_Name="Canvas",m_Layer=5,m_TagString="Untagged",m_StaticEditorFlags=0,m_IsActive=true}},
+            new {fileID="11",classID=224,className="RectTransform",fields=new {m_GameObject=Ref("10"),m_LocalPosition=new{x=0f,y=0f,z=0f},m_LocalScale=new{x=1f,y=1f,z=1f},m_LocalRotation=new{x=0f,y=0f,z=0f,w=1f},m_Father=Ref("0"),m_Children=new[]{Ref("17")},m_AnchorMin=Vec2(0,0),m_AnchorMax=Vec2(1,1),m_AnchoredPosition=Vec2(0,0),m_SizeDelta=Vec2(1280,720),m_Pivot=Vec2(.5f,.5f)}},
+            new {fileID="12",classID=223,className="Canvas",fields=new {m_GameObject=Ref("10"),m_Enabled=true,m_RenderMode=0,m_Camera=Ref("0"),m_PlaneDistance=100f,m_PixelPerfect=0,m_ReceivesEvents=1,m_OverrideSorting=0,m_OverridePixelPerfect=0,m_SortingBucketNormalizedSize=0f,m_AdditionalShaderChannelsFlag=25,m_SortingLayerID=0,m_SortingOrder=0,m_TargetDisplay=0}},
+            new {fileID="13",classID=114,className="MonoBehaviour",fields=new {m_GameObject=Ref("10"),m_Enabled=true,m_Script=UiScript("1980459831"),m_UiScaleMode=1,m_ReferencePixelsPerUnit=100f,m_ScaleFactor=1f,m_ReferenceResolution=Vec2(1280,720),m_ScreenMatchMode=0,m_MatchWidthOrHeight=.25f,m_PhysicalUnit=3,m_FallbackScreenDPI=96f,m_DefaultSpriteDPI=96f,m_DynamicPixelsPerUnit=1f}},
+            new {fileID="14",classID=114,className="MonoBehaviour",fields=new {m_GameObject=Ref("10"),m_Enabled=true,m_Script=UiScript("1301386320"),m_IgnoreReversedGraphics=1,m_BlockingObjects=2,m_BlockingMask=new{serializedVersion=2,m_Bits=unchecked((int)0xffff00ff)}}},
+            new {fileID="16",classID=1,className="GameObject",fields=new {m_Name="Panel",m_Layer=5,m_TagString="Untagged",m_StaticEditorFlags=0,m_IsActive=true}},
+            new {fileID="17",classID=224,className="RectTransform",fields=new {m_GameObject=Ref("16"),m_LocalPosition=new{x=0f,y=0f,z=0f},m_LocalScale=new{x=1f,y=1f,z=1f},m_LocalRotation=new{x=0f,y=0f,z=0f,w=1f},m_Father=Ref("11"),m_Children=Array.Empty<object>(),m_AnchorMin=Vec2(0,0),m_AnchorMax=Vec2(1,1),m_AnchoredPosition=Vec2(0,0),m_SizeDelta=Vec2(-20,-40),m_Pivot=Vec2(.5f,.5f)}}
+        };
+        var uiPackage=JsonSerializer.Serialize(new{guidPaths=new Dictionary<string,string>(),assets=new Dictionary<string,object>{{uiPath,new{records=uiRecords}}}});
+        var uiWorld=new RuntimeWorld();uiWorld.MakeCurrent();
+        var uiRoot=SceneLoader.LoadPrefab(uiPackage,uiPath,uiWorld).prefabRoot;
+        var canvas=uiRoot.GetComponent<Canvas>();var scaler=uiRoot.GetComponent<CanvasScaler>();var raycaster=uiRoot.GetComponent<GraphicRaycaster>();
+        var panel=(RectTransform)uiRoot.transform.GetChild(0);
+        Check(canvas.renderMode==RenderMode.ScreenSpaceOverlay&&canvas.receivesEvents&&canvas.planeDistance==100&&canvas.additionalShaderChannelsFlag==25,"Original Canvas render and event settings are imported");
+        Check(scaler.uiScaleMode==1&&scaler.referenceResolution.x==1280&&scaler.referenceResolution.y==720&&scaler.matchWidthOrHeight==.25f&&scaler.dynamicPixelsPerUnit==1,"Original CanvasScaler authored values are imported");
+        Check(raycaster.blockingObjects==2&&raycaster.blockingMask.value==unchecked((int)0xffff00ff)&&raycaster.ignoreReversedGraphics,"Original GraphicRaycaster filtering values are imported");
+        Check(panel.anchorMax.x==1&&panel.anchorMin.y==0&&panel.pivot.x==.5f&&panel.rect.width==1260&&panel.rect.height==680,"RectTransform anchors, pivot, and sizeDelta determine its stretched rectangle");
+        var uiClone=UnityEngine.Object.Instantiate(uiRoot);var clonedPanel=(RectTransform)uiClone.transform.GetChild(0);
+        Check(clonedPanel.anchorMax.x==1&&clonedPanel.pivot.x==.5f&&clonedPanel.rect.width==1260&&uiClone.GetComponent<CanvasScaler>().referenceResolution.x==1280&&uiClone.GetComponent<GraphicRaycaster>().blockingMask.value==unchecked((int)0xffff00ff),"Instantiated authored UI keeps its layout and scaler/raycaster state");
         return "PASS: source prefab record references, deferred Awake, and two independent actor clones";
     }
 }

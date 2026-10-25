@@ -28,6 +28,7 @@ public static class SceneLoader {
     static bool Flag(JsonElement fields,string name,bool fallback=true)=>fields.TryGetProperty(name,out var v) ? v.ValueKind==JsonValueKind.True||(v.ValueKind==JsonValueKind.False?false:v.ValueKind==JsonValueKind.String?int.Parse(v.GetString()!,System.Globalization.CultureInfo.InvariantCulture)!=0:v.GetInt32()!=0) : fallback;
     static float Number(JsonElement fields,string name,float fallback=0)=>fields.TryGetProperty(name,out var v)?float.Parse(v.ValueKind==JsonValueKind.String?v.GetString()!:v.GetRawText(),System.Globalization.NumberStyles.Float,System.Globalization.CultureInfo.InvariantCulture):fallback;
     static Vector3 Vector(JsonElement value)=>new(Number(value,"x"),Number(value,"y"),Number(value,"z"));
+    static Vector2 Vector2Value(JsonElement value)=>new(Number(value,"x"),Number(value,"y"));
     static Quaternion Rotation(JsonElement value)=>new(Number(value,"x"),Number(value,"y"),Number(value,"z"),Number(value,"w",1));
     public static object VerifyImportedRay(SceneLoadResult result){
         result.world.MakeCurrent();
@@ -96,6 +97,14 @@ public static class SceneLoader {
             foreach(var record in transformsByGO.Values){
                 var t=(Transform)result.objects[record.GetProperty("fileID").GetString()];var f=record.GetProperty("fields");
                 t.localPosition=Vector(f.GetProperty("m_LocalPosition"));t.localScale=Vector(f.GetProperty("m_LocalScale"));t.localRotation=Rotation(f.GetProperty("m_LocalRotation"));
+                if(t is RectTransform rect){
+                    rect.anchorMin=f.TryGetProperty("m_AnchorMin",out var anchorMin)?Vector2Value(anchorMin):Vector2.zero;
+                    rect.anchorMax=f.TryGetProperty("m_AnchorMax",out var anchorMax)?Vector2Value(anchorMax):rect.anchorMin;
+                    rect.anchoredPosition=f.TryGetProperty("m_AnchoredPosition",out var anchoredPosition)?Vector2Value(anchoredPosition):Vector2.zero;
+                    rect.sizeDelta=f.TryGetProperty("m_SizeDelta",out var sizeDelta)?Vector2Value(sizeDelta):Vector2.zero;
+                    rect.pivot=f.TryGetProperty("m_Pivot",out var pivot)?Vector2Value(pivot):new Vector2(.5f,.5f);
+                    rect.anchoredPosition3D=new(rect.anchoredPosition.x,rect.anchoredPosition.y,rect.localPosition.z);
+                }
                 var parent=Ref(f.GetProperty("m_Father"));
                 if(parent!="0"){
                     if(!result.objects.TryGetValue(parent,out var p)||p is not Transform parentTransform)throw new InvalidOperationException($"Unresolved Transform parent {parent}");
@@ -240,7 +249,7 @@ public static class SceneLoader {
             var target=(classID,source) switch {
                 (23,"m_Materials")=>("materials",typeof(Material[])), (199,"m_Materials")=>("materials",typeof(Material[])),(212,"m_Materials")=>("materials",typeof(Material[])),(199,"m_StaticBatchRoot")=>("staticBatchRoot",typeof(Transform)), (199,"m_Mesh")=>("mesh",typeof(Mesh)),(23,"m_StaticBatchRoot")=>("staticBatchRoot",typeof(Transform)),(23,"m_ProbeAnchor")=>("probeAnchor",typeof(Transform)),(23,"m_LightProbeVolumeOverride")=>("lightProbeVolumeOverride",typeof(Transform)),(23,"m_LightmapParameters")=>("lightmapParameters",typeof(UObject)),(212,"m_StaticBatchRoot")=>("staticBatchRoot",typeof(Transform)),(212,"m_ProbeAnchor")=>("probeAnchor",typeof(Transform)),(212,"m_LightProbeVolumeOverride")=>("lightProbeVolumeOverride",typeof(Transform)),(212,"m_LightmapParameters")=>("lightmapParameters",typeof(UObject)),
                 (33,"m_Mesh")=>("sharedMesh",typeof(Mesh)),(64,"m_Mesh")=>("sharedMesh",typeof(Mesh)),(61,"m_Material")=>("sharedMaterial",typeof(PhysicMaterial)),(64,"m_Material")=>("sharedMaterial",typeof(PhysicMaterial)),(65,"m_Material")=>("sharedMaterial",typeof(PhysicMaterial)),(136,"m_Material")=>("sharedMaterial",typeof(PhysicMaterial)),(212,"m_Sprite")=>("sprite",typeof(Sprite)),
-                (82,"OutputAudioMixerGroup")=>("outputAudioMixerGroup",typeof(UnityEngine.Audio.AudioMixerGroup)),(95,"m_Avatar")=>("avatar",typeof(UObject)),(95,"m_Controller")=>("runtimeController",typeof(RuntimeAnimatorController)),(198,"stopAction")=>("stopAction",typeof(int)),_=>default
+                (82,"OutputAudioMixerGroup")=>("outputAudioMixerGroup",typeof(UnityEngine.Audio.AudioMixerGroup)),(95,"m_Avatar")=>("avatar",typeof(UObject)),(95,"m_Controller")=>("runtimeController",typeof(RuntimeAnimatorController)),(198,"stopAction")=>("stopAction",typeof(int)),(223,"m_Camera")=>("worldCamera",typeof(Camera)),_=>default
             };
             if(target!=default){SetField(source,target.Item1,target.Item2);return;}
             if(!fields.TryGetProperty(source,out var value))return;
@@ -268,6 +277,7 @@ public static class SceneLoader {
             SetField("m_SpriteTileMode","spriteTileMode",typeof(int));SetField("m_SpriteSortPoint","spriteSortPoint",typeof(int));
             SetField("m_MaskInteraction","maskInteraction",typeof(int));SetField("m_WasSpriteAssigned","wasSpriteAssigned",typeof(bool));
         }
+        if(classID==223){SetField("m_RenderMode","renderMode",typeof(RenderMode));External("m_Camera");SetField("m_PlaneDistance","planeDistance",typeof(float));SetField("m_PixelPerfect","pixelPerfect",typeof(bool));SetField("m_ReceivesEvents","receivesEvents",typeof(bool));SetField("m_OverrideSorting","overrideSorting",typeof(bool));SetField("m_OverridePixelPerfect","overridePixelPerfect",typeof(bool));SetField("m_SortingBucketNormalizedSize","sortingBucketNormalizedSize",typeof(float));SetField("m_AdditionalShaderChannelsFlag","additionalShaderChannelsFlag",typeof(int));SetField("m_SortingLayerID","sortingLayerID",typeof(int));SetField("m_SortingOrder","sortingOrder",typeof(int));SetField("m_TargetDisplay","targetDisplay",typeof(int));}
         if(classID==199){SetField("m_RenderMode","renderMode",typeof(int));SetField("m_SortMode","sortMode",typeof(int));SetField("m_LengthScale","lengthScale",typeof(float));SetField("m_RenderAlignment","renderAlignment",typeof(int));SetField("m_UseCustomVertexStreams","useCustomVertexStreams",typeof(bool));SetField("m_VertexStreams","vertexStreams",typeof(int));SetField("m_Pivot","pivot",typeof(Vector3));SetField("m_Flip","flip",typeof(Vector3));SetField("m_CameraVelocityScale","cameraVelocityScale",typeof(float));SetField("m_VelocityScale","velocityScale",typeof(float));SetField("m_SortingFudge","sortingFudge",typeof(float));SetField("m_MinParticleSize","minParticleSize",typeof(float));SetField("m_MaxParticleSize","maxParticleSize",typeof(float));SetField("m_MaskInteraction","maskInteraction",typeof(int));External("m_Mesh");External("m_Mesh1");External("m_Mesh2");External("m_Mesh3");}
 if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("Spatialize","spatialize",typeof(bool));SetField("SpatializePostEffects","spatializePostEffects",typeof(bool));SetField("DopplerLevel","dopplerLevel",typeof(float));SetField("MinDistance","minDistance",typeof(float));SetField("MaxDistance","maxDistance",typeof(float));SetField("Pan2D","pan2D",typeof(float));SetField("rolloffMode","rolloffMode",typeof(int));SetField("BypassEffects","bypassEffects",typeof(bool));SetField("BypassListenerEffects","bypassListenerEffects",typeof(bool));SetField("BypassReverbZones","bypassReverbZones",typeof(bool));SetField("rolloffCustomCurve","rolloffCustomCurve",typeof(AnimationCurve));SetField("panLevelCustomCurve","panLevelCustomCurve",typeof(AnimationCurve));SetField("spreadCustomCurve","spreadCustomCurve",typeof(AnimationCurve));SetField("reverbZoneMixCustomCurve","reverbZoneMixCustomCurve",typeof(AnimationCurve));}
         switch(classID){
@@ -304,6 +314,7 @@ if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("S
             case 136:
                 SetField("m_Center","center",typeof(Vector3));SetField("m_Radius","radius",typeof(float));SetField("m_Height","height",typeof(float));SetField("m_Direction","direction",typeof(int));
                 SetField("m_IsTrigger","isTrigger",typeof(bool));External("m_Material");break;
+            case 223:break;
         }
         foreach(var candidate in fields.EnumerateObject()){if(consumed.Contains(candidate.Name)||candidate.Name.StartsWith("m_",StringComparison.Ordinal))continue;var property=component.GetType().GetProperty(candidate.Name,BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);if(property!=null&&property.CanWrite){consumed.Add(candidate.Name);try{property.SetValue(component,ReadValue(candidate.Value,property.PropertyType,result));}catch(Exception error){throw new NotSupportedException($"Cannot load original built-in field {component.GetType().Name}.{candidate.Name}",error);}}}foreach(var property in fields.EnumerateObject())
             if(!consumed.Contains(property.Name)&&!property.Name.StartsWith("m_Prefab",StringComparison.Ordinal)&&!SerializedFields(component.GetType()).Any(field=>field.Name==property.Name))
@@ -313,8 +324,39 @@ if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("S
             }
     }
     static void AssignSerializedFields(Component component,JsonElement fields,SceneLoadResult result,string id){
+        var consumed=new HashSet<string>(StringComparer.Ordinal);
+        void SetSource(string source,string target,Type type){
+            if(!fields.TryGetProperty(source,out var value))return;
+            consumed.Add(source);
+            var member=(MemberInfo)component.GetType().GetField(target,BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic)
+                ??component.GetType().GetProperty(target,BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
+            if(type==typeof(LayerMask)){
+                if(value.ValueKind!=JsonValueKind.Object||!value.TryGetProperty("m_Bits",out var bits))throw new NotSupportedException($"Expected serialized LayerMask object for {source}");
+                var maskBits=bits.TryGetInt32(out var signedBits)?signedBits:unchecked((int)bits.GetUInt32());
+                var mask=new LayerMask{value=maskBits};
+                if(member is FieldInfo maskField)maskField.SetValue(component,mask);
+                else if(member is PropertyInfo maskProperty&&maskProperty.CanWrite)maskProperty.SetValue(component,mask);
+                else throw new NotSupportedException($"Unsupported {component.GetType().Name} source field {source} -> {target}");
+                return;
+            }
+            if(member is FieldInfo field)field.SetValue(component,ReadValue(value,type,result));
+            else if(member is PropertyInfo property&&property.CanWrite)property.SetValue(component,ReadValue(value,type,result));
+            else throw new NotSupportedException($"Unsupported {component.GetType().Name} source field {source} -> {target}");
+        }
+        if(component is UnityEngine.UI.CanvasScaler){
+            SetSource("m_UiScaleMode","uiScaleMode",typeof(int));SetSource("m_ReferencePixelsPerUnit","referencePixelsPerUnit",typeof(float));SetSource("m_ScaleFactor","scaleFactor",typeof(float));SetSource("m_ReferenceResolution","referenceResolution",typeof(Vector2));SetSource("m_ScreenMatchMode","screenMatchMode",typeof(int));SetSource("m_MatchWidthOrHeight","matchWidthOrHeight",typeof(float));SetSource("m_PhysicalUnit","physicalUnit",typeof(int));SetSource("m_FallbackScreenDPI","fallbackScreenDPI",typeof(float));SetSource("m_DefaultSpriteDPI","defaultSpriteDPI",typeof(float));SetSource("m_DynamicPixelsPerUnit","dynamicPixelsPerUnit",typeof(float));
+        }else if(component is UnityEngine.UI.GraphicRaycaster){
+            SetSource("m_IgnoreReversedGraphics","ignoreReversedGraphics",typeof(bool));SetSource("m_BlockingObjects","blockingObjects",typeof(int));SetSource("m_BlockingMask","blockingMask",typeof(LayerMask));
+        }
+        if(component is UnityEngine.UI.Graphic){
+            SetSource("m_Material","material",typeof(Material));SetSource("m_Color","color",typeof(Color));SetSource("m_RaycastTarget","raycastTarget",typeof(bool));
+        }
+        if(component is UnityEngine.UI.Image){
+            SetSource("m_Sprite","sprite",typeof(Sprite));SetSource("m_Type","imageType",typeof(int));SetSource("m_PreserveAspect","preserveAspect",typeof(bool));SetSource("m_FillCenter","fillCenter",typeof(bool));SetSource("m_FillMethod","fillMethod",typeof(int));SetSource("m_FillAmount","fillAmount",typeof(float));SetSource("m_FillClockwise","fillClockwise",typeof(bool));SetSource("m_FillOrigin","fillOrigin",typeof(int));
+        }
+        if(component is UnityEngine.UI.Text)SetSource("m_Text","text",typeof(string));
         foreach(var property in fields.EnumerateObject()){
-            if(property.Name.StartsWith("m_",StringComparison.Ordinal))continue;
+            if(property.Name.StartsWith("m_",StringComparison.Ordinal)){if(!consumed.Contains(property.Name))component.OriginalSerializedFields[property.Name]=property.Value.Clone();continue;}
             component.OriginalSerializedFields[property.Name]=property.Value.Clone();
             var field=SerializedFields(component.GetType()).FirstOrDefault(f=>f.Name==property.Name);
             if(field==null){result.unresolvedReferences.Add($"Unsupported serialized field {component.GetType().Name}.{property.Name}");continue;}
@@ -384,14 +426,18 @@ if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("S
         if(typeof(UObject).IsAssignableFrom(type)){
             if(value.ValueKind!=JsonValueKind.Object||!value.TryGetProperty("fileID",out var fileId))throw new NotSupportedException($"External {type.Name} asset reference is not mapped");
             var key=fileId.ToString();if(key=="0")return null;
-            if(result.objects.TryGetValue(key,out var found)&&type.IsInstanceOfType(found))return found;
             if(value.TryGetProperty("guid",out var referenceGuid)){
                 try{return SerializedAssetResolver.Resolve(result.package,referenceGuid.GetString(),key,result.world,type,result.requireComplete);}
                 catch(KeyNotFoundException) when(!result.requireComplete){
                     result.unresolvedReferences.Add($"Unresolved {type.Name} reference {referenceGuid.GetString()}:{key}");
                     return null;
                 }
+                catch(NotSupportedException error) when(!result.requireComplete){
+                    result.unresolvedReferences.Add($"Unsupported {type.Name} reference {referenceGuid.GetString()}:{key}: {error.Message}");
+                    return null;
+                }
             }
+            if(result.objects.TryGetValue(key,out var found)&&type.IsInstanceOfType(found))return found;
             string guid=value.TryGetProperty("guid",out var externalGuid)?externalGuid.GetString():"local";
             result.unresolvedReferences.Add($"Unresolved {type.Name} reference {guid}:{key}");return null;
         }

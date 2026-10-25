@@ -15,12 +15,33 @@ if(args.Length==2&&args[0]=="--behavior-graph-contract"){
     Console.WriteLine(BehaviorDesignerContracts.Run(File.ReadAllText(args[1])));
     return;
 }
+if(args.Length==2&&args[0]=="--source-ui-prefab-contract"){
+    var package=File.ReadAllText(args[1]);var world=new RuntimeWorld();world.MakeCurrent();
+    var loaded=SceneLoader.LoadPrefab(package,"Assets/GameObject/Interior mode UI.prefab",world,requireComplete:false);
+    var rects=loaded.prefabRoot.GetComponentsInChildren<RectTransform>(true);
+    var canvases=loaded.prefabRoot.GetComponentsInChildren<Canvas>(true);var canvas=canvases.FirstOrDefault();
+    var scalers=loaded.prefabRoot.GetComponentsInChildren<UnityEngine.UI.CanvasScaler>(true);
+    var raycasters=loaded.prefabRoot.GetComponentsInChildren<UnityEngine.UI.GraphicRaycaster>(true);
+    var pointer=loaded.prefabRoot.GetComponentsInChildren<Crisis.Runtime.FullSource.WeaponPointer>(true).SingleOrDefault();
+    var physiology=loaded.prefabRoot.GetComponentsInChildren<Crisis.Runtime.FullSource.UIPhysiologyIndicator>(true).SingleOrDefault();
+    if(rects.Length==0||canvas==null||scalers.Length==0||raycasters.Length==0||pointer?.aimQuadPrefab==null||physiology?.circulationImage?.material==null)
+        throw new InvalidOperationException($"Authored UI prefab dependency graph missed required UI components (rects={rects.Length}, canvas={canvases.Length}, scalers={scalers.Length}, raycasters={raycasters.Length}, pointer={pointer!=null}, aimQuad={pointer?.aimQuadPrefab!=null}, physiologyMaterial={physiology?.circulationImage?.material!=null})");
+    if(canvas.renderMode!=RenderMode.ScreenSpaceOverlay||!canvas.receivesEvents||scalers[0].referenceResolution.x!=1280||scalers[0].referenceResolution.y!=720||!raycasters[0].ignoreReversedGraphics)
+        throw new InvalidOperationException("Authored UI Canvas, CanvasScaler, or GraphicRaycaster settings did not import");
+    if(pointer.aimQuadPrefab.OriginalAssetPath!="Assets/GameObject/Aim quad.prefab")throw new InvalidOperationException($"Authored WeaponPointer aim-quad prefab resolved as {pointer.aimQuadPrefab.OriginalAssetPath} ({pointer.aimQuadPrefab.name})");
+    var uiClone=UnityEngine.Object.Instantiate(loaded.prefabRoot);var clonedPhysiology=uiClone.GetComponentsInChildren<Crisis.Runtime.FullSource.UIPhysiologyIndicator>(true).Single();
+    if(clonedPhysiology.circulationImage.material==null||!ReferenceEquals(clonedPhysiology.circulationImage,uiClone.GetComponentsInChildren<UnityEngine.UI.Image>(true).First(image=>image.name==physiology.circulationImage.name)))
+        throw new InvalidOperationException("Instantiated authored UI did not retain the physiology overlay material and owned image reference");
+    Console.WriteLine(JsonSerializer.Serialize(new{prefab=loaded.scene,rectTransforms=rects.Length,canvasCount=canvases.Length,canvasScalerCount=scalers.Length,graphicRaycasterCount=raycasters.Length,canvasRenderMode=canvas.renderMode,referenceResolution=new{x=scalers[0].referenceResolution.x,y=scalers[0].referenceResolution.y},aimQuadPrefab=pointer.aimQuadPrefab.OriginalAssetPath,physiologyMaterial=physiology.circulationImage.material.OriginalAssetPath,physiologyMaterialCloned=clonedPhysiology.circulationImage.material!=null,unsupportedComponents=loaded.unsupportedComponents,unresolvedReferences=loaded.unresolvedReferences}));
+    return;
+}
 if(args.Length==3&&args[0]=="--ammunition-resource-contract"){
     Console.WriteLine(JsonSerializer.Serialize(AmmunitionLoader.VerifyOriginalResource(File.ReadAllText(args[1]),args[2])));
     return;
 }
-if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-outcome-contract"||args[0]=="--mission-ai-contract"||args[0]=="--mission-ai-outcome-contract"||args[0]=="--mission-projectile-contract"||args[0]=="--mission-ai-projectile-contract")){
+if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-ui-contract"||args[0]=="--mission-outcome-contract"||args[0]=="--mission-ai-contract"||args[0]=="--mission-ai-outcome-contract"||args[0]=="--mission-projectile-contract"||args[0]=="--mission-ai-projectile-contract")){
     var runOriginalAI=args[0].StartsWith("--mission-ai-",StringComparison.Ordinal);
+    var runWithOriginalUI=args[0]=="--mission-ui-contract";
     var package=File.ReadAllText(args[1]);
     var world=new RuntimeWorld();
     world.MakeCurrent();
@@ -49,9 +70,11 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-outcome-c
     // host. The original menus instantiate a large presentation-only prefab
     // graph; suppress those roots before their Awake callbacks, as a UI driver
     // would, while preserving the mission, operators, occupants, and systems.
+    if(runWithOriginalUI)Console.Error.WriteLine("MISSION-UI stage: loading scene records");
     var mission=SceneLoader.Load(package,"Assets/Scenes/Mission 01.unity",world,loaded=>{
-        foreach(var ui in loaded.objects.Values.OfType<Crisis.Runtime.FullSource.MissionUI>())ui.gameObject.SetActive(false);
-        foreach(var component in loaded.objects.Values.OfType<Crisis.Runtime.FullSource.Mission>()){
+        if(runWithOriginalUI)Console.Error.WriteLine("MISSION-UI stage: scene records loaded; activating authored UI");
+        if(!runWithOriginalUI)foreach(var ui in loaded.objects.Values.OfType<Crisis.Runtime.FullSource.MissionUI>())ui.gameObject.SetActive(false);
+        if(!runWithOriginalUI)foreach(var component in loaded.objects.Values.OfType<Crisis.Runtime.FullSource.Mission>()){
             // Keep original InteriorMode gameplay state for PlayerController,
             // but keep its original canvas initialized for weapon-pointer and
             // physiology indicator references. The headless gate supplies the
@@ -63,9 +86,11 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-outcome-c
                     component.interiorModePrefab.uiPrefab.gameObject.SetActive(false);
             }
         }
+        if(runWithOriginalUI)Console.Error.WriteLine("MISSION-UI stage: pre-activation configuration complete");
     });
+    if(runWithOriginalUI)Console.Error.WriteLine("MISSION-UI stage: scene activation completed");
     var missionComponent=mission.objects.Values.OfType<Crisis.Runtime.FullSource.Mission>().Single();
-    missionComponent.sandboxStartMode=Crisis.Runtime.FullSource.Mission.MissionView.None;
+    missionComponent.sandboxStartMode=runWithOriginalUI?Crisis.Runtime.FullSource.Mission.MissionView.EntryTeam:Crisis.Runtime.FullSource.Mission.MissionView.None;
     mission.objects.Values.OfType<Crisis.Runtime.FullSource.MissionUI>().Single().missionIntro=null;
     foreach(var renderer in world.Objects.OfType<Renderer>().ToArray())renderer.material.OnTextureAssigned??=((_,_)=>{});
     // Fog of war presentation Starts before the Mission Start callback in this
@@ -105,7 +130,15 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-outcome-c
         if(poseSnapshot.RootElement.GetProperty("owner").GetString()!="FullSource.CharacterBody"||
            poseSnapshot.RootElement.GetProperty("poses").GetArrayLength()<20)
             throw new InvalidOperationException("FullSource actor bridge did not return the actor-owned authored hierarchy snapshot");
-    try{
+    if(runWithOriginalUI){
+        if(missionComponent.InteriorMode?.UI?.InteractionMenu==null)throw new InvalidOperationException("EntryTeam mission did not initialize its original InteractionMenu");
+        var leftAction=Crisis.Runtime.FullSource.Global.Context.InputHandler.Keys.left;
+        var inputHandler=Crisis.Runtime.FullSource.Global.Context.InputHandler;
+        fullSourceBridge.Step(1f/60f,"{\"left\":true}",0f,0f);
+        if(!leftAction.Pressed)throw new InvalidOperationException($"FullSource bridge did not deliver the original left-action press to InputHandler (rawKey={UnityEngine.Input.GetKey(leftAction.key)}, key={leftAction.key}, enabled={leftAction.Enabled}, handlerEnabled={inputHandler.isActiveAndEnabled}, suspended={inputHandler.GetType().GetField("inputSuspended",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)!.GetValue(inputHandler)})");
+        fullSourceBridge.Step(1f/60f,"{}",0f,0f);
+        if(leftAction.Pressed||!leftAction.Up)throw new InvalidOperationException("FullSource bridge did not deliver the original left-action release to InputHandler");
+    }else try{
         fullSourceBridge.Step(1f/60f,"{\"left\":true}",0f,0f);
         throw new InvalidOperationException("FullSource bridge tick accepted Mission 01's intentionally incomplete, headless player UI");
     }catch(NotSupportedException error) when(error.Message.Contains("InteractionMenu",StringComparison.Ordinal)){}
@@ -180,7 +213,7 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-outcome-c
     }
     var liveTrees=world.Objects.OfType<BehaviorDesigner.Runtime.BehaviorTree>().Where(tree=>tree.enabled).ToArray();
     if(runOriginalAI&&(liveTrees.Length==0||liveTrees.Any(tree=>tree.GetBehaviorSource().RootTask==null)))throw new InvalidOperationException($"Original mission AI trees did not remain active with deserialized roots: activeTrees={liveTrees.Length}");
-    Console.WriteLine(JsonSerializer.Serialize(new{mission=mission.scene,missionStarted=missionComponent.Started,globalContext=context.gameObject.name,globalContextInstantiated=!ReferenceEquals(context.gameObject,contextPrefab.prefabRoot),sourceActors=bodies.Length,operators=bodies.Count(body=>body.GetComponent<Crisis.Runtime.FullSource.TeamOperator>()!=null),occupants=bodies.Count(body=>body.GetComponent<Crisis.Runtime.FullSource.Occupant>()!=null),fullSourceActorBridge="snapshot passed; step correctly rejected missing authored InteractionMenu UI",ai=runOriginalAI?"original BehaviorTrees enabled for one simulated second":"suppressed in headless mission contract",aiSimulationTicks,aiForceCommands,behaviorTrees=liveTrees.Length,behaviorTreeStatus=liveTrees.Select(tree=>new{root=tree.GetBehaviorSource().RootTask?.GetType().Name,execution=tree.ExecutionStatus.ToString()}).ToArray(),sceneObjects=mission.gameObjects,originalComponents=mission.originalComponents,missionUnsupported=mission.unsupportedComponents,missionUnresolved=mission.unresolvedReferences,globalContextUnsupported=contextPrefab.unsupportedComponents,globalContextUnresolved=contextPrefab.unresolvedReferences,audio="silent test adapter; original decode/playback not verified"}));
+    Console.WriteLine(JsonSerializer.Serialize(new{mission=mission.scene,missionStarted=missionComponent.Started,globalContext=context.gameObject.name,globalContextInstantiated=!ReferenceEquals(context.gameObject,contextPrefab.prefabRoot),sourceActors=bodies.Length,operators=bodies.Count(body=>body.GetComponent<Crisis.Runtime.FullSource.TeamOperator>()!=null),occupants=bodies.Count(body=>body.GetComponent<Crisis.Runtime.FullSource.Occupant>()!=null),fullSourceActorBridge=runWithOriginalUI?"snapshot passed; EntryTeam UI initialized; original left press and release passed":"snapshot passed; step correctly rejected missing authored InteractionMenu UI",ai=runOriginalAI?"original BehaviorTrees enabled for one simulated second":"suppressed in headless mission contract",aiSimulationTicks,aiForceCommands,behaviorTrees=liveTrees.Length,behaviorTreeStatus=liveTrees.Select(tree=>new{root=tree.GetBehaviorSource().RootTask?.GetType().Name,execution=tree.ExecutionStatus.ToString()}).ToArray(),sceneObjects=mission.gameObjects,originalComponents=mission.originalComponents,missionUnsupported=mission.unsupportedComponents,missionUnresolved=mission.unresolvedReferences,globalContextUnsupported=contextPrefab.unsupportedComponents,globalContextUnresolved=contextPrefab.unresolvedReferences,audio="silent test adapter; original decode/playback not verified"}));
     return;
 }
 var runLifecycle=args.Contains("--prefab-lifecycle");if(runLifecycle||args.Contains("--prefab-instantiate")){

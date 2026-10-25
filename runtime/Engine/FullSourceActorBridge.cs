@@ -17,6 +17,7 @@ public sealed class FullSourceActorBridge
     readonly PlayerController controller;
     readonly Crisis.Runtime.FullSource.InputHandler input;
     readonly Dictionary<string, FieldInfo> actions;
+    HashSet<KeyCode> drivenKeys=[];
 
     public FullSourceActorBridge(RuntimeWorld world, CharacterBody body)
     {
@@ -65,13 +66,19 @@ public sealed class FullSourceActorBridge
         world.MakeCurrent();
         using var document = JsonDocument.Parse(actionsJson);
         var values = document.RootElement;
+        var nextKeys=new HashSet<KeyCode>();
         foreach (var field in actions.Values)
         {
             var key = (InputKey)field.GetValue(input.Keys);
             if (key == null || key.key == KeyCode.None) continue;
             var pressed = values.TryGetProperty(field.Name, out var value) && value.ValueKind == JsonValueKind.True;
-            Input.SetKey(key.key, pressed);
+            if(pressed)nextKeys.Add(key.key);
         }
+        // Several authored actions can share one physical key. Treat keyboard
+        // state as the union of their action levels so a later false action
+        // cannot release a key another true action is holding.
+        foreach(var key in drivenKeys.Concat(nextKeys).Distinct())Input.SetKey(key,nextKeys.Contains(key));
+        drivenKeys=nextKeys;
         Input.mousePosition = new Vector3(mouseX, mouseY, 0f);
         world.Tick(elapsedSeconds);
         return Snapshot();
