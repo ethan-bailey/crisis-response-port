@@ -3,54 +3,46 @@
 ## Checkpoint
 
 - Active branch: `develop/wasm`.
-- Live and fetched HEAD: `387e274bd210a3842781a4cbac770cd4c7a0907e`.
-- Worktree was clean after fetching this SHA. No open PRs were found before the
-  change.
-- Nothing was deployed. Site v39 remains the last owner-accepted iPhone Safari
-  build. Desktop browser automation is optional; iPhone Safari acceptance stays
-  open for new gameplay behavior.
-- Follow `AGENT_INSTRUCTIONS.md`; batch related work, use the pinned .NET SDK
-  8.0.426 for builds, and update this handoff once at the end of the next
-  substantive batch.
+- Source recovery implementation commit: `de7ab755ba63b18051c5302203b5788e434e4a3f`.
+- The handoff checkpoint commit follows this implementation commit.
+- The exact original Global Context prefab and `.meta` were recovered from the
+  mounted extracted export and copied into `source-reference/Original`.
+- The historical recovery ZIP is absent in this session; its documented SHA was
+  not rechecked. Individual prefab and meta hashes and byte comparisons were
+  verified against the mounted export.
+- No deployment was performed. Site v39 remains the last owner-accepted iPhone
+  Safari build. Keep target-device acceptance open for new gameplay behavior.
 
-## Latest batch: bounded Operator source delivery
+## Latest source recovery batch
 
-- Added `scripts/package_fullsource_actor.py` to build the source-preserving
-  dependency closure of the recovered `Assets/Resources/characters/Operator.prefab`.
-- The generated profile contains 238 source assets and 998 records. Measured
-  output: 9,554,760 gzip bytes / 24,296,523 expanded JSON bytes. Hard ceilings
-  are 12 MiB compressed / 32 MiB expanded.
-- Added `loadFullSourceOperatorPackage()` in
-  `scene-data/scene-package-loader.mjs`. It fetches on demand and checks profile
-  identity, byte ceilings, exact sizes, SHA-256, and the original prefab root.
-- Wired release packaging and validation in `scripts/package_wasm_site.py`.
-  The full scene smoke package remains behind the existing opt-in `scene-smoke`
-  query parameter.
-- Implementation source SHA: `387e274bd210a3842781a4cbac770cd4c7a0907e`.
-- Checks run: package generator completed on the tracked recovered archive;
-  Node syntax check, Python bytecode compilation, and `git diff --check` passed.
-  No .NET build, release package build, test suite, browser smoke, or iPhone
-  Safari acceptance was run. No deployment.
-- Evidence: `docs/evidence/BOUNDED_OPERATOR_SOURCE_DELIVERY_2026-10-25.md`.
-
-## Active integration blocker
-
-The Operator-only profile is not yet sufficient to initialize the
-`FullSourceActorBridge`. That bridge requires original `Global.Context`, its
-`InputHandler`, an active original `PlayerController`, and the `CharacterBody`
-in one `RuntimeWorld`. The tracked recovered scene archive does not contain
-`Assets/Resources/Global context.prefab`. Loading the complete Mission 01 scene
-closure would be 825 assets, 15,341 records, 144,342,051 JSON bytes, and
-67,400,258 gzip bytes, which is not a bounded phone-startup path.
+- Recovered `Assets/Resources/Global context.prefab`, Unity GUID
+  `64a19dee4df3d6e42a4ce00a87b8cebe`, at
+  `source-reference/Original/CharacterDependencies/GlobalContext/` with `.meta`
+  and provenance.
+- Regenerated package from the recovered export: 2,060 assets, 40,139 records,
+  24,856 references, 776 binary assets, and 6 unresolved references. Counts
+  match historical evidence; regenerated package hash differs from the
+  historical output, so no package identity claim is made from that hash.
+- A serialized-reference traversal from original Mission,
+  MissionUI, and GlobalContextInitializer records selected 7,126 of 7,141
+  Mission 01 records. It does not yield a small, source-preserving UI slice.
+- Global Context + Operator execution-view closure: 1,204 assets, 7,367 records,
+  59,941,213 JSON bytes / 33,355,400 gzip bytes. Adding full Mission 01 yields
+  1,918 assets, 22,361 records, 160,546,681 JSON bytes / 91,250,300 gzip bytes.
+- Details: `docs/evidence/GLOBAL_CONTEXT_SOURCE_RECOVERY_2026-10-25.md`.
+- No .NET build, browser smoke, package deployment, or iPhone Safari test was
+  run. Nothing was deployed.
 
 ## Exact next action
 
-Recover the exact original Global Context prefab from available source material
-and generate a bounded same-world package for Global Context, Mission UI, and
-Operator. Do not bind the isolated Operator prefab as a competing actor. If the
-source remains unavailable, record the exact source search and continue only
-with independent work that preserves the one-actor ownership rule. Once the
-same-world package is ready, wire page actions/ticks, PhysX state, actor snapshot
-rendering, and weapon/equipment callbacks through that FullSource actor; run the
-combined runtime and package checks on one exact SHA, then request iPhone Safari
-acceptance at the playable milestone. Do not deploy without the release gate.
+Implement source-faithful deferred serialized-asset resolution for the original
+Mission UI package, using exact GUID/fileID references and existing source hashes.
+Keep original Mission, MissionUI, InteriorModeUI, InteractionMenu, Global
+Context, and Operator components in one RuntimeWorld. Measure the assets
+required before first actor input and set an explicit on-demand byte budget
+before wiring the page. Do not strip component fields, drop dependencies,
+replace source records, or create a second actor to make the package smaller.
+Once the same-world source path passes the existing Mission UI actor contract,
+wire page input, PhysX results, actor snapshots, and weapon callbacks through
+that actor; run combined checks on one SHA. Do not deploy before the release
+gate and owner iPhone Safari acceptance.
