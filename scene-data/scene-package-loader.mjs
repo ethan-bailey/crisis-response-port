@@ -94,6 +94,18 @@ async function fetchCompressedAsset(url, expected, label) {
   return compressed;
 }
 
+// Blazor's byte[] JS interop path is version-sensitive and the hosted .NET 8
+// runtime rejects Uint8Array arguments as an unexpected JSON byte array.
+// Keep the interop payload an ordinary string, encoding only one asset at a
+// time so large profiles do not require retaining base64 copies for the batch.
+function bytesToBase64(bytes) {
+  let binary = "";
+  const chunkSize = 0x8000;
+  for (let offset = 0; offset < bytes.length; offset += chunkSize)
+    binary += String.fromCharCode(...bytes.subarray(offset, offset + chunkSize));
+  return btoa(binary);
+}
+
 /** Deliver one verified source dependency profile to the WASM store, one asset at a time. */
 export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onProgress} = {}) {
   if (!bridge || typeof bridge.invokeMethodAsync !== "function") throw new TypeError("A Blazor DotNet bridge is required");
@@ -140,7 +152,7 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
       throw new Error("Incremental source profile contains an invalid asset entry");
     seenPaths.add(asset.path);
     const compressed = await fetchCompressedAsset(new URL(asset.file, base), asset, `Source asset ${asset.path}`);
-    const result = JSON.parse(await bridge.invokeMethodAsync("AddIncrementalSourceGzipAsset", asset.path, new Uint8Array(compressed)));
+    const result = JSON.parse(await bridge.invokeMethodAsync("AddIncrementalSourceGzipAsset", asset.path, bytesToBase64(new Uint8Array(compressed))));
     deliveredAssetBytes += asset.bytes;
     if (result.expectedAssets !== manifest.assets.length || result.receivedAssets !== index + 1
         || result.receivedBytes !== deliveredAssetBytes || result.receivedCompressedBytes !== compressedAssetBytes + compressed.byteLength)

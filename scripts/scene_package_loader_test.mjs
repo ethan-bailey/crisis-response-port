@@ -63,7 +63,13 @@ test("rejects an invalid chunk path before fetching it", async () => {
 test("delivers verified source assets sequentially to the WASM package bridge", async () => {
   const hash = bytes => createHash("sha256").update(bytes).digest("hex");
   const assetPath = "Assets/Resources/Global context.prefab";
-  const assetText = '{"records":[]}';
+  let state = 0x5eed;
+  let payload = "";
+  for (let index = 0; index < 96 * 1024; index++) {
+    state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+    payload += String.fromCharCode(65 + state % 26);
+  }
+  const assetText = `{"payload":"${payload}"}`;
   const assetRaw = encoder.encode(assetText);
   const assetGzip = gzipSync(assetRaw);
   const assetCompressedHash = hash(assetGzip);
@@ -103,7 +109,9 @@ test("delivers verified source assets sequentially to the WASM package bridge", 
     assert.deepEqual(calls.map(call => call[0]), ["InitializeIncrementalSourcePackage", "AddIncrementalSourceGzipAsset"]);
     assert.equal(calls[1][0], "AddIncrementalSourceGzipAsset");
     assert.equal(calls[1][1], assetPath);
-    assert.deepEqual(new Uint8Array(gzipSync(assetRaw)), calls[1][2]);
+    assert.equal(typeof calls[1][2], "string");
+    assert.ok(calls[1][2].length > 32768, "base64 payload should cover more than one encoding chunk");
+    assert.deepEqual(Buffer.from(calls[1][2], "base64"), Buffer.from(gzipSync(assetRaw)));
     assert.deepEqual(progress, [{receivedAssets:1,expectedAssets:1,compressedAssetBytes:assetGzip.byteLength,sourceAssetBytes:assetRaw.byteLength,maximumAssetBytes:assetRaw.byteLength,totalCompressedAssetBytes:assetGzip.byteLength,totalSourceAssetBytes:assetRaw.byteLength}]);
   } finally {
     globalThis.fetch = originalFetch;
