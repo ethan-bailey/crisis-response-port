@@ -22,6 +22,7 @@ public sealed class FullSourceActorBridge
     readonly List<object> physicsCommands=[];
     readonly Action<Vector3,Vector3,ForceMode> priorActorPhysicsSink;
     readonly FieldInfo accelerationField;
+    readonly BrowserAudioEventQueue audioEventQueue;
     int lastFixedSteps;
     float pendingMovementMagnitude = 1f;
     bool movementInputWasActive;
@@ -33,6 +34,7 @@ public sealed class FullSourceActorBridge
         this.world = world ?? throw new ArgumentNullException(nameof(world));
         this.body = body ?? throw new ArgumentNullException(nameof(body));
         world.MakeCurrent();
+        audioEventQueue = world.AudioSourceDriver as BrowserAudioEventQueue;
 
         var context = Global.Context ?? throw new InvalidOperationException("FullSource actor bridge requires the original Global.Context");
         if (!world.Objects.Any(value => ReferenceEquals(value, context.gameObject)) ||
@@ -139,7 +141,7 @@ public sealed class FullSourceActorBridge
         if (!hasMovementInput && !accelerationStillPending) pendingMovementMagnitude = 1f;
         movementInputWasActive = hasMovementInput;
         lastFixedSteps = Math.Max(0, (int)MathF.Round((Time.fixedTime - fixedTimeBefore) / Time.fixedDeltaTime));
-        return Snapshot();
+        return Snapshot(audioEventQueue?.Drain() ?? []);
     }
 
     void CaptureActorForce(Vector3 force, Vector3 position, ForceMode mode)
@@ -190,7 +192,9 @@ public sealed class FullSourceActorBridge
             throw new NotSupportedException("FullSource actor stepping requires the recovered Mission InteriorMode UI and InteractionMenu; refusing to tick a partial player context");
     }
 
-    public object Snapshot()
+    public object Snapshot() => Snapshot([]);
+
+    object Snapshot(object[] audioEvents)
     {
         world.MakeCurrent();
         var poses = new List<object>();
@@ -220,6 +224,7 @@ public sealed class FullSourceActorBridge
         return new
         {
             owner = "FullSource.CharacterBody",
+            sourceTime = Time.time,
             playerController = controller.GetInstanceID(),
             actor = body.name,
             position = new[] { body.transform.position.x, body.transform.position.y, body.transform.position.z },
@@ -234,6 +239,8 @@ public sealed class FullSourceActorBridge
                 fixedSteps = lastFixedSteps,
                 commands = physicsCommands.ToArray()
             },
+            audioEvents,
+            droppedAudioEvents = audioEventQueue?.DroppedEvents ?? 0,
             controlSpeed = new {walkCap = lastTickWalkSpeedCap,sprintCap = lastTickSprintSpeedCap,movementMagnitude = pendingMovementMagnitude}
         };
     }

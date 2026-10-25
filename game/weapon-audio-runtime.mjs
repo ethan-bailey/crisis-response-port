@@ -12,6 +12,19 @@ export function clampWeaponEventGain(value) {
   return Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0;
 }
 
+export function createSourceWeaponAudioDispatcher(audioData, audioRuntime) {
+  const keys = new Map(Object.entries(audioData || {}).filter(([, info]) => info.source)
+    .map(([key, info]) => [info.source, key]));
+  return function dispatch(events, sourceTime) {
+    for (const event of events || []) {
+      const key = keys.get(event.sourcePath);
+      if (!key || event.action !== 'oneShot') { audioRuntime.noteUnmappedSourceEvent(); continue; }
+      const volume = (Number.isFinite(event.volume) ? event.volume : 0) * (key === 'audioFire' ? 0.6 : 1);
+      audioRuntime.play(key, volume, sourceTime - Number(event.time));
+    }
+  };
+}
+
 export function createWeaponAudioRuntime(audioData, { AudioContextClass, fetchAudio } = {}) {
   const AudioContext = AudioContextClass ?? globalThis.AudioContext ?? globalThis.webkitAudioContext;
   const request = fetchAudio ?? globalThis.fetch?.bind(globalThis);
@@ -19,7 +32,7 @@ export function createWeaponAudioRuntime(audioData, { AudioContextClass, fetchAu
   const buffers = new Map();
   const loadingAudio = new Map();
   const stats = { played: 0, droppedSuspended: 0, droppedUnloaded: 0, droppedStale: 0,
-    decodeErrors: 0, unlockFailures: 0 };
+    decodeErrors: 0, unlockFailures: 0, unmappedSourceEvents: 0 };
   const outputGain = context?.createGain() ?? null;
   const limiter = context?.createDynamicsCompressor() ?? null;
   if (outputGain && limiter) {
@@ -85,5 +98,7 @@ export function createWeaponAudioRuntime(audioData, { AudioContextClass, fetchAu
       loadedBuffers: buffers.size, pendingBuffers: loadingAudio.size };
   }
 
-  return { context, load, play, snapshot, unlock };
+  function noteUnmappedSourceEvent() { stats.unmappedSourceEvents++; }
+
+  return { context, load, play, snapshot, unlock, noteUnmappedSourceEvent };
 }

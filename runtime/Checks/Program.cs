@@ -29,6 +29,17 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
     var fullWalkForce=authoredWalkSpeed*Time.fixedDeltaTime*750f;
     if(!(forceX>0f&&forceX<fullWalkForce*.6f)||MathF.Abs(session.Actor.walkSpeed-authoredWalkSpeed)>.001f)
         throw new InvalidOperationException($"The eased browser stick magnitude did not scale the original walk speed cap and restore the authored speed: forceX={forceX}, fullWalkForce={fullWalkForce}, authoredWalkSpeed={session.Actor.walkSpeed}, snapshot={state}");
+    var sourceClip=session.Mission.world.Objects.OfType<AudioClip>().FirstOrDefault(clip=>!string.IsNullOrEmpty(clip.OriginalAssetPath))
+        ??throw new InvalidOperationException("Mission source profile has no identified original audio clips");
+    var sourceAudio=session.Mission.world.Objects.OfType<AudioSource>().FirstOrDefault()
+        ??throw new InvalidOperationException("Mission source profile has no original AudioSource");
+    for(var index=0;index<65;index++)sourceAudio.PlayOneShot(sourceClip,.37f);
+    using var audioCapture=JsonDocument.Parse(JsonSerializer.Serialize(bridge.Step(1f/60f,"{}",640f,360f)));
+    var audioEvents=audioCapture.RootElement.GetProperty("audioEvents");
+    if(audioEvents.GetArrayLength()!=64||audioCapture.RootElement.GetProperty("droppedAudioEvents").GetInt32()!=1||audioEvents[0].GetProperty("sourcePath").GetString()!=sourceClip.OriginalAssetPath||
+       MathF.Abs(audioEvents[0].GetProperty("volume").GetSingle()-.37f)>.001f||
+       MathF.Abs(audioCapture.RootElement.GetProperty("sourceTime").GetSingle()-audioEvents[0].GetProperty("time").GetSingle())>.1f)
+        throw new InvalidOperationException($"Original AudioSource callback was not delivered as one bounded, timestamped browser event: {audioCapture.RootElement}");
     var originalPointer=session.Actor.GetComponent<Crisis.Runtime.FullSource.PlayerController>()?.WeaponPointer
         ??throw new InvalidOperationException("Browser EntryTeam actor has no original WeaponPointer");
     if(originalPointer.enabled)
@@ -48,7 +59,7 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
     var velocity=roundTrip.RootElement.GetProperty("velocity");
     if(MathF.Abs(position[0].GetSingle()-(before.x+.25f))>.001f||MathF.Abs(velocity[0].GetSingle()-1f)>.001f)
         throw new InvalidOperationException("Browser PhysX position and velocity did not round trip into the source player actor");
-    Console.WriteLine(JsonSerializer.Serialize(new{status="passed",mission=session.Mission.scene,actor=session.Actor.name,sourceActors=session.SourceActorCount,interactionMenu=true,input="original press/release",movementForce=commands.GetArrayLength(),analogMovement="0.5 eased cap reaches source CharacterBody and restores authored speed",aim="absolute WeaponPointer world target unchanged by horizontal movement and mouse X",physics="position/velocity round trip"}));
+    Console.WriteLine(JsonSerializer.Serialize(new{status="passed",mission=session.Mission.scene,actor=session.Actor.name,sourceActors=session.SourceActorCount,interactionMenu=true,input="original press/release",movementForce=commands.GetArrayLength(),analogMovement="0.5 eased cap reaches source CharacterBody and restores authored speed",aim="absolute WeaponPointer world target unchanged by horizontal movement and mouse X",audio="original AudioSource callback includes source path, event volume, and source time",physics="position/velocity round trip"}));
     return;
 }
 OriginalSourcePackage LoadSourcePackage(string path){

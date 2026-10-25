@@ -32,14 +32,6 @@ public static class BrowserEntryTeamMission
         public void LoadScene(string sceneName) => throw new NotSupportedException("Browser EntryTeam session does not change scenes");
     }
 
-    sealed class SilentAudioDriver : IAudioClipPlaybackDriver
-    {
-        public bool IsPlaying => false;
-        public void PlayOneShot(AudioClip clip, float volume, int priority) { }
-        public void Play(AudioClip clip, float volume, float pitch, bool loop, bool muted, int priority) { }
-        public void Stop() { }
-    }
-
     sealed class SilentMixerDriver : UnityEngine.Audio.IAudioMixerDriver
     {
         public bool SetFloat(string exposedParameter, float value) => true;
@@ -51,6 +43,8 @@ public static class BrowserEntryTeamMission
         ArgumentNullException.ThrowIfNull(package);
         ArgumentNullException.ThrowIfNull(world);
         world.MakeCurrent();
+        var audioEvents = new BrowserAudioEventQueue();
+        world.AudioSourceDriver = audioEvents;
         Resources.Configure(package, world);
         Screen.Bind(world, new DisplayDriver());
         QualitySettings.Bind(world, new QualityDriver());
@@ -61,7 +55,7 @@ public static class BrowserEntryTeamMission
 
         SceneLoader.LoadPrefabInstance(package, "Assets/Resources/Global context.prefab", world, requireComplete: false);
         foreach (var clip in world.Objects.OfType<AudioClip>()) clip.ReportLoadState(AudioDataLoadState.Loaded);
-        foreach (var source in world.Objects.OfType<AudioSource>()) source.Driver = new SilentAudioDriver();
+        foreach (var source in world.Objects.OfType<AudioSource>()) source.Driver = audioEvents;
         world.Initialize();
 
         var context = Global.Context ?? throw new InvalidOperationException("Recovered Global Context did not initialize");
@@ -87,7 +81,7 @@ public static class BrowserEntryTeamMission
         missionRoot.sandboxStartMode = Mission.MissionView.EntryTeam;
         world.Objects.OfType<MissionUI>().Single().missionIntro = null;
         foreach (var renderer in world.Objects.OfType<Renderer>().ToArray()) renderer.material.OnTextureAssigned ??= (_, _) => { };
-        foreach (var source in world.Objects.OfType<AudioSource>().ToArray()) source.Driver ??= new SilentAudioDriver();
+        foreach (var source in world.Objects.OfType<AudioSource>().ToArray()) source.Driver ??= audioEvents;
         foreach (var pointer in world.Objects.OfType<WeaponPointer>().ToArray())
         {
             pointer.enabled = false;
@@ -110,7 +104,7 @@ public static class BrowserEntryTeamMission
             foreach (var vocalization in world.Objects.OfType<UIVocalizationText>().ToArray()) vocalization.enabled = false;
             foreach (var fog in world.Objects.OfType<FogOfWarElement>().ToArray()) fog.enabled = false;
             foreach (var tree in world.Objects.OfType<BehaviorDesigner.Runtime.BehaviorTree>().ToArray()) tree.enabled = false;
-            foreach (var source in world.Objects.OfType<AudioSource>().ToArray()) source.Driver ??= new SilentAudioDriver();
+            foreach (var source in world.Objects.OfType<AudioSource>().ToArray()) source.Driver ??= audioEvents;
         }
         world.Tick(1f / 60f, PrepareMissionFrame);
         foreach (var rigidbody in world.Objects.OfType<Rigidbody>().ToArray()) rigidbody.PhysicsForceSink ??= (_, _, _) => { };
@@ -123,6 +117,7 @@ public static class BrowserEntryTeamMission
             .Where(body => body && body.IsPlayer && body.GetComponent<PlayerController>() is { isActiveAndEnabled: true })
             .ToArray();
         if (actors.Length != 1) throw new InvalidOperationException($"Expected one active original player actor, found {actors.Length}");
+        audioEvents.Clear();
         return new Session(mission, actors[0], world.Objects.OfType<CharacterBody>().Count());
     }
 }

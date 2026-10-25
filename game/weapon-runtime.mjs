@@ -4,7 +4,7 @@ import { createOriginalImpactMeshRenderer } from './original-impact-mesh.mjs';
 import { sourceEffectAge } from './source-effect-clock.mjs';
 import { createOriginalWindowVisuals } from './original-window-visuals.mjs';
 import { createOriginalParticleEventBinding } from './original-particle-event-binding.mjs';
-import { createWeaponAudioRuntime } from './weapon-audio-runtime.mjs';
+import { createWeaponAudioRuntime, createSourceWeaponAudioDispatcher } from './weapon-audio-runtime.mjs';
 export async function loadWeaponData(){
  const r=await fetch('./assets/weapon-runtime.json.gz');if(!r.ok)throw new Error('Original weapon settings unavailable');
  const data=await new Response(r.body.pipeThrough(new DecompressionStream('gzip'))).json();
@@ -19,6 +19,7 @@ export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,part
  const audio=data.audioRuntime||createWeaponAudioRuntime(data.audio);
  for(const info of Object.values(ballisticsData?.effects||{}))for(const url of info.audio)audio.load(url,url);
  const audioStats={snapshot:()=>audio.snapshot()};
+ const dispatchSourceAudio=createSourceWeaponAudioDispatcher(data.audio,audio);
  const originalImpactMeshes=createOriginalImpactMeshRenderer(scene);
  const originalWindows=createOriginalWindowVisuals(scene,ballisticsData,sourceWindows);
  const originalParticleEvents=createOriginalParticleEventBinding(particleSources.particles,particleSources.materials);
@@ -97,5 +98,5 @@ export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,part
     currentSourceSpriteGuid:active.find(item=>item.firstFrameApplied)?.originalSpriteGuid||null};
  }
  function audioSnapshot(){return audioStats.snapshot();}
- return {update,flashSnapshot,audioSnapshot,impactMeshSnapshot:originalImpactMeshes.snapshot,windowSnapshot:originalWindows.snapshot,particleSourceSnapshot:originalParticleEvents.snapshot};
+ return {update,playSourceAudioEvents:dispatchSourceAudio,flashSnapshot,audioSnapshot,impactMeshSnapshot:originalImpactMeshes.snapshot,windowSnapshot:originalWindows.snapshot,particleSourceSnapshot:originalParticleEvents.snapshot};
 }
