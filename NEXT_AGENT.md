@@ -2,7 +2,7 @@
 
 ## Exact shipped checkpoint
 
-- Runtime source branch `develop/wasm` is at `f8a4be5234e294c7fb58fc5f14e037941d70014d` (verified against the live GitHub branch head). Site artifact source is `b7b1e2318e264b1fe861e3163a9913c3e8ae1781`.
+- Runtime code checkpoint tested and deployed is `f8a4be5234e294c7fb58fc5f14e037941d70014d`. Documentation commit `a3301dc10c53d38bc3e886f17552b54cbdb3cc08` is pushed after it; `develop/wasm` now points to that documentation commit. Site artifact source is `b7b1e2318e264b1fe861e3163a9913c3e8ae1781`.
 - The source startup race is fixed: `App.razor` owns the single first-render `startOriginalRuntime()` call; the duplicate inline startup call was removed. `scripts/runtime_memory_check_test.mjs` guards this contract. Before this fix, two concurrent source-profile deliveries wrote the same static asset store; the UI advanced while the second `AddIncrementalSourceGzipAsset` saw an inconsistent received count (`WASM source store rejected asset ...`).
 - Exact source gates: Node **88/88** (`node --test scripts/*_test.mjs`); Python **39/39** (`python3 -m unittest discover -s scripts -p '*_test.py'`); EngineChecks **69**; FoundationChecks **121**; Release browser publish succeeded; `--browser-entryteam-session-contract` passed at this SHA. Compiler reports existing warnings; no errors. `wasm-tools` optimization is optional and unavailable here.
 - Mission contract evidence covers the original fire input/source actor path, source shot and authored event callbacks, source audio mapping and bounded gain, absolute aim, analog movement, and position/velocity round trip. This does not prove native browser particle/casing presentation or full gameplay parity.
