@@ -95,7 +95,7 @@ async function fetchCompressedAsset(url, expected, label) {
 }
 
 /** Deliver one verified source dependency profile to the WASM store, one asset at a time. */
-export async function deliverIncrementalSourceProfile(bridge, manifestUrl) {
+export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onProgress} = {}) {
   if (!bridge || typeof bridge.invokeMethodAsync !== "function") throw new TypeError("A Blazor DotNet bridge is required");
   const manifestResponse = await fetch(manifestUrl);
   if (!manifestResponse.ok) throw new Error(`Incremental source manifest unavailable: HTTP ${manifestResponse.status}`);
@@ -150,6 +150,9 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl) {
     compressedAssetBytes += compressed.byteLength;
     sourceAssetBytes += asset.bytes;
     maximumAssetBytes = Math.max(maximumAssetBytes, asset.bytes);
+    if (onProgress && ((index + 1) % 25 === 0 || index + 1 === manifest.assets.length))
+      await onProgress({receivedAssets:index + 1,expectedAssets:manifest.assets.length,
+        compressedAssetBytes,sourceAssetBytes,maximumAssetBytes});
   }
   if (compressedAssetBytes !== manifest.compressedAssetBytes || sourceAssetBytes !== manifest.uncompressedAssetBytes)
     throw new Error("Incremental source profile byte totals do not match its manifest");

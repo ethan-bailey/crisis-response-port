@@ -94,8 +94,9 @@ test("delivers verified source assets sequentially to the WASM package bridge", 
     return JSON.stringify({expectedAssets: 1, receivedAssets: 1, receivedBytes: assetRaw.byteLength,
       receivedCompressedBytes: assetGzip.byteLength});
   }};
+  const progress = [];
   try {
-    const result = await deliverIncrementalSourceProfile(bridge, "https://example.test/source/manifest.json");
+    const result = await deliverIncrementalSourceProfile(bridge, "https://example.test/source/manifest.json", {onProgress: value => progress.push(value)});
     assert.equal(result.assetCount, 1);
     assert.equal(result.sourceBytes, metadataRaw.byteLength + assetRaw.byteLength);
     assert.equal(result.maximumAssetBytes, assetRaw.byteLength);
@@ -103,6 +104,7 @@ test("delivers verified source assets sequentially to the WASM package bridge", 
     assert.equal(calls[1][0], "AddIncrementalSourceGzipAsset");
     assert.equal(calls[1][1], assetPath);
     assert.deepEqual(new Uint8Array(gzipSync(assetRaw)), calls[1][2]);
+    assert.deepEqual(progress, [{receivedAssets:1,expectedAssets:1,compressedAssetBytes:assetGzip.byteLength,sourceAssetBytes:assetRaw.byteLength,maximumAssetBytes:assetRaw.byteLength}]);
   } finally {
     globalThis.fetch = originalFetch;
   }

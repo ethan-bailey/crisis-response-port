@@ -54,6 +54,11 @@ public static class RuntimeBridge {
         bool added=source.AddVerifiedGzipAsset(assetPath,compressedAsset);
         return JsonSerializer.Serialize(new{added,expectedAssets=source.ExpectedAssetCount,receivedAssets=source.AssetCount,receivedBytes=source.DeliveredBytes,receivedCompressedBytes=source.DeliveredCompressedBytes});
     }
+    [JSInvokable] public static string GetIncrementalSourceMemorySnapshot(){
+        var source=originalSourcePackage??throw new InvalidOperationException("Incremental source package is not initialized");
+        var gc=GC.GetGCMemoryInfo();
+        return JsonSerializer.Serialize(new{managedBytes=GC.GetTotalMemory(false),managedHeapBytes=gc.HeapSizeBytes,totalAvailableBytes=gc.TotalAvailableMemoryBytes,receivedAssets=source.AssetCount,expectedAssets=source.ExpectedAssetCount,sourceBytes=source.DeliveredBytes,compressedBytes=source.DeliveredCompressedBytes});
+    }
     [JSInvokable] public static string LoadIncrementalSourceScene(string path){
         var source=originalSourcePackage??throw new InvalidOperationException("Incremental source package is not initialized");
         scene=SceneLoader.Load(source,path,incrementalSourceWorld??throw new InvalidOperationException("Incremental source world is not initialized"));
