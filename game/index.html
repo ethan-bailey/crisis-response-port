@@ -107,6 +107,9 @@ html,body,#stage,canvas,#controls,#movementStick,#controlsHelp,#controlsGuide{-w
 
 
 #startOriginalMission{position:absolute;left:12px;top:max(60px,calc(env(safe-area-inset-top) + 56px));z-index:5;min-height:44px;padding:9px 12px;border:1px solid #86a9c5;border-radius:10px;background:#152432ed;color:#eef6ff;font-size:13px;font-weight:700;pointer-events:auto;touch-action:manipulation}#startOriginalMission:disabled{opacity:.55}
+#missionProgress{position:absolute;left:12px;top:calc(max(60px,env(safe-area-inset-top) + 56px) + 52px);z-index:6;width:min(420px,calc(100vw - 24px));padding:10px 12px;border:1px solid #86a9c5;border-radius:10px;background:#101820f2;color:#eef6ff;font-size:13px;line-height:1.4;box-shadow:0 8px 24px #0008;touch-action:manipulation}
+#missionProgress[hidden]{display:none}#missionProgressText{display:block;margin-bottom:8px;overflow-wrap:anywhere}
+#cancelMissionLoad{min-width:72px;min-height:40px;padding:7px 12px;touch-action:manipulation}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
 </head>
@@ -114,6 +117,7 @@ html,body,#stage,canvas,#controls,#movementStick,#controlsHelp,#controlsGuide{-w
 <div id="stage"></div>
 <div id="hud"><div id="title">Crisis Response · incomplete port</div><div id="status">Loading recovered scene and original Operator prefab…</div><div id="position"></div><div id="weaponStatus">Loading original weapons…</div></div>
 <button id="startOriginalMission" type="button" disabled>Start original Mission · 99 MB</button>
+<div id="missionProgress" role="status" aria-live="polite" hidden><span id="missionProgressText">Preparing original Mission download…</span><button id="cancelMissionLoad" type="button">Cancel</button></div>
 <div id="help">A/D · Shift · S/W · drag or tap to aim · tap same spot to fire · <a href="../runtime-web/">Runtime checks</a></div>
 <button id="controlsHelp" type="button" aria-label="Show touch controls" aria-expanded="false" aria-controls="controlsGuide">?</button>
 <aside id="controlsGuide" aria-labelledby="controlsGuideTitle" hidden>
@@ -152,6 +156,7 @@ import { posePosition } from "./animation-pose.mjs";
 import { SourceCharacterAnimator } from "./source-character-animator.mjs";
 
 const weaponStatus=document.querySelector("#weaponStatus"),startOriginalMissionButton=document.querySelector("#startOriginalMission");
+const missionProgress=document.querySelector("#missionProgress"),missionProgressText=document.querySelector("#missionProgressText");
 const stage=document.querySelector("#stage"), status=document.querySelector("#status"), positionLabel=document.querySelector("#position"), errorBox=document.querySelector("#error"),errorDetails=document.querySelector("#errorDetails"),errorHint=document.querySelector("#errorHint"),copyErrorStatus=document.querySelector("#copyErrorStatus"),retryErrorButton=document.querySelector("#retryError");
 const scene=new THREE.Scene(); scene.background=new THREE.Color(0x11151b);
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false}); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(innerWidth,innerHeight); renderer.outputColorSpace=THREE.SRGBColorSpace; stage.appendChild(renderer.domElement);
@@ -163,6 +168,12 @@ const world=new THREE.Group();scene.add(world);
 const character=new THREE.Group();character.name="Original Operator prefab";scene.add(character);
 const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(2,0,0),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,contactPhysicsModule=null,contactPhysicsData=null,physicsState=null,physicsTime=0,sprintBlend=0,gaitPhase=0,upperBody=null,presentationData=null,weaponData=null,ballisticsData=null,hasAimPointer=false,aimDirty=false,aimGeneration=0,settledAimGeneration=-1,tapPending=0,tapFrame=false,reloadPending=false,weaponState=null,handRenderers=null,armRig=null,sourceActorMode=false,sourceActorSnapshot=null,projectFullSourceSnapshot=()=>{};const lockedAim=new AimDirection(),aimFireGate=new AimFireGate();
 const loadStart=performance.now(),loadingTimings={};window.__loadingTimings=loadingTimings;
+let sourceLoadController=null;
+let lastStageTouchEnd=0;
+document.addEventListener("touchend",event=>{
+ if(!(event.target instanceof Element)||!event.target.closest("#stage,canvas"))return;
+ const now=Date.now();if(now-lastStageTouchEnd<350)event.preventDefault();lastStageTouchEnd=now;
+},{passive:false});
 const markLoaded=name=>loadingTimings[name]=performance.now()-loadStart;
 function showError(e,{retry,hint}={}){
  const message=String(e?.message||e),stack=String(e?.stack||"");
@@ -428,11 +439,12 @@ async function load(){
   status.textContent="Original C# camera and arm IK · tap or drag to aim; tap same spot to fire.";
   positionLabel.textContent="Walk 1.5 m/s · Sprint 4.2 m/s · original spawn X −3";
   const startOriginalMission=async()=>{
-   startOriginalMissionButton.disabled=true;sourceActorMode=false;
+   startOriginalMissionButton.disabled=true;startOriginalMissionButton.textContent="Downloading Mission…";missionProgress.hidden=false;missionProgressText.textContent="Starting source download · 99 MB compressed. Keep this page open; progress will appear here.";sourceLoadController=new AbortController();sourceActorMode=false;
    try{
     status.textContent="Downloading the original Mission, UI and Operator dependencies…";
     const delivery=await deliverIncrementalSourceProfile({invokeMethodAsync:runtimeCall},"../scene-data/fullsource/global-ui-mission-operator/manifest.json",{
-     onProgress:progress=>{status.textContent=`Verifying original Mission source… ${progress.receivedAssets}/${progress.expectedAssets} assets · ${(progress.compressedAssetBytes/1048576).toFixed(1)} / ${(progress.totalCompressedAssetBytes/1048576).toFixed(1)} MiB`;}
+     signal:sourceLoadController.signal,
+     onProgress:progress=>{missionProgressText.textContent=`Verifying Mission source · ${progress.receivedAssets}/${progress.expectedAssets} assets · ${(progress.compressedAssetBytes/1048576).toFixed(1)} / ${(progress.totalCompressedAssetBytes/1048576).toFixed(1)} MiB`;}
     });
     const session=JSON.parse(await runtimeCall("InitializeIncrementalEntryTeamMission"));
     if(session.snapshot?.owner!=="FullSource.CharacterBody")throw new Error("Original Mission did not return the source-owned player actor");
@@ -440,12 +452,14 @@ async function load(){
     contactPhysics=await contactPhysicsModule.createContactPhysics(contactPhysicsData,{x:sourceActorSnapshot.position[0],y:sourceActorSnapshot.position[1],z:sourceActorSnapshot.position[2]});
     physicsState=contactPhysics.snapshot();projectFullSourceSnapshot(sourceActorSnapshot);sourceActorMode=true;
     startOriginalMissionButton.hidden=true;
+    missionProgress.hidden=true;sourceLoadController=null;
     weaponStatus.textContent="Original source weapon callbacks active";
     status.textContent=`EntryTeam Mission ready · ${session.sourceActors} original actors · ${(delivery.compressedBytes/1048576).toFixed(1)} MiB verified`;
     positionLabel.textContent="Original Mission · source actor and weapon callbacks";
     window.__fullSourceMission={delivery,session:{mission:session.mission.scene,actor:session.actor,sourceActors:session.sourceActors}};
-   }catch(error){sourceActorMode=false;startOriginalMissionButton.disabled=false;showError(error,{hint:"Original Mission did not start; the lightweight scene remains active.",retry:()=>{startOriginalMissionButton.hidden=false;startOriginalMissionButton.click();}});}
+   }catch(error){sourceActorMode=false;missionProgress.hidden=true;sourceLoadController=null;startOriginalMissionButton.disabled=false;startOriginalMissionButton.textContent="Start original Mission · 99 MB";if(error?.name==="AbortError"){status.textContent="Mission download cancelled; tap Start original Mission to try again.";return;}showError(error,{hint:"Original Mission did not start; the lightweight scene remains active.",retry:()=>{startOriginalMissionButton.hidden=false;startOriginalMissionButton.click();}});}
   };
+  document.querySelector("#cancelMissionLoad").addEventListener("click",()=>sourceLoadController?.abort());
   startOriginalMissionButton.addEventListener("click",startOriginalMission);
   startOriginalMissionButton.disabled=false;
  }catch(e){showError(e)}

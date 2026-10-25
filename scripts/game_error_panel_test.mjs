@@ -15,4 +15,8 @@ test("game errors are readable, selectable, copyable, and no longer covered by M
   assert.match(html, /navigator\.clipboard\.writeText\(text\)/);
   assert.match(html, /range\.selectNodeContents\(errorDetails\)/);
   assert.match(html, /showError\(error,\{hint:[\s\S]*?retry:/);
+  assert.match(html, /id="missionProgress" role="status" aria-live="polite"/);
+  assert.match(html, /id="cancelMissionLoad" type="button">Cancel/);
+  assert.match(html, /signal:sourceLoadController\.signal/);
+  assert.match(html, /event\.preventDefault\(\);lastStageTouchEnd=now/);
 });

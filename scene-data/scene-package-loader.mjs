@@ -72,8 +72,12 @@ async function sha256(bytes) {
   return Array.from(digest, value => value.toString(16).padStart(2, "0")).join("");
 }
 
-async function fetchGzipJson(url, expected, label) {
-  const response = await fetch(url);
+function throwIfAborted(signal) {
+  if (signal?.aborted) throw new DOMException("Mission source download cancelled", "AbortError");
+}
+
+async function fetchGzipJson(url, expected, label, signal) {
+  const response = await fetch(url, {signal});
   if (!response.ok) throw new Error(`${label} unavailable: HTTP ${response.status}`);
   const compressed = await response.arrayBuffer();
   if (compressed.byteLength !== expected.compressedBytes || await sha256(compressed) !== expected.compressedSha256)
@@ -85,8 +89,8 @@ async function fetchGzipJson(url, expected, label) {
   return { compressed, raw, text: new TextDecoder("utf-8", { fatal: true }).decode(raw) };
 }
 
-async function fetchCompressedAsset(url, expected, label) {
-  const response = await fetch(url);
+async function fetchCompressedAsset(url, expected, label, signal) {
+  const response = await fetch(url, {signal});
   if (!response.ok) throw new Error(`${label} unavailable: HTTP ${response.status}`);
   const compressed = await response.arrayBuffer();
   if (compressed.byteLength !== expected.compressedBytes || await sha256(compressed) !== expected.compressedSha256)
@@ -107,9 +111,10 @@ function bytesToBase64(bytes) {
 }
 
 /** Deliver one verified source dependency profile to the WASM store, one asset at a time. */
-export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onProgress} = {}) {
+export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onProgress,signal} = {}) {
   if (!bridge || typeof bridge.invokeMethodAsync !== "function") throw new TypeError("A Blazor DotNet bridge is required");
-  const manifestResponse = await fetch(manifestUrl);
+  throwIfAborted(signal);
+  const manifestResponse = await fetch(manifestUrl, {signal});
   if (!manifestResponse.ok) throw new Error(`Incremental source manifest unavailable: HTTP ${manifestResponse.status}`);
   const manifest = await manifestResponse.json();
   if (manifest.schemaVersion !== 1 || manifest.encoding !== "gzip-json-assets"
@@ -121,7 +126,7 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
     throw new Error("Incremental source profile manifest is invalid");
 
   const base = new URL("./", new URL(manifestUrl, import.meta.url));
-  const metadata = await fetchGzipJson(new URL(manifest.metadata.file, base), manifest.metadata, "Incremental source metadata");
+  const metadata = await fetchGzipJson(new URL(manifest.metadata.file, base), manifest.metadata, "Incremental source metadata",signal);
   const metadataObject = JSON.parse(metadata.text);
   if (!metadataObject.assetManifest || Object.keys(metadataObject.assetManifest).length !== manifest.assets.length)
     throw new Error("Incremental source metadata and delivery manifest disagree");
@@ -129,6 +134,7 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
   if (manifest.rootAssets.some(path => !assetPaths.has(path)))
     throw new Error("Incremental source profile omits a declared root asset");
   const initialized = JSON.parse(await bridge.invokeMethodAsync("InitializeIncrementalSourcePackage", metadata.text));
+  throwIfAborted(signal);
   if (initialized.expectedAssets !== manifest.assetCount || initialized.receivedAssets !== 0 || initialized.receivedBytes !== 0)
     throw new Error("WASM source store initialized with unexpected manifest counts");
   let compressedBytes = metadata.compressed.byteLength;
@@ -151,8 +157,10 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
         || !Number.isSafeInteger(asset.compressedBytes) || asset.compressedBytes > 25 * 1024 * 1024)
       throw new Error("Incremental source profile contains an invalid asset entry");
     seenPaths.add(asset.path);
-    const compressed = await fetchCompressedAsset(new URL(asset.file, base), asset, `Source asset ${asset.path}`);
+    throwIfAborted(signal);
+    const compressed = await fetchCompressedAsset(new URL(asset.file, base), asset, `Source asset ${asset.path}`,signal);
     const result = JSON.parse(await bridge.invokeMethodAsync("AddIncrementalSourceGzipAsset", asset.path, bytesToBase64(new Uint8Array(compressed))));
+    throwIfAborted(signal);
     deliveredAssetBytes += asset.bytes;
     if (result.expectedAssets !== manifest.assets.length || result.receivedAssets !== index + 1
         || result.receivedBytes !== deliveredAssetBytes || result.receivedCompressedBytes !== compressedAssetBytes + compressed.byteLength)

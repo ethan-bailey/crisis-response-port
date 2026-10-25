@@ -118,6 +118,23 @@ test("delivers verified source assets sequentially to the WASM package bridge", 
   }
 });
 
+test("stops source delivery when its abort signal is already cancelled", async () => {
+  const controller = new AbortController();
+  controller.abort();
+  let requested = false;
+  const original = globalThis.fetch;
+  globalThis.fetch = async () => { requested = true; throw new Error("fetch should not run"); };
+  try {
+    await assert.rejects(
+      deliverIncrementalSourceProfile({invokeMethodAsync:async()=>"{}"}, "https://example.test/source/manifest.json", {signal:controller.signal}),
+      error => error.name === "AbortError",
+    );
+    assert.equal(requested, false);
+  } finally {
+    globalThis.fetch = original;
+  }
+});
+
 test("defers the 220 MB original scene preflight unless scene-smoke is requested", async () => {
   const game = await readFile(new URL("../game/index.html", import.meta.url), "utf8");
   const runtime = await readFile(new URL("../runtime/Browser/wwwroot/index.html", import.meta.url), "utf8");
