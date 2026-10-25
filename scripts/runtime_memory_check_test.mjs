@@ -10,3 +10,8 @@ test('iPhone memory sampling waits until the incremental source store is initial
   assert.match(html, /sourceSnapshotAvailable=true;status\.textContent=.*?await sample\(\)/);
   assert.match(html, /await sample\(\);const timer=setInterval\(sample,1000\)/);
 });
+
+test('iPhone memory check downloads the same full Mission profile as the Start Mission action', () => {
+  assert.match(html, /profile:'global-ui-mission-operator'/);
+  assert.match(html, /fullsource\/global-ui-mission-operator\/manifest\.json/);
+});
