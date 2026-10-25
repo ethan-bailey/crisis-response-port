@@ -73,15 +73,13 @@ public static class RuntimeBridge {
         fullSourceActor=new(scene.world,actors[0]);
         return JsonSerializer.Serialize(fullSourceActor.Snapshot());
     }
-    [JSInvokable] public static string TickFullSourceActorBridge(float elapsedSeconds,string actionsJson,float mouseX,float mouseY)=>JsonSerializer.Serialize((fullSourceActor??throw new InvalidOperationException("FullSource actor bridge is not initialized")).Step(elapsedSeconds,actionsJson,mouseX,mouseY));
-    [JSInvokable] public static string SynchronizeFullSourceActorPhysics(float x,float y,float z,float velocityX,float velocityY,float velocityZ)=>JsonSerializer.Serialize((fullSourceActor??throw new InvalidOperationException("FullSource actor bridge is not initialized")).SynchronizePhysics(x,y,z,velocityX,velocityY,velocityZ));
-    [JSInvokable] public static string VerifyAmmunition(string package,string path)=>JsonSerializer.Serialize(AmmunitionLoader.VerifyOriginalPrefab(package,path));
-    [JSInvokable] public static string VerifyResource(string package,string name)=>JsonSerializer.Serialize(AmmunitionLoader.VerifyOriginalResource(package,name));
-    [JSInvokable] public static string VerifySceneRay()=>scene==null?throw new InvalidOperationException("No scene loaded"):JsonSerializer.Serialize(SceneLoader.VerifyImportedRay(scene));
-    [JSInvokable] public static string Raycast(float ox,float oy,float oz,float dx,float dy,float dz,float distance,int mask){
-        if(scene==null)throw new InvalidOperationException("No original scene loaded");
-        scene.world.MakeCurrent();
-        bool found=Physics.Raycast(new Ray(new(ox,oy,oz),new(dx,dy,dz)),out var hit,distance,mask);
-        return JsonSerializer.Serialize(new{found,distance=found?hit.distance:0,name=found?hit.collider.name:null,point=found?new[]{hit.point.x,hit.point.y,hit.point.z}:null});
+    [JSInvokable] public static string InitializeIncrementalEntryTeamMission(){
+        var source=originalSourcePackage??throw new InvalidOperationException("Incremental source package is not initialized");
+        var world=incrementalSourceWorld??throw new InvalidOperationException("Incremental source world is not initialized");
+        var session=Crisis.Runtime.Browser.BrowserEntryTeamMission.Start(source,world);
+        scene=session.Mission;
+        fullSourceActor=new(scene.world,session.Actor);
+        return JsonSerializer.Serialize(new{mission=session.Mission.scene,actor=session.Actor.name,sourceActors=session.SourceActorCount,snapshot=fullSourceActor.Snapshot()});
     }
-}
+    [JSInvokable] public static string TickFullSourceActorBridge(float elapsedSeconds,string actionsJson,float mouseX,float mouseY)=>JsonSerializer.Serialize((fullSourceActor??throw new InvalidOperationException("FullSource actor bridge is not initialized")).Step(elapsedSeconds,actionsJson,mouseX,mouseY));
+    [JSInvokable] public static string SynchronizeFullSourceActorPhysics(float x,float y,float z,float velocityX,float velocityY,float velocityZ)=>JsonSerializer.Serialize((fullSourceActor??throw new InvalidOperationException("FullSource actor bridge is not initialized")).Synchron
