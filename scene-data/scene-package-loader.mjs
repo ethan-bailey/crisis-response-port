@@ -110,7 +110,7 @@ function bytesToBase64(bytes) {
   return btoa(binary);
 }
 
-/** Deliver one verified source dependency profile to the WASM store, one asset at a time. */
+/** Fetch a small bounded batch in parallel, then deliver verified assets in manifest order. */
 export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onProgress,signal} = {}) {
   if (!bridge || typeof bridge.invokeMethodAsync !== "function") throw new TypeError("A Blazor DotNet bridge is required");
   throwIfAborted(signal);
@@ -144,40 +144,51 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
   let maximumAssetBytes = 0;
   let deliveredAssetBytes = 0;
   const seenPaths = new Set();
-  for (const [index, asset] of manifest.assets.entries()) {
-    if (typeof asset.path !== "string" || !/^assets\/[0-9a-f]{24}\.json\.gz$/.test(asset.file)
-        || seenPaths.has(asset.path) || !/^[0-9a-f]{64}$/.test(asset.sha256 ?? "")
-        || !/^[0-9a-f]{64}$/.test(asset.compressedSha256 ?? "")
-        || !Number.isSafeInteger(asset.bytes) || asset.bytes < 0
-        || !metadataObject.assetManifest[asset.path]
-        || metadataObject.assetManifest[asset.path].bytes !== asset.bytes
-        || metadataObject.assetManifest[asset.path].sha256 !== asset.sha256
-        || metadataObject.assetManifest[asset.path].compressedBytes !== asset.compressedBytes
-        || metadataObject.assetManifest[asset.path].compressedSha256 !== asset.compressedSha256
-        || !Number.isSafeInteger(asset.compressedBytes) || asset.compressedBytes > 25 * 1024 * 1024)
-      throw new Error("Incremental source profile contains an invalid asset entry");
-    seenPaths.add(asset.path);
+  const downloadConcurrency = 6;
+  for (let batchStart = 0; batchStart < manifest.assets.length; batchStart += downloadConcurrency) {
+    const batch = manifest.assets.slice(batchStart, batchStart + downloadConcurrency);
+    for (const asset of batch) {
+      if (typeof asset.path !== "string" || !/^assets\/[0-9a-f]{24}\.json\.gz$/.test(asset.file)
+          || seenPaths.has(asset.path) || !/^[0-9a-f]{64}$/.test(asset.sha256 ?? "")
+          || !/^[0-9a-f]{64}$/.test(asset.compressedSha256 ?? "")
+          || !Number.isSafeInteger(asset.bytes) || asset.bytes < 0
+          || !metadataObject.assetManifest[asset.path]
+          || metadataObject.assetManifest[asset.path].bytes !== asset.bytes
+          || metadataObject.assetManifest[asset.path].sha256 !== asset.sha256
+          || metadataObject.assetManifest[asset.path].compressedBytes !== asset.compressedBytes
+          || metadataObject.assetManifest[asset.path].compressedSha256 !== asset.compressedSha256
+          || !Number.isSafeInteger(asset.compressedBytes) || asset.compressedBytes > 25 * 1024 * 1024)
+        throw new Error("Incremental source profile contains an invalid asset entry");
+      seenPaths.add(asset.path);
+    }
     throwIfAborted(signal);
-    const compressed = await fetchCompressedAsset(new URL(asset.file, base), asset, `Source asset ${asset.path}`,signal);
-    const result = JSON.parse(await bridge.invokeMethodAsync("AddIncrementalSourceGzipAsset", asset.path, bytesToBase64(new Uint8Array(compressed))));
-    throwIfAborted(signal);
-    deliveredAssetBytes += asset.bytes;
-    if (result.expectedAssets !== manifest.assets.length || result.receivedAssets !== index + 1
-        || result.receivedBytes !== deliveredAssetBytes || result.receivedCompressedBytes !== compressedAssetBytes + compressed.byteLength)
-      throw new Error(`WASM source store rejected asset ${asset.path}`);
-    compressedBytes += compressed.byteLength;
-    sourceBytes += asset.bytes;
-    compressedAssetBytes += compressed.byteLength;
-    sourceAssetBytes += asset.bytes;
-    maximumAssetBytes = Math.max(maximumAssetBytes, asset.bytes);
-    if (onProgress && ((index + 1) % 25 === 0 || index + 1 === manifest.assets.length))
-      await onProgress({receivedAssets:index + 1,expectedAssets:manifest.assets.length,
-        compressedAssetBytes,sourceAssetBytes,maximumAssetBytes,
-        totalCompressedAssetBytes:manifest.compressedAssetBytes,totalSourceAssetBytes:manifest.uncompressedAssetBytes});
+    const compressedBatch = await Promise.all(batch.map(asset =>
+      fetchCompressedAsset(new URL(asset.file, base), asset, `Source asset ${asset.path}`,signal)));
+    for (let offset = 0; offset < batch.length; offset++) {
+      throwIfAborted(signal);
+      const index = batchStart + offset;
+      const asset = batch[offset];
+      const compressed = compressedBatch[offset];
+      const result = JSON.parse(await bridge.invokeMethodAsync("AddIncrementalSourceGzipAsset", asset.path, bytesToBase64(new Uint8Array(compressed))));
+      throwIfAborted(signal);
+      deliveredAssetBytes += asset.bytes;
+      if (result.expectedAssets !== manifest.assets.length || result.receivedAssets !== index + 1
+          || result.receivedBytes !== deliveredAssetBytes || result.receivedCompressedBytes !== compressedAssetBytes + compressed.byteLength)
+        throw new Error(`WASM source store rejected asset ${asset.path}`);
+      compressedBytes += compressed.byteLength;
+      sourceBytes += asset.bytes;
+      compressedAssetBytes += compressed.byteLength;
+      sourceAssetBytes += asset.bytes;
+      maximumAssetBytes = Math.max(maximumAssetBytes, asset.bytes);
+      if (onProgress && ((index + 1) % 25 === 0 || index + 1 === manifest.assets.length))
+        await onProgress({receivedAssets:index + 1,expectedAssets:manifest.assets.length,
+          compressedAssetBytes,sourceAssetBytes,maximumAssetBytes,
+          totalCompressedAssetBytes:manifest.compressedAssetBytes,totalSourceAssetBytes:manifest.uncompressedAssetBytes});
+    }
   }
   if (compressedAssetBytes !== manifest.compressedAssetBytes || sourceAssetBytes !== manifest.uncompressedAssetBytes)
     throw new Error("Incremental source profile byte totals do not match its manifest");
   return {profile: manifest.profile, rootAssets: manifest.rootAssets, assetCount: manifest.assetCount,
     compressedBytes, sourceBytes, maximumAssetBytes,totalCompressedAssetBytes:manifest.compressedAssetBytes,
-    totalSourceAssetBytes:manifest.uncompressedAssetBytes,sequentialDelivery: true};
+    totalSourceAssetBytes:manifest.uncompressedAssetBytes,downloadConcurrency};
 }
