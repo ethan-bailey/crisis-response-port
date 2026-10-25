@@ -2,9 +2,12 @@
 
 ## Checkpoint
 
-- Project branch: `develop/wasm`; starting source SHA for this verified batch:
-  `f30f36e2d99661aaca221d529b1c831c9dda2d7a`.
-- Worktree began clean. Live GitHub `develop/wasm` matched this SHA.
+- Project branch: `develop/wasm`; latest verified package source SHA:
+  `4c219170c30035433357480419b652ef5e7633fc`. The runtime source code was
+  unchanged from `f30f36e2d99661aaca221d529b1c831c9dda2d7a`; intermediate and
+  current follow-up commits contain documentation only.
+- Worktree began clean. Live GitHub `develop/wasm` matched `f30f36e` before the
+  documentation checkpoint; pushed checkpoint is `4c21917`.
 - No runtime source change was made in this batch. The source recovery, pinned
   .NET SDK, Mission contract and Site package gates that earlier handoffs called
   blocked were reconstituted and verified locally; details are in
@@ -36,8 +39,10 @@
 - `scripts/package_wasm_site.py build` plus independent `verify` passed for
   both the default 1,230-asset profile and the Mission 01 1,919-asset profile.
   The exact Mission artifact contains 2,673 files, 199 Blazor resources and 195
-  valid WASM files; it records source commit `f30f36e…`. No deployment was
-  performed.
+  valid WASM files; it records source commit `4c21917…` and profile name
+  `global-ui-mission-operator`, matching the URL requested by `game/index.html`.
+  An integrity-valid build with a different profile name was discarded. No
+  deployment was performed.
 - The UI failure shown as “Warning: truncated output ...” is a ChatGPT display
   truncation notice, not evidence of a game runtime exception. The prior
   `JsonException` for a JS byte array is handled in current source by sending a
@@ -46,9 +51,12 @@
 
 ## Remaining gates, in dependency order
 
-1. **Preserve exact-source package evidence on the pushed checkpoint.** Commit
-   and push the evidence/handoff update, verify remote SHA, then rebuild the
-   package against that resulting SHA because package inventory includes docs.
+1. **Prepare an iPhone-testable Site version.** The existing Runtime Site is
+   owner-private. Sites reports its artifact repository uses branch `main` on a
+   separate Cloudflare artifact repository. Use the supported Sites source
+   workflow to align the archive-backed Site source commit and exact package; do
+   not pass the game-repository SHA as the Site repository commit. No deployment
+   was performed.
 2. **Mission download/startup on target iPhone.** The 1,919-asset package still
    totals about 98 MB compressed (205 MB source). Have the owner test the exact
    pushed build on iPhone Safari, including progress through the former 1,900
@@ -70,7 +78,8 @@
 
 ## Exact next action
 
-Commit/push this documentation checkpoint, verify the remote ref, and rebuild
-and independently verify the Mission 01 Site package against that pushed SHA.
-Then move to the target-device startup/throughput gate; do not count the 98 MB
-transfer profile as a download-performance fix.
+Prepare the existing Site source checkout with the supported Sites workflow,
+retain owner-only access, and make the verified Mission archive the current
+archive-backed version. Then have the owner exercise startup and per-asset
+progress on iPhone Safari. Do not count the 98 MB transfer profile as a
+performance fix.

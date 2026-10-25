@@ -41,7 +41,11 @@ The ordinary five-root Global/UI/Operator/Version profile is 1,230 assets,
 include the Mission 01 scene closure; use all six roots for the Mission UI
 contract and full Mission package.
 
-## Verification at source SHA `f30f36e2d99661aaca221d529b1c831c9dda2d7a`
+## Verification at runtime source SHA `f30f36e2d99661aaca221d529b1c831c9dda2d7a`
+
+The exact package was rebuilt at documentation checkpoint
+`4c219170c30035433357480419b652ef5e7633fc`; runtime and game source were
+unchanged from the tested runtime source SHA above.
 
 - Runtime source-profile verifier passed for 1,919 assets and 22,365 records;
   lazy parsed documents were released and rehydrated as expected.
@@ -54,13 +58,20 @@ contract and full Mission package.
   optimization was unavailable and not required for publish success.
 - Before packaging, `npm ci --prefix game --ignore-scripts` and
   `npm run --prefix game vendor` generated the lockfile-pinned PhysX adapter.
-- `scripts/package_wasm_site.py build` and separate `verify` both passed for
-  `/tmp/cpr-exact-mission-site-f30f36e`, recording source commit
-  `f30f36e2d99661aaca221d529b1c831c9dda2d7a`, 2,673 files, 199 Blazor boot
+- `scripts/package_wasm_site.py build` and separate `verify` passed for
+  `/tmp/cpr-exact-mission-site-pathmatched-4c21917`, recording source commit
+  `4c219170c30035433357480419b652ef5e7633fc`, 2,673 files, 199 Blazor boot
   resources, 195 valid WASM files, and the 1,919-asset incremental profile.
+  Its profile name `global-ui-mission-operator` exactly matches the URL requested
+  by `game/index.html`. An earlier integrity-valid package used a different
+  profile name and was not accepted for release.
 - A separate package for the five-root profile also passed: 1,984 files, 199
   Blazor resources, 195 valid WASM files.
-- No Site deployment or browser/iPhone test occurred in this run.
+- Sites confirmed the existing Runtime Site remains custom/owner-private. Its
+  artifact source repository reports branch `main` on a separate Cloudflare
+  artifact repository. No Site deployment or browser/iPhone test occurred in
+  this run; use the supported Sites source workflow to align an archive-backed
+  Site version before deployment.
 
 ## Transfer interpretation and next investigation
 
