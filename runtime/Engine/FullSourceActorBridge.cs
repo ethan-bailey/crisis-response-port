@@ -21,6 +21,9 @@ public sealed class FullSourceActorBridge
     HashSet<KeyCode> drivenKeys=[];
     readonly List<object> physicsCommands=[];
     readonly Action<Vector3,Vector3,ForceMode> priorActorPhysicsSink;
+    readonly Action<Rigidbody,Vector3,Vector3,ForceMode> priorWorldPhysicsForceSink;
+    readonly Action<Rigidbody,Vector3,ForceMode> priorWorldPhysicsTorqueSink;
+    readonly List<object> worldPhysicsCommands=[];
     readonly FieldInfo accelerationField;
     readonly BrowserAudioEventQueue audioEventQueue;
     int lastFixedSteps;
@@ -63,6 +66,22 @@ public sealed class FullSourceActorBridge
             priorActorPhysicsSink?.Invoke(force, position, mode);
             CaptureActorForce(force, position, mode);
         };
+        // Original weapons add Rigidbody components to ejected casing clones at
+        // runtime. Those bodies have no per-instance browser driver yet, so
+        // preserve the world's existing driver and expose the source requests
+        // in the same actor snapshot consumed by the browser boundary.
+        priorWorldPhysicsForceSink = world.PhysicsForceSink;
+        priorWorldPhysicsTorqueSink = world.PhysicsTorqueSink;
+        world.PhysicsForceSink = (target, force, position, mode) =>
+        {
+            priorWorldPhysicsForceSink?.Invoke(target, force, position, mode);
+            CaptureWorldForce(target, force, position, mode);
+        };
+        world.PhysicsTorqueSink = (target, torque, mode) =>
+        {
+            priorWorldPhysicsTorqueSink?.Invoke(target, torque, mode);
+            CaptureWorldTorque(target, torque, mode);
+        };
 
         if (input.Keys == null)
             throw new InvalidOperationException("FullSource InputHandler has no authored InputMapping");
@@ -101,6 +120,7 @@ public sealed class FullSourceActorBridge
         // state as the union of their action levels so a later false action
         // cannot release a key another true action is holding.
         physicsCommands.Clear();
+        worldPhysicsCommands.Clear();
         var fixedTimeBefore = Time.fixedTime;
         var hasMovementInput =
             ((values.TryGetProperty("left", out var leftAction) && leftAction.ValueKind == JsonValueKind.True) ||
@@ -152,6 +172,35 @@ public sealed class FullSourceActorBridge
         {
             force = new[] { force.x, force.y, force.z },
             position = new[] { position.x, position.y, position.z },
+            mode = mode.ToString()
+        });
+    }
+
+    void CaptureWorldForce(Rigidbody target, Vector3 force, Vector3 position, ForceMode mode)
+    {
+        worldPhysicsCommands.Add(new
+        {
+            body = target.GetInstanceID(),
+            name = target.gameObject.name,
+            source = target.gameObject.GetComponent<Casing>() ? "Casing" : "Rigidbody",
+            operation = "force",
+            force = new[] { force.x, force.y, force.z },
+            position = new[] { position.x, position.y, position.z },
+            mass = target.mass,
+            mode = mode.ToString()
+        });
+    }
+
+    void CaptureWorldTorque(Rigidbody target, Vector3 torque, ForceMode mode)
+    {
+        worldPhysicsCommands.Add(new
+        {
+            body = target.GetInstanceID(),
+            name = target.gameObject.name,
+            source = target.gameObject.GetComponent<Casing>() ? "Casing" : "Rigidbody",
+            operation = "torque",
+            torque = new[] { torque.x, torque.y, torque.z },
+            mass = target.mass,
             mode = mode.ToString()
         });
     }
@@ -237,7 +286,8 @@ public sealed class FullSourceActorBridge
             physics = new
             {
                 fixedSteps = lastFixedSteps,
-                commands = physicsCommands.ToArray()
+                commands = physicsCommands.ToArray(),
+                worldCommands = worldPhysicsCommands.ToArray()
             },
             audioEvents,
             droppedAudioEvents = audioEventQueue?.DroppedEvents ?? 0,
