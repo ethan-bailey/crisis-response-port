@@ -161,6 +161,20 @@ const weaponStatus=document.querySelector("#weaponStatus"),startOriginalMissionB
 const missionProgress=document.querySelector("#missionProgress"),missionProgressText=document.querySelector("#missionProgressText");
 const copyMissionProgressButton=document.querySelector("#copyMissionProgress");
 const stage=document.querySelector("#stage"), status=document.querySelector("#status"), positionLabel=document.querySelector("#position"), errorBox=document.querySelector("#error"),errorDetails=document.querySelector("#errorDetails"),errorHint=document.querySelector("#errorHint"),copyErrorStatus=document.querySelector("#copyErrorStatus"),retryErrorButton=document.querySelector("#retryError");
+// Catch failures during module startup too. In particular, WebGLRenderer can
+// throw before the regular Mission initialization try/catch is entered. Keep
+// the existing accessible, copyable error panel available for those failures.
+window.addEventListener("error",event=>{
+ if(!errorBox.hidden)return;
+ const error=event.error||new Error(`${event.message||"Runtime startup failed"}${event.filename?` at ${event.filename}:${event.lineno||0}:${event.colno||0}`:""}`);
+ const webgl=/webgl|graphics context/i.test(String(error.message||error));
+ showError(error,{hint:webgl?"3D graphics could not start. This browser may not provide WebGL; copy the details if the problem continues.":"The runtime stopped before the Mission finished loading. Copy the details to share this error."});
+});
+window.addEventListener("unhandledrejection",event=>{
+ if(!errorBox.hidden)return;
+ const error=event.reason instanceof Error?event.reason:new Error(String(event.reason||"Unhandled runtime startup failure"));
+ showError(error,{hint:"The runtime stopped before the Mission finished loading. Copy the details to share this error."});
+});
 const scene=new THREE.Scene(); scene.background=new THREE.Color(0x11151b);
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false}); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(innerWidth,innerHeight); renderer.outputColorSpace=THREE.SRGBColorSpace; stage.appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xe8f0ff,0x55505a,2.0));
