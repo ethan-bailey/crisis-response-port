@@ -49,9 +49,9 @@ Recovered input SHA-256: `6586b293eb1455669eba29042469ebd6740b0ad08629fd39ea6252
 Instructions and exact URL: [phone source memory check](docs/evidence/PHONE_SOURCE_MEMORY_CHECK_2026-10-25.md).
 
 Use:
-https://crisis-response-memory-check-20261024.craftysnipe13.chatgpt.site/game/?source-profile-smoke
+https://crisis-response-memory-check-20261024.craftysnipe13.chatgpt.site/runtime-web/?source-profile-smoke
 
-The route loads the 1,230-asset Global/UI/Operator/Version profile and does not
+Use the `/runtime-web/` path; `/game/` opens the visual game and does not run the memory route. The route loads the 1,230-asset Global/UI/Operator/Version profile and does not
 start gameplay. The user should leave the page alone until **Complete**, copy
 the JSON report, and return it here. Do not aim, shoot, or move during this
 memory check.

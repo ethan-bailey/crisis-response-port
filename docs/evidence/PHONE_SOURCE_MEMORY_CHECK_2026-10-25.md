@@ -4,9 +4,9 @@
 
 Open this URL in iPhone Safari:
 
-https://crisis-response-memory-check-20261024.craftysnipe13.chatgpt.site/game/?source-profile-smoke
+https://crisis-response-memory-check-20261024.craftysnipe13.chatgpt.site/runtime-web/?source-profile-smoke
 
-This is version 1 of the separate owner-private diagnostic Site. Open it while signed in to the ChatGPT account that owns the Site. The existing Crisis Response Runtime Site was left unchanged.
+This is version 1 of the separate owner-private diagnostic Site. Use the `/runtime-web/` path: `/game/` opens the visual game and does not run this check. Open it while signed in to the ChatGPT account that owns the Site. The existing Crisis Response Runtime Site was left unchanged.
 
 The route delivers the Global Context, UI, Operator, and Version profile: 1,230 assets, about 36.97 MB compressed. It verifies asset hashes and reports delivery progress, elapsed time, managed heap samples, and JavaScript heap values when Safari exposes them. It does not start Mission gameplay, input, or rendering.
 
