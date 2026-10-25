@@ -160,6 +160,23 @@ class PackageTests(unittest.TestCase):
         }])
         self.assertTrue((self.site / "scene-data/fullsource/fixture/assets" / profile["assets"][0]["file"].split("/")[-1]).is_file())
 
+    def test_prebuilt_incremental_profile_is_reused_when_raw_source_package_is_unavailable(self):
+        root = "Assets/Resources/fixture.prefab"
+        source = {"format": "fixture", "assets": {root: {"records": [{
+            "classID": 1, "fileID": "1", "className": "GameObject", "fields": {"m_Name": "fixture"}}]}},
+            "guidPaths": {}, "objectReferences": [], "sourceOfTruth": {"fixture": True}}
+        source_path = self.root / "full-source.json.gz"
+        source_path.write_bytes(gzip.compress(json.dumps(source).encode(), mtime=0))
+        profile_path = self.root / "prebuilt-profile"
+        subprocess.run(["python3", str(self.repo / "scripts/package_incremental_source.py"),
+                        str(source_path), str(profile_path), "--profile", "fixture", "--root", root],
+                       check=True, cwd=self.repo, capture_output=True, text=True)
+        result = self.build(incremental_profile="fixture", incremental_profile_package=profile_path)
+        packaged = self.site / "scene-data/fullsource/fixture"
+        self.assertEqual(result["incrementalSourceProfiles"][0]["assetCount"], 1)
+        self.assertEqual((packaged / "manifest.json").read_bytes(), (profile_path / "manifest.json").read_bytes())
+        self.assertEqual(len(list(packaged.glob("assets/*.json.gz"))), 1)
+
     def test_default_incremental_profile_matches_mission_page_and_includes_scene_root(self):
         roots = [
             "Assets/Resources/Global context.prefab",

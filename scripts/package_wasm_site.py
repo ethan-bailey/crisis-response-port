@@ -285,7 +285,7 @@ def git(repo, *args):
 
 def package(repo, published, output, toolchain, run_url, incremental_source_package=None,
             incremental_profile=DEFAULT_INCREMENTAL_PROFILE, incremental_roots=None,
-            include_original_scene_smoke=False):
+            include_original_scene_smoke=False, incremental_profile_package=None):
     repo, published, output = repo.resolve(), published.resolve(), output.resolve()
     require((repo / "game/index.html").is_file(), "Game source missing")
     require(published.is_dir(), "Published wwwroot directory missing")
@@ -347,6 +347,8 @@ def package(repo, published, output, toolchain, run_url, incremental_source_pack
     shutil.copytree(published, output / "runtime-web")
     scene_ignore = None if include_original_scene_smoke else shutil.ignore_patterns(SCENE_ARCHIVE)
     shutil.copytree(repo / "scene-data", output / "scene-data", ignore=scene_ignore)
+    require(not (incremental_source_package is not None and incremental_profile_package is not None),
+            "Supply a raw incremental source package or a verified source profile, not both")
     if incremental_source_package is not None:
         source_builder = repo / "scripts/package_incremental_source.py"
         require(source_builder.is_file(), "Incremental original source package builder is missing")
@@ -358,6 +360,17 @@ def package(repo, published, output, toolchain, run_url, incremental_source_pack
         for root in (incremental_roots if incremental_roots is not None else DEFAULT_INCREMENTAL_ROOTS):
             command.extend(["--root", root])
         subprocess.run(command, check=True, cwd=repo)
+    elif incremental_profile_package is not None:
+        profile_input = Path(incremental_profile_package).resolve()
+        require(profile_input.is_dir(), f"Incremental source profile is missing: {profile_input}")
+        files(profile_input)
+        profile_manifest = json.loads((profile_input / "manifest.json").read_text())
+        require(profile_manifest.get("profile") == incremental_profile
+                and profile_manifest.get("schemaVersion") == 1
+                and profile_manifest.get("encoding") == "gzip-json-assets",
+                "Prebuilt incremental source profile identity is invalid")
+        source_output = output / "scene-data/fullsource" / incremental_profile
+        shutil.copytree(profile_input, source_output)
     archive = output / "scene-data/crisis-response-scenes.json.gz"
     if archive.is_file():
         with gzip.open(archive, "rt", encoding="utf-8") as source:
@@ -417,6 +430,8 @@ def main():
     build.add_argument("--toolchain", type=Path, required=True)
     build.add_argument("--incremental-source-package", type=Path,
                        help="Optional recovered full source JSON package used to build a bounded per-asset profile")
+    build.add_argument("--incremental-profile-package", type=Path,
+                       help="Copy a previously integrity-checked bounded source profile when its source package is unavailable")
     build.add_argument("--incremental-profile", default=DEFAULT_INCREMENTAL_PROFILE)
     build.add_argument("--incremental-root", action="append", dest="incremental_roots",
                        help="Override a default profile root; repeat for multiple roots")
@@ -430,7 +445,7 @@ def main():
         result = package(args.repo, args.published, args.output,
                          json.loads(args.toolchain.read_text()), args.run_url,
                          args.incremental_source_package, args.incremental_profile, args.incremental_roots,
-                         args.include_original_scene_smoke)
+                         args.include_original_scene_smoke, args.incremental_profile_package)
     else:
         result = verify(args.site)
     print(json.dumps(result, sort_keys=True))
