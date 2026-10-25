@@ -17,7 +17,7 @@
 
 ### Batch 1 — deployment diagnostics and mobile load
 
-1. Inspect production Worker errors and current version 56 package delivery behavior. Treat the user's “Warning: truncated output” screen as captured tool-output truncation unless live Site logs or Safari reproduce an app exception; it is not a stack trace from the game.
+1. **Done for this checkpoint:** version 56 production Worker query returned zero error events over the last 180 minutes. The connected browser reached `/game/`, but its Chromium runtime has WebGL disabled; Three.js failed to create a context before gameplay initialized. Treat this as a runner capability blocker, not an iPhone/site failure. The user's “Warning: truncated output” capture is tool-output truncation, not an app exception stack trace.
 2. Owner acceptance on iPhone Safari: record first-paint/start-button wait, final asset count, total time, tail/stall interval, Safari memory samples, input responsiveness, aim, and immediate/extended-play gun audio. Prior iPhone test reached 1,230/1,230 Global/UI assets in 270.6 seconds and peaked at 68.9 MB managed bytes; an earlier Mission attempt reported about 99 MB, slow tail, and a stall near 1,900 assets. Retest the actual current package and attach bounded diagnostic JSON/screenshots. No iPhone device is attached to this runner.
 3. Use fresh delivery timings to decide whether to tune per-asset concurrency, retries, progress/UI, or package partitioning. Preserve bounded concurrency, manifest-order delivery, cancellation, hash verification, and fail-closed behavior. The Mission package is about 98 MB compressed; do not claim the slow-tail issue fixed until device evidence passes.
 
@@ -29,7 +29,7 @@
 
 ### Batch 3 — full release closure
 
-7. Run browser smoke on a runner with Playwright and browser binaries, then rerun all source, package, archive, Site, and device gates against one exact source SHA. Current runner has no Playwright/browser binaries; this is a tooling blocker for automation, not evidence of a passing browser gate.
+7. Run browser smoke on a runner with Playwright and browser binaries plus WebGL. Playwright resolves in this runner, but Chromium is absent; the official Playwright install attempt returned an invalid zero-byte archive. The connected browser also reports WebGL disabled and cannot initialize the page's renderer. This is a tooling blocker for automated rendering acceptance, not evidence of a passing browser gate.
 8. Update this handoff and evidence log with test output, checksums, exact source/artifact commits, deployed version, and every remaining concrete blocker. Publish only after exact-source build and package/archive integrity pass; preserve owner-only Site access.
 
 ## Immediate next action

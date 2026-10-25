@@ -394,7 +394,13 @@ establish acceptance for version 56. The latest screenshot's text
 application stack trace; verify against live Site Worker logs before treating
 it as a runtime defect. iPhone Safari load-tail, tap zoom, control behavior,
 and delayed/loud gun-audio acceptance remain open. No Playwright/browser
-binaries or physical iPhone are available in this runner.
+binaries or physical iPhone are available in this runner. Playwright resolves
+from the Codex Node runtime but Chromium is absent; an official Playwright
+install attempt received an invalid zero-byte archive. The connected browser
+did reach `/game/`, then Three.js failed to create a WebGL context because the
+browser reports WebGL disabled. This runner-specific failure prevented a
+rendering smoke and does not contradict the owner's prior iPhone view of the
+character.
 
 The delivered loader version sends compressed asset bytes through Blazor as
 base64 text, then the existing .NET `byte[]` parameter decodes them. Its
