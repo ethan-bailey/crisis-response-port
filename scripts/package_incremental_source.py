@@ -11,6 +11,10 @@ DEFAULT_ROOTS = [
     "Assets/GameObject/Interior mode UI.prefab",
     "Assets/Resources/ui/Interaction menu.prefab",
     "Assets/Resources/characters/Operator.prefab",
+    # Version.Instance loads this by Resources.Load("Version") during
+    # GlobalContext.Awake; the object is a code-driven resource dependency and
+    # does not appear in the serialized GUID reference closure.
+    "Assets/Resources/Version.prefab",
 ]
 
 

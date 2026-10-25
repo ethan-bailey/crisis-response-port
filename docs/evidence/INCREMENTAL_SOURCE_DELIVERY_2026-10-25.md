@@ -5,7 +5,9 @@
 - `scripts/package_incremental_source.py` walks the original package reference
   index from an explicit set of root assets, preserves the package metadata and
   source asset records, and emits one gzip JSON file per asset plus a hash and
-  byte-count manifest.
+  byte-count manifest. Its default roots include `Assets/Resources/Version.prefab`,
+  which is loaded dynamically by `Version.Instance` and therefore is not present
+  in the serialized GUID reference closure.
 - `scripts/package_wasm_site.py build` accepts an optional
   `--incremental-source-package` and includes the generated profile in its
   integrity manifest. Site verification checks the compressed and decoded
@@ -28,14 +30,16 @@ Input `/tmp/cpr-scenes-full-source.json` SHA-256:
 
 | Profile roots | Assets | Asset bytes compressed | Asset JSON bytes | Metadata gzip / JSON | Largest asset JSON / gzip |
 |---|---:|---:|---:|---:|---:|
-| Global Context + Interior Mode UI + Interaction Menu + Operator | 1,229 | 36,969,948 | 77,801,511 | 675,552 / 4,817,294 | 3,742,886 / 2,822,414 |
-| Above plus Mission 01 | 1,918 | 97,766,376 | 205,509,197 | 853,717 / 6,912,437 | 14,858,177 / 3,108,968 |
+| Global Context + Interior Mode UI + Interaction Menu + Operator + Version | 1,230 | 36,971,121 | 77,806,659 | 675,673 / 4,817,759 | 3,742,886 / 2,822,414 |
+| Above plus Mission 01 | 1,919 | 97,767,549 | 205,514,345 | 853,867 / 6,912,902 | 14,858,177 / 3,108,968 |
 
 Every profile asset and metadata document in the generated Global/UI/Operator
-bundle was independently decompressed and verified against its manifest.
-These payload totals are still large for phone startup. During transfer,
+bundle was independently decompressed and verified against its manifest. The
+full Mission profile was then assembled into the incremental C# store and used
+to run the original Mission UI and actor contract. These payload totals are
+still large for phone startup. During transfer,
 browser JavaScript keeps one compressed asset at a time; WASM keeps the
-compressed profile (36,969,948 or 97,766,376 asset bytes) and parsed metadata.
+compressed profile (36,971,121 or 97,767,549 asset bytes) and parsed metadata.
 The store inflates one asset at a time (largest observed source asset
 3,742,886 or 14,858,177 bytes), validates its source hash, and retains its
 compressed bytes. Parsed source documents are released after scene/prefab or
@@ -56,8 +60,14 @@ heap was not measured because this environment has no browser runtime.
   hydration, post-release rehydration, same-world scene loading, fail-closed
   handling, and legacy compatibility.
 - `--verify-incremental-source-profile` — passed the actual recovered Global/UI/
-  Operator profile through the C# store: 1,229 assets and 7,594 records, all
+  Operator/Version profile through the C# store: 1,230 assets and 7,598 records, all
   source hashes verified, parsed documents released after inspection.
+- `--mission-ui-incremental-contract /tmp/cpr-incremental-mission-profile-v3` —
+  passed with the actual 1,919-asset Mission profile: Mission 01 started, the
+  authored EntryTeam UI initialized, two Operators and five Occupants spawned,
+  FullSource actor snapshot and left press/release passed, and the movement
+  force plus browser-physics synchronization round trip passed. The contract is
+  headless and does not run a native PhysX solve or render pixels.
 - WASM Browser build — passed with 0 errors and 48 existing warnings.
 - Default runtime contracts and active Mission UI actor contract passed after
   lazy parsed-document release was added. The Mission UI contract used the
@@ -68,8 +78,8 @@ heap was not measured because this environment has no browser runtime.
 
 ## Next gate
 
-Reduce retained WASM memory for the measured closure or narrow the authored
-pre-input dependency set. Then run `?source-profile-smoke` on the target
-runtime, load the original Mission UI and actor in one RuntimeWorld, and record
-real device memory and pre-input bytes before wiring page movement, PhysX,
-rendering, and weapon callbacks through that actor.
+Run `?source-profile-smoke` on iPhone Safari and record real device memory and
+pre-input bytes. The original Mission UI and actor now pass through the complete
+incremental C# store in one RuntimeWorld. If the profile fits on device, proceed
+to wire page movement, PhysX, rendering, and weapon callbacks through that
+actor.

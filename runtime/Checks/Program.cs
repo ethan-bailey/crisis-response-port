@@ -10,6 +10,26 @@ if(args.Length==2&&args[0]=="--verify-incremental-source-profile"){
     Console.WriteLine(OriginalSourcePackageContracts.VerifyProfile(args[1]));
     return;
 }
+OriginalSourcePackage LoadSourcePackage(string path){
+    if(File.Exists(path))return OriginalSourcePackage.FromJson(File.ReadAllText(path));
+    using var profile=JsonDocument.Parse(File.ReadAllText(Path.Combine(path,"manifest.json")));
+    var manifest=profile.RootElement;var metadataInfo=manifest.GetProperty("metadata");
+    var metadataCompressed=File.ReadAllBytes(Path.Combine(path,metadataInfo.GetProperty("file").GetString()!));
+    if(metadataCompressed.LongLength!=metadataInfo.GetProperty("compressedBytes").GetInt64()||Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(metadataCompressed)).ToLowerInvariant()!=metadataInfo.GetProperty("compressedSha256").GetString())
+        throw new InvalidDataException("Incremental source profile metadata failed its compressed size or SHA-256 check");
+    byte[] metadataBytes;
+    using(var input=new MemoryStream(metadataCompressed,writable:false))
+    using(var gzip=new System.IO.Compression.GZipStream(input,System.IO.Compression.CompressionMode.Decompress))
+    using(var output=new MemoryStream()){gzip.CopyTo(output);metadataBytes=output.ToArray();}
+    if(metadataBytes.LongLength!=metadataInfo.GetProperty("bytes").GetInt64()||Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(metadataBytes)).ToLowerInvariant()!=metadataInfo.GetProperty("sha256").GetString())
+        throw new InvalidDataException("Incremental source profile metadata failed its source size or SHA-256 check");
+    var package=OriginalSourcePackage.CreateIncremental(System.Text.Encoding.UTF8.GetString(metadataBytes));
+    foreach(var asset in manifest.GetProperty("assets").EnumerateArray())
+        package.AddVerifiedGzipAsset(asset.GetProperty("path").GetString()!,File.ReadAllBytes(Path.Combine(path,asset.GetProperty("file").GetString()!)));
+    if(package.AssetCount!=manifest.GetProperty("assetCount").GetInt32()||package.DeliveredBytes!=manifest.GetProperty("uncompressedAssetBytes").GetInt64()||package.DeliveredCompressedBytes!=manifest.GetProperty("compressedAssetBytes").GetInt64())
+        throw new InvalidDataException("Incremental source profile totals differ from the verified runtime store");
+    return package;
+}
 if(args.Length==2&&args[0]=="--builtin-resource-contract"){
     using var builtinPackage=JsonDocument.Parse(File.ReadAllText(args[1]));
     Console.WriteLine(RuntimeContracts.RunBuiltinResource(builtinPackage.RootElement));
@@ -47,10 +67,10 @@ if(args.Length==3&&args[0]=="--ammunition-resource-contract"){
     Console.WriteLine(JsonSerializer.Serialize(AmmunitionLoader.VerifyOriginalResource(File.ReadAllText(args[1]),args[2])));
     return;
 }
-if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-ui-contract"||args[0]=="--mission-outcome-contract"||args[0]=="--mission-ai-contract"||args[0]=="--mission-ai-outcome-contract"||args[0]=="--mission-projectile-contract"||args[0]=="--mission-ai-projectile-contract")){
+if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-ui-contract"||args[0]=="--mission-ui-incremental-contract"||args[0]=="--mission-outcome-contract"||args[0]=="--mission-ai-contract"||args[0]=="--mission-ai-outcome-contract"||args[0]=="--mission-projectile-contract"||args[0]=="--mission-ai-projectile-contract")){
     var runOriginalAI=args[0].StartsWith("--mission-ai-",StringComparison.Ordinal);
-    var runWithOriginalUI=args[0]=="--mission-ui-contract";
-    var package=File.ReadAllText(args[1]);
+    var runWithOriginalUI=args[0] is "--mission-ui-contract" or "--mission-ui-incremental-contract";
+    var package=LoadSourcePackage(args[1]);
     var world=new RuntimeWorld();
     world.MakeCurrent();
     UnityEngine.Application.persistentDataPath=System.IO.Path.Combine(System.IO.Path.GetTempPath(),"crisis-response-mission-contract-"+Guid.NewGuid().ToString("N"));
