@@ -1,24 +1,29 @@
 # Current handoff — 2026-10-25
 
-## Current source and Site
+## Source checkpoint and deployed Site
 
-- Live `develop/wasm` runtime source checkpoint: `3ab872704121ed4ce6822923f9597c43aa960176`; current handoff-only branch head before this update: `19165a5eca158b1dbf22566d1799a999845798be`.
-- Crisis Response Runtime Site version **49** is deployed successfully at `https://crisis-response-runtime.craftysnipe13.chatgpt.site` and remains owner-only. Site source commit `2c62158f49f71903971d35838cd28cc5e427a629`; package manifest identifies source `19165a5`.
-- Mission download uses six concurrent checksum-verified fetches and ordered WASM ingestion. Loading progress reports every asset and displays a separate actor-initialization phase. Joystick elevation uses only raw vertical input; horizontal/diagonal movement no longer pulls aim toward center.
+- Branch: `develop/wasm`.
+- Tested source change: `64cd6c3e94b8f197ecc82100d705a91418053370` (`fix: restore Mission page startup and error UI`), based on live branch head `4e4e0887c2b71da230c881e95c9b630fde743706`.
+- The change restores the full `game/index.html` document shell, which had been truncated in an earlier change. This brings back the Mission controls, selectable error panel, M4 magazine wiring, initialization path, and opt-in `scene-smoke` guard. Loading status now explicitly switches to “initializing original Mission actors…” after verified delivery completes.
+- Site v49 remains owner-only and unchanged at source `2c62158f49f71903971d35838cd28cc5e427a629` (package source `19165a5`). No new Site package was published.
 
-## Verification
+## Verification at the tested source change
 
-- At runtime source `3ab872704121ed4ce6822923f9597c43aa960176`, `node --test scripts/*test.mjs` passed **81/81**; EngineChecks passed **69 assertions**; FoundationChecks and Runtime Checks completed successfully; full runtime build passed with **0 errors**.
-- In this run, the checksum-verified pinned .NET SDK **8.0.426** and tracked `/proc` shim were restored. `dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release --output /tmp/cpr-publish` succeeded at exact source checkpoint `19165a5eca158b1dbf22566d1799a999845798be`. Lockfile-pinned PhysX adapter was regenerated using `npm ci --prefix game --ignore-scripts` and `npm run --prefix game vendor`.
-- Owner-authorized retrieval recovered the v48 Mission profile: all 1,919 compressed asset hashes and sizes verified against its manifest, then all decompressed asset hashes/sizes verified. The package was reconstructed from those verified source assets and dependency metadata.
-- `scripts/package_wasm_site.py build` and `verify` passed for source `19165a5eca158b1dbf22566d1799a999845798be`: **2,673 files**, 199 Blazor resources, 195 WASM files, 1,919 profile assets, 97,767,549 compressed asset bytes, 205,514,345 source bytes. Scene smoke archive remains excluded.
-- Site version 49 publication status: `succeeded`.
+- `node --test scripts/*test.mjs`: **81/81 passed**.
+- `python3 -m unittest discover -s scripts -p '*test.py'`: **38/38 passed**.
+- EngineChecks: **69 assertions passed**.
+- FoundationChecks: **121 assertions passed**.
+- Runtime checks passed, including ballistics and original-source checks.
+- `dotnet build runtime/Crisis.Runtime.csproj -c Release --no-restore -v:q`: succeeded, **0 warnings, 0 errors**.
+- `dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release -o /tmp/cpr-publish-restore-shell`: succeeded using checksum-verified .NET SDK **8.0.426** and the tracked `/proc` shim. WASM optimization workload was unavailable; publish completed successfully.
+- `git diff --check`: passed.
 
-## Remaining acceptance
+## Blocked release gate and acceptance
 
-- No Playwright/browser run or exact-build iPhone Safari acceptance is available in this workspace. The owner should reload Site v49 and test Mission download to completion, including the former final-19-asset pause, then check joystick aim while moving diagonally/horizontally.
-- Gun audio remains an acknowledged product issue: source Mission audio bridge is silent; no audio fix was part of this batch. Some Unity components/NPC systems remain unsupported or unverified.
+- The checked-out repository does not contain `scene-data/fullsource/global-ui-mission-operator/`; the 1,919-asset Mission source profile and metadata needed to reproduce and integrity-verify the exact Site package are absent. Therefore the package build/integrity gate is **not satisfied**, and this source change was **not published**. Recover the owner-authorized source package through its approved durable connector, verify all compressed and decompressed assets against the manifest, rebuild and verify the Site archive for this exact source checkpoint, then publish only that verified archive.
+- Playwright/browser binaries and exact-build iPhone Safari acceptance are still unavailable. Owner should verify Mission startup and completion, error copy/readability, and aim independence after a verified deployment.
+- Gun audio remains open: the Mission audio bridge is silent. Some Unity components and NPC systems also remain unsupported or unverified.
 
 ## Next action
 
-Have the owner validate Site v49 on iPhone Safari for Mission completion and aim independence; then continue the next gameplay completion roadmap gate from the exact live `develop/wasm` head.
+Recover and integrity-verify the Mission source profile, then build and verify the exact-source WASM Site package before any publication. If that package gate remains blocked, continue independent gameplay gates and preserve the blocker details in this handoff.
