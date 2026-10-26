@@ -88,6 +88,7 @@ test("delivers verified source assets through the WASM package bridge", async ()
   const originalFetch = globalThis.fetch;
   const originalCaches = globalThis.caches;
   const originalSecureContext = globalThis.isSecureContext;
+  const originalNavigator = Object.getOwnPropertyDescriptor(globalThis,"navigator");
   const files = new Map([["manifest.json", encoder.encode(JSON.stringify(manifest))],
     ["metadata.json.gz", metadataGzip], ["0123456789abcdef01234567.json.gz", assetGzip]]);
   const assetFetchCounts = new Map();
@@ -99,6 +100,7 @@ test("delivers verified source assets through the WASM package bridge", async ()
   };
   const cachedResponses = new Map();
   globalThis.isSecureContext = true;
+  Object.defineProperty(globalThis,"navigator",{configurable:true,value:{storage:{persist:async()=>true,estimate:async()=>({usage:100,quota:1000})}}});
   globalThis.caches = {open:async()=>({
     match:async url=>{
       const response=cachedResponses.get(String(url));
@@ -137,10 +139,12 @@ test("delivers verified source assets through the WASM package bridge", async ()
     assert.deepEqual(calls[1][2],[assetGzip.byteLength]);
     assert.equal(typeof calls[1][3],"string");
     assert.deepEqual(Buffer.from(calls[1][3],"base64"),Buffer.from(gzipSync(assetRaw)));
-    assert.deepEqual(progress.map(value=>value.stage),["fetching","adding","delivered"]);
-    assert.deepEqual(progress[0].pendingAssetPaths,[assetPath]);
+    assert.deepEqual(progress.map(value=>value.stage),["storage","fetching","adding","delivered"]);
+    assert.equal(progress[0].persistent,true);
+    assert.deepEqual(progress[0].estimate,{usage:100,quota:1000,available:900});
     assert.deepEqual(progress[1].pendingAssetPaths,[assetPath]);
-    assert.equal(progress[1].batchCompressedBytes,assetGzip.byteLength);
+    assert.deepEqual(progress[2].pendingAssetPaths,[assetPath]);
+    assert.equal(progress[2].batchCompressedBytes,assetGzip.byteLength);
     const completed=progress.at(-1);
     assert.deepEqual({
       receivedAssets:completed.receivedAssets,expectedAssets:completed.expectedAssets,
@@ -186,6 +190,7 @@ test("delivers verified source assets through the WASM package bridge", async ()
     globalThis.fetch = originalFetch;
     if(originalCaches===undefined)delete globalThis.caches;else globalThis.caches=originalCaches;
     if(originalSecureContext===undefined)delete globalThis.isSecureContext;else globalThis.isSecureContext=originalSecureContext;
+    if(originalNavigator===undefined)delete globalThis.navigator;else Object.defineProperty(globalThis,"navigator",originalNavigator);
   }
 });
 

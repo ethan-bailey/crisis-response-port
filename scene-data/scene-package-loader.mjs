@@ -80,6 +80,23 @@ function monotonicNow() {
   return globalThis.performance?.now?.() ?? Date.now();
 }
 
+async function getStorageStatus() {
+  const storage = globalThis.navigator?.storage;
+  let persistent = null;
+  let estimate = null;
+  try { if (typeof storage?.persist === "function") persistent = await storage.persist(); }
+  catch { /* CacheStorage remains optional; report the browser-managed status. */ }
+  try {
+    if (typeof storage?.estimate === "function") {
+      const result = await storage.estimate();
+      const usage = Number.isFinite(result?.usage) && result.usage >= 0 ? result.usage : null;
+      const quota = Number.isFinite(result?.quota) && result.quota >= 0 ? result.quota : null;
+      estimate = {usage, quota, available:usage !== null && quota !== null ? Math.max(0, quota - usage) : null};
+    }
+  } catch { /* Unsupported and denied estimates do not prevent verified delivery. */ }
+  return {persistent, estimate};
+}
+
 async function fetchGzipJson(url, expected, label, signal) {
   const response = await fetch(url, {signal});
   if (!response.ok) throw new Error(`${label} unavailable: HTTP ${response.status}`);
@@ -183,9 +200,10 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
     try { persistentCache = await globalThis.caches.open(`crisis-source-${manifest.sourcePackageSha256}`); }
     catch { /* Storage is optional; continue with verified network delivery. */ }
   }
-  // Storage persistence is a best-effort request (Safari may decline it); it
-  // never blocks the Mission or changes the verified network fallback.
-  try { await globalThis.navigator?.storage?.persist?.(); } catch { /* Browser-managed quota remains valid. */ }
+  // Storage persistence and quota estimates are advisory. A browser can still
+  // evict CacheStorage, so verified network delivery never depends on either.
+  const storageStatus = await getStorageStatus();
+  if (onProgress) await onProgress({stage:"storage",...storageStatus});
 
   const base = new URL("./", new URL(manifestUrl, import.meta.url));
   const metadata = await fetchGzipJson(new URL(manifest.metadata.file, base), manifest.metadata, "Incremental source metadata",signal);
