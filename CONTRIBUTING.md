@@ -29,4 +29,4 @@ dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release
 
 These checks cover only what their commands exercise. Keep compile, browser boot, original behavior, visual parity, and iPhone Safari acceptance as separate claims.
 
-The repository is public. Keep credentials and separately stored recovery archives out of Git. Do not deploy or publish an intermediate build; release work requires owner authorization and exact-SHA evidence. Avoid creating a Codespace for routine work through 2026-11-01.
+Read [the release policy](docs/RELEASE_POLICY.md) before any publication. The repository is public. Keep credentials and separately stored recovery archives out of Git. Do not deploy or publish an intermediate build; release work requires owner authorization and exact-SHA evidence. Avoid creating a Codespace for routine work through 2026-11-01.

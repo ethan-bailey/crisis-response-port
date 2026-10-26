@@ -1,33 +1,38 @@
-## Purpose and linked issue
+## Purpose and intended behavior
 
-Closes #<issue-number>. Describe one source-backed change and which original gameplay action it enables. Normal base branch: `develop/wasm`.
+Closes #<issue-number, if applicable>. Describe the source-backed behavior or repository workflow changed. Normal target branch: develop/wasm. PRs are optional and used only when review, branch protection, or isolation materially helps.
 
-## Original developer source and provenance
+## Original source and dependency closure
 
-- Original archive SHA256:
-- Original C# file paths and exact hashes:
-- Original prefabs/assets and GUID/fileIDs:
-- Original method(s) executed (rather than merely parsed/compiled):
-- Engine/browser adapter changes (no replacement gameplay):
+- Original source paths, methods, serialized fields, and exact asset provenance:
+- GUID/fileID and source SHA-256 where applicable:
+- Full in-scope dependency set traced and remaining missing items:
+- Compatibility/runtime adapter changes:
+- Any independent work explicitly deferred and why:
 
-## Acceptance and tests
+## Acceptance and evidence
 
-- Native Unity parity reference or explicit reason it is unavailable:
-- Fast source/contract tests and command output:
-- WASM/Chromium/WebKit run URL, matching commit SHA and private artifact (when relevant):
-- What **is not yet implemented or tested**:
+- Observable acceptance contract and native/reference result:
+- Relevant existing commands and results:
+- Exact GitHub source SHA and Actions run:
+- Distinguish inventory, compile, browser boot, original behavior, visual comparison, and device acceptance:
+- Known limitations or blockers:
 
-## Review and safety checklist
+## Release impact
 
-- [ ] Branched from latest `develop/wasm`, PR targets `develop/wasm` (unless documented release/research exception).
-- [ ] Original developer files/assets preserved unchanged, privacy intact.
-- [ ] No invented gameplay, simulated source data, fake callbacks, speculative shaders or false parity claims.
-- [ ] Source GUID/hash contract and executable regression tests included.
-- [ ] Checked other open PRs and CI for overlapping files/runs; no unnecessary duplicate builds.
-- [ ] `vercel.json` retains `git.deploymentEnabled: false`. No automatic deploy or public artifact hosting.
-- [ ] Handoff and linked issue state whether code is recovered, compiled, executed, browser-tested, native-parity checked or device-tested.
-- [ ] **Selective rollback:** list the exact commits/files and downstream impacts.
+- No publication is included by default.
+- If release work is explicitly authorized, link the [release evidence](../docs/RELEASE_POLICY.md), Site source SHA/crosswalk, package/archive hashes, and access-policy verification.
+
+## Review and rollback
+
+- [ ] Based on the latest develop/wasm head; checked open PRs/runs for overlap.
+- [ ] Original gameplay source, serialized data, assets, GUIDs, and fileIDs remain attributable and intact.
+- [ ] No invented gameplay, callbacks, source data, artwork, or unsupported parity claims.
+- [ ] Relevant regression contract included when source behavior changes.
+- [ ] No credentials or private recovery artifacts added to this public repository.
+- [ ] Handoff and linked issue state what is recovered, compiled, executed, browser-tested, visually checked, and device-tested.
+- [ ] Exact rollback commit/files and downstream impact are recorded.
 
 ## Follow-up
 
-One bounded next original-source dependency or blocker, not a new alternative implementation.
+One next source-backed dependency or concrete blocker.

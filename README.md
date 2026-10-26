@@ -9,6 +9,7 @@ This repository is a source-preserving effort to make the original Crisis Respon
 - [Contributor guide](CONTRIBUTING.md)
 - [Gameplay completion contract](docs/GAMEPLAY_COMPLETION_ROADMAP.md)
 - [WASM port workflow research](docs/PORTING_WORKFLOW_RESEARCH.md)
+- [Release and publication policy](docs/RELEASE_POLICY.md)
 - [.NET recovery runbook](docs/DOTNET_BUILD_RUNBOOK.md)
 
 NEXT_AGENT.md is the live handoff. Verify its branch and SHA before using it as current state.
