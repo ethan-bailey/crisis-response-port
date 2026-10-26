@@ -6,7 +6,7 @@
 - Current implementation commit: `e7bfacb5630adcecccdb50c42c4701c097f3d696`; tested source tree: `be08627820b3ef44d3aebb028862442f7b2cbdc1`.
 - This exact implementation tree is locally checked in a detached-worktree-based `reload-contract` branch; all source edits were committed and `git diff --check` passed.
 - Hosted run #17 for the identical Mission storage source tree `b9f2fff7ee3f71de235593f89126605678db3fb6` completed successfully: Actions run `40260844821`. This is the source contracts and WASM build workflow, not browser/device parity.
-- Hosted run #18 for `e7bfacb5630adcecccdb50c42c4701c097f3d696` was in progress at last query: run `40261089241`. Recheck its status and preserve the result.
+- Hosted run #18 for `e7bfacb5630adcecccdb50c42c4701c097f3d696` completed successfully: Actions run `40261089241`.
 - No preview/Site was deployed or changed in this run.
 
 ## Latest implementation batches
@@ -30,7 +30,7 @@
 8. **End-to-end web acceptance — NOT PASSED.** Serve the exact production package over HTTP and verify paths, MIME and hashes; fresh launch, cached second launch, interrupted download recovery, manifest change, quota errors, movement/aim/fire/reload/injury/two-actor lifecycle in Chromium and WebKit. Measure bytes, timing and memory. Physical iPhone acceptance remains owner-only; desktop emulation cannot substitute.
 9. **Exact-source closeout — NOT PASSED.** Run the complete verification set on one exact source SHA when implementation is ready, and link every log/artifact/package hash to it. Obtain owner iPhone Safari result before claiming 100% completion.
 
-Cross-cutting evidence pending: file-level crosswalk for historical Site version 70 source `d65cdb2fbd1c50f55fbd5c7ab96eb12a242ca684` against GitHub source plus audited archive/manifest. Version 70 is historical evidence; no Site action is authorized here.
+Cross-cutting Site version 70 crosswalk is recorded in `docs/evidence/SITE_VERSION_70_GITHUB_CROSSWALK_2026-10-25.md`: all 2,684 archive payloads and 1,209 public source inventory files matched; the Site source commit ID remains distinct from the public mapped commit. Version 70 is historical evidence; no Site action is authorized here.
 
 ## Next dependency-ready action
 
