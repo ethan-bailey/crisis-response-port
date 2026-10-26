@@ -103,7 +103,7 @@ public sealed class WeaponHost {
  foreach(var p in records.EnumerateObject()){var f=p.Value;var t=map[p.Name];var pid=f.GetProperty("m_Father").GetProperty("fileID").GetString();if(map.TryGetValue(pid,out var parent))t.SetParent(parent,false);t.localPosition=Vec(f.GetProperty("m_LocalPosition"));t.localScale=Vec(f.GetProperty("m_LocalScale"));var q=f.GetProperty("m_LocalRotation");t.localRotation=new(q.GetProperty("x").GetSingle(),q.GetProperty("y").GetSingle(),q.GetProperty("z").GetSingle(),q.GetProperty("w").GetSingle());}}
  public BallisticRuntimeHost Ballistics {get;private set;}
  public void InitializeBallistics(string json,SceneLoadResult scene){Ballistics=new(json,scene,effects,p=>{p.FlightMask=ballisticMask;if(!projectiles.Contains(p))projectiles.Add(p);});ballisticMask=Masks.Instance.BallisticTargets;}
- public WeaponHost(string json,InputHandler input,RuntimeWorld sourceWorld=null,int reserveMagazines=1){
+ public WeaponHost(string json,InputHandler input,RuntimeWorld sourceWorld=null){
   world=sourceWorld??new RuntimeWorld(true,false);world.MakeCurrent();using var d=JsonDocument.Parse(json);var c=d.RootElement;config=c.Clone();var w=c.GetProperty("weapon");Global.Context.InputHandler=input;
   Hierarchy(c.GetProperty("weaponTransforms"),weaponTransforms);Hierarchy(c.GetProperty("operatorTransforms"),operatorTransforms);
   Transform WT(string key)=>weaponTransforms[w.GetProperty(key).GetProperty("fileID").GetString()];
@@ -132,7 +132,7 @@ public sealed class WeaponHost {
   weapon.audioFiringPin=new(effects,"audioFiringPin");weapon.audioBoltExtract=new(effects,"audioBoltExtract");weapon.audioBoltReturn=new(effects,"audioBoltReturn");
   weapon.audioInsertMagazine=new(effects,"audioInsertMagazine");weapon.audioExtractMagazine=new(effects,"audioExtractMagazine");
   // Scoped test loadout, not a claim about the original saved player's equipment.
-  body.Equipment.primaryWeapon=weapon;body.Equipment.primaryMagazineCount=reserveMagazines;body.Equipment.Initialize();
+  body.Equipment.primaryWeapon=weapon;body.Equipment.primaryMagazineCount=1;body.Equipment.Initialize();
   weapon.InsertMagazine(new Magazine(weapon));body.Equipment.AddMagazineForWeapon(weapon.Magazine,weapon);
   world.Invoke(barrel,"Awake");world.Invoke(cb,"Awake");cb.Initialize(weapon,weapon.OnBoltOpened,weapon.OnBoltClosed,w.GetProperty("boltFeedMalfunctionRate").GetSingle());
   Transform OT(string key)=>operatorTransforms[c.GetProperty("bodyTransforms").GetProperty(key).GetString()];
@@ -177,7 +177,7 @@ public sealed class WeaponHost {
   // Original CharacterBody.QueryTrigger clears one-frame requests; manipulation blocks new pulls.
   bool waitForSourceAim=f.TryGetProperty("requireAimConvergence",out var requireAim)&&requireAim.GetBoolean();
   if(f.GetProperty("fire").GetBoolean()&&(!waitForSourceAim||aimConverged)&&!body.IsManipulatingEquipment)body.PullTrigger();
-  if(task==null&&f.GetProperty("reload").GetBoolean()){body.PendingAction=CharacterBody.CharacterAction.SwitchMagazine;reload.quick=f.TryGetProperty("quickReload",out var quickReload)&&quickReload.GetBoolean();task=reload;task.OnStart();}
+  if(task==null&&f.GetProperty("reload").GetBoolean()){body.PendingAction=CharacterBody.CharacterAction.SwitchMagazine;task=reload;task.OnStart();}
   if(task!=null&&task.OnUpdate()!=TaskStatus.Running){task.OnEnd();task=null;}
   if(task==null&&body.PendingAction==CharacterBody.CharacterAction.WorkBolt){task=workBolt;task.OnStart();}
   weapon.Step();world.Invoke(weapon.cyclingBolt,"Update");body.QueryTrigger();
