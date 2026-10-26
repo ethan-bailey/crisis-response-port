@@ -194,7 +194,26 @@ public static class MissionProjectileContracts
                     }
                     var secondHitLimb=secondVictim.LastHitLimb;
                     var secondDamageAfter=secondHitLimb==null?null:DescribeDamageState(secondVictim,secondHitLimb);
-                    var secondLiveProjectiles=world.Objects.OfType<SourceProjectile>().Count(projectile=>ReferenceEquals(projectile.Owner,shooter));
+                    var secondImpactTime=Time.time;
+                    var secondLiveProjectilesImmediatelyAfterImpact=world.Objects.OfType<SourceProjectile>()
+                        .Count(projectile=>projectile&&ReferenceEquals(projectile.Owner,shooter));
+                    var secondShotNewestSpawnTime=observedProjectiles.Skip(secondSpawnCountBefore)
+                        .Select(projectile=>projectile.SpawnTime).DefaultIfEmpty(secondImpactTime).Max();
+                    var liveProjectileAgesAtImpact=world.Objects.OfType<SourceProjectile>()
+                        .Where(projectile=>projectile&&ReferenceEquals(projectile.Owner,shooter))
+                        .Select(projectile=>Time.time-projectile.SpawnTime).ToArray();
+                    int sourceTerminationTicks=0;
+                    while(sourceTerminationTicks<260&&world.Objects.OfType<SourceProjectile>()
+                        .Any(projectile=>projectile&&ReferenceEquals(projectile.Owner,shooter))){
+                        world.Tick(.005f,()=>{
+                            foreach(var source in world.Objects.OfType<AudioSource>())source.Driver??=new MissionContractSilentAudioDriver();
+                            foreach(var system in world.Objects.OfType<ParticleSystem>())system.Driver??=particleDriver;
+                        });
+                        sourceTerminationTicks++;
+                    }
+                    var sourceAgeSecondsAfterNewestSpawn=Time.time-secondShotNewestSpawnTime;
+                    var secondLiveProjectilesAfterSourceTermination=world.Objects.OfType<SourceProjectile>()
+                        .Count(projectile=>projectile&&ReferenceEquals(projectile.Owner,shooter));
                     secondShot=new{
                         body=secondVictim.name,
                         selectedTarget=secondTarget.name,
@@ -206,7 +225,12 @@ public static class MissionProjectileContracts
                         limb=secondHitLimb?.id.ToString(),
                         damageBefore=secondDamageBefore,
                         damageAfter=secondDamageAfter,
-                        liveOwnedProjectilesAfterImpact=secondLiveProjectiles,
+                        liveOwnedProjectilesImmediatelyAfterImpact=secondLiveProjectilesImmediatelyAfterImpact,
+                        liveProjectileAgesAtImpact,
+                        sourceLifetimeSeconds=1f,
+                        sourceTerminationTicks,
+                        sourceAgeSecondsAfterNewestSpawn,
+                        liveOwnedProjectilesAfterSourceTermination=secondLiveProjectilesAfterSourceTermination,
                         flightTrace=secondFlightTrace
                     };
                 }

@@ -339,8 +339,12 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-ui-contra
             throw new InvalidOperationException("One second trigger must increment source ShotsFired exactly once");
         if(secondShot.GetProperty("spawnedProjectiles").GetInt32()!=secondShot.GetProperty("expectedProjectiles").GetInt32())
             throw new InvalidOperationException("Second source shot did not register the serialized ammunition projectile count");
-        if(secondShot.GetProperty("liveOwnedProjectilesAfterImpact").GetInt32()!=0)
-            throw new InvalidOperationException("Second source projectile was not cleaned up after its Occupant impact");
+        if(secondShot.GetProperty("liveOwnedProjectilesImmediatelyAfterImpact").GetInt32()<=0)
+            throw new InvalidOperationException("Source projectile lifecycle report lost the live owner-matched projectiles at impact");
+        if(secondShot.GetProperty("sourceAgeSecondsAfterNewestSpawn").GetSingle()<=1f)
+            throw new InvalidOperationException("Source projectile cleanup was checked before the recovered one-second lifetime elapsed");
+        if(secondShot.GetProperty("liveOwnedProjectilesAfterSourceTermination").GetInt32()!=0)
+            throw new InvalidOperationException("Original source projectiles remained registered after TestTermination lifetime/bounds checks");
         var firstHit=attempt.GetProperty("victimHits").EnumerateArray()
             .FirstOrDefault(hit=>hit.GetProperty("body").GetString()==selectedTarget);
         var secondHit=attempt.GetProperty("victimHits").EnumerateArray()
