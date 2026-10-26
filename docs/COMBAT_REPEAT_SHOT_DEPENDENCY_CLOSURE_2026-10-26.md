@@ -21,7 +21,7 @@ This is the inventory gate before extending the Mission source projectile contra
 
 ## Batched acceptance plan
 
-Run #58 has fully passed. This test-only batch is pushed in source SHA `312871c76e62b60d214cdbf3813585c5fc83af79`; exact workflow run #59 (`40315965437`) is pending. Its behavior is:
+Run #58 has fully passed. First attempt #59 (`40315965437`, SHA `312871c76e62b60d214cdbf3813585c5fc83af79`) exposed a compile-only API mismatch (`RightArm` vs recovered `rightArm`) before package work; SHA `16c12f762e0089f58769bf40eb612616c2d7e671` corrects it. Exact retry #60 (`40316195196`) is queued. Its behavior is:
 
 - Preserve its existing first-shot assertion.
 - Stage a second initialized Occupant in the same clear lane, move the first victim clear, update the original Blackboard target/aim, and allow the source arm pose and 0.1-second weapon cycle to complete.
