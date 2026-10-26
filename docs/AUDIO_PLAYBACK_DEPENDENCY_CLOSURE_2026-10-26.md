@@ -45,3 +45,8 @@ The initial browser implementation decoded the clips and reached the gesture-sta
 ## Harness correction in verification
 
 Commit 2b55d5f4905e7a14eddb0fd029f8941e80d237b1 adds Playwright's --autoplay-policy=user-gesture-required launch argument. The full exact-source Release/profile/package and Chromium run #65 / ID 40321027816 is in progress; no audio playback pass is claimed until its browser job records the context transition and analyser output.
+
+
+## Second hidden dependency — run #65
+
+The explicit Playwright launch argument --autoplay-policy=user-gesture-required did not keep Chromium's actual AudioContext suspended; the same assertion again observed running before click. The CI headless runner does not reproduce Safari's automatic suspension behavior through that flag. The harness must establish a blocked state by calling suspend() on the actual production AudioContext after loading, then verify its state is suspended and use a trusted Playwright click to invoke the production pointerdown handler. It must not call the runtime's unlock method directly. This preserves real WebAudio nodes and decoded original clips while making the unlock transition deterministic. Run #65's IndexedDB job passed; audio did not reach dispatch or analyser sampling. Its Release/package job was still in progress when documented and remains pending final capture.
