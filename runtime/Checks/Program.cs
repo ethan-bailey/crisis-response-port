@@ -201,7 +201,7 @@ if(args.Length==3&&args[0]=="--ammunition-resource-contract"){
     Console.WriteLine(JsonSerializer.Serialize(AmmunitionLoader.VerifyOriginalResource(File.ReadAllText(args[1]),args[2])));
     return;
 }
-if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-ui-contract"||args[0]=="--mission-ui-incremental-contract"||args[0]=="--mission-outcome-contract"||args[0]=="--mission-ai-contract"||args[0]=="--mission-ai-outcome-contract"||args[0]=="--mission-projectile-contract"||args[0]=="--mission-ai-projectile-contract")){
+if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-ui-contract"||args[0]=="--mission-ui-incremental-contract"||args[0]=="--mission-outcome-contract"||args[0]=="--mission-ai-contract"||args[0]=="--mission-ai-outcome-contract"||args[0]=="--mission-projectile-contract"||args[0]=="--mission-ai-projectile-contract"||args[0]=="--mission-physiology-contract")){
     var runOriginalAI=args[0].StartsWith("--mission-ai-",StringComparison.Ordinal);
     var runWithOriginalUI=args[0] is "--mission-ui-contract" or "--mission-ui-incremental-contract";
     var package=LoadSourcePackage(args[1]);
@@ -311,6 +311,10 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-ui-contra
         fullSourceBridge.Step(1f/60f,"{\"left\":true}",0f,0f);
         throw new InvalidOperationException("FullSource bridge tick accepted Mission 01's intentionally incomplete, headless player UI");
     }catch(NotSupportedException error) when(error.Message.Contains("InteractionMenu",StringComparison.Ordinal)){}
+    if(args[0]=="--mission-physiology-contract"){
+        Console.WriteLine(MissionPhysiologyContracts.Run(world,bodies));
+        return;
+    }
     if(args[0]=="--mission-projectile-contract"||args[0]=="--mission-ai-projectile-contract"){
         var report=MissionProjectileContracts.Describe(world,missionComponent,bodies);
         Console.WriteLine(report);
