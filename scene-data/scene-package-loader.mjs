@@ -119,11 +119,14 @@ async function fetchCompressedAsset(url, expected, label, signal, persistentCach
     if (compressed.byteLength !== expected.compressedBytes || await sha256(compressed) !== expected.compressedSha256)
       throw new Error(`${label} compressed size or checksum mismatch`);
   }
+  let cachedLocally = wasCached;
   if (!wasCached && persistentCache) {
-    try { await persistentCache.put(url, new Response(compressed.slice(0), {headers:{'Content-Type':'application/gzip'}})); }
-    catch { /* Safari quota or private browsing: this run still uses verified network bytes. */ }
+    try {
+      await persistentCache.put(url, new Response(compressed.slice(0), {headers:{'Content-Type':'application/gzip'}}));
+      cachedLocally = true;
+    } catch { /* Safari quota or private browsing: this run still uses verified network bytes. */ }
   }
-  return {compressed, fetchAndHashMs: monotonicNow() - started, wasCached};
+  return {compressed, fetchAndHashMs: monotonicNow() - started, wasCached, cachedLocally};
 }
 
 // Blazor's byte[] JS interop path is version-sensitive and the hosted .NET 8
@@ -254,7 +257,7 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
       for(let offset=0;offset<assets.length;offset++){
         const index=batchStart+deliveryStart+offset;
         const asset=assets[offset];
-        const {compressed,fetchAndHashMs}=fetched[offset];
+        const {compressed,fetchAndHashMs,cachedLocally}=fetched[offset];
         const item=result.items[offset];
         deliveredAssetBytes+=asset.bytes;
         if(!item.added||item.expectedAssets!==manifest.assets.length||item.receivedAssets!==index+1
@@ -271,7 +274,7 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
           stage:"delivered",compressedAssetBytes,sourceAssetBytes,maximumAssetBytes,
           totalCompressedAssetBytes:manifest.compressedAssetBytes,totalSourceAssetBytes:manifest.uncompressedAssetBytes,
           asset:{path:asset.path,compressedBytes:compressed.byteLength,sourceBytes:asset.bytes,
-            fetchAndHashMs,wasCached:fetched[offset].wasCached,transportPrepareMs:transportPrepareMs/assets.length,bridgeMs:bridgeBatchMs/assets.length,
+            fetchAndHashMs,wasCached:fetched[offset].wasCached,cachedLocally,transportPrepareMs:transportPrepareMs/assets.length,bridgeMs:bridgeBatchMs/assets.length,
             bridgeBatchMs,bridgeBatchAssets:assets.length},
           profileElapsedMs:monotonicNow()-profileStarted,batchElapsedMs:monotonicNow()-batchStarted});
       }

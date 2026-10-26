@@ -150,7 +150,7 @@ test("delivers verified source assets through the WASM package bridge", async ()
     }, {receivedAssets:1,expectedAssets:1,compressedAssetBytes:assetGzip.byteLength,sourceAssetBytes:assetRaw.byteLength,
       maximumAssetBytes:assetRaw.byteLength,totalCompressedAssetBytes:assetGzip.byteLength,totalSourceAssetBytes:assetRaw.byteLength,
       asset:{path:assetPath,compressedBytes:assetGzip.byteLength,sourceBytes:assetRaw.byteLength,
-        fetchAndHashMs:completed.asset.fetchAndHashMs,wasCached:false,transportPrepareMs:completed.asset.transportPrepareMs,
+        fetchAndHashMs:completed.asset.fetchAndHashMs,wasCached:false,cachedLocally:true,transportPrepareMs:completed.asset.transportPrepareMs,
         bridgeMs:completed.asset.bridgeMs,bridgeBatchMs:completed.asset.bridgeBatchMs,bridgeBatchAssets:1}});
     for(const value of [completed.asset.fetchAndHashMs,completed.asset.transportPrepareMs,completed.asset.bridgeMs,
       completed.profileElapsedMs,completed.batchElapsedMs]) assert.ok(Number.isFinite(value) && value >= 0);
@@ -165,6 +165,7 @@ test("delivers verified source assets through the WASM package bridge", async ()
     await deliverIncrementalSourceProfile(cachedBridge,"https://example.test/source/manifest.json",{onProgress:value=>cachedProgress.push(value)});
     assert.equal(assetFetchCounts.get("0123456789abcdef01234567.json.gz"),1,"second run reads the verified asset from persistent cache");
     assert.equal(cachedProgress.at(-1).asset.wasCached,true);
+    assert.equal(cachedProgress.at(-1).asset.cachedLocally,true,"a verified cache hit is confirmed as stored on device");
 
     const assetUrl="https://example.test/source/assets/0123456789abcdef01234567.json.gz";
     cachedResponses.set(assetUrl,new Response(encoder.encode("corrupt cached bytes")));
@@ -172,6 +173,7 @@ test("delivers verified source assets through the WASM package bridge", async ()
     await deliverIncrementalSourceProfile(cachedBridge,"https://example.test/source/manifest.json",{onProgress:value=>recoveredProgress.push(value)});
     assert.equal(assetFetchCounts.get("0123456789abcdef01234567.json.gz"),2,"a corrupt cached chunk is recovered from the network");
     assert.equal(recoveredProgress.at(-1).asset.wasCached,false,"network recovery is reported as a cache miss");
+    assert.equal(recoveredProgress.at(-1).asset.cachedLocally,true,"the verified replacement is stored on device");
     assert.deepEqual(Buffer.from(await cachedResponses.get(assetUrl).arrayBuffer()),Buffer.from(assetGzip),"verified network bytes replace the corrupt cache entry");
   } finally {
     globalThis.fetch = originalFetch;
