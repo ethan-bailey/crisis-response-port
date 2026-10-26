@@ -120,11 +120,16 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
         ??throw new InvalidOperationException("Mission source profile has no identified original audio clips");
     var sourceAudio=session.Mission.world.Objects.OfType<AudioSource>().FirstOrDefault()
         ??throw new InvalidOperationException("Mission source profile has no original AudioSource");
+    var audioQueue=world.AudioSourceDriver as Crisis.Runtime.BrowserAudioEventQueue
+        ??throw new InvalidOperationException("Mission EntryTeam session has no original browser audio event queue");
+    audioQueue.Drain(); // Keep the saturation assertion isolated from the earlier scene/audio callbacks.
+    var droppedBefore=audioQueue.DroppedEvents;
     for(var index=0;index<65;index++)sourceAudio.PlayOneShot(sourceClip,.37f);
     using var audioCapture=JsonDocument.Parse(JsonSerializer.Serialize(bridge.Step(1f/60f,"{}",640f,360f)));
     var audioEvents=audioCapture.RootElement.GetProperty("audioEvents");
-    if(audioEvents.GetArrayLength()!=64||audioCapture.RootElement.GetProperty("droppedAudioEvents").GetInt32()!=1||audioEvents[0].GetProperty("sourcePath").GetString()!=sourceClip.OriginalAssetPath||
-       MathF.Abs(audioEvents[0].GetProperty("volume").GetSingle()-.37f)>.001f||
+    var expectedSourceGain=Math.Clamp(sourceAudio.volume*.37f,0f,1f);
+    if(audioEvents.GetArrayLength()!=64||audioCapture.RootElement.GetProperty("droppedAudioEvents").GetInt32()!=droppedBefore+1||audioEvents[0].GetProperty("sourcePath").GetString()!=sourceClip.OriginalAssetPath||
+       MathF.Abs(audioEvents[0].GetProperty("volume").GetSingle()-expectedSourceGain)>.001f||
        MathF.Abs(audioCapture.RootElement.GetProperty("sourceTime").GetSingle()-audioEvents[0].GetProperty("time").GetSingle())>.1f)
         throw new InvalidOperationException($"Original AudioSource callback was not delivered as one bounded, timestamped browser event: {audioCapture.RootElement}");
     var sourceWeapon=session.Actor.ActiveWeapon??throw new InvalidOperationException("FullSource Mission actor has no original active weapon");
