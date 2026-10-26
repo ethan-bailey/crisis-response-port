@@ -90,7 +90,7 @@ export class BrowserInput {
       surface.classList.remove('active', 'sprinting', 'detent', 'break-left', 'break-right');
       if (released !== null && surface.hasPointerCapture?.(released)) surface.releasePointerCapture(released);
     };
-    const move = event => {
+    const move = (event, startAim = false) => {
       if (pointer !== event.pointerId) return;
       const rect = surface.getBoundingClientRect();
       const thumbWidth = thumb?.offsetWidth || 48;
@@ -121,6 +121,9 @@ export class BrowserInput {
       const aimVertical = Math.max(-1, Math.min(1, rawY));
       const aimPower = Math.max(0, (Math.abs(aimVertical) - deadZone) / (1 - deadZone));
       this.movementStickAim = -Math.sign(aimVertical) * aimPower;
+      if (startAim) {
+        onAimStart(this.movementStickAim);
+      }
       onAim(this.movementStickAim);
       this.set('left', source, this.movementStickAxis < 0);
       this.set('right', source, this.movementStickAxis > 0);
@@ -143,8 +146,7 @@ export class BrowserInput {
       pointer = event.pointerId;
       surface.setPointerCapture?.(pointer);
       surface.classList.add('active');
-      onAimStart();
-      move(event);
+      move(event, true);
     });
     this.listen(surface, 'pointermove', move);
     for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {

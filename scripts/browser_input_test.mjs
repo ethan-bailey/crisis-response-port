@@ -191,19 +191,25 @@ function analogStickFixture() {
  stick.classList={add:x=>classes.add(x),remove:(...xs)=>xs.forEach(x=>classes.delete(x)),toggle:(x,on)=>on?classes.add(x):classes.delete(x)};
  stick.style={setProperty:(key,value)=>properties.set(key,value)};
  stick.getBoundingClientRect=()=>({left:40,top:20,width:200,height:200});
- const aim={value:0};input.bindMovementStick(stick,thumb,{onAim:(value,active=true)=>{if(active&&value!==0)aim.value=value;}});
+ const aim={value:0.4,baseY:0,baseVertical:0};input.bindMovementStick(stick,thumb,{
+  onAimStart:vertical=>{aim.baseY=aim.value;aim.baseVertical=vertical;},
+  onAim:(vertical,active=true)=>{if(active)aim.value=Math.max(-1,Math.min(1,aim.baseY+vertical-aim.baseVertical));}
+ });
  input.bindKeyboard(keyboard,{KeyA:'left',KeyD:'right',ShiftLeft:'sprint'});
  const move=(type,x,y=120,pointerId=9)=>stick.send(type,{pointerId,clientX:x,clientY:y});
  return {input,stick,keyboard,thumb,classes,properties,aim,move};
 }
 
-test('circular joystick restores vertical aim and only moves horizontally',()=>{
+test('circular joystick anchors aim on touch-down; horizontal movement does not change it',()=>{
  const {input,thumb,move,stick,aim}=analogStickFixture();
  move('pointerdown',140,120);
+ assert.equal(aim.value,0.4,'Touch-down at neutral must preserve the current aim');
+ move('pointermove',150,120);
+ assert.equal(aim.value,0.4,'Horizontal movement alone must not pull aim toward center');
  assert.equal(input.movementMagnitude(1),0);
  move('pointermove',140,20); // vertical-only gesture
  assert.equal(input.pressed('left'),false);assert.equal(input.pressed('right'),false);
- assert.ok(Math.abs(input.movementStickAim-1)<1e-12);assert.ok(Math.abs(aim.value-1)<1e-12);
+ assert.ok(Math.abs(input.movementStickAim-1)<1e-12);assert.equal(aim.value,1,'Vertical travel adjusts the anchored aim and clamps to the absolute limit');
  assert.match(thumb.style.transform,/translate3d\(0px,-/);
  move('pointermove',150,120); // inside the dead zone
  assert.equal(input.movementMagnitude(1),0);
@@ -223,15 +229,16 @@ test('circular joystick restores vertical aim and only moves horizontally',()=>{
  move('pointerup',40);
  assert.equal(input.movementMagnitude(-1),0);
  assert.equal(thumb.style.transform,'');
- assert.equal(input.movementStickAim,0);assert.ok(Math.abs(aim.value-1)<1e-12,'neutral release preserves the last vertical aim');
+ assert.equal(input.movementStickAim,0);assert.ok(Math.abs(aim.value-.4)<1e-12,'release preserves the last anchored aim');
  assert.equal(stick.hasPointerCapture(9),false);
  input.dispose();
 });
 
-test('Mission maps joystick vertical input to absolute aim instead of the prior pointer position',async()=>{
+test('Mission keeps absolute aim anchored to joystick touch-down and adjusts it only by vertical travel',async()=>{
  const html=await readFile(new URL('../game/index.html',import.meta.url),'utf8');
- assert.match(html,/const targetY=Math\.max\(-1,Math\.min\(1,vertical\)\)/);
- assert.doesNotMatch(html,/stickAimBaseY\s*\+\s*vertical/);
+ assert.match(html,/onAimStart\(vertical\)\{stickAimBaseY=pointerNdc\.y;stickAimBaseVertical=vertical;/);
+ assert.match(html,/stickAimBaseY\+vertical-stickAimBaseVertical/);
+ assert.doesNotMatch(html,/const targetY=Math\.max\(-1,Math\.min\(1,vertical\)\)/);
 });
 
 test('joystick travel scales walk; sprint requires a deliberate over-pull and has hysteresis',()=>{
