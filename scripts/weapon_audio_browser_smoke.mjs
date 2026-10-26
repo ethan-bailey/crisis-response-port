@@ -114,7 +114,7 @@ try {
   assert.equal(manifest.snapshot.contextState, 'suspended', 'runtime is created before the user gesture');
   assert.equal(manifest.snapshot.decodeErrors, 0, 'all authored clip files decode');
   assert.equal(manifest.snapshot.loadedBuffers, manifest.urlCount, 'every source clip has a decoded buffer');
-  assert.equal(manifest.snapshot.outputGain, 0.16, 'production master gain ceiling is retained');
+  assert.ok(Math.abs(manifest.snapshot.outputGain - 0.16) < 1e-6, 'production master gain ceiling is retained within Float32 readback precision');
 
   await page.locator('#unlock').click();
   await page.waitForFunction(() => window.audioFixture.context.state === 'running', null, { timeout: 5000 });
