@@ -1,34 +1,25 @@
 # Crisis Response Port — continuation handoff (2026-10-26)
 
-## Current deployed checkpoint: Site v75
+## Verified release and source checkpoints
 
-- Live URL: https://crisis-response-runtime.craftysnipe13.chatgpt.site
-- Version 75: `appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_3627e642babc8191baf0ba264e96a5af`
-- Deployment `appgdep_6adf8880cd4c8191a4d16a6789d45c6a` succeeded. Owner-private access preserved.
-- Exact Site source `main`: `d8dbe9f3c038e59afbf0d9903d5d036c1f3169b4`.
-- Pinned .NET SDK 8.0.426. Release runtime build: 0 errors / 48 warnings. Release Browser/WASM publish succeeded; optional `wasm-tools` optimizer is not installed.
-- `package_wasm_site.py build` and `verify dist` passed on that exact source: 2,686 files, 199 Blazor resources, 195 WASM files; Mission profile 1,919 assets / 22,365 records / 97,767,549 compressed bytes / 205,514,345 source bytes. Source package SHA-256 `ea3592ff5bdd39534bb905cd0abac74f456578b46eb4b12cdd0cb79fe8520cf7`; build-manifest SHA-256 `c1610bf34f29e38c7efc82f5f3cd6ff4cc7d8e6d1db694183850d50f2f801a52`.
-- Deployment archive `/tmp/cpr-site-v75-deploy-d8dbe.tar.gz`: SHA-256 `ba24d8a315e4865ccc6d68cf925423fa59fa84d57462e7320778e8dbf42de2d8`, 138,792,202 bytes. Archive contains matching `.openai/hosting.json` and `dist/index.html`; independent extraction verified all 2,686 manifest file sizes and hashes. Sites normalized TAR SHA `6bc154b5299a354782a9bcc9ed7a479aca0693dea8903f3b4a3e454d20299f59`, 178,022,400 bytes / 2,688 files.
-- Joystick fix: approved sprint entry/release distances are 1.75×/1.5×; implementation was corrected from 1.42×/1.24×. Tests cover 1.49× no sprint, 1.75× activation, 1.51× hysteresis, 1.5× release. Full Site Node suite 142/142 and targeted controls suite 33/33 pass.
-- Recovered actor package audit passed with `python3 scripts/verify_runtime_package.py /tmp/cpr-recovery-full-source/export/ExportedProject /tmp/cpr-site-v73-full-source.json`: 2,060 assets, 40,139 records, 24,856 dependency edges; Operator/Occupant closures have zero unresolved GUIDs and unsupported builtins.
-- Automated cloud browser cannot create WebGL (`GL_VENDOR=Disabled`); this is a runner limitation, not device acceptance.
+- **Live Site v75:** https://crisis-response-runtime.craftysnipe13.chatgpt.site
+- Site source `main`: `d8dbe9f3c038e59afbf0d9903d5d036c1f3169b4`; saved version `appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_3627e642babc8191baf0ba264e96a5af`; successful deployment `appgdep_6adf8880cd4c8191a4d16a6789d45c6a`. Audience remains owner-private.
+- Site v75 built using pinned .NET SDK 8.0.426. Release runtime build had 0 errors / 48 warnings; Release Browser/WASM publish, full Mission profile build, package verifier and independent deployment archive audit passed on that exact Site SHA. Package: 2,686 files, 199 Blazor resources, 195 WASM files; Mission profile 1,919 assets / 22,365 records / 97,767,549 compressed bytes / 205,514,345 source bytes. Source package SHA `ea3592ff5bdd39534bb905cd0abac74f456578b46eb4b12cdd0cb79fe8520cf7`; build-manifest SHA `c1610bf34f29e38c7efc82f5f3cd6ff4cc7d8e6d1db694183850d50f2f801a52`.
+- Site v75 sprint wall uses approved 1.75× entry and 1.5× release thresholds. Public regression additionally asserts the puck passes fully outside the rim. Site implementation file and public `develop/wasm` implementation file match SHA-256 `0f5a424597c32624f121648f51a3cf7d7bf608cd2b55ff311717e03e5caa6a78`; public-only test assertion does not require a product redeploy.
+- Public `develop/wasm` test commit: `da3fae42504557e131d255feed6a8d51b127a699` (`Assert sprint puck clears joystick rim`). Exact-SHA Actions run #81 / `40368479589` succeeded. Contracts/Release/package/full-profile job `121733263824` and independent Chromium IndexedDB/audio job `121733264439` both succeeded.
+- Exact-SHA run #81: Node and Python contract jobs, runtime/engine/foundation checks, Release WASM build/publish/output verification, recovered source verification, complete Mission package build/verifier, retained artifact, full-profile browser persistence and Chromium audio all passed. Complete package identifies source commit `da3fae...`, contains 2,686 files / 199 Blazor resources / 195 WASM files, and selects 1,919 Mission assets / 22,365 records. Recovery archive SHA `cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d`; source index SHA `9d866276582031d440c316c8e60d69d252506cf67a8ae9d03dbdbe0d91980f92`; deterministic package tar SHA `4e1e1d4495684bede24e7c88c1f5e5dace401fc54b43bd49115d146ee6dd42ec`. Retained artifact `12672355752`, 138,555,158 bytes, digest `sha256:87586a07489cba47407980ee984ab90f725cb3822f1819a1a2293fba0b477238`, expires 2026-11-09.
+- Run #81 full-profile browser result on real Chromium IndexedDB: 1,919/1,919 first-load assets persisted; cold 11,065 ms; warm reload 8,568 ms; warm network requests 0; 1,919 verified cache hits. Bridge was modeled in the page; this does not prove .NET bridge throughput or iPhone Safari behavior. Independent Chromium IndexedDB/audio job passed.
+- Local supplemental checks against the same full Mission profile: `node --test scripts/*_test.mjs scripts/*_contracts.mjs` passed 143/143; `python3 -m unittest discover -s scripts -p '*test.py'` passed 45/45. Original player reload interruption passed: source reload task completed/canceled through source input and weapon switch in 42 frames, no shots/ammo changes, both IK sequencers ready. Original AI empty-primary fallback passed: M4A1→Glock in 45 frames; loaded-primary and both-empty negative cases did not swap. These local checks supplement, not replace, exact-SHA CI.
+- Full recovered actor package audit: 2,060 assets, 40,139 records, 24,856 edges; Operator and Occupant closures have zero unresolved GUIDs and unsupported builtins.
 
-## Next actions, in order
+## Next work, in dependency order
 
-1. **Public source synchronization:** Push `game/browser-input.mjs`, `scripts/browser_input_test.mjs`, and this refreshed documentation to `develop/wasm` through the GitHub connector. Parent must be remote SHA `fe2982c1e0f30fc8617afd914586c6fee584497a`; update ref with expected-SHA compare-and-swap. Inspect exact-SHA Actions and resolve failures before building a public-branch package. Site v75 evidence belongs only to Site commit `d8dbe9f...`.
-2. **Owner device acceptance:** On physical iPhone Safari, test v75 cold and warm Mission launch/persistence, late ~1,900-asset progress, vertical-only absolute aim, walk-speed control, resisted sprint wall, rapid-tap zoom, and fire/reload speaker output. Record what happens. Cloud Chromium cannot certify Safari/device behavior.
-3. **Continue source parity gates regardless of device wait:** Use `docs/GATE_DEPENDENCY_INDEX.md` as the dependency-first inventory. Next source work is the original FullSource reload BehaviorTree handoff/cancel path; preserve protected `WeaponHost.cs`, and add fixture setup only in `runtime/Checks/WeaponContracts.cs`. Then progress distinct two-actor hit/injury/physiology, original IK/animation, mission/NPC, native physics/rendering and combined acceptance.
+1. **Continue Gate 4/7 source work from the verified package.** Two distinct source-fired projectile→limb→injury lifecycles and Mission/AI outcome checks have prior passing contracts. Batch the next recoverable source behavior with its complete dependency inventory first. The strict Mission Occupant armor records are all `ArmorClass.Type.None`; do not invent an active-armor test by mutating source state.
+2. **Continue Gate 5/7 rendering closure.** Complete-export Wound/Blood and tracer dependencies are inventoried in `docs/particle-lifecycle-dependency-closure-2026-10-26.md`. The older historical particle inventory and complete-export binary hashes differ; reconcile exact source revision and material/mesh provenance before binding new visuals. Cloud browser WebGL is disabled, so do source mapping/contracts while recording native/browser pixel acceptance separately.
+3. **Continue native physics and full Mission parity.** Headless force sinks and state contracts do not prove PhysX contact, ragdoll, casing trajectory, autonomous navigation/perception/combat, or rendered effect parity. Inventory each owner, update order and serialized dependency before a bounded batch; add runtime-discovered hidden dependencies to the owning closure.
+4. **Owner iPhone Safari acceptance:** cold/warm Site v75 Mission launch and persistence, late asset progress, vertical-only absolute aim, speed/walk curve, resisted sprint wall, rapid-tap zoom and speaker output. This device-only step is outstanding; do not claim the software task finished while it is pending.
+5. **Publish only for a product-code change** after the exact Site source SHA, Release/WASM build, complete profile verifier and independent archive integrity checks agree. No deploy is needed for test-only/documentation commits; keep owner-private Site access.
 
-## Persistent constraints
+## Completion flags and durable evidence
 
-- Keep SDK pinned to 8.0.426; use the working .NET + package workflow, not a speculative CLI/Codespaces detour.
-- Do not publish unless exact source build, complete profile verifier and archive hashes pass for the same source SHA. Preserve Site owner-private access.
-- Physical iPhone acceptance is a separately owned check; do not mark the software work “done” just because it is pending. Continue independent source gates and log concrete evidence.
-- Keep `fullGameParity:false`, `sourceVisualParity:false`, `nativeParityVerified:false`, `originalGameComplete:false`, and `offlineComplete:false` until their required evidence exists.
-
-## Evidence index
-
-- Dependency order and closure requirements: `docs/GATE_DEPENDENCY_INDEX.md`.
-- Exact v75 build, archive audit, actor audit and browser limitation: `docs/evidence/SITE_DEPLOYMENT_ALIGNMENT_BLOCKER_2026-10-26.md`.
-- Full-profile cold/warm IndexedDB and audio evidence on public run #79: `docs/INDEXEDDB_FULLPROFILE_DEPENDENCY_CLOSURE_2026-10-26.md`.
-- Publication controls: `docs/RELEASE_POLICY.md`.
+Keep `fullGameParity:false`, `sourceVisualParity:false`, `nativeParityVerified:false`, `originalGameComplete:false` and `offlineComplete:false` until their evidence requirements pass. Gate order and closure requirements: `docs/GATE_DEPENDENCY_INDEX.md`. Exact v75 release record: `docs/evidence/SITE_DEPLOYMENT_ALIGNMENT_BLOCKER_2026-10-26.md`. Latest full-profile browser record: `docs/INDEXEDDB_FULLPROFILE_DEPENDENCY_CLOSURE_2026-10-26.md`. Publication controls: `docs/RELEASE_POLICY.md`.
