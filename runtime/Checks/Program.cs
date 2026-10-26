@@ -360,11 +360,19 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-ui-contra
         world.Invoke(missionComponent,"UpdateMissionState");
         if(!missionComponent.AllRoomsChecked)throw new InvalidOperationException("Original Mission.UpdateMissionState did not accept rooms cleared through the Operator path");
         var allDisabledEventCount=0;missionComponent.Occupants.allDisabledEvent.AddListener(()=>allDisabledEventCount++);
-        foreach(var body in spawnedOccupants){body.SetUnconscious();body.Restrain();}
+        foreach(var body in spawnedOccupants)body.SetUnconscious();
         world.Tick(1f/60f,DisableUnboundVocalizationPresentation);
+        if(!missionComponent.Occupants.AllRenderedSafe||allDisabledEventCount!=1||spawnedOccupants.Any(body=>!body.IsRagdoll))
+            throw new InvalidOperationException($"Original Occupants manager failed to propagate all-disabled/ragdoll state before restraint: allRenderedSafe={missionComponent.Occupants.AllRenderedSafe}, eventCount={allDisabledEventCount}, ragdoll={spawnedOccupants.Count(body=>body.IsRagdoll)}/{spawnedOccupants.Length}");
+        // Restrain invokes the original CharacterBody callback and creates its
+        // source SpringJoints. Do not advance a physics tick here: the headless
+        // runner intentionally has no native PhysX joint driver. Recompute the
+        // original manager and Mission state immediately to verify completion.
+        foreach(var body in spawnedOccupants)body.Restrain();
+        world.Invoke(missionComponent.Occupants,"Update");
         world.Invoke(missionComponent,"UpdateMissionState");
-        if(!missionComponent.Occupants.AllRenderedSafe||allDisabledEventCount!=1||spawnedOccupants.Any(body=>!body.IsRagdoll)||spawnedOccupants.Any(body=>!body.IsRestrained)||!missionComponent.missionEnded)
-            throw new InvalidOperationException($"Original Mission completion did not propagate all-disabled, ragdoll, restraint, and missionEnded state: allRenderedSafe={missionComponent.Occupants.AllRenderedSafe}, eventCount={allDisabledEventCount}, ragdoll={spawnedOccupants.Count(body=>body.IsRagdoll)}/{spawnedOccupants.Length}, restrained={spawnedOccupants.Count(body=>body.IsRestrained)}/{spawnedOccupants.Length}, missionEnded={missionComponent.missionEnded}");
+        if(!missionComponent.Occupants.AllRestrained||spawnedOccupants.Any(body=>!body.IsRestrained)||!missionComponent.missionEnded)
+            throw new InvalidOperationException($"Original Mission completion did not propagate restraint and missionEnded state: allRestrained={missionComponent.Occupants.AllRestrained}, restrained={spawnedOccupants.Count(body=>body.IsRestrained)}/{spawnedOccupants.Length}, missionEnded={missionComponent.missionEnded}");
         string presentationBlocker=null;string missionUiInitialization=null;
         var missionUI=world.Objects.OfType<Crisis.Runtime.FullSource.MissionUI>().Single();
         try{
