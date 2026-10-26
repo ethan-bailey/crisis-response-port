@@ -114,8 +114,8 @@ test("delivers verified source assets through the WASM package bridge", async ()
     assert.equal(method,"AddIncrementalSourceGzipAssetBatch");
     assert.deepEqual(args[0],[assetPath]);
     assert.deepEqual(args[1],[assetGzip.byteLength]);
-    assert.ok(args[2] instanceof Uint8Array);
-    assert.deepEqual(Buffer.from(args[2]),Buffer.from(assetGzip));
+    assert.equal(typeof args[2],"string","Blazor byte[] interop accepts a base64 string, not Uint8Array JSON");
+    assert.deepEqual(Buffer.from(args[2],"base64"),Buffer.from(assetGzip));
     return JSON.stringify({items:[{added:true,expectedAssets:1,receivedAssets:1,receivedBytes:assetRaw.byteLength,
       receivedCompressedBytes:assetGzip.byteLength}]});
   }};
@@ -134,8 +134,8 @@ test("delivers verified source assets through the WASM package bridge", async ()
     assert.equal(calls[1][0], "AddIncrementalSourceGzipAssetBatch");
     assert.deepEqual(calls[1][1],[assetPath]);
     assert.deepEqual(calls[1][2],[assetGzip.byteLength]);
-    assert.ok(calls[1][3] instanceof Uint8Array);
-    assert.deepEqual(Buffer.from(calls[1][3]),Buffer.from(gzipSync(assetRaw)));
+    assert.equal(typeof calls[1][3],"string");
+    assert.deepEqual(Buffer.from(calls[1][3],"base64"),Buffer.from(gzipSync(assetRaw)));
     assert.deepEqual(progress.map(value=>value.stage),["fetching","adding","delivered"]);
     assert.deepEqual(progress[0].pendingAssetPaths,[assetPath]);
     assert.deepEqual(progress[1].pendingAssetPaths,[assetPath]);
@@ -203,8 +203,8 @@ test("amortizes WASM interop over a bounded ordered batch of small source assets
     assert.equal(method,"AddIncrementalSourceGzipAssetBatch");
     assert.deepEqual(args[0],entries.map(item=>item.path));
     assert.deepEqual(args[1],entries.map(item=>item.compressed.byteLength));
-    assert.ok(args[2] instanceof Uint8Array);
-    assert.deepEqual(Buffer.from(args[2]),Buffer.concat(entries.map(item=>Buffer.from(item.compressed))));
+    assert.equal(typeof args[2],"string","batched Blazor byte[] payload must use base64 JSON encoding");
+    assert.deepEqual(Buffer.from(args[2],"base64"),Buffer.concat(entries.map(item=>Buffer.from(item.compressed))));
     const items=entries.map(item=>{
       receivedAssets++;receivedBytes+=item.bytes;receivedCompressedBytes+=item.compressedBytes;
       return {added:true,expectedAssets:2,receivedAssets,receivedBytes,receivedCompressedBytes};
