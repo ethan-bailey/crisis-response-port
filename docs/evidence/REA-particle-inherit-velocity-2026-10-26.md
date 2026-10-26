@@ -68,3 +68,23 @@ profile. First resolve the profile/asset provenance mismatch before merging
 fields across inventories. Then implement one complete source-backed module or
 lifecycle slice with a real runtime-path acceptance check. Keep the missing
 Spark texture unresolved and visible until authoritative bytes are recovered.
+
+## Runtime adapter regression found in the hosted game — 2026-10-26
+
+The hosted game reported:
+
+```text
+Original particle InheritVelocity requires its source Rigidbody command: 198243736805655561
+```
+
+The earlier runtime path above covered native ParticleSystem Emit callbacks, but this error arrived from a ballistic `materialEffect` event. In the recovered source, `Limb.OnBallisticHit` calls `BallisticHitEffect.PlayExit(projectile, Rigidbody.velocity, ...)`; `BallisticHitEffect` passes that velocity to each `SingleEmissionEffect.ExitEmission`, which assigns it to the child Rigidbody before particle emission. The browser adapter's `BallisticHitEffect.PlayExit` accepted this value but omitted it from the event payload. Since this event path can run without a matching `sourceEmissions` command, the renderer had no source velocity and threw.
+
+The adapter now includes `sourceRigidbodyVelocity` in material-effect events. The browser binder validates it as a finite three-component vector. The renderer continues to prefer the matching native Emit command's attached Rigidbody velocity and uses the ballistic event's source velocity when that command is absent. The runtime ballistic contract checks exact vector transport, and the focused Node test checks the fallback wiring.
+
+Focused verification on the current local source tree:
+
+- `node --test scripts/original_particle_event_binding_test.mjs`: 13/13 passed.
+- `dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -c Release`: ballistics contract passed with `sourceRigidbodyVelocityTransported=true`, including the original material/mesh hit checks. Existing nullable-context warnings remain in `MissionPhysiologyContracts.cs`.
+- `git diff --check`: passed.
+
+This fixes the missing velocity input for the adapter path that raised the reported error. The live Site remains v73 until a separate release authorization; this source/test batch is not a deployment. These checks do not establish native Unity particle pixels or broader particle/render parity.

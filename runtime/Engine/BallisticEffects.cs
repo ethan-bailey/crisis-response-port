@@ -12,12 +12,12 @@ public partial class PerformanceManager {
 public sealed class BallisticHitEffect:MonoBehaviour {
  public string SourceID;public float offset;public string[] audioClips=[];float spawnTime;public float Lifetime;
  public void InitializeTransform(Transform parent,Vector3 worldPosition,Vector3 worldDirection){transform.SetParent(parent);transform.position=worldPosition;transform.rotation=Quaternion.LookRotation(worldDirection);}
- public void PlayEntry(Projectile p){Play(p,"entry");}
- public void PlayExit(Projectile p,Vector3 parentVelocity,AudioInstigator instigator){Play(p,"exit");}
- void Play(Projectile p,string phase){spawnTime=Time.time;Lifetime=BallisticRuntimeHost.Current.particlesLifetime;
+ public void PlayEntry(Projectile p){Play(p,"entry",Vector3.zero);}
+ public void PlayExit(Projectile p,Vector3 parentVelocity,AudioInstigator instigator){Play(p,"exit",parentVelocity);}
+ void Play(Projectile p,string phase,Vector3 sourceRigidbodyVelocity){spawnTime=Time.time;Lifetime=BallisticRuntimeHost.Current.particlesLifetime;
   // BallisticHitEffect.PlayAudio's exact sample choice/energy volume rule.
   string clip=audioClips.Length==0?null:audioClips[UnityEngine.Random.Range(0,audioClips.Length)];
-  BallisticRuntimeHost.Current.Emit("materialEffect",new{source=SourceID,phase,id=p.Id,clip,volume=Mathf.Clamp01(p.Energy/300f),position=new[]{transform.position.x,transform.position.y,transform.position.z},direction=new[]{transform.forward.x,transform.forward.y,transform.forward.z},energy=p.Energy,p.Velocity,metricDiameter=p.MetricDiameter,projectileDiameter=p.Diameter,displacedMaterialVolume=p.DisplacedMaterialVolume,particleCountScaler=p.particleCountScaler});
+  BallisticRuntimeHost.Current.Emit("materialEffect",new{source=SourceID,phase,id=p.Id,clip,volume=Mathf.Clamp01(p.Energy/300f),position=new[]{transform.position.x,transform.position.y,transform.position.z},direction=new[]{transform.forward.x,transform.forward.y,transform.forward.z},sourceRigidbodyVelocity=new[]{sourceRigidbodyVelocity.x,sourceRigidbodyVelocity.y,sourceRigidbodyVelocity.z},energy=p.Energy,p.Velocity,metricDiameter=p.MetricDiameter,projectileDiameter=p.Diameter,displacedMaterialVolume=p.DisplacedMaterialVolume,particleCountScaler=p.particleCountScaler});
  }
  public void Step(){if(Time.time-spawnTime>=Lifetime)Object.Destroy(gameObject);}
 }

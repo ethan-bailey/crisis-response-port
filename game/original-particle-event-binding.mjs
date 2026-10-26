@@ -135,6 +135,9 @@ export function createOriginalParticleEventBinding(particles,materials,controlle
       value.position.every(Number.isFinite),'invalid native effect world position');
     requireSource(Array.isArray(value.direction)&&value.direction.length===3&&
       value.direction.every(Number.isFinite),'invalid native effect world direction');
+    if(Object.hasOwn(value,'sourceRigidbodyVelocity'))
+      requireSource(Array.isArray(value.sourceRigidbodyVelocity)&&value.sourceRigidbodyVelocity.length===3&&
+        value.sourceRigidbodyVelocity.every(Number.isFinite),'invalid source Rigidbody velocity input');
     return source.emitters;
   }
   function sampleSourceEffect(sourceGuid,normalizedAge,random={}) {

@@ -97,6 +97,7 @@ public static class BallisticContracts {
     .EnumerateArray().Count(e=>e.GetProperty("type").GetString()=="materialEffect");
   int beforeNativeEntry=OriginalMaterialEvents();
   bool originalEntryEffectDelivered=false;
+  bool sourceRigidbodyVelocityTransported=false;
   try {
     PerformanceManager.Instance.MaxEnvironmentHitEffects=Math.Max(1,originalEffectLimit);
     var sourceProjectile=Bullet(sourceEntry.transform.position,Vector3.right);
@@ -119,9 +120,23 @@ public static class BallisticContracts {
       float.IsFinite(emissionInputs.GetProperty("displacedMaterialVolume").GetSingle())&&emissionInputs.GetProperty("displacedMaterialVolume").GetSingle()>=0&&
       float.IsFinite(emissionInputs.GetProperty("particleCountScaler").GetSingle())&&emissionInputs.GetProperty("particleCountScaler").GetSingle()>=0,
       "Original emission controller inputs (diameter, displaced volume, particle scaler) lost in material effect event");
+    var velocityEffect=new GameObject("Contract source inherited-velocity impact",world)
+      .AddComponent<global::BallisticHitEffect>();
+    velocityEffect.SourceID=sourceEntry.properties.entryEffect.SourceID;
+    var expectedRigidbodyVelocity=new Vector3(.25f,-.5f,1.5f);
+    velocityEffect.PlayExit(sourceProjectile,expectedRigidbodyVelocity,null);
+    var velocityEvent=JsonSerializer.SerializeToElement(host.effects.events).EnumerateArray()
+      .Last(e=>e.GetProperty("type").GetString()=="materialEffect"&&
+        e.GetProperty("value").GetProperty("phase").GetString()=="exit");
+    var velocity=velocityEvent.GetProperty("value").GetProperty("sourceRigidbodyVelocity");
+    Check(Mathf.Abs(velocity[0].GetSingle()-expectedRigidbodyVelocity.x)<.0001f&&
+      Mathf.Abs(velocity[1].GetSingle()-expectedRigidbodyVelocity.y)<.0001f&&
+      Mathf.Abs(velocity[2].GetSingle()-expectedRigidbodyVelocity.z)<.0001f,
+      "Original BallisticHitEffect parent Rigidbody velocity was not preserved in material effect event");
+    sourceRigidbodyVelocityTransported=true;
   } finally {
     PerformanceManager.Instance.MaxEnvironmentHitEffects=originalEffectLimit;
   }
-  return JsonSerializer.Serialize(new{ballistics="PASS",sourceMaterials=386,meshColliders=runtime.loadedMeshColliders,unresolvedBuiltins=runtime.unsupportedColliders,shearedExitMeshReparent=true,liveSceneContact=true,thinPenetration=true,thickStop=true,impenetrable=true,delayedExitResumes=true,glassHolePassThrough=true,originalEntryEffectDelivered,fragmentCount=count,fragmentMassConserved=true,fullUnityParity=false});
+  return JsonSerializer.Serialize(new{ballistics="PASS",sourceMaterials=386,meshColliders=runtime.loadedMeshColliders,unresolvedBuiltins=runtime.unsupportedColliders,shearedExitMeshReparent=true,liveSceneContact=true,thinPenetration=true,thickStop=true,impenetrable=true,delayedExitResumes=true,glassHolePassThrough=true,originalEntryEffectDelivered,sourceRigidbodyVelocityTransported,fragmentCount=count,fragmentMassConserved=true,fullUnityParity=false});
  }
 }

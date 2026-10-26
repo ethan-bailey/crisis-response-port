@@ -132,9 +132,11 @@ export function createOriginalParticleRenderer(scene,sources,binder,settings={})
           :plan.emission.lifetime;
         const velocity=particleDirection.multiplyScalar(speed);
         const inheritance=evaluateSourceInheritedVelocity(emitter,0,random.inheritVelocity);
-        if(inheritance!==0&&!hasSourceCommand)
-          throw new Error('Original particle InheritVelocity requires its source Rigidbody command: '+emitter.sourceEmitterFileID);
-        if(inheritance!==0)velocity.add(v3(commandRecord.attachedRigidbodyVelocity).multiplyScalar(inheritance));
+        const inheritedSourceVelocity=hasSourceCommand
+          ?commandRecord.attachedRigidbodyVelocity:value.sourceRigidbodyVelocity;
+        if(inheritance!==0&&!inheritedSourceVelocity)
+          throw new Error('Original particle InheritVelocity requires its source Rigidbody velocity input: '+emitter.sourceEmitterFileID);
+        if(inheritance!==0)velocity.add(v3(inheritedSourceVelocity).multiplyScalar(inheritance));
         const object=mode===0||mode===1?new THREE.Sprite(material.clone()):new THREE.Mesh(geometry,material.clone());
         const particle={object,material:object.material,geometry,emitter,renderer:emitter.renderer,sourceGuid:source.guid,
           start:event.time,lifetime,base:particleBase,velocity,
