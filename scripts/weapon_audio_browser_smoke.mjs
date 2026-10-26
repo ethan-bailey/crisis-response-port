@@ -55,7 +55,7 @@ const expectedFiles = {
 };
 let pageError = null;
 try {
-  browser = await chromium.launch({ headless: true });
+  browser = await chromium.launch({ headless: true, args: ['--autoplay-policy=user-gesture-required'] });
   const page = await browser.newPage();
   page.on('pageerror', error => { pageError = String(error?.stack || error); });
   page.on('console', message => {
