@@ -134,7 +134,7 @@ Continue dependency-ordered parity work. Physical iPhone Safari acceptance remai
 
 ## Remote handoff identity
 
-Current remote `develop/wasm` head is `07d95641e13dc77e2ebc79ac8d914bc038c10648`, run #72 candidate. The active magazine was removed from the test reserve list and `HasAmmunitionForWeapon==false` confirmed. Runtime then failed a bundled postcondition without identifying which final state field differed; no Release WASM build or package was produced.
+Current remote `develop/wasm` head is `919d74b417591ac59365f0de03de7692f402b62a`, run #73 diagnostic candidate. The test confirmed a genuine no-reserve state and printed the exact original result: active magazine removed (magazine 29→0), chamber remains live, ammo 30→1, reserve 0, bolt Closed, shots unchanged at 61, task/manipulation cleared, and only extract audio emitted. Runtime then failed only because the expected postcondition still required magazine=29. No Release WASM build or package was produced.
 
 
 ## Run #68 — exact build, package, IndexedDB and headless audio passed — 2026-10-26
@@ -195,3 +195,10 @@ The run #70 assertion combined insert and bolt-return events; it did not report 
 
 - Exact SHA `07d95641e13dc77e2ebc79ac8d914bc038c10648`, workflow `40328022724`. Node and Python suites passed. The genuine-empty-reserve precondition passed after removing the active magazine from the test Equipment reserve list. Runtime failed at `WeaponContracts.cs:62` with `No-reserve retry changed ammo unexpectedly or failed to settle`.
 - That postcondition bundled magazine count, reserve count, shots, magazine+chamber total, `reloading`, and `manipulating`; the log does not reveal which changed. Do not assert a guessed source outcome. Next change: include all before/after fields and emitted audio names in the exception, then rerun. Chromium IndexedDB/audio job was still running when checked; capture its terminal result. Release runtime checks after WeaponContracts, WASM publish, source package verifier, and artifact retention did not run, so no verified package exists.
+
+
+## Run #73 — exact no-reserve source result — 2026-10-26
+
+- Exact SHA `919d74b417591ac59365f0de03de7692f402b62a`, workflow `40328443690`. Node/Python passed; Chromium IndexedDB and production weapon audio passed. Runtime failed only at the no-reserve expected magazine count.
+- Exact observed source outcome: before retry `magazine=29`, `chamberLive=true`, ammo total 30, bolt `Closed`, shots 61. After retry `magazine=0`, `reserve=0`, `chamberLive=true`, ammo total 1, bolt `Closed`, shots 61, `reloading=false`, `manipulating=false`; events contain only `audioExtractMagazine`. Original `ChangeMagazine` removes the detachable magazine before the no-ammo State3 early return. This is source behavior; this contract will record it, not redesign it.
+- Next: update the one assertion to expect the observed source result and exact one extract/no insert/no bolt return; rerun complete exact-SHA gates. The Release WASM/package verifier and artifact retention did not run; no package exists and no publish is permitted.

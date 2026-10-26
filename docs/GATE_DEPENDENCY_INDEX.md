@@ -79,3 +79,7 @@ The run #70 assertion grouped insert and bolt-return events, so its failure alon
 ## Gate 3 hidden gap — characterize genuine no-reserve task outcome — run #72
 
 Run #72 / workflow `40328022724`, exact SHA `07d95641e13dc77e2ebc79ac8d914bc038c10648`: Node/Python passed; Chromium IndexedDB/audio job was still in progress at last check. The new fixture precondition `Equipment.HasAmmunitionForWeapon == false` passed after removing the active magazine from the reserve list. Runtime then failed a bundled no-reserve postcondition without reporting the differing field. Next, add diagnostic values for magazine, reserve, chamber, bolt, shots, ammo total, reloading/manipulating, and events; use the observed state to define the source contract. Release WASM/package integrity did not run; no artifact.
+
+## Gate 3 — exact no-reserve M4A1 source behavior — run #73
+
+Run #73 / workflow `40328443690`, exact SHA `919d74b417591ac59365f0de03de7692f402b62a`: Node/Python and Chromium passed. The genuine no-reserve precondition passed. Runtime diagnostic observed before `magazine=29,chamberLive=true,ammo=30,bolt=Closed,shots=61`; after `magazine=0,reserve=0,chamberLive=true,ammo=1,bolt=Closed,shots=61,reloading=false,manipulating=false`; events `audioExtractMagazine` only. Recovered `ChangeMagazine` removes the detachable magazine before its State3 no-ammo early return. Contract currently fails only because it expected magazine 29; update to this exact source result. No Release/package verifier or artifact ran.
