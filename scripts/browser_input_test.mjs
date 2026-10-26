@@ -242,7 +242,7 @@ test('Mission keeps absolute aim anchored to joystick touch-down and adjusts it 
 });
 
 test('joystick travel scales walk; sprint requires a deliberate over-pull and has hysteresis',()=>{
- const {input,move,classes}=analogStickFixture();
+ const {input,move,classes,stick,thumb}=analogStickFixture();
  const walk=1.5,sprint=4.2;
  move('pointerdown',140,120);
  for(const x of [150,180,194,195,196,210,213,214,240]){
@@ -262,6 +262,9 @@ test('joystick travel scales walk; sprint requires a deliberate over-pull and ha
  const above=input.movementProfile(1,walk,sprint);
  assert.equal(above.sprint,true);
  assert.equal(above.magnitude,1);
+ const puckX=Number(thumb.style.transform.match(/translate3d\(([-\d.]+)px/)?.[1]);
+ const rimRadius=stick.getBoundingClientRect().width/2, puckRadius=thumb.offsetWidth/2;
+ assert.ok(puckX>rimRadius+puckRadius,'sprint puck must push fully clear of the outer rim');
  move('pointermove',251.74,120); // 1.51x retains sprint through hysteresis
  assert.equal(input.movementProfile(1,walk,sprint).sprint,true);
  move('pointermove',251,120); // 1.5x releases sprint
