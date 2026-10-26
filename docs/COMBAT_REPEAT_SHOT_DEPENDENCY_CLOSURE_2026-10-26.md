@@ -21,7 +21,7 @@ This is the inventory gate before extending the Mission source projectile contra
 
 ## Batched acceptance plan
 
-After the active run #58 has fully passed (Contracts/Release and Chromium IndexedDB), extend `MissionProjectileContracts` in one test-only batch:
+Run #58 has fully passed. This test-only batch is pushed in source SHA `312871c76e62b60d214cdbf3813585c5fc83af79`; exact workflow run #59 (`40315965437`) is pending. Its behavior is:
 
 - Preserve its existing first-shot assertion.
 - Stage a second initialized Occupant in the same clear lane, move the first victim clear, update the original Blackboard target/aim, and allow the source arm pose and 0.1-second weapon cycle to complete.
