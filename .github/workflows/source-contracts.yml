@@ -10,6 +10,8 @@ on:
       - runtime/**
       - game/**
       - scripts/**
+      - scene-data/**
+      - source-reference/Original/**
       - NuGet.config
       - requirements-test.txt
       - '**/*.sln'
@@ -108,6 +110,47 @@ jobs:
           test -s "$root/index.html"
           test -s "$root/browser-input.mjs"
           find "$root" -type f -name '*.wasm' -print -quit | grep -q .
+
+      - name: Build and independently verify full Mission Site package
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '{"dotnet":"8.0.426"}\n' > "$RUNNER_TEMP/cpr-toolchain.json"
+          python3 scripts/package_wasm_site.py build \
+            --repo "$GITHUB_WORKSPACE" \
+            --published "$RUNNER_TEMP/cpr-browser-publish/wwwroot" \
+            --output "$RUNNER_TEMP/cpr-site-package" \
+            --toolchain "$RUNNER_TEMP/cpr-toolchain.json" \
+            --incremental-profile-package "$GITHUB_WORKSPACE/scene-data/fullsource/global-ui-mission-operator" \
+            --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+            | tee "$RUNNER_TEMP/cpr-package-build.json"
+          python3 scripts/package_wasm_site.py verify "$RUNNER_TEMP/cpr-site-package" \
+            | tee "$RUNNER_TEMP/cpr-package-verify.json"
+          python3 - "$RUNNER_TEMP/cpr-site-package/build-manifest.json" "$GITHUB_SHA" <<'PY'
+          import json, sys
+          manifest = json.load(open(sys.argv[1], encoding="utf-8"))
+          if manifest["sourceCommit"] != sys.argv[2]:
+              raise SystemExit(f"package source {manifest['sourceCommit']} != workflow SHA {sys.argv[2]}")
+          if manifest.get("scope", {}).get("originalGameComplete") is not False:
+              raise SystemExit("package parity scope must remain explicitly incomplete")
+          PY
+          tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner \
+            -cf "$RUNNER_TEMP/cpr-site-package.tar" -C "$RUNNER_TEMP/cpr-site-package" .
+          gzip -n -6 "$RUNNER_TEMP/cpr-site-package.tar"
+          archive_sha="$(sha256sum "$RUNNER_TEMP/cpr-site-package.tar.gz" | cut -d' ' -f1)"
+          package_files="$(find "$RUNNER_TEMP/cpr-site-package" -type f | wc -l | tr -d ' ')"
+          printf '\n### Full Mission Site package\n\n- Source SHA: `%s`\n- Package files (including build manifest): `%s`\n- Deterministic tar.gz SHA-256: `%s`\n- Build result: `%s`\n- Independent verify: `%s`\n' \
+            "$GITHUB_SHA" "$package_files" "$archive_sha" \
+            "$(cat "$RUNNER_TEMP/cpr-package-build.json")" \
+            "$(cat "$RUNNER_TEMP/cpr-package-verify.json")" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Retain exact Mission Site package
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: crisis-response-site-${{ github.sha }}
+          path: ${{ runner.temp }}/cpr-site-package.tar.gz
+          if-no-files-found: error
+          retention-days: 14
 
   indexeddb-browser:
     name: Chromium IndexedDB cache acceptance
