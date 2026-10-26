@@ -45,3 +45,12 @@ The source serialization inventory and its regression contract are closed for th
 4. Bind those observed values/order to a browser runtime-path test, then implement the module and re-run all 31 serialized cases.
 
 No Unity editor/runtime binary is present in this automation workspace; the exact engine-backed acceptance was not run. This is a concrete dependency for the clamp implementation only. Continue the independent module and lifecycle closures from the full particle inventory; do not pause other source-backed work for this fixture.
+
+
+## Verification checkpoint
+
+- Source-contract commit: `38c6f45792d6fba9dbd3c1f417f3c67746f72f7d`; runtime source files were unchanged.
+- Focused clamp inventory regression: **2/2** locally against the exact compressed inventory. The Actions workflow ran on this SHA and completed successfully: Node **131/131**, Python **41/41**, runtime contracts, EngineChecks, FoundationChecks, and Release WASM publish/output checks.
+- Actions run: [#24 — 40268907833](https://github.com/ethan-bailey/crisis-response-port/actions/runs/40268907833).
+- The Actions build checked required WASM publish outputs; the independent full archive integrity verifier was not rerun on this test/documentation-only commit. The last full archive verification remains tied to runtime-equivalent commit `afc583e`.
+- No Site version was created or deployed.
