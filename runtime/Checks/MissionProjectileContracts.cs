@@ -211,7 +211,7 @@ public static class MissionProjectileContracts
                         });
                         sourceTerminationTicks++;
                     }
-                    var sourceAgeSecondsAfterNewestSpawn=Time.time-secondShotNewestSpawnTime;
+                    var sourceAgeSecondsAtCleanupCheck=Time.time-secondShotNewestSpawnTime;
                     var secondLiveProjectilesAfterSourceTermination=world.Objects.OfType<SourceProjectile>()
                         .Count(projectile=>projectile&&ReferenceEquals(projectile.Owner,shooter));
                     secondShot=new{
@@ -229,7 +229,7 @@ public static class MissionProjectileContracts
                         liveProjectileAgesAtImpact,
                         sourceLifetimeSeconds=1f,
                         sourceTerminationTicks,
-                        sourceAgeSecondsAfterNewestSpawn,
+                        sourceAgeSecondsAtCleanupCheck,
                         liveOwnedProjectilesAfterSourceTermination=secondLiveProjectilesAfterSourceTermination,
                         flightTrace=secondFlightTrace
                     };

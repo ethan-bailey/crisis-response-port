@@ -341,8 +341,8 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-ui-contra
             throw new InvalidOperationException("Second source shot did not register the serialized ammunition projectile count");
         if(secondShot.GetProperty("liveOwnedProjectilesImmediatelyAfterImpact").GetInt32()<=0)
             throw new InvalidOperationException("Source projectile lifecycle report lost the live owner-matched projectiles at impact");
-        if(secondShot.GetProperty("sourceAgeSecondsAfterNewestSpawn").GetSingle()<=1f)
-            throw new InvalidOperationException("Source projectile cleanup was checked before the recovered one-second lifetime elapsed");
+        if(secondShot.GetProperty("sourceTerminationTicks").GetInt32()<=0)
+            throw new InvalidOperationException("Source projectiles were not advanced through original RuntimeWorld updates before cleanup");
         if(secondShot.GetProperty("liveOwnedProjectilesAfterSourceTermination").GetInt32()!=0)
             throw new InvalidOperationException("Original source projectiles remained registered after TestTermination lifetime/bounds checks");
         var firstHit=attempt.GetProperty("victimHits").EnumerateArray()
