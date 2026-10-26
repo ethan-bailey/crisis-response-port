@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {evaluateSourceParticleFields} from './source-particle-values.mjs';
 import {sampleRecoveredParticleShape} from './source-particle-shapes.mjs';
+import {stretchedBillboardParameters} from './source-particle-render-modes.mjs';
 
 const TEXTURES='./assets/ballistics/';
 const MESHES='./assets/ballistics/particle-meshes/particle-mesh-';
@@ -24,7 +25,7 @@ function visualRandom(event,emitter,index,sourceSeed=null){
 export function createOriginalParticleRenderer(scene,sources,binder,settings={}) {
   const effects=new Map(sources.particles.effects.map(effect=>[effect.guid,effect]));
   const textureLoader=new THREE.TextureLoader(),textures=new Map(),geometries=new Map(),active=[];
-  let disposed=false,loadError=null,assetsReady=false,emitted=0,dropped=0,sourceSeededEmitters=0,seedFallbackEmitters=0,lastSourceTime=0;
+  let disposed=false,loadError=null,assetsReady=false,emitted=0,dropped=0,sourceSeededEmitters=0,seedFallbackEmitters=0,lastSourceTime=0,lastCamera=null;
   const pending=[];
   const sourceEmissions=new Map();
 
@@ -73,7 +74,7 @@ export function createOriginalParticleRenderer(scene,sources,binder,settings={})
     const base={color:new THREE.Color().setRGB(tint.r,tint.g,tint.b),transparent:true,
       opacity,depthWrite:false,side:THREE.DoubleSide,
       userData:{sourceOpacity:opacity,sourceMaterialGuid:guid}};
-    if(renderer.m_RenderMode===0)return new THREE.SpriteMaterial({...base,map:texture||null,rotation:0});
+    if(renderer.m_RenderMode===0||renderer.m_RenderMode===1)return new THREE.SpriteMaterial({...base,map:texture||null,rotation:0});
     return new THREE.MeshBasicMaterial({...base,map:texture||null});
   }
   function disposeParticle(particle){
@@ -130,12 +131,12 @@ export function createOriginalParticleRenderer(scene,sources,binder,settings={})
           ?lifetimeRange[0]+(lifetimeRange[1]-lifetimeRange[0])*random.startLifetime
           :plan.emission.lifetime;
         const velocity=particleDirection.multiplyScalar(speed);
-        const object=mode===0?new THREE.Sprite(material.clone()):new THREE.Mesh(geometry,material.clone());
-        const particle={object,material:object.material,geometry,emitter,sourceGuid:source.guid,
+        const object=mode===0||mode===1?new THREE.Sprite(material.clone()):new THREE.Mesh(geometry,material.clone());
+        const particle={object,material:object.material,geometry,emitter,renderer:emitter.renderer,sourceGuid:source.guid,
           start:event.time,lifetime,base:particleBase,velocity,
           initialSize:Math.max(.001,authored.size*sizeMultiplier),rotation:authored.rotation,
-          random};
-        object.name=`Original ${mode===0?'billboard':'mesh'} particle ${plan.sourceEmitterFileID}`;
+          random,camera:lastCamera};
+        object.name=`Original ${mode===0?'billboard':mode===1?'stretched billboard':'mesh'} particle ${plan.sourceEmitterFileID}`;
         object.userData.originalParticleSource={prefab:source.guid,emitter:plan.sourceEmitterFileID,
           material:ref,mode,sourceHash:source.sourcePrefabSha256};
         scene.add(object);active.push(particle);emitted++;
@@ -149,15 +150,25 @@ export function createOriginalParticleRenderer(scene,sources,binder,settings={})
     particle.object.position.copy(particle.base).addScaledVector(particle.velocity,age);
     const size=Math.max(.001,particle.initialSize*sample.size/Math.max(.001,evaluateSourceParticleFields(particle.emitter,0,
       particle.random).size));
-    particle.object.scale.set(size,size,size);
-    particle.object.rotation.z=sample.rotation;
+    if(particle.renderer.m_RenderMode===1){
+      const cameraQ=particle.camera?.getWorldQuaternion(new THREE.Quaternion());
+      const basis=cameraQ?{right:new THREE.Vector3(1,0,0).applyQuaternion(cameraQ).toArray(),
+        up:new THREE.Vector3(0,1,0).applyQuaternion(cameraQ).toArray()}:undefined;
+      const stretched=stretchedBillboardParameters(particle.velocity.toArray(),size,particle.renderer,basis);
+      particle.object.scale.set(stretched.width,stretched.length,1);
+      particle.object.rotation.z=stretched.rotation+sample.rotation;
+    }else{
+      particle.object.scale.set(size,size,size);
+      particle.object.rotation.z=sample.rotation;
+    }
     particle.material.color.setRGB(sample.color.r,sample.color.g,sample.color.b);
     particle.material.opacity=(particle.material.userData?.sourceOpacity??1)*sample.color.a;
   }
-  function update(events,sourceTime){
+  function update(events,sourceTime,camera=null){
     if(disposed)return;
     if(!Number.isFinite(sourceTime))throw new Error('Original particle renderer requires source Unity Time.time');
-    lastSourceTime=sourceTime;
+    lastSourceTime=sourceTime;lastCamera=camera;
+    for(const particle of active)particle.camera=camera;
     if(!assetsReady){
       for(const event of events)if(event.type==='materialEffect'){
         if(pending.length>=MAX_PENDING){pending.shift();dropped++;}

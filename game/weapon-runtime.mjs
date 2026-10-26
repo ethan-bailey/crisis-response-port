@@ -76,7 +76,7 @@ export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,part
   if(loadedFlashTexture)attachOriginalTexture(item,loadedFlashTexture);
   else texturePromise.then(t=>{if(!item.disposed)attachOriginalTexture(item,t);});
  }
- function update(events,magazinePose,sourceTime){
+ function update(events,magazinePose,sourceTime,camera){
   if(magazinePose){const {p,q,visible}=magazinePose;magRoot.visible=visible;magRoot.position.set(p[0],p[1],-p[2]);magRoot.quaternion.set(-q[0],-q[1],q[2],q[3]);}
   for(const e of events){
    const eventAge=sourceTime-Number(e.time);
@@ -87,7 +87,7 @@ export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,part
   originalImpactMeshes.update(events);
   originalWindows.update(events);
   originalParticleEvents.observe(events,sourceTime);
-  originalParticleRenderer.update(events,sourceTime);
+  originalParticleRenderer.update(events,sourceTime,camera);
   for(let i=active.length-1;i>=0;i--){const item=active[i],time=sourceEffectAge(sourceTime,item.start);
    if(time>=duration){item.disposed=true;scene.remove(item.group);item.mesh.geometry.dispose();item.material.dispose();item.texture?.dispose();active.splice(i,1);continue;}
    applyOriginalSpriteFrame(item,time);

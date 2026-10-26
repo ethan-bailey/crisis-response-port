@@ -160,7 +160,7 @@ test('normal page forwards the FullSource actor particle snapshot into the sourc
   assert.match(queue,/sourceFields = system\.OriginalSerializedFields/);
   assert.match(queue,/fields = sourceRenderer\.OriginalSerializedFields/);
   assert.match(loader,/component\.OriginalAssetSha256=package\.GetAssetSha256\(assetPath\)/);
-  assert.match(weaponRuntime,/originalParticleRenderer\.update\(events,sourceTime\)/);
+  assert.match(weaponRuntime,/originalParticleRenderer\.update\(events,sourceTime,camera\)/);
   const renderer=readFileSync(new URL('../game/original-particle-renderer.mjs',import.meta.url),'utf8');
   assert.match(renderer,/binder\.evaluateImpactEffect\(event,settings\)/);
   assert.match(renderer,/renderedParticles:active\.length/);

@@ -9,7 +9,7 @@ import {evaluateOriginalImpactEmission,evaluateSourceParticleFields} from './sou
 const GUID=/^[0-9a-f]{32}$/;
 const SHA=/^[0-9a-f]{64}$/;
 const MAX_DIAGNOSTICS=32;
-const KNOWN_MESH_RENDER_MODES=new Set([0,4]);
+const KNOWN_MESH_RENDER_MODES=new Set([0,1,4]);
 
 function requireSource(ok,message) {
   if(!ok)throw new Error('Original particle source binding: '+message);
@@ -89,7 +89,7 @@ export function createOriginalParticleEventBinding(particles,materials,controlle
       const mode=e.renderer?.m_RenderMode;
       requireSource(KNOWN_MESH_RENDER_MODES.has(mode),
         'unknown native ParticleSystemRenderer mode: '+mode);
-      if(mode===0)billboards++;else meshes++;
+      if(mode===0||mode===1)billboards++;else meshes++;
       for(const ref of (e.renderer?.m_Materials||[])) {
         const material=ref.guid;
         if(!material)continue;
