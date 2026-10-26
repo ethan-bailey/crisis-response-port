@@ -93,14 +93,20 @@ async function fetchGzipJson(url, expected, label, signal) {
   return { compressed, raw, text: new TextDecoder("utf-8", { fatal: true }).decode(raw) };
 }
 
-async function fetchCompressedAsset(url, expected, label, signal) {
+async function fetchCompressedAsset(url, expected, label, signal, persistentCache) {
   const started = monotonicNow();
-  const response = await fetch(url, {signal});
+  let response = persistentCache ? await persistentCache.match(url) : null;
+  const wasCached = !!response;
+  if (!response) response = await fetch(url, {signal});
   if (!response.ok) throw new Error(`${label} unavailable: HTTP ${response.status}`);
   const compressed = await response.arrayBuffer();
   if (compressed.byteLength !== expected.compressedBytes || await sha256(compressed) !== expected.compressedSha256)
     throw new Error(`${label} compressed size or checksum mismatch`);
-  return {compressed, fetchAndHashMs: monotonicNow() - started};
+  if (!wasCached && persistentCache) {
+    try { await persistentCache.put(url, new Response(compressed.slice(0), {headers:{'Content-Type':'application/gzip'}})); }
+    catch { /* Safari quota or private browsing: this run still uses verified network bytes. */ }
+  }
+  return {compressed, fetchAndHashMs: monotonicNow() - started, wasCached};
 }
 
 // Blazor's byte[] JS interop path is version-sensitive and the hosted .NET 8
@@ -130,6 +136,17 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
       || !manifest.metadata || manifest.metadata.file !== "metadata.json.gz"
       || !/^[0-9a-f]{64}$/.test(manifest.sourcePackageSha256 ?? ""))
     throw new Error("Incremental source profile manifest is invalid");
+
+  // Cache only the immutable compressed assets. The cache name is bound to
+  // the profile hash; every cache hit still passes the manifest size and SHA.
+  let persistentCache = null;
+  if (globalThis.isSecureContext && globalThis.caches?.open) {
+    try { persistentCache = await globalThis.caches.open(`crisis-source-${manifest.sourcePackageSha256}`); }
+    catch { /* Storage is optional; continue with verified network delivery. */ }
+  }
+  // Storage persistence is a best-effort request (Safari may decline it); it
+  // never blocks the Mission or changes the verified network fallback.
+  try { await globalThis.navigator?.storage?.persist?.(); } catch { /* Browser-managed quota remains valid. */ }
 
   const base = new URL("./", new URL(manifestUrl, import.meta.url));
   const metadata = await fetchGzipJson(new URL(manifest.metadata.file, base), manifest.metadata, "Incremental source metadata",signal);
@@ -181,7 +198,7 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
       totalCompressedAssetBytes:manifest.compressedAssetBytes,totalSourceAssetBytes:manifest.uncompressedAssetBytes,
       pendingAssetPaths:batch.map(asset=>asset.path),profileElapsedMs:monotonicNow()-profileStarted});
     const fetchedBatch = await Promise.all(batch.map(asset =>
-      fetchCompressedAsset(new URL(asset.file, base), asset, `Source asset ${asset.path}`,signal)));
+      fetchCompressedAsset(new URL(asset.file, base), asset, `Source asset ${asset.path}`,signal,persistentCache)));
     // Keep each interop payload small while amortizing Blazor/.NET dispatch over
     // several files. A single large file is still transported by itself.
     let deliveryOffset=0;
@@ -237,7 +254,7 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
           stage:"delivered",compressedAssetBytes,sourceAssetBytes,maximumAssetBytes,
           totalCompressedAssetBytes:manifest.compressedAssetBytes,totalSourceAssetBytes:manifest.uncompressedAssetBytes,
           asset:{path:asset.path,compressedBytes:compressed.byteLength,sourceBytes:asset.bytes,
-            fetchAndHashMs,transportPrepareMs:transportPrepareMs/assets.length,bridgeMs:bridgeBatchMs/assets.length,
+            fetchAndHashMs,wasCached:fetched[offset].wasCached,transportPrepareMs:transportPrepareMs/assets.length,bridgeMs:bridgeBatchMs/assets.length,
             bridgeBatchMs,bridgeBatchAssets:assets.length},
           profileElapsedMs:monotonicNow()-profileStarted,batchElapsedMs:monotonicNow()-batchStarted});
       }
