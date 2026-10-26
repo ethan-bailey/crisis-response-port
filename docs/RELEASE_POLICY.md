@@ -9,10 +9,10 @@ Before publishing, all evidence must refer to one exact source and package:
 1. Identify the live develop/wasm SHA and the exact source tree used for the build.
 2. Run the relevant source contracts, pinned .NET 8.0.426 Release build and WASM publish. Verify the complete package and byte-audit the deployment archive. Record commands, warnings, errors, file count, package/archive hashes, and the successful CI run for the same GitHub SHA.
 3. If the Site keeps a separate source history, record the Site-source commit and a file-level crosswalk to the GitHub tree. Include exact paths, sizes, SHA-256 values, and archive/manifest hashes. A Site commit absent from public GitHub history is not itself proof of differing bytes, but it is not covered by the GitHub run until the crosswalk is verified.
-4. Test the exact saved/deployed version in a WebGL-capable browser and on the owner's physical iPhone Safari for the acceptance items in NEXT_AGENT.md. A successful deployment or browser shell is not device acceptance.
-5. Record the saved version ID/number, deployment ID and status, Site source commit, artifact hashes, and access policy. Keep the existing restricted audience.
+4. After explicit publication authorization, verify the deployed version and access policy, then have the owner test that exact build in physical iPhone Safari against NEXT_AGENT.md. A successful deployment or browser shell is not device acceptance.
+5. Record the saved version ID/number, deployment ID and status, Site source commit, artifact hashes, access policy, and remaining device-only acceptance. Keep the existing restricted audience.
 
-The current source-to-Site relationship is not fully crosswalked. Do not save or deploy another Site version until that comparison is complete and the owner has explicitly authorized publication.
+The live handoff records a verified file-level crosswalk for Site version 69: its separate Site source commit maps to public develop/wasm code checkpoint f2241ba68c6ba370ceb6ef3283736e6707e72c49, and the archive audit matched all 2,684 manifest files. Physical iPhone Safari acceptance of version 69 remains pending. Repeat the exact source/package crosswalk for every later Site source commit; prior crosswalks do not cover future builds. Owner authorization is still required before publication.
 
 ## Hosting
 
