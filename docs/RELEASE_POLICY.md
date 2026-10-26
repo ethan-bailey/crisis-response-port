@@ -12,7 +12,7 @@ Before publishing, all evidence must refer to one exact source and package:
 4. After explicit publication authorization, verify the deployed version and access policy, then have the owner test that exact build in physical iPhone Safari against NEXT_AGENT.md. A successful deployment or browser shell is not device acceptance.
 5. Record the saved version ID/number, deployment ID and status, Site source commit, artifact hashes, access policy, and remaining device-only acceptance. Keep the existing restricted audience.
 
-The live handoff records a verified file-level crosswalk for Site version 69: its separate Site source commit maps to public develop/wasm code checkpoint f2241ba68c6ba370ceb6ef3283736e6707e72c49, and the archive audit matched all 2,684 manifest files. Physical iPhone Safari acceptance of version 69 remains pending. Repeat the exact source/package crosswalk for every later Site source commit; prior crosswalks do not cover future builds. Owner authorization is still required before publication.
+The live handoff records a verified file-level crosswalk for Site version 69, but Site version 70 is now the current deployment. Version 70 uses separate Site source SHA d65cdb2fbd1c50f55fbd5c7ab96eb12a242ca684, which is not in public GitHub history; no crosswalk to current public source SHA df7aad51045b1e03537ab7a3a49334122eb40831 is recorded yet. Do not treat the GitHub run as verifying version 70 until the crosswalk is complete. Physical iPhone Safari acceptance of version 70 remains pending. Prior crosswalks do not cover later builds. Owner authorization is still required before future publication.
 
 ## Hosting
 
