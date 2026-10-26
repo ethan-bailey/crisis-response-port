@@ -144,6 +144,14 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
     Console.WriteLine(JsonSerializer.Serialize(new{status="passed",mission=session.Mission.scene,actor=session.Actor.name,weapon=sourceWeapon.name,weaponFirePath=actualFirePath,weaponAudioPaths=capturedWeaponPaths,sourceShotAudioEvents=actualShotEvents.Count,sourceParticleEvents=actualParticleEvents.Count,particleIdentityVerified,droppedParticleEvents=particleDriver.DroppedEvents,sourceCasingForceRequests=casingForceCommands.Length,sourceCasingTorqueRequests=casingTorqueCommands.Length,sourceShots=session.Actor.ShotsFired-shotsBefore,armReady=armWasReady,weaponInputEnabled=fireEnabledAfterAuthoredStart,sourceActors=session.SourceActorCount,interactionMenu=true,input="original press/hold/release",movementForce=commands.GetArrayLength(),analogMovement="0.5 eased cap reaches source CharacterBody and restores authored speed",aim="absolute WeaponPointer world target unchanged by horizontal movement and mouse X",audio="real original fire input drives the source firing mechanism and emits mapped fire/crack clips with bounded volume and source time",particleTransport="original ParticleSystem Emit/Simulate/Play commands carry prefab/component identity, pose, and source time",physics="position/velocity round trip; original casing force and torque requests transported with source body, mass, and ForceMode"}));
     return;
 }
+if(args.Length==2&&args[0]=="--mission-weapon-switch-contract"){
+    var package=LoadSourcePackage(args[1]);
+    var world=new RuntimeWorld();
+    var session=Crisis.Runtime.Browser.BrowserEntryTeamMission.Start(package,world);
+    var bridge=new FullSourceActorBridge(world,session.Actor);
+    Console.WriteLine(Crisis.Runtime.Checks.SourceWeaponSwitchContracts.Run(package,world,session.Actor,bridge));
+    return;
+}
 OriginalSourcePackage LoadSourcePackage(string path){
     if(File.Exists(path))return OriginalSourcePackage.FromJson(File.ReadAllText(path));
     using var profile=JsonDocument.Parse(File.ReadAllText(Path.Combine(path,"manifest.json")));

@@ -219,6 +219,7 @@ jobs:
           dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -c Release -- --mission-physiology-contract "$RUNNER_TEMP/cpr-site-package/scene-data/fullsource/global-ui-mission-operator" | tee "$RUNNER_TEMP/cpr-mission-physiology-contract.json"
           dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -c Release -- --mission-outcome-contract "$RUNNER_TEMP/cpr-site-package/scene-data/fullsource/global-ui-mission-operator" | tee "$RUNNER_TEMP/cpr-mission-outcome-contract.json"
           dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -c Release -- --mission-ai-outcome-contract "$RUNNER_TEMP/cpr-site-package/scene-data/fullsource/global-ui-mission-operator" | tee "$RUNNER_TEMP/cpr-mission-ai-outcome-contract.json"
+          dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -c Release -- --mission-weapon-switch-contract "$RUNNER_TEMP/cpr-site-package/scene-data/fullsource/global-ui-mission-operator"
           python3 - "$RUNNER_TEMP/cpr-site-package/scene-data/fullsource/global-ui-mission-operator/manifest.json" "$RUNNER_TEMP/cpr-full-source.json" "$RUNNER_TEMP/cpr-toolchain.json" <<'PY'
           import hashlib, json, sys
           profile = json.load(open(sys.argv[1], encoding="utf-8"))

@@ -168,15 +168,17 @@ test('normal page forwards the FullSource actor particle snapshot into the sourc
   assert.match(renderer,/renderedParticles:active\.length/);
 });
 
-test('impact events preserve the original Rigidbody velocity when no Emit command is available',()=>{
+test('impact events preserve source Rigidbody velocity and tolerate a missing command snapshot',()=>{
   const binding=readFileSync(new URL('../game/original-particle-event-binding.mjs',import.meta.url),'utf8');
   const renderer=readFileSync(new URL('../game/original-particle-renderer.mjs',import.meta.url),'utf8');
   const adapter=readFileSync(new URL('../runtime/Engine/BallisticEffects.cs',import.meta.url),'utf8');
   assert.match(adapter,/PlayExit\(Projectile p,Vector3 parentVelocity,AudioInstigator instigator\)\{Play\(p,"exit",parentVelocity\);\}/);
   assert.match(adapter,/sourceRigidbodyVelocity=new\[\]\{sourceRigidbodyVelocity\.x,sourceRigidbodyVelocity\.y,sourceRigidbodyVelocity\.z\}/);
   assert.match(binding,/invalid source Rigidbody velocity input/);
-  assert.match(renderer,/commandRecord\.attachedRigidbodyVelocity:value\.sourceRigidbodyVelocity/);
-  assert.match(renderer,/Original particle InheritVelocity requires its source Rigidbody velocity input/);
+  assert.match(renderer,/commandRecord\?\.attachedRigidbodyVelocity/);
+  assert.match(renderer,/value\.sourceRigidbodyVelocity/);
+  assert.match(renderer,/if\(inheritance!==0&&!inheritedSourceVelocity\)sourceVelocityFallbacks\+\+/);
+  assert.match(renderer,/inheritedSourceVelocity\|\|\[0,0,0\]/);
 });
 
 test('missing or corrupted native material/particle manifest cannot fall back to invented assets',()=>{

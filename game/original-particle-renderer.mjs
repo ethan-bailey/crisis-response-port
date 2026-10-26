@@ -25,7 +25,7 @@ function visualRandom(event,emitter,index,sourceSeed=null){
 export function createOriginalParticleRenderer(scene,sources,binder,settings={}) {
   const effects=new Map(sources.particles.effects.map(effect=>[effect.guid,effect]));
   const textureLoader=new THREE.TextureLoader(),textures=new Map(),geometries=new Map(),active=[];
-  let disposed=false,loadError=null,assetsReady=false,emitted=0,dropped=0,sourceSeededEmitters=0,seedFallbackEmitters=0,lastSourceTime=0,lastCamera=null;
+  let disposed=false,loadError=null,assetsReady=false,emitted=0,dropped=0,sourceSeededEmitters=0,seedFallbackEmitters=0,sourceVelocityFallbacks=0,lastSourceTime=0,lastCamera=null;
   const pending=[];
   const sourceEmissions=new Map();
 
@@ -132,11 +132,19 @@ export function createOriginalParticleRenderer(scene,sources,binder,settings={})
           :plan.emission.lifetime;
         const velocity=particleDirection.multiplyScalar(speed);
         const inheritance=evaluateSourceInheritedVelocity(emitter,0,random.inheritVelocity);
-        const inheritedSourceVelocity=hasSourceCommand
-          ?commandRecord.attachedRigidbodyVelocity:value.sourceRigidbodyVelocity;
-        if(inheritance!==0&&!inheritedSourceVelocity)
-          throw new Error('Original particle InheritVelocity requires its source Rigidbody velocity input: '+emitter.sourceEmitterFileID);
-        if(inheritance!==0)velocity.add(v3(inheritedSourceVelocity).multiplyScalar(inheritance));
+        const commandVelocity=commandRecord?.attachedRigidbodyVelocity;
+        const eventVelocity=value.sourceRigidbodyVelocity;
+        const inheritedSourceVelocity=Array.isArray(commandVelocity)&&commandVelocity.length===3&&commandVelocity.every(Number.isFinite)
+          ?commandVelocity
+          :Array.isArray(eventVelocity)&&eventVelocity.length===3&&eventVelocity.every(Number.isFinite)
+            ?eventVelocity
+            :null;
+        // A missing source command must not take down the whole presentation
+        // frame. Unity's emission path can omit the command snapshot for an
+        // emitter; zero is the only safe visual fallback when neither the
+        // command nor the materialEffect carries the attached Rigidbody state.
+        if(inheritance!==0&&!inheritedSourceVelocity)sourceVelocityFallbacks++;
+        if(inheritance!==0)velocity.add(v3(inheritedSourceVelocity||[0,0,0]).multiplyScalar(inheritance));
         const object=mode===0||mode===1?new THREE.Sprite(material.clone()):new THREE.Mesh(geometry,material.clone());
         const particle={object,material:object.material,geometry,emitter,renderer:emitter.renderer,sourceGuid:source.guid,
           start:event.time,lifetime,base:particleBase,velocity,
@@ -200,7 +208,7 @@ export function createOriginalParticleRenderer(scene,sources,binder,settings={})
       [...referencedMeshes].every(guid=>geometries.has(guid)),assetError:loadError,
     sourceMaterialCount:Object.keys(sources.materials.materials).length,sourceTextureCount:referencedTextures.size,
     sourceMeshCount:referencedMeshes.size,sourceEmitters:effects.size?26:0,
-    renderedParticles:active.length,emittedParticles:emitted,droppedParticles:dropped,
+    renderedParticles:active.length,emittedParticles:emitted,droppedParticles:dropped,sourceVelocityFallbacks,
     shapeSampledParticles:emitted,sourceSeededEmitters,seedFallbackEmitters,sourceVisualParity:false,
     blocker:'The emitter seed is transported when available, but Unity random-stream reproduction, native shader behavior and browser acceptance are not yet verified'};}
   function dispose(){disposed=true;for(const p of active)disposeParticle(p);active.length=0;
