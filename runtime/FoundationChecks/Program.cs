@@ -84,6 +84,13 @@ void Throws<T>(System.Action action,string label) where T:Exception {try{action(
  Check(surface.RandomFootstep()==null,"original empty footstep list");var clip=new AudioClip("original.wav",.25f);properties.footstepSamples.Add(clip);Check(surface.RandomFootstep()==clip,"original surface sample returned");
  var audio=go.AddComponent<AudioSource>();Throws<NotSupportedException>(()=>audio.Stop(),"audio driver mandatory");var driver=new AudioDriver();audio.Driver=driver;Throws<InvalidOperationException>(()=>audio.PlayOneShot(clip),"undecoded sample rejected");
  clip.ReportLoadState(AudioDataLoadState.Loaded);audio.priority=60;audio.PlayOneShot(clip,.5f);Check(audio.isPlaying&&driver.Clip==clip&&driver.Priority==60,"decoded original sample delivered");audio.Stop();Check(!audio.isPlaying,"voice stop delivered");
+ var deferredClip=new AudioClip("Assets/AudioClip/hurt-07.ogg",.25f);var deferredSource=new GameObject("browser deferred audio source",w).AddComponent<AudioSource>();
+ var deferredQueue=new Crisis.Runtime.BrowserAudioEventQueue();deferredSource.Driver=deferredQueue;deferredSource.clip=deferredClip;
+ deferredSource.PlayOneShot(deferredClip,.7f);deferredSource.Play();var deferredEvents=deferredQueue.Drain();
+ Check(deferredClip.loadState==AudioDataLoadState.Unloaded&&deferredEvents.Length==2&&
+  (string)deferredEvents[0].GetType().GetProperty("action")!.GetValue(deferredEvents[0])=="oneShot"&&
+  (string)deferredEvents[1].GetType().GetProperty("action")!.GetValue(deferredEvents[1])=="play",
+  "browser queues one-shot and looping source requests while audio decodes without claiming the sample is loaded");
 }
 // Curves serialized by the actual plugin retain their tangent data and wraps.
 {

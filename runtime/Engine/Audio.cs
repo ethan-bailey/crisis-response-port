@@ -19,6 +19,9 @@ public interface IAudioSourceDriver {
     void PlayOneShot(AudioClip clip,float volume,int priority);
     void Stop();
 }
+// Browser and network-backed drivers can queue source requests while their
+// own decoder loads the referenced clip. Local playback drivers stay strict.
+public interface IDeferredAudioSourceDriver : IAudioSourceDriver { }
 public interface IAudioClipPlaybackDriver:IAudioSourceDriver {
     void Play(AudioClip clip,float volume,float pitch,bool loop,bool muted,int priority);
 }
@@ -37,13 +40,17 @@ public sealed class AudioSource:Behaviour {
     public bool isPlaying=>RequiredDriver.IsPlaying;
     public void PlayOneShot(AudioClip clip,float volumeScale=1){
         ArgumentNullException.ThrowIfNull(clip);
-        if(clip.loadState!=AudioDataLoadState.Loaded)throw new InvalidOperationException($"Audio sample {clip.SourceID} is not decoded");
-        RequiredDriver.PlayOneShot(clip,volumeScale,priority);
+        var driver=RequiredDriver;
+        if(clip.loadState!=AudioDataLoadState.Loaded&&driver is not IDeferredAudioSourceDriver)
+            throw new InvalidOperationException($"Audio sample {clip.SourceID} is not decoded");
+        driver.PlayOneShot(clip,volumeScale,priority);
     }
     public void Play(){
         ArgumentNullException.ThrowIfNull(clip);
-        if(clip.loadState!=AudioDataLoadState.Loaded)throw new InvalidOperationException($"Audio sample {clip.SourceID} is not decoded");
-        if(RequiredDriver is not IAudioClipPlaybackDriver playback)throw new NotSupportedException("Audio clip playback driver is not bound");
+        var driver=RequiredDriver;
+        if(clip.loadState!=AudioDataLoadState.Loaded&&driver is not IDeferredAudioSourceDriver)
+            throw new InvalidOperationException($"Audio sample {clip.SourceID} is not decoded");
+        if(driver is not IAudioClipPlaybackDriver playback)throw new NotSupportedException("Audio clip playback driver is not bound");
         playback.Play(clip,volume,pitch,loop,mute,priority);
     }
     public void Stop()=>RequiredDriver.Stop();

@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Crisis.Runtime;
 
 /// <summary>Bounded bridge from recovered AudioSource callbacks to browser audio.</summary>
-public sealed class BrowserAudioEventQueue : IAudioClipPlaybackDriver
+public sealed class BrowserAudioEventQueue : IAudioClipPlaybackDriver, IDeferredAudioSourceDriver
 {
     const int MaximumPendingEvents = 64;
     readonly List<object> pending = [];

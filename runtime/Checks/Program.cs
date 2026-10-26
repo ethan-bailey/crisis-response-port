@@ -10,11 +10,37 @@ if(args.Length==2&&args[0]=="--verify-incremental-source-profile"){
     Console.WriteLine(OriginalSourcePackageContracts.VerifyProfile(args[1]));
     return;
 }
+if(args.Length==2&&args[0]=="--mission-fire-alarm-audio-contract"){
+    var package=LoadSourcePackage(args[1]);
+    var world=new RuntimeWorld();
+    var session=Crisis.Runtime.Browser.BrowserEntryTeamMission.Start(package,world);
+    var bridge=new FullSourceActorBridge(world,session.Actor);
+    var fireAlarms=session.Mission.objects.Values.OfType<Crisis.Runtime.FullSource.FireAlarm>().ToArray();
+    if(fireAlarms.Length==0)throw new InvalidOperationException("Mission 01 source scene has no FireAlarm instances to validate");
+    var fireAlarm=fireAlarms.FirstOrDefault(value=>value.GetComponent<AudioSource>()?.clip!=null)
+        ??throw new InvalidOperationException($"Mission 01 FireAlarm source components are incomplete: {string.Join(",",fireAlarms.Select(value=>$"{value.name}[AudioSource={value.GetComponent<AudioSource>()!=null},clip={value.GetComponent<AudioSource>()?.clip!=null}]"))}");
+    var source=fireAlarm.GetComponent<AudioSource>()!;
+    fireAlarm.ActivateIn(0f);
+    using var frame=JsonDocument.Parse(JsonSerializer.Serialize(bridge.Step(1f/60f,"{}",640f,360f)));
+    var played=frame.RootElement.GetProperty("audioEvents").EnumerateArray().Any(value=>
+        value.GetProperty("action").GetString()=="play"&&value.GetProperty("sourcePath").GetString()==source.clip.OriginalAssetPath);
+    if(!fireAlarm.alarm||!played)
+        throw new InvalidOperationException($"Original delayed FireAlarm activation did not queue its authored AudioSource.Play event: alarm={fireAlarm.alarm},clip={source.clip.OriginalAssetPath},events={frame.RootElement.GetProperty("audioEvents")}");
+    Console.WriteLine(JsonSerializer.Serialize(new{status="passed",scene=session.Mission.scene,fireAlarm=fireAlarm.name,audioSource=source.name,clip=source.clip.OriginalAssetPath,decoded=source.clip.loadState==AudioDataLoadState.Loaded,delayedCallback="ActivateIn(0) -> SetState(true) -> AudioSource.Play"}));
+    return;
+}
 if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
     var package=LoadSourcePackage(args[1]);
     var world=new RuntimeWorld();
     var session=Crisis.Runtime.Browser.BrowserEntryTeamMission.Start(package,world);
     var bridge=new FullSourceActorBridge(world,session.Actor);
+    var fireAlarms=session.Mission.objects.Values.OfType<Crisis.Runtime.FullSource.FireAlarm>().ToArray();
+    if(fireAlarms.Length==0)throw new InvalidOperationException("Mission 01 source scene has no FireAlarm instances to validate");
+    var fireAlarm=fireAlarms.FirstOrDefault(value=>value.GetComponent<AudioSource>()?.clip!=null)
+        ??throw new InvalidOperationException($"Mission 01 FireAlarm source components are incomplete: {string.Join(",",fireAlarms.Select(value=>$"{value.name}[AudioSource={value.GetComponent<AudioSource>()!=null},clip={value.GetComponent<AudioSource>()?.clip!=null}]"))}");
+    fireAlarm.ActivateIn(0f);
+    bridge.Step(1f/60f,"{}",640f,360f);
+    if(!fireAlarm.alarm)throw new InvalidOperationException("Original FireAlarm delayed activation did not reach SetState(true)");
     var authoredWalkSpeed=session.Actor.walkSpeed;
     bridge.SetAimWorldPoint(5f,2.5f,0f);
     bridge.Step(1f/60f,"{\"right\":true}",640f,360f,.5f);

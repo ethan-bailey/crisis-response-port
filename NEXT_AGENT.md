@@ -1,5 +1,14 @@
 # Crisis Response Port — continuation handoff (2026-10-26)
 
+## FireAlarm scene AudioSource fix — working tree verified; release pending
+
+- Owner reported a `NullReferenceException` in `FireAlarm.SetState(true)` after returning to Mission 01. The scene attaches AudioSource class ID 82 directly to its Smoke detector GameObject; SceneLoader had only restored class 82 from prefabs. Updated it to restore scene AudioSources and their serialized clip fields.
+- Browser audio is asynchronous. Browser-backed Play/PlayOneShot now queues requests while a clip is undecoded; other drivers remain strict.
+- Focused full-source Mission test passed in dev and Site working trees. Dev queued `Assets/AudioClip/fire-alarm.ogg`; Site passed with `decoded=false`. Dev FoundationChecks passed 122 assertions. Site FoundationChecks passed 123; Site runtime build had 0 errors and 48 existing warnings; Browser/WASM Release publish passed.
+- Dev source now includes upstream exact-source CI run #86 and the local camera assertion work. FireAlarm changes are not yet committed. Site production remains v82 owner-private/custom until exact Site source is pushed, rebuilt, packaged and independently verified. The full Browser EntryTeam contract currently passes on exact upstream CI and fails on a separate assertion in this older local profile; do not report FireAlarm as full parity.
+- Owner iPhone Safari performance, operator pose/grip, visual/audio output and full parity remain unverified.
+- Evidence: `docs/evidence/REA_FIRE_ALARM_SCENE_AUDIO_2026-10-26.md`.
+
 ## Latest verified public-source checkpoint
 
 - Public `develop/wasm` now points to exact SHA `ddee041028f99ce7f5dc23b62e4d320b834c584e` (GitHub API compare-and-swap from `44cf92a`). Exact-source Actions run [#86](https://github.com/ethan-bailey/crisis-response-port/actions/runs/40395873492) completed successfully: Contracts/Release/package job `121828633553` and independent Chromium IndexedDB/audio job `121828634159` both passed.
