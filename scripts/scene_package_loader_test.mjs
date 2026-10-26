@@ -86,12 +86,26 @@ test("delivers verified source assets through the WASM package bridge", async ()
     assets: [{path: assetPath, file: "assets/0123456789abcdef01234567.json.gz", bytes: assetRaw.byteLength,
       sha256: hash(assetRaw), compressedBytes: assetGzip.byteLength, compressedSha256: assetCompressedHash}]};
   const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  const originalSecureContext = globalThis.isSecureContext;
   const files = new Map([["manifest.json", encoder.encode(JSON.stringify(manifest))],
     ["metadata.json.gz", metadataGzip], ["0123456789abcdef01234567.json.gz", assetGzip]]);
+  const assetFetchCounts = new Map();
   globalThis.fetch = async url => {
     const name = new URL(url).pathname.split("/").at(-1);
+    if (name === "0123456789abcdef01234567.json.gz")
+      assetFetchCounts.set(name, (assetFetchCounts.get(name) ?? 0) + 1);
     return files.has(name) ? new Response(files.get(name), {status: 200}) : new Response("missing", {status: 404});
   };
+  const cachedResponses = new Map();
+  globalThis.isSecureContext = true;
+  globalThis.caches = {open:async()=>({
+    match:async url=>{
+      const response=cachedResponses.get(String(url));
+      return response?new Response(await response.arrayBuffer(),{headers:{"Content-Type":"application/gzip"}}):undefined;
+    },
+    put:async(url,response)=>cachedResponses.set(String(url),new Response(await response.arrayBuffer(),{headers:{"Content-Type":"application/gzip"}}))
+  })};
   const calls = [];
   const bridge = {invokeMethodAsync: async (method, ...args) => {
     calls.push([method, ...args]);
@@ -135,12 +149,25 @@ test("delivers verified source assets through the WASM package bridge", async ()
     }, {receivedAssets:1,expectedAssets:1,compressedAssetBytes:assetGzip.byteLength,sourceAssetBytes:assetRaw.byteLength,
       maximumAssetBytes:assetRaw.byteLength,totalCompressedAssetBytes:assetGzip.byteLength,totalSourceAssetBytes:assetRaw.byteLength,
       asset:{path:assetPath,compressedBytes:assetGzip.byteLength,sourceBytes:assetRaw.byteLength,
-        fetchAndHashMs:completed.asset.fetchAndHashMs,transportPrepareMs:completed.asset.transportPrepareMs,
+        fetchAndHashMs:completed.asset.fetchAndHashMs,wasCached:false,transportPrepareMs:completed.asset.transportPrepareMs,
         bridgeMs:completed.asset.bridgeMs,bridgeBatchMs:completed.asset.bridgeBatchMs,bridgeBatchAssets:1}});
     for(const value of [completed.asset.fetchAndHashMs,completed.asset.transportPrepareMs,completed.asset.bridgeMs,
       completed.profileElapsedMs,completed.batchElapsedMs]) assert.ok(Number.isFinite(value) && value >= 0);
+
+    const cachedProgress=[];
+    const cachedBridge={invokeMethodAsync:async(method,...args)=>{
+      if(method==="InitializeIncrementalSourcePackage")return JSON.stringify({expectedAssets:1,receivedAssets:0,receivedBytes:0});
+      assert.equal(method,"AddIncrementalSourceGzipAssetBatch");
+      assert.deepEqual(args[0],[assetPath]);
+      return JSON.stringify({items:[{added:true,expectedAssets:1,receivedAssets:1,receivedBytes:assetRaw.byteLength,receivedCompressedBytes:assetGzip.byteLength}]});
+    }};
+    await deliverIncrementalSourceProfile(cachedBridge,"https://example.test/source/manifest.json",{onProgress:value=>cachedProgress.push(value)});
+    assert.equal(assetFetchCounts.get("0123456789abcdef01234567.json.gz"),1,"second run reads the verified asset from persistent cache");
+    assert.equal(cachedProgress.at(-1).asset.wasCached,true);
   } finally {
     globalThis.fetch = originalFetch;
+    if(originalCaches===undefined)delete globalThis.caches;else globalThis.caches=originalCaches;
+    if(originalSecureContext===undefined)delete globalThis.isSecureContext;else globalThis.isSecureContext=originalSecureContext;
   }
 });
 
