@@ -142,6 +142,71 @@ public static class MissionProjectileContracts
                 foreach(var projectile in observedProjectiles)
                     flightTrace.Add(DescribeProjectile("after-flight-tick",tick+1,world,shooter,projectile));
             }
+            object? secondShot=null;
+            CharacterBody? secondVictim=null;
+            if(selectedVictim.LastHitLimb!=null){
+                secondVictim=victims.FirstOrDefault(victim=>!ReferenceEquals(victim,selectedVictim));
+                if(secondVictim!=null){
+                    var firstVictimPosition=selectedVictim.transform.position;
+                    selectedVictim.transform.position=new Vector3(40f,firstVictimPosition.y,firstVictimPosition.z);
+                    int otherIndex=0;
+                    foreach(var otherVictim in victims.Where(victim=>!ReferenceEquals(victim,selectedVictim)&&!ReferenceEquals(victim,secondVictim)))
+                        otherVictim.transform.position=new Vector3(42f+otherIndex++*2f,otherVictim.transform.position.y,otherVictim.transform.position.z);
+                    var secondVictimPosition=secondVictim.transform.position;
+                    secondVictim.transform.position=new Vector3(7f,secondVictimPosition.y+.75f,secondVictimPosition.z);
+                    var secondTarget=secondVictim.GetComponent<Target>()??throw new InvalidOperationException("Second recovered Occupant has no original Target component");
+                    shooter.Blackboard.Target=secondTarget;
+                    shooter.WeaponAimer.Mode=WeaponAimer.AimMode.Ready;
+                    world.Invoke(shooter.WeaponAimer,"Update");
+                    var secondAimLimb=secondVictim.limbMap.TryGetValue(LimbId.Abdomen,out var secondAbdomen)?secondAbdomen:secondVictim.limbMap[LimbId.Torso];
+                    shooter.AimPoint=secondAimLimb.AimPointWithExtents(shooter.RightUpperArm.transform.position);
+                    for(int tick=0;tick<30;tick++)world.Tick(1f/60f,()=>{
+                        foreach(var source in world.Objects.OfType<AudioSource>())source.Driver??=new MissionContractSilentAudioDriver();
+                        foreach(var system in world.Objects.OfType<ParticleSystem>())system.Driver??=particleDriver;
+                    });
+                    if(!shooter.RightArm.OnTarget||!weapon.ReadyToFire)
+                        throw new InvalidOperationException($"Second original shot prerequisites did not recover after authored pose/cycle: rightArmOnTarget={shooter.RightArm.OnTarget}, ready={weapon.ReadyToFire}");
+                    var secondDamageLimb=secondVictim.limbMap.TryGetValue(LimbId.Abdomen,out secondAbdomen)?secondAbdomen:secondVictim.limbMap[LimbId.Torso];
+                    var secondDamageBefore=DescribeDamageState(secondVictim,secondDamageLimb);
+                    var secondShotsBefore=shooter.ShotsFired;
+                    var secondSpawnCountBefore=observedProjectiles.Count;
+                    shooter.PullTrigger();
+                    world.Tick(.005f,()=>{
+                        foreach(var source in world.Objects.OfType<AudioSource>())source.Driver??=new MissionContractSilentAudioDriver();
+                        foreach(var system in world.Objects.OfType<ParticleSystem>())system.Driver??=particleDriver;
+                    });
+                    var secondShotsAfterTrigger=shooter.ShotsFired;
+                    if(secondShotsAfterTrigger!=secondShotsBefore+1)
+                        throw new InvalidOperationException($"A single second source trigger did not fire exactly one round: {secondShotsBefore}->{secondShotsAfterTrigger}");
+                    var secondFlightTrace=new List<object>();
+                    for(int tick=0;tick<12&&secondVictim.LastHitLimb==null;tick++){
+                        world.Tick(.005f,()=>{
+                            foreach(var source in world.Objects.OfType<AudioSource>())source.Driver??=new MissionContractSilentAudioDriver();
+                            foreach(var system in world.Objects.OfType<ParticleSystem>())system.Driver??=particleDriver;
+                        });
+                        foreach(var projectile in observedProjectiles.Skip(secondSpawnCountBefore))
+                            secondFlightTrace.Add(DescribeProjectile("second-shot-flight",tick+1,world,shooter,projectile));
+                    }
+                    var secondHitLimb=secondVictim.LastHitLimb;
+                    var secondDamageAfter=secondHitLimb==null?null:DescribeDamageState(secondVictim,secondHitLimb);
+                    var secondLiveProjectiles=world.Objects.OfType<SourceProjectile>().Count(projectile=>ReferenceEquals(projectile.Owner,shooter));
+                    secondShot=new{
+                        body=secondVictim.name,
+                        selectedTarget=secondTarget.name,
+                        shotsBefore=secondShotsBefore,
+                        shotsAfter=shooter.ShotsFired,
+                        expectedProjectiles=weapon.ammunition.projectileCount,
+                        spawnedProjectiles=observedProjectiles.Count-secondSpawnCountBefore,
+                        hit=secondHitLimb!=null,
+                        limb=secondHitLimb?.id.ToString(),
+                        damageBefore=secondDamageBefore,
+                        damageAfter=secondDamageAfter,
+                        liveOwnedProjectilesAfterImpact=secondLiveProjectiles,
+                        flightTrace=secondFlightTrace
+                    };
+                }
+            }
+            bool secondVictimWasHit=secondVictim?.LastHitLimb!=null;
             var hits=victims.Where(victim=>victim.LastHitLimb!=null).Select(victim=>new{
                 body=victim.name,
                 limb=victim.LastHitLimb.id.ToString(),
@@ -151,7 +216,7 @@ public static class MissionProjectileContracts
                 damageAfter=DescribeDamageState(victim,victim.LastHitLimb)
             }).ToArray();
             bool selectedVictimWasHit=hits.Any(hit=>hit.body==selectedVictim.name);
-            string result=selectedVictimWasHit?"source-projectile-hit-selected-occupant":shotsAfter>shotsBefore&&projectiles.Length==0?"source-shot-fired-no-live-projectile-observed":"source-shot-fired-no-occupant-hit";
+            string result=selectedVictimWasHit&&secondVictimWasHit?"source-projectile-hit-two-occupants":selectedVictimWasHit?"source-first-shot-only":"source-shot-fired-no-occupant-hit";
             return new{
                 sourcePullTriggerCalled=true,
                 selectedTarget=selectedTarget?.name,
@@ -160,6 +225,8 @@ public static class MissionProjectileContracts
                 selectedVictimPositionBefore=selectedVictimPositionBefore.HasValue?Pos(selectedVictimPositionBefore.Value):null,
                 selectedVictimPositionAfter=Pos(selectedVictim.transform.position),
                 selectedVictimWasHit,
+                secondVictimWasHit,
+                secondShot,
                 currentWorldMatchesMissionWorld=ReferenceEquals(RuntimeWorld.Current,world),
                 ammunitionProjectileCount=weapon.ammunition.projectileCount,
                 ammunitionProjectileType=weapon.ammunition.projectile.GetType().FullName,

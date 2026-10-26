@@ -327,19 +327,34 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-ui-contra
         if(attempt.ValueKind!=JsonValueKind.Object)
             throw new InvalidOperationException($"Mission projectile contract produced no fire attempt: {report}");
         var result=attempt.GetProperty("result").GetString();
-        if(result!="source-projectile-hit-selected-occupant")
-            throw new InvalidOperationException($"Mission projectile contract failed: {result}");
+        if(result!="source-projectile-hit-two-occupants")
+            throw new InvalidOperationException($"Mission two-shot projectile contract failed: {result}");
         var selectedTarget=attempt.GetProperty("selectedTarget").GetString();
-        var selectedHit=attempt.GetProperty("victimHits").EnumerateArray()
+        var secondShot=attempt.GetProperty("secondShot");
+        if(secondShot.ValueKind!=JsonValueKind.Object||!secondShot.GetProperty("hit").GetBoolean())
+            throw new InvalidOperationException("Second original projectile did not hit its distinct initialized Occupant");
+        if(secondShot.GetProperty("body").GetString()==selectedTarget)
+            throw new InvalidOperationException("Two source shots must verify distinct Occupant ownership");
+        if(secondShot.GetProperty("shotsAfter").GetInt32()!=secondShot.GetProperty("shotsBefore").GetInt32()+1)
+            throw new InvalidOperationException("One second trigger must increment source ShotsFired exactly once");
+        if(secondShot.GetProperty("spawnedProjectiles").GetInt32()!=secondShot.GetProperty("expectedProjectiles").GetInt32())
+            throw new InvalidOperationException("Second source shot did not register the serialized ammunition projectile count");
+        if(secondShot.GetProperty("liveOwnedProjectilesAfterImpact").GetInt32()!=0)
+            throw new InvalidOperationException("Second source projectile was not cleaned up after its Occupant impact");
+        var firstHit=attempt.GetProperty("victimHits").EnumerateArray()
             .FirstOrDefault(hit=>hit.GetProperty("body").GetString()==selectedTarget);
-        if(selectedHit.ValueKind!=JsonValueKind.Object)
-            throw new InvalidOperationException("Mission projectile contract did not report the selected Occupant hit");
-        var damageBefore=selectedHit.GetProperty("damageBefore");
-        var damageAfter=selectedHit.GetProperty("damageAfter");
-        if(damageAfter.GetProperty("wounds").GetInt32()<=damageBefore.GetProperty("wounds").GetInt32()
-            ||damageAfter.GetProperty("damagedTissueVolume").GetSingle()<=damageBefore.GetProperty("damagedTissueVolume").GetSingle()
-            ||damageAfter.GetProperty("bodyShock").GetSingle()<=damageBefore.GetProperty("bodyShock").GetSingle())
-            throw new InvalidOperationException("Mission projectile contract hit the selected Occupant without verified wound, tissue, and shock increases");
+        var secondHit=attempt.GetProperty("victimHits").EnumerateArray()
+            .FirstOrDefault(hit=>hit.GetProperty("body").GetString()==secondShot.GetProperty("body").GetString());
+        foreach(var hit in new[]{firstHit,secondHit}){
+            if(hit.ValueKind!=JsonValueKind.Object)
+                throw new InvalidOperationException("Mission projectile contract did not report both selected Occupant hits");
+            var damageBefore=hit.GetProperty("damageBefore");
+            var damageAfter=hit.GetProperty("damageAfter");
+            if(damageAfter.GetProperty("wounds").GetInt32()<=damageBefore.GetProperty("wounds").GetInt32()
+                ||damageAfter.GetProperty("damagedTissueVolume").GetSingle()<=damageBefore.GetProperty("damagedTissueVolume").GetSingle()
+                ||damageAfter.GetProperty("bodyShock").GetSingle()<=damageBefore.GetProperty("bodyShock").GetSingle())
+                throw new InvalidOperationException($"Mission projectile did not verify wound, tissue, and shock increases on {hit.GetProperty("body").GetString()}");
+        }
         return;
     }
     var outcomeBehaviorTrees=world.Objects.OfType<BehaviorDesigner.Runtime.BehaviorTree>().Where(tree=>tree.enabled).ToArray();
