@@ -21,6 +21,10 @@ Use the connected GitHub API instead of GitHub CLI authentication or a repeated 
 5. **Verify the behavior at the right layers.** Run the relevant existing contracts and build gates for the change, then the configured GitHub Actions workflow for code changes. Capture exact commands, output, commit SHA, SDK/browser version, and artifact hashes where applicable. Report separately whether source was inventoried, code compiled, runtime booted, original behavior executed, visuals matched, and iPhone Safari acceptance passed. Desktop automation does not stand in for the owner's phone.
 6. **Persist the result.** Update NEXT_AGENT.md once at the end of a substantive batch with the observed live branch/head, exact tested SHA, gates and outcomes, limitations, remaining independent work, and one next action. Do not leave known recoverable failures as a future agent's first task.
 
+When a check fails, capture its first exact error and trace it to source, package, or runner evidence. Make one bounded fix attempt and rerun the relevant check once. If it still fails, classify the concrete dependency and leave that gate pending; do not repeat diagnostic-only cycles or weaken the acceptance criteria. Continue with independent authorized work, since an open gate alone is not a stopping point.
+
+The owner performs iPhone Safari acceptance. At each major milestone, prepare the exact tested SHA and concise acceptance steps for the owner, record the device-only gate as pending until results arrive, and continue independent work without claiming device acceptance.
+
 If a required device, source file, or environment is unavailable, record the exact missing input and evidence, keep its dependent acceptance gate open, and continue every independent task. Do not repeat a failed setup or build experiment unless an input changed.
 
 ## Port-specific constraints
