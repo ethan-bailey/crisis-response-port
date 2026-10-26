@@ -1,5 +1,9 @@
 # Current handoff — 2026-10-26
 
+## Latest implementation batch
+
+- Commit `522b8e0063e3dbf976d6568b224bb7a72b09f7e4` recovers a corrupt cached Mission asset by deleting that entry and fetching only that asset again; the replacement is cached only after manifest size/SHA verification. The regression and local checks are recorded in [REA mission cache recovery evidence](docs/evidence/REA-mission-cache-recovery-2026-10-26.md). Full Node suite passed 126/126 after the pinned npm dependency/vendor setup. Local .NET/WASM build was not run because `dotnet` is unavailable. The GitHub connector did not expose a check status for the push SHA, so hosted verification remains unconfirmed.
+
 ## Latest verified release
 
 - Live owner-private Site: `https://crisis-response-runtime.craftysnipe13.chatgpt.site`.
