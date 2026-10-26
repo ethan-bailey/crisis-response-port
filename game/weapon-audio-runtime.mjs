@@ -12,6 +12,12 @@ export function clampWeaponEventGain(value) {
   return Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0;
 }
 
+export async function preloadWeaponAudio(audioData, audioRuntime) {
+  const entries = Object.entries(audioData || {}).filter(([, info]) => info?.source && info?.url);
+  await Promise.all(entries.map(([key, info]) => audioRuntime.load(key, info.url)));
+  return entries.map(([key]) => key);
+}
+
 export function createSourceWeaponAudioDispatcher(audioData, audioRuntime) {
   const keys = new Map(Object.entries(audioData || {}).filter(([, info]) => info.source)
     .map(([key, info]) => [info.source, key]));
