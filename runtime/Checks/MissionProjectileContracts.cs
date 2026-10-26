@@ -142,6 +142,11 @@ public static class MissionProjectileContracts
                 foreach(var projectile in observedProjectiles)
                     flightTrace.Add(DescribeProjectile("after-flight-tick",tick+1,world,shooter,projectile));
             }
+            // The headless test intentionally does not bind a GL texture-transfer driver.
+            // Stop only original wound-decal rendering after the first hit; keep source wound,
+            // tissue, and physiology state active for the second projectile.
+            if(selectedVictim.LastHitLimb!=null)
+                foreach(var renderer in world.Objects.OfType<DynamicLimbDecalRenderer>())renderer.enabled=false;
             object secondShot=null;
             CharacterBody secondVictim=null;
             if(selectedVictim.LastHitLimb!=null){
