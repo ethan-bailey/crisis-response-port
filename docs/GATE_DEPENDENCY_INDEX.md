@@ -26,6 +26,10 @@ This index is the dependency-first entry point for continuing parity work. Gate 
 
 Run #61 (source SHA a1ee8c34d242a2733a0209a60ed8e35d9988c5ef) demonstrated two distinct original M4A1 torso impacts and positive source injury deltas, but failed the test's immediate-cleanup assertion. This is a test assumption error: recovered Projectile.Update destroys its GameObject only when original TestTermination() is true. That predicate is age >1.0s since SpawnTime, energy <2, or the authored x/y/z bounds; a torso impact with Status=Continue does not imply cleanup. The second projectile was about 0.0023 seconds old at impact and both owner projectiles reported TestTermination=false. The next batch will retain the impact-time report, advance source ticks beyond one second from the newest spawn, then verify zero live owner projectiles. #61 did not reach package verification because of the assertion; its Chromium job was still installing at the last poll. See the updated pre-implementation closure note.
 
+## Gate 3 follow-up — source-driven early projectile termination
+
+Run #62 on source SHA b83cf870811d461a35ff84c73f91ba1c1cd89e74 reached both distinct source Occupant hits and injury deltas. Its contract observed one live owner projectile at impact and the original RuntimeWorld removed it after six ticks; source age after newest SpawnTime was only 0.006753683 seconds. The test then failed only because it asserted that the one-second lifetime had elapsed. This is another test assumption defect: the recovered Projectile.Update destroys the object when a collision result is Stop/Error or when TestTermination is true (age >1.0s, energy <2, or bounds); age is only one of several possible source exits. No force destroy was used. The corrected acceptance checks source-driven removal after original RuntimeWorld ticks and records elapsed scaled Time without imposing a minimum. #62 did not reach package verification; its Chromium job was still installing at last poll and may be cancelled on the next source push.
+
 ## Batch exit checklist
 
 For each gate, the owning batch should record:
