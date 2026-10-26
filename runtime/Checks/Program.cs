@@ -33,7 +33,10 @@ if(args.Length==1&&args[0]=="--browser-audio-event-contract"){
     var world=new RuntimeWorld();
     var queue=new Crisis.Runtime.BrowserAudioEventQueue();
     world.AudioSourceDriver=queue;
-    var clip=new AudioClip("Assets/AudioClip/hurt-07.ogg",.4f){OriginalAssetPath="Assets/AudioClip/hurt-07.ogg"};
+    // This isolated bridge contract intentionally uses a synthetic source ID;
+    // asset provenance is assigned by the source-package resolver and is
+    // internal to the runtime assembly.
+    var clip=new AudioClip("Assets/AudioClip/hurt-07.ogg",.4f);
     var go=new GameObject("Audio source",world);
     var source=go.AddComponent<AudioSource>();source.clip=clip;source.volume=.4f;source.PlayOneShot(clip,.5f);var reportsPlaying=source.isPlaying;source.Stop();var stopped=source.isPlaying;
     using var events=JsonDocument.Parse(JsonSerializer.Serialize(queue.Drain()));
