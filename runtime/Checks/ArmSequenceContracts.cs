@@ -51,7 +51,7 @@ public static class ArmSequenceContracts {
         Check(result.RootElement.GetProperty("right").GetArrayLength() == 3 && !result.RootElement.GetProperty("playbackImplemented").GetBoolean(), "Browser transport keeps scope explicit");
         try { OriginalArmSequences.Load(json.Replace("\"action\": 0", "\"action\": 999")); throw new Exception("Invalid enum accepted"); }
         catch (InvalidDataException) { }
-        using var controllerProof = JsonDocument.Parse(FullSourceControllerPlaybackContracts.Run(world));
+        using var controllerProof = JsonDocument.Parse(FullSourceControllerPlaybackContracts.Run(world, sequences));
         var controllerRoot = controllerProof.RootElement;
         Check(controllerRoot.GetProperty("status").GetString() == "pass" &&
               controllerRoot.GetProperty("callbackObserved").GetBoolean() &&
@@ -106,7 +106,7 @@ public static class FullSourceControllerPlaybackContracts {
         return (root, body, controller);
     }
 
-    public static string Run(RuntimeWorld world) {
+    public static string Run(RuntimeWorld world, IReadOnlyDictionary<string, IKArmSequence> authoredSequences) {
         var first = CreateActor(world, "FullSource playback actor A");
         var second = CreateActor(world, "FullSource playback actor B");
         try {
@@ -115,6 +115,19 @@ public static class FullSourceControllerPlaybackContracts {
                 !ReferenceEquals(first.body.armController, first.controller) ||
                 !ReferenceEquals(second.body.armController, second.controller))
                 throw new InvalidOperationException("FullSource actors do not own independent original IK controllers and sequencers");
+
+            OriginalArmSequences.BindAuthoredSequences(first.controller, authoredSequences);
+            OriginalArmSequences.BindAuthoredSequences(second.controller, authoredSequences);
+            var authoredSequencesBound =
+                ReferenceEquals(first.controller.holsterPistol, authoredSequences["Holster pistol"]) &&
+                ReferenceEquals(first.controller.unholsterPistol, authoredSequences["Unholster pistol"]) &&
+                ReferenceEquals(first.controller.lowerShoulderWeapon, authoredSequences["Lower weapon"]) &&
+                ReferenceEquals(first.controller.returnShoulderWeapon, authoredSequences["Raise shoulder weapon"]) &&
+                ReferenceEquals(first.controller.pickupGrenade, authoredSequences["Pickup grenade"]) &&
+                ReferenceEquals(first.controller.returnGrenade, authoredSequences["Return grenade"]) &&
+                ReferenceEquals(first.controller.applyGauze, authoredSequences["Apply gauze"]);
+            if (!authoredSequencesBound)
+                throw new InvalidOperationException("Recovered authored IK sequences did not bind to all seven FullSource controller fields");
 
             var sequence = new IKArmSequenceRuntime();
             sequence.right.Add(new IKArmAnimationFrame {
@@ -194,6 +207,7 @@ public static class FullSourceControllerPlaybackContracts {
                 siblingWaitHeld,
                 siblingFrameAdvanced,
                 siblingCallbackAfterAdvance,
+                authoredSequencesBound,
                 independentControllers = true,
                 sequencerAdvancedToCompletion = true
             });

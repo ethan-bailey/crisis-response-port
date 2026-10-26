@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace Crisis.Runtime;
 
-// Serialization boundary only. Composition executes the unchanged original classes.
-// IKArmSequencer/IKArmController and their callbacks are deliberately not simulated.
+// Preserves recovered frame data and binds it to the unchanged original controller.
+// Browser rendering/playback remains a separate, unimplemented boundary.
 public static class OriginalArmSequences {
     public static Dictionary<string, IKArmSequence> Load(string json) {
         using var doc = JsonDocument.Parse(json);
@@ -54,6 +54,38 @@ public static class OriginalArmSequences {
             });
         }
         return result;
+    }
+
+    public static void BindAuthoredSequences(
+        Crisis.Runtime.FullSource.IKArmController controller,
+        IReadOnlyDictionary<string, IKArmSequence> sequences) {
+        ArgumentNullException.ThrowIfNull(controller);
+        ArgumentNullException.ThrowIfNull(sequences);
+        var owner = controller.GetComponent<Crisis.Runtime.FullSource.CharacterBody>();
+        Crisis.Runtime.FullSource.OriginalActorIdentity.RequireController(owner, controller);
+
+        IKArmSequence Required(string name) => sequences.TryGetValue(name, out var sequence) && sequence != null
+            ? sequence
+            : throw new InvalidDataException($"Missing recovered IK sequence: {name}");
+
+        // Resolve the full set before mutation so a partial bundle cannot leave
+        // the source controller in a mixed authored/default state.
+        var holsterPistol = Required("Holster pistol");
+        var unholsterPistol = Required("Unholster pistol");
+        var lowerShoulderWeapon = Required("Lower weapon");
+        var returnShoulderWeapon = Required("Raise shoulder weapon");
+        var pickupGrenade = Required("Pickup grenade");
+        var returnGrenade = Required("Return grenade");
+        var applyGauze = Required("Apply gauze");
+
+        // These names map one-to-one to the source Operator's serialized fields.
+        controller.holsterPistol = holsterPistol;
+        controller.unholsterPistol = unholsterPistol;
+        controller.lowerShoulderWeapon = lowerShoulderWeapon;
+        controller.returnShoulderWeapon = returnShoulderWeapon;
+        controller.pickupGrenade = pickupGrenade;
+        controller.returnGrenade = returnGrenade;
+        controller.applyGauze = applyGauze;
     }
 
     public static string Compose(string bundle, string namesJson) {
