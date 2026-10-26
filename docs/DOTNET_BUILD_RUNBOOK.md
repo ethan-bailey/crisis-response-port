@@ -1,5 +1,7 @@
 # .NET build preflight and failure runbook
 
+> This is a toolchain recovery guide. Follow [AGENTS.md](../AGENTS.md) for project policy and [NEXT_AGENT.md](../NEXT_AGENT.md) for live task state. Historical incident notes below are not the current source SHA or assignment.
+
 Use this before the first .NET command in a fresh Work Mode checkout. The repo
 pins .NET SDK **8.0.426** in the root `global.json`; a newer SDK is not a
 substitute. This host has also shown a runner-only `/proc` process-stat failure
@@ -26,7 +28,7 @@ If the expected checkout is absent, make one bounded recovery attempt:
 2. The public repository can be cloned/fetched over HTTPS without GitHub CLI
    authorization when network access permits. Use the connected GitHub API to
    verify the live branch/PR state. For commits, use the connector Git Data API
-   sequence in `AGENT_INSTRUCTIONS.md`, then fetch the updated public branch
+   sequence in `AGENTS.md`, then fetch the updated public branch
    with Git. Do not install/authorize `gh` or repeat device login when the
    connected GitHub API is available. Connector-only file inspection is not a
    buildable checkout.

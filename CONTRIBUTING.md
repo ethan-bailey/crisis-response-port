@@ -1,38 +1,31 @@
-# Contributing to Crisis Response Port
+# Contributing
 
-This private project preserves original Crisis Response developer code and behavior for a C#/.NET WebAssembly browser port. Do not publish proprietary source, assets, private build artifacts or credentials. **A successful compile is not proof of original-game parity.**
+Read [AGENTS.md](AGENTS.md) before changing the port. It is the canonical agent workflow and source-fidelity prompt. Read [NEXT_AGENT.md](NEXT_AGENT.md) for the current task and verified state, then confirm the live develop/wasm head and current Actions/PR state.
 
-## Start here
+## Workflow
 
-Read the [audited operations board](docs/REPOSITORY_OPERATIONS_2026-10-17.md) and [branching and collaboration guide](docs/BRANCHING_AND_COLLABORATION.md), then the current [NEXT_AGENT.md](https://github.com/ethan-bailey/crisis-response-port/blob/develop/wasm/NEXT_AGENT.md) on `develop/wasm`, the [workspace](https://github.com/ethan-bailey/crisis-response-port/blob/develop/wasm/WORKSPACE.md), and the linked issue. The latest plan is on `develop/wasm`; historical notes are not active assignments.
+1. Establish the exact live source SHA and clean working state.
+2. Define one observable acceptance target from original source behavior.
+3. Inventory the complete dependency closure before implementation: scripts, serialized scene/prefab references, GUIDs/fileIDs, assets, lifecycle, engine APIs, browser adapters, and checks.
+4. Batch all recoverable related dependencies and supported fixes in dependency order. Keep original gameplay rules and authored data intact; use the smallest compatibility adapter needed for the browser.
+5. Run the relevant existing contracts and the pinned .NET 8.0.426 checks. Code changes are also checked by .github/workflows/source-contracts.yml.
+6. Commit and push owner-authorized work to develop/wasm using the inspected head as a lease. Use one short-lived PR only when review, branch protection, or isolation materially helps; keep at most one active PR. Never force-push or delete historical branches as routine cleanup.
+7. Update NEXT_AGENT.md once at the end with exact SHA, commands/results, remaining limitations, and one next action.
 
-## Standard workflow
+## Verification commands
 
-1. Choose or open one scoped issue. Read the real `develop/wasm` HEAD and active Actions runs; coordinate overlapping source/adapter files.
-2. Create a short-lived branch **from current `develop/wasm`**: `feature/<issue>-<name>`, `fix/<issue>-<name>`, `research/<topic>`, or `experiment/<topic>`.
-3. Open a focused PR **targeting `develop/wasm`**, link the issue, use the PR template, and note the exact original source paths, GUIDs, SHA256, methods, adapters, test results and rollback instructions.
-4. Preserve recovered original files byte-for-byte. Write only required browser/Unity engine adapters when source semantics are understood. **No placeholder gameplay, fabricated callbacks, dummy shaders or claimed 1:1 behavior without evidence.**
-5. Run fast source, package and unit tests. Trigger full .NET 8 WASM/PhysX/Chromium/WebKit only for meaningful integration milestones—not every commit, documentation change or audit.
-6. Review against the latest `develop/wasm` and merge one reviewed feature at a time; conventional merge commits are preferred for traceability. Record matching tested SHA, artifact IDs, remaining limitations and selective rollback in the shared handoff.
-7. Deploy a matching **protected** Vercel build only when testing on a real iPhone. Keep `vercel.json` → `git.deploymentEnabled=false`.
+~~~sh
+node --test scripts/*_test.mjs
+python -m unittest discover -s scripts -p '*test.py'
+dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -c Release
+dotnet run --project runtime/EngineChecks/Crisis.Runtime.EngineChecks.csproj -c Release
+dotnet run --project runtime/FoundationChecks/Crisis.Runtime.FoundationChecks.csproj -c Release
+dotnet build runtime/Crisis.Runtime.csproj -c Release --no-incremental
+npm ci --prefix game --ignore-scripts
+npm run --prefix game vendor
+dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release
+~~~
 
-`main` is the stable baseline; it is **not** the regular gameplay integration branch and not a claim the whole game is complete. Promotions from `develop/wasm` to `main` require explicit review and evidence. Independent Unity feasibility remains isolated.
+These checks cover only what their commands exercise. Keep compile, browser boot, original behavior, visual parity, and iPhone Safari acceptance as separate claims.
 
-## Agent operating checklist — 2026-10-16 audit
-
-These rules are shared by human contributors and AI agents. They apply to **every** source-preserving WASM/Unity workstream.
-
-- **Before writing:** survey active branches/PRs, running CI, and current integration HEAD; avoid duplicate work and coordinate ownership of overlapping engine adapters. Open a **draft PR early** when a feature branch contains valuable work; target `develop/wasm`. Close stale/superseded PRs with a traceable link.
-- **Keep branches current (owner rule, 2026-10-22):** agent work runs as one active workstream at a time - new ideas are recorded in the handoff or issues, not started as parallel branches. Refresh an agent-owned feature branch by merging current `develop/wasm` into it at the start of every session while it lives, and again before integration. Rebase **only your own unpublished/unshared commits** with coordination; never rebase/force-reset a shared branch or another agent's active work. Prefer a normal merge commit for verified integrations.
-- **Evidence for every claim:** distinguish **compiles**, **browser boots**, **executes original gameplay**, **native parity**, and **physical iPhone**. Record tested commit SHA, localhost browser smoke result, screenshots and artifact IDs; keep screenshots in private CI artifacts linked by the PR rather than unnecessarily committing huge binaries. Do not claim site functionality from a Vercel READY state alone.
-- **Minimal expensive work:** use ordinary fast checks on changed source; one cached SDK8 WASM/PhysX/Chromium/WebKit milestone for a meaningful gameplay batch; no concurrent redundant full Unity/IL2CPP builds. Original Unity workflow remains manual-only, must release its license seat on completion, and must never log `UNITY_EMAIL`/`UNITY_PASSWORD`.
-- **Publish on demand, after real browser boot:** a Vercel preview needs matching localhost Chromium/WebKit/game smoke evidence first. Prefer a **stable test alias** mapping to the last deliberate deploy (verify its mapping), not an unverified build or a new arbitrary URL per commit. Check complete site-package hashes and that Git tracks ignored scene/PhysX binaries. If quotas rise, note this in the branch handoff early.
-- **Security and rights:** repository source and recovery archive stay private by default. User access preference can change for an authorized **compiled, asset-cleared** build, but do not make recovered proprietary source or unlicensed original assets openly redistributable just to avoid sign-in. Never include tokens, Unity license secrets, passwords, or CI credentials in logs.
-
-**Source-specific HUD exception:** a diagnostic UI may represent original state without replacing game rules. Its visual distinction from original developer art must be documented. Only recovered actual game assets are eligible when the user requests no generated artwork.
-
-## Evidence terms
-
-**Recovered** = original source/assets hashed; **compiles** = selected source builds; **executes** = original methods run; **browser-tested** = matched Chromium/WebKit packaged execution; **native-parity checked** = compared with original Unity reference; **device-tested** = real iPhone Safari evidence; **released** = protected, verified and rollback-ready. Do not conflate them.
-
-For complete-game gates see [roadmap on develop/wasm](https://github.com/ethan-bailey/crisis-response-port/blob/develop/wasm/docs/COMPLETE_WASM_PORT_ROADMAP.md).
+The repository is public. Keep credentials and separately stored recovery archives out of Git. Do not deploy or publish an intermediate build; release work requires owner authorization and exact-SHA evidence. Avoid creating a Codespace for routine work through 2026-11-01.

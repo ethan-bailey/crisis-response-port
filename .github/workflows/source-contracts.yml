@@ -1,0 +1,106 @@
+name: Source contracts and WASM build
+
+on:
+  push:
+    branches: [develop/wasm]
+    paths:
+      - .github/workflows/source-contracts.yml
+      - global.json
+      - Directory.*
+      - runtime/**
+      - game/**
+      - scripts/**
+      - NuGet.config
+      - '**/*.sln'
+      - '**/*.csproj'
+  pull_request:
+    branches: [develop/wasm]
+    paths:
+      - .github/workflows/source-contracts.yml
+      - global.json
+      - Directory.*
+      - runtime/**
+      - game/**
+      - scripts/**
+      - NuGet.config
+      - '**/*.sln'
+      - '**/*.csproj'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: source-wasm-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Contracts and Release WASM publish
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+      CI: true
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up pinned .NET SDK
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 8.0.426
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: game/package-lock.json
+
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+
+      - name: Assert toolchain versions
+        shell: bash
+        run: |
+          test "$(dotnet --version)" = "8.0.426"
+          node --version
+          python --version
+
+      - name: Install and vendor pinned browser physics runtime
+        run: |
+          npm ci --prefix game --ignore-scripts
+          npm run --prefix game vendor
+
+      - name: Run Node contracts
+        run: node --test scripts/*_test.mjs
+
+      - name: Run Python contracts
+        run: python -m unittest discover -s scripts -p '*test.py'
+
+      - name: Run runtime contracts
+        run: dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -c Release
+
+      - name: Run engine checks
+        run: dotnet run --project runtime/EngineChecks/Crisis.Runtime.EngineChecks.csproj -c Release
+
+      - name: Run foundation checks
+        run: dotnet run --project runtime/FoundationChecks/Crisis.Runtime.FoundationChecks.csproj -c Release
+
+      - name: Build source runtime
+        run: dotnet build runtime/Crisis.Runtime.csproj -c Release --no-incremental
+
+      - name: Publish browser WebAssembly runtime
+        run: dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release -o "$RUNNER_TEMP/cpr-browser-publish"
+
+      - name: Verify browser publish output
+        shell: bash
+        run: |
+          root="$RUNNER_TEMP/cpr-browser-publish/wwwroot"
+          test -s "$root/index.html"
+          test -s "$root/browser-input.mjs"
+          find "$root" -type f -name '*.wasm' -print -quit | grep -q .
