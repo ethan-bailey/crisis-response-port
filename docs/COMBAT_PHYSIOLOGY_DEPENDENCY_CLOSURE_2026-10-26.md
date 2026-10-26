@@ -15,6 +15,18 @@ This closes the *inventory* for the combat/physiology gate as presently recovere
 - Do not combine or substitute source files across archive/index revisions. Preserve GUID and hash crosswalks; the source index’s six global unresolved GUIDs are not evidence that the selected Mission profile is unresolved.
 - Run #58 (`17194f02ee8d6cf94d27477a595ff76be00737f1`) passed the new physiology contract and complete package verification; artifact/package identity is in `NEXT_AGENT.md`. Chromium IndexedDB for that run is still pending at last poll. This document itself is source inventory, not a runtime change.
 
+## Gate 4 next-slice inventory: authored vital-hit dispatch
+
+Mission 01 actor setup can produce four or five Occupants depending on recovered runtime settings; exact executions of the same profile observed both counts. The regression therefore needs four Occupants plus the Operator and allocates one distinct actor to each positive source vital type (Operator for brain, Occupants 0–3 for lungs, heart, spine and bone). It does not assume a fifth Occupant exists.
+
+| Dependency | Recovered source/data | Contract assertion |
+| --- | --- | --- |
+| Hit owners and order | `Limb.VitalsTest` → `LimbPhysiology.VitalsTest` → `VitalFunctions.HitTest`; `VitalFunctions.Awake` binds its same-limb `LimbPhysiology`; `Start` binds capsule height/offset; hit normalized Y uses entry/exit local Y and authored capsule dimensions. | Run through original `VitalsTest` on loaded Mission actors; fail if owner binding or capsule start state is absent. |
+| Source serialized vital groups | Each Operator/Occupant prefab has 9 source `VitalFunctions` groups: Pelvis (Lumbar spine .1 Spine, Pelvis .75 Bone); Abdomen (Lumbar spine .1 Spine); Torso (Lungs .75, Heart .15, Thoracic spine .075); Neck (Cervical spine .2 Spine); Head (Cervical spine .2 Spine, Brain 1); each upper leg (Femur .5 Bone, Patella 1 Bone); each lower leg (Tibia .6 Bone). Every entry retains a non-empty authored `AnimationCurve`. | Exact count, names, enum type, authored probability, and curve-presence assertions run for each actor before temporary probability changes. |
+| Chance and position | `LimbVitalFunction.probability` and `.factor`; `AnimationCurve.Evaluate(normalizedY)`; temporary test probability overrides are restored in `finally`. | Positive source curve samples dispatch with factor-scaled projectile volume and shock; a guaranteed probability miss and an authored-coordinate zero-factor no-op leave the measured physiology unchanged. All authored fields are restored. |
+| Physiology destinations | `LimbPhysiology.InflictVitalTrauma`: Brain → `AddBrainTrauma`; Lungs → `AddLungsTrauma`; Heart → `AddHeartTrauma`; Spine → `SetParalyzed`; Bone → `AddBoneTrauma` → `LimbMuscle.AddJointTrauma` and source limb/actor cripple state. | Observe BrainTrauma, LungsEffectiveness, heartCapacity, Paralyzed, and CrippledRatio deltas respectively. Snapshot all other actors before/after each synchronous hit to assert owner isolation. |
+| Adjacent paths held separate | `Physiology.AnnounceHit` follows positive dispatch condition; AnnounceHit rendering depends on source Settings, Mission UI announcements, camera and prefab. Bone joint trauma depends on authored `LimbMuscle` and `HingeJoint`; native solver/contact is external. | This slice proves state dispatch and callback reachability, not hit-announcement pixels, native joint response, Wound/blood render, or source audio. |
+
 ## Dependency graph by subgate
 
 | Order | Required original inputs and owners | Lifecycle / observable result | Current evidence and boundary |

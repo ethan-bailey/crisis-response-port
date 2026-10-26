@@ -18,6 +18,7 @@ public static class MissionPhysiologyContracts
 
         var allActors=operators.Concat(occupants).ToArray();
         foreach(var body in allActors)VerifyRecoveredActorConfiguration(body);
+        var vitalTraumaResult=VerifyVitalTraumaDispatch(world,operators[0],occupants,allActors);
 
         var bleedingBody=occupants[0];
         var bleedingLimb=bleedingBody.limbs.Single(limb=>limb.id==LimbId.Torso);
@@ -96,7 +97,127 @@ public static class MissionPhysiologyContracts
             SetClock(oldTime,oldDelta);
         }
 
-        return JsonSerializer.Serialize(new{contract="recovered-original-actor-physiology",actors=allActors.Length,operatorCount=operators.Length,occupantCount=occupants.Length,serializedStaticConfiguration="verified on loaded Mission actors",fitnessConfiguration="source prefab 0.85; runtime-adaptive",cappedTraumaAndTimedHemorrhage=bleedResult,hypoxicStateTransitions=hypoxiaResult,visualWoundOutput="suppressed",nativeJointPhysicsAdvanced=false});
+        return JsonSerializer.Serialize(new{contract="recovered-original-actor-physiology",actors=allActors.Length,operatorCount=operators.Length,occupantCount=occupants.Length,serializedStaticConfiguration="verified on loaded Mission actors",fitnessConfiguration="source prefab 0.85; runtime-adaptive",authoredVitalTraumaDispatch=vitalTraumaResult,cappedTraumaAndTimedHemorrhage=bleedResult,hypoxicStateTransitions=hypoxiaResult,visualWoundOutput="suppressed",nativeJointPhysicsAdvanced=false});
+    }
+
+    static object VerifyVitalTraumaDispatch(RuntimeWorld world,CharacterBody operatorBody,CharacterBody[] occupants,CharacterBody[] actors)
+    {
+        if(occupants.Length<4)
+            throw new InvalidOperationException($"Vital-trauma contract requires four recovered Occupants plus the recovered Operator so each source type can be observed without cross-contaminating another type; found {occupants.Length}");
+
+        var projectileObject=new GameObject("Vital-trauma source contract projectile",world);
+        var projectile=projectileObject.AddComponent<Crisis.Runtime.FullSource.Projectile>();
+        projectile.DisplacedMaterialVolume=20f;
+        var tests=new[]{
+            (Body:operatorBody,Limb:LimbId.Head,Name:"Brain",Type:LimbVitalFunction.Type.Brain,Observe:(Func<CharacterBody,float>)(body=>body.Physiology.BrainTrauma)),
+            (Body:occupants[0],Limb:LimbId.Torso,Name:"Lungs",Type:LimbVitalFunction.Type.Lungs,Observe:(Func<CharacterBody,float>)(body=>body.Physiology.LungsEffectiveness)),
+            (Body:occupants[1],Limb:LimbId.Torso,Name:"Heart",Type:LimbVitalFunction.Type.Heart,Observe:(Func<CharacterBody,float>)(body=>ReadFloat(body.Physiology,"heartCapacity"))),
+            (Body:occupants[2],Limb:LimbId.Neck,Name:"Cervical spine",Type:LimbVitalFunction.Type.Spine,Observe:(Func<CharacterBody,float>)(body=>body.Physiology.Paralyzed?1f:0f)),
+            (Body:occupants[3],Limb:LimbId.RightUpperLeg,Name:"Femur",Type:LimbVitalFunction.Type.Bone,Observe:(Func<CharacterBody,float>)(body=>body.CrippledRatio))
+        };
+        var results=new List<object>();
+        try
+        {
+            foreach(var test in tests)
+            {
+                var limb=test.Body.limbs.Single(value=>value.id==test.Limb);
+                var physiology=limb.LimbPhysiology??throw new InvalidOperationException($"Recovered {test.Body.name}/{test.Limb} has no source LimbPhysiology");
+                var vitals=limb.GetComponent<VitalFunctions>()??throw new InvalidOperationException($"Recovered {test.Body.name}/{test.Limb} has no source VitalFunctions");
+                var vital=vitals.vitalFunctions.SingleOrDefault(value=>value.name==test.Name&&value.type==test.Type)
+                    ??throw new InvalidOperationException($"Recovered {test.Body.name}/{test.Limb} has no unique authored {test.Name}/{test.Type} vital");
+                var curve=vital.factor??throw new InvalidOperationException($"Recovered {test.Body.name}/{test.Limb}/{test.Name} has no authored factor curve");
+                var normalizedY=FindPositiveCurvePosition(curve);
+                var factor=curve.Evaluate(normalizedY);
+                var heightField=typeof(VitalFunctions).GetField("capsuleHeight",InstanceFlags)!;
+                var offsetField=typeof(VitalFunctions).GetField("capsuleOffset",InstanceFlags)!;
+                var capsuleHeight=(float)heightField.GetValue(vitals)!;
+                var capsuleOffset=(float)offsetField.GetValue(vitals)!;
+                if(!(capsuleHeight>0f)||!float.IsFinite(capsuleHeight)||!float.IsFinite(capsuleOffset))
+                    throw new InvalidOperationException($"Recovered {test.Body.name}/{test.Limb} VitalFunctions.Start did not bind finite CapsuleCollider dimensions: height={capsuleHeight}, offset={capsuleOffset}");
+                var localPoint=new Vector3(0f,normalizedY*capsuleHeight-capsuleOffset,0f);
+                var hitPoint=vitals.transform.TransformPoint(localPoint);
+                var originalProbabilities=vitals.vitalFunctions.Select(value=>(Value:value,Probability:value.probability)).ToArray();
+                var before=test.Observe(test.Body);
+                var offTargetBefore=actors.Where(body=>!ReferenceEquals(body,test.Body)).Select(Snapshot).ToArray();
+                try
+                {
+                    foreach(var item in vitals.vitalFunctions)item.probability=ReferenceEquals(item,vital)?1f:-1f;
+                    if(!(factor>0f))throw new InvalidOperationException($"Recovered {test.Body.name}/{test.Limb}/{test.Name} authored factor never evaluates above zero in the normalized capsule range");
+                    physiology.VitalsTest(projectile,hitPoint,hitPoint,40f);
+                }
+                finally
+                {
+                    foreach(var item in originalProbabilities)item.Value.probability=item.Probability;
+                }
+                var after=test.Observe(test.Body);
+                if(MathF.Abs(after-before)<.00001f)
+                    throw new InvalidOperationException($"Original VitalFunctions.HitTest did not dispatch the recovered {test.Type} vital to {test.Body.name}/{test.Limb}: before={before}, after={after}, factor={factor}, y={normalizedY}");
+                var offTargetAfter=actors.Where(body=>!ReferenceEquals(body,test.Body)).Select(Snapshot).ToArray();
+                if(!offTargetBefore.SequenceEqual(offTargetAfter))
+                    throw new InvalidOperationException($"Original {test.Type} hit changed physiology owned by a different recovered actor");
+                results.Add(new{actor=test.Body.name,limb=test.Limb.ToString(),vital=test.Name,type=test.Type.ToString(),probabilityRestored=vital.probability,factor,normalizedY,sourceDisplacedVolume=projectile.DisplacedMaterialVolume,sourceShock=40f,ownerIsolation=true});
+            }
+
+            var head=operatorBody.limbs.Single(limb=>limb.id==LimbId.Head);
+            var headVitals=head.GetComponent<VitalFunctions>()??throw new InvalidOperationException("Recovered Operator head has no source VitalFunctions for miss/zero-factor paths");
+            var brain=headVitals.vitalFunctions.Single(value=>value.name=="Brain"&&value.type==LimbVitalFunction.Type.Brain);
+            var sampleY=FindPositiveCurvePosition(brain.factor);
+            var height=(float)typeof(VitalFunctions).GetField("capsuleHeight",InstanceFlags)!.GetValue(headVitals)!;
+            var offset=(float)typeof(VitalFunctions).GetField("capsuleOffset",InstanceFlags)!.GetValue(headVitals)!;
+            var point=headVitals.transform.TransformPoint(new Vector3(0f,sampleY*height-offset,0f));
+            var originalProbability=brain.probability;
+            var originalCurve=brain.factor;
+            var others=headVitals.vitalFunctions.Where(value=>!ReferenceEquals(value,brain)).Select(value=>(Value:value,Probability:value.probability)).ToArray();
+            var brainBefore=operatorBody.Physiology.BrainTrauma;
+            try
+            {
+                foreach(var other in others)other.Value.probability=-1f;
+                brain.probability=-1f;
+                head.LimbPhysiology.VitalsTest(projectile,point,point,40f);
+                if(MathF.Abs(operatorBody.Physiology.BrainTrauma-brainBefore)>.00001f)
+                    throw new InvalidOperationException("VitalFunctions probability miss unexpectedly changed source brain trauma");
+                brain.probability=1f;
+                brain.factor=new AnimationCurve(new Keyframe(0f,0f,0f,0f),new Keyframe(1f,0f,0f,0f));
+                head.LimbPhysiology.VitalsTest(projectile,point,point,40f);
+                if(MathF.Abs(operatorBody.Physiology.BrainTrauma-brainBefore)>.00001f)
+                    throw new InvalidOperationException("VitalFunctions zero-factor branch unexpectedly changed source brain trauma");
+            }
+            finally
+            {
+                brain.probability=originalProbability;
+                brain.factor=originalCurve;
+                foreach(var other in others)other.Value.probability=other.Probability;
+            }
+            return new{sourceLimbVitalAssignments="verified for 9 authored limb groups on every actor",positiveDispatch=results,probabilityMissNoOp=true,zeroFactorNoOp=true,distinctActorStateIsolated=true,authoredConfigurationRestored=true,nativeJointPhysicsAdvanced=false};
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(projectileObject);
+        }
+
+        static float FindPositiveCurvePosition(AnimationCurve curve)
+        {
+            var keys=curve.keys;
+            if(keys.Length==0)throw new InvalidOperationException("Recovered vital factor curve has no authored keys");
+            var candidates=keys.Where(key=>key.time>=0f&&key.time<=1f).Select(key=>key.time).ToList();
+            candidates.AddRange(keys.Zip(keys.Skip(1),(a,b)=>(a.time+b.time)*.5f).Where(value=>value>=0f&&value<=1f));
+            for(var index=0;index<=100;index++)
+            {
+                var value=index/100f;
+                if(curve.clampOutside||(value>=keys[0].time&&value<=keys[^1].time))candidates.Add(value);
+            }
+            return candidates.Distinct().Select(value=>(Position:value,Factor:curve.Evaluate(value)))
+                .OrderByDescending(value=>value.Factor).Select(value=>value.Position).FirstOrDefault(float.NaN);
+        }
+
+        static float ReadFloat(object owner,string field)
+        {
+            var info=owner.GetType().GetField(field,InstanceFlags)??throw new MissingFieldException(owner.GetType().FullName,field);
+            return (float)info.GetValue(owner)!;
+        }
+
+        static string Snapshot(CharacterBody body)
+            =>$"{body.GetInstanceID()}:{body.Physiology.BrainTrauma:R}:{body.Physiology.LungsEffectiveness:R}:{ReadFloat(body.Physiology,"heartCapacity"):R}:{body.Physiology.Paralyzed}:{body.CrippledRatio:R}";
     }
 
     static void VerifyRecoveredActorConfiguration(CharacterBody body)
@@ -133,5 +254,37 @@ public static class MissionPhysiologyContracts
         var armorCount=limbs.Count(limb=>limb.GetComponent<LimbArmor>()!=null);
         if(limbs.Count!=19||physiologyCount!=17||vitalCount!=9||armorCount!=4||limbs.Count(limb=>limb.LimbPhysiology==null)!=2)
             throw new InvalidOperationException($"Recovered {body.name} prefab component crosswalk changed: limbs={limbs.Count}, physiology={physiologyCount}, vitalFunctions={vitalCount}, armor={armorCount}, authoredNoPhysiologyHands={limbs.Count(limb=>limb.LimbPhysiology==null)}");
+        VerifyAuthoredVitalAssignments(body);
+    }
+
+    static void VerifyAuthoredVitalAssignments(CharacterBody body)
+    {
+        var expected=new Dictionary<LimbId,(string Name,LimbVitalFunction.Type Type,float Probability)[]>
+        {
+            [LimbId.Pelvis]=[("Lumbar spine",LimbVitalFunction.Type.Spine,.1f),("Pelvis",LimbVitalFunction.Type.Bone,.75f)],
+            [LimbId.Abdomen]=[("Lumbar spine",LimbVitalFunction.Type.Spine,.1f)],
+            [LimbId.Torso]=[("Lungs",LimbVitalFunction.Type.Lungs,.75f),("Heart",LimbVitalFunction.Type.Heart,.15f),("Thoracic spine",LimbVitalFunction.Type.Spine,.075f)],
+            [LimbId.Neck]=[("Cervical spine",LimbVitalFunction.Type.Spine,.2f)],
+            [LimbId.Head]=[("Cervical spine",LimbVitalFunction.Type.Spine,.2f),("Brain",LimbVitalFunction.Type.Brain,1f)],
+            [LimbId.RightUpperLeg]=[("Femur",LimbVitalFunction.Type.Bone,.5f),("Patella",LimbVitalFunction.Type.Bone,1f)],
+            [LimbId.RightLowerLeg]=[("Tibia",LimbVitalFunction.Type.Bone,.6f)],
+            [LimbId.LeftUpperLeg]=[("Femur",LimbVitalFunction.Type.Bone,.5f),("Patella",LimbVitalFunction.Type.Bone,1f)],
+            [LimbId.LeftLowerLeg]=[("Tibia",LimbVitalFunction.Type.Bone,.6f)]
+        };
+        foreach(var group in expected)
+        {
+            var limb=body.limbs.Single(value=>value.id==group.Key);
+            var component=limb.GetComponent<VitalFunctions>()??throw new InvalidOperationException($"Recovered {body.name}/{group.Key} lost its source VitalFunctions component");
+            var actual=component.vitalFunctions??throw new InvalidOperationException($"Recovered {body.name}/{group.Key} has null source vital list");
+            if(actual.Count!=group.Value.Length)
+                throw new InvalidOperationException($"Recovered {body.name}/{group.Key} vital count changed: actual={actual.Count}, expected={group.Value.Length}");
+            foreach(var wanted in group.Value)
+            {
+                var found=actual.SingleOrDefault(value=>value.name==wanted.Name&&value.type==wanted.Type)
+                    ??throw new InvalidOperationException($"Recovered {body.name}/{group.Key} lacks authored vital {wanted.Name}/{wanted.Type}");
+                if(MathF.Abs(found.probability-wanted.Probability)>.00001f||found.factor==null||found.factor.keys.Length==0)
+                    throw new InvalidOperationException($"Recovered {body.name}/{group.Key}/{wanted.Name} serialized probability or factor curve changed: probability={found.probability}, expected={wanted.Probability}");
+            }
+        }
     }
 }
