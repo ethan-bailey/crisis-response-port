@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { BrowserInput } from '../game/browser-input.mjs';
 
 class Surface extends EventTarget {
@@ -225,6 +226,12 @@ test('circular joystick restores vertical aim and only moves horizontally',()=>{
  assert.equal(input.movementStickAim,0);assert.ok(Math.abs(aim.value-1)<1e-12,'neutral release preserves the last vertical aim');
  assert.equal(stick.hasPointerCapture(9),false);
  input.dispose();
+});
+
+test('Mission maps joystick vertical input to absolute aim instead of the prior pointer position',async()=>{
+ const html=await readFile(new URL('../game/index.html',import.meta.url),'utf8');
+ assert.match(html,/const targetY=Math\.max\(-1,Math\.min\(1,vertical\)\)/);
+ assert.doesNotMatch(html,/stickAimBaseY\s*\+\s*vertical/);
 });
 
 test('joystick travel scales walk; sprint requires a deliberate over-pull and has hysteresis',()=>{
