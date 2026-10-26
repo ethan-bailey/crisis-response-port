@@ -123,10 +123,14 @@ public static class ParticleClampVelocityProbe
             module.separateAxes = false;
             module.limit = new ParticleSystem.MinMaxCurve(limit);
             module.dampen = dampen;
-            var emit = new ParticleSystem.EmitParams();
-            emit.velocity = new Vector3(speed, 0f, 0f);
-            emit.startLifetime = 10f;
-            system.Emit(emit, 1);
+            var particle = new ParticleSystem.Particle();
+            particle.position = Vector3.zero;
+            particle.velocity = new Vector3(speed, 0f, 0f);
+            particle.startLifetime = 10f;
+            particle.remainingLifetime = 10f;
+            particle.startSize = 1f;
+            particle.startColor = Color.white;
+            system.SetParticles(new[] { particle }, 1);
             system.Simulate(step, false, false, true);
             var particles = new ParticleSystem.Particle[4];
             int count = system.GetParticles(particles);
