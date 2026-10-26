@@ -1,5 +1,18 @@
 # Site source alignment blocker — 2026-10-26
 
+## Updated exact-source checkpoint — 2026-10-26
+
+Workflow #78 passed on `develop/wasm` SHA `30de783d924312a9483fc5f5a566968b9e64183d`. Its package verifier reported sourceCommit equal to that SHA, 2,686 files, 199 Blazor resources, 195 WASM files, and the complete six-root Mission profile. Source index SHA-256 is `9d866276582031d440c316c8e60d69d252506cf67a8ae9d03dbdbe0d91980f92`; deterministic package tar.gz SHA-256 is `7a6b0d5b6f945ef2457276c6d8a6186638d8d0a0a6969ba57f1140e5a77fa6f5`. Retained artifact `12664937990` has upload digest `sha256:67069fd6fc0a4bcc1a0076fdda44744dfcc414a663a5d3525d7cb80b9a7c1b3b`. Both Contracts/Release and Chromium IndexedDB/WebAudio jobs passed. This closes the exact source/package gate for this develop commit only.
+
+Read-only Sites metadata still reports live version 73 source SHA `5ca69fc5a4b6538121b00aece66a8587997cf1f5` and archive SHA `sha256:d893e55c88784cdd059d1e386445c217dddbf29f9ea5d6d5ac89fbd3105658dc`. GitHub API lookup cannot resolve the v73 source SHA (422). The Site getter does not expose its configured source repo or branch, and `https://api.github.com/repos/ethan-bailey/crisis-response-port/contents/.openai/hosting.json?ref=main` returns 404. Public `main` is `d7af0076274ff0ae4da3da5f84e2d346e94e3292`; tested `develop/wasm` is `30de783d924312a9483fc5f5a566968b9e64183d`; compare is diverged by 1,320 ahead / 21 behind. Site version save requires the source commit to equal the configured remote source branch HEAD. Therefore no source-bound save/deploy input is currently verified; preserve v73 and do not use the develop archive against it.
+
+## Next concrete integration batch
+
+1. Obtain the Site-bound repository and configured source branch from a supported read-only metadata surface or the Site handoff/hosting configuration.
+2. If it is the public repository's `main`, prepare a reviewed integration commit that carries the intended develop runtime onto that branch without silently merging the divergent histories. Run the exact Release WASM, full package integrity and Chromium jobs on that integration SHA.
+3. If the Site supports an explicit source-branch change, verify the new branch binding before packaging. In either route, save/deploy only when the supplied archive and commit SHA both match the current configured Site source branch HEAD.
+4. Continue independent parity work and owner-controlled iPhone acceptance while integration metadata is obtained. This is a concrete missing identity/binding, not a reason to stop all other gates.
+
 The verified build now exists, but it cannot safely be deployed to the existing Site until its source provenance is aligned.
 
 | Item | Exact source |
