@@ -57,10 +57,13 @@ The retained GitHub artifact `crisis-response-site-package-f012fa85de9bb7928c78d
 
 Run #44 predates the new `Chunk`/`LowPolySphere` decoded mesh assets and their CI regeneration comparison. This run therefore establishes the full-source/package baseline at `f012fa8`; the next commit will run all updated tests and recreate those mesh JSON files from the selected artifact before package verification. It does **not** establish full gameplay parity, WebGL browser gameplay, cold/warm phone memory behavior, iPhone Safari acceptance, or the v71 Site-source crosswalk. No Site was deployed.
 
-## Next dependency batch
+## Previously listed dependency batch — verified on public run #81
 
-1. Push the hash-locked `Chunk` and `LowPolySphere` source geometry, revised lifecycle assertions, dependency-version reconciliation, and CI regeneration comparison. Confirm the exact pushed-SHA Actions run passes before treating these files as build inputs.
-2. Keep source-variant matching explicit. All 17 particle materials, textures and meshes are present by path/GUID in the complete export, but all 17 byte hashes differ from the historical particle inventory. The new snapshot's files cannot be silently substituted into the older runtime maps; reconcile that version boundary before rendering them.
+The hash-locked `Chunk` and `LowPolySphere` geometry, lifecycle assertions, source-version reconciliation tests, and CI regeneration checks are present in the pushed branch. Exact-SHA run #81 (`40368479589`, source `da3fae42504557e131d255feed6a8d51b127a699`) passed source recovery/index generation, the complete Mission package build and verifier, and Release WASM output checks. The generated source index SHA-256 is `9d866276582031d440c316c8e60d69d252506cf67a8ae9d03dbdbe0d91980f92`. The Site production source remains the separate, independently verified `d8dbe9f...` checkpoint; run #81 does not change the live Site version.
+
+## Remaining source-version and rendering batch
+
+1. Keep source-variant matching explicit. All 17 particle materials, textures and meshes are present by path/GUID in the complete export, but all 17 byte hashes differ from the historical particle inventory. The new snapshot's files cannot be silently substituted into the older runtime maps; reconcile that version boundary before rendering them.
 3. Close renderer lifecycle for generic Wound `Emit`/`Simulate`/`Play` source commands, and add source-hash-bound Blood material/texture records. Keep actual visual acceptance open until the same-version source mapping and native/browser comparison pass.
 4. Continue the source inventory through tracer LineRenderer material, tracer owners/projectile hooks, other original actors and scenes, then batch the related runtime implementation. These owner prefabs are in the full six-root profile, so inventory from that profile rather than treating them as absent.
 5. Keep `develop/wasm` source and the full package committed/pushed and reproducible. Do not publish a Site build without the exact Site source crosswalk, package verification, and owner-authorized release.
