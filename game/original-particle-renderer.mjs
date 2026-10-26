@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {evaluateSourceParticleFields} from './source-particle-values.mjs';
+import {evaluateSourceInheritedVelocity,evaluateSourceParticleFields} from './source-particle-values.mjs';
 import {sampleRecoveredParticleShape} from './source-particle-shapes.mjs';
 import {stretchedBillboardParameters} from './source-particle-render-modes.mjs';
 
@@ -16,7 +16,7 @@ function visualRandom(event,emitter,index,sourceSeed=null){
   return {radius:next(),arc:next(),hemisphereZ:next(),hemisphereArc:next(),
     directionZ:next(),directionArc:next(),
     startSize:next(),startSpeed:next(),startLifetime:next(),startRotation:next(),color:next(),
-    sizeOverLifetime:next(),rotationOverLifetime:next()};
+    sizeOverLifetime:next(),rotationOverLifetime:next(),inheritVelocity:next()};
 }
 
 // Displays source-linked impact particle assets in WebGL. The original asset
@@ -131,6 +131,10 @@ export function createOriginalParticleRenderer(scene,sources,binder,settings={})
           ?lifetimeRange[0]+(lifetimeRange[1]-lifetimeRange[0])*random.startLifetime
           :plan.emission.lifetime;
         const velocity=particleDirection.multiplyScalar(speed);
+        const inheritance=evaluateSourceInheritedVelocity(emitter,0,random.inheritVelocity);
+        if(inheritance!==0&&!hasSourceCommand)
+          throw new Error('Original particle InheritVelocity requires its source Rigidbody command: '+emitter.sourceEmitterFileID);
+        if(inheritance!==0)velocity.add(v3(commandRecord.attachedRigidbodyVelocity).multiplyScalar(inheritance));
         const object=mode===0||mode===1?new THREE.Sprite(material.clone()):new THREE.Mesh(geometry,material.clone());
         const particle={object,material:object.material,geometry,emitter,renderer:emitter.renderer,sourceGuid:source.guid,
           start:event.time,lifetime,base:particleBase,velocity,
@@ -187,7 +191,8 @@ export function createOriginalParticleRenderer(scene,sources,binder,settings={})
       sourceEmissions.set(`${event.sourceGuid}:${event.sourceFileId}`,{
         randomSeed:event.command.randomSeed>>>0,count:event.command.count,time:event.time,
         startSpeed:event.command.startSpeed,startLifetime:event.command.startLifetime,
-        startSizeMultiplier:event.command.startSizeMultiplier});
+        startSizeMultiplier:event.command.startSizeMultiplier,
+        attachedRigidbodyVelocity:event.attachedRigidbodyVelocity});
   }
   function snapshot(){return {loaded:loadError===null&&textures.size===referencedTextures.size&&
       [...referencedMeshes].every(guid=>geometries.has(guid)),assetError:loadError,

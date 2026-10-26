@@ -129,6 +129,15 @@ export function evaluateSourceParticleFields(emitter, normalizedAge, random = {}
     rotation: evaluateUnityMinMaxCurve(initial.startRotation,0,sample('startRotation'))*rotationMultiplier};
 }
 
+/** Return the authored initial inherited-velocity multiplier, or zero when disabled. */
+export function evaluateSourceInheritedVelocity(emitter, normalizedAge, random = 0) {
+  const module = emitter?.enabledModules?.InheritVelocityModule;
+  if (!module || !module.enabled) return 0;
+  if (module.m_Mode !== 0)
+    throw new RangeError('Unsupported Unity InheritVelocity mode: ' + module.m_Mode);
+  return evaluateUnityMinMaxCurve(module.m_Curve, normalizedAge, random);
+}
+
 /** Apply the recovered SingleEmissionEffect count/speed/lifetime rules to a material impact event. */
 export function evaluateOriginalImpactEmission(controller,impact,phase,settings={}) {
   const f=controller?.serializedFields||controller;

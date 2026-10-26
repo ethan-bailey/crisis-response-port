@@ -204,7 +204,9 @@ export function createOriginalParticleEventBinding(particles,materials,controlle
         'FullSource particle command is missing the original ParticleSystemRenderer fields');
       requireSource(typeof event.hierarchyPath==='string'&&event.hierarchyPath.length>0&&
         Array.isArray(event.position)&&event.position.length===3&&event.position.every(Number.isFinite)&&
-        Array.isArray(event.rotation)&&event.rotation.length===4&&event.rotation.every(Number.isFinite),
+        Array.isArray(event.rotation)&&event.rotation.length===4&&event.rotation.every(Number.isFinite)&&
+        Array.isArray(event.attachedRigidbodyVelocity)&&event.attachedRigidbodyVelocity.length===3&&
+        event.attachedRigidbodyVelocity.every(Number.isFinite),
         'FullSource particle command has invalid hierarchy or world pose');
       const command=event.command;
       requireSource(command&&Object.hasOwn(sourceCommandActions,command.action),

@@ -110,7 +110,7 @@ test('FullSource particle command transport validates provenance, actions and so
     renderer:{sourceGuid:'0123456789abcdef0123456789abcdef',sourceFileId:'19900000',
       sourcePath:'Assets/Resources/effects/ballistic hits/Concrete entry.prefab',sourceAssetSha256:'a'.repeat(64),
       fields:{m_RenderMode:0}},
-    position:[1,2,3],rotation:[0,0,0,1],command:{action:'emit',count:3,maxParticles:512,
+    position:[1,2,3],rotation:[0,0,0,1],attachedRigidbodyVelocity:[.5,0,-1],command:{action:'emit',count:3,maxParticles:512,
       startSpeed:[2,4],startLifetime:[3,3],startSizeMultiplier:1.25,randomSeed:123456789,
       radius:.2,angle:25}};
   binder.observeSourceCommands([command],5,0);
@@ -135,13 +135,14 @@ test('FullSource particle commands reject missing source identity and malformed 
     sourceFields:{m_ParticleSystem:{serializedVersion:6}},
     renderer:{sourceGuid:'0123456789abcdef0123456789abcdef',sourceFileId:'19900000',
       sourcePath:'Assets/Effects/Test.prefab',sourceAssetSha256:'a'.repeat(64),fields:{m_RenderMode:0}},
-    position:[1,2,3],rotation:[0,0,0,1],command:{action:'play'}};
+    position:[1,2,3],rotation:[0,0,0,1],attachedRigidbodyVelocity:[0,0,0],command:{action:'play'}};
   assert.throws(()=>binder.observeSourceCommands([{...command,sourceAssetSha256:'bad'}],5),/provenance/);
   assert.throws(()=>binder.observeSourceCommands([{...command,sourceFields:{}}],5),/ParticleSystem module fields/);
   assert.throws(()=>binder.observeSourceCommands([{...command,renderer:{...command.renderer,fields:{}}}],5),/ParticleSystemRenderer fields/);
   assert.throws(()=>binder.observeSourceCommands([{...command,time:6}],5),/after simulation-clock/);
   assert.throws(()=>binder.observeSourceCommands([{...command,command:{...command.command,action:'emit',count:-1}}],5),/invalid count/);
   assert.throws(()=>binder.observeSourceCommands([{...command,command:{action:'restart'}}],5),/unknown/);
+  assert.throws(()=>binder.observeSourceCommands([{...command,attachedRigidbodyVelocity:[0,NaN,0]}],5),/world pose/);
 });
 
 test('normal page forwards the FullSource actor particle snapshot into the source observer',()=>{
@@ -156,6 +157,7 @@ test('normal page forwards the FullSource actor particle snapshot into the sourc
   const loader=readFileSync(new URL('../runtime/Engine/SceneLoader.cs',import.meta.url),'utf8');
   assert.match(queue,/sourceAssetSha256 = system\.OriginalAssetSha256/);
   assert.match(queue,/randomSeed = state\.randomSeed/);
+  assert.match(queue,/attachedRigidbodyVelocity = attachedRigidbody == null/);
   assert.match(queue,/startLifetime = new\[\] \{ state\.startLifetime\.constantMin, state\.startLifetime\.constantMax \}/);
   assert.match(queue,/sourceFields = system\.OriginalSerializedFields/);
   assert.match(queue,/fields = sourceRenderer\.OriginalSerializedFields/);

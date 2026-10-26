@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {readFileSync} from 'node:fs';
 import {gunzipSync} from 'node:zlib';
-import {evaluateOriginalImpactEmission,evaluateSourceParticleFields,evaluateUnityCurve,evaluateUnityGradient,evaluateUnityMinMaxCurve,evaluateUnityMinMaxGradient} from '../game/source-particle-values.mjs';
+import {evaluateOriginalImpactEmission,evaluateSourceInheritedVelocity,evaluateSourceParticleFields,evaluateUnityCurve,evaluateUnityGradient,evaluateUnityMinMaxCurve,evaluateUnityMinMaxGradient} from '../game/source-particle-values.mjs';
 const controllers=JSON.parse(gunzipSync(readFileSync(new URL('../game/assets/ballistics/original-particle-controllers-source.json.gz',import.meta.url))));
 
 const source=JSON.parse(gunzipSync(readFileSync(new URL('../game/assets/ballistics/original-particles-source.json.gz',import.meta.url))));
@@ -79,6 +79,23 @@ test('source particle field sampling evaluates authored initial and over-lifetim
     }
   }
   assert.equal(evaluated,130);
+});
+
+test('all active impact InheritVelocity modules use source initial mode and retain the owning Rigidbody multiplier',()=>{
+  let count=0;
+  for(const effect of source.effects)for(const emitter of effect.emitters){
+    const module=emitter.enabledModules.InheritVelocityModule;
+    if(!module)continue;
+    count++;
+    assert.equal(module.enabled,1);
+    assert.equal(module.m_Mode,0);
+    for(const age of [0,.25,.5,.75,1])
+      assert.equal(evaluateSourceInheritedVelocity(emitter,age,.37),1);
+  }
+  assert.equal(count,14);
+  assert.equal(evaluateSourceInheritedVelocity({enabledModules:{}},0),0);
+  const unsupported={enabledModules:{InheritVelocityModule:{enabled:1,m_Mode:1,m_Curve:{minMaxState:0,scalar:1}}}};
+  assert.throws(()=>evaluateSourceInheritedVelocity(unsupported,0),/Unsupported Unity InheritVelocity mode/);
 });
 
 test('serialized SingleEmissionEffect fields reproduce original impact count, speed and lifetime formulas',()=>{

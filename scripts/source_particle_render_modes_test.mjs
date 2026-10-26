@@ -39,5 +39,7 @@ test('renderer consumes native Stretch settings instead of constructing a mesh w
   const binding=readFileSync(new URL('../game/original-particle-event-binding.mjs',import.meta.url),'utf8');
   assert.match(renderer,/mode===0\|\|mode===1\?new THREE\.Sprite/);
   assert.match(renderer,/stretchedBillboardParameters\(particle\.velocity\.toArray\(\),size,particle\.renderer,basis\)/);
+  assert.match(renderer,/evaluateSourceInheritedVelocity\(emitter,0,random\.inheritVelocity\)/);
+  assert.match(renderer,/attachedRigidbodyVelocity\).*multiplyScalar\(inheritance\)/);
   assert.match(binding,/new Set\(\[0,1,4\]\)/);
 });

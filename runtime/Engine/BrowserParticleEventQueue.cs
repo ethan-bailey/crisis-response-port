@@ -34,6 +34,7 @@ public sealed class BrowserParticleEventQueue : ParticleSystem.IParticleDriver
         ArgumentNullException.ThrowIfNull(system);
         if (pending.Count >= MaximumPendingEvents) { DroppedEvents++; return; }
         var sourceRenderer = system.gameObject.GetComponent<ParticleSystemRenderer>();
+        var attachedRigidbody = system.GetComponentInParent<Rigidbody>();
         var transform = system.transform;
         var position = transform.position;
         var rotation = transform.rotation;
@@ -61,6 +62,12 @@ public sealed class BrowserParticleEventQueue : ParticleSystem.IParticleDriver
             hierarchyPath = string.Join("/", hierarchy),
             position = new[] { position.x, position.y, position.z },
             rotation = new[] { rotation.x, rotation.y, rotation.z, rotation.w },
+            attachedRigidbodyVelocity = attachedRigidbody == null ? new[] { 0f, 0f, 0f } : new[]
+            {
+                attachedRigidbody.velocity.x,
+                attachedRigidbody.velocity.y,
+                attachedRigidbody.velocity.z
+            },
             command
         });
     }

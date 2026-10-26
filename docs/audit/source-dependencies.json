@@ -751,6 +751,7 @@
     "runtime/Engine/Mesh.cs",
     "runtime/Engine/Objects.cs",
     "runtime/Engine/OriginalArmPhysicsHost.cs",
+    "runtime/Engine/OriginalSourcePackage.cs",
     "runtime/Engine/ParticleSystem.OriginalSerializedFields.cs",
     "runtime/Engine/ParticleSystem.SerializedState.cs",
     "runtime/Engine/ParticleSystem.cs",
@@ -1547,7 +1548,7 @@
     },
     {
       "path": "runtime/Engine/BallisticEffects.cs",
-      "sha256": "1cdb0a98a12fa759ebabfe9c1010dc8f6b92112a63b92aa3c58d762aa7e0867d",
+      "sha256": "83d7fa874486947095a948c36e4374161cbf148cdb68901fc9b50a51a709c7b0",
       "declares": [
         "BallisticHitEffect",
         "BallisticHitMeshEffect",
@@ -1673,6 +1674,42 @@
       ]
     },
     {
+      "path": "runtime/Engine/BrowserAudioEventQueue.cs",
+      "sha256": "358f609b9c2b3d175492771eaa0590455c94188304d282451753b189d44af670",
+      "declares": [
+        "BrowserAudioEventQueue"
+      ],
+      "references": [
+        "AudioClip",
+        "Clear",
+        "IAudioClipPlaybackDriver",
+        "IsPlaying",
+        "Play",
+        "PlayOneShot",
+        "Stop",
+        "Time"
+      ]
+    },
+    {
+      "path": "runtime/Engine/BrowserParticleEventQueue.cs",
+      "sha256": "0bc392ebd3e5751fae45a9112ef8fb6df2a8ba5c008ee2927a7af411f8cdc824",
+      "declares": [
+        "BrowserParticleEventQueue"
+      ],
+      "references": [
+        "Clear",
+        "EmissionState",
+        "GetComponent",
+        "IParticleDriver",
+        "ParticleSystem",
+        "ParticleSystemRenderer",
+        "Play",
+        "Rigidbody",
+        "Simulate",
+        "Time"
+      ]
+    },
+    {
       "path": "runtime/Engine/CharacterPhysics.cs",
       "sha256": "384fd5643d732b448f504c9e1c237d54e8aa9c28b2bf3d63d97097d5535b022e",
       "declares": [
@@ -1742,6 +1779,49 @@
       ],
       "references": [
         "RuntimeWorld"
+      ]
+    },
+    {
+      "path": "runtime/Engine/FullSourceActorBridge.cs",
+      "sha256": "0824a4dc5f64ed43af01af7cff919521067162252f3a12463421c3f8dbe87814",
+      "declares": [
+        "FullSourceActorBridge"
+      ],
+      "references": [
+        "Action",
+        "BrowserAudioEventQueue",
+        "BrowserParticleEventQueue",
+        "Casing",
+        "CharacterBody",
+        "Clear",
+        "Destroy",
+        "Direction",
+        "ForceMode",
+        "GameObject",
+        "GetChild",
+        "GetComponent",
+        "Global",
+        "Input",
+        "InputHandler",
+        "InputKey",
+        "InputMapping",
+        "InteriorMode",
+        "IsPlayer",
+        "KeyCode",
+        "Mission",
+        "Object",
+        "PlayerController",
+        "Quaternion",
+        "Rigidbody",
+        "RuntimeWorld",
+        "SetValue",
+        "Step",
+        "Text",
+        "Time",
+        "Transform",
+        "Vector3",
+        "WeaponPointer",
+        "in"
       ]
     },
     {
@@ -1824,7 +1904,7 @@
     },
     {
       "path": "runtime/Engine/Objects.cs",
-      "sha256": "bc6b8ae3958337e35f4b50ba9866006074a9a303c9985fd8c5d9ab6f429ab54d",
+      "sha256": "db3c3430f69dc92b171c1ac4411953cb57b18d0143d0275717de83bacef3caec",
       "declares": [
         "ActivationScope",
         "Axis",
@@ -1832,6 +1912,7 @@
         "CanvasRenderer",
         "Component",
         "GameObject",
+        "ICloneReferenceState",
         "ILightDriver",
         "Light",
         "MonoBehaviour",
@@ -1975,6 +2056,20 @@
       ]
     },
     {
+      "path": "runtime/Engine/OriginalSourcePackage.cs",
+      "sha256": "62e95ff26e2c2ae1ecf08f4059d9a54d26ce3a25f71729be3408cd63e9f2b5dc",
+      "declares": [
+        "OriginalSourcePackage",
+        "StoredAsset"
+      ],
+      "references": [
+        "GetString",
+        "Object",
+        "Text",
+        "in"
+      ]
+    },
+    {
       "path": "runtime/Engine/ParticleSystem.OriginalSerializedFields.cs",
       "sha256": "95e521c5ac526435dd315372976df43bbd6cb121779e3ba6f71ec35aa7afe2f5",
       "declares": [
@@ -1996,7 +2091,7 @@
     },
     {
       "path": "runtime/Engine/ParticleSystem.cs",
-      "sha256": "a2007cd573aaaf9caecc34f4f0ffb6c29cf01eba0b4a795176a23bd629f935b1",
+      "sha256": "c0969f558d41d751b3b5dde45a2c0593f6506b7e3134a26e844dfb033e28b6fc",
       "declares": [
         "EmissionState",
         "IParticleCollisionDriver",
@@ -2043,7 +2138,7 @@
     },
     {
       "path": "runtime/Engine/PhysicsComponents.cs",
-      "sha256": "f6cd99ebbbb8cda34405ddf4093dd25b7517965158dd35671872bd921bf6d7b8",
+      "sha256": "8ef7d08b4ae28ea366bb4056f4b9f971f27159f93bd3afc1f11298ce1a564f0c",
       "declares": [
         "Camera",
         "CameraClearFlags",
@@ -2096,7 +2191,7 @@
     },
     {
       "path": "runtime/Engine/PrefabCloner.cs",
-      "sha256": "91d0073806ff155c4df9cba949b2e1fa74cf7d24a136f8768fe7aac9475676a1",
+      "sha256": "0e82e76c8a4374f177a90f2846aef177187091e3b50f212ea281865fe478d7a5",
       "declares": [
         "PrefabCloner"
       ],
@@ -2104,9 +2199,11 @@
         "AnimationCurve",
         "Behaviour",
         "BoxCollider",
+        "Canvas",
         "Color",
         "Component",
         "GameObject",
+        "ICloneReferenceState",
         "Keyframe",
         "Light",
         "MonoBehaviour",
@@ -2169,7 +2266,7 @@
     },
     {
       "path": "runtime/Engine/ProjectileFlightHost.cs",
-      "sha256": "75c627f8e47abe93b9be24549e0cd3f9ae08d2b53cbd7b56be25141d09bc1264",
+      "sha256": "7ba09fcdeada521347eb5561d8c315df18be741117464fde75e4946eafc096c5",
       "declares": [
         "Projectile",
         "TutorialSoftTarget"
@@ -2390,13 +2487,14 @@
     },
     {
       "path": "runtime/Engine/Resources.cs",
-      "sha256": "8d5fc4cbe72568394c408647c770d8f2033493ff43a332f8693c1e08980b9498",
+      "sha256": "76959d5b1e960a8aa6ec33f54f141ca95b3b44f1afefd49fcaffa39760fcc944",
       "declares": [
         "Resources"
       ],
       "references": [
         "Clear",
         "Object",
+        "OriginalSourcePackage",
         "Replace",
         "RuntimeWorld",
         "SceneLoader",
@@ -2453,7 +2551,7 @@
     },
     {
       "path": "runtime/Engine/SceneLoader.cs",
-      "sha256": "dd862009b59a9f8529359c64a14e2cc8df1d495dc0352607b087d5c6101997ec",
+      "sha256": "05b8f3e9fed0045d1e2d38f7c96c2fb4c02476c1f68eeb6d7c4ee9761ca0f433",
       "declares": [
         "SceneLoadResult",
         "SceneLoader",
@@ -2474,6 +2572,7 @@
         "Camera",
         "Canvas",
         "CanvasRenderer",
+        "CanvasScaler",
         "CapsuleCollider",
         "Clear",
         "CollisionDetectionMode",
@@ -2482,12 +2581,16 @@
         "Enum",
         "GameObject",
         "GetString",
+        "Graphic",
+        "GraphicRaycaster",
         "HingeJoint",
+        "Image",
         "IsNullOrEmpty",
         "JointLimits",
         "JointMotor",
         "JointSpring",
         "Keyframe",
+        "LayerMask",
         "Light",
         "LineRenderer",
         "Material",
@@ -2497,6 +2600,7 @@
         "MeshRenderer",
         "MonoBehaviour",
         "Object",
+        "OriginalSourcePackage",
         "ParticleSystem",
         "ParticleSystemRenderer",
         "PhysicMaterial",
@@ -2506,6 +2610,8 @@
         "QueryTriggerInteraction",
         "Ray",
         "Raycast",
+        "RectTransform",
+        "RenderMode",
         "Rigidbody",
         "RigidbodyConstraints",
         "RigidbodyInterpolation",
@@ -2575,7 +2681,7 @@
     },
     {
       "path": "runtime/Engine/SerializedAssetResolver.cs",
-      "sha256": "43f6771bc43852d3713f737e6f94d3a537e369d59005f34948e2ec43835d2f34",
+      "sha256": "6d8d8095bd5a390b188d44abf1eea18722378840ad355231a1e8644486871cc7",
       "declares": [
         "SerializedAssetIdentity",
         "SerializedAssetResolver"
@@ -2594,6 +2700,7 @@
         "Material",
         "Mesh",
         "Object",
+        "OriginalSourcePackage",
         "PhysicMaterial",
         "RuntimeAnimatorController",
         "RuntimeWorld",
@@ -2612,7 +2719,7 @@
     },
     {
       "path": "runtime/Engine/SerializedEngineTypes.cs",
-      "sha256": "97f2323755a800b4aa9597469a9684f7ffc58c2661d00c9d3cd56bb1da87dc0c",
+      "sha256": "87a6a4472ff288cb89659ee1eabba592798499da6493e8e56239f0cabcad7b09",
       "declares": [
         "AddComponentMenu",
         "Application",
@@ -2677,7 +2784,7 @@
     },
     {
       "path": "runtime/Engine/UI.cs",
-      "sha256": "ca3e6e242ea7a179392c8995e41f02f6236272900da4d52076638df23c2c8ac3",
+      "sha256": "7a89320bfe1d21cb3158e7eb8a68b487c7f5dfccda74ee5d0d0dfbf82fdc5ba3",
       "declares": [
         "Button",
         "CanvasScaler",
@@ -2706,6 +2813,9 @@
         "Action",
         "Clear",
         "Color",
+        "Component",
+        "ICloneReferenceState",
+        "LayerMask",
         "Material",
         "MonoBehaviour",
         "Rect",
@@ -2714,7 +2824,8 @@
         "SetColor",
         "Sprite",
         "Texture",
-        "UnityEvent"
+        "UnityEvent",
+        "Vector2"
       ]
     },
     {
@@ -9350,7 +9461,7 @@
     },
     {
       "path": "runtime/Original/FullSource/Casing.cs",
-      "sha256": "c4e1d228ee0905e8d340a9774a77bd01d75ea1c6cc6eae9cf36e44e80a8ddd7c",
+      "sha256": "1fd3d310cec36b5adcc1f62ac7973b44b2a0503c8e7382defaea8d165b377c07",
       "declares": [
         "Casing"
       ],
@@ -18899,6 +19010,7 @@
         "runtime/Engine/ArmPhysicsComponents.cs",
         "runtime/Engine/BallisticEngine.cs",
         "runtime/Engine/BallisticRuntimeHost.cs",
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/Math.cs",
         "runtime/Engine/Objects.cs",
         "runtime/Engine/PhysicsComponents.cs",
@@ -20340,6 +20452,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/BrowserAudioEventQueue.cs",
         "runtime/Engine/LegacyWWW.cs",
         "runtime/Engine/SceneLoader.cs",
         "runtime/Engine/SerializedAssetResolver.cs",
@@ -22858,6 +22971,36 @@
       ]
     },
     {
+      "name": "BrowserAudioEventQueue",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/BrowserAudioEventQueue.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Engine/FullSourceActorBridge.cs"
+      ]
+    },
+    {
+      "name": "BrowserParticleEventQueue",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/BrowserParticleEventQueue.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Engine/FullSourceActorBridge.cs"
+      ]
+    },
+    {
       "name": "BuildAvailability",
       "category": "recovered source",
       "requiresAuthoredAssets": false,
@@ -23238,6 +23381,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/PrefabCloner.cs",
         "runtime/Engine/SceneLoader.cs",
         "runtime/Original/FullSource/GlobalContext.cs",
         "runtime/Original/FullSource/InteriorModeUI.cs",
@@ -23274,7 +23418,9 @@
       "referenceSources": [],
       "archiveEntries": [],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Engine/SceneLoader.cs"
+      ]
     },
     {
       "name": "CapsuleCollider",
@@ -23315,6 +23461,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Original/AmmunitionBase.cs",
         "runtime/Original/FullSource/AmmunitionBase.cs",
         "runtime/Original/FullSource/CyclingBolt.cs",
@@ -23749,6 +23896,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/OriginalArmPhysicsHost.cs",
         "runtime/Engine/ProjectileMaterialHost.cs",
         "runtime/Original/Animation/ArmController.cs",
@@ -24266,7 +24414,10 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/BallisticRuntimeHost.cs",
+        "runtime/Engine/BrowserAudioEventQueue.cs",
+        "runtime/Engine/BrowserParticleEventQueue.cs",
         "runtime/Engine/ClockInput.cs",
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/Mesh.cs",
         "runtime/Engine/Objects.cs",
         "runtime/Engine/OriginalArmPhysicsHost.cs",
@@ -25006,6 +25157,7 @@
         "runtime/Engine/ProjectileMaterialHost.cs",
         "runtime/Engine/SceneLoader.cs",
         "runtime/Engine/SerializedAssetResolver.cs",
+        "runtime/Engine/UI.cs",
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/SharedVariable.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/VariableSynchronizer.cs",
@@ -25918,6 +26070,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/BallisticEffects.cs",
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/Objects.cs",
         "runtime/Engine/RenderTexture.cs",
         "runtime/Engine/RuntimeContracts.cs",
@@ -26079,6 +26232,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/PresentationHost.cs",
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ApplyGauze.cs",
@@ -26905,7 +27059,9 @@
       "referenceSources": [],
       "archiveEntries": [],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Engine/BrowserParticleEventQueue.cs"
+      ]
     },
     {
       "name": "Emitter",
@@ -28391,6 +28547,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/Objects.cs",
         "runtime/Engine/PhysicsComponents.cs",
         "runtime/Original/Animation/ArmController.cs",
@@ -28809,6 +28966,19 @@
       "referencedBy": []
     },
     {
+      "name": "FullSourceActorBridge",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/FullSourceActorBridge.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
+    },
+    {
       "name": "FullSourceArmorBridge",
       "category": "recovered source",
       "requiresAuthoredAssets": false,
@@ -28960,6 +29130,7 @@
         "runtime/Engine/BallisticRuntimeHost.cs",
         "runtime/Engine/BodyPoseHost.cs",
         "runtime/Engine/CharacterPhysics.cs",
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/OriginalArmSequences.cs",
         "runtime/Engine/OriginalHandModes.cs",
         "runtime/Engine/OriginalInputHost.cs",
@@ -29307,6 +29478,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/Objects.cs",
         "runtime/Engine/RuntimeContracts.cs",
         "runtime/Engine/WeaponHost.cs",
@@ -29379,6 +29551,8 @@
       "referencedBy": [
         "runtime/Engine/AmmunitionLoader.cs",
         "runtime/Engine/BallisticRuntimeHost.cs",
+        "runtime/Engine/BrowserParticleEventQueue.cs",
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/Objects.cs",
         "runtime/Engine/OriginalArmPhysicsHost.cs",
         "runtime/Engine/RuntimeContracts.cs",
@@ -30605,6 +30779,7 @@
         "runtime/Engine/BallisticRuntimeHost.cs",
         "runtime/Engine/OriginalArmPhysicsHost.cs",
         "runtime/Engine/OriginalArmSequences.cs",
+        "runtime/Engine/OriginalSourcePackage.cs",
         "runtime/Engine/PlayerPrefs.cs",
         "runtime/Engine/PresentationHost.cs",
         "runtime/Engine/Rendering/Texture2D.cs",
@@ -30869,6 +31044,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/AllPacified.cs",
         "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ApplyGauze.cs",
         "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ApplyGauzeCondition.cs",
@@ -31148,7 +31324,9 @@
       "referenceSources": [],
       "archiveEntries": [],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Engine/SceneLoader.cs"
+      ]
     },
     {
       "name": "GraphicRaycaster",
@@ -31161,7 +31339,9 @@
       "referenceSources": [],
       "archiveEntries": [],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Engine/SceneLoader.cs"
+      ]
     },
     {
       "name": "Graphics",
@@ -32040,7 +32220,9 @@
       "referenceSources": [],
       "archiveEntries": [],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Engine/BrowserAudioEventQueue.cs"
+      ]
     },
     {
       "name": "IAudioMixerDriver",
@@ -32085,6 +32267,22 @@
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/Behavior.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/BehaviorSource.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/ExternalBehavior.cs"
+      ]
+    },
+    {
+      "name": "ICloneReferenceState",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/Objects.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Engine/PrefabCloner.cs",
+        "runtime/Engine/UI.cs"
       ]
     },
     {
@@ -32426,6 +32624,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/BrowserParticleEventQueue.cs",
         "runtime/Engine/Objects.cs"
       ]
     },
@@ -32723,6 +32922,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Original/FullSource/ImageColorFlasher.cs",
         "runtime/Original/FullSource/MainMenu.cs",
         "runtime/Original/FullSource/PauseMenu.cs",
@@ -32833,6 +33033,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/Objects.cs",
         "runtime/Engine/OriginalInputHost.cs",
         "runtime/Engine/RuntimeContracts.cs",
@@ -32896,6 +33097,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/OriginalInputHost.cs",
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ApplyGauze.cs",
@@ -32947,6 +33149,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/OriginalInputHost.cs",
         "runtime/Engine/RuntimeContracts.cs",
         "runtime/Original/FullSource/InputHandler.cs",
@@ -32978,6 +33181,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/OriginalInputHost.cs",
         "runtime/Original/FullSource/GlobalContext.cs",
         "runtime/Original/FullSource/InputHandler.cs",
@@ -33318,6 +33522,7 @@
       ],
       "compilerMissing": true,
       "referencedBy": [
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ApplyGauze.cs",
         "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/CheckVitals.cs",
         "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/DisarmTrap.cs",
@@ -33848,6 +34053,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ApplyGauze.cs",
         "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/CheckVitals.cs",
@@ -33906,6 +34112,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/Audio.cs",
+        "runtime/Engine/BrowserAudioEventQueue.cs",
         "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/HandleDoor.cs",
         "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/Lead.cs",
         "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ReadyStunGrenade.cs",
@@ -34161,6 +34368,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/ClockInput.cs",
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Original/FullSource/AlternateCamera.cs",
         "runtime/Original/FullSource/Benchmark.cs",
         "runtime/Original/FullSource/InputHandler.cs",
@@ -34265,6 +34473,8 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/SceneLoader.cs",
+        "runtime/Engine/UI.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserialization.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/JSONDeserializationDeprecated.cs",
         "runtime/Original/BehaviorDesigner/BinaryDeserialization.cs",
@@ -36178,6 +36388,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/AllPacified.cs",
         "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ApplyGauze.cs",
         "runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Operators/ApplyGauzeCondition.cs",
@@ -37260,8 +37471,10 @@
         "runtime/Engine/BallisticEffects.cs",
         "runtime/Engine/BallisticRuntimeHost.cs",
         "runtime/Engine/CoreSerializedAssetTypes.cs",
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/Math.cs",
         "runtime/Engine/Mesh.cs",
+        "runtime/Engine/OriginalSourcePackage.cs",
         "runtime/Engine/PrefabCloner.cs",
         "runtime/Engine/ProjectileMaterialHost.cs",
         "runtime/Engine/RenderTexture.cs",
@@ -38184,6 +38397,23 @@
       ]
     },
     {
+      "name": "OriginalSourcePackage",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/OriginalSourcePackage.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": [
+        "runtime/Engine/Resources.cs",
+        "runtime/Engine/SceneLoader.cs",
+        "runtime/Engine/SerializedAssetResolver.cs"
+      ]
+    },
+    {
       "name": "OverrideFieldValue",
       "category": "recovered source",
       "requiresAuthoredAssets": false,
@@ -38387,6 +38617,7 @@
       "archiveEntries": [],
       "compilerMissing": true,
       "referencedBy": [
+        "runtime/Engine/BrowserParticleEventQueue.cs",
         "runtime/Engine/Objects.cs",
         "runtime/Engine/SceneLoader.cs",
         "runtime/Original/FullSource/Emitter.cs",
@@ -38417,6 +38648,7 @@
       "archiveEntries": [],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/BrowserParticleEventQueue.cs",
         "runtime/Engine/SceneLoader.cs"
       ]
     },
@@ -38762,6 +38994,8 @@
       "referencedBy": [
         "runtime/Engine/Audio.cs",
         "runtime/Engine/BallisticEffects.cs",
+        "runtime/Engine/BrowserAudioEventQueue.cs",
+        "runtime/Engine/BrowserParticleEventQueue.cs",
         "runtime/Engine/ParticleSystem.cs",
         "runtime/Engine/WeaponHost.cs",
         "runtime/Original/Ballistics/BallisticHitMeshEffect.cs",
@@ -38821,6 +39055,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/Audio.cs",
+        "runtime/Engine/BrowserAudioEventQueue.cs",
         "runtime/Original/FullSource/AudioPlayer.cs",
         "runtime/Original/FullSource/BallisticHitEffect.cs",
         "runtime/Original/FullSource/Casing.cs",
@@ -38887,6 +39122,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Original/CharacterBody.Full.cs",
         "runtime/Original/FullSource/CharacterPhysiologyVisualizer.cs",
         "runtime/Original/FullSource/DoorTrap.cs",
@@ -39443,6 +39679,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/BallisticEffects.cs",
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/Objects.cs",
         "runtime/Engine/PrefabCloner.cs",
         "runtime/Engine/PresentationHost.cs",
@@ -40279,6 +40516,7 @@
       "referencedBy": [
         "runtime/Engine/PrefabCloner.cs",
         "runtime/Engine/RectTransformUtility.cs",
+        "runtime/Engine/SceneLoader.cs",
         "runtime/Engine/UI.cs",
         "runtime/Original/FullSource/GlobalContext.cs",
         "runtime/Original/FullSource/MarksmanBoltActionVisualization.cs",
@@ -40421,7 +40659,9 @@
       "referenceSources": [],
       "archiveEntries": [],
       "compilerMissing": false,
-      "referencedBy": []
+      "referencedBy": [
+        "runtime/Engine/SceneLoader.cs"
+      ]
     },
     {
       "name": "RenderOrder",
@@ -41005,7 +41245,9 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/ArmPhysicsComponents.cs",
+        "runtime/Engine/BrowserParticleEventQueue.cs",
         "runtime/Engine/CharacterPhysics.cs",
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/Objects.cs",
         "runtime/Engine/OriginalArmPhysicsHost.cs",
         "runtime/Engine/Physics.cs",
@@ -41382,6 +41624,7 @@
         "runtime/Engine/BallisticRuntimeHost.cs",
         "runtime/Engine/BodyPoseHost.cs",
         "runtime/Engine/DisplaySettings.cs",
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/GL.cs",
         "runtime/Engine/OriginalArmPhysicsHost.cs",
         "runtime/Engine/OriginalArmSequences.cs",
@@ -44771,6 +45014,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/AmmunitionLoader.cs",
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/PrefabCloner.cs",
         "runtime/Engine/PresentationHost.cs",
         "runtime/Engine/SceneLoader.cs",
@@ -45700,6 +45944,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/BrowserParticleEventQueue.cs",
         "runtime/Engine/ParticleSystem.cs",
         "runtime/Original/FullSource/SingleEmissionEffect.cs"
       ]
@@ -46269,6 +46514,7 @@
         "runtime/Engine/BallisticEffects.cs",
         "runtime/Engine/BallisticRuntimeHost.cs",
         "runtime/Engine/BodyPoseHost.cs",
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/OriginalArmPhysicsHost.cs",
         "runtime/Engine/PresentationHost.cs",
         "runtime/Engine/WeaponHost.cs",
@@ -46318,6 +46564,7 @@
       "compilerMissing": false,
       "referencedBy": [
         "runtime/Engine/Audio.cs",
+        "runtime/Engine/BrowserAudioEventQueue.cs",
         "runtime/Original/Ballistics/BallisticMaterial.cs",
         "runtime/Original/Ballistics/BallisticResult.cs",
         "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/Behavior.cs",
@@ -46387,6 +46634,19 @@
       "runtimeSources": [],
       "engineSources": [
         "runtime/Engine/Rendering/TextureTransfers.cs"
+      ],
+      "referenceSources": [],
+      "archiveEntries": [],
+      "compilerMissing": false,
+      "referencedBy": []
+    },
+    {
+      "name": "StoredAsset",
+      "category": "native Unity adapter",
+      "requiresAuthoredAssets": false,
+      "runtimeSources": [],
+      "engineSources": [
+        "runtime/Engine/OriginalSourcePackage.cs"
       ],
       "referenceSources": [],
       "archiveEntries": [],
@@ -47502,10 +47762,12 @@
         "runtime/Engine/BallisticEngine.cs",
         "runtime/Engine/BallisticRuntimeHost.cs",
         "runtime/Engine/BoxCollider2D.cs",
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/Objects.cs",
         "runtime/Engine/OriginalArmPhysicsHost.cs",
         "runtime/Engine/OriginalArmSequences.cs",
         "runtime/Engine/OriginalHandModes.cs",
+        "runtime/Engine/OriginalSourcePackage.cs",
         "runtime/Engine/ParticleSystem.SerializedState.cs",
         "runtime/Engine/PresentationHost.cs",
         "runtime/Engine/Rendering/Texture2D.cs",
@@ -47928,6 +48190,9 @@
       "referencedBy": [
         "runtime/Engine/AmmunitionLoader.cs",
         "runtime/Engine/BallisticEffects.cs",
+        "runtime/Engine/BrowserAudioEventQueue.cs",
+        "runtime/Engine/BrowserParticleEventQueue.cs",
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/Objects.cs",
         "runtime/Engine/PresentationHost.cs",
         "runtime/Engine/ProjectileFlightHost.cs",
@@ -48315,6 +48580,7 @@
         "runtime/Engine/BallisticRuntimeHost.cs",
         "runtime/Engine/BodyPoseHost.cs",
         "runtime/Engine/CharacterPhysics.cs",
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/Math.cs",
         "runtime/Engine/OriginalArmPhysicsHost.cs",
         "runtime/Engine/ParticleSystem.OriginalSerializedFields.cs",
@@ -51419,6 +51685,7 @@
         "runtime/Engine/SerializationTypes.cs",
         "runtime/Engine/SerializedAssetResolver.cs",
         "runtime/Engine/SerializedEngineTypes.cs",
+        "runtime/Engine/UI.cs",
         "runtime/Engine/UnityEventSystems.cs",
         "runtime/Original/Ballistics/BallisticMaterial.cs",
         "runtime/Original/Ballistics/BallisticMaterialProperties.cs",
@@ -51499,6 +51766,7 @@
         "runtime/Engine/BodyPoseHost.cs",
         "runtime/Engine/CharacterPhysics.cs",
         "runtime/Engine/ClockInput.cs",
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/Mesh.cs",
         "runtime/Engine/Objects.cs",
         "runtime/Engine/OriginalArmPhysicsHost.cs",
@@ -52653,6 +52921,7 @@
       ],
       "compilerMissing": false,
       "referencedBy": [
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Original/FullSource/InteriorModeUI.cs",
         "runtime/Original/FullSource/PlayerController.cs",
         "runtime/Original/FullSource/TeamTutorial.cs",
@@ -54171,10 +54440,12 @@
         "runtime/Engine/Animator.cs",
         "runtime/Engine/AnimatorGraphDriver.cs",
         "runtime/Engine/CharacterPhysics.cs",
+        "runtime/Engine/FullSourceActorBridge.cs",
         "runtime/Engine/Objects.cs",
         "runtime/Engine/OriginalArmPhysicsHost.cs",
         "runtime/Engine/OriginalArmSequences.cs",
         "runtime/Engine/OriginalHandModes.cs",
+        "runtime/Engine/OriginalSourcePackage.cs",
         "runtime/Engine/Physics.cs",
         "runtime/Engine/PrefabCloner.cs",
         "runtime/Engine/PresentationHost.cs",
