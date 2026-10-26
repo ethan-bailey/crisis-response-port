@@ -7,6 +7,7 @@ import { chromium } from "../game/node_modules/playwright/index.mjs";
 const sha256 = bytes => createHash("sha256").update(bytes).digest("hex");
 const sourceHash1 = "a".repeat(64);
 const sourceHash2 = "b".repeat(64);
+const sourceHash3 = "c".repeat(64);
 const assetPath = "Assets/Resources/fixture.prefab";
 const assetName = "assets/0123456789abcdef01234567.json.gz";
 const rawAsset = Buffer.from(JSON.stringify({ fixture: "verified IndexedDB cache" }));
@@ -63,6 +64,8 @@ const server = createServer(async (request, response) => {
         from "/scene-data/scene-package-loader.mjs";
       window.runFixtureLoad = async (version = 1) => {
         const progress = [];
+        const controller = new AbortController();
+        window.abortFixtureLoad = () => controller.abort();
         const bridge = { invokeMethodAsync: async (method, ...args) => {
           if (method === "InitializeIncrementalSourcePackage")
             return JSON.stringify({ expectedAssets: 1, receivedAssets: 0, receivedBytes: 0, receivedCompressedBytes: 0 });
@@ -75,16 +78,19 @@ const server = createServer(async (request, response) => {
         } };
         const result = await deliverIncrementalSourceProfile(bridge,
           location.origin + "/manifest.json?version=" + version,
-          { onProgress: value => progress.push(value) });
-        return { result, progress };
+          { signal: controller.signal, onProgress: value => progress.push(value) });
+        return { result, progress, error: null };
       };
+      window.abortFixtureLoad = () => {};
       window.clearFixtureCache = () => clearIncrementalSourceCache(location.origin + "/manifest.json?version=1");
     </script>`);
     return;
   }
   if (url.pathname === "/manifest.json") {
     counts.manifest++;
-    send(200, "application/json", JSON.stringify(manifest(url.searchParams.get("version") === "2" ? sourceHash2 : sourceHash1)));
+    const version = url.searchParams.get("version");
+    const sourceHash = version === "2" ? sourceHash2 : version === "3" ? sourceHash3 : sourceHash1;
+    send(200, "application/json", JSON.stringify(manifest(sourceHash)));
     return;
   }
   if (url.pathname === "/metadata.json.gz") {
@@ -130,6 +136,42 @@ try {
   assert.equal(second.progress.at(-1).asset.wasCached, true, "a full page reload reuses the verified IndexedDB record");
   assert.equal(counts.asset, 1, "a valid local hit avoids the asset request");
 
+  let interruptOnce = true;
+  await page.route(`**/${assetName}`, async route => {
+    if (interruptOnce) {
+      interruptOnce = false;
+      await page.evaluate(() => window.abortFixtureLoad());
+      await route.abort("failed");
+      return;
+    }
+    await route.continue();
+  });
+  const interrupted = await page.evaluate(async () => {
+    try { return await window.runFixtureLoad(2); }
+    catch (error) { return { progress: [], error: { name: error.name, message: error.message } }; }
+  });
+  assert.equal(interrupted.error?.name, "AbortError", "cancelling an in-flight asset fetch returns AbortError");
+  const partialCache = await page.evaluate(async ({ sourceHash, assetUrl }) => {
+    const database = await new Promise((resolve, reject) => {
+      const request = indexedDB.open("crisis-response-mission-assets", 1);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    const record = await new Promise((resolve, reject) => {
+      const transaction = database.transaction("assets", "readonly");
+      const request = transaction.objectStore("assets").get(sourceHash + ":" + assetUrl);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    database.close();
+    return !!record;
+  }, { sourceHash: sourceHash2, assetUrl: `${origin}/${assetName}` });
+  assert.equal(partialCache, false, "an interrupted fetch does not write a partial IndexedDB record");
+  const retry = await page.evaluate(() => window.runFixtureLoad(2));
+  assert.equal(retry.progress.at(-1).asset.wasCached, false, "retry downloads after the interrupted request");
+  assert.equal(retry.progress.at(-1).asset.cachedLocally, true, "retry stores only the complete verified response");
+  await page.unroute(`**/${assetName}`);
+
   await page.evaluate(async ({ sourceHash, assetUrl }) => {
     const database = await new Promise((resolve, reject) => {
       const request = indexedDB.open("crisis-response-mission-assets", 1);
@@ -149,11 +191,11 @@ try {
   const recovered = await page.evaluate(() => window.runFixtureLoad(1));
   assert.equal(recovered.progress.at(-1).asset.wasCached, false, "corrupt record is rejected");
   assert.equal(recovered.progress.at(-1).asset.cachedLocally, true, "verified network bytes replace the bad record");
-  assert.equal(counts.asset, 2, "one network recovery request repairs the corrupt cache entry");
+  assert.equal(counts.asset, 3, "one network recovery request repairs the corrupt cache entry");
 
-  const changedManifest = await page.evaluate(() => window.runFixtureLoad(2));
+  const changedManifest = await page.evaluate(() => window.runFixtureLoad(3));
   assert.equal(changedManifest.progress.at(-1).asset.wasCached, false, "a different source hash cannot reuse the prior version");
-  assert.equal(counts.asset, 3);
+  assert.equal(counts.asset, 4);
 
   const cleared = await page.evaluate(() => window.clearFixtureCache());
   assert.deepEqual(cleared, { cleared: true, available: true });
@@ -171,11 +213,11 @@ try {
     });
     database.close();
     return !!record;
-  }, { sourceHash: sourceHash2, assetUrl: `${origin}/${assetName}` });
+  }, { sourceHash: sourceHash3, assetUrl: `${origin}/${assetName}` });
   assert.equal(otherVersionSurvived, true, "clearing one manifest leaves other source versions intact");
   const afterClear = await page.evaluate(() => window.runFixtureLoad(1));
   assert.equal(afterClear.progress.at(-1).asset.wasCached, false, "clearing the selected source version forces a refetch");
-  assert.equal(counts.asset, 4);
+  assert.equal(counts.asset, 5);
   assert.equal(pageError, null, pageError?.stack);
 
   await context.close();
@@ -186,6 +228,7 @@ try {
     assertions: [
       "first launch stores a manifest-verified asset",
       "page reload reuses the persistent record without a network asset request",
+      "an interrupted fetch writes no partial record and retry stores only verified bytes",
       "corrupt cache data is rejected and repaired from verified network bytes",
       "manifest source hash isolates cache versions",
       "clear removes only the selected manifest version",
