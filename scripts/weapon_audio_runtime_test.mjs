@@ -201,6 +201,8 @@ test('the original firing callback chain emits source audio at the shot frame', 
   assert.match(host, /weapon\.audioFiringPin=new\(effects,"audioFiringPin"\)/);
   assert.match(host, /weapon\.audioBoltExtract=new\(effects,"audioBoltExtract"\)/);
   assert.match(host, /weapon\.audioInsertMagazine=new\(effects,"audioInsertMagazine"\)/);
+  assert.match(host, /weapon\.audioExtractMagazine=new\(effects,"audioExtractMagazine"\)/,
+    'the source reload-removal event must be bound to its serialized extract clip');
   assert.match(host, /public void EmitMuzzleAudio\(bool supersonic\)\{Effects\.Emit\("audio","audioFire"\)/);
   assert.match(queue, /sourcePath = clip\.OriginalAssetPath/);
   assert.match(queue, /time = Time\.time/);
