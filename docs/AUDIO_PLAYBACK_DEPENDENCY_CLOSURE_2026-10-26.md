@@ -50,3 +50,10 @@ Commit 2b55d5f4905e7a14eddb0fd029f8941e80d237b1 adds Playwright's --autoplay-pol
 ## Second hidden dependency — run #65
 
 The explicit Playwright launch argument --autoplay-policy=user-gesture-required did not keep Chromium's actual AudioContext suspended; the same assertion again observed running before click. The CI headless runner does not reproduce Safari's automatic suspension behavior through that flag. The harness must establish a blocked state by calling suspend() on the actual production AudioContext after loading, then verify its state is suspended and use a trusted Playwright click to invoke the production pointerdown handler. It must not call the runtime's unlock method directly. This preserves real WebAudio nodes and decoded original clips while making the unlock transition deterministic. Run #65's IndexedDB job passed; audio did not reach dispatch or analyser sampling. Its Release/package job was still in progress when documented and remains pending final capture.
+
+
+## Run #67 readback and integration checkpoint — 2026-10-26
+
+Run #67 / workflow ID 40322246503 used source SHA `4926b8013d3a40797ee18b6870582fe0eebc014c`. Its Chromium job 121569828991 passed the production IndexedDB acceptance and decoded the original audio clips, then failed at the master-gain assertion before dispatch/analyser checks: expected decimal `0.16`, actual WebAudio Float32 readback `0.1599999964237213`. The production cap is still authored as 0.16; only the assertion should use an absolute tolerance below `1e-6`. Preserve the exact configured ceiling and all downstream event-count, output-sample and zero-drop checks.
+
+The same workflow's Release job 121569829336 stopped earlier at Node test 118. That is the particle test assumption documented in the particle closure, not an audio/package result. No package verifier or artifact ran for #67. Once both assertion corrections are made, rerun the exact source Release/package verifier and both Chromium checks on one SHA. Until analyser evidence passes, audio playback remains unverified; no deployment.
