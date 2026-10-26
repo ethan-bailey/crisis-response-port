@@ -150,6 +150,64 @@ test('original M4 reload and bolt audio clips are packaged and preloaded by the 
   assert.match(adapter, /if\(e\.type==='audio'\)audio\.play\(e\.value/);
 });
 
+test('Mission M4 ammunition has a complete original prefab dependency closure', async () => {
+  const bytes = await readFile(new URL('../game/assets/weapon-runtime.json.gz', import.meta.url));
+  const data = JSON.parse(gunzipSync(bytes));
+  const ammo = data.ammoPackage;
+  const audit = ammo.closureAudit;
+
+  assert.equal(data.ammoPath, 'Assets/Resources/weapons/ammunition/5.56-FMJ.prefab');
+  assert.equal(audit.complete, true);
+  assert.deepEqual(audit.unresolved, []);
+  assert.deepEqual([...audit.resolvedAssets].sort(), Object.keys(ammo.assets).sort());
+  assert.equal(audit.resolvedAssets.length, 29, 'the known M4 FMJ graph has 29 packaged assets');
+
+  const sourceEdges = {
+    calibre: ['57cfc851e0e47374d98db0383b39cddf', 'Assets/Resources/weapons/calibers/Caliber 5.56x45mm.prefab'],
+    projectile: ['cf5bca2bd1c0369439bb8fbe00c9320d', 'Assets/Resources/weapons/ammunition/projectiles/Projectile 5.56mm FMJ.prefab'],
+    casing: ['9413de22ed594c44e8586fede9f5a355', 'Assets/Resources/weapons/ammunition/casings/Casing 5.56x45mm.prefab'],
+    highPolyModel: ['1b3dc24381623284e82335a132ad5dad', 'Assets/Resources/weapons/ammunition/ui models/5.56x45mm FMJ.prefab'],
+    sprite: ['8464cbc48daa246479808d64b86fb8c2', 'Assets/Sprite/Icon 556 FMJ.asset'],
+  };
+  for (const [field, [guid, sourcePath]] of Object.entries(sourceEdges)) {
+    assert.equal(data.ammunition[field].guid, guid, `${field} keeps the source prefab identity`);
+    assert.equal(ammo.guidPaths[guid], sourcePath, `${field} GUID resolves to its original source path`);
+  }
+  for (const sourcePath of Object.values(sourceEdges).map(([, sourcePath]) => sourcePath)) {
+    assert.ok(ammo.assets[sourcePath], `transitive source dependency is packaged: ${sourcePath}`);
+  }
+});
+
+test('the original firing callback chain emits source audio at the shot frame', async () => {
+  const [weapon, host, queue, adapter] = await Promise.all([
+    readFile(new URL('../runtime/Original/FullSource/WeaponBase.cs', import.meta.url), 'utf8'),
+    readFile(new URL('../runtime/Engine/WeaponHost.cs', import.meta.url), 'utf8'),
+    readFile(new URL('../runtime/Engine/BrowserAudioEventQueue.cs', import.meta.url), 'utf8'),
+    readFile(new URL('../game/weapon-runtime.mjs', import.meta.url), 'utf8'),
+  ]);
+  const strike = methodBody(weapon, 'public void StrikeFiringPin()');
+  const spawn = methodBody(weapon, 'private void SpawnProjectiles()');
+  const emit = methodBody(weapon, 'private void EmitMuzzleAudio(bool superSonic = true)');
+
+  assert.ok(strike.indexOf('audioFiringPin.Play') < strike.indexOf('DetonateRound()'),
+    'the source firing-pin callback runs before detonation');
+  assert.ok(spawn.indexOf('onSpawnProjectile.Invoke(projectile)') < spawn.indexOf('EmitMuzzleAudio(flag)'),
+    'the source shot callback runs before its associated muzzle sound in the same tick');
+  assert.ok(spawn.indexOf('EmitMuzzleAudio(flag)') < spawn.indexOf('LastWeaponFireTimestamp = Time.time'),
+    'source fire timestamp is recorded only after the muzzle sound callback');
+  assert.match(emit, /propagatingAudioSample\.PlayCustom\(Muzzle\.position\.x/);
+  assert.match(emit, /audioSupersonic\.PlayCustom\(Muzzle\.position\.x/);
+
+  assert.match(host, /weapon\.audioFiringPin=new\(effects,"audioFiringPin"\)/);
+  assert.match(host, /weapon\.audioBoltExtract=new\(effects,"audioBoltExtract"\)/);
+  assert.match(host, /weapon\.audioInsertMagazine=new\(effects,"audioInsertMagazine"\)/);
+  assert.match(host, /public void EmitMuzzleAudio\(bool supersonic\)\{Effects\.Emit\("audio","audioFire"\)/);
+  assert.match(queue, /sourcePath = clip\.OriginalAssetPath/);
+  assert.match(queue, /time = Time\.time/);
+  assert.match(adapter, /const eventAge=sourceTime-Number\(e\.time\)/);
+  assert.match(adapter, /audio\.play\(e\.value,\(data\.audio\[e\.value\]/);
+});
+
 test('original magazine reload, interrupt, and internal-magazine audio branches stay source-owned',async()=>{
   const weapon=await readFile(new URL('../runtime/Original/FullSource/WeaponBase.cs',import.meta.url),'utf8');
   const reload=await readFile(new URL('../runtime/Original/CharacterBehavior/CharacterBehavior/ChangeMagazine.cs',import.meta.url),'utf8');
