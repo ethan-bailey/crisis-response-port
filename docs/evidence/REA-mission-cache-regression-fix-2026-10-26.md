@@ -62,6 +62,13 @@ Chromium/WebKit runs and owner iPhone Safari acceptance. This fix does not close
 the broader source/package, authored actor lifecycle, combat, rendering or
 end-to-end gates.
 
+Runner availability was checked with `command -v chromium chromium-browser
+google-chrome firefox` and a bounded `find` under `/usr`, `/opt`, and
+`/root/.cache` for Chrome/Chromium/WebKitWebDriver/Playwright; no browser
+binary was present. Browser-backed acceptance is therefore deferred to a
+runner with those binaries or the owner's phone, while source and package work
+continues.
+
 ## Exact pushed commit and package evidence
 
 - GitHub connector commit: `12d61245431b3e3a026fbd82a8199f6e983a8590`, tree
@@ -99,3 +106,15 @@ It is not byte-identical to the declared source and is not substituted. Search
 covered the mounted `/tmp` and workspace for `Spark.png`; no 1,539-byte
 matching source was found. Exact raw texture recovery and any claims of
 visual identity remain pending the source owner's artifact or archive.
+
+A further authorized recovery attempt downloaded prior GitHub Actions artifact
+`11903811738` with `github_download_workflow_artifact`. The archive is
+101,082,158 bytes, SHA-256
+`cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d`. Its
+`export/ExportedProject/Assets/Texture2D/Spark.png` is the same 1,014-byte
+`b33ee840...` exported image; its `.meta` matches SHA-256
+`980e0c84ccde638ef5ade55ddc2d9249f20e61aa4c6cfafaa1c25a066b2ad363`. The
+artifact does not contain the required original source bytes. Next recovery
+input is the original project export/archive or a source owner copy whose
+1,539 bytes match the expected SHA; importing the exported 1,014-byte texture
+would be a provenance-changing substitute and remains disallowed.
