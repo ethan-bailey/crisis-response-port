@@ -36,6 +36,11 @@ def build(source_path, output_dir, profile, roots):
     if not isinstance(assets, dict) or not isinstance(guid_paths, dict) or not isinstance(references, list):
         raise ValueError("Original source package lacks asset dependency indexes")
 
+    missing_roots = [path for path in roots if path not in assets]
+    if missing_roots:
+        formatted = "\\n".join(f" - {path}" for path in missing_roots)
+        raise ValueError(f"Original source roots are missing ({len(missing_roots)}):\\n{formatted}")
+
     by_source = {}
     for ref in references:
         if ref.get("resolution") == "package":

@@ -125,7 +125,6 @@ jobs:
             --toolchain "$RUNNER_TEMP/cpr-toolchain.json" \
             --incremental-source-package "$GITHUB_WORKSPACE/scene-data/crisis-response-scenes.json.gz" \
             --incremental-profile global-ui-mission-operator \
-            --incremental-root "Assets/Resources/Global context.prefab" \
             --incremental-root "Assets/GameObject/Interior mode UI.prefab" \
             --incremental-root "Assets/Resources/ui/Interaction menu.prefab" \
             --incremental-root "Assets/Resources/characters/Operator.prefab" \
@@ -142,7 +141,6 @@ jobs:
           if profile.get("sourcePackageSha256") != expected:
               raise SystemExit("generated Mission profile does not identify the tracked source archive")
           expected_roots = [
-              "Assets/Resources/Global context.prefab",
               "Assets/GameObject/Interior mode UI.prefab",
               "Assets/Resources/ui/Interaction menu.prefab",
               "Assets/Resources/characters/Operator.prefab",
@@ -152,7 +150,7 @@ jobs:
               raise SystemExit(f"unexpected candidate roots: {profile.get('rootAssets')}")
           if profile.get("assetCount", 0) < len(expected_roots):
               raise SystemExit("generated Mission candidate profile is incomplete")
-          print(f"Mission candidate source profile: {profile['assetCount']} assets; source archive SHA-256 {expected}; deferred root: Assets/Resources/Version.prefab")
+          print(f"Mission candidate source profile: {profile['assetCount']} assets; source archive SHA-256 {expected}; deferred roots: Assets/Resources/Global context.prefab and Assets/Resources/Version.prefab")
           PY
           python3 scripts/package_wasm_site.py verify "$RUNNER_TEMP/cpr-site-package" \
             | tee "$RUNNER_TEMP/cpr-package-verify.json"
@@ -169,7 +167,7 @@ jobs:
           gzip -n -6 "$RUNNER_TEMP/cpr-site-package.tar"
           archive_sha="$(sha256sum "$RUNNER_TEMP/cpr-site-package.tar.gz" | cut -d' ' -f1)"
           package_files="$(find "$RUNNER_TEMP/cpr-site-package" -type f | wc -l | tr -d ' ')"
-          printf '\n### Bounded Mission package candidate\n\n- Source SHA: `%s`\n- Release eligibility: **NO — recovered source archive omits Assets/Resources/Version.prefab**\n- Package files (including build manifest): `%s`\n- Deterministic tar.gz SHA-256: `%s`\n- Build result: `%s`\n- Independent verify: `%s`\n' \
+          printf '\n### Bounded Mission package candidate\n\n- Source SHA: `%s`\n- Release eligibility: **NO — recovered source archive omits Assets/Resources/Global context.prefab and Assets/Resources/Version.prefab**\n- Package files (including build manifest): `%s`\n- Deterministic tar.gz SHA-256: `%s`\n- Build result: `%s`\n- Independent verify: `%s`\n' \
             "$GITHUB_SHA" "$package_files" "$archive_sha" \
             "$(cat "$RUNNER_TEMP/cpr-package-build.json")" \
             "$(cat "$RUNNER_TEMP/cpr-package-verify.json")" >> "$GITHUB_STEP_SUMMARY"

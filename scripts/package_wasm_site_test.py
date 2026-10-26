@@ -160,6 +160,22 @@ class PackageTests(unittest.TestCase):
         }])
         self.assertTrue((self.site / "scene-data/fullsource/fixture/assets" / profile["assets"][0]["file"].split("/")[-1]).is_file())
 
+    def test_incremental_source_reports_all_missing_roots_before_closure(self):
+        roots = ["Assets/Resources/available.prefab", "Assets/Resources/missing-one.prefab",
+                 "Assets/Resources/missing-two.prefab"]
+        source = {"format": "fixture", "assets": {roots[0]: {"records": []}},
+                  "guidPaths": {}, "objectReferences": []}
+        source_path = self.root / "incomplete-source.json"
+        source_path.write_text(json.dumps(source))
+        result = subprocess.run(["python3", str(self.repo / "scripts/package_incremental_source.py"),
+                                 str(source_path), str(self.root / "out"),
+                                 *[arg for root in roots for arg in ("--root", root)]],
+                                cwd=self.repo, capture_output=True, text=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Original source roots are missing (2)", result.stderr)
+        self.assertIn(roots[1], result.stderr)
+        self.assertIn(roots[2], result.stderr)
+
     def test_prebuilt_incremental_profile_is_reused_when_raw_source_package_is_unavailable(self):
         root = "Assets/Resources/fixture.prefab"
         source = {"format": "fixture", "assets": {root: {"records": [{
