@@ -1,37 +1,41 @@
-# Site source alignment blocker — 2026-10-26
+# Site source alignment and deployment — 2026-10-26
 
-## Updated exact-source checkpoint — 2026-10-26
+## Disposition
 
-Workflow #78 passed on `develop/wasm` SHA `30de783d924312a9483fc5f5a566968b9e64183d`. Its package verifier reported sourceCommit equal to that SHA, 2,686 files, 199 Blazor resources, 195 WASM files, and the complete six-root Mission profile. Source index SHA-256 is `9d866276582031d440c316c8e60d69d252506cf67a8ae9d03dbdbe0d91980f92`; deterministic package tar.gz SHA-256 is `7a6b0d5b6f945ef2457276c6d8a6186638d8d0a0a6969ba57f1140e5a77fa6f5`. Retained artifact `12664937990` has upload digest `sha256:67069fd6fc0a4bcc1a0076fdda44744dfcc414a663a5d3525d7cb80b9a7c1b3b`. Both Contracts/Release and Chromium IndexedDB/WebAudio jobs passed. This closes the exact source/package gate for this develop commit only.
+The exact-source Site build/package gate is closed for version 74. The Site remains owner-private/custom access. Production URL: https://crisis-response-runtime.craftysnipe13.chatgpt.site.
 
-Read-only Sites metadata still reports live version 73 source SHA `5ca69fc5a4b6538121b00aece66a8587997cf1f5` and archive SHA `sha256:d893e55c88784cdd059d1e386445c217dddbf29f9ea5d6d5ac89fbd3105658dc`. GitHub API lookup cannot resolve the v73 source SHA (422). The Site getter does not expose its configured source repo or branch, and `https://api.github.com/repos/ethan-bailey/crisis-response-port/contents/.openai/hosting.json?ref=main` returns 404. Public `main` is `d7af0076274ff0ae4da3da5f84e2d346e94e3292`; tested `develop/wasm` is `30de783d924312a9483fc5f5a566968b9e64183d`; compare is diverged by 1,320 ahead / 21 behind. Site version save requires the source commit to equal the configured remote source branch HEAD. Therefore no source-bound save/deploy input is currently verified; preserve v73 and do not use the develop archive against it.
+- Site project: `appgprj_6acfef7174888191bc2bc2f269f60acc`.
+- Version: 74; version ID `appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_0f9fe8a4d73081919ec6ea3655289698`.
+- Deployment: `appgdep_6adf84df5dd481919cd70f72f33f0889`, `succeeded`.
+- Bound source: Cloudflare artifact repository, branch `main`, commit `ae134ef153149e6b6ab262502dd978c4737087ca`.
+- Audience: `custom`; only the owner account is allowed; no groups. This preserves the pre-existing restricted audience.
 
-## Next concrete integration batch
+## Exact source build and package
 
-1. Obtain the Site-bound repository and configured source branch from a supported read-only metadata surface or the Site handoff/hosting configuration.
-2. If it is the public repository's `main`, prepare a reviewed integration commit that carries the intended develop runtime onto that branch without silently merging the divergent histories. Run the exact Release WASM, full package integrity and Chromium jobs on that integration SHA.
-3. If the Site supports an explicit source-branch change, verify the new branch binding before packaging. In either route, save/deploy only when the supplied archive and commit SHA both match the current configured Site source branch HEAD.
-4. Continue independent parity work and owner-controlled iPhone acceptance while integration metadata is obtained. This is a concrete missing identity/binding, not a reason to stop all other gates.
+The Site-bound source commit was rebuilt with pinned .NET SDK 8.0.426. `dotnet build runtime/Crisis.Runtime.csproj -c Release --no-incremental` passed with 0 errors and 48 existing warnings. `dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release -o /tmp/cpr-site-v74-publish-ae134` succeeded; SDK reports the optional `wasm-tools` workload is not installed and publication is unoptimized.
 
-The verified build now exists, but it cannot safely be deployed to the existing Site until its source provenance is aligned.
+`python3 scripts/package_wasm_site.py build` used that publish output, the exact Site recovered-source index and `global-ui-mission-operator`. `python3 scripts/package_wasm_site.py verify dist` returned `status=verified` with exact sourceCommit `ae134ef153149e6b6ab262502dd978c4737087ca`, 2,686 files, 199 Blazor resources and 195 WASM files. The complete profile is 1,919 assets / 22,365 records / 97,767,549 compressed bytes / 205,514,345 source bytes. Source-package SHA-256: `ea3592ff5bdd39534bb905cd0abac74f456578b46eb4b12cdd0cb79fe8520cf7`. `dist/build-manifest.json` SHA-256: `1b734839f875c15121d815faefd0656f0fffbb8800e6dcdb22af4ca413bf3e16`.
 
-| Item | Exact source |
-|---|---|
-| Live Site | Crisis Response Runtime, project `appgprj_6acfef7174888191bc2bc2f269f60acc`, version 73 |
-| Version 73 source SHA | `5ca69fc5a4b6538121b00aece66a8587997cf1f5` |
-| Current repository `main` | `d7af0076274ff0ae4da3da5f84e2d346e94e3292` |
-| Tested `develop/wasm` source/package | `b173b1daebcb0337fb1def6da948d08f3d990d79` |
-| GitHub compare | diverged; develop ahead 1,291 commits and behind 21; merge base `13b24c4ce296a81f4d6803cd4a3325020d13229b` |
+The Site source helper pushed the exact commit and made `/tmp/cpr-site-v74-ae134.tar.gz`. Local archive SHA-256 `72a017a7c673b688abfe459fe8d5ad2100c3153fa6d378922ed6ce2d1de20fa0`, size 138,696,962 bytes. The archive was extracted and every one of the 2,686 manifest-listed files was independently checked for presence, length and SHA-256. The embedded `.openai/hosting.json` resolved to this project and `static.directory=dist`; `dist/index.html` was present. The local recovered mesh `.Combined Mesh (root_ scene)_1.asset.QpoHQd` was verified absent from the archive. Site version metadata stores a normalized TAR representation with `sha256:a8727a341a0de81f7235c01ca37804416dbbc1b8f500ad4b4a711e6ad11e6075`, 178,022,400 bytes and 2,688 files; it is not the byte representation of the local gzip archive.
 
-The Site handoff identifies `main` as the Site source branch. Current `main` does not contain `game/weapon-audio-runtime.mjs`, `game/original-particle-renderer.mjs`, `runtime/Engine/BallisticEffects.cs`, or `.github/workflows/source-contracts.yml`, all part of the tested develop source. Site publication requires the supplied archive and `commit_sha` to match the current configured remote branch head.
+## Source crosswalk to public develop
 
-## Safe disposition
+Compared every tracked Git blob at Site `ae134ef153149e6b6ab262502dd978c4737087ca` and public `develop/wasm` `4428f5f5adc06edeb19b1dc17f111e66e407d04c`: Site has 2,264 files; develop 2,283; Site-only 1 (`.openai/hosting.json`), develop-only 20, shared-but-different 14. The full path inventory is available from the commit trees; previous v73 path list below is historical and should not be treated as current.
 
-Do not pass the develop package with a main-branch SHA, publish the stale v73 archive, or merge this branch divergence blindly. The exact next step is to inspect the Site's configured source repository/branch and establish the supported integration route:
+These current product paths are byte-identical: `game/aim-direction.mjs`, `game/browser-input.mjs`, `game/index.html`, `scene-data/scene-package-loader.mjs`, `game/original-particle-event-binding.mjs`, `game/original-particle-renderer.mjs`, and `runtime/Engine/BallisticEffects.cs`. Thus v74 carries the particle inherited-velocity fix, but the joystick/aim implementation is unchanged. `runtime/Browser/BrowserEntryTeamMission.cs` remains one of the shared production paths with different content; CI on public develop is not attributed to Site `ae134ef...`.
 
-1. If the Site supports changing its source branch, verify that branch on the Site before building from it.
-2. Otherwise create a reviewed integration commit on the Site-bound branch that includes the intended runtime source and tests.
-3. Run the exact Release WASM build, complete Mission package verifier and Chromium acceptance against that integration SHA.
-4. Save/deploy only an archive whose embedded sourceCommit exactly matches that Site-bound pushed SHA.
+## Applied source fix and checks
 
-Run #68 fully passed for `develop/wasm`: 2,686 files, 199 Blazor, 195 WASM; Mission profile 1,919 assets / 22,365 records; inner package SHA-256 `a5522d46a7dc7976aac57787ddf8100b8b3e4ef5e9fc201b6c549ad841fd01ec`; retained artifact `12649418198`, outer SHA-256 `f30f8ccdd34e0829706e98f3736003f7bc152486f7d49d550b32ab26a7c6a883`. Those integrity results do not change which source branch the Site expects. Site v73 remains live; no mismatched deployment was attempted.
+The Site branch now includes the source Rigidbody velocity transport fix. The original InheritVelocity particle path is supplied its source Rigidbody velocity; the matching renderer/runtime checks were copied from the tested develop implementation. Targeted particle tests passed 13/13, full Node suite passed 143/143, and Runtime BallisticContracts reported `sourceRigidbodyVelocityTransported=true`. Site Python baseline checks passed 45/45; EngineChecks passed 75 assertions; FoundationChecks passed 121 assertions. These are Site-tree checks, separate from public develop run #79.
+
+Run #79 / Actions `40356543988` on public develop SHA `4428f5f5adc06edeb19b1dc17f111e66e407d04c` had both jobs pass (`121690423604`, `121690424261`). It is separate evidence, not the Site build's CI attestation. Full-profile browser measurements and WebAudio results are in the IndexedDB closure note.
+
+## Recovery note
+
+The pre-existing untracked recovered mesh file is preserved locally and excluded by local `.git/info/exclude`. The source helper's first push auto-staged it in intermediate commit `28d550c001cc9a163e80d63179f47e89ed56571c`; cleanup commit `ae134ef153149e6b6ab262502dd978c4737087ca` removed it from the latest source tree. The v74 package/archive and deployed version were built from the cleanup commit and do not include the mesh. Keep the file and local exclude rule intact.
+
+## Remaining acceptance gates
+
+- The Site v74 build passed source/package integrity and is deployed, but the owner must still test that exact version on physical iPhone Safari: cold/warm Mission load and persistence; completion near the reported 1,900-asset point; joystick aim anchored correctly and independent of X; walk-to-sprint control; rapid-tap zoom prevention; audible reload and fire clips.
+- Public run #79 used Chromium, actual browser IndexedDB and the production JS loader, but modeled the full-profile .NET bridge. It is not evidence of iPhone storage, performance, touch feel, Safari speaker output or actual .NET throughput at this scale.
+- Do not claim complete parity until source behavior, native rendering/physics/audio and the device acceptance gates have evidence or are explicitly scoped out.
