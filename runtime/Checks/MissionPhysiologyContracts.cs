@@ -188,7 +188,15 @@ public static class MissionPhysiologyContracts
                 brain.factor=originalCurve;
                 foreach(var other in others)other.Value.probability=other.Probability;
             }
-            return new{sourceLimbVitalAssignments="verified for 9 authored limb groups on every actor",positiveDispatch=results,probabilityMissNoOp=true,zeroFactorNoOp=true,distinctActorStateIsolated=true,authoredConfigurationRestored=true,nativeJointPhysicsAdvanced=false};
+            var noOpTypes=new[]{LimbVitalFunction.Type.BloodVessels,LimbVitalFunction.Type.None};
+            foreach(var type in noOpTypes)
+            {
+                var before=Snapshot(operatorBody);
+                head.LimbPhysiology.InflictVitalTrauma(new LimbVitalFunction{name=$"Contract {type}",type=type},20f,40f,sampleY);
+                if(Snapshot(operatorBody)!=before)
+                    throw new InvalidOperationException($"Original LimbPhysiology.InflictVitalTrauma {type} case unexpectedly changed physiology");
+            }
+            return new{sourceLimbVitalAssignments="verified for 9 authored limb groups on every actor",positiveDispatch=results,probabilityMissNoOp=true,zeroFactorNoOp=true,explicitBloodVesselsAndNoneNoOps=true,distinctActorStateIsolated=true,authoredConfigurationRestored=true,nativeJointPhysicsAdvanced=false};
         }
         finally
         {
