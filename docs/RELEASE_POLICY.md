@@ -14,7 +14,7 @@ Before publication, bind all evidence to one exact source state:
 
 ## Current Site
 
-Site v75 is deployed from bound Cloudflare source `main` SHA `d8dbe9f3c038e59afbf0d9903d5d036c1f3169b4`; deployment `appgdep_6adf8880cd4c8191a4d16a6789d45c6a` succeeded. Exact Release/WASM build, Mission package verification and independent archive audit passed before publishing. The deployed joystick sprint thresholds are 1.75× entry / 1.5× release. Physical iPhone Safari checks remain outstanding. See `NEXT_AGENT.md` and `evidence/SITE_DEPLOYMENT_ALIGNMENT_BLOCKER_2026-10-26.md` for exact records.
+Site v75 is deployed from bound Cloudflare source `main` SHA `d8dbe9f3c038e59afbf0d9903d5d036c1f3169b4`; deployment `appgdep_6adf8880cd4c8191a4d16a6789d45c6a` succeeded. Exact Release/WASM build, Mission package verification and independent archive audit passed before publishing. The deployed joystick sprint thresholds are 1.75× entry / 1.5× release. Physical iPhone Safari checks remain outstanding. Public `develop/wasm` exact-SHA source/package run #81 passed at `da3fae42504557e131d255feed6a8d51b127a699`; it is not the Site `main` source SHA and did not change the live version. See `NEXT_AGENT.md` and `evidence/SITE_DEPLOYMENT_ALIGNMENT_BLOCKER_2026-10-26.md` for exact records.
 
 ## Hosting
 
