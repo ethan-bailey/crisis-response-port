@@ -80,6 +80,23 @@ function monotonicNow() {
   return globalThis.performance?.now?.() ?? Date.now();
 }
 
+async function getStorageStatus() {
+  const storage = globalThis.navigator?.storage;
+  let persistent = null;
+  let estimate = null;
+  try { if (typeof storage?.persist === "function") persistent = await storage.persist(); }
+  catch { /* Persistent storage remains optional; report browser-managed retention. */ }
+  try {
+    if (typeof storage?.estimate === "function") {
+      const result = await storage.estimate();
+      const usage = Number.isFinite(result?.usage) && result.usage >= 0 ? result.usage : null;
+      const quota = Number.isFinite(result?.quota) && result.quota >= 0 ? result.quota : null;
+      estimate = {usage, quota, available:usage !== null && quota !== null ? Math.max(0, quota - usage) : null};
+    }
+  } catch { /* Unsupported and denied estimates do not prevent verified delivery. */ }
+  return {persistent, estimate};
+}
+
 async function fetchGzipJson(url, expected, label, signal) {
   const response = await fetch(url, {signal});
   if (!response.ok) throw new Error(`${label} unavailable: HTTP ${response.status}`);
@@ -93,20 +110,113 @@ async function fetchGzipJson(url, expected, label, signal) {
   return { compressed, raw, text: new TextDecoder("utf-8", { fatal: true }).decode(raw) };
 }
 
+function openMissionAssetDatabase() {
+  return new Promise((resolve,reject)=>{
+    if(!globalThis.indexedDB?.open){reject(new Error("IndexedDB unavailable"));return;}
+    const request=globalThis.indexedDB.open("crisis-response-mission-assets",1);
+    request.onupgradeneeded=()=>{
+      const database=request.result;
+      if(!database.objectStoreNames.contains("assets"))database.createObjectStore("assets",{keyPath:"key"});
+    };
+    request.onsuccess=()=>{request.result.onversionchange=()=>request.result.close();resolve(request.result);};
+    request.onerror=()=>reject(request.error||new Error("IndexedDB open failed"));
+    request.onblocked=()=>reject(new Error("IndexedDB upgrade is blocked by another open page"));
+  });
+}
+
+function makeIndexedDbAssetStore(database,sourceHash) {
+  const prefix=`${sourceHash}:`;
+  const keyFor=url=>prefix+String(url);
+  const transaction=(mode,action)=>new Promise((resolve,reject)=>{
+    let result;
+    let tx;
+    try{tx=database.transaction("assets",mode);result=action(tx.objectStore("assets"));}
+    catch(error){reject(error);return;}
+    tx.oncomplete=()=>resolve(result&&"result" in result?result.result:result);
+    tx.onerror=()=>reject(tx.error||result?.error||new Error("IndexedDB transaction failed"));
+    tx.onabort=()=>reject(tx.error||new Error("IndexedDB transaction aborted"));
+  });
+  return {
+    backend:"IndexedDB",
+    match:async url=>{
+      const record=await transaction("readonly",store=>store.get(keyFor(url)));
+      return record?.compressed instanceof ArrayBuffer?new Response(record.compressed,{headers:{"Content-Type":"application/gzip"}}):null;
+    },
+    put:async(url,response)=>{
+      const compressed=await response.arrayBuffer();
+      await transaction("readwrite",store=>store.put({key:keyFor(url),compressed}));
+    },
+    delete:async url=>transaction("readwrite",store=>store.delete(keyFor(url))),
+    clear:async()=>{
+      const state={deleted:0};
+      await transaction("readwrite",store=>{
+        const request=store.openCursor();
+        request.onsuccess=()=>{const cursor=request.result;if(!cursor)return;if(typeof cursor.key==="string"&&cursor.key.startsWith(prefix)){cursor.delete();state.deleted++;}cursor.continue();};
+        return state;
+      });
+      return state.deleted>0;
+    },
+    close:()=>database.close()
+  };
+}
+
+async function openMissionAssetStore(sourceHash) {
+  if(globalThis.isSecureContext&&globalThis.indexedDB?.open){
+    try{return makeIndexedDbAssetStore(await openMissionAssetDatabase(),sourceHash);}
+    catch(error){
+      if(!(globalThis.caches?.open))return {backend:"unavailable",error,match:async()=>null,put:async()=>{throw error;},delete:async()=>false,clear:async()=>false};
+    }
+  }
+  if(globalThis.isSecureContext&&globalThis.caches?.open){
+    try{
+      const cache=await globalThis.caches.open(`crisis-source-${sourceHash}`);
+      return {backend:"CacheStorage",match:url=>cache.match(url),put:(url,response)=>cache.put(url,response),delete:url=>cache.delete(url),clear:()=>globalThis.caches.delete(`crisis-source-${sourceHash}`)};
+    }catch(error){return {backend:"unavailable",error,match:async()=>null,put:async()=>{throw error;},delete:async()=>false,clear:async()=>false};}
+  }
+  return {backend:"unavailable",match:async()=>null,put:async()=>{throw new Error("Persistent browser storage is unavailable");},delete:async()=>false,clear:async()=>false};
+}
+
 async function fetchCompressedAsset(url, expected, label, signal, persistentCache) {
   const started = monotonicNow();
-  let response = persistentCache ? await persistentCache.match(url) : null;
-  const wasCached = !!response;
-  if (!response) response = await fetch(url, {signal});
-  if (!response.ok) throw new Error(`${label} unavailable: HTTP ${response.status}`);
-  const compressed = await response.arrayBuffer();
-  if (compressed.byteLength !== expected.compressedBytes || await sha256(compressed) !== expected.compressedSha256)
-    throw new Error(`${label} compressed size or checksum mismatch`);
-  if (!wasCached && persistentCache) {
-    try { await persistentCache.put(url, new Response(compressed.slice(0), {headers:{'Content-Type':'application/gzip'}})); }
-    catch { /* Safari quota or private browsing: this run still uses verified network bytes. */ }
+  let response = null;
+  try { response = persistentCache ? await persistentCache.match(url) : null; }
+  catch { /* A damaged local store is treated as a miss; network bytes are verified below. */ }
+  let wasCached = !!response;
+  let compressed = null;
+  if (response) {
+    try {
+      compressed = await response.arrayBuffer();
+      if (compressed.byteLength !== expected.compressedBytes || await sha256(compressed) !== expected.compressedSha256)
+        throw new Error("Cached source asset failed its manifest integrity check");
+    } catch {
+      // A bad or unreadable cached chunk must not poison every later launch.
+      // Drop it and fetch this one immutable asset again from the verified source.
+      try { await persistentCache.delete?.(url); } catch { /* Network recovery is still attempted. */ }
+      response = null;
+      compressed = null;
+      wasCached = false;
+    }
   }
-  return {compressed, fetchAndHashMs: monotonicNow() - started, wasCached};
+  if (!response) {
+    response = await fetch(url, {signal});
+    if (!response.ok) throw new Error(`${label} unavailable: HTTP ${response.status}`);
+    compressed = await response.arrayBuffer();
+    if (compressed.byteLength !== expected.compressedBytes || await sha256(compressed) !== expected.compressedSha256)
+      throw new Error(`${label} compressed size or checksum mismatch`);
+  }
+  let cachedLocally = wasCached;
+  let cacheWriteError = null;
+  if (!wasCached && persistentCache) {
+    try {
+      await persistentCache.put(url, new Response(compressed.slice(0), {headers:{'Content-Type':'application/gzip'}}));
+      cachedLocally = true;
+    } catch (error) {
+      // Storage is optional for this launch, but the caller must be able to
+      // distinguish quota exhaustion from an unavailable/private cache.
+      cacheWriteError = {name:error?.name || "Error", message:String(error?.message || error)};
+    }
+  }
+  return {compressed, fetchAndHashMs: monotonicNow() - started, wasCached, cachedLocally, cacheWriteError};
 }
 
 // Blazor's byte[] JS interop path is version-sensitive and the hosted .NET 8
@@ -119,6 +229,26 @@ function bytesToBase64(bytes) {
   for (let offset = 0; offset < bytes.length; offset += chunkSize)
     binary += String.fromCharCode(...bytes.subarray(offset, offset + chunkSize));
   return btoa(binary);
+}
+
+/** Delete only the immutable source cache selected by the current manifest. */
+export async function clearIncrementalSourceCache(manifestUrl) {
+  if (!globalThis.isSecureContext || (!globalThis.indexedDB?.open&&!globalThis.caches?.delete))
+    return {cleared:false,available:false};
+  const response=await fetch(manifestUrl);
+  if(!response.ok)throw new Error(`Incremental source manifest unavailable: HTTP ${response.status}`);
+  const manifest=await response.json();
+  if(manifest.schemaVersion!==1||manifest.encoding!=="gzip-json-assets"
+      ||! /^[0-9a-f]{64}$/.test(manifest.sourcePackageSha256??""))
+    throw new Error("Incremental source profile manifest is invalid");
+  const cacheName=`crisis-source-${manifest.sourcePackageSha256}`;
+  let cleared=false;
+  if(globalThis.indexedDB?.open){
+    try{const store=makeIndexedDbAssetStore(await openMissionAssetDatabase(),manifest.sourcePackageSha256);cleared=await store.clear();store.close();}
+    catch(error){if(!globalThis.caches?.delete)throw error;}
+  }
+  if(globalThis.caches?.delete)cleared=(await globalThis.caches.delete(cacheName))||cleared;
+  return {cleared,available:true};
 }
 
 /** Fetch a small bounded batch in parallel, then deliver verified assets in manifest order. */
@@ -137,16 +267,13 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
       || !/^[0-9a-f]{64}$/.test(manifest.sourcePackageSha256 ?? ""))
     throw new Error("Incremental source profile manifest is invalid");
 
-  // Cache only the immutable compressed assets. The cache name is bound to
-  // the profile hash; every cache hit still passes the manifest size and SHA.
-  let persistentCache = null;
-  if (globalThis.isSecureContext && globalThis.caches?.open) {
-    try { persistentCache = await globalThis.caches.open(`crisis-source-${manifest.sourcePackageSha256}`); }
-    catch { /* Storage is optional; continue with verified network delivery. */ }
-  }
-  // Storage persistence is a best-effort request (Safari may decline it); it
-  // never blocks the Mission or changes the verified network fallback.
-  try { await globalThis.navigator?.storage?.persist?.(); } catch { /* Browser-managed quota remains valid. */ }
+  // Store only immutable compressed assets in a namespace bound to the source
+  // profile hash; every hit still passes the manifest size and SHA.
+  const persistentCache=await openMissionAssetStore(manifest.sourcePackageSha256);
+  // Storage persistence and quota estimates are advisory. A browser can still
+  // evict local data, so verified network delivery never depends on either.
+  const storageStatus = await getStorageStatus();
+  if (onProgress) await onProgress({stage:"storage",backend:persistentCache.backend,...storageStatus});
 
   const base = new URL("./", new URL(manifestUrl, import.meta.url));
   const metadata = await fetchGzipJson(new URL(manifest.metadata.file, base), manifest.metadata, "Incremental source metadata",signal);
@@ -175,10 +302,9 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
   };
   const seenPaths = new Set();
   const downloadConcurrency = 6;
-  // The manifest is canonical and path-sorted, but that leaves large textures
-  // clustered at its tail. Fetch the largest verified assets first so slow
-  // multi-megabyte files do not hold the user at ~99% after thousands of small
-  // assets have already completed. Tie-break by path for deterministic runs.
+  // The canonical manifest is path-sorted, which leaves multi-megabyte assets
+  // at the end of delivery. Fetch large verified assets first so the load does
+  // not appear stalled near completion. Ties remain deterministic by path.
   const deliveryAssets=[...manifest.assets].sort((a,b)=>b.compressedBytes-a.compressedBytes||a.path.localeCompare(b.path));
   for (let batchStart = 0; batchStart < deliveryAssets.length; batchStart += downloadConcurrency) {
     const batchStarted = monotonicNow();
@@ -242,7 +368,7 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
       for(let offset=0;offset<assets.length;offset++){
         const index=batchStart+deliveryStart+offset;
         const asset=assets[offset];
-        const {compressed,fetchAndHashMs}=fetched[offset];
+        const {compressed,fetchAndHashMs,cachedLocally}=fetched[offset];
         const item=result.items[offset];
         deliveredAssetBytes+=asset.bytes;
         if(!item.added||item.expectedAssets!==manifest.assets.length||item.receivedAssets!==index+1
@@ -259,7 +385,7 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
           stage:"delivered",compressedAssetBytes,sourceAssetBytes,maximumAssetBytes,
           totalCompressedAssetBytes:manifest.compressedAssetBytes,totalSourceAssetBytes:manifest.uncompressedAssetBytes,
           asset:{path:asset.path,compressedBytes:compressed.byteLength,sourceBytes:asset.bytes,
-            fetchAndHashMs,wasCached:fetched[offset].wasCached,transportPrepareMs:transportPrepareMs/assets.length,bridgeMs:bridgeBatchMs/assets.length,
+            fetchAndHashMs,wasCached:fetched[offset].wasCached,cachedLocally,cacheWriteError:fetched[offset].cacheWriteError,transportPrepareMs:transportPrepareMs/assets.length,bridgeMs:bridgeBatchMs/assets.length,
             bridgeBatchMs,bridgeBatchAssets:assets.length},
           profileElapsedMs:monotonicNow()-profileStarted,batchElapsedMs:monotonicNow()-batchStarted});
       }

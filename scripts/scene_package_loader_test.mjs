@@ -3,7 +3,7 @@ import { gzipSync } from "node:zlib";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { test } from "node:test";
-import { deliverIncrementalSourceProfile, loadOriginalScenePackage } from "../scene-data/scene-package-loader.mjs";
+import { clearIncrementalSourceCache, deliverIncrementalSourceProfile, loadOriginalScenePackage } from "../scene-data/scene-package-loader.mjs";
 
 const encoder = new TextEncoder();
 const originalFetch = globalThis.fetch;
@@ -33,6 +33,35 @@ function mockPackage(source) {
     const chunk = chunks.find((entry) => entry.path === name);
     return chunk ? new Response(chunk.gzip, { status: 200 }) : new Response("missing", { status: 404 });
   };
+}
+
+function fakeIndexedDb(records) {
+  const database={
+    objectStoreNames:{contains:name=>name==="assets"},
+    createObjectStore:()=>({}),
+    close(){},
+    transaction(_name,_mode){
+      const tx={};
+      const finish=()=>queueMicrotask(()=>tx.oncomplete?.());
+      tx.objectStore=()=>({
+        get:key=>{const request={result:records.get(key)};queueMicrotask(()=>{request.onsuccess?.();finish();});return request;},
+        put:value=>{records.set(value.key,value);const request={result:value.key};queueMicrotask(()=>{request.onsuccess?.();finish();});return request;},
+        delete:key=>{records.delete(key);const request={result:undefined};queueMicrotask(()=>{request.onsuccess?.();finish();});return request;},
+        openCursor(){
+          const request={result:null};let keys=[...records.keys()],offset=0;
+          const advance=()=>queueMicrotask(()=>{
+            if(offset>=keys.length){request.result=null;request.onsuccess?.();finish();return;}
+            const key=keys[offset++];
+            request.result={key,delete:()=>records.delete(key),continue:advance};
+            request.onsuccess?.();
+          });
+          advance();return request;
+        }
+      });
+      return tx;
+    }
+  };
+  return {records,open:()=>{const request={result:database};queueMicrotask(()=>{request.onupgradeneeded?.();request.onsuccess?.();});return request;}};
 }
 
 test("reassembles compressed scene chunks across UTF-8 boundaries", async () => {
@@ -88,6 +117,8 @@ test("delivers verified source assets through the WASM package bridge", async ()
   const originalFetch = globalThis.fetch;
   const originalCaches = globalThis.caches;
   const originalSecureContext = globalThis.isSecureContext;
+  const originalNavigator = Object.getOwnPropertyDescriptor(globalThis,"navigator");
+  const originalIndexedDb = Object.getOwnPropertyDescriptor(globalThis,"indexedDB");
   const files = new Map([["manifest.json", encoder.encode(JSON.stringify(manifest))],
     ["metadata.json.gz", metadataGzip], ["0123456789abcdef01234567.json.gz", assetGzip]]);
   const assetFetchCounts = new Map();
@@ -99,11 +130,13 @@ test("delivers verified source assets through the WASM package bridge", async ()
   };
   const cachedResponses = new Map();
   globalThis.isSecureContext = true;
+  Object.defineProperty(globalThis,"navigator",{configurable:true,value:{storage:{persist:async()=>true,estimate:async()=>({usage:100,quota:1000})}}});
   globalThis.caches = {open:async()=>({
     match:async url=>{
       const response=cachedResponses.get(String(url));
       return response?new Response(await response.arrayBuffer(),{headers:{"Content-Type":"application/gzip"}}):undefined;
     },
+    delete:async url=>cachedResponses.delete(String(url)),
     put:async(url,response)=>cachedResponses.set(String(url),new Response(await response.arrayBuffer(),{headers:{"Content-Type":"application/gzip"}}))
   })};
   const calls = [];
@@ -136,10 +169,13 @@ test("delivers verified source assets through the WASM package bridge", async ()
     assert.deepEqual(calls[1][2],[assetGzip.byteLength]);
     assert.equal(typeof calls[1][3],"string");
     assert.deepEqual(Buffer.from(calls[1][3],"base64"),Buffer.from(gzipSync(assetRaw)));
-    assert.deepEqual(progress.map(value=>value.stage),["fetching","adding","delivered"]);
-    assert.deepEqual(progress[0].pendingAssetPaths,[assetPath]);
+    assert.deepEqual(progress.map(value=>value.stage),["storage","fetching","adding","delivered"]);
+    assert.equal(progress[0].backend,"CacheStorage","browsers without IndexedDB retain the request-cache fallback");
+    assert.equal(progress[0].persistent,true);
+    assert.deepEqual(progress[0].estimate,{usage:100,quota:1000,available:900});
     assert.deepEqual(progress[1].pendingAssetPaths,[assetPath]);
-    assert.equal(progress[1].batchCompressedBytes,assetGzip.byteLength);
+    assert.deepEqual(progress[2].pendingAssetPaths,[assetPath]);
+    assert.equal(progress[2].batchCompressedBytes,assetGzip.byteLength);
     const completed=progress.at(-1);
     assert.deepEqual({
       receivedAssets:completed.receivedAssets,expectedAssets:completed.expectedAssets,
@@ -149,7 +185,7 @@ test("delivers verified source assets through the WASM package bridge", async ()
     }, {receivedAssets:1,expectedAssets:1,compressedAssetBytes:assetGzip.byteLength,sourceAssetBytes:assetRaw.byteLength,
       maximumAssetBytes:assetRaw.byteLength,totalCompressedAssetBytes:assetGzip.byteLength,totalSourceAssetBytes:assetRaw.byteLength,
       asset:{path:assetPath,compressedBytes:assetGzip.byteLength,sourceBytes:assetRaw.byteLength,
-        fetchAndHashMs:completed.asset.fetchAndHashMs,wasCached:false,transportPrepareMs:completed.asset.transportPrepareMs,
+        fetchAndHashMs:completed.asset.fetchAndHashMs,wasCached:false,cachedLocally:true,cacheWriteError:null,transportPrepareMs:completed.asset.transportPrepareMs,
         bridgeMs:completed.asset.bridgeMs,bridgeBatchMs:completed.asset.bridgeBatchMs,bridgeBatchAssets:1}});
     for(const value of [completed.asset.fetchAndHashMs,completed.asset.transportPrepareMs,completed.asset.bridgeMs,
       completed.profileElapsedMs,completed.batchElapsedMs]) assert.ok(Number.isFinite(value) && value >= 0);
@@ -164,10 +200,52 @@ test("delivers verified source assets through the WASM package bridge", async ()
     await deliverIncrementalSourceProfile(cachedBridge,"https://example.test/source/manifest.json",{onProgress:value=>cachedProgress.push(value)});
     assert.equal(assetFetchCounts.get("0123456789abcdef01234567.json.gz"),1,"second run reads the verified asset from persistent cache");
     assert.equal(cachedProgress.at(-1).asset.wasCached,true);
+    assert.equal(cachedProgress.at(-1).asset.cachedLocally,true,"a verified cache hit is confirmed as stored on device");
+
+    const assetUrl="https://example.test/source/assets/0123456789abcdef01234567.json.gz";
+    cachedResponses.set(assetUrl,new Response(encoder.encode("corrupt cached bytes")));
+    const recoveredProgress=[];
+    await deliverIncrementalSourceProfile(cachedBridge,"https://example.test/source/manifest.json",{onProgress:value=>recoveredProgress.push(value)});
+    assert.equal(assetFetchCounts.get("0123456789abcdef01234567.json.gz"),2,"a corrupt cached chunk is recovered from the network");
+    assert.equal(recoveredProgress.at(-1).asset.wasCached,false,"network recovery is reported as a cache miss");
+    assert.equal(recoveredProgress.at(-1).asset.cachedLocally,true,"the verified replacement is stored on device");
+    assert.deepEqual(Buffer.from(await cachedResponses.get(assetUrl).arrayBuffer()),Buffer.from(assetGzip),"verified network bytes replace the corrupt cache entry");
+
+    globalThis.caches={open:async()=>({match:async()=>undefined,delete:async()=>false,
+      put:async()=>{const error=new Error("Storage quota reached");error.name="QuotaExceededError";throw error;}})};
+    const quotaProgress=[];
+    await deliverIncrementalSourceProfile(cachedBridge,"https://example.test/source/manifest.json",{onProgress:value=>quotaProgress.push(value)});
+    assert.equal(quotaProgress.at(-1).asset.cachedLocally,false,"quota rejection must not be reported as saved locally");
+    assert.equal(quotaProgress.at(-1).asset.cacheWriteError.name,"QuotaExceededError","the exact browser storage failure remains observable");
+
+    const idb=fakeIndexedDb(new Map());
+    Object.defineProperty(globalThis,"indexedDB",{configurable:true,value:{open:idb.open}});
+    const idbFirst=[];
+    await deliverIncrementalSourceProfile(cachedBridge,"https://example.test/source/manifest.json",{onProgress:value=>idbFirst.push(value)});
+    assert.equal(idbFirst[0].backend,"IndexedDB","large immutable Mission chunks prefer IndexedDB over CacheStorage");
+    assert.equal(idbFirst.at(-1).asset.cachedLocally,true);
+    const fetchedBeforeIdbHit=assetFetchCounts.get("0123456789abcdef01234567.json.gz");
+    const idbSecond=[];
+    await deliverIncrementalSourceProfile(cachedBridge,"https://example.test/source/manifest.json",{onProgress:value=>idbSecond.push(value)});
+    assert.equal(idbSecond.at(-1).asset.wasCached,true,"the second run reuses the integrity-checked IndexedDB record");
+    assert.equal(assetFetchCounts.get("0123456789abcdef01234567.json.gz"),fetchedBeforeIdbHit,"an IndexedDB hit avoids the asset network request");
+    const idbKey=`${manifest.sourcePackageSha256}:${assetUrl}`;
+    idb.records.set(idbKey,{key:idbKey,compressed:encoder.encode("corrupt") .buffer});
+    const idbRecovery=[];
+    await deliverIncrementalSourceProfile(cachedBridge,"https://example.test/source/manifest.json",{onProgress:value=>idbRecovery.push(value)});
+    assert.equal(idbRecovery.at(-1).asset.wasCached,false,"a corrupt IndexedDB record is rejected");
+    assert.equal(idbRecovery.at(-1).asset.cachedLocally,true,"the verified network replacement is stored");
+    const unrelatedKey=`${"c".repeat(64)}:https://example.test/other`;
+    idb.records.set(unrelatedKey,{key:unrelatedKey,compressed:assetGzip.buffer});
+    assert.deepEqual(await clearIncrementalSourceCache("https://example.test/source/manifest.json"),{cleared:true,available:true});
+    assert.equal([...idb.records.keys()].some(key=>key.startsWith(`${manifest.sourcePackageSha256}:`)),false,"clear removes all chunks from the selected version");
+    assert.equal(idb.records.has(unrelatedKey),true,"clear preserves other manifest versions");
   } finally {
     globalThis.fetch = originalFetch;
     if(originalCaches===undefined)delete globalThis.caches;else globalThis.caches=originalCaches;
     if(originalSecureContext===undefined)delete globalThis.isSecureContext;else globalThis.isSecureContext=originalSecureContext;
+    if(originalNavigator===undefined)delete globalThis.navigator;else Object.defineProperty(globalThis,"navigator",originalNavigator);
+    if(originalIndexedDb===undefined)delete globalThis.indexedDB;else Object.defineProperty(globalThis,"indexedDB",originalIndexedDb);
   }
 });
 
@@ -235,6 +313,22 @@ test("stops source delivery when its abort signal is already cancelled", async (
     assert.equal(requested, false);
   } finally {
     globalThis.fetch = original;
+  }
+});
+
+test("clear control deletes only the manifest-versioned Mission source cache",async()=>{
+  const originalFetch=globalThis.fetch,originalCaches=globalThis.caches,originalSecureContext=globalThis.isSecureContext;
+  const sourceHash="b".repeat(64),deleted=[];
+  globalThis.isSecureContext=true;
+  globalThis.caches={delete:async name=>{deleted.push(name);return true;}};
+  globalThis.fetch=async()=>new Response(JSON.stringify({schemaVersion:1,encoding:"gzip-json-assets",sourcePackageSha256:sourceHash}),{status:200});
+  try{
+    assert.deepEqual(await clearIncrementalSourceCache("https://example.test/source/manifest.json"),{cleared:true,available:true});
+    assert.deepEqual(deleted,[`crisis-source-${sourceHash}`]);
+  }finally{
+    globalThis.fetch=originalFetch;
+    if(originalCaches===undefined)delete globalThis.caches;else globalThis.caches=originalCaches;
+    if(originalSecureContext===undefined)delete globalThis.isSecureContext;else globalThis.isSecureContext=originalSecureContext;
   }
 });
 

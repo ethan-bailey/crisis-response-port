@@ -3,9 +3,9 @@
 ## Checkpoint
 
 - Repository: `ethan-bailey/crisis-response-port`; authorized branch `develop/wasm`.
-- Latest tested source commit: `cc4042f7dc7fcd42a7ff3e36e7c29e3744b706e5`; source tree `ce0c6c107c2d4d3b91f93b380ccfdcead68fa242`.
-- Hosted Source contracts/WASM run #20 (`40262914576`) passed for that exact SHA.
-- Exact Release WASM package and local HTTP smoke passed for that SHA. Evidence: `docs/evidence/REA-particle-inherit-velocity-2026-10-26.md`.
+- Live branch at start: `59cb7b876ad23a4aa6de5008f01fa5401d053fd6`. This handoff will be updated with the fix commit and exact verification before push.
+- The live branch's latest two Mission delivery commits removed previously verified cache behavior and its tests while retaining an import of the now-missing `clearIncrementalSourceCache` export. Restored behavior plus largest-first ordering is recorded in `docs/evidence/REA-mission-cache-regression-fix-2026-10-26.md`.
+- Prior exact checkpoint `cc4042f7dc7fcd42a7ff3e36e7c29e3744b706e5` had hosted run #20 (`40262914576`) and package/HTTP evidence in `docs/evidence/REA-particle-inherit-velocity-2026-10-26.md`.
 - No open PRs at last live query. No Site or preview deployment was made.
 - Pinned .NET SDK 8.0.426 is present at `/tmp/codex-dotnet-8.0.426/dotnet`; shim `/tmp/libprocshim.so`. Check and use the paths per `docs/DOTNET_BUILD_RUNBOOK.md`; do not reinstall the SDK.
 - Keep the untracked checkout artifact `source-reference/Original/Assets/Scenes/.Mission 01.unity.u4cmKY` untouched; it is not part of the repo tree.
@@ -24,6 +24,21 @@ On the exact source tree/SHA above:
 - Local HTTP returned 200 HTML for `/`, `/game/`, and `/runtime-web/`; the selected 5,347,727-byte WASM returned `application/wasm` and matched its manifest hash.
 - No interactive browser, visual parity, or iPhone Safari acceptance is claimed.
 
+## Latest Mission delivery regression fix
+
+- Restored IndexedDB primary cache, CacheStorage fallback, manifest-version
+  namespace, SHA/size checks on hits, corrupt-entry recovery, quota error
+  reporting, storage estimate/persistence progress and version-scoped clear.
+- Preserved largest-first six-way downloads, deterministic path tie-breaks and
+  bounded ordered .NET bridge batches.
+- Loader tests: **7/7**; full Node suite **128/128**; Python suite **43/43**;
+  source inventory freshness check passed. Pinned .NET **8.0.426** recovered
+  with `/tmp/libprocshim.so`; EngineChecks, FoundationChecks and Release WASM
+  publish completed. The generated PhysX adapter was restored using the
+  lockfile-pinned vendor command. Detailed evidence is in the REA above.
+- Still need package integrity/HTTP on the exact fix SHA and its hosted Actions
+  result. Browser and iPhone storage acceptance remain unrun.
+
 ## Remaining parity gates, dependency order
 
 1. **Repository and reproducible build — PASS for tested SHA.** Recheck live branch and checks after each source commit.
@@ -38,4 +53,9 @@ On the exact source tree/SHA above:
 
 ## Next dependency-ready action
 
-Continue the full particle/source closure using one matching source profile. Reconcile package provenance before importing fields across the 51-system inventory and the 14-prefab impact manifest. Then implement the next source-backed module or owner lifecycle with a real runtime-path assertion. Record exact missing data, checks, and next dependency in the REA evidence; do not stop at “gate open.”
+After verifying the exact fix SHA's package/HTTP artifact and hosted workflow,
+continue the source-backed particle closure: reconcile one matching source
+profile's provenance across the 51-system inventory and 14-prefab impact
+manifest, then implement the next supported module with a real runtime-path
+assertion. In parallel, run browser-backed IndexedDB acceptance when a usable
+Chromium/WebKit runner is available; keep owner iPhone acceptance explicit.
