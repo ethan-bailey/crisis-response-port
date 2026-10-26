@@ -40,3 +40,8 @@ Dependency inventory complete; no browser implementation change in this document
 ## Hidden dependency found — run #64
 
 The initial browser implementation decoded the clips and reached the gesture-state assertion, but GitHub Actions Chromium had already started the AudioContext in running state before any click. The failure was exact: expected suspended, got running. The browser default therefore does not enforce the user-gesture prerequisite this acceptance intends to verify. Before the next source edit, this is recorded as a harness dependency: launch Chromium with the explicit --autoplay-policy=user-gesture-required flag; keep the runtime constructed before the trusted click, require suspended state before it and running state afterward, then rerun the full exact-source release/package and IndexedDB gates. The #64 IndexedDB subtest passed; the audio test did not reach event playback or output analysis, so no audio-playback result is claimed.
+
+
+## Harness correction in verification
+
+Commit 2b55d5f4905e7a14eddb0fd029f8941e80d237b1 adds Playwright's --autoplay-policy=user-gesture-required launch argument. The full exact-source Release/profile/package and Chromium run #65 / ID 40321027816 is in progress; no audio playback pass is claimed until its browser job records the context transition and analyser output.
