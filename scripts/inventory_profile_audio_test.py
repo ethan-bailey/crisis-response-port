@@ -1,4 +1,6 @@
+import base64
 import gzip
+import hashlib
 import json
 import tempfile
 import unittest
@@ -9,12 +11,25 @@ from inventory_profile_audio import inventory
 
 class ProfileAudioInventoryTests(unittest.TestCase):
     def make_profile(self, root: Path, *, has_reference=True):
+        audio = b"fixture ogg bytes"
+        audio_b64 = base64.b64encode(audio).decode("ascii")
+        audio_sha = hashlib.sha256(audio).hexdigest()
+        descriptor = json.dumps({
+            "path": "Assets/AudioClip/hurt-07.ogg",
+            "sha256": audio_sha,
+            "size": len(audio),
+            "binary": True,
+            "dataBase64": audio_b64,
+        }, separators=(",", ":")).encode()
+        packed = gzip.compress(descriptor, mtime=0)
+        (root / "clip.json.gz").write_bytes(packed)
         clip = {
             "path": "Assets/AudioClip/hurt-07.ogg",
-            "bytes": 27302,
-            "sha256": "a" * 64,
-            "compressedBytes": 1024,
-            "compressedSha256": "b" * 64,
+            "file": "clip.json.gz",
+            "bytes": len(descriptor),
+            "sha256": hashlib.sha256(descriptor).hexdigest(),
+            "compressedBytes": len(packed),
+            "compressedSha256": hashlib.sha256(packed).hexdigest(),
         }
         manifest = {
             "profile": "fixture",
@@ -49,11 +64,22 @@ class ProfileAudioInventoryTests(unittest.TestCase):
             root = Path(directory)
             self.make_profile(root)
             result = inventory(root)
+        self.assertEqual(result["schemaVersion"], 2)
         self.assertEqual(result["sourcePackageSha256"], "c" * 64)
         self.assertEqual(result["formatCounts"], {"ogg": 1})
         self.assertEqual(result["serializedReferenceCount"], 1)
+        self.assertEqual(result["sourceAudioBytes"], len(b"fixture ogg bytes"))
+        self.assertEqual(result["descriptorJsonBytes"], result["assets"][0]["descriptorJsonBytes"])
         entry = result["assets"][0]
-        self.assertEqual(entry["sourceSha256"], "a" * 64)
+        self.assertEqual(entry["sourceAudioBytes"], len(b"fixture ogg bytes"))
+        self.assertEqual(entry["sourceAudioSha256"], hashlib.sha256(b"fixture ogg bytes").hexdigest())
+        self.assertEqual(entry["descriptorJsonBytes"], len(json.dumps({
+            "path": "Assets/AudioClip/hurt-07.ogg",
+            "sha256": hashlib.sha256(b"fixture ogg bytes").hexdigest(),
+            "size": len(b"fixture ogg bytes"),
+            "binary": True,
+            "dataBase64": base64.b64encode(b"fixture ogg bytes").decode("ascii"),
+        }, separators=(",", ":")).encode()))
         self.assertEqual(entry["references"][0]["fieldPath"], "audioClip")
         self.assertTrue(entry["references"][0]["ownerMayBeInstantiatedAfterMissionStart"])
 
@@ -75,6 +101,26 @@ class ProfileAudioInventoryTests(unittest.TestCase):
             with gzip.open(metadata_path, "wt", encoding="utf-8") as target:
                 json.dump(metadata, target)
             with self.assertRaisesRegex(ValueError, "outside the selected profile"):
+                inventory(root)
+
+    def test_rejects_embedded_audio_hash_mismatch(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.make_profile(root)
+            descriptor_path = root / "clip.json.gz"
+            with gzip.open(descriptor_path, "rt", encoding="utf-8") as source:
+                descriptor = json.load(source)
+            descriptor["sha256"] = "0" * 64
+            raw = json.dumps(descriptor, separators=(",", ":")).encode()
+            packed = gzip.compress(raw, mtime=0)
+            descriptor_path.write_bytes(packed)
+            manifest_path = root / "manifest.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest["assets"][0].update(
+                bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest(),
+                compressedBytes=len(packed), compressedSha256=hashlib.sha256(packed).hexdigest())
+            manifest_path.write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, "Embedded audio byte identity"):
                 inventory(root)
 
 
