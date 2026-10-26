@@ -116,6 +116,8 @@ public static class ParticleClampVelocityProbe
             main.startLifetime = 10f;
             main.startSpeed = 0f;
             main.maxParticles = 4;
+            var emission = system.emission;
+            emission.enabled = false;
             var module = system.limitVelocityOverLifetime;
             module.enabled = true;
             module.separateAxes = false;
