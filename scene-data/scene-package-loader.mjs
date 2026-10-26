@@ -120,13 +120,18 @@ async function fetchCompressedAsset(url, expected, label, signal, persistentCach
       throw new Error(`${label} compressed size or checksum mismatch`);
   }
   let cachedLocally = wasCached;
+  let cacheWriteError = null;
   if (!wasCached && persistentCache) {
     try {
       await persistentCache.put(url, new Response(compressed.slice(0), {headers:{'Content-Type':'application/gzip'}}));
       cachedLocally = true;
-    } catch { /* Safari quota or private browsing: this run still uses verified network bytes. */ }
+    } catch (error) {
+      // Storage is optional for this launch, but the caller must be able to
+      // distinguish quota exhaustion from an unavailable/private cache.
+      cacheWriteError = {name:error?.name || "Error", message:String(error?.message || error)};
+    }
   }
-  return {compressed, fetchAndHashMs: monotonicNow() - started, wasCached, cachedLocally};
+  return {compressed, fetchAndHashMs: monotonicNow() - started, wasCached, cachedLocally, cacheWriteError};
 }
 
 // Blazor's byte[] JS interop path is version-sensitive and the hosted .NET 8
@@ -288,7 +293,7 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
           stage:"delivered",compressedAssetBytes,sourceAssetBytes,maximumAssetBytes,
           totalCompressedAssetBytes:manifest.compressedAssetBytes,totalSourceAssetBytes:manifest.uncompressedAssetBytes,
           asset:{path:asset.path,compressedBytes:compressed.byteLength,sourceBytes:asset.bytes,
-            fetchAndHashMs,wasCached:fetched[offset].wasCached,cachedLocally,transportPrepareMs:transportPrepareMs/assets.length,bridgeMs:bridgeBatchMs/assets.length,
+            fetchAndHashMs,wasCached:fetched[offset].wasCached,cachedLocally,cacheWriteError:fetched[offset].cacheWriteError,transportPrepareMs:transportPrepareMs/assets.length,bridgeMs:bridgeBatchMs/assets.length,
             bridgeBatchMs,bridgeBatchAssets:assets.length},
           profileElapsedMs:monotonicNow()-profileStarted,batchElapsedMs:monotonicNow()-batchStarted});
       }

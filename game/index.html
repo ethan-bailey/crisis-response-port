@@ -486,7 +486,11 @@ async function load(){
       const mib=`${(progress.compressedAssetBytes/1048576).toFixed(1)} / ${(progress.totalCompressedAssetBytes/1048576).toFixed(1)} MiB`;
       if(progress.stage==="fetching")missionProgressText.textContent=`Downloading Mission assets ${progress.receivedAssets+1}–${Math.min(progress.expectedAssets,progress.receivedAssets+progress.pendingAssetPaths.length)} of ${progress.expectedAssets} · ${mib}`;
       else if(progress.stage==="adding")missionProgressText.textContent=`Adding verified source assets ${progress.receivedAssets+1}–${Math.min(progress.expectedAssets,progress.receivedAssets+progress.pendingAssetPaths.length)} of ${progress.expectedAssets} to WASM · ${((progress.batchCompressedBytes||0)/1048576).toFixed(2)} MiB in this batch · ${mib} verified`;
-      else missionProgressText.textContent=`Verified ${progress.receivedAssets}/${progress.expectedAssets} Mission assets · ${mib} · ${progress.asset.wasCached?"loaded from device cache":progress.asset.cachedLocally?"saved on this device":"not saved; next run may download again"} · latest fetch/hash ${progress.asset.fetchAndHashMs.toFixed(0)} ms, WASM add ${progress.asset.bridgeMs.toFixed(0)} ms`;
+      else {
+       const storageState=progress.asset.wasCached?"loaded from device cache":progress.asset.cachedLocally?"saved on this device":"not saved; next run may download again";
+       const storageFailure=progress.asset.cacheWriteError?.name==="QuotaExceededError"?" · browser storage is full; clear device space and retry":progress.asset.cacheWriteError?` · local save failed (${progress.asset.cacheWriteError.name})`:"";
+       missionProgressText.textContent=`Verified ${progress.receivedAssets}/${progress.expectedAssets} Mission assets · ${mib} · ${storageState}${storageFailure} · latest fetch/hash ${progress.asset.fetchAndHashMs.toFixed(0)} ms, WASM add ${progress.asset.bridgeMs.toFixed(0)} ms`;
+      }
      }
     });
     window.__missionSourceDiagnostics.status="verified";

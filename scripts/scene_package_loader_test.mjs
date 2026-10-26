@@ -150,7 +150,7 @@ test("delivers verified source assets through the WASM package bridge", async ()
     }, {receivedAssets:1,expectedAssets:1,compressedAssetBytes:assetGzip.byteLength,sourceAssetBytes:assetRaw.byteLength,
       maximumAssetBytes:assetRaw.byteLength,totalCompressedAssetBytes:assetGzip.byteLength,totalSourceAssetBytes:assetRaw.byteLength,
       asset:{path:assetPath,compressedBytes:assetGzip.byteLength,sourceBytes:assetRaw.byteLength,
-        fetchAndHashMs:completed.asset.fetchAndHashMs,wasCached:false,cachedLocally:true,transportPrepareMs:completed.asset.transportPrepareMs,
+        fetchAndHashMs:completed.asset.fetchAndHashMs,wasCached:false,cachedLocally:true,cacheWriteError:null,transportPrepareMs:completed.asset.transportPrepareMs,
         bridgeMs:completed.asset.bridgeMs,bridgeBatchMs:completed.asset.bridgeBatchMs,bridgeBatchAssets:1}});
     for(const value of [completed.asset.fetchAndHashMs,completed.asset.transportPrepareMs,completed.asset.bridgeMs,
       completed.profileElapsedMs,completed.batchElapsedMs]) assert.ok(Number.isFinite(value) && value >= 0);
@@ -175,6 +175,13 @@ test("delivers verified source assets through the WASM package bridge", async ()
     assert.equal(recoveredProgress.at(-1).asset.wasCached,false,"network recovery is reported as a cache miss");
     assert.equal(recoveredProgress.at(-1).asset.cachedLocally,true,"the verified replacement is stored on device");
     assert.deepEqual(Buffer.from(await cachedResponses.get(assetUrl).arrayBuffer()),Buffer.from(assetGzip),"verified network bytes replace the corrupt cache entry");
+
+    globalThis.caches={open:async()=>({match:async()=>undefined,delete:async()=>false,
+      put:async()=>{const error=new Error("Storage quota reached");error.name="QuotaExceededError";throw error;}})};
+    const quotaProgress=[];
+    await deliverIncrementalSourceProfile(cachedBridge,"https://example.test/source/manifest.json",{onProgress:value=>quotaProgress.push(value)});
+    assert.equal(quotaProgress.at(-1).asset.cachedLocally,false,"quota rejection must not be reported as saved locally");
+    assert.equal(quotaProgress.at(-1).asset.cacheWriteError.name,"QuotaExceededError","the exact browser storage failure remains observable");
   } finally {
     globalThis.fetch = originalFetch;
     if(originalCaches===undefined)delete globalThis.caches;else globalThis.caches=originalCaches;
