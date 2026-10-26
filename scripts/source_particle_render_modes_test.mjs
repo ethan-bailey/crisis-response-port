@@ -40,7 +40,9 @@ test('renderer consumes native Stretch settings and preserves source inherited-v
   assert.match(renderer,/mode===0\|\|mode===1\?new THREE\.Sprite/);
   assert.match(renderer,/stretchedBillboardParameters\(particle\.velocity\.toArray\(\),size,particle\.renderer,basis\)/);
   assert.match(renderer,/evaluateSourceInheritedVelocity\(emitter,0,random\.inheritVelocity\)/);
-  assert.match(renderer,/const inheritedSourceVelocity=hasSourceCommand\s*\?commandRecord\.attachedRigidbodyVelocity:value\.sourceRigidbodyVelocity/);
-  assert.match(renderer,/v3\(inheritedSourceVelocity\)\.multiplyScalar\(inheritance\)/);
+  assert.match(renderer,/const commandVelocity=commandRecord\?\.attachedRigidbodyVelocity/);
+  assert.match(renderer,/const eventVelocity=value\.sourceRigidbodyVelocity/);
+  assert.match(renderer,/const inheritedSourceVelocity=Array\.isArray\(commandVelocity\)/);
+  assert.match(renderer,/inheritedSourceVelocity\|\|\[0,0,0\]/);
   assert.match(binding,/new Set\(\[0,1,4\]\)/);
 });
