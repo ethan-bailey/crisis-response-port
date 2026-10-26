@@ -23,8 +23,7 @@
 
 ## Next action
 
-Close the runtime execution gap before adding another static-only contract: extend the pinned .NET CI runtime check to invoke the existing original Mission projectile harness and assert the source chain actually fires a projectile, hits a selected Occupant limb, updates LastHitLimb/HitCount and injury state, and records correct source owner/order. First inventory the harness and all dependencies (scene prefabs, projectile prefab, limb colliders/masks, armor/surface, physics, Physiology, audio/particle adapters, and cleanup); verify whether its current prerequisites can select a deterministic safe shot. Keep AI suppression explicit, but do not count actor snapshots as combat execution. Add assertions to the smallest focused existing check, then run full Node/Python/runtime/engine/foundation suites and exact-source Release/package/Chromium gates, push the coherent batch to `develop/wasm`, and deploy only its verified package. In parallel, the owner can test live v73 on iPhone Safari.
-
+Wait for Actions run #50 (`40305904711`, source SHA `4238fd866320cac3f2279adf0e00e69948210a82`) to finish. If its new projectile contract passes, retain the exact report and package artifact digest, then add the existing `--mission-outcome-contract` as the next CI gate and run the full workflow again. If it fails, use the captured report to fix the concrete prerequisite or source-path mismatch before advancing. Do not deploy this checks-only change; the currently deployed Site v73 is unchanged.
 
 ## Active verification — 2026-10-26
 
