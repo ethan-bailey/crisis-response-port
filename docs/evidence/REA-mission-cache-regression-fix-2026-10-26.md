@@ -90,9 +90,9 @@ continues.
   200 `text/html`; `/game/vendor/physx-js-webidl.wasm` returned 200
   `application/wasm`, 5,347,727 bytes, SHA-256
   `7d4696e6273166308ce1f0db5dd5aee96c843b6e3722d96db7e4422aa1fbee1f`.
-- GitHub branch subsequently advanced to `41c4e5351242947cc988714450f508a593638013`
-  with a `NEXT_AGENT.md`-only commit. The 12d code commit is its ancestor; verify
-  this current tip before the next source change.
+- GitHub branch subsequently advanced through docs-only handoff commits
+  `41c4e535...`, `54d170fc...`, and `a3e8bda...`. The 12d code commit is their
+  ancestor; refresh the live branch before the next source change.
 
 ## Spark provenance check
 
@@ -118,3 +118,22 @@ artifact does not contain the required original source bytes. Next recovery
 input is the original project export/archive or a source owner copy whose
 1,539 bytes match the expected SHA; importing the exported 1,014-byte texture
 would be a provenance-changing substitute and remains disallowed.
+
+## Next source-backed particle slice
+
+The matching source profile's 14 impact prefabs contain 14 active
+`ClampVelocityModule`s in three configurations. All use `separateAxis=0`,
+`inWorldSpace=0`, drag scalar 0, magnitude scalar 0, and x/y/z scalar 1, with
+dampen values 0.98 (11 systems), 0.99 (1), and 0.65 (2). Unity's module
+documentation describes velocity limiting plus damping/drag and the space
+selection, but does not resolve the exact Unity 2017.2 serialized field mapping
+for this profile. See the [Unity 2018.1 module API](https://docs.unity3d.com/2018.1/Documentation/ScriptReference/ParticleSystem.LimitVelocityOverLifetimeModule.html)
+and [Unity 2018.4 Limit Velocity module manual](https://docs.unity3d.com/2018.4/Manual/PartSysLimitVelOverLifeModule.html)
+for context. The latter documents that the `Space` choice applies only when
+separate axes are enabled. No browser behavior was added from the later API
+description.
+Next, establish whether zero serialized magnitude means an unbounded limit or a
+zero limit in this Unity 2017.2 source/runtime, and verify local-space
+transforms and damping order with a native source capture or version-matched
+fixture. Then add the smallest contract and runtime implementation for the
+observed behavior.

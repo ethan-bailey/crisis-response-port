@@ -3,7 +3,7 @@
 ## Live checkpoint
 
 - Repository `ethan-bailey/crisis-response-port`; authorized branch `develop/wasm`.
-- Latest code commit: `12d61245431b3e3a026fbd82a8199f6e983a8590`, tree `7dd6c19db9afcf0d02077a11c5d106744b641b74`. Current remote tip `41c4e5351242947cc988714450f508a593638013` is a later `NEXT_AGENT.md`-only update; refresh before edits.
+- Latest code commit: `12d61245431b3e3a026fbd82a8199f6e983a8590`, tree `7dd6c19db9afcf0d02077a11c5d106744b641b74`. Remote HEAD was `a3e8bda14c5dc94454829634fff8128769072c5f` immediately before this documentation-only update; refresh before edits.
 - Actions run #22 (`40263692936`) passed on exact code commit `12d612...`.
 - Release WASM package rebuilt from that exact remote SHA and verified: 2,684 files, 199 Blazor resources, 195 WASM files, and 1,919 Mission source assets (97,767,549 compressed bytes; 205,514,345 source bytes). HTTP smoke returned correct entry pages and WASM MIME/hash. Evidence: `docs/evidence/REA-mission-cache-regression-fix-2026-10-26.md`.
 - No browser interaction or physical iPhone Safari result is available. Keep `fullGameParity:false` and visual parity unclaimed.
@@ -39,4 +39,4 @@ For the implementation tree:
 
 ## Next dependency-ready action
 
-Continue particle dependency closure from `docs/MISSION_PARTICLE_DEPENDENCY_CLOSURE_2026-10-25.md` and `docs/mission-particle-dependency-inventory-2026-10-25.json.gz`: source-trace a module/lifecycle outside the existing 14-prefab impact renderer and add a real runtime-path assertion. Independently locate a real Chromium/WebKit runner for IndexedDB acceptance. If runner or exact Spark source is unavailable, record attempted paths and evidence, defer only those acceptances, and continue source-backed gameplay work.
+Continue particle dependency closure from `docs/MISSION_PARTICLE_DEPENDENCY_CLOSURE_2026-10-25.md` and `docs/mission-particle-dependency-inventory-2026-10-25.json.gz`. The packaged 14 impact prefabs have 14 active `ClampVelocityModule`s across three serialized configurations; trace Unity 2017.2's exact serialized magnitude/axis mapping and damping order before implementing a real runtime-path assertion. Current `magnitude.scalar=0` with `separateAxis=0` makes a guess unsafe. Independently locate a real Chromium/WebKit runner for IndexedDB acceptance. If runner or exact Spark source is unavailable, record attempted paths and evidence, defer only those acceptances, and continue source-backed gameplay work.
