@@ -135,3 +135,22 @@ Continue dependency-ordered parity work. Physical iPhone Safari acceptance remai
 ## Remote handoff identity
 
 Current remote `develop/wasm` head is `93411b1db408a62573d86f624f6457e520e2d57c`, a documentation-only checkpoint on top of the tested source SHA `b173b1daebcb0337fb1def6da948d08f3d990d79`. No runtime or test source changed after run #68.
+
+
+## Run #68 — exact build, package, IndexedDB and headless audio passed — 2026-10-26
+
+- Source commit `b173b1daebcb0337fb1def6da948d08f3d990d79`, run #68 / ID `40322845592`: overall `success`; Contracts/Release job `121571910792` and Chromium IndexedDB/audio job `121571911030` both passed. Node contracts: 143/143; Python contracts: 45/45. Runtime, engine, foundation, Release WASM publish, recovery/index validation, complete Mission package build and independent package verifier also passed.
+- Exact package verifier: `status=verified`, 2,686 files, 199 Blazor resources, 195 WASM files; Mission profile 1,919 assets / 22,365 records / 97,767,549 compressed bytes / 205,514,345 source bytes; package sourceCommit exactly equals `b173b1daebcb0337fb1def6da948d08f3d990d79`. Recovery archive SHA-256 `cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d`; source index SHA-256 `9d866276582031d440c316c8e60d69d252506cf67a8ae9d03dbdbe0d91980f92`; deterministic inner tar.gz SHA-256 `a5522d46a7dc7976aac57787ddf8100b8b3e4ef5e9fc201b6c549ad841fd01ec`. Artifact `12649418198`, 138,555,231 bytes, outer ZIP SHA-256 `f30f8ccdd34e0829706e98f3736003f7bc152486f7d49d550b32ab26a7c6a883`.
+- Chromium passed all 7 IndexedDB assertions: manifest-verified write, persistent reload reuse without asset network request, interrupted fetch/retry without partial records, quota fallback without a false persistence claim, corrupt-record repair, source-hash version isolation, and clear-selected-version behavior. Production audio smoke decoded 7 clips and played the authored fire/extract/insert/bolt events once each through a trusted-click-resumed production WebAudio graph; gain/readback `0.1599999964` / max `0.16`; analyser peak RMS `0.1590921945`; all drop/unmapped/unlock counters zero.
+- The verified package does **not** yet constitute a publishable Site archive: the Site's previously documented source branch is `main`; v73 references `5ca69fc5a4b6538121b00aece66a8587997cf1f5`, current `main` is `d7af0076274ff0ae4da3da5f84e2d346e94e3292`, and `develop/wasm` is `b173b1daebcb0337fb1def6da948d08f3d990d79`. GitHub compare says these branches diverge (develop +1,291 / −21, merge base `13b24c4ce296a81f4d6803cd4a3325020d13229b)); main also lacks the tested source-contract/audio/particle files. The Sites publisher requires archive SHA and commit SHA to match the configured source HEAD. No mismatched deployment was attempted; v73 remains live. Full comparison/blocker and the safe integration action are in `docs/evidence/SITE_DEPLOYMENT_ALIGNMENT_BLOCKER_2026-10-26.md`.
+- Input regression evidence remains green on this SHA: the Node suite includes touch-down aim anchoring, horizontal-axis invariance, vertical-only aim adjustment and aim persistence on release. This is unit/browser-input contract evidence, not owner-device iPhone Safari confirmation.
+
+## Next action
+
+Resolve the Site-bound source integration path without merging the 1,291-commit divergence blindly: inspect the configured Site source repository/branch and determine whether the supported route is to repoint it to `develop/wasm` or create a deliberate integration commit. Then build and verify that exact Site-bound SHA using the complete Mission package verifier and Chromium acceptance before publishing. Meanwhile continue the independent dependency-ordered source batch: inventory all original reload phases, interruption and weapon-switch paths and their audio clip mappings in the dependency closure before adding the remaining source-driven reload lifecycle assertions. Do not deploy until the archive's embedded source SHA equals the Site publisher's configured remote HEAD. Physical iPhone Safari/device audio, full particle/visual parity, native PhysX and full-game completion remain unclaimed.
+
+
+## Evidence references
+
+- Complete run #68 build/package, IndexedDB, headless audio and input acceptance: `docs/evidence/AUDIO_PLAYBACK_CI_2026-10-26.md`.
+- Exact source-branch mismatch and safe publishing sequence: `docs/evidence/SITE_DEPLOYMENT_ALIGNMENT_BLOCKER_2026-10-26.md`.
