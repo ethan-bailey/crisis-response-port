@@ -106,6 +106,45 @@ public static class RuntimeBridge {
         fullSourceActor=new(scene.world,session.Actor);
         return JsonSerializer.Serialize(new{mission=session.Mission.scene,actor=session.Actor.name,sourceActors=session.SourceActorCount,snapshot=fullSourceActor.Snapshot()});
     }
+    [JSInvokable] public static string GetMissionAudioSourcePaths(){
+        var world=incrementalSourceWorld??throw new InvalidOperationException("Incremental source world is not initialized");
+        return JsonSerializer.Serialize(world.Objects.OfType<AudioClip>().Select(clip=>clip.OriginalAssetPath)
+            .Where(path=>!string.IsNullOrWhiteSpace(path)&&path.StartsWith("Assets/AudioClip/",StringComparison.Ordinal)&&
+                (path.EndsWith(".wav",StringComparison.OrdinalIgnoreCase)||path.EndsWith(".ogg",StringComparison.OrdinalIgnoreCase)))
+            .Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray());
+    }
+    [JSInvokable] public static string GetOriginalAudioAssetData(string assetPath){
+        if(string.IsNullOrWhiteSpace(assetPath)||!assetPath.StartsWith("Assets/AudioClip/",StringComparison.Ordinal)||
+            !(assetPath.EndsWith(".wav",StringComparison.OrdinalIgnoreCase)||assetPath.EndsWith(".ogg",StringComparison.OrdinalIgnoreCase)))
+            throw new InvalidDataException("Requested source audio path is outside the selected AudioClip WAV/OGG closure");
+        var source=originalSourcePackage??throw new InvalidOperationException("Incremental source package is not initialized");
+        if(!source.TryGetAsset(assetPath,out var asset))throw new KeyNotFoundException($"Verified source audio asset is not present: {assetPath}");
+        try{
+            if(!asset.TryGetProperty("dataBase64",out var data)||data.ValueKind!=JsonValueKind.String||
+                !asset.TryGetProperty("sha256",out var hash)||hash.ValueKind!=JsonValueKind.String)
+                throw new InvalidDataException($"Verified source audio asset lacks binary data or source hash: {assetPath}");
+            var bytes=Convert.FromBase64String(data.GetString());
+            var actual=Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(bytes)).ToLowerInvariant();
+            if(!System.Security.Cryptography.CryptographicOperations.FixedTimeEquals(
+                System.Text.Encoding.ASCII.GetBytes(actual),System.Text.Encoding.ASCII.GetBytes(hash.GetString())))
+                throw new InvalidDataException($"Source audio binary hash does not match package record: {assetPath}");
+            return JsonSerializer.Serialize(new{assetPath,dataBase64=data.GetString(),sourceSha256=actual});
+        }finally{source.ReleaseParsedAsset(assetPath);}
+    }
+    [JSInvokable] public static string SetOriginalAudioLoadState(string assetPath,int state){
+        if(!Enum.IsDefined(typeof(AudioDataLoadState),state))throw new ArgumentOutOfRangeException(nameof(state));
+        var world=incrementalSourceWorld??throw new InvalidOperationException("Incremental source world is not initialized");
+        var clips=world.Objects.OfType<AudioClip>().Where(clip=>clip.OriginalAssetPath==assetPath).ToArray();
+        foreach(var clip in clips){clip.ReportLoadState((AudioDataLoadState)state);if((AudioDataLoadState)state==AudioDataLoadState.Loaded)clip.ReleaseSourceData();}
+        return JsonSerializer.Serialize(new{assetPath,state=(AudioDataLoadState)state,instances=clips.Length});
+    }
+    [JSInvokable] public static string SetBrowserAudioSourcePlaying(int sourceId,bool isPlaying){
+        var world=incrementalSourceWorld??throw new InvalidOperationException("Incremental source world is not initialized");
+        if(world.AudioSourceDriver is not Crisis.Runtime.BrowserAudioEventQueue audioEvents)
+            throw new InvalidOperationException("The current source world has no browser audio event driver");
+        audioEvents.ReportPlaybackState(sourceId,isPlaying);
+        return JsonSerializer.Serialize(new{sourceId,isPlaying});
+    }
     [JSInvokable] public static string SetFullSourceActorAimTarget(float x,float y,float z)=>JsonSerializer.Serialize((fullSourceActor??throw new InvalidOperationException("FullSource actor bridge is not initialized")).SetAimWorldPoint(x,y,z));
     [JSInvokable] public static string TickFullSourceActorBridge(float elapsedSeconds,string actionsJson,float mouseX,float mouseY,float movementMagnitude)=>JsonSerializer.Serialize((fullSourceActor??throw new InvalidOperationException("FullSource actor bridge is not initialized")).Step(elapsedSeconds,actionsJson,mouseX,mouseY,movementMagnitude));
     [JSInvokable] public static string SynchronizeFullSourceActorPhysics(float x,float y,float z,float velocityX,float velocityY,float velocityZ)=>JsonSerializer.Serialize((fullSourceActor??throw new InvalidOperationException("FullSource actor bridge is not initialized")).SynchronizePhysics(x,y,z,velocityX,velocityY,velocityZ));

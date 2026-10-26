@@ -31,7 +31,7 @@ export function createUpperBody(data,manifest,nodeById,character,weapon,runtimeC
  const anchors=[weapon.nodesByPath.get('Transform/Right hand anchor'),weapon.nodesByPath.get('Transform/Left hand anchor')];
  const ac=data.armConfiguration;
  anchors[0].position.set(ac.rightHandOffset.x,ac.rightHandOffset.y,0);anchors[1].position.set(ac.leftHandOffset.x,ac.leftHandOffset.y,0);
- const effects=createWeaponEffects(weaponData,scene,ballisticsData,sourceWindows,particleSources);
+ const effects=createWeaponEffects(weaponData,scene,ballisticsData,sourceWindows,particleSources,runtimeCall);
  const weaponWorld=()=>{const p=worldPosition(weapon.root),q=weapon.root.getWorldQuaternion(new THREE.Quaternion());return {p:unityVector(p),q:[-q.x,-q.y,q.z,q.w]};};
  const sourceNodes=new Map(manifest.nodes.map(n=>[n.transformFileID,nodeById.get(n.gameObjectFileID)]));
  let result=null,solutions=[],weaponResult=null;

@@ -16,11 +16,14 @@ export async function loadWeaponData(){
  const [,renderMaterials]=await Promise.all([preloadWeaponAudio(data.audio,data.audioRuntime),loadSourceCutoutMaterials()]);
  data.renderMaterials=renderMaterials;return data;
 }
-export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,particleSources){
+export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,particleSources,runtimeCall){
  const audio=data.audioRuntime||createWeaponAudioRuntime(data.audio);
  for(const info of Object.values(ballisticsData?.effects||{}))for(const url of info.audio)audio.load(url,url);
  const audioStats={snapshot:()=>audio.snapshot()};
- const dispatchSourceAudio=createSourceWeaponAudioDispatcher(data.audio,audio);
+ const fetchOriginalSourceAudio=async path=>JSON.parse(await runtimeCall('GetOriginalAudioAssetData',path));
+ const reportOriginalAudioState=async(path,state)=>JSON.parse(await runtimeCall('SetOriginalAudioLoadState',path,state));
+ const reportOriginalAudioPlaying=async(sourceId,isPlaying)=>JSON.parse(await runtimeCall('SetBrowserAudioSourcePlaying',sourceId,isPlaying));
+ const dispatchSourceAudio=createSourceWeaponAudioDispatcher(data.audio,audio,fetchOriginalSourceAudio,reportOriginalAudioState,reportOriginalAudioPlaying);
  const originalImpactMeshes=createOriginalImpactMeshRenderer(scene);
  const originalWindows=createOriginalWindowVisuals(scene,ballisticsData,sourceWindows);
  const originalParticleEvents=createOriginalParticleEventBinding(particleSources.particles,particleSources.materials,particleSources.controllers);

@@ -1,9 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { webcrypto } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { gunzipSync } from 'node:zlib';
 import {
   MAX_WEAPON_OUTPUT_GAIN,
+  MAX_DECODED_SOURCE_AUDIO_BYTES,
   classifyWeaponPlayback,
   clampWeaponEventGain,
   createSourceWeaponAudioDispatcher,
@@ -25,9 +27,10 @@ function methodBody(source, signature) {
 }
 
 class FakeNode {
-  constructor() { this.gain = { value: 1 }; }
+  constructor() { this.gain = { value: 1 }; this.playbackRate={value:1};this.stopped=0; }
   connect(next) { return next; }
   disconnect() {}
+  stop() { this.stopped++;this.onended?.(); }
 }
 
 let activeContext;
@@ -53,7 +56,7 @@ class FakeAudioContext {
     source.start = () => { this.started++; };
     return source;
   }
-  decodeAudioData() { return Promise.resolve({ decoded: true }); }
+  decodeAudioData() { return Promise.resolve({ decoded: true,length:this.decodedBufferLength??4800,numberOfChannels:1,sampleRate:48000 }); }
   resume() { this.state = 'running'; return Promise.resolve(); }
 }
 
@@ -139,6 +142,86 @@ test('FullSource gun events resolve by original clip path and retain source age'
   assert.ok(Math.abs(played[3][1] - 0.6) < 1e-12);
   assert.ok(Math.abs(played[3][2] - 0.01) < 1e-12);
   assert.equal(unmapped.length, 2, 'unsupported loops and unknown source clips are counted rather than guessed');
+});
+
+test('dynamic Mission source WAV events coalesce verified decode and preserve per-source stop state', async () => {
+  const bytes=Uint8Array.from([1,2,3,4]),sourcePath='Assets/AudioClip/hurt-07.ogg';
+  const sourceSha256=[...new Uint8Array(await webcrypto.subtle.digest('SHA-256',bytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
+  const encoded=Buffer.from(bytes).toString('base64');let fetches=0;const states=[],sourcePlaying=[],played=[],unmapped=[];
+  const runtime=createWeaponAudioRuntime({}, {AudioContextClass:FakeAudioContext});runtime.unlock();await Promise.resolve();
+  const fetchSource=async path=>{assert.equal(path,sourcePath);fetches++;return {assetPath:path,dataBase64:encoded,sourceSha256};};
+  const report=(path,state)=>states.push([path,state]);
+  const dispatch=createSourceWeaponAudioDispatcher({},runtime,fetchSource,report,(id,isPlaying)=>sourcePlaying.push([id,isPlaying]));
+  dispatch([
+    {action:'oneShot',sourcePath,sourceId:22,time:4,volume:.7},
+    {action:'oneShot',sourcePath,sourceId:22,time:4.01,volume:.5},
+  ],4.02);
+  await runtime.loadOriginalSource(sourcePath,fetchSource,report);
+  assert.equal(fetches,1,'same source path shares the in-flight verified package read and decode');
+  assert.equal(runtime.snapshot().sourceDecodeCoalesced,2);
+  assert.equal(runtime.snapshot().played,2,JSON.stringify(runtime.snapshot()));
+  assert.deepEqual(states,[[sourcePath,2]],'Loaded is reported only after source hash verification and decode');
+  dispatch([{action:'play',sourcePath,sourceId:22,time:4.03,volume:.4,pitch:.8,loop:true}],4.04);
+  assert.equal(runtime.snapshot().sourceLoopEvents,1);
+  dispatch([{action:'stop',sourceId:22,time:4.05}],4.06);
+  assert.equal(runtime.snapshot().sourceStops,1);
+  assert.deepEqual(sourcePlaying.at(-1),[22,false],'source-scoped Stop reports the ended state to FullSource');
+  assert.equal(runtime.snapshot().decodedAudioBytes,19200);
+  assert.equal(runtime.snapshot().maxDecodedAudioBytes,MAX_DECODED_SOURCE_AUDIO_BYTES);
+  assert.equal(runtime.snapshot().unmappedSourceEvents,0);
+  assert.equal(runtime.snapshot().sourceEventsDropped,0);
+  assert.equal(unmapped.length,0);
+});
+
+test('source decode failure and stale event are recorded without late playback', async () => {
+  const sourcePath='Assets/AudioClip/hurt-07.ogg',states=[];
+  const runtime=createWeaponAudioRuntime({}, {AudioContextClass:FakeAudioContext});runtime.unlock();await Promise.resolve();
+  const fetchBad=async path=>({assetPath:path,dataBase64:Buffer.from([1,2]).toString('base64'),sourceSha256:'0'.repeat(64)});
+  const report=(path,state)=>states.push([path,state]);
+  const dispatch=createSourceWeaponAudioDispatcher({},runtime,fetchBad,report);
+  dispatch([{action:'oneShot',sourcePath,sourceId:1,time:1,volume:1}],1.2);
+  await runtime.loadOriginalSource(sourcePath,fetchBad,report);
+  assert.equal(runtime.snapshot().sourceDecodeErrors,1);
+  assert.equal(runtime.snapshot().sourceEventsDropped,1);
+  assert.deepEqual(states,[[sourcePath,3]]);
+  const staleRuntime=createWeaponAudioRuntime({}, {AudioContextClass:FakeAudioContext});staleRuntime.unlock();await Promise.resolve();
+  let fetches=0;const fetchStale=async()=>{fetches++;throw new Error('should still be caught');},stale=createSourceWeaponAudioDispatcher({},staleRuntime,fetchStale);
+  stale([{action:'oneShot',sourcePath,sourceId:2,time:2,volume:1}],2.2);
+  await staleRuntime.loadOriginalSource(sourcePath,fetchStale);
+  assert.equal(staleRuntime.snapshot().droppedStale,1);
+  assert.equal(staleRuntime.snapshot().played,0);
+  assert.equal(fetches,1,'stale events still warm the clip cache but cannot play late');
+});
+
+test('AudioSource.Stop cancels source events that are waiting for original decode', async () => {
+  const bytes=Uint8Array.from([5,6,7]),sourcePath='Assets/AudioClip/hurt-07.ogg';
+  const sourceSha256=[...new Uint8Array(await webcrypto.subtle.digest('SHA-256',bytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
+  let finishFetch;const states=[];
+  const runtime=createWeaponAudioRuntime({}, {AudioContextClass:FakeAudioContext});runtime.unlock();await Promise.resolve();
+  const fetchSource=()=>new Promise(resolve=>{finishFetch=()=>resolve({assetPath:sourcePath,dataBase64:Buffer.from(bytes).toString('base64'),sourceSha256});});
+  const dispatch=createSourceWeaponAudioDispatcher({},runtime,fetchSource,null,(id,isPlaying)=>states.push([id,isPlaying]));
+  dispatch([{action:'oneShot',sourcePath,sourceId:77,time:9,volume:1}],9.01);
+  await Promise.resolve();
+  dispatch([{action:'stop',sourceId:77,time:9.02}],9.02);
+  finishFetch();
+  await runtime.loadOriginalSource(sourcePath,fetchSource);
+  assert.equal(runtime.snapshot().played,0,'pending one-shot must not resurrect after source Stop');
+  assert.equal(runtime.snapshot().sourceEventsPending,0);
+  assert.equal(runtime.snapshot().sourceEventsDropped,1);
+  assert.deepEqual(states.at(-1),[77,false]);
+});
+
+test('a single decoded source larger than the retained-memory ceiling fails explicitly', async () => {
+  class OversizedAudioContext extends FakeAudioContext { constructor(){super();this.decodedBufferLength=Math.floor(MAX_DECODED_SOURCE_AUDIO_BYTES/4)+1;} }
+  const bytes=Uint8Array.of(8),sourcePath='Assets/AudioClip/large.wav';
+  const sourceSha256=[...new Uint8Array(await webcrypto.subtle.digest('SHA-256',bytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
+  const states=[],runtime=createWeaponAudioRuntime({}, {AudioContextClass:OversizedAudioContext});
+  const result=await runtime.loadOriginalSource(sourcePath,async()=>({assetPath:sourcePath,dataBase64:Buffer.from(bytes).toString('base64'),sourceSha256}),
+    (path,state)=>states.push([path,state]));
+  assert.equal(result,null);
+  assert.equal(runtime.snapshot().sourceDecodeErrors,1);
+  assert.equal(runtime.snapshot().decodedAudioBytes,0);
+  assert.deepEqual(states,[[sourcePath,3]]);
 });
 
 test('original M4 reload and bolt audio clips are packaged and preloaded by the live weapon adapter', async () => {

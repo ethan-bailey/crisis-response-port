@@ -508,6 +508,17 @@ async function load(){
     const session=JSON.parse(await runtimeCall("InitializeIncrementalEntryTeamMission"));
     if(session.snapshot?.owner!=="FullSource.CharacterBody")throw new Error("Original Mission did not return the source-owned player actor");
     sourceActorSnapshot=session.snapshot;
+    missionProgressText.textContent="Decoding active Mission audio before controls are enabled…";
+    const sourceAudioPaths=JSON.parse(await runtimeCall("GetMissionAudioSourcePaths"));
+    const mappedWeaponAudioPaths=new Set(Object.values(weaponData.audio||{}).map(info=>info.source).filter(Boolean));
+    const activeSourceAudioPaths=sourceAudioPaths.filter(path=>!mappedWeaponAudioPaths.has(path));
+    const sourceAudioFetch=async path=>JSON.parse(await runtimeCall("GetOriginalAudioAssetData",path));
+    const sourceAudioState=async(path,state)=>runtimeCall("SetOriginalAudioLoadState",path,state);
+    const sourceAudioReady=await weaponData.audioRuntime.preloadOriginalSources(activeSourceAudioPaths,sourceAudioFetch,sourceAudioState,{concurrency:3});
+    window.__missionSourceDiagnostics.audio={activeClipPaths:sourceAudioPaths.length,preloadPaths:activeSourceAudioPaths.length,
+     decodedPaths:sourceAudioReady.decoded,residentPaths:sourceAudioReady.loaded,evictedPaths:sourceAudioReady.evicted,
+     failedPaths:sourceAudioReady.failed,decodedBytes:sourceAudioReady.decodedAudioBytes,
+     maxDecodedBytes:sourceAudioReady.maxDecodedAudioBytes,decodeErrors:sourceAudioReady.sourceDecodeErrors};
     contactPhysics=await contactPhysicsModule.createContactPhysics(contactPhysicsData,{x:sourceActorSnapshot.position[0],y:sourceActorSnapshot.position[1],z:sourceActorSnapshot.position[2]});
     const casingSource=await json("./assets/casing-556.json");
     const normalTexture=await texLoader.loadAsync("./assets/casing-556-normal.png");

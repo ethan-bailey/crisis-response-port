@@ -54,7 +54,6 @@ public static class BrowserEntryTeamMission
         UnityEngine.Audio.AudioMixer.Bind(world, new SilentMixerDriver());
 
         SceneLoader.LoadPrefabInstance(package, "Assets/Resources/Global context.prefab", world, requireComplete: false);
-        foreach (var clip in world.Objects.OfType<AudioClip>()) clip.ReportLoadState(AudioDataLoadState.Loaded);
         foreach (var source in world.Objects.OfType<AudioSource>()) source.Driver = audioEvents;
         world.Initialize();
 
@@ -77,11 +76,8 @@ public static class BrowserEntryTeamMission
             .SetValue(context.OperatorSpawnData, team);
 
         SceneLoadResult mission = SceneLoader.Load(package, "Assets/Scenes/Mission 01.unity", world);
-        // The Global Context prefab only contains the boot-time clips. Mission
-        // scene clips are part of the same already verified source package and
-        // must be marked available before original actors can emit footsteps,
-        // weapon, or equipment one-shots during source ticks.
-        foreach (var clip in world.Objects.OfType<AudioClip>()) clip.ReportLoadState(AudioDataLoadState.Loaded);
+        // Package presence is not decoded audio. The browser driver defers
+        // these events until its verified-source WebAudio decoder is ready.
         var missionRoot = world.Objects.OfType<Mission>().Single();
         missionRoot.sandboxStartMode = Mission.MissionView.EntryTeam;
         world.Objects.OfType<MissionUI>().Single().missionIntro = null;

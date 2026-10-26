@@ -29,6 +29,64 @@ if(args.Length==2&&args[0]=="--mission-fire-alarm-audio-contract"){
     Console.WriteLine(JsonSerializer.Serialize(new{status="passed",scene=session.Mission.scene,fireAlarm=fireAlarm.name,audioSource=source.name,clip=source.clip.OriginalAssetPath,decoded=source.clip.loadState==AudioDataLoadState.Loaded,delayedCallback="ActivateIn(0) -> SetState(true) -> AudioSource.Play"}));
     return;
 }
+if(args.Length==1&&args[0]=="--browser-audio-event-contract"){
+    var world=new RuntimeWorld();
+    var queue=new Crisis.Runtime.BrowserAudioEventQueue();
+    world.AudioSourceDriver=queue;
+    var clip=new AudioClip("Assets/AudioClip/hurt-07.ogg",.4f){OriginalAssetPath="Assets/AudioClip/hurt-07.ogg"};
+    var go=new GameObject("Audio source",world);
+    var source=go.AddComponent<AudioSource>();source.clip=clip;source.volume=.4f;source.PlayOneShot(clip,.5f);var reportsPlaying=source.isPlaying;source.Stop();var stopped=source.isPlaying;
+    using var events=JsonDocument.Parse(JsonSerializer.Serialize(queue.Drain()));
+    var items=events.RootElement;
+    if(items.GetArrayLength()!=2||items[0].GetProperty("action").GetString()!="oneShot"||
+       items[0].GetProperty("sourceId").GetInt32()!=source.GetInstanceID()||
+       MathF.Abs(items[0].GetProperty("volume").GetSingle()-.2f)>.001f||
+       items[1].GetProperty("action").GetString()!="stop"||items[1].GetProperty("sourceId").GetInt32()!=source.GetInstanceID()||!reportsPlaying||stopped)
+        throw new InvalidOperationException($"Browser audio bridge lost source identity, source gain, or stop order: {items}");
+    var pressureWorld=new RuntimeWorld();var pressureQueue=new Crisis.Runtime.BrowserAudioEventQueue();pressureWorld.AudioSourceDriver=pressureQueue;
+    var pressureSource=new GameObject("Saturated audio source",pressureWorld).AddComponent<AudioSource>();pressureSource.clip=clip;
+    for(var index=0;index<64;index++)pressureSource.PlayOneShot(clip);
+    pressureSource.Stop();using var pressureEvents=JsonDocument.Parse(JsonSerializer.Serialize(pressureQueue.Drain()));
+    if(pressureEvents.RootElement.GetArrayLength()!=64||pressureEvents.RootElement[63].GetProperty("action").GetString()!="stop"||
+       pressureQueue.DroppedEvents!=1||pressureSource.isPlaying)
+        throw new InvalidOperationException($"A full browser audio queue discarded the source Stop control: dropped={pressureQueue.DroppedEvents}, sourcePlaying={pressureSource.isPlaying}, events={pressureEvents.RootElement}");
+    Console.WriteLine(JsonSerializer.Serialize(new{status="passed",sourceId=source.GetInstanceID(),events=items,sourceGainApplied=true,sourceScopedStop=true,sourceIsPlayingMirrored=true,clipLoadState=clip.loadState.ToString()}));
+    return;
+}
+if(args.Length==2&&args[0]=="--mission-hurt-audio-contract"){
+    var package=LoadSourcePackage(args[1]);
+    var world=new RuntimeWorld();
+    var session=Crisis.Runtime.Browser.BrowserEntryTeamMission.Start(package,world);
+    var occupant=Crisis.Runtime.SceneLoader.LoadPrefabInstance(package,"Assets/Resources/characters/Occupant.prefab",world,requireComplete:true);
+    var audio=occupant.objects.Values.OfType<Crisis.Runtime.FullSource.CharacterAudio>().FirstOrDefault(value=>
+        value.hurtSamples?.Any(clip=>clip?.OriginalAssetPath=="Assets/AudioClip/hurt-07.ogg")==true)
+        ??throw new InvalidOperationException("The instantiated original Occupant prefab did not retain hurt-07.ogg in CharacterAudio.hurtSamples");
+    var body=audio.GetComponent<Crisis.Runtime.FullSource.CharacterBody>()
+        ??throw new InvalidOperationException("Instantiated Occupant CharacterAudio has no source CharacterBody owner");
+    if(!body.Conscious)throw new InvalidOperationException("Instantiated Occupant is not conscious, so its source PlayHurt branch cannot run");
+    var communication=audio.communicationAudio??throw new InvalidOperationException("Instantiated Occupant CharacterAudio has no communication AudioSource");
+    var hurt=audio.hurtSamples.Single(clip=>clip.OriginalAssetPath=="Assets/AudioClip/hurt-07.ogg");
+    audio.hurtSamples.Clear();audio.hurtSamples.Add(hurt); // isolate the identified source clip from Unity.Random selection
+    typeof(Crisis.Runtime.FullSource.CharacterAudio).GetField("hurtTimestamp",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)!
+        .SetValue(audio,Time.time-4f);
+    var queue=world.AudioSourceDriver as Crisis.Runtime.BrowserAudioEventQueue
+        ??throw new InvalidOperationException("Mission browser world has no deferred source audio event queue");
+    audio.Hurt();
+    var events=queue.Drain();
+    var dispatched=events.FirstOrDefault(value=>{
+        using var json=JsonDocument.Parse(JsonSerializer.Serialize(value));
+        return json.RootElement.TryGetProperty("sourcePath",out var path)&&path.GetString()==hurt.OriginalAssetPath;
+    });
+    if(dispatched==null)throw new InvalidOperationException($"Original CharacterAudio.Hurt did not dispatch hurt-07.ogg through its communication AudioSource; queued={JsonSerializer.Serialize(events)}");
+    using var eventJson=JsonDocument.Parse(JsonSerializer.Serialize(dispatched));
+    if(eventJson.RootElement.GetProperty("action").GetString()!="oneShot"||
+       eventJson.RootElement.GetProperty("sourceId").GetInt32()!=communication.GetInstanceID()||!communication.isPlaying)
+        throw new InvalidOperationException($"Original delayed CharacterAudio.PlayHurt lost its communication source identity or playing state: {eventJson.RootElement}");
+    Console.WriteLine(JsonSerializer.Serialize(new{status="passed",scene=session.Mission.scene,prefab=occupant.scene,
+        owner=audio.name,clip=hurt.OriginalAssetPath,sourceId=communication.GetInstanceID(),deferredDecodeSupported=hurt.loadState!=AudioDataLoadState.Loaded,
+        action="CharacterAudio.Hurt -> PlayHurt -> communicationAudio.PlayOneShot -> BrowserAudioEventQueue"}));
+    return;
+}
 if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
     var package=LoadSourcePackage(args[1]);
     var world=new RuntimeWorld();
