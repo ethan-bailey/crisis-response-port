@@ -85,3 +85,9 @@ Poll workflow #63 (40318922083) and capture its assigned job IDs. Verify both di
 ## Audio subgate — dependency inventory complete, implementation next
 
 The pre-implementation inventory is committed in docs/AUDIO_PLAYBACK_DEPENDENCY_CLOSURE_2026-10-26.md. Next, add a Chromium test that loads the production compressed weapon manifest and authentic WAV files, creates the production WebAudio runtime and source dispatcher, unlocks it using a trusted Playwright click, decodes all authored source clips, dispatches actual fire/magazine/bolt source events, and observes nonzero samples from an analyser tapped into the real output graph. Add this to the pinned Chromium workflow, then run exact-source Release/profile/package verification and the IndexedDB job. Do not deploy test-only changes. Physical iPhone Safari/audio remains a separate acceptance gate.
+
+
+## Audio browser follow-up — 2026-10-26
+
+- Run #64 / ID 40320457016 on source SHA 161614c462b667b7d0ffabce0d46285650e55883 passed its Chromium IndexedDB job through all seven assertions, then the new audio smoke failed before dispatch. Concrete failure: the test expected AudioContext state suspended before the click, but CI Chromium reported running. This is a browser test policy prerequisite, not evidence of working or failed sound playback; analyser/event assertions were not reached.
+- Before the next test change, the audio dependency closure now records this hidden harness dependency. Configure Playwright Chromium with --autoplay-policy=user-gesture-required, then repeat the exact suspended-before-click → trusted pointerdown → running-after-click path, source WAV decoding, source event dispatch and analyser check. The separate Release/package job for #64 is still running at this checkpoint; capture its final artifact/verifier evidence even though the browser job failed.

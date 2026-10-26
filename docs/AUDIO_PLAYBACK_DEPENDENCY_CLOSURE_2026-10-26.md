@@ -35,3 +35,8 @@ If the browser test reveals an undocumented prerequisite—such as the source ke
 ## Current status
 
 Dependency inventory complete; no browser implementation change in this documentation checkpoint. The known source keys, WAV files and production API are present on develop/wasm. The next action is the Chromium smoke implementation above. Site v73 remains live; no deployment is needed for this test-only batch.
+
+
+## Hidden dependency found — run #64
+
+The initial browser implementation decoded the clips and reached the gesture-state assertion, but GitHub Actions Chromium had already started the AudioContext in running state before any click. The failure was exact: expected suspended, got running. The browser default therefore does not enforce the user-gesture prerequisite this acceptance intends to verify. Before the next source edit, this is recorded as a harness dependency: launch Chromium with the explicit --autoplay-policy=user-gesture-required flag; keep the runtime constructed before the trusted click, require suspended state before it and running state afterward, then rerun the full exact-source release/package and IndexedDB gates. The #64 IndexedDB subtest passed; the audio test did not reach event playback or output analysis, so no audio-playback result is claimed.
