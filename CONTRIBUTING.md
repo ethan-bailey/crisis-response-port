@@ -15,7 +15,7 @@ Read [AGENTS.md](AGENTS.md) before changing the port. It is the canonical agent 
 ## Verification commands
 
 ~~~sh
-node --test scripts/*_test.mjs
+node --test scripts/*_test.mjs scripts/*_contracts.mjs
 python -m pip install --requirement requirements-test.txt
 python -m unittest discover -s scripts -p '*test.py'
 dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -c Release
