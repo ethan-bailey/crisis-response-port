@@ -315,7 +315,13 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-ui-contra
         var report=MissionProjectileContracts.Describe(world,missionComponent,bodies);
         Console.WriteLine(report);
         using var reportDocument=JsonDocument.Parse(report);
-        var attempt=reportDocument.RootElement.GetProperty("fireAttempt");
+        var reportRoot=reportDocument.RootElement;
+        var firingStatus=reportRoot.GetProperty("firingStatus").GetString();
+        if(firingStatus!="source-fire-prerequisites-ready")
+            throw new InvalidOperationException($"Mission projectile contract was blocked before the original trigger: {report}");
+        var attempt=reportRoot.GetProperty("fireAttempt");
+        if(attempt.ValueKind!=JsonValueKind.Object)
+            throw new InvalidOperationException($"Mission projectile contract produced no fire attempt: {report}");
         var result=attempt.GetProperty("result").GetString();
         if(result!="source-projectile-hit-selected-occupant")
             throw new InvalidOperationException($"Mission projectile contract failed: {result}");
