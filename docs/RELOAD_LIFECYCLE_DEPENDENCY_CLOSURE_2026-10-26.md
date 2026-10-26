@@ -26,7 +26,7 @@ This batch adds source-driven acceptance for the recovered M4A1 detachable-magaz
 ## Exact unreachable paths and next dependencies
 
 - The current M4A1 manifest selects a detachable-magazine path; after insertion it completes at State7. The fire interruption condition is only active for `state >= State9`, used by the internal-magazine path. The current host rejects unsupported internal-magazine return/feed operations, and only loads the M4A1. Therefore fire-during-State9+ is unreachable in this fixture.
-- Weapon switching is also untestable: `WeaponHost` constructs exactly one active M4A1 and the fixture has no source SecondaryWeapon prefab, weapon-swap action host, or switch task. To verify this guard, first inventory and recover a supported second source weapon, its dependencies, and the original swap task; then drive the source active-weapon change at each reachable reload phase. Do not use a fake weapon reference or direct state mutation as acceptance.
+- Weapon switching is not covered by this M4-only fixture, but the source task/action is recovered. See `docs/WEAPON_SWITCH_DEPENDENCY_CLOSURE_2026-10-26.md`: the missing dependencies are the original serialized Glock-18 + 9-FMJ/9mm/magazine graph and seven authored Operator IK sequence assets, plus a source-driven actor fixture that runs PlayerController/IK callbacks. Do not claim the action is missing, and do not synthesize weapon or IK data.
 - Interrupted audio playback and quick repeated gesture timing on iPhone remain device tests. Chromium tests do not prove speaker output or iOS Safari timing.
 
 ## Hidden-gap protocol
@@ -87,3 +87,10 @@ Chromium IndexedDB passed all seven persistent storage/retry/quota/corruption/ve
 - Fire interruption: original guard only runs at State9+, while the active M4A1 detachable path reaches State7 and returns. Need an actually supported original internal-magazine weapon graph plus a fixture/host path that can execute its insert/feed callbacks. Current `WeaponHost.InsertSingleRound` throws; do not mock this branch.
 - Weapon switching: current contract creates only one active M4A1 and no original swap task/action. Inventory the exact second-weapon prefab and full weapon/ammunition/magazine/IK dependencies, the original swap owner/action, source switch callback ordering, and resulting task lifecycle before implementation. If no recovered swap task exists, defer only that path and continue elsewhere.
 - Preserve the frozen-hash boundary for `runtime/Engine/WeaponHost.cs`; test-only reflection worked for this detachable-magazine acceptance.
+
+
+## Corrected weapon-switch source inventory — 2026-10-26
+
+This lifecycle note previously described the swap task/action as absent. That is wrong. Original `InputMapping.switchWeapons` maps Tab; `PlayerController.Update` calls `CharacterBody.armController.SwitchWeapons()`; the original Behavior Designer `SwitchWeapon` task and `SwitchWeaponCondition` are present. The test remains unsupported because its host is M4-only and the complete source dependency closure is missing, not because the source action is unrecovered.
+
+The next weapon-switch work is staged in `docs/WEAPON_SWITCH_DEPENDENCY_CLOSURE_2026-10-26.md`. Do not change this reload fixture or frozen host to mimic a swap. Recover the serialized second weapon/ammunition graph and authored IK sequence assets first, then construct an acceptance path that runs the original loadout and sequencer callbacks.
