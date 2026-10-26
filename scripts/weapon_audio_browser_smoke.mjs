@@ -55,7 +55,7 @@ const expectedFiles = {
 };
 let pageError = null;
 try {
-  browser = await chromium.launch({ headless: true, args: ['--autoplay-policy=user-gesture-required'] });
+  browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
   page.on('pageerror', error => { pageError = String(error?.stack || error); });
   page.on('console', message => {
@@ -85,6 +85,11 @@ try {
     };
     const audio = createWeaponAudioRuntime(weaponData.audio, { AudioContextClass: InstrumentedAudioContext });
     await preloadWeaponAudio(weaponData.audio, audio);
+    // Headless Chromium allows autoplay by default. Suspend the actual
+    // production AudioContext to model the browser's blocked-autoplay state;
+    // the following trusted pointerdown must exercise the registered handler.
+    await audio.context.suspend();
+    if (audio.context.state !== 'suspended') throw new Error('AudioContext test fixture failed to suspend');
     const dispatch = createSourceWeaponAudioDispatcher(weaponData.audio, audio);
     window.audioFixture = { weaponData, audio, dispatch, context: activeContext, analyser };
     document.querySelector('#ready').value = 'ready';
