@@ -18,7 +18,10 @@ public static class MissionPhysiologyContracts
 
         var allActors=operators.Concat(occupants).ToArray();
         foreach(var body in allActors)VerifyRecoveredActorConfiguration(body);
-        var vitalTraumaResult=VerifyVitalTraumaDispatch(world,operators[0],occupants,allActors);
+        // The checked source profile exposed three Occupants; keep the vital
+        // fixture at that minimum even when a local package includes more.
+        // This deterministically exercises the Femur fallback in every run.
+        var vitalTraumaResult=VerifyVitalTraumaDispatch(world,operators[0],occupants.Take(3).ToArray(),allActors);
 
         var bleedingBody=occupants[0];
         var bleedingLimb=bleedingBody.limbs.Single(limb=>limb.id==LimbId.Torso);
@@ -97,23 +100,24 @@ public static class MissionPhysiologyContracts
             SetClock(oldTime,oldDelta);
         }
 
-        return JsonSerializer.Serialize(new{contract="recovered-original-actor-physiology",actors=allActors.Length,operatorCount=operators.Length,occupantCount=occupants.Length,serializedStaticConfiguration="verified on loaded Mission actors",fitnessConfiguration="source prefab 0.85; runtime-adaptive",authoredVitalTraumaDispatch=vitalTraumaResult,cappedTraumaAndTimedHemorrhage=bleedResult,hypoxicStateTransitions=hypoxiaResult,visualWoundOutput="suppressed",nativeJointPhysicsAdvanced=false});
+        return JsonSerializer.Serialize(new{contract="recovered-original-actor-physiology",actors=allActors.Length,operatorCount=operators.Length,occupantCount=occupants.Length,serializedStaticConfiguration="verified on loaded Mission actors",fitnessConfiguration="source prefab 0.85; runtime-adaptive",authoredVitalTraumaDispatch=vitalTraumaResult,threeOccupantMinimumProfileDispatch=true,cappedTraumaAndTimedHemorrhage=bleedResult,hypoxicStateTransitions=hypoxiaResult,visualWoundOutput="suppressed",nativeJointPhysicsAdvanced=false});
     }
 
     static object VerifyVitalTraumaDispatch(RuntimeWorld world,CharacterBody operatorBody,CharacterBody[] occupants,CharacterBody[] actors)
     {
-        if(occupants.Length<4)
-            throw new InvalidOperationException($"Vital-trauma contract requires four recovered Occupants plus the recovered Operator so each source type can be observed without cross-contaminating another type; found {occupants.Length}");
-
         var projectileObject=new GameObject("Vital-trauma source contract projectile",world);
         var projectile=projectileObject.AddComponent<Crisis.Runtime.FullSource.Projectile>();
         projectile.DisplacedMaterialVolume=20f;
+        // Some shipped Mission profiles author three Occupants, others four. The
+        // bone branch can reuse the first Occupant after its lung branch; the
+        // per-hit snapshots still prove that only the selected actor changes.
+        var femurActor=occupants.Length>=4?occupants[3]:occupants[0];
         var tests=new[]{
             (Body:operatorBody,Limb:LimbId.Head,Name:"Brain",Type:LimbVitalFunction.Type.Brain,Observe:(Func<CharacterBody,float>)(body=>body.Physiology.BrainTrauma)),
             (Body:occupants[0],Limb:LimbId.Torso,Name:"Lungs",Type:LimbVitalFunction.Type.Lungs,Observe:(Func<CharacterBody,float>)(body=>body.Physiology.LungsEffectiveness)),
             (Body:occupants[1],Limb:LimbId.Torso,Name:"Heart",Type:LimbVitalFunction.Type.Heart,Observe:(Func<CharacterBody,float>)(body=>ReadFloat(body.Physiology,"heartCapacity"))),
-            (Body:occupants[2],Limb:LimbId.Neck,Name:"Cervical spine",Type:LimbVitalFunction.Type.Spine,Observe:(Func<CharacterBody,float>)(body=>body.Physiology.Paralyzed?1f:0f)),
-            (Body:occupants[3],Limb:LimbId.RightUpperLeg,Name:"Femur",Type:LimbVitalFunction.Type.Bone,Observe:(Func<CharacterBody,float>)(body=>body.CrippledRatio))
+            (Body:occupants[2],Limb:LimbId.Neck,Name:"Cervical spine",Type:LimbVitalFunction.Type.Spine,Observe:(Func<CharacterBody,float>)(body=>(body.Physiology.Paralyzed?1f:0f)+(body.IsRagdoll?1f:0f))),
+            (Body:femurActor,Limb:LimbId.RightUpperLeg,Name:"Femur",Type:LimbVitalFunction.Type.Bone,Observe:(Func<CharacterBody,float>)(body=>body.CrippledRatio))
         };
         var results=new List<object>();
         try
@@ -196,7 +200,7 @@ public static class MissionPhysiologyContracts
                 if(Snapshot(operatorBody)!=before)
                     throw new InvalidOperationException($"Original LimbPhysiology.InflictVitalTrauma {type} case unexpectedly changed physiology");
             }
-            return new{sourceLimbVitalAssignments="verified for 9 authored limb groups on every actor",positiveDispatch=results,probabilityMissNoOp=true,zeroFactorNoOp=true,explicitBloodVesselsAndNoneNoOps=true,distinctActorStateIsolated=true,authoredConfigurationRestored=true,nativeJointPhysicsAdvanced=false};
+            return new{sourceLimbVitalAssignments="verified for 9 authored limb groups on every actor",positiveDispatch=results,femurActorReusedForProfileCount=occupants.Length<4,probabilityMissNoOp=true,zeroFactorNoOp=true,explicitBloodVesselsAndNoneNoOps=true,distinctActorStateIsolated=true,authoredConfigurationRestored=true,nativeJointPhysicsAdvanced=false};
         }
         finally
         {

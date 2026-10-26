@@ -189,6 +189,7 @@ jobs:
           test -s "$project/Assets/Mesh/LowPolySphere.asset"
           test -s "$project/Assets/Material/Projectile trace.mat"
           test -s "$project/Assets/Resources/weapons/ammunition/5.56-FMJ-Tracer.prefab"
+          python3 scripts/verify_camera_postprocess_sources.py "$recovery_root"
           python3 scripts/extract_runtime_scene.py "$project" "$RUNNER_TEMP/cpr-full-source.json"
           python3 scripts/extract_original_particle_meshes.py "$project" --out-dir "$RUNNER_TEMP/recovered-particle-meshes"
           for guid in 8ed663818ef63e741bd160cb133722fe 9b4443c616aa6fa429dd969b46cbca0e eedec0cf1e8d71a49b3949fbbc2cf3b4 f62208a372e889c4f8ae2dde522cce11 f6fe08f20af97e149b26c77ded5823d7; do

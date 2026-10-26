@@ -251,6 +251,10 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-ui-contra
     world.MakeCurrent();
     UnityEngine.Application.persistentDataPath=System.IO.Path.Combine(System.IO.Path.GetTempPath(),"crisis-response-mission-contract-"+Guid.NewGuid().ToString("N"));
     Resources.Configure(package,world);
+    // Scene AudioSources bind during SceneLoader.AddComponent, before the
+    // scene's PoweredLight/FireAlarm Awake callbacks. Model the browser's
+    // deferred audio boundary at that point, not only on prefab instances.
+    world.AudioSourceDriver=new MissionContractSilentAudioDriver();
     var contextPrefab=SceneLoader.LoadPrefabInstance(package,"Assets/Resources/Global context.prefab",world,requireComplete:false);
     UnityEngine.QualitySettings.Bind(world,new MissionContractQualitySettingsDriver());
     UnityEngine.Shader.Resolver??=(name=>new UnityEngine.Shader{name=name,isSupported=false});
