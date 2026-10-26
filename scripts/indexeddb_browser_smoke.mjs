@@ -124,8 +124,10 @@ try {
   assert.equal(first.progress.at(-1).asset.cachedLocally, true);
   assert.equal(counts.asset, 1, "first launch fetches and stores the verified asset");
 
+  await page.reload();
+  await page.waitForFunction(() => typeof window.runFixtureLoad === "function");
   const second = await page.evaluate(() => window.runFixtureLoad(1));
-  assert.equal(second.progress.at(-1).asset.wasCached, true, "second launch reuses the verified IndexedDB record");
+  assert.equal(second.progress.at(-1).asset.wasCached, true, "a full page reload reuses the verified IndexedDB record");
   assert.equal(counts.asset, 1, "a valid local hit avoids the asset request");
 
   await page.evaluate(async ({ sourceHash, assetUrl }) => {
@@ -183,7 +185,7 @@ try {
     actualIndexedDb: true,
     assertions: [
       "first launch stores a manifest-verified asset",
-      "second launch reuses the persistent record without a network asset request",
+      "page reload reuses the persistent record without a network asset request",
       "corrupt cache data is rejected and repaired from verified network bytes",
       "manifest source hash isolates cache versions",
       "clear removes only the selected manifest version",
