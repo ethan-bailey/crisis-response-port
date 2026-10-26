@@ -29,4 +29,6 @@ The workspace runner's one local `playwright install chromium` attempt returned 
 
 ## Follow-on interruption case
 
-A follow-on case is being added to the same real Chromium fixture: abort an actual intercepted in-flight asset request, inspect IndexedDB for the source-version key, then retry and require a fresh integrity-checked store. It is **not yet accepted** in this evidence revision. The runner has no Playwright Chromium executable; the changed browser test will be verified by the hosted Actions job before this record is updated with its result.
+A follow-on browser case now aborts an intercepted in-flight asset request, inspects IndexedDB for the source-version key, then retries and requires a fresh integrity-checked store. It also simulates an IndexedDB `QuotaExceededError` on `put` and requires delivery to complete without reporting the asset as persisted. The quota error is injected at the browser API boundary; it is not a test of Safari's physical quota policy or eviction behavior.
+
+These follow-on assertions are **not yet accepted** in this evidence revision. The runner has no Playwright Chromium executable; static syntax and the ordinary Node/Python contracts pass, but the revised browser test awaits the hosted Actions result for the exact pushed source SHA. The prior local installer attempt returned a zero-byte/corrupt archive, so do not repeat it.

@@ -8,6 +8,7 @@ const sha256 = bytes => createHash("sha256").update(bytes).digest("hex");
 const sourceHash1 = "a".repeat(64);
 const sourceHash2 = "b".repeat(64);
 const sourceHash3 = "c".repeat(64);
+const sourceHash4 = "d".repeat(64);
 const assetPath = "Assets/Resources/fixture.prefab";
 const assetName = "assets/0123456789abcdef01234567.json.gz";
 const rawAsset = Buffer.from(JSON.stringify({ fixture: "verified IndexedDB cache" }));
@@ -89,7 +90,7 @@ const server = createServer(async (request, response) => {
   if (url.pathname === "/manifest.json") {
     counts.manifest++;
     const version = url.searchParams.get("version");
-    const sourceHash = version === "2" ? sourceHash2 : version === "3" ? sourceHash3 : sourceHash1;
+    const sourceHash = version === "2" ? sourceHash2 : version === "3" ? sourceHash3 : version === "4" ? sourceHash4 : sourceHash1;
     send(200, "application/json", JSON.stringify(manifest(sourceHash)));
     return;
   }
@@ -172,6 +173,36 @@ try {
   assert.equal(retry.progress.at(-1).asset.cachedLocally, true, "retry stores only the complete verified response");
   await page.unroute(`**/${assetName}`);
 
+  await page.evaluate(() => {
+    const originalPut = IDBObjectStore.prototype.put;
+    IDBObjectStore.prototype.put = function (...args) {
+      IDBObjectStore.prototype.put = originalPut;
+      throw new DOMException("Fixture storage quota exhausted", "QuotaExceededError");
+    };
+  });
+  const storageFull = await page.evaluate(() => window.runFixtureLoad(4));
+  assert.equal(storageFull.result.assetCount, 1, "delivery completes despite an IndexedDB quota failure");
+  assert.equal(storageFull.progress.at(-1).asset.cacheWriteError.name, "QuotaExceededError",
+    "the loader surfaces quota failure rather than claiming the asset was saved");
+  assert.equal(storageFull.progress.at(-1).asset.cachedLocally, false,
+    "a quota-failed cache write is not reported as persisted");
+  const quotaRecord = await page.evaluate(async ({ sourceHash, assetUrl }) => {
+    const database = await new Promise((resolve, reject) => {
+      const request = indexedDB.open("crisis-response-mission-assets", 1);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    const record = await new Promise((resolve, reject) => {
+      const transaction = database.transaction("assets", "readonly");
+      const request = transaction.objectStore("assets").get(sourceHash + ":" + assetUrl);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    database.close();
+    return !!record;
+  }, { sourceHash: sourceHash4, assetUrl: `${origin}/${assetName}` });
+  assert.equal(quotaRecord, false, "a failed quota write leaves no cache record");
+
   await page.evaluate(async ({ sourceHash, assetUrl }) => {
     const database = await new Promise((resolve, reject) => {
       const request = indexedDB.open("crisis-response-mission-assets", 1);
@@ -191,11 +222,11 @@ try {
   const recovered = await page.evaluate(() => window.runFixtureLoad(1));
   assert.equal(recovered.progress.at(-1).asset.wasCached, false, "corrupt record is rejected");
   assert.equal(recovered.progress.at(-1).asset.cachedLocally, true, "verified network bytes replace the bad record");
-  assert.equal(counts.asset, 3, "one network recovery request repairs the corrupt cache entry");
+  assert.equal(counts.asset, 4, "one network recovery request repairs the corrupt cache entry");
 
   const changedManifest = await page.evaluate(() => window.runFixtureLoad(3));
   assert.equal(changedManifest.progress.at(-1).asset.wasCached, false, "a different source hash cannot reuse the prior version");
-  assert.equal(counts.asset, 4);
+  assert.equal(counts.asset, 5);
 
   const cleared = await page.evaluate(() => window.clearFixtureCache());
   assert.deepEqual(cleared, { cleared: true, available: true });
@@ -217,7 +248,7 @@ try {
   assert.equal(otherVersionSurvived, true, "clearing one manifest leaves other source versions intact");
   const afterClear = await page.evaluate(() => window.runFixtureLoad(1));
   assert.equal(afterClear.progress.at(-1).asset.wasCached, false, "clearing the selected source version forces a refetch");
-  assert.equal(counts.asset, 5);
+  assert.equal(counts.asset, 6);
   assert.equal(pageError, null, pageError?.stack);
 
   await context.close();
@@ -229,6 +260,7 @@ try {
       "first launch stores a manifest-verified asset",
       "page reload reuses the persistent record without a network asset request",
       "an interrupted fetch writes no partial record and retry stores only verified bytes",
+      "quota failure is reported while delivery succeeds without claiming local persistence",
       "corrupt cache data is rejected and repaired from verified network bytes",
       "manifest source hash isolates cache versions",
       "clear removes only the selected manifest version",
