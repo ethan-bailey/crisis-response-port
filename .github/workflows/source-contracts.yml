@@ -298,3 +298,6 @@ jobs:
 
       - name: Exercise production loader with browser IndexedDB
         run: node scripts/indexeddb_browser_smoke.mjs
+
+      - name: Exercise production weapon audio in Chromium
+        run: node scripts/weapon_audio_browser_smoke.mjs
