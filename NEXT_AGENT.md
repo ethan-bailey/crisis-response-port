@@ -131,3 +131,7 @@ Before the latest rebase, focused Node tests passed 13/13, full runtime contract
 ## Next action
 
 Continue dependency-ordered parity work. Physical iPhone Safari acceptance remains unverified for startup/storage, touch aim and movement, zoom prevention, and audible weapon playback. Continue source-backed NPC/AI, combat/physiology, authored IK/interaction, native physics, particle/render, and full parity gates independently; preserve `fullGameParity:false`, `sourceVisualParity:false`, `nativeParityVerified:false`, `originalGameComplete:false`, and `offlineComplete:false` until their acceptance evidence exists.
+
+## Remote handoff identity
+
+Current remote `develop/wasm` head is `93411b1db408a62573d86f624f6457e520e2d57c`, a documentation-only checkpoint on top of the tested source SHA `b173b1daebcb0337fb1def6da948d08f3d990d79`. No runtime or test source changed after run #68.
