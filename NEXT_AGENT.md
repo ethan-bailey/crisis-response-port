@@ -134,7 +134,7 @@ Continue dependency-ordered parity work. Physical iPhone Safari acceptance remai
 
 ## Remote handoff identity
 
-Current remote `develop/wasm` head is `1ecd9322eb9bf8dbf6358e9f01c79796c6c65943`, the run #69 candidate. Its `WeaponHost.cs` fixture edit failed the protected legacy-owner boundary (Python 3/45); Node and Chromium passed. No release WASM build or package was produced from this candidate.
+Current remote `develop/wasm` head is `ba4a194dea0d7931d087426367cd0127deb69bdb`, run #70 candidate. `WeaponHost.cs` was restored to the protected baseline; Node/Python/Chromium passed. Runtime contracts found an overstrict no-reserve audio assertion; no Release WASM build or package was produced.
 
 
 ## Run #68 — exact build, package, IndexedDB and headless audio passed — 2026-10-26
@@ -167,3 +167,12 @@ Before implementation, the source task, host, M4A1 detachable-magazine path, res
 - Hidden dependency recorded before retry in the reload closure: all quick/reserve fixture setup must remain in `runtime/Checks/WeaponContracts.cs`. The correction is to revert `WeaponHost.cs` entirely and use reflection in the test to set `ChangeMagazine.quick` and add a source `Magazine` to the original `Equipment` reserve list. This still exercises the original source reload task and state transitions; it introduces no host or gameplay behavior change.
 - Site v73 was rechecked during this run. Sites reports v73 source commit `5ca69fc5a4b6538121b00aece66a8587997cf1f5`, archive hash `sha256:d893e55c88784cdd059d1e386445c217dddbf29f9ea5d6d5ac89fbd3105658dc`, 2,688 files, live URL `https://crisis-response-runtime.craftysnipe13.chatgpt.site`. GitHub `main` remains `d7af0076274ff0ae4da3da5f84e2d346e94e3292`; `develop/wasm` is on this independent WASM line. The exact source/branch mismatch remains unresolved, so no publish was attempted.
 - Next: revert the host edit, implement test-only reflection, rerun full CI and record any new hidden dependency before further changes.
+
+
+## Run #70 — quick reload passed; no-reserve callback assertion needs correction — 2026-10-26
+
+- Exact SHA `ba4a194dea0d7931d087426367cd0127deb69bdb`, workflow run `40326988717`. Node and Python suites passed; Chromium IndexedDB and production-audio acceptance passed. Contract job passed the existing standard reload and both source-driven quick reloads, including exact extract/insert/bolt callback order and ammo/reserve/task snapshots.
+- Runtime contract then failed only at the final empty-reserve retry assertion: `No-reserve reload incorrectly inserted a magazine or cycled the bolt` (`WeaponContracts.cs:63`). Its preceding state assertion passed. The failing expectation rejected `audioBoltReturn`; the exact source path is `ChangeMagazine.OnEnd` → pending `WorkBolt` when the current magazine is nonempty → original bolt close callback. This does not prove insertion. The expected check is: no `audioInsertMagazine`, no shots or reserve gain, task/manipulation settles; allow/expect source `audioBoltReturn` and record bolt/chamber/round state.
+- The host edit from run #69 is reverted; fixture controls now live only in `WeaponContracts.cs` via reflection. Python boundary checks confirm this.
+- Release/runtime remainder after the failing contract, WASM publish, source/profile/package integrity, and artifact retention did not run. No verified package was produced. Do not deploy.
+- Next: update the no-reserve assertion to match the observed original callback, capture the resulting `magazine`, `chamberLive`, and `bolt` state in the failure/success output, push, and rerun full exact-SHA CI/package gates. Site v73 source SHA and current remote `main` remain different; retain the existing no-publish rule.
