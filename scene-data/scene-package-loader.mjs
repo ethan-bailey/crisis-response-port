@@ -85,7 +85,7 @@ async function getStorageStatus() {
   let persistent = null;
   let estimate = null;
   try { if (typeof storage?.persist === "function") persistent = await storage.persist(); }
-  catch { /* CacheStorage remains optional; report the browser-managed status. */ }
+  catch { /* Persistent storage remains optional; report browser-managed retention. */ }
   try {
     if (typeof storage?.estimate === "function") {
       const result = await storage.estimate();
@@ -110,9 +110,77 @@ async function fetchGzipJson(url, expected, label, signal) {
   return { compressed, raw, text: new TextDecoder("utf-8", { fatal: true }).decode(raw) };
 }
 
+function openMissionAssetDatabase() {
+  return new Promise((resolve,reject)=>{
+    if(!globalThis.indexedDB?.open){reject(new Error("IndexedDB unavailable"));return;}
+    const request=globalThis.indexedDB.open("crisis-response-mission-assets",1);
+    request.onupgradeneeded=()=>{
+      const database=request.result;
+      if(!database.objectStoreNames.contains("assets"))database.createObjectStore("assets",{keyPath:"key"});
+    };
+    request.onsuccess=()=>{request.result.onversionchange=()=>request.result.close();resolve(request.result);};
+    request.onerror=()=>reject(request.error||new Error("IndexedDB open failed"));
+    request.onblocked=()=>reject(new Error("IndexedDB upgrade is blocked by another open page"));
+  });
+}
+
+function makeIndexedDbAssetStore(database,sourceHash) {
+  const prefix=`${sourceHash}:`;
+  const keyFor=url=>prefix+String(url);
+  const transaction=(mode,action)=>new Promise((resolve,reject)=>{
+    let result;
+    let tx;
+    try{tx=database.transaction("assets",mode);result=action(tx.objectStore("assets"));}
+    catch(error){reject(error);return;}
+    tx.oncomplete=()=>resolve(result&&"result" in result?result.result:result);
+    tx.onerror=()=>reject(tx.error||result?.error||new Error("IndexedDB transaction failed"));
+    tx.onabort=()=>reject(tx.error||new Error("IndexedDB transaction aborted"));
+  });
+  return {
+    backend:"IndexedDB",
+    match:async url=>{
+      const record=await transaction("readonly",store=>store.get(keyFor(url)));
+      return record?.compressed instanceof ArrayBuffer?new Response(record.compressed,{headers:{"Content-Type":"application/gzip"}}):null;
+    },
+    put:async(url,response)=>{
+      const compressed=await response.arrayBuffer();
+      await transaction("readwrite",store=>store.put({key:keyFor(url),compressed}));
+    },
+    delete:async url=>transaction("readwrite",store=>store.delete(keyFor(url))),
+    clear:async()=>{
+      const state={deleted:0};
+      await transaction("readwrite",store=>{
+        const request=store.openCursor();
+        request.onsuccess=()=>{const cursor=request.result;if(!cursor)return;if(typeof cursor.key==="string"&&cursor.key.startsWith(prefix)){cursor.delete();state.deleted++;}cursor.continue();};
+        return state;
+      });
+      return state.deleted>0;
+    },
+    close:()=>database.close()
+  };
+}
+
+async function openMissionAssetStore(sourceHash) {
+  if(globalThis.isSecureContext&&globalThis.indexedDB?.open){
+    try{return makeIndexedDbAssetStore(await openMissionAssetDatabase(),sourceHash);}
+    catch(error){
+      if(!(globalThis.caches?.open))return {backend:"unavailable",error,match:async()=>null,put:async()=>{throw error;},delete:async()=>false,clear:async()=>false};
+    }
+  }
+  if(globalThis.isSecureContext&&globalThis.caches?.open){
+    try{
+      const cache=await globalThis.caches.open(`crisis-source-${sourceHash}`);
+      return {backend:"CacheStorage",match:url=>cache.match(url),put:(url,response)=>cache.put(url,response),delete:url=>cache.delete(url),clear:()=>globalThis.caches.delete(`crisis-source-${sourceHash}`)};
+    }catch(error){return {backend:"unavailable",error,match:async()=>null,put:async()=>{throw error;},delete:async()=>false,clear:async()=>false};}
+  }
+  return {backend:"unavailable",match:async()=>null,put:async()=>{throw new Error("Persistent browser storage is unavailable");},delete:async()=>false,clear:async()=>false};
+}
+
 async function fetchCompressedAsset(url, expected, label, signal, persistentCache) {
   const started = monotonicNow();
-  let response = persistentCache ? await persistentCache.match(url) : null;
+  let response = null;
+  try { response = persistentCache ? await persistentCache.match(url) : null; }
+  catch { /* A damaged local store is treated as a miss; network bytes are verified below. */ }
   let wasCached = !!response;
   let compressed = null;
   if (response) {
@@ -165,7 +233,7 @@ function bytesToBase64(bytes) {
 
 /** Delete only the immutable source cache selected by the current manifest. */
 export async function clearIncrementalSourceCache(manifestUrl) {
-  if (!globalThis.isSecureContext || !globalThis.caches?.delete)
+  if (!globalThis.isSecureContext || (!globalThis.indexedDB?.open&&!globalThis.caches?.delete))
     return {cleared:false,available:false};
   const response=await fetch(manifestUrl);
   if(!response.ok)throw new Error(`Incremental source manifest unavailable: HTTP ${response.status}`);
@@ -174,7 +242,13 @@ export async function clearIncrementalSourceCache(manifestUrl) {
       ||! /^[0-9a-f]{64}$/.test(manifest.sourcePackageSha256??""))
     throw new Error("Incremental source profile manifest is invalid");
   const cacheName=`crisis-source-${manifest.sourcePackageSha256}`;
-  return {cleared:await globalThis.caches.delete(cacheName),available:true};
+  let cleared=false;
+  if(globalThis.indexedDB?.open){
+    try{const store=makeIndexedDbAssetStore(await openMissionAssetDatabase(),manifest.sourcePackageSha256);cleared=await store.clear();store.close();}
+    catch(error){if(!globalThis.caches?.delete)throw error;}
+  }
+  if(globalThis.caches?.delete)cleared=(await globalThis.caches.delete(cacheName))||cleared;
+  return {cleared,available:true};
 }
 
 /** Fetch a small bounded batch in parallel, then deliver verified assets in manifest order. */
@@ -193,17 +267,13 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
       || !/^[0-9a-f]{64}$/.test(manifest.sourcePackageSha256 ?? ""))
     throw new Error("Incremental source profile manifest is invalid");
 
-  // Cache only the immutable compressed assets. The cache name is bound to
-  // the profile hash; every cache hit still passes the manifest size and SHA.
-  let persistentCache = null;
-  if (globalThis.isSecureContext && globalThis.caches?.open) {
-    try { persistentCache = await globalThis.caches.open(`crisis-source-${manifest.sourcePackageSha256}`); }
-    catch { /* Storage is optional; continue with verified network delivery. */ }
-  }
+  // Store only immutable compressed assets in a namespace bound to the source
+  // profile hash; every hit still passes the manifest size and SHA.
+  const persistentCache=await openMissionAssetStore(manifest.sourcePackageSha256);
   // Storage persistence and quota estimates are advisory. A browser can still
-  // evict CacheStorage, so verified network delivery never depends on either.
+  // evict local data, so verified network delivery never depends on either.
   const storageStatus = await getStorageStatus();
-  if (onProgress) await onProgress({stage:"storage",...storageStatus});
+  if (onProgress) await onProgress({stage:"storage",backend:persistentCache.backend,...storageStatus});
 
   const base = new URL("./", new URL(manifestUrl, import.meta.url));
   const metadata = await fetchGzipJson(new URL(manifest.metadata.file, base), manifest.metadata, "Incremental source metadata",signal);

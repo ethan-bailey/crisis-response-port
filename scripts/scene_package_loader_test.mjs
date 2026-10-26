@@ -35,6 +35,35 @@ function mockPackage(source) {
   };
 }
 
+function fakeIndexedDb(records) {
+  const database={
+    objectStoreNames:{contains:name=>name==="assets"},
+    createObjectStore:()=>({}),
+    close(){},
+    transaction(_name,_mode){
+      const tx={};
+      const finish=()=>queueMicrotask(()=>tx.oncomplete?.());
+      tx.objectStore=()=>({
+        get:key=>{const request={result:records.get(key)};queueMicrotask(()=>{request.onsuccess?.();finish();});return request;},
+        put:value=>{records.set(value.key,value);const request={result:value.key};queueMicrotask(()=>{request.onsuccess?.();finish();});return request;},
+        delete:key=>{records.delete(key);const request={result:undefined};queueMicrotask(()=>{request.onsuccess?.();finish();});return request;},
+        openCursor(){
+          const request={result:null};let keys=[...records.keys()],offset=0;
+          const advance=()=>queueMicrotask(()=>{
+            if(offset>=keys.length){request.result=null;request.onsuccess?.();finish();return;}
+            const key=keys[offset++];
+            request.result={key,delete:()=>records.delete(key),continue:advance};
+            request.onsuccess?.();
+          });
+          advance();return request;
+        }
+      });
+      return tx;
+    }
+  };
+  return {records,open:()=>{const request={result:database};queueMicrotask(()=>{request.onupgradeneeded?.();request.onsuccess?.();});return request;}};
+}
+
 test("reassembles compressed scene chunks across UTF-8 boundaries", async () => {
   const source = '{"scene":"Mission 01 ☃ — recovery"}';
   mockPackage(source);
@@ -89,6 +118,7 @@ test("delivers verified source assets through the WASM package bridge", async ()
   const originalCaches = globalThis.caches;
   const originalSecureContext = globalThis.isSecureContext;
   const originalNavigator = Object.getOwnPropertyDescriptor(globalThis,"navigator");
+  const originalIndexedDb = Object.getOwnPropertyDescriptor(globalThis,"indexedDB");
   const files = new Map([["manifest.json", encoder.encode(JSON.stringify(manifest))],
     ["metadata.json.gz", metadataGzip], ["0123456789abcdef01234567.json.gz", assetGzip]]);
   const assetFetchCounts = new Map();
@@ -140,6 +170,7 @@ test("delivers verified source assets through the WASM package bridge", async ()
     assert.equal(typeof calls[1][3],"string");
     assert.deepEqual(Buffer.from(calls[1][3],"base64"),Buffer.from(gzipSync(assetRaw)));
     assert.deepEqual(progress.map(value=>value.stage),["storage","fetching","adding","delivered"]);
+    assert.equal(progress[0].backend,"CacheStorage","browsers without IndexedDB retain the request-cache fallback");
     assert.equal(progress[0].persistent,true);
     assert.deepEqual(progress[0].estimate,{usage:100,quota:1000,available:900});
     assert.deepEqual(progress[1].pendingAssetPaths,[assetPath]);
@@ -186,11 +217,35 @@ test("delivers verified source assets through the WASM package bridge", async ()
     await deliverIncrementalSourceProfile(cachedBridge,"https://example.test/source/manifest.json",{onProgress:value=>quotaProgress.push(value)});
     assert.equal(quotaProgress.at(-1).asset.cachedLocally,false,"quota rejection must not be reported as saved locally");
     assert.equal(quotaProgress.at(-1).asset.cacheWriteError.name,"QuotaExceededError","the exact browser storage failure remains observable");
+
+    const idb=fakeIndexedDb(new Map());
+    Object.defineProperty(globalThis,"indexedDB",{configurable:true,value:{open:idb.open}});
+    const idbFirst=[];
+    await deliverIncrementalSourceProfile(cachedBridge,"https://example.test/source/manifest.json",{onProgress:value=>idbFirst.push(value)});
+    assert.equal(idbFirst[0].backend,"IndexedDB","large immutable Mission chunks prefer IndexedDB over CacheStorage");
+    assert.equal(idbFirst.at(-1).asset.cachedLocally,true);
+    const fetchedBeforeIdbHit=assetFetchCounts.get("0123456789abcdef01234567.json.gz");
+    const idbSecond=[];
+    await deliverIncrementalSourceProfile(cachedBridge,"https://example.test/source/manifest.json",{onProgress:value=>idbSecond.push(value)});
+    assert.equal(idbSecond.at(-1).asset.wasCached,true,"the second run reuses the integrity-checked IndexedDB record");
+    assert.equal(assetFetchCounts.get("0123456789abcdef01234567.json.gz"),fetchedBeforeIdbHit,"an IndexedDB hit avoids the asset network request");
+    const idbKey=`${manifest.sourcePackageSha256}:${assetUrl}`;
+    idb.records.set(idbKey,{key:idbKey,compressed:encoder.encode("corrupt") .buffer});
+    const idbRecovery=[];
+    await deliverIncrementalSourceProfile(cachedBridge,"https://example.test/source/manifest.json",{onProgress:value=>idbRecovery.push(value)});
+    assert.equal(idbRecovery.at(-1).asset.wasCached,false,"a corrupt IndexedDB record is rejected");
+    assert.equal(idbRecovery.at(-1).asset.cachedLocally,true,"the verified network replacement is stored");
+    const unrelatedKey=`${"c".repeat(64)}:https://example.test/other`;
+    idb.records.set(unrelatedKey,{key:unrelatedKey,compressed:assetGzip.buffer});
+    assert.deepEqual(await clearIncrementalSourceCache("https://example.test/source/manifest.json"),{cleared:true,available:true});
+    assert.equal([...idb.records.keys()].some(key=>key.startsWith(`${manifest.sourcePackageSha256}:`)),false,"clear removes all chunks from the selected version");
+    assert.equal(idb.records.has(unrelatedKey),true,"clear preserves other manifest versions");
   } finally {
     globalThis.fetch = originalFetch;
     if(originalCaches===undefined)delete globalThis.caches;else globalThis.caches=originalCaches;
     if(originalSecureContext===undefined)delete globalThis.isSecureContext;else globalThis.isSecureContext=originalSecureContext;
     if(originalNavigator===undefined)delete globalThis.navigator;else Object.defineProperty(globalThis,"navigator",originalNavigator);
+    if(originalIndexedDb===undefined)delete globalThis.indexedDB;else Object.defineProperty(globalThis,"indexedDB",originalIndexedDb);
   }
 });
 

@@ -488,7 +488,8 @@ async function load(){
        const available=progress.estimate?.available;
        const estimateText=Number.isFinite(available)?`${(available/1048576).toFixed(1)} MiB estimated available`:"storage estimate unavailable";
        const persistenceText=progress.persistent===true?"persistent storage granted":progress.persistent===false?"browser may evict saved data":"persistent storage status unavailable";
-       missionProgressText.textContent=`Device storage: ${estimateText} · ${persistenceText}. Mission needs about ${(progress.totalCompressedAssetBytes/1048576).toFixed(1)} MiB compressed; delivery continues if local storage is declined.`;
+       const backendText=progress.backend==="IndexedDB"?"Mission chunks will use IndexedDB":progress.backend==="CacheStorage"?"IndexedDB unavailable; using CacheStorage fallback":"persistent Mission storage unavailable";
+       missionProgressText.textContent=`${backendText} · ${estimateText} · ${persistenceText}. Mission needs about ${(progress.totalCompressedAssetBytes/1048576).toFixed(1)} MiB compressed; delivery continues if local storage is declined.`;
       }
       else if(progress.stage==="fetching")missionProgressText.textContent=`Downloading Mission assets ${progress.receivedAssets+1}–${Math.min(progress.expectedAssets,progress.receivedAssets+progress.pendingAssetPaths.length)} of ${progress.expectedAssets} · ${mib}`;
       else if(progress.stage==="adding")missionProgressText.textContent=`Adding verified source assets ${progress.receivedAssets+1}–${Math.min(progress.expectedAssets,progress.receivedAssets+progress.pendingAssetPaths.length)} of ${progress.expectedAssets} to WASM · ${((progress.batchCompressedBytes||0)/1048576).toFixed(2)} MiB in this batch · ${mib} verified`;
