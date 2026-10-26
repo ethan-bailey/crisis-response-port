@@ -96,12 +96,29 @@ async function fetchGzipJson(url, expected, label, signal) {
 async function fetchCompressedAsset(url, expected, label, signal, persistentCache) {
   const started = monotonicNow();
   let response = persistentCache ? await persistentCache.match(url) : null;
-  const wasCached = !!response;
-  if (!response) response = await fetch(url, {signal});
-  if (!response.ok) throw new Error(`${label} unavailable: HTTP ${response.status}`);
-  const compressed = await response.arrayBuffer();
-  if (compressed.byteLength !== expected.compressedBytes || await sha256(compressed) !== expected.compressedSha256)
-    throw new Error(`${label} compressed size or checksum mismatch`);
+  let wasCached = !!response;
+  let compressed = null;
+  if (response) {
+    try {
+      compressed = await response.arrayBuffer();
+      if (compressed.byteLength !== expected.compressedBytes || await sha256(compressed) !== expected.compressedSha256)
+        throw new Error("Cached source asset failed its manifest integrity check");
+    } catch {
+      // A bad or unreadable cached chunk must not poison every later launch.
+      // Drop it and fetch this one immutable asset again from the verified source.
+      try { await persistentCache.delete?.(url); } catch { /* Network recovery is still attempted. */ }
+      response = null;
+      compressed = null;
+      wasCached = false;
+    }
+  }
+  if (!response) {
+    response = await fetch(url, {signal});
+    if (!response.ok) throw new Error(`${label} unavailable: HTTP ${response.status}`);
+    compressed = await response.arrayBuffer();
+    if (compressed.byteLength !== expected.compressedBytes || await sha256(compressed) !== expected.compressedSha256)
+      throw new Error(`${label} compressed size or checksum mismatch`);
+  }
   if (!wasCached && persistentCache) {
     try { await persistentCache.put(url, new Response(compressed.slice(0), {headers:{'Content-Type':'application/gzip'}})); }
     catch { /* Safari quota or private browsing: this run still uses verified network bytes. */ }

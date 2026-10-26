@@ -104,6 +104,7 @@ test("delivers verified source assets through the WASM package bridge", async ()
       const response=cachedResponses.get(String(url));
       return response?new Response(await response.arrayBuffer(),{headers:{"Content-Type":"application/gzip"}}):undefined;
     },
+    delete:async url=>cachedResponses.delete(String(url)),
     put:async(url,response)=>cachedResponses.set(String(url),new Response(await response.arrayBuffer(),{headers:{"Content-Type":"application/gzip"}}))
   })};
   const calls = [];
@@ -164,6 +165,14 @@ test("delivers verified source assets through the WASM package bridge", async ()
     await deliverIncrementalSourceProfile(cachedBridge,"https://example.test/source/manifest.json",{onProgress:value=>cachedProgress.push(value)});
     assert.equal(assetFetchCounts.get("0123456789abcdef01234567.json.gz"),1,"second run reads the verified asset from persistent cache");
     assert.equal(cachedProgress.at(-1).asset.wasCached,true);
+
+    const assetUrl="https://example.test/source/assets/0123456789abcdef01234567.json.gz";
+    cachedResponses.set(assetUrl,new Response(encoder.encode("corrupt cached bytes")));
+    const recoveredProgress=[];
+    await deliverIncrementalSourceProfile(cachedBridge,"https://example.test/source/manifest.json",{onProgress:value=>recoveredProgress.push(value)});
+    assert.equal(assetFetchCounts.get("0123456789abcdef01234567.json.gz"),2,"a corrupt cached chunk is recovered from the network");
+    assert.equal(recoveredProgress.at(-1).asset.wasCached,false,"network recovery is reported as a cache miss");
+    assert.deepEqual(Buffer.from(await cachedResponses.get(assetUrl).arrayBuffer()),Buffer.from(assetGzip),"verified network bytes replace the corrupt cache entry");
   } finally {
     globalThis.fetch = originalFetch;
     if(originalCaches===undefined)delete globalThis.caches;else globalThis.caches=originalCaches;
