@@ -134,7 +134,7 @@ Continue dependency-ordered parity work. Physical iPhone Safari acceptance remai
 
 ## Remote handoff identity
 
-Current remote `develop/wasm` head is `93411b1db408a62573d86f624f6457e520e2d57c`, a documentation-only checkpoint on top of the tested source SHA `b173b1daebcb0337fb1def6da948d08f3d990d79`. No runtime or test source changed after run #68.
+Current remote `develop/wasm` head is `9a70d16518959b957059c77cdb5ab816068815d1`, a documentation-only checkpoint on top of tested source SHA `b173b1daebcb0337fb1def6da948d08f3d990d79`. No runtime or test source changed after run #68.
 
 
 ## Run #68 — exact build, package, IndexedDB and headless audio passed — 2026-10-26
@@ -154,3 +154,8 @@ Resolve the Site-bound source integration path without merging the 1,291-commit 
 
 - Complete run #68 build/package, IndexedDB, headless audio and input acceptance: `docs/evidence/AUDIO_PLAYBACK_CI_2026-10-26.md`.
 - Exact source-branch mismatch and safe publishing sequence: `docs/evidence/SITE_DEPLOYMENT_ALIGNMENT_BLOCKER_2026-10-26.md`.
+
+
+## Reload lifecycle dependency inventory — 2026-10-26
+
+Before implementation, the source task, host, M4A1 detachable-magazine path, reserve ownership, IK transitions, source audio events, and test/package dependencies were inventoried in `docs/RELOAD_LIFECYCLE_DEPENDENCY_CLOSURE_2026-10-26.md`. Next: add test-only fixture controls for quick reload and a two-reserve setup, then assert quick reload and a no-reserve repeated reload through the original task. The current one-M4A1 fixture cannot reach the fire interruption branch (State9+) or a real weapon-switch guard; close those only after adding and inventorying original internal-magazine/secondary-weapon dependencies. Preserve the existing verified standard reload contract.
