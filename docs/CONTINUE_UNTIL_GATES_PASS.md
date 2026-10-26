@@ -7,8 +7,10 @@ the live `develop/wasm` branch before relying on its SHA or gate statuses.
 
 ## Required closeout loop
 
-1. List the remaining parity gates in dependency order from the active user
-   request and current repository evidence.
+1. Read `docs/GATE_DEPENDENCY_INDEX.md` and its linked system closure notes.
+   List remaining parity gates in dependency order, verify the full known asset,
+   script, component, lifecycle, and acceptance dependency set for the selected
+   gate, and add any newly discovered dependency before implementation.
 2. Pick the next feasible, dependency-ready gate or the next bounded vertical
    slice within it. Do implementation and acceptance work; a plan or an open
    gate is not a stopping condition.
