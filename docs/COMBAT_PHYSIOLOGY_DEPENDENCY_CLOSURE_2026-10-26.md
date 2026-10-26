@@ -28,6 +28,43 @@ This closes the *inventory* for the combat/physiology gate as presently recovere
 | 7. Wound and impact presentation | LimbRenderer trace output, DynamicLimbDecalRenderer/TextureData/TexturePool, Wound local coordinates and entry/exit diameters, blood emitter/stream, particle systems and their serialized shape/main modules, shaders/materials/textures, FloorStreakPainter/pools, impact audio. | Source wound/impact callback → bounded render/particle/audio request → output at original body/limb world transform → pool return and cleanup when limb/body is removed. Need both lifecycle and pixel/particle evidence. | Headless tests record requests; they do not render pixels, emit/simulate particles or play sound. The historical particle inventory has 17 material/texture/mesh hashes that do not crosswalk to the selected source snapshot; keep those unresolved and do not bind mismatched bytes. See `docs/particle-lifecycle-dependency-closure-2026-10-26.md` and `docs/MISSION_PARTICLE_DEPENDENCY_CLOSURE_2026-10-25.md`. |
 | 8. Browser/native integration and acceptance | Browser projectile/physics driver and fixed-step timing; source time mapping; actual iPhone WebAudio decode/unlock/gain and source-event queue; native PhysX or compatible solver for joints/contacts; exact verified source package; iPhone Safari storage/render/touch. | Exact-source contract/package checks → browser runtime event timing and playback → native/browser physical behavior → cold/warm device scenario. Never infer device acceptance from headless tests or Chromium IndexedDB. | CI #54 verified source package and Mission state but its Chromium job was canceled when #55 superseded it. #55 is running the replacement Chromium IndexedDB check. Physical iPhone Safari, actual audio and native PhysX acceptance remain device/backend-only. |
 
+## Recovered actor-prefab physiology crosswalk
+
+The pinned recovery archive was downloaded and independently checked in this work session: SHA-256 `cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d`; ZIP test passed. The following serialized files were read from that exact export:
+
+| File | GUID | SHA-256 |
+| --- | --- | --- |
+| `Assets/Resources/characters/Operator.prefab` | `2e00922aa35d9a8438c52fec69254605` | `94bcda5de74f45d83f4bbf88e80874b8f77bf0339d307294187b085c03170536` |
+| `Assets/Resources/characters/Occupant.prefab` | `8363ad318a650364ebdaa8c237f65bfe` | `9094b840c49d6c53ffa077c274561ab5cbeedb202f85dbaade023ad67cb8c419` |
+| `Assets/Scripts/Assembly-CSharp/Physiology.cs` | `9f48e44c3a8b101aae85a0fdb37d620b` | `a60d5ea1cebd66daa89ffd985f14fac98d86da0c1778558637c20c9e5d2133e4` |
+| `Assets/Scripts/Assembly-CSharp/LimbPhysiology.cs` | `07a9aa49a2e19843162751cf67d46900` | `7a04b54de7e581b4a199693250d216e2c50a31ca3b53c25b53775c329757562e` |
+| `Assets/Scripts/Assembly-CSharp/VitalFunctions.cs` | `e9592550ceeb4537f20ef2dd433b481b` | `2d677971ac8db23154406da6d5b6c1bcb5a4fc5d93b1d08641750feb3dfaca99` |
+| `Assets/Scripts/Assembly-CSharp/Limb.cs` | `be3758e77a74782a9a1fed91440259e7` | `4057e0b5dbb0fd4c7cab847f6168d655dc09fdabf0564587b403274210e6b8de` |
+| `Assets/Scripts/Assembly-CSharp/Wound.cs` | `60ca3a020c0b1dd6c25096b09beb8605` | `51000a4edfbeb3e2b549d8f541edeb25eaa5f966563aa894ceee2596abaaf148` |
+| `Assets/Scripts/Assembly-CSharp/CharacterBody.cs` | `5b10b9352f3650669dc5334d4d67edff` | `76301d45e6e94556d1a902f0d37f5f97111bc2efb89f36de7ed9acd935b55742` |
+| `Assets/Scripts/Assembly-CSharp/Projectile.cs` | `75280d5bb60068b2fabefd8e2004397e` | `ef6443c2d6fece6866526fa8c9d4262c31fbc26a2ed77da57e607d681a0302b2` |
+
+Both actor prefabs serialize the same Physiology settings: heart capacity 70; respiration-to-lungs 0.7; heart oxygen take 0.2; deliver 1; work oxygen factor 0.3; respiration and depth adaptation 0.1 / 1; fitness 0.85; maximum heart/respiration rates 190 / 160; brain injury threshold 3 seconds and rate 1; brain-death threshold 30 seconds; invulnerable false. The concussion curve is two keys, (0,0, slopes 0/0) and (1,1, slopes 2.8872511/2.8872511). These prefab values override different code defaults (notably the code default oxygen brain-damage threshold is 10 seconds); contracts must assert loaded prefab values and must not test against defaults.
+
+Each prefab has 19 Limb components, 17 LimbPhysiology components, 9 VitalFunctions components (15 serialized vital entries), 4 LimbArmor components, and one Physiology component. Left and Right hand are the two Limb objects without LimbPhysiology in both prefabs; this is an authored source configuration, not a missing component to synthesize. Vital locations and serialized probabilities are identical in both: Brain on Head (1); Lungs (0.75), Heart (0.15), Thoracic spine (0.075) on Torso; Cervical spine (0.2) on Head and Neck; Lumbar spine (0.1) on Abdomen and Pelvis; Pelvis vital (0.75) on Pelvis; Femur (0.5) and Patella (1) on each upper leg; Tibia (0.6) on each lower leg.
+
+The 17 limb physiology components use these 11 distinct serialized tuples `(bloodPressureModifier, shockModifier, maxHemorrhaging, maxWoundCavityVolume)`; the counts below are the identical per-prefab distribution:
+| Tuple | Limb count |
+| --- | ---: |
+| (0.1, 0.5, 1.5, 250) | 1 |
+| (0.1, 0.6, 15, 300) | 1 |
+| (0.1, 0.7, 20, 500) | 1 |
+| (0.25, 1, 100, 100) | 1 |
+| (1, 1, 100, 250) | 1 |
+| (0.04, 0.25, 4, 100) | 2 |
+| (0.03, 0.15, 2.5, 50) | 2 |
+| (0.05, 0.15, 8, 200) | 2 |
+| (0.04, 0.1, 4, 100) | 2 |
+| (0.01, 0.05, 0.2, 50) | 2 |
+| (0.005, 1, 0.1, 25) | 2 |
+
+These values and the two hand omissions are now closed from the exact recovered snapshot. The source state chain is also mapped: `LimbPhysiology.AddTrauma` caps cavity and tissue by serialized max cavity; `UpdateHemorrhaging` uses local pressure and delta time to remove blood, then delegates wound output; `Physiology.Update` orders heart/respiration/brain oxygen/shock, heart, pressure, limb bleed, aggregate bleed, blood oxygen and character-state checks; `SetCharacterState` calls original unconsciousness or death transitions; `Physiology.SetDead` calls `CharacterBody.OnDeath` and muscle death; `CharacterBody.SetUnconscious` calls source ragdoll. The headless test may invoke these state owners but must not advance native joint physics after ragdoll.
+
 ## Pre-implementation batch protocol
 
 For each row before changing implementation:
@@ -42,4 +79,4 @@ For each row before changing implementation:
 
 ## Next implementation batch
 
-After #55 completes, close the *headless systemic physiology state* subgate as one batch: first complete the same-version serialized field/curve/vital-assignment crosswalk for Operator and Occupant, then add source-driven timed tests for wound hemorrhage, StopHemorrhage treatment, systemic blood/oxygen changes, unconsciousness and death/event ordering. Keep render/particle output and native ragdoll/joint solve out of that batch; they have separate dependency rows and require their own backend evidence. The complete one-shot impact contract remains the baseline. If the first fixture reveals an unlisted serialized dependency, record its source GUID/hash and incorporate it here before making a fix.
+After #55 completes, the serialized Operator/Occupant crosswalk is complete from the hash-verified recovery export. Add one source-driven headless contract for: capped wound/tissue accumulation; timed limb bleeding and blood-volume delta; source StopHemorrhage clearing cavity/internal blood; zero-blood oxygen depletion → unconscious/ragdoll event; and the 30-second source brain-oxygen death event. Load the actual prefabs and keep original serialized values. A first contract failure may expose a hidden lifecycle dependency; document that exact edge, recover it from the same archive, then batch its fix. Do not step joints after the source ragdoll callback. Keep render/particle output and native ragdoll/joint solve out of that batch; they have separate dependency rows and require their own backend evidence. The complete one-shot impact contract remains the baseline. If the first fixture reveals an unlisted serialized dependency, record its source GUID/hash and incorporate it here before making a fix.
