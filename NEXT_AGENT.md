@@ -134,7 +134,7 @@ Continue dependency-ordered parity work. Physical iPhone Safari acceptance remai
 
 ## Remote handoff identity
 
-Current remote `develop/wasm` head is `ba4a194dea0d7931d087426367cd0127deb69bdb`, run #70 candidate. `WeaponHost.cs` was restored to the protected baseline; Node/Python/Chromium passed. Runtime contracts found an overstrict no-reserve audio assertion; no Release WASM build or package was produced.
+Current remote `develop/wasm` head is `926b853d1e27ca7e73fb0cd5e6294f7561cf801b`, run #71 candidate. `WeaponHost.cs` remains at the protected baseline; Node/Python/Chromium passed. The runtime contract exposed that the active magazine still resides in the fixture reserve list, so the purported no-reserve case reinserted it. No Release WASM build or package was produced.
 
 
 ## Run #68 — exact build, package, IndexedDB and headless audio passed — 2026-10-26
@@ -176,3 +176,11 @@ Before implementation, the source task, host, M4A1 detachable-magazine path, res
 - The host edit from run #69 is reverted; fixture controls now live only in `WeaponContracts.cs` via reflection. Python boundary checks confirm this.
 - Release/runtime remainder after the failing contract, WASM publish, source/profile/package integrity, and artifact retention did not run. No verified package was produced. Do not deploy.
 - Next: update the no-reserve assertion to match the observed original callback, capture the resulting `magazine`, `chamberLive`, and `bolt` state in the failure/success output, push, and rerun full exact-SHA CI/package gates. Site v73 source SHA and current remote `main` remain different; retain the existing no-publish rule.
+
+
+## Run #71 — empty-reserve fixture was not actually empty — 2026-10-26
+
+- Exact source SHA `926b853d1e27ca7e73fb0cd5e6294f7561cf801b`, workflow `40327440650`. Node and Python passed; Chromium IndexedDB and production audio passed. Standard reload and both source-driven quick reloads passed, including ammo state and callback ordering.
+- The final no-reserve retry assertion failed with events `audioExtractMagazine -> audioInsertMagazine`. `WeaponHost` adds its active Magazine into `Equipment.PrimaryMagazines`; `Snapshot.reserve` excludes the active object, but source `Equipment.GetFullestMagazineForWeapon` does not. It chose/reinserted the active Magazine, so this was not an empty-reserve test. This fixture limitation is documented before the next edit in the reload closure.
+- Correction: in test-only setup remove the active `quickWeapon.Magazine` object from `quickBody.Equipment.PrimaryMagazines`, leaving it attached to `WeaponBase.Magazine`; then retry with the Equipment reserve list truly empty. Do not change the frozen host or source gameplay code. Preserve and report all source callbacks plus magazine/reserve/chamber/bolt/shots snapshots.
+- Runtime contract stopped before Release WASM and source/package integrity checks; no package or artifact was produced. No publish. Site v73 remains on source SHA `5ca69fc5a4b6538121b00aece66a8587997cf1f5`; current `main` is `d7af0076274ff0ae4da3da5f84e2d346e94e3292`, so do not deploy the develop package to the misaligned Site.
