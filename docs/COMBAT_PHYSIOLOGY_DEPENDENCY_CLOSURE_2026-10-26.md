@@ -13,7 +13,7 @@ This closes the *inventory* for the combat/physiology gate as presently recovere
 - The package roots are Global context, Interior mode UI, Interaction menu, Operator, Version and Mission 01. The exact root names, package byte counts and package verification are recorded in `docs/evidence/ORIGINAL_MISSION_SOURCE_CLOSURE_2026-10-26.md`.
 - The M4A1 5.56 FMJ ammunition/projectile subgraph has a separate strict closure: 29/29 assets, five source scripts and one builtin; zero closure-level unresolved references. See `docs/evidence/REA-ammunition-closure-2026-10-20.md` and `docs/evidence/GATE8_SOURCE_PROJECTILE_INJURY_2026-10-24.md`.
 - Do not combine or substitute source files across archive/index revisions. Preserve GUID and hash crosswalks; the source index’s six global unresolved GUIDs are not evidence that the selected Mission profile is unresolved.
-- The latest completed exact package contract is run #54 at source `e5b44b01fbf6c106490754048cbfa8916f495a48`; artifact/package identities and Mission outcomes are in `NEXT_AGENT.md`. Run #55 adds an active Behavior Tree root assertion and is the current verification target. This document itself is source inventory, not a runtime change.
+- Run #58 (`17194f02ee8d6cf94d27477a595ff76be00737f1`) passed the new physiology contract and complete package verification; artifact/package identity is in `NEXT_AGENT.md`. Chromium IndexedDB for that run is still pending at last poll. This document itself is source inventory, not a runtime change.
 
 ## Dependency graph by subgate
 
