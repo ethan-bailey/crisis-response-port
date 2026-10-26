@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Recover exact three Unity 2017 particle mesh geometries into private JSON.
+"""Recover exact five Unity 2017 particle mesh geometries into source JSON.
 
 No replacement meshes or particle animation are generated. Both decoders already
 convert Unity local vertices/normals and triangle winding into Three.js basis.
@@ -22,7 +22,12 @@ a=p.parse_args(); root=a.project
 sources={
  '8ed663818ef63e741bd160cb133722fe': ('Assets/Mesh/Particle shard.asset','661b5a9d7f3f45d558e9f6f11864eacb449e031a38561fffe51b6bff3d4fbdb1'),
  'eedec0cf1e8d71a49b3949fbbc2cf3b4': ('Assets/Mesh/Tetraedron.asset','906bd249eb17b8d5e2d41877b53a2eee335bb2590e55cd97de8263d09cc19c3f'),
- 'f6fe08f20af97e149b26c77ded5823d7': ('Assets/Mesh/Splinter.asset','37d2f797c49d4bb3055a65a25f50b059ebf41583638e6896fca76f75a4013876')
+ 'f6fe08f20af97e149b26c77ded5823d7': ('Assets/Mesh/Splinter.asset','37d2f797c49d4bb3055a65a25f50b059ebf41583638e6896fca76f75a4013876'),
+ # These two assets are from the complete, digest-verified source snapshot
+ # recovered in 2026-10. Their old inventory hashes refer to a different
+ # export and are retained in the dependency inventory as historical evidence.
+ 'f62208a372e889c4f8ae2dde522cce11': ('Assets/Mesh/LowPolySphere.asset','6b07b7570773145d9e5676a32ee293274cd0dc4dca41fc767680615f7a0cad9a'),
+ '9b4443c616aa6fa429dd969b46cbca0e': ('Assets/Mesh/Chunk.asset','16c78ce02019fd56c4e904fe6fc6095a582601ad06564c1d316e97605913f25d')
 }
 results=[]
 for guid,(rel,sha) in sorted(sources.items()):

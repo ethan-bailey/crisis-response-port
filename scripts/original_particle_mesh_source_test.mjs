@@ -4,21 +4,23 @@ import { readFileSync } from 'node:fs';
 
 // Source-only original Unity mesh fidelity gate. No generated substitute meshes.
 const expected = {
-  '8ed663818ef63e741bd160cb133722fe': {source:'661b5a9d7f3f45d558e9f6f11864eacb449e031a38561fffe51b6bff3d4fbdb1',triangles:8,normals:true},
-  'eedec0cf1e8d71a49b3949fbbc2cf3b4': {source:'906bd249eb17b8d5e2d41877b53a2eee335bb2590e55cd97de8263d09cc19c3f',triangles:4,normals:true},
-  'f6fe08f20af97e149b26c77ded5823d7': {source:'37d2f797c49d4bb3055a65a25f50b059ebf41583638e6896fca76f75a4013876',triangles:4,normals:true},
+  '8ed663818ef63e741bd160cb133722fe': {source:'661b5a9d7f3f45d558e9f6f11864eacb449e031a38561fffe51b6bff3d4fbdb1',vertices:12,triangles:8,normals:true,uv:false},
+  '9b4443c616aa6fa429dd969b46cbca0e': {source:'16c78ce02019fd56c4e904fe6fc6095a582601ad06564c1d316e97605913f25d',vertices:28,triangles:16,normals:true,uv:true},
+  'eedec0cf1e8d71a49b3949fbbc2cf3b4': {source:'906bd249eb17b8d5e2d41877b53a2eee335bb2590e55cd97de8263d09cc19c3f',vertices:12,triangles:4,normals:true,uv:false},
+  'f62208a372e889c4f8ae2dde522cce11': {source:'6b07b7570773145d9e5676a32ee293274cd0dc4dca41fc767680615f7a0cad9a',vertices:79,triangles:112,normals:true,uv:true},
+  'f6fe08f20af97e149b26c77ded5823d7': {source:'37d2f797c49d4bb3055a65a25f50b059ebf41583638e6896fca76f75a4013876',vertices:12,triangles:4,normals:true,uv:false},
 };
 for (const [guid,info] of Object.entries(expected)) test('exact original source particle mesh '+guid,()=>{
   const asset=JSON.parse(readFileSync(new URL('../game/assets/ballistics/particle-meshes/particle-mesh-'+guid+'.json', import.meta.url),'utf8'));
   assert.equal(asset.sourceGuid,guid);
   assert.equal(asset.sourceSha256,info.source);
   assert.ok(asset.sourceFormat.includes('already converted to right-handed'));
-  assert.equal(asset.count.vertices,12);
+  assert.equal(asset.count.vertices,info.vertices);
   assert.equal(asset.count.triangles,info.triangles);
   const {positions,normals,uv,indices}=asset.mesh;
-  assert.equal(positions.length,12);
+  assert.equal(positions.length,info.vertices);
   assert.equal(indices.length,info.triangles*3);
-  assert.equal(normals.length,info.normals?12:0);
+  assert.equal(normals.length,info.normals?info.vertices:0);
   assert.equal(asset.nativeNormalsPresent,true);
   assert.equal(asset.hasDecodedSourceNormals,info.normals);
   assert.equal(asset.nativeNormalsPresent,true);
@@ -26,7 +28,7 @@ for (const [guid,info] of Object.entries(expected)) test('exact original source 
     const unit=Math.hypot(n[0],n[1],n[2]);
     assert.ok(Math.abs(unit-1)<0.0025,'Recovered native packed source normal must remain a unit direction');
   }
-  assert.equal(uv.length,0,'Never invent absent source UV');
+  assert.equal(uv.length,info.uv?info.vertices:0,'Never invent absent source UV');
   let checked=0;
   for(let i=0;i<indices.length;i+=3){
     const [a,b,c]=indices.slice(i,i+3);

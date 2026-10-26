@@ -66,7 +66,7 @@ test('particle inventory locks the complete serialized WoundEmitter and Projecti
   assert.equal(hit.incomingReferences[0].fieldPath,'hitEffectPrefab');
 });
 
-test('wound and tracer render dependencies are recorded before runtime implementation',()=>{
+test('wound and tracer render dependencies are inventoried and recovery assets are distinguished from runtime bindings',()=>{
   const deps=inventory.dependencies;
   // Renderer records have no script GUID. Resolve by the serialized component fileID instead.
   const wound=inventory.prefabs['Assets/GameObject/Wound emitter.prefab'];
@@ -83,13 +83,18 @@ test('wound and tracer render dependencies are recorded before runtime implement
   assert.equal(deps.meshes[bloodMesh].sourceMetadata.nativeVertexCount,79);
   assert.equal(Object.hasOwn(deps.meshes[bloodMesh],'mesh'),false,
     'inventory metadata does not contain decoded LowPolySphere geometry');
+  const recoveredMesh=JSON.parse(readFileSync(new URL('../game/assets/ballistics/particle-meshes/particle-mesh-'+bloodMesh+'.json',import.meta.url)));
+  assert.equal(recoveredMesh.sourcePath,'Assets/Mesh/LowPolySphere.asset');
+  assert.equal(recoveredMesh.sourceSha256,'6b07b7570773145d9e5676a32ee293274cd0dc4dca41fc767680615f7a0cad9a');
+  assert.deepEqual(recoveredMesh.count,{vertices:79,triangles:112});
+  assert.equal(recoveredMesh.mesh.positions.length,79);
   assert.equal(deps.materials[bloodMaterial].records[0].fields.m_Shader.guid,
     '0000000000000000f000000000000000');
   const materialManifest=JSON.parse(gunzipSync(readFileSync(new URL('../game/assets/ballistics/original-particle-materials-source.json.gz',import.meta.url))));
   assert.equal(Object.hasOwn(materialManifest.materials,bloodMaterial),false,
     'the runtime material map is impact-only and does not yet bind Blood particle new');
-  assert.equal(existsSync(new URL('../game/assets/ballistics/particle-meshes/particle-mesh-'+bloodMesh+'.json',import.meta.url)),false,
-    'the source LowPolySphere browser geometry has not been recovered');
+  assert.equal(existsSync(new URL('../game/assets/ballistics/particle-meshes/particle-mesh-'+bloodMesh+'.json',import.meta.url)),true,
+    'the verified full-source snapshot supplied LowPolySphere geometry');
 
   const trace=inventory.prefabs['Assets/GameObject/Projectile trace.prefab'];
   const line=trace.records.find(record=>record.classID===120);
@@ -99,7 +104,7 @@ test('wound and tracer render dependencies are recorded before runtime implement
     'the LineRenderer material is outside the particle material closure');
   for(const ammo of trace.incomingReferences.map(ref=>ref.source))
     assert.equal(inventory.prefabs[ammo],undefined,
-      'tracer ammunition owner prefab must be recovered before trace activation: '+ammo);
+      'tracer ammunition owners are outside the bounded 27-prefab inventory: '+ammo);
 });
 
 test('all 27 inventoried particle prefabs reconcile against browser materials, textures, and custom meshes',()=>{
@@ -137,10 +142,8 @@ test('all 27 inventoried particle prefabs reconcile against browser materials, t
   const availableMeshFiles=new Set(readdirSync(new URL('../game/assets/ballistics/particle-meshes/',import.meta.url))
     .map(name=>name.match(/^particle-mesh-([0-9a-f]{32})\.json$/)?.[1]).filter(Boolean));
   assert.equal(sourceMeshes.size,5);
-  assert.equal(availableMeshFiles.size,3);
-  assert.deepEqual([...referencedMeshes].filter(guid=>!availableMeshFiles.has(guid)).sort(),[
-    '9b4443c616aa6fa429dd969b46cbca0e','f62208a372e889c4f8ae2dde522cce11'
-  ]);
+  assert.equal(availableMeshFiles.size,5);
+  assert.deepEqual([...referencedMeshes].filter(guid=>!availableMeshFiles.has(guid)),[]);
   assert.equal(Object.hasOwn(inventory.dependencies.meshes,'0000000000000000e000000000000000'),false,
     'Unity built-in mesh remains an engine dependency, not a project asset');
 });
