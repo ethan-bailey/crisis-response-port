@@ -1,7 +1,8 @@
 import copy
+import hashlib
 import unittest
 
-from package_ammunition_closure import merge_builtin_resource_data
+from package_ammunition_closure import merge_builtin_resource_data, verify_closure
 
 
 class PlayerResourceClosureTests(unittest.TestCase):
@@ -37,6 +38,48 @@ class PlayerResourceClosureTests(unittest.TestCase):
         del self.scene["builtinPlayerResourceRecords"]
         with self.assertRaisesRegex(ValueError, "without its recovered source record"):
             merge_builtin_resource_data(self.ammo, self.scene)
+
+
+class AmmoClosureAuditTests(unittest.TestCase):
+    def setUp(self):
+        self.source_bytes = b'{"assets":{"ammo.prefab":{"records":[],"externalGuids":[]}}}'
+        source_sha256 = hashlib.sha256(self.source_bytes).hexdigest()
+        self.scene = {
+            "assets": {
+                "ammo.prefab": {"records": [], "externalGuids": ["a" * 32]},
+                "dep.prefab": {"records": [{"fileID": "fresh"}], "externalGuids": []},
+            },
+            "guidPaths": {"a" * 32: "dep.prefab"}, "guidMetadata": {}, "scriptTypes": {}, "scriptAssemblies": {},
+            "builtinObjects": {},
+        }
+        self.weapon = {"ammoPackage": {
+            "assets": {"ammo.prefab": {"records": [], "externalGuids": ["a" * 32]}},
+            "guidPaths": {"a" * 32: "dep.prefab"}, "guidMetadata": {}, "scriptTypes": {}, "scriptAssemblies": {},
+            "closureAudit": {
+                "sourceSceneSha256": source_sha256,
+                "rootAssets": ["ammo.prefab", "dep.prefab"], "resolvedAssets": ["ammo.prefab", "dep.prefab"],
+                "resolvedSourceScripts": [], "builtinGuids": [],
+                "builtinResourcePackSha256": None, "builtinPlayerResourceSha256": None,
+                "unresolved": [], "complete": True,
+            },
+        }}
+        self.weapon["ammoPackage"]["assets"]["dep.prefab"] = {"records": [{"fileID": "fresh"}], "externalGuids": []}
+        self.source_sha256 = source_sha256
+
+    def test_source_snapshot_and_all_serialized_closure_records_must_match(self):
+        report = verify_closure(self.weapon, self.scene, self.source_sha256)
+        self.assertTrue(report["complete"])
+
+        self.weapon["ammoPackage"]["closureAudit"]["sourceSceneSha256"] = "old-source-snapshot"
+        report = verify_closure(self.weapon, self.scene, self.source_sha256)
+        self.assertFalse(report["complete"])
+        self.assertTrue(report["staleSourceAudit"])
+
+        self.weapon["ammoPackage"]["closureAudit"]["sourceSceneSha256"] = self.source_sha256
+        del self.weapon["ammoPackage"]["assets"]["dep.prefab"]
+        report = verify_closure(self.weapon, self.scene, self.source_sha256)
+        self.assertFalse(report["complete"])
+        self.assertTrue(report["staleAssetData"])
 
 
 if __name__ == "__main__":

@@ -124,6 +124,55 @@ def closure(scene: dict, ammo_package: dict) -> tuple[dict, set, set, set, set, 
             package_guid_paths, roots, sorted(visited))
 
 
+def verify_closure(weapon: dict, scene: dict, source_sha256: str) -> dict:
+    """Verify closure content and the source snapshot used to create its audit."""
+    ammo = weapon.get("ammoPackage")
+    if not isinstance(ammo, dict):
+        raise ValueError("weapon package has no original ammoPackage")
+
+    (assets, unresolved, used_guids, source_scripts, builtin_guids,
+     guid_paths, roots, visited) = closure(scene, ammo)
+    audit = ammo.get("closureAudit", {})
+    stale_script_maps = {key: ammo.get(key) != scene.get(key, {}) for key in ("scriptTypes", "scriptAssemblies")}
+    source_metadata = scene.get("guidMetadata", {})
+    package_metadata = ammo.get("guidMetadata", {})
+    missing_metadata = sorted(g for g in used_guids if g in source_metadata and package_metadata.get(g) != source_metadata[g])
+    expected_builtin_package = copy.deepcopy(ammo)
+    merge_builtin_resource_data(expected_builtin_package, scene)
+    stale_builtin_data = (ammo.get("builtinObjects", {}) != expected_builtin_package.get("builtinObjects", {}) or
+                          ammo.get("builtinResourceRecords") != expected_builtin_package.get("builtinResourceRecords") or
+                          ammo.get("builtinPlayerResourceRecords") != expected_builtin_package.get("builtinPlayerResourceRecords"))
+    expected_builtin_pack_sha = (scene.get("builtinResourceRecords") or {}).get("packSha256")
+    stale_source_audit = audit.get("sourceSceneSha256") != source_sha256
+    stale_asset_data = ammo.get("assets") != assets
+    stale_guid_paths = ammo.get("guidPaths", {}) != guid_paths
+    complete = (not unresolved and not stale_script_maps["scriptTypes"] and not stale_script_maps["scriptAssemblies"]
+                and not missing_metadata and not stale_builtin_data and not stale_source_audit
+                and not stale_asset_data and not stale_guid_paths
+                and audit.get("builtinResourcePackSha256") == expected_builtin_pack_sha
+                and audit.get("builtinPlayerResourceSha256") == (scene.get("builtinPlayerResourceRecords") or {}).get("sourceSha256")
+                and audit.get("rootAssets") == roots
+                and audit.get("resolvedAssets") == sorted(assets)
+                and audit.get("resolvedSourceScripts") == sorted(source_scripts)
+                and audit.get("builtinGuids") == sorted(builtin_guids)
+                and audit.get("unresolved") == []
+                and audit.get("complete") is True)
+    return {
+        "complete": complete,
+        "rootAssets": roots,
+        "resolvedAssets": sorted(ammo.get("assets", {})),
+        "missingPackageAssets": sorted(set(assets) - set(ammo.get("assets", {}))),
+        "staleScriptMaps": stale_script_maps,
+        "staleBuiltinData": stale_builtin_data,
+        "staleSourceAudit": stale_source_audit,
+        "staleAssetData": stale_asset_data,
+        "staleGuidPaths": stale_guid_paths,
+        "missingGuidMetadata": missing_metadata,
+        "unresolved": unresolved,
+        "sourceSha256": source_sha256,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("weapon_package", type=Path)
@@ -147,30 +196,9 @@ def main() -> int:
     source_sha256 = hashlib.sha256(args.source_scene_package.read_bytes()).hexdigest()
 
     if args.check:
-        audit = ammo.get("closureAudit", {})
-        stale_script_maps = {key: ammo.get(key) != scene.get(key, {}) for key in ("scriptTypes", "scriptAssemblies")}
-        source_metadata = scene.get("guidMetadata", {})
-        package_metadata = ammo.get("guidMetadata", {})
-        missing_metadata = sorted(g for g in used_guids if g in source_metadata and package_metadata.get(g) != source_metadata[g])
-        expected_builtin_package = copy.deepcopy(ammo)
-        merge_builtin_resource_data(expected_builtin_package, scene)
-        stale_builtin_data = (ammo.get("builtinObjects", {}) != expected_builtin_package.get("builtinObjects", {}) or
-                              ammo.get("builtinResourceRecords") != expected_builtin_package.get("builtinResourceRecords") or
-                              ammo.get("builtinPlayerResourceRecords") != expected_builtin_package.get("builtinPlayerResourceRecords"))
-        expected_builtin_pack_sha = (scene.get("builtinResourceRecords") or {}).get("packSha256")
-        complete = (not unresolved and not missing_paths and not any(stale_script_maps.values())
-                        and not missing_metadata and not stale_builtin_data
-                        and audit.get("builtinResourcePackSha256") == expected_builtin_pack_sha
-                        and audit.get("builtinPlayerResourceSha256") == (scene.get("builtinPlayerResourceRecords") or {}).get("sourceSha256")
-                        and audit.get("complete") is True)
-        print(json.dumps({"complete": complete, "rootAssets": roots,
-                          "resolvedAssets": sorted(existing_asset_paths),
-                          "missingPackageAssets": missing_paths,
-                              "staleScriptMaps": stale_script_maps,
-                          "staleBuiltinData": stale_builtin_data,
-                              "missingGuidMetadata": missing_metadata,
-                          "unresolved": unresolved, "sourceSha256": source_sha256}, indent=2))
-        return 0 if complete else 1
+        report = verify_closure(weapon, scene, source_sha256)
+        print(json.dumps(report, indent=2))
+        return 0 if report["complete"] else 1
 
     if not args.allow_unresolved and unresolved:
         print(json.dumps({"complete": False, "rootAssets": roots,
