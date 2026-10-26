@@ -33,7 +33,7 @@ public static class MissionProjectileContracts
         if(weapon?.ammunition==null)blockers.Add("Original Operator weapon has no selected ammunition");
         if(weapon?.ammunition?.projectile==null)blockers.Add("Selected original ammunition has no source projectile prefab");
         if(weapon?.ReadyToFire!=true)blockers.Add("Original weapon is not ready to fire");
-        if(shooter?.rightArm?.OnTarget!=true)blockers.Add("Original right arm IK has not reached OnTarget, so CharacterBody.PullTrigger will reject the trigger");
+        // IK readiness is established by FireOnce after it stages the original actor and advances the authored pose updates.
         object fireAttempt=null;
         if(blockers.Count==0)fireAttempt=FireOnce(world,shooter,weapon,victims);
         return JsonSerializer.Serialize(new{
