@@ -31,7 +31,7 @@ public interface IAudioClipPlaybackDriver:IAudioSourceDriver {
 // Drivers that transport the originating AudioSource can preserve per-source
 // stop/loop state across an asynchronous browser decoder.
 public interface IAudioSourceEventDriver:IAudioClipPlaybackDriver {
-    bool IsPlaying(AudioSource source);
+    bool IsSourcePlaying(AudioSource source);
     void ReportPlaybackState(int sourceId,bool isPlaying);
     void PlayOneShot(AudioSource source,AudioClip clip,float volumeScale,int priority);
     void Play(AudioSource source,AudioClip clip,float volume,float pitch,bool loop,bool muted,int priority);
@@ -49,7 +49,7 @@ public sealed class AudioSource:Behaviour {
     public bool loop,mute;
     public IAudioSourceDriver Driver {get;set;}
     IAudioSourceDriver RequiredDriver=>Driver??throw new NotSupportedException("Decoded original audio playback driver is not bound");
-    public bool isPlaying { get { var driver=RequiredDriver;return driver is IAudioSourceEventDriver sourceEvents?sourceEvents.IsPlaying(this):driver.IsPlaying; } }
+    public bool isPlaying { get { var driver=RequiredDriver;return driver is IAudioSourceEventDriver sourceEvents?sourceEvents.IsSourcePlaying(this):driver.IsPlaying; } }
     public void PlayOneShot(AudioClip clip,float volumeScale=1){
         ArgumentNullException.ThrowIfNull(clip);
         var driver=RequiredDriver;

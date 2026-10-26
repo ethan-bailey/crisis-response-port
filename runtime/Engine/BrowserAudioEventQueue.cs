@@ -10,7 +10,7 @@ public sealed class BrowserAudioEventQueue : IAudioSourceEventDriver, IDeferredA
     readonly Dictionary<int,bool> playback = [];
     public int DroppedEvents { get; private set; }
     public bool IsPlaying => playback.Values.Any(value=>value);
-    public bool IsPlaying(AudioSource source)=>source!=null&&playback.GetValueOrDefault(source.GetInstanceID());
+    public bool IsSourcePlaying(AudioSource source)=>source!=null&&playback.GetValueOrDefault(source.GetInstanceID());
     public void ReportPlaybackState(int sourceId,bool isPlaying){if(sourceId!=0)playback[sourceId]=isPlaying;}
 
     public void PlayOneShot(AudioClip clip, float volume, int priority) => Enqueue("oneShot", clip, volume, 1f, false, false, priority);
