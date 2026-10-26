@@ -111,6 +111,8 @@ test('FullSource gun events resolve by original clip path and retain source age'
     audioFire: { source: 'Assets/AudioClip/5.56x45mm-01-unsuppressed.wav' },
     audioSupersonic: { source: 'Assets/AudioClip/5.56x45mm-crack-interior.wav' },
     audioFiringPin: { source: 'Assets/Audio/M4-pin.wav' },
+    audioExtractMagazine: { source: 'Assets/AudioClip/magazine-out-02.wav' },
+    audioInsertMagazine: { source: 'Assets/AudioClip/magazine-in-01.wav' },
   }, {
     play: (...args) => played.push(args),
     noteUnmappedSourceEvent: () => unmapped.push(true),
@@ -119,15 +121,23 @@ test('FullSource gun events resolve by original clip path and retain source age'
     { action: 'oneShot', sourcePath: 'Assets/AudioClip/5.56x45mm-01-unsuppressed.wav', volume: 0.5, time: 10.04 },
     { action: 'oneShot', sourcePath: 'Assets/AudioClip/5.56x45mm-crack-interior.wav', volume: 0.8, time: 10.08 },
     { action: 'play', sourcePath: 'Assets/Audio/M4-pin.wav', volume: 0.8, time: 10.05 },
+    { action: 'oneShot', sourcePath: 'Assets/AudioClip/magazine-out-02.wav', volume: 0.7, time: 10.07 },
+    { action: 'oneShot', sourcePath: 'Assets/AudioClip/magazine-in-01.wav', volume: 0.6, time: 10.09 },
     { action: 'oneShot', sourcePath: 'Assets/Audio/not-mapped.wav', volume: 1, time: 10.06 },
   ], 10.1);
-  assert.equal(played.length, 2);
+  assert.equal(played.length, 4);
   assert.equal(played[0][0], 'audioFire');
   assert.ok(Math.abs(played[0][1] - 0.3) < 1e-12);
   assert.ok(Math.abs(played[0][2] - 0.06) < 1e-12);
   assert.equal(played[1][0], 'audioSupersonic');
   assert.ok(Math.abs(played[1][1] - 0.8) < 1e-12);
   assert.ok(Math.abs(played[1][2] - 0.02) < 1e-12);
+  assert.equal(played[2][0], 'audioExtractMagazine');
+  assert.ok(Math.abs(played[2][1] - 0.7) < 1e-12);
+  assert.ok(Math.abs(played[2][2] - 0.03) < 1e-12);
+  assert.equal(played[3][0], 'audioInsertMagazine');
+  assert.ok(Math.abs(played[3][1] - 0.6) < 1e-12);
+  assert.ok(Math.abs(played[3][2] - 0.01) < 1e-12);
   assert.equal(unmapped.length, 2, 'unsupported loops and unknown source clips are counted rather than guessed');
 });
 
