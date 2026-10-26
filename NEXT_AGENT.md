@@ -34,4 +34,4 @@
 
 ## Next action
 
-Have the user load version 70 on iPhone Safari and retry Start Mission, then capture a progress report if any failure remains. Continue the audio lifecycle and inventoried particle gates independently; do not treat the open device gate or missing Spark texture as a stopping point.
+Create the file-level source-to-Site crosswalk for deployed version 70 against public develop/wasm SHA df7aad51045b1e03537ab7a3a49334122eb40831. Record the Site SHA, GitHub SHA, exact file hashes, and archive/manifest evidence before another Site release. Then continue the remaining reload event-timing and particle-lifecycle batches; keep physical iPhone acceptance of version 70 explicitly pending.
