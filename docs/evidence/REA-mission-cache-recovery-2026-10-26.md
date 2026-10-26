@@ -19,3 +19,7 @@
 ## Limits and next dependency
 
 This change recovers one bad immutable cached chunk without invalidating other verified chunks. It does not add IndexedDB storage, quota estimates/error UI, user clear-cache controls, or prove Safari eviction behavior. The next action is to verify the exact-SHA hosted CI result for this commit, then continue the version 70 source crosswalk and storage/mission-load gates. No Site was published.
+
+## Superseding status — 2026-10-26
+
+The exact-SHA hosted verification unknown in this historical note was later closed by Actions runs #30 (code SHA `60399dd`) and #33 (code/probe SHA `c23d7f8`); both source/build and Chromium jobs passed. The live Site is now version 71. IndexedDB and user-facing cache controls are implemented and covered by browser-fixture checks. See `NEXT_AGENT.md` for current status; this section above preserves the status at the time of this change.

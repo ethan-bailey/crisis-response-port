@@ -24,3 +24,7 @@ Source commit: `a56a898232b2624c1613d72ed5bf5192be231bd4` (parent `28a310e61ae8f
 ## Limits and next work
 
 This is CacheStorage with browser-managed retention, not a guarantee that the browser will preserve data indefinitely. IndexedDB migration, quota estimates and user-facing quota/error handling, and a clear-cache control remain open. No real iPhone Safari run or Site publication was performed. Continue with exact-SHA hosted verification, then the version 70 crosswalk and remaining mission/storage gates.
+
+## Superseding status — 2026-10-26
+
+The paragraph above is a historical checkpoint. The loader now uses IndexedDB with CacheStorage fallback, storage estimate/progress, quota-safe delivery, and a version-scoped clear control. Actions run #30 passed the seven real-Chromium fixture assertions (including reload reuse, interruption/retry, corruption repair, quota-error handling, source isolation, and clear); run #33 repeated source/build and browser acceptance. Site version 71 is deployed. Full 98 MiB phone acceptance and source crosswalk to the Site's recorded source identifier remain open; see `NEXT_AGENT.md`.
