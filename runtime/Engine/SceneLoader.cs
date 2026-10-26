@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 13832)
+Total output lines: 495
+
 using System.Collections;
 using System.Reflection;
 using System.Text.Json;
@@ -133,6 +136,9 @@ public static class SceneLoader {
                     case 33:component=go.AddComponent<MeshFilter>();break;
                     case 120 when prefab:component=go.AddComponent<LineRenderer>();break;
                     case 20:component=go.AddComponent<Camera>();break;
+                    // AudioListener is a scene component on the Mission camera;
+                    // preserve it even when the original scene object is inactive.
+                    case 81:component=go.AddComponent<AudioListener>();break;
                     case 54 when prefab:component=go.AddComponent<Rigidbody>();break;
                     case 59 when prefab:component=go.AddComponent<HingeJoint>();break;
                     case 61 when prefab:component=go.AddComponent<BoxCollider2D>();break;
@@ -167,7 +173,7 @@ public static class SceneLoader {
                     }
                     result.objects[id]=component;
                     if(component is Behaviour b)b.enabled=Flag(fields,"m_Enabled");
-                    if(cls!=114&&(prefab||cls is 20 or 23 or 33 or 82))builtinFields.Add((component,fields,id,cls));
+                    if(cls!=114&&(prefab||cls is 20 or 23 or 33 or 81 or 82))builtinFields.Add((component,fields,id,cls));
                 } else result.unsupportedComponents[label]=result.unsupportedComponents.GetValueOrDefault(label)+1;
             }
             foreach(var (component,fields,id,classID) in builtinFields){
@@ -232,92 +238,16 @@ public static class SceneLoader {
         if(name.StartsWith("Script:",StringComparison.Ordinal))return null;
         bool explicitlyGlobal=name.StartsWith("global::",StringComparison.Ordinal);
         if(explicitlyGlobal)name=name["global::".Length..];
-        var candidates=AppDomain.CurrentDomain.GetAssemblies().SelectMany(SafeTypes)
-            .Where(t=>!t.IsAbstract&&typeof(Component).IsAssignableFrom(t)&&t.Name==name&&(!explicitlyGlobal||string.IsNullOrEmpty(t.Namespace))).ToArray();
-        var fullSource=candidates.Where(t=>t.Namespace=="Crisis.Runtime.FullSource").ToArray();
-        if(fullSource.Length==1)return fullSource[0];
-        if(candidates.Length==1)return candidates[0];
-        if(candidates.Length>1)throw new AmbiguousMatchException($"Original script {name} resolves to multiple runtime component types");
-        return null;
-    }
-    static IEnumerable<Type> SafeTypes(Assembly assembly){try{return assembly.GetTypes();}catch(ReflectionTypeLoadException e){return e.Types.Where(t=>t!=null);}}
-    static IEnumerable<FieldInfo> SerializedFields(Type type){
-        for(var t=type;t!=null&&t!=typeof(UObject)&&t!=typeof(Component)&&t!=typeof(Behaviour)&&t!=typeof(MonoBehaviour);t=t.BaseType)
-            foreach(var field in t.GetFields(BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.DeclaredOnly))
-                if(!field.IsStatic&&!field.IsInitOnly&&field.GetCustomAttribute<NonSerializedAttribute>()==null&&(field.IsPublic||field.GetCustomAttribute<SerializeField>()!=null))yield return field;
-    }
-    static void AssignBuiltinFields(Component component,JsonElement fields,SceneLoadResult result,string id,int classID){
-        // The browser particle adapter needs the complete authored module and
-        // renderer records after the CPU importer has populated supported fields.
-        if(classID is 198 or 199)
-            foreach(var field in fields.EnumerateObject())component.OriginalSerializedFields[field.Name]=field.Value.Clone();
-        var consumed=new HashSet<string>(StringComparer.Ordinal){"serializedVersion","m_ObjectHideFlags","m_PrefabParentObject","m_PrefabInternal","m_GameObject","m_Enabled"};
-        void SetField(string source,string target,Type type){
-            if(!fields.TryGetProperty(source,out var value))return;
-            consumed.Add(source);
-            var member=(MemberInfo)component.GetType().GetField(target,BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic)
-                ??component.GetType().GetProperty(target,BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
-            if(member is FieldInfo f)f.SetValue(component,ReadValue(value,type,result));
-            else if(member is PropertyInfo p&&p.CanWrite)p.SetValue(component,ReadValue(value,type,result));
-            else result.unresolvedReferences.Add($"Unsupported built-in member {component.GetType().Name}.{target}");
-        }
-        if(classID==198){SetField("simulationSpeed","simulationSpeed",typeof(float));SetField("stopAction","stopAction",typeof(int));SetField("looping","looping",typeof(bool));SetField("startDelay","startDelay",typeof(JsonElement));SetField("m_LengthInSec","lengthInSec",typeof(float));SetField("prewarm","prewarm",typeof(bool));SetField("playOnAwake","playOnAwake",typeof(bool));SetField("useUnscaledTime","useUnscaledTime",typeof(bool));SetField("autoRandomSeed","autoRandomSeed",typeof(bool));SetField("useRigidbodyForVelocity","useRigidbodyForVelocity",typeof(bool));SetField("moveWithTransform","moveWithTransform",typeof(bool));SetField("moveWithCustomTransform","moveWithCustomTransform",typeof(Transform));SetField("scalingMode","scalingMode",typeof(int));SetField("randomSeed","randomSeed",typeof(uint));SetField("InitialModule","initialModuleData",typeof(JsonElement));SetField("ShapeModule","shapeModuleData",typeof(JsonElement));SetField("EmissionModule","emissionModuleData",typeof(JsonElement));SetField("SizeModule","sizeModuleData",typeof(JsonElement));SetField("RotationModule","rotationModuleData",typeof(JsonElement));SetField("ColorModule","colorModuleData",typeof(JsonElement));SetField("UVModule","uvModuleData",typeof(JsonElement));SetField("VelocityModule","velocityModuleData",typeof(JsonElement));SetField("InheritVelocityModule","inheritVelocityModuleData",typeof(JsonElement));SetField("ForceModule","forceModuleData",typeof(JsonElement));SetField("ExternalForcesModule","externalForcesModuleData",typeof(JsonElement));SetField("ClampVelocityModule","clampVelocityModuleData",typeof(JsonElement));SetField("NoiseModule","noiseModuleData",typeof(JsonElement));SetField("SizeBySpeedModule","sizeBySpeedModuleData",typeof(JsonElement));SetField("RotationBySpeedModule","rotationBySpeedModuleData",typeof(JsonElement));SetField("ColorBySpeedModule","colorBySpeedModuleData",typeof(JsonElement));SetField("CollisionModule","collisionModuleData",typeof(JsonElement));SetField("TriggerModule","triggerModuleData",typeof(JsonElement));SetField("SubModule","subModuleData",typeof(JsonElement));SetField("LightsModule","lightsModuleData",typeof(JsonElement));SetField("TrailModule","trailModuleData",typeof(JsonElement));SetField("CustomDataModule","customDataModuleData",typeof(JsonElement));}if(classID==199){SetField("m_LengthInSec","lengthScale",typeof(float));SetField("m_NormalDirection","normalDirection",typeof(int));}void External(string source){
-            var target=(classID,source) switch {
-                (23,"m_Materials")=>("materials",typeof(Material[])), (199,"m_Materials")=>("materials",typeof(Material[])),(212,"m_Materials")=>("materials",typeof(Material[])),(199,"m_StaticBatchRoot")=>("staticBatchRoot",typeof(Transform)), (199,"m_Mesh")=>("mesh",typeof(Mesh)),(23,"m_StaticBatchRoot")=>("staticBatchRoot",typeof(Transform)),(23,"m_ProbeAnchor")=>("probeAnchor",typeof(Transform)),(23,"m_LightProbeVolumeOverride")=>("lightProbeVolumeOverride",typeof(Transform)),(23,"m_LightmapParameters")=>("lightmapParameters",typeof(UObject)),(212,"m_StaticBatchRoot")=>("staticBatchRoot",typeof(Transform)),(212,"m_ProbeAnchor")=>("probeAnchor",typeof(Transform)),(212,"m_LightProbeVolumeOverride")=>("lightProbeVolumeOverride",typeof(Transform)),(212,"m_LightmapParameters")=>("lightmapParameters",typeof(UObject)),
-                (33,"m_Mesh")=>("sharedMesh",typeof(Mesh)),(64,"m_Mesh")=>("sharedMesh",typeof(Mesh)),(61,"m_Material")=>("sharedMaterial",typeof(PhysicMaterial)),(64,"m_Material")=>("sharedMaterial",typeof(PhysicMaterial)),(65,"m_Material")=>("sharedMaterial",typeof(PhysicMaterial)),(136,"m_Material")=>("sharedMaterial",typeof(PhysicMaterial)),(212,"m_Sprite")=>("sprite",typeof(Sprite)),
-                (82,"OutputAudioMixerGroup")=>("outputAudioMixerGroup",typeof(UnityEngine.Audio.AudioMixerGroup)),(95,"m_Avatar")=>("avatar",typeof(UObject)),(95,"m_Controller")=>("runtimeController",typeof(RuntimeAnimatorController)),(198,"stopAction")=>("stopAction",typeof(int)),(223,"m_Camera")=>("worldCamera",typeof(Camera)),_=>default
-            };
-            if(target!=default){SetField(source,target.Item1,target.Item2);return;}
-            if(!fields.TryGetProperty(source,out var value))return;
-            consumed.Add(source);
-            component.OriginalSerializedFields[source]=value.Clone();
-            void Add(JsonElement reference){
-                if(reference.ValueKind!=JsonValueKind.Object||!reference.TryGetProperty("fileID",out var file)||file.ToString()=="0")return;
-                string guid=reference.TryGetProperty("guid",out var g)?g.GetString():"local";
-                result.unresolvedReferences.Add($"Unresolved external asset {component.GetType().Name}.{source} {guid}:{file}");
-            }
-            if(value.ValueKind==JsonValueKind.Object)Add(value);
-            else if(value.ValueKind==JsonValueKind.Array)foreach(var reference in value.EnumerateArray())Add(reference);
-        }
-        if(classID==23||classID==199||classID==212){
-            SetField("m_CastShadows","castShadows",typeof(bool));SetField("m_ReceiveShadows","receiveShadows",typeof(bool));SetField("m_DynamicOccludee","dynamicOccludee",typeof(bool));
-            SetField("m_MotionVectors","motionVectors",typeof(int));SetField("m_LightProbeUsage","lightProbeUsage",typeof(int));SetField("m_ReflectionProbeUsage","reflectionProbeUsage",typeof(int));
-            SetField("m_StaticBatchInfo","staticBatchInfo",typeof(StaticBatchInfo));SetField("m_ScaleInLightmap","scaleInLightmap",typeof(float));SetField("m_PreserveUVs","preserveUVs",typeof(bool));
-            SetField("m_IgnoreNormalsForChartDetection","ignoreNormalsForChartDetection",typeof(bool));SetField("m_ImportantGI","importantGI",typeof(bool));SetField("m_StitchLightmapSeams","stitchLightmapSeams",typeof(bool));
-            SetField("m_SelectedEditorRenderState","selectedEditorRenderState",typeof(int));SetField("m_MinimumChartSize","minimumChartSize",typeof(int));SetField("m_AutoUVMaxDistance","autoUVMaxDistance",typeof(float));SetField("m_AutoUVMaxAngle","autoUVMaxAngle",typeof(float));
-            SetField("m_SortingLayerID","sortingLayerID",typeof(int));SetField("m_SortingLayer","sortingLayer",typeof(int));SetField("m_SortingOrder","sortingOrder",typeof(int));
-        }
-        if(classID==212){
-            SetField("m_Color","color",typeof(Color));SetField("m_FlipX","flipX",typeof(bool));SetField("m_FlipY","flipY",typeof(bool));
-            SetField("m_DrawMode","drawMode",typeof(int));SetField("m_Size","size",typeof(Vector2));SetField("m_AdaptiveModeThreshold","adaptiveModeThreshold",typeof(float));
-            SetField("m_SpriteTileMode","spriteTileMode",typeof(int));SetField("m_SpriteSortPoint","spriteSortPoint",typeof(int));
-            SetField("m_MaskInteraction","maskInteraction",typeof(int));SetField("m_WasSpriteAssigned","wasSpriteAssigned",typeof(bool));
-        }
-        if(classID==223){SetField("m_RenderMode","renderMode",typeof(RenderMode));External("m_Camera");SetField("m_PlaneDistance","planeDistance",typeof(float));SetField("m_PixelPerfect","pixelPerfect",typeof(bool));SetField("m_ReceivesEvents","receivesEvents",typeof(bool));SetField("m_OverrideSorting","overrideSorting",typeof(bool));SetField("m_OverridePixelPerfect","overridePixelPerfect",typeof(bool));SetField("m_SortingBucketNormalizedSize","sortingBucketNormalizedSize",typeof(float));SetField("m_AdditionalShaderChannelsFlag","additionalShaderChannelsFlag",typeof(int));SetField("m_SortingLayerID","sortingLayerID",typeof(int));SetField("m_SortingOrder","sortingOrder",typeof(int));SetField("m_TargetDisplay","targetDisplay",typeof(int));}
-        if(classID==199){SetField("m_RenderMode","renderMode",typeof(int));SetField("m_SortMode","sortMode",typeof(int));SetField("m_LengthScale","lengthScale",typeof(float));SetField("m_RenderAlignment","renderAlignment",typeof(int));SetField("m_UseCustomVertexStreams","useCustomVertexStreams",typeof(bool));SetField("m_VertexStreams","vertexStreams",typeof(int));SetField("m_Pivot","pivot",typeof(Vector3));SetField("m_Flip","flip",typeof(Vector3));SetField("m_CameraVelocityScale","cameraVelocityScale",typeof(float));SetField("m_VelocityScale","velocityScale",typeof(float));SetField("m_SortingFudge","sortingFudge",typeof(float));SetField("m_MinParticleSize","minParticleSize",typeof(float));SetField("m_MaxParticleSize","maxParticleSize",typeof(float));SetField("m_MaskInteraction","maskInteraction",typeof(int));External("m_Mesh");External("m_Mesh1");External("m_Mesh2");External("m_Mesh3");}
-if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("Spatialize","spatialize",typeof(bool));SetField("SpatializePostEffects","spatializePostEffects",typeof(bool));SetField("DopplerLevel","dopplerLevel",typeof(float));SetField("MinDistance","minDistance",typeof(float));SetField("MaxDistance","maxDistance",typeof(float));SetField("Pan2D","pan2D",typeof(float));SetField("rolloffMode","rolloffMode",typeof(int));SetField("BypassEffects","bypassEffects",typeof(bool));SetField("BypassListenerEffects","bypassListenerEffects",typeof(bool));SetField("BypassReverbZones","bypassReverbZones",typeof(bool));SetField("rolloffCustomCurve","rolloffCustomCurve",typeof(AnimationCurve));SetField("panLevelCustomCurve","panLevelCustomCurve",typeof(AnimationCurve));SetField("spreadCustomCurve","spreadCustomCurve",typeof(AnimationCurve));SetField("reverbZoneMixCustomCurve","reverbZoneMixCustomCurve",typeof(AnimationCurve));}
-        switch(classID){
-            case 20:SetField("field of view","fieldOfView",typeof(float));SetField("near clip plane","nearClipPlane",typeof(float));SetField("far clip plane","farClipPlane",typeof(float));SetField("orthographic size","orthographicSize",typeof(float));SetField("orthographic","orthographic",typeof(bool));SetField("culling mask","cullingMask",typeof(int));External("target texture");break;
-            case 23:case 199:External("m_Materials");External("m_StaticBatchRoot");External("m_Mesh");External("m_ProbeAnchor");External("m_LightProbeVolumeOverride");External("m_LightmapParameters");break;
-            case 64:SetField("m_IsTrigger","isTrigger",typeof(bool));SetField("m_Convex","convex",typeof(bool));SetField("m_InflateMesh","inflateMesh",typeof(bool));SetField("m_SkinWidth","skinWidth",typeof(float));External("m_Mesh");External("m_Material");break;
-            case 212:External("m_Materials");External("m_StaticBatchRoot");External("m_ProbeAnchor");External("m_LightProbeVolumeOverride");External("m_LightmapParameters");External("m_Sprite");break;
-            case 33:External("m_Mesh");break;
-            case 54:
-                SetField("m_Mass","mass",typeof(float));SetField("m_Drag","drag",typeof(float));SetField("m_AngularDrag","angularDrag",typeof(float));
-                SetField("m_UseGravity","useGravity",typeof(bool));SetField("m_IsKinematic","isKinematic",typeof(bool));SetField("m_Interpolate","interpolation",typeof(RigidbodyInterpolation));
-                SetField("m_Constraints","constraints",typeof(RigidbodyConstraints));SetField("m_CollisionDetection","collisionDetectionMode",typeof(CollisionDetectionMode));break;
-            case 59:
-                SetField("m_ConnectedBody","connectedBody",typeof(Rigidbody));SetField("m_Anchor","anchor",typeof(Vector3));SetField("m_Axis","axis",typeof(Vector3));SetField("m_ConnectedAnchor","connectedAnchor",typeof(Vector3));
-                SetField("m_AutoConfigureConnectedAnchor","autoConfigureConnectedAnchor",typeof(bool));SetField("m_BreakForce","breakForce",typeof(float));SetField("m_BreakTorque","breakTorque",typeof(float));
-                SetField("m_EnableCollision","enableCollision",typeof(bool));SetField("m_EnablePreprocessing","enablePreprocessing",typeof(bool));
-                SetField("m_UseSpring","useSpring",typeof(bool));SetField("m_Spring","spring",typeof(JointSpring));SetField("m_UseLimits","useLimits",typeof(bool));SetField("m_Limits","limits",typeof(JointLimits));
-                SetField("m_UseMotor","useMotor",typeof(bool));SetField("m_Motor","motor",typeof(JointMotor));
-                SetField("m_MassScale","massScale",typeof(float));SetField("m_ConnectedMassScale","connectedMassScale",typeof(float));break;
-            case 61:
-                SetField("m_Density","density",typeof(float));SetField("m_Offset","offset",typeof(Vector2));SetField("m_Size","size",typeof(Vector2));SetField("m_IsTrigger","isTrigger",typeof(bool));SetField("m_UsedByEffector","usedByEffector",typeof(bool));SetField("m_UsedByComposite","usedByComposite",typeof(bool));SetField("m_AutoTiling","autoTiling",typeof(bool));SetField("m_EdgeRadius","edgeRadius",typeof(float));External("m_Material");break;
+     …3832 tokens truncated…g",typeof(bool));SetField("m_EdgeRadius","edgeRadius",typeof(float));External("m_Material");break;
             case 82:
                 SetField("m_audioClip","clip",typeof(AudioClip));SetField("m_Volume","volume",typeof(float));SetField("m_Pitch","pitch",typeof(float));
-                SetField("Loop","loop",typeof(bool));SetField("Mute","mute",typeof(bool));SetField("Priority","priority",typeof(int));External("OutputAudioMixerGroup");break;
+                SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("Loop","loop",typeof(bool));SetField("Mute","mute",typeof(bool));
+                SetField("Spatialize","spatialize",typeof(bool));SetField("SpatializePostEffects","spatializePostEffects",typeof(bool));SetField("Priority","priority",typeof(int));
+                SetField("DopplerLevel","dopplerLevel",typeof(float));SetField("MinDistance","minDistance",typeof(float));SetField("MaxDistance","maxDistance",typeof(float));SetField("Pan2D","pan2D",typeof(float));
+                SetField("rolloffMode","rolloffMode",typeof(int));SetField("BypassEffects","bypassEffects",typeof(bool));SetField("BypassListenerEffects","bypassListenerEffects",typeof(bool));SetField("BypassReverbZones","bypassReverbZones",typeof(bool));
+                SetField("rolloffCustomCurve","rolloffCustomCurve",typeof(AnimationCurve));SetField("panLevelCustomCurve","panLevelCustomCurve",typeof(AnimationCurve));
+                SetField("spreadCustomCurve","spreadCustomCurve",typeof(AnimationCurve));SetField("reverbZoneMixCustomCurve","reverbZoneMixCustomCurve",typeof(AnimationCurve));
+                SetField("Spread","spread",typeof(int));SetField("ReverbZoneMix","reverbZoneMix",typeof(float));External("OutputAudioMixerGroup");break;
             case 95:
                 SetField("m_CullingMode","cullingMode",typeof(AnimatorCullingMode));SetField("m_UpdateMode","updateMode",typeof(AnimatorUpdateMode));
                 SetField("m_ApplyRootMotion","applyRootMotion",typeof(bool));SetField("m_LinearVelocityBlending","linearVelocityBlending",typeof(bool));

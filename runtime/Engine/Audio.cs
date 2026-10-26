@@ -17,6 +17,8 @@ public sealed class AudioClip:Object {
     // if the bounded WebAudio cache later evicts this clip.
     public void ReleaseSourceData()=>SourceData=Array.Empty<byte>();
 }
+/// <summary>Recovered Unity listener marker. Host spatialization must select an active source listener explicitly.</summary>
+public sealed class AudioListener:Behaviour { }
 public interface IAudioSourceDriver {
     bool IsPlaying {get;}
     void PlayOneShot(AudioClip clip,float volume,int priority);
