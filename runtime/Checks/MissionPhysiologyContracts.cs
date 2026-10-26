@@ -11,8 +11,8 @@ public static class MissionPhysiologyContracts
 
     public static string Run(RuntimeWorld world,CharacterBody[] bodies)
     {
-        var operators=bodies.Where(body=>body.GetComponent<TeamOperator>()!=null).ToArray();
-        var occupants=bodies.Where(body=>body.GetComponent<Occupant>()!=null).ToArray();
+        var operators=bodies.Where(body=>body.GetComponent<TeamOperator>()!=null&&body.Physiology!=null).ToArray();
+        var occupants=bodies.Where(body=>body.GetComponent<Occupant>()!=null&&body.Physiology!=null).ToArray();
         if(operators.Length==0||occupants.Length<2)
             throw new InvalidOperationException($"Physiology contract requires the original Operator and two Occupants; operators={operators.Length}, occupants={occupants.Length}");
 
