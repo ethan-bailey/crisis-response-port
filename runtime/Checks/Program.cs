@@ -152,6 +152,14 @@ if(args.Length==2&&args[0]=="--mission-weapon-switch-contract"){
     Console.WriteLine(Crisis.Runtime.Checks.SourceWeaponSwitchContracts.Run(package,world,session.Actor,bridge));
     return;
 }
+if(args.Length==2&&args[0]=="--mission-player-reload-contract"){
+    var package=LoadSourcePackage(args[1]);
+    var world=new RuntimeWorld();
+    var session=Crisis.Runtime.Browser.BrowserEntryTeamMission.Start(package,world,enablePlayerBehavior:true);
+    var bridge=new FullSourceActorBridge(world,session.Actor);
+    Console.WriteLine(Crisis.Runtime.Checks.SourceBehaviorReloadContracts.Run(package,world,session.Actor,bridge));
+    return;
+}
 OriginalSourcePackage LoadSourcePackage(string path){
     if(File.Exists(path))return OriginalSourcePackage.FromJson(File.ReadAllText(path));
     using var profile=JsonDocument.Parse(File.ReadAllText(Path.Combine(path,"manifest.json")));
@@ -182,7 +190,7 @@ if(args.Length==2&&args[0]=="--spawner-contract"){
     return;
 }
 if(args.Length==2&&args[0]=="--behavior-graph-contract"){
-    Console.WriteLine(BehaviorDesignerContracts.Run(File.ReadAllText(args[1])));
+    Console.WriteLine(BehaviorDesignerContracts.Run(LoadSourcePackage(args[1])));
     return;
 }
 if(args.Length==2&&args[0]=="--source-ui-prefab-contract"){
@@ -209,7 +217,7 @@ if(args.Length==3&&args[0]=="--ammunition-resource-contract"){
     Console.WriteLine(JsonSerializer.Serialize(AmmunitionLoader.VerifyOriginalResource(File.ReadAllText(args[1]),args[2])));
     return;
 }
-if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-ui-contract"||args[0]=="--mission-ui-incremental-contract"||args[0]=="--mission-outcome-contract"||args[0]=="--mission-ai-contract"||args[0]=="--mission-ai-outcome-contract"||args[0]=="--mission-projectile-contract"||args[0]=="--mission-ai-projectile-contract"||args[0]=="--mission-physiology-contract")){
+if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-ui-contract"||args[0]=="--mission-ui-incremental-contract"||args[0]=="--mission-outcome-contract"||args[0]=="--mission-ai-contract"||args[0]=="--mission-ai-outcome-contract"||args[0]=="--mission-projectile-contract"||args[0]=="--mission-ai-projectile-contract"||args[0]=="--mission-physiology-contract"||args[0]=="--mission-ai-switch-fallback-contract")){
     var runOriginalAI=args[0].StartsWith("--mission-ai-",StringComparison.Ordinal);
     var runWithOriginalUI=args[0] is "--mission-ui-contract" or "--mission-ui-incremental-contract";
     var package=LoadSourcePackage(args[1]);
@@ -234,6 +242,7 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-ui-contra
     var loadout=new SerializableEquipment();loadout.primary.prefabName="M4A1";loadout.primary.ammunitionPrefabName="5.56-FMJ";loadout.secondary.prefabName="Glock-18";loadout.secondary.ammunitionPrefabName="9-FMJ";
     loadout.items.itemPrefabNames.AddRange(new[]{"Primary magazine","Secondary magazine","Plasticuffs","Gauze"});
     team.entryMembers.Add(loadout);
+    if(args[0]=="--mission-ai-switch-fallback-contract")team.entryMembers.Add(loadout.Copy());
     typeof(Crisis.Runtime.FullSource.OperatorSpawnData).GetProperty(nameof(Crisis.Runtime.FullSource.OperatorSpawnData.Team),System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.Public|System.Reflection.BindingFlags.NonPublic)!.SetValue(context.OperatorSpawnData,team);
     context.MissionMetaData.DeactivateTutorial();
     // Keep gate 7 focused on the real mission and actor flow in this headless
@@ -260,7 +269,7 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-ui-contra
     });
     if(runWithOriginalUI)Console.Error.WriteLine("MISSION-UI stage: scene activation completed");
     var missionComponent=mission.objects.Values.OfType<Crisis.Runtime.FullSource.Mission>().Single();
-    missionComponent.sandboxStartMode=runWithOriginalUI?Crisis.Runtime.FullSource.Mission.MissionView.EntryTeam:Crisis.Runtime.FullSource.Mission.MissionView.None;
+    missionComponent.sandboxStartMode=runWithOriginalUI||args[0]=="--mission-ai-switch-fallback-contract"?Crisis.Runtime.FullSource.Mission.MissionView.EntryTeam:Crisis.Runtime.FullSource.Mission.MissionView.None;
     mission.objects.Values.OfType<Crisis.Runtime.FullSource.MissionUI>().Single().missionIntro=null;
     foreach(var renderer in world.Objects.OfType<Renderer>().ToArray())renderer.material.OnTextureAssigned??=((_,_)=>{});
     // Fog of war presentation Starts before the Mission Start callback in this
@@ -279,18 +288,24 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-ui-contra
     // calls execute without claiming decoded or audible output.
     foreach(var clip in world.Objects.OfType<AudioClip>())clip.ReportLoadState(AudioDataLoadState.Loaded);
     foreach(var source in world.Objects.OfType<AudioSource>())source.Driver=new MissionContractSilentAudioDriver();
-    void DisableUnboundVocalizationPresentation(){foreach(var vocalization in world.Objects.OfType<Crisis.Runtime.FullSource.UIVocalizationText>().ToArray())vocalization.enabled=false;foreach(var source in world.Objects.OfType<AudioSource>())source.Driver??=new MissionContractSilentAudioDriver();if(!runOriginalAI)foreach(var tree in world.Objects.OfType<BehaviorDesigner.Runtime.BehaviorTree>().ToArray())tree.enabled=false;}
+    void DisableUnboundVocalizationPresentation(){foreach(var vocalization in world.Objects.OfType<Crisis.Runtime.FullSource.UIVocalizationText>().ToArray())vocalization.enabled=false;foreach(var source in world.Objects.OfType<AudioSource>())source.Driver??=new MissionContractSilentAudioDriver();if(!runOriginalAI)foreach(var tree in world.Objects.OfType<BehaviorDesigner.Runtime.BehaviorTree>().ToArray())tree.enabled=false;if(args[0]=="--mission-ai-switch-fallback-contract")foreach(var controller in world.Objects.OfType<Crisis.Runtime.FullSource.PlayerController>())controller.enabled=false;}
     world.Tick(1f/60f,DisableUnboundVocalizationPresentation);
     // Original AI/movement can emit forces on its next fixed tick. This
     // contract records source force commands without claiming a PhysX solve.
     var aiForceCommands=0;foreach(var rigidbody in world.Objects.OfType<Rigidbody>())rigidbody.PhysicsForceSink??=((_,_,_)=>aiForceCommands++);
     world.Tick(1f/60f,DisableUnboundVocalizationPresentation);
-    var aiSimulationTicks=0;if(runOriginalAI)for(var aiTick=0;aiTick<60;aiTick++){world.Tick(1f/60f,DisableUnboundVocalizationPresentation);aiSimulationTicks++;}
+    var aiSimulationTicks=0;if(runOriginalAI&&args[0]!="--mission-ai-switch-fallback-contract")for(var aiTick=0;aiTick<60;aiTick++){world.Tick(1f/60f,DisableUnboundVocalizationPresentation);aiSimulationTicks++;}
     missionComponent=world.Objects.OfType<Crisis.Runtime.FullSource.Mission>().SingleOrDefault()??throw new InvalidOperationException("Mission 01 did not initialize exactly one original Mission component");
     var bodies=world.Objects.OfType<Crisis.Runtime.FullSource.CharacterBody>().ToArray();
     if(!missionComponent.Started)throw new InvalidOperationException("Original Mission did not reach BeginMission during normal RuntimeWorld startup");
     if(bodies.Length<2||!bodies.Any(body=>body.GetComponent<Crisis.Runtime.FullSource.TeamOperator>()!=null)||!bodies.Any(body=>body.GetComponent<Crisis.Runtime.FullSource.Occupant>()!=null))
         throw new InvalidOperationException($"Mission 01 actor flow did not produce an Operator and Occupant; bodies={bodies.Length}");
+    if(args[0]=="--mission-ai-switch-fallback-contract"){
+        var aiOperator=bodies.FirstOrDefault(body=>!body.IsPlayer&&body.GetComponent<Crisis.Runtime.FullSource.TeamOperator>()!=null&&body.Equipment?.primaryWeapon!=null)
+            ??throw new InvalidOperationException("Mission 01 did not create a nonplayer Operator for the source AI fallback contract");
+        Console.WriteLine(Crisis.Runtime.Checks.SourceAIWeaponFallbackContracts.Run(world,aiOperator));
+        return;
+    }
     var activePlayerControllers=world.Objects.OfType<Crisis.Runtime.FullSource.PlayerController>()
         .Where(controller=>controller&&controller.isActiveAndEnabled&&controller.Body!=null&&controller.Body.IsPlayer).ToArray();
     if(activePlayerControllers.Length!=1)

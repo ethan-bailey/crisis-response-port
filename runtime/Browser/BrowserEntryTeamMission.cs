@@ -38,7 +38,7 @@ public static class BrowserEntryTeamMission
         public void TransitionTo(UnityEngine.Audio.AudioMixerSnapshot snapshot, float timeToReach) { }
     }
 
-    public static Session Start(OriginalSourcePackage package, RuntimeWorld world)
+    public static Session Start(OriginalSourcePackage package, RuntimeWorld world, bool enablePlayerBehavior = false)
     {
         ArgumentNullException.ThrowIfNull(package);
         ArgumentNullException.ThrowIfNull(world);
@@ -102,13 +102,21 @@ public static class BrowserEntryTeamMission
         }
         foreach (var vocalization in world.Objects.OfType<UIVocalizationText>().ToArray()) vocalization.enabled = false;
         foreach (var fog in world.Objects.OfType<FogOfWarElement>().ToArray()) fog.enabled = false;
-        foreach (var tree in world.Objects.OfType<BehaviorDesigner.Runtime.BehaviorTree>().ToArray()) tree.enabled = false;
+        void SuppressUnboundBehavior()
+        {
+            foreach (var tree in world.Objects.OfType<BehaviorDesigner.Runtime.BehaviorTree>().ToArray())
+            {
+                var body = tree.GetComponent<CharacterBody>();
+                if (!enablePlayerBehavior || body == null || !body.IsPlayer) tree.enabled = false;
+            }
+        }
+        SuppressUnboundBehavior();
         foreach (var rigidbody in world.Objects.OfType<Rigidbody>().ToArray()) rigidbody.PhysicsForceSink ??= (_, _, _) => { };
         void PrepareMissionFrame()
         {
             foreach (var vocalization in world.Objects.OfType<UIVocalizationText>().ToArray()) vocalization.enabled = false;
             foreach (var fog in world.Objects.OfType<FogOfWarElement>().ToArray()) fog.enabled = false;
-            foreach (var tree in world.Objects.OfType<BehaviorDesigner.Runtime.BehaviorTree>().ToArray()) tree.enabled = false;
+            SuppressUnboundBehavior();
             foreach (var source in world.Objects.OfType<AudioSource>().ToArray()) source.Driver ??= audioEvents;
         }
         world.Tick(1f / 60f, PrepareMissionFrame);
