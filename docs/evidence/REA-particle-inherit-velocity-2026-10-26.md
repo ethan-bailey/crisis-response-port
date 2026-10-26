@@ -88,3 +88,10 @@ Focused verification on the current local source tree:
 - `git diff --check`: passed.
 
 This fixes the missing velocity input for the adapter path that raised the reported error. The live Site remains v73 until a separate release authorization; this source/test batch is not a deployment. These checks do not establish native Unity particle pixels or broader particle/render parity.
+
+
+## Exact-source acceptance — run #68
+
+The adapter fix at source commit `4926b8013d3a40797ee18b6870582fe0eebc014c` is present in verified branch SHA `b173b1daebcb0337fb1def6da948d08f3d990d79`. Run #68 / ID `40322845592` passed the Contracts/Release job `121571910792` and Chromium job `121571911030`. The focused change is covered by the full Node suite (143/143), full Python suite (45/45), and runtime ballistics contract output `sourceRigidbodyVelocityTransported=true`. The full Mission package verifier reported 2,686 files, 199 Blazor resources, 195 WASM files, and 1,919 assets / 22,365 records; deterministic tar.gz SHA-256 `a5522d46a7dc7976aac57787ddf8100b8b3e4ef5e9fc201b6c549ad841fd01ec`. Retained artifact `12649418198` has outer ZIP SHA-256 `f30f8ccdd34e0829706e98f3736003f7bc152486f7d49d550b32ab26a7c6a883`.
+
+Run #68 also passed Chromium IndexedDB and the real weapon audio smoke: seven source clips decoded, the four fire/magazine/bolt events played after a trusted user gesture, drops remained zero, and peak output analyser RMS was 0.1590921945306555. This verifies the browser graph path only. The live Site remains v73; nothing was deployed. Physical iPhone audibility and particle pixel/native Unity parity are still open.
