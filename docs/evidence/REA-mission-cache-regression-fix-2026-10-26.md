@@ -67,7 +67,13 @@ google-chrome firefox` and a bounded `find` under `/usr`, `/opt`, and
 `/root/.cache` for Chrome/Chromium/WebKitWebDriver/Playwright; no browser
 binary was present. Browser-backed acceptance is therefore deferred to a
 runner with those binaries or the owner's phone, while source and package work
-continues.
+continues. The CUA cloud Chrome surface was also tried against the verified
+package served locally on port 8877. Workspace-local `urllib` returned 200 for
+`/game/` and the 5,347,727-byte WASM with the expected hash; cloud Chrome
+returned `net::ERR_CONNECTION_REFUSED` for `http://127.0.0.1:8877/game/`.
+That browser cannot use this runner's loopback, so no interactive result is
+claimed. Do not expose/publish the package merely to work around this; use a
+browser installed in the workspace or an authorized non-publishing test path.
 
 ## Exact pushed commit and package evidence
 

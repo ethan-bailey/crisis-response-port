@@ -3,10 +3,10 @@
 ## Live checkpoint
 
 - Repository `ethan-bailey/crisis-response-port`; authorized branch `develop/wasm`.
-- Latest code commit: `12d61245431b3e3a026fbd82a8199f6e983a8590`, tree `7dd6c19db9afcf0d02077a11c5d106744b641b74`. Remote HEAD was `a3e8bda14c5dc94454829634fff8128769072c5f` immediately before this documentation-only update; refresh before edits.
+- Latest code commit: `12d61245431b3e3a026fbd82a8199f6e983a8590`, tree `7dd6c19db9afcf0d02077a11c5d106744b641b74`. Remote HEAD was `7d5874caf7743797964bac3a719d19e0b0e587d3` immediately before this documentation-only update; refresh before edits.
 - Actions run #22 (`40263692936`) passed on exact code commit `12d612...`.
 - Release WASM package rebuilt from that exact remote SHA and verified: 2,684 files, 199 Blazor resources, 195 WASM files, and 1,919 Mission source assets (97,767,549 compressed bytes; 205,514,345 source bytes). HTTP smoke returned correct entry pages and WASM MIME/hash. Evidence: `docs/evidence/REA-mission-cache-regression-fix-2026-10-26.md`.
-- No browser interaction or physical iPhone Safari result is available. Keep `fullGameParity:false` and visual parity unclaimed.
+- No usable browser interaction or physical iPhone Safari result is available. The cloud Chrome surface returned `net::ERR_CONNECTION_REFUSED` for a local HTTP server that answered from this workspace; no Chrome/Firefox/WebKit binary is installed in the runner. Keep `fullGameParity:false` and visual parity unclaimed.
 - .NET SDK pin is 8.0.426. On this runner use `/tmp/codex-dotnet-8.0.426/dotnet` with `LD_PRELOAD=/tmp/libprocshim.so` as documented in `docs/DOTNET_BUILD_RUNBOOK.md`; do not reinstall or retarget.
 - A prior handoff reports owner-private Site version 71 published from separate source before this run. This run made no Site/preview change. Current user instruction prohibits publishing/deployment; keep later publication separate and unauthorized absent a new explicit instruction.
 - Preserve the unrelated untracked user artifact `source-reference/Original/Assets/Scenes/.Mission 01.unity.u4cmKY` if it appears in the primary checkout.
