@@ -107,7 +107,7 @@ export class BrowserInput {
       // Give the user most of the visible stick travel to choose walking speed.
       // Sprint is a separate deliberate over-pull, with hysteresis to prevent
       // accidental activation and flicker around the trigger point.
-      const walkFullAt = 1, sprintEnter = 1.42, sprintExit = 1.24;
+      const walkFullAt = 1, sprintEnter = 1.75, sprintExit = 1.5;
       const walkProgress = Math.max(0, Math.min(1, (travel - deadZone) / (walkFullAt - deadZone)));
       const magnitude = walkProgress * walkProgress;
       const overtravel = Math.abs(rawX) > 1;

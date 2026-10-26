@@ -252,17 +252,21 @@ test('joystick travel scales walk; sprint requires a deliberate over-pull and ha
  }
  move('pointermove',214,120); // full walk at the visible rim
  const below=input.movementProfile(1,walk,sprint);
- move('pointermove',250,120); // over-pull past the 1.42x detent
- const above=input.movementProfile(1,walk,sprint);
+ move('pointermove',250,120); // 1.49x over-pull is still below the 1.75x wall
+ const belowWall=input.movementProfile(1,walk,sprint);
  assert.equal(below.sprint,false);
- assert.equal(above.sprint,true);
+ assert.equal(belowWall.sprint,false);
  assert.equal(below.magnitude,1);
+ assert.equal(belowWall.magnitude,1);
+ move('pointermove',269.5,120); // exactly 1.75x breaks through and activates sprint
+ const above=input.movementProfile(1,walk,sprint);
+ assert.equal(above.sprint,true);
  assert.equal(above.magnitude,1);
- move('pointermove',240,120); // stays sprinting until below the 1.24x release point
+ move('pointermove',251.74,120); // 1.51x retains sprint through hysteresis
  assert.equal(input.movementProfile(1,walk,sprint).sprint,true);
- move('pointermove',230,120); // pull back across the detent
+ move('pointermove',251,120); // 1.5x releases sprint
  assert.equal(input.movementProfile(1,walk,sprint).sprint,false);
- move('pointermove',250,120);
+ move('pointermove',269.5,120);
  assert.deepEqual(input.movementProfile(1,walk,sprint),{magnitude:1,sprint:true});
  assert.equal(classes.has('sprinting'),true);
  assert.equal(input.pressed('sprint'),true,'full-pull sprint must reach original InputHandler');

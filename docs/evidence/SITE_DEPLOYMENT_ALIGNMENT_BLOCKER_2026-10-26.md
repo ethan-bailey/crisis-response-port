@@ -1,41 +1,44 @@
-# Site source alignment and deployment — 2026-10-26
+# Site v75 deployment and source alignment evidence — 2026-10-26
 
-## Disposition
+## Exact deployed source and result
 
-The exact-source Site build/package gate is closed for version 74. The Site remains owner-private/custom access. Production URL: https://crisis-response-runtime.craftysnipe13.chatgpt.site.
+- Site project: `appgprj_6acfef7174888191bc2bc2f269f60acc`; configured artifact repository branch `main`.
+- Site source commit: `d8dbe9f3c038e59afbf0d9903d5d036c1f3169b4`.
+- Saved version 75: `appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_3627e642babc8191baf0ba264e96a5af`.
+- Deployment: `appgdep_6adf8880cd4c8191a4d16a6789d45c6a`, `succeeded`; production URL https://crisis-response-runtime.craftysnipe13.chatgpt.site.
+- Site access remains owner-private. No audience changes were made.
 
-- Site project: `appgprj_6acfef7174888191bc2bc2f269f60acc`.
-- Version: 74; version ID `appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_0f9fe8a4d73081919ec6ea3655289698`.
-- Deployment: `appgdep_6adf84df5dd481919cd70f72f33f0889`, `succeeded`.
-- Bound source: Cloudflare artifact repository, branch `main`, commit `ae134ef153149e6b6ab262502dd978c4737087ca`.
-- Audience: `custom`; only the owner account is allowed; no groups. This preserves the pre-existing restricted audience.
+## Exact build and package gates
 
-## Exact source build and package
+Build from the Site checkout with .NET SDK 8.0.426:
 
-The Site-bound source commit was rebuilt with pinned .NET SDK 8.0.426. `dotnet build runtime/Crisis.Runtime.csproj -c Release --no-incremental` passed with 0 errors and 48 existing warnings. `dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release -o /tmp/cpr-site-v74-publish-ae134` succeeded; SDK reports the optional `wasm-tools` workload is not installed and publication is unoptimized.
+```sh
+dotnet build runtime/Crisis.Runtime.csproj -c Release --no-incremental
+dotnet publish runtime/Browser/Crisis.Runtime.Browser.csproj -c Release -o /tmp/cpr-site-v75-publish-d8dbe
+python3 scripts/package_wasm_site.py build --repo . --published /tmp/cpr-site-v75-publish-d8dbe/wwwroot --output dist --toolchain /tmp/cpr-site-v75-toolchain-d8dbe.json --incremental-source-package /tmp/cpr-site-v73-full-source.json --incremental-profile global-ui-mission-operator
+python3 scripts/package_wasm_site.py verify dist
+```
 
-`python3 scripts/package_wasm_site.py build` used that publish output, the exact Site recovered-source index and `global-ui-mission-operator`. `python3 scripts/package_wasm_site.py verify dist` returned `status=verified` with exact sourceCommit `ae134ef153149e6b6ab262502dd978c4737087ca`, 2,686 files, 199 Blazor resources and 195 WASM files. The complete profile is 1,919 assets / 22,365 records / 97,767,549 compressed bytes / 205,514,345 source bytes. Source-package SHA-256: `ea3592ff5bdd39534bb905cd0abac74f456578b46eb4b12cdd0cb79fe8520cf7`. `dist/build-manifest.json` SHA-256: `1b734839f875c15121d815faefd0656f0fffbb8800e6dcdb22af4ca413bf3e16`.
+Runtime Release build: 0 errors / 48 warnings. Browser/WASM publish completed; optional `wasm-tools` optimizer workload was unavailable. Package verifier returned `status=verified`, exact `sourceCommit=d8dbe9f3c038e59afbf0d9903d5d036c1f3169b4`, 2,686 files, 199 Blazor resources, 195 WASM files, and Mission profile 1,919 assets / 22,365 records / 97,767,549 compressed bytes / 205,514,345 source bytes. Source package SHA-256 `ea3592ff5bdd39534bb905cd0abac74f456578b46eb4b12cdd0cb79fe8520cf7`; `dist/build-manifest.json` SHA-256 `c1610bf34f29e38c7efc82f5f3cd6ff4cc7d8e6d1db694183850d50f2f801a52`.
 
-The Site source helper pushed the exact commit and made `/tmp/cpr-site-v74-ae134.tar.gz`. Local archive SHA-256 `72a017a7c673b688abfe459fe8d5ad2100c3153fa6d378922ed6ce2d1de20fa0`, size 138,696,962 bytes. The archive was extracted and every one of the 2,686 manifest-listed files was independently checked for presence, length and SHA-256. The embedded `.openai/hosting.json` resolved to this project and `static.directory=dist`; `dist/index.html` was present. The local recovered mesh `.Combined Mesh (root_ scene)_1.asset.QpoHQd` was verified absent from the archive. Site version metadata stores a normalized TAR representation with `sha256:a8727a341a0de81f7235c01ca37804416dbbc1b8f500ad4b4a711e6ad11e6075`, 178,022,400 bytes and 2,688 files; it is not the byte representation of the local gzip archive.
+Deploy archive `/tmp/cpr-site-v75-deploy-d8dbe.tar.gz`: SHA-256 `ba24d8a315e4865ccc6d68cf925423fa59fa84d57462e7320778e8dbf42de2d8`, 138,792,202 bytes. It includes `.openai/hosting.json` with matching project ID and `static.directory=dist`, plus `dist/index.html`. After one extraction, all 2,686 manifest-listed files matched their recorded length and SHA-256. Sites stores its normalized TAR as `sha256:6bc154b5299a354782a9bcc9ed7a479aca0693dea8903f3b4a3e454d20299f59`, 178,022,400 bytes / 2,688 files. These are different archive encodings and hashes.
 
-## Source crosswalk to public develop
+## Sprint control fix
 
-Compared every tracked Git blob at Site `ae134ef153149e6b6ab262502dd978c4737087ca` and public `develop/wasm` `4428f5f5adc06edeb19b1dc17f111e66e407d04c`: Site has 2,264 files; develop 2,283; Site-only 1 (`.openai/hosting.json`), develop-only 20, shared-but-different 14. The full path inventory is available from the commit trees; previous v73 path list below is historical and should not be treated as current.
+Approved analog movement source `docs/APPROVED_IPHONE_ANALOG_MOVEMENT.md` specifies sprint entry at 1.75 times normalized joystick radius and release at 1.5 times. The implementation had drifted to 1.42/1.24, making sprint too easy. Site source commit `d8dbe9f...` corrects the thresholds and covers below-wall, activation, hysteresis and release boundaries. Full Site Node tests passed 142/142; targeted browser input, aim, zoom and aim/fire contracts passed 33/33. This does not establish physical joystick ergonomics; owner iPhone acceptance is still required.
 
-These current product paths are byte-identical: `game/aim-direction.mjs`, `game/browser-input.mjs`, `game/index.html`, `scene-data/scene-package-loader.mjs`, `game/original-particle-event-binding.mjs`, `game/original-particle-renderer.mjs`, and `runtime/Engine/BallisticEffects.cs`. Thus v74 carries the particle inherited-velocity fix, but the joystick/aim implementation is unchanged. `runtime/Browser/BrowserEntryTeamMission.cs` remains one of the shared production paths with different content; CI on public develop is not attributed to Site `ae134ef...`.
+## Recovered actor source package audit
 
-## Applied source fix and checks
+This command passed:
 
-The Site branch now includes the source Rigidbody velocity transport fix. The original InheritVelocity particle path is supplied its source Rigidbody velocity; the matching renderer/runtime checks were copied from the tested develop implementation. Targeted particle tests passed 13/13, full Node suite passed 143/143, and Runtime BallisticContracts reported `sourceRigidbodyVelocityTransported=true`. Site Python baseline checks passed 45/45; EngineChecks passed 75 assertions; FoundationChecks passed 121 assertions. These are Site-tree checks, separate from public develop run #79.
+```sh
+python3 scripts/verify_runtime_package.py /tmp/cpr-recovery-full-source/export/ExportedProject /tmp/cpr-site-v73-full-source.json
+```
 
-Run #79 / Actions `40356543988` on public develop SHA `4428f5f5adc06edeb19b1dc17f111e66e407d04c` had both jobs pass (`121690423604`, `121690424261`). It is separate evidence, not the Site build's CI attestation. Full-profile browser measurements and WebAudio results are in the IndexedDB closure note.
+Summary: 2,060 package assets, 40,139 records, 24,856 dependency edges. Operator and Occupant actor closures each had zero unresolved GUIDs and unsupported builtins. Use the `export/ExportedProject` directory; `work/source/unpacked` is not the export root.
 
-## Recovery note
+## Browser and device limits
 
-The pre-existing untracked recovered mesh file is preserved locally and excluded by local `.git/info/exclude`. The source helper's first push auto-staged it in intermediate commit `28d550c001cc9a163e80d63179f47e89ed56571c`; cleanup commit `ae134ef153149e6b6ab262502dd978c4737087ca` removed it from the latest source tree. The v74 package/archive and deployed version were built from the cleanup commit and do not include the mesh. Keep the file and local exclude rule intact.
+The cloud browser reports WebGL disabled (`GL_VENDOR=Disabled`) and failed WebGL context creation. This is an automation-runner limitation, not a visual smoke pass or proof of production failure. The owner still needs physical iPhone Safari checks for Mission cold/warm loads and persistence, late asset progress, absolute vertical-only aim, walk/sprint feel, rapid-tap zoom, and fire/reload speaker output.
 
-## Remaining acceptance gates
-
-- The Site v74 build passed source/package integrity and is deployed, but the owner must still test that exact version on physical iPhone Safari: cold/warm Mission load and persistence; completion near the reported 1,900-asset point; joystick aim anchored correctly and independent of X; walk-to-sprint control; rapid-tap zoom prevention; audible reload and fire clips.
-- Public run #79 used Chromium, actual browser IndexedDB and the production JS loader, but modeled the full-profile .NET bridge. It is not evidence of iPhone storage, performance, touch feel, Safari speaker output or actual .NET throughput at this scale.
-- Do not claim complete parity until source behavior, native rendering/physics/audio and the device acceptance gates have evidence or are explicitly scoped out.
+Public `develop/wasm` before the current synchronization batch is `fe2982c1e0f30fc8617afd914586c6fee584497a`. The control patch is `game/browser-input.mjs` plus `scripts/browser_input_test.mjs`; Site v75 is not CI evidence for a different public SHA. After synchronization, inspect exact-SHA Actions and compare tracked source blobs. The source repo helper exclusion for the untracked recovered mesh must remain intact; never include that local file in public Git or Site package.
