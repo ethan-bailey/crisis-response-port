@@ -1,5 +1,11 @@
 # Current handoff — 2026-10-26
 
+## SDK recovery and exact-SHA verification
+
+- Correction: `dotnet` was not on the default `PATH`, but the pinned SDK was present at `/tmp/codex-dotnet-8.0.426` with `/tmp/libprocshim.so`. After applying the runbook environment, `dotnet --version` reported **8.0.426**. The runbook now requires checking these known paths before recording an SDK blocker.
+- Clean detached worktree at source SHA `5693194aef4d614a99764c8683c0c344a15ebe1b`: runtime checks passed; EngineChecks 75 passed; FoundationChecks passed; Release build passed (48 warnings, 0 errors); Release WASM publish and output assertions passed. Optional wasm-tools optimization was unavailable. Evidence: [pinned SDK recovery](docs/evidence/REA-pinned-sdk-recovery-2026-10-26.md).
+- Local Node suite passed 127/127 against the equivalent source tree. The GitHub connector returns no hosted check status for the push SHA. Physical device acceptance and visual/runtime parity are not implied by build success.
+
 ## Latest implementation batch
 
 - Source commit `5693194aef4d614a99764c8683c0c344a15ebe1b` adds a clear control scoped to the currently verified Mission manifest cache. It reports clear success, absence, unsupported storage, or errors; regression coverage checks that the versioned Mission cache is the only cache deleted. Evidence: [REA mission cache controls](docs/evidence/REA-mission-cache-controls-2026-10-26.md).
