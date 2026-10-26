@@ -2,6 +2,7 @@
 
 ## Latest verified checkpoints
 
+- The consolidated dependency-first gate inventory is now `docs/GATE_DEPENDENCY_INDEX.md` (commit `e76edc24e1c8b2dc9b6941a25a3e7427e93e0e77`). Use it with the linked system closure notes before starting each next implementation batch.
 - Public source: `ethan-bailey/crisis-response-port`, branch `develop/wasm`; latest handoff-only commit `2fbe230f52ef440a968adb0b1e9ba1522995d314`, with code/build SHA `e1e530b0598b70f414309b9fa07bd6a53e848278` unchanged. e1e530b is the exact SHA used for the verified Release WASM artifact.
 - GitHub Actions run **#47**, ID `40287442400`, passed on exact SHA e1e530b. Contracts/Release job `121454341825` and Chromium IndexedDB job `121454341722` both concluded success. It ran Node/Python, runtime, engine, foundation, Release WASM build/publish, source-index and complete Mission package checks, plus the production loader's Chromium IndexedDB acceptance.
 - Artifact `12634797431`, `crisis-response-site-package-e1e530b...`: ZIP SHA-256 `c1b33f4616f89cf2df409b7590ffc9fbc62ceddaa176a0c80a5dfd02e9e3a036`; inner package tar.gz SHA-256 `17b5f2304a4a6210fc79575c7c3430b04ec6b9cde6a3a54e2882b400f2bb1634`. Embedded source SHA e1e530b; package verifier: 2,686 manifest-listed files, 199 Blazor resources, 195 WASM files; bounded Mission profile: 1,919 assets, 22,365 records, 97,767,549 compressed bytes, 205,514,345 source bytes. No scene smoke included.
