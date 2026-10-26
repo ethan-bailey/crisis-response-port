@@ -11,6 +11,7 @@ on:
       - game/**
       - scripts/**
       - NuGet.config
+      - requirements-test.txt
       - '**/*.sln'
       - '**/*.csproj'
   pull_request:
@@ -75,6 +76,9 @@ jobs:
         run: |
           npm ci --prefix game --ignore-scripts
           npm run --prefix game vendor
+
+      - name: Install pinned Python test dependencies
+        run: python -m pip install --requirement requirements-test.txt
 
       - name: Run Node contracts
         run: node --test scripts/*_test.mjs

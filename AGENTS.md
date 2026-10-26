@@ -33,4 +33,4 @@ If a required device, source file, or environment is unavailable, record the exa
 
 For experimental port/toolchain work, record a unique experiment name, hypothesis, exact flags and versions, source SHA, diff, artifact hashes, browser-visible outcome, and next decision. This avoids repeating failed configurations after context changes. Keep source facts and inferences labeled as such.
 
-The source-and-WASM Actions workflow is read-only: it runs existing checks and publishes only to its temporary runner directory. It does not create a deployment. CI success proves only the checks it ran; it does not prove full game or device parity. Read docs/PORTING_WORKFLOW_RESEARCH.md for the evidence behind this workflow.
+Install Python helper dependencies from requirements-test.txt before Python contracts. The source-and-WASM Actions workflow is read-only: it runs existing checks and publishes only to its temporary runner directory. It does not create a deployment. CI success proves only the checks it ran; it does not prove full game or device parity. Read docs/PORTING_WORKFLOW_RESEARCH.md for the evidence behind this workflow.

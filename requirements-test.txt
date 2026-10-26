@@ -1,0 +1,2 @@
+# Python-only tooling used by source and Unity YAML audit contracts.
+PyYAML==6.0.3
