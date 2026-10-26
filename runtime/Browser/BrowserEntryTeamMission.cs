@@ -34,7 +34,7 @@ public static class BrowserEntryTeamMission
 
     sealed class SilentMixerDriver : UnityEngine.Audio.IAudioMixerDriver
     {
-        public bool SetFloat(string exposedParameter, float value) => true;
+        public bool SetFloat(string exposedParameter, float value) => false;
         public void TransitionTo(UnityEngine.Audio.AudioMixerSnapshot snapshot, float timeToReach) { }
     }
 

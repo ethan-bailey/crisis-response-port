@@ -2,6 +2,12 @@
 
 Status: source inventory and dependency capture complete enough to plan one implementation batch; no priority cap, spatializer, mixer routing, or snapshot emulation is implemented by this note. Do not implement isolated voice stealing until the source identity, source lifetime, mixer, listener, and arbitration inputs below are carried end to end.
 
+## Exposed setter resolution (source/API checkpoint)
+
+- The recovered Unity 2018.4 AudioMixer.SetFloat API returns false when the named exposed parameter is absent: https://docs.unity3d.com/2018.4/Documentation/ScriptReference/Audio.AudioMixer.SetFloat.html
+- The archive's serialized exposed names are ptsMjOH, WovWKVN, SOprRTH, ipmjNUH, and qJOQoiH; exact recovered C# calls use EffectsVolume, VoiceVolume, AmbienceVolume, InterfaceVolume, and RealtimePitch. These five strings do not match. The original calls ignore the boolean result, so the source/API evidence supports treating these particular setters as no-ops; this is an inference from the recovered export and version-matched API, not a run inside the original Unity editor. Do not invent an alias or remap.
+- The browser's silent mixer driver must report false. The Mission EntryTeam contract now calls all five source strings and fails if any is accepted. This closes exposed-name disposition and fake-success reporting only; browser audio still lacks source-priority voice allocation, group routing/snapshots, authored spatial transforms/listener positioning, and physical-device output.
+
 ## Recovered source configuration
 
 - `ProjectSettings/AudioManager.asset` from `/tmp/cpr-recovery-full-source/export/ExportedProject/ProjectSettings/AudioManager.asset`, SHA-256 `56df44cb0ac6c39e13c02cbaf3f16b20b606d44fa5dd801a1a16cdd9171dab87`: master volume 1, rolloff scale 1, Doppler factor 1, speaker mode 2, sample rate and DSP buffer size left at platform defaults, 512 virtual voices, 64 real voices, effect virtualization enabled, audio disabled false.
