@@ -114,34 +114,93 @@ jobs:
           test -s "$root/browser-input.mjs"
           find "$root" -type f -name '*.wasm' -print -quit | grep -q .
 
-      - name: Download the pinned original Unity recovery artifact
+      - name: Select a verified Unity source snapshot
+        id: recovery-input
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import datetime, json, os, urllib.request
+          repo = os.environ['GITHUB_REPOSITORY']
+          token = os.environ['GH_TOKEN']
+          req = urllib.request.Request(f'https://api.github.com/repos/{repo}/actions/artifacts?per_page=100', headers={'Accept':'application/vnd.github+json','Authorization':f'Bearer {token}','X-GitHub-Api-Version':'2022-11-28'})
+          with urllib.request.urlopen(req) as response:
+              artifacts = json.load(response)['artifacts']
+          candidates = [a for a in artifacts if a['name'].startswith('cpr-recovered-unity-project-') and not a.get('expired', True)]
+          if candidates:
+              selected = max(candidates, key=lambda a: a['created_at'])
+              created = datetime.datetime.fromisoformat(selected['created_at'].replace('Z', '+00:00'))
+              refresh = (datetime.datetime.now(datetime.timezone.utc) - created).days >= 60
+              values = {'artifact_id':str(selected['id']),'run_id':str(selected['workflow_run']['id']),'name':selected['name'],'is_seed':'false','refresh':str(refresh).lower()}
+          else:
+              values = {'artifact_id':'11903811738','run_id':'38582072502','name':'crisis-response-recovery-direct-v3-1','is_seed':'true','refresh':'true'}
+          with open(os.environ['GITHUB_OUTPUT'],'a') as output:
+              for key,value in values.items():
+                  print(f'{key}={value}',file=output)
+          print(f"Selected {values['name']} from run {values['run_id']}; refresh={values['refresh']}")
+          PY
+
+      - name: Download the selected Unity source snapshot
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
-          name: crisis-response-recovery-direct-v3-1
+          name: ${{ steps.recovery-input.outputs.name }}
           repository: ${{ github.repository }}
-          run-id: 38582072502
+          run-id: ${{ steps.recovery-input.outputs.run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: ${{ runner.temp }}/recovery-artifact
 
-      - name: Verify and index complete original Unity source
+      - name: Verify recovered source and generate full source index
         id: recovered-source
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_ARTIFACT_ID: ${{ steps.recovery-input.outputs.artifact_id }}
+          INPUT_IS_SEED: ${{ steps.recovery-input.outputs.is_seed }}
+          REFRESH_SOURCE: ${{ steps.recovery-input.outputs.refresh }}
         shell: bash
         run: |
           set -euo pipefail
-          recovery_archive="$(find "$RUNNER_TEMP/recovery-artifact" -maxdepth 1 -type f -print -quit)"
-          test -n "$recovery_archive"
-          expected_archive_sha="cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d"
-          printf '%s  %s\\n' "$expected_archive_sha" "$recovery_archive" | sha256sum -c -
-          unzip -tq "$recovery_archive"
-          project_root="$RUNNER_TEMP/recovered-project"
-          mkdir -p "$project_root"
-          unzip -q "$recovery_archive" -d "$project_root"
-          project="$project_root/export/ExportedProject"
+          recovery_root="$RUNNER_TEMP/recovery-artifact"
+          if [ "$INPUT_IS_SEED" = true ]; then
+            curl -fsSL -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GH_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28" "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/$INPUT_ARTIFACT_ID" > "$RUNNER_TEMP/recovery-artifact-metadata.json"
+            python3 - "$RUNNER_TEMP/recovery-artifact-metadata.json" <<'PY'
+          import json, sys
+          artifact = json.load(open(sys.argv[1], encoding='utf-8'))
+          if artifact.get('id') != 11903811738 or artifact.get('expired') or artifact.get('digest') != 'sha256:cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d':
+              raise SystemExit('pinned original recovery artifact identity, digest, or retention state is invalid')
+          PY
+            printf '{"artifactId":11903811738,"runId":38582072502,"artifactSha256":"cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d"}\n' > "$recovery_root/recovery-provenance.json"
+            (cd "$recovery_root" && find . -type f ! -name RECOVERY_CONTENTS_SHA256SUMS.txt -print0 | sort -z | xargs -0 sha256sum > RECOVERY_CONTENTS_SHA256SUMS.txt)
+          else
+            test -s "$recovery_root/recovery-provenance.json"
+            test -s "$recovery_root/RECOVERY_CONTENTS_SHA256SUMS.txt"
+            (cd "$recovery_root" && sha256sum -c RECOVERY_CONTENTS_SHA256SUMS.txt)
+            python3 - "$recovery_root/recovery-provenance.json" <<'PY'
+          import json, sys
+          provenance = json.load(open(sys.argv[1], encoding='utf-8'))
+          if provenance.get('artifactSha256') != 'cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d':
+              raise SystemExit('refreshed Unity source snapshot lost canonical recovery provenance')
+          PY
+          fi
+          project="$recovery_root/export/ExportedProject"
           test -s "$project/Assets/Scenes/Mission 01.unity"
+          test -s "$project/Assets/Resources/Global context.prefab"
+          test -s "$project/Assets/Resources/Version.prefab"
+          test -s "$project/Assets/Mesh/LowPolySphere.asset"
+          test -s "$project/Assets/Material/Projectile trace.mat"
+          test -s "$project/Assets/Resources/weapons/ammunition/5.56-FMJ-Tracer.prefab"
           python3 scripts/extract_runtime_scene.py "$project" "$RUNNER_TEMP/cpr-full-source.json"
-          echo "recovery_sha256=$expected_archive_sha" >> "$GITHUB_OUTPUT"
+          echo "recovery_sha256=cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d" >> "$GITHUB_OUTPUT"
           echo "source_index_sha256=$(sha256sum "$RUNNER_TEMP/cpr-full-source.json" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
 
+      - name: Refresh verified Unity source snapshot
+        if: steps.recovery-input.outputs.refresh == 'true'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: cpr-recovered-unity-project-${{ github.sha }}
+          path: ${{ runner.temp }}/recovery-artifact/
+          if-no-files-found: error
+          retention-days: 90
       - name: Build and verify complete Mission source package
         shell: bash
         env:
@@ -151,6 +210,7 @@ jobs:
           set -euo pipefail
           printf '{"dotnet":"8.0.426","recoveryArchiveSha256":"%s","sourceIndexSha256":"%s"}\\n' "$RECOVERY_SHA256" "$SOURCE_INDEX_SHA256" > "$RUNNER_TEMP/cpr-toolchain.json"
           python3 scripts/package_wasm_site.py build --repo "$GITHUB_WORKSPACE" --published "$RUNNER_TEMP/cpr-browser-publish/wwwroot" --output "$RUNNER_TEMP/cpr-site-package" --toolchain "$RUNNER_TEMP/cpr-toolchain.json" --incremental-source-package "$RUNNER_TEMP/cpr-full-source.json" --incremental-profile global-ui-mission-operator --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" | tee "$RUNNER_TEMP/cpr-package-build.json"
+          dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -c Release -- --mission-ui-incremental-contract "$RUNNER_TEMP/cpr-site-package/scene-data/fullsource/global-ui-mission-operator"
           python3 - "$RUNNER_TEMP/cpr-site-package/scene-data/fullsource/global-ui-mission-operator/manifest.json" "$RUNNER_TEMP/cpr-full-source.json" "$RUNNER_TEMP/cpr-toolchain.json" <<'PY'
           import hashlib, json, sys
           profile = json.load(open(sys.argv[1], encoding="utf-8"))
