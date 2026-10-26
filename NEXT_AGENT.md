@@ -134,7 +134,7 @@ Continue dependency-ordered parity work. Physical iPhone Safari acceptance remai
 
 ## Remote handoff identity
 
-Current remote `develop/wasm` head is `926b853d1e27ca7e73fb0cd5e6294f7561cf801b`, run #71 candidate. `WeaponHost.cs` remains at the protected baseline; Node/Python/Chromium passed. The runtime contract exposed that the active magazine still resides in the fixture reserve list, so the purported no-reserve case reinserted it. No Release WASM build or package was produced.
+Current remote `develop/wasm` head is `07d95641e13dc77e2ebc79ac8d914bc038c10648`, run #72 candidate. The active magazine was removed from the test reserve list and `HasAmmunitionForWeapon==false` confirmed. Runtime then failed a bundled postcondition without identifying which final state field differed; no Release WASM build or package was produced.
 
 
 ## Run #68 — exact build, package, IndexedDB and headless audio passed — 2026-10-26
@@ -189,3 +189,9 @@ Before implementation, the source task, host, M4A1 detachable-magazine path, res
 ## Evidence correction — WorkBolt attribution for run #70
 
 The run #70 assertion combined insert and bolt-return events; it did not report which event triggered failure. The run #71 exact log reported `audioExtractMagazine -> audioInsertMagazine` and no bolt-return event, identifying the active-magazine reserve-list mismatch as the observed cause. The earlier run #70 WorkBolt attribution was an inference and is superseded. The source OnEnd→WorkBolt possibility remains listed but has not been demonstrated in this fixture. Next test: remove the active M4A1 Magazine from Equipment.PrimaryMagazines in test setup, retain WeaponBase.Magazine, and verify the genuine empty-reserve behavior by exact events and snapshot.
+
+
+## Run #72 — no-reserve outcome needs field-level diagnostics — 2026-10-26
+
+- Exact SHA `07d95641e13dc77e2ebc79ac8d914bc038c10648`, workflow `40328022724`. Node and Python suites passed. The genuine-empty-reserve precondition passed after removing the active magazine from the test Equipment reserve list. Runtime failed at `WeaponContracts.cs:62` with `No-reserve retry changed ammo unexpectedly or failed to settle`.
+- That postcondition bundled magazine count, reserve count, shots, magazine+chamber total, `reloading`, and `manipulating`; the log does not reveal which changed. Do not assert a guessed source outcome. Next change: include all before/after fields and emitted audio names in the exception, then rerun. Chromium IndexedDB/audio job was still running when checked; capture its terminal result. Release runtime checks after WeaponContracts, WASM publish, source package verifier, and artifact retention did not run, so no verified package exists.

@@ -60,3 +60,8 @@ Before the next source test, use the contract's fixture reflection to remove `qu
 
 The run #70 failure message combined `audioInsertMagazine` and `audioBoltReturn` in one predicate, so the log did not establish which event caused it. The immediately following handoff inferred WorkBolt as the cause; that inference was unverified. Run #71 printed the exact event sequence `audioExtractMagazine -> audioInsertMagazine` and no bolt-return event, which identifies active-magazine reselection as the observed cause. Keep the source-level OnEnd→WorkBolt dependency in this inventory, but do not claim that WorkBolt emitted during the failing run #70 fixture. With the active magazine removed from the reserve list, record the new exact event/state output before deciding whether that source branch is reached.
 
+
+
+## Run #72 — genuine empty-reserve state reached; result needs diagnostics
+
+After the contract removed the active M4A1 Magazine from `Equipment.PrimaryMagazines`, the precondition `HasAmmunitionForWeapon(quickWeapon)==false` passed. The no-reserve retry then failed the bundled postcondition `No-reserve retry changed ammo unexpectedly or failed to settle`. That assertion combines active magazine count, reserve count, shot count, total magazine+chamber count, task state, and manipulation state; the job log does not identify which value differed. The test is no longer reselecting the active magazine, but the final source behavior is not yet characterized. Before changing expected gameplay results, add each before/after value to the thrown message and success record, then rerun the exact source contracts. Run #72 passed Node/Python and Chromium completed separately; Release runtime/package gates stopped at this runtime failure, so no package was verified.

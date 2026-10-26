@@ -75,3 +75,7 @@ Run #71 / workflow `40327440650`, exact SHA `926b853d1e27ca7e73fb0cd5e6294f7561c
 ## Evidence correction — run #70 no-reserve diagnosis
 
 The run #70 assertion grouped insert and bolt-return events, so its failure alone did not identify the cause. The run #71 diagnostic showed exactly `audioExtractMagazine -> audioInsertMagazine`, with no bolt return; the active equipped magazine was being counted as reserve by the original Equipment search because the fixture lists it. The previous WorkBolt explanation was inference, not observed evidence. Keep the OnEnd→WorkBolt source dependency documented, but do not attribute these failing events to it. Next, remove the active Magazine object from the test fixture's reserve list and rerun the source task.
+
+## Gate 3 hidden gap — characterize genuine no-reserve task outcome — run #72
+
+Run #72 / workflow `40328022724`, exact SHA `07d95641e13dc77e2ebc79ac8d914bc038c10648`: Node/Python passed; Chromium IndexedDB/audio job was still in progress at last check. The new fixture precondition `Equipment.HasAmmunitionForWeapon == false` passed after removing the active magazine from the reserve list. Runtime then failed a bundled no-reserve postcondition without reporting the differing field. Next, add diagnostic values for magazine, reserve, chamber, bolt, shots, ammo total, reloading/manipulating, and events; use the observed state to define the source contract. Release WASM/package integrity did not run; no artifact.
