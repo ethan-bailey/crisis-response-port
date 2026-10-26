@@ -2,6 +2,12 @@
 
 ## Latest implementation batch
 
+- Source commit `a56a898232b2624c1613d72ed5bf5192be231bd4` reports whether each Mission asset was read from the verified device cache, fetched and successfully cached locally, or fetched without a successful local cache write. The regression suite covers these states plus corrupt-cache recovery. Evidence: [REA mission device-cache status](docs/evidence/REA-mission-device-cache-status-2026-10-26.md).
+- Local focused tests passed 7/7 and the full Node suite passed 126/126 after the locked npm install/vendor step. Local .NET/WASM build was not run (`dotnet` unavailable); exact-SHA hosted check status is not exposed by the available connector. No Site was published.
+- Next action: inspect the hosted CI run for `a56a898232b2624c1613d72ed5bf5192be231bd4`; continue with quota-aware storage/clear-cache behavior and the version 70 source crosswalk. Physical iPhone acceptance remains pending.
+
+## Latest implementation batch
+
 - Commit `522b8e0063e3dbf976d6568b224bb7a72b09f7e4` recovers a corrupt cached Mission asset by deleting that entry and fetching only that asset again; the replacement is cached only after manifest size/SHA verification. The regression and local checks are recorded in [REA mission cache recovery evidence](docs/evidence/REA-mission-cache-recovery-2026-10-26.md). Full Node suite passed 126/126 after the pinned npm dependency/vendor setup. Local .NET/WASM build was not run because `dotnet` is unavailable. The GitHub connector did not expose a check status for the push SHA, so hosted verification remains unconfirmed.
 
 ## Latest verified release
