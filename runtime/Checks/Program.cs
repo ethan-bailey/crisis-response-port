@@ -430,17 +430,25 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-ui-contra
             missionUiInitialization="original MissionUI.Awake created the authored PauseMenu";
         }catch(Exception error){missionUiInitialization=error.ToString();}
         bool cameraDepthOfFieldFound=false;
+        bool cameraDepthOfFieldEnabledBeforeEnd=false;
         var interiorCamera=missionComponent.InteriorMode?.interiorCamera;
         if(interiorCamera!=null){
-            cameraDepthOfFieldFound=interiorCamera.GetComponent<UnityStandardAssets.ImageEffects.DepthOfField>()!=null;
-            if(cameraDepthOfFieldFound)world.Invoke(interiorCamera,"Awake");
+            var depthOfField=interiorCamera.GetComponent<UnityStandardAssets.ImageEffects.DepthOfField>();
+            cameraDepthOfFieldFound=depthOfField!=null;
+            if(cameraDepthOfFieldFound){
+                world.Invoke(interiorCamera,"Awake");
+                cameraDepthOfFieldEnabledBeforeEnd=depthOfField!.enabled;
+            }
         }
         try{missionComponent.EndMission(0f);}
         catch(Exception error){presentationBlocker=error.ToString();}
         if(!missionComponent.missionSuccess)throw new InvalidOperationException("Original Mission.EndMission did not derive success from the checked-room and all-rendered-safe source state");
         var endMenuVisible=missionUI.missionEndMenu?.Visible??false;
         if(presentationBlocker==null&&!endMenuVisible)throw new InvalidOperationException("Original Mission.EndMission returned without showing the authored MissionEndMenu");
-        Console.WriteLine(JsonSerializer.Serialize(new{mission=mission.scene,missionStarted=missionComponent.Started,missionEnded=missionComponent.missionEnded,missionSuccess=missionComponent.missionSuccess,allRenderedSafe=missionComponent.Occupants.AllRenderedSafe,allDisabledEventCount,allRoomsChecked=missionComponent.AllRoomsChecked,roomsClearedThroughSource,spawnedOccupants=spawnedOccupants.Length,allOccupantsRagdoll=spawnedOccupants.All(body=>body.IsRagdoll),allOccupantsRestrained=spawnedOccupants.All(body=>body.IsRestrained),outcomePath="Operator traversed room -> original CharacterBody room query -> original TeamController.UpdateMissionState/Room.Clear -> original Mission.UpdateMissionState -> original Occupant disable -> original CharacterBody.Restrain -> original Mission completion update -> Mission.EndMission",missionUiInitialization,cameraDepthOfFieldFound,endMenuVisible,presentationTransition=presentationBlocker==null?"completed":"blocked: "+presentationBlocker,ai=runOriginalAI?"original BehaviorTrees remained enabled with deserialized roots during the outcome":"suppressed; original BehaviorDesigner graph separately passes both actor prefabs",behaviorTrees=outcomeBehaviorTrees.Length,behaviorTreeStatus=outcomeBehaviorTrees.Select(tree=>new{root=tree.GetBehaviorSource().RootTask?.GetType().Name,execution=tree.ExecutionStatus.ToString()}).ToArray(),audio="silent adapter"}));
+        var cameraDepthOfFieldEnabledAtEnd=interiorCamera?.GetComponent<UnityStandardAssets.ImageEffects.DepthOfField>()?.enabled??false;
+        if(presentationBlocker==null&&cameraDepthOfFieldFound&&(!endMenuVisible||cameraDepthOfFieldEnabledBeforeEnd||!cameraDepthOfFieldEnabledAtEnd))
+            throw new InvalidOperationException($"Original MissionEndMenu transition did not enable Depth of Field from its disabled mission baseline: found={cameraDepthOfFieldFound}, enabledBefore={cameraDepthOfFieldEnabledBeforeEnd}, endMenuVisible={endMenuVisible}, enabledAfter={cameraDepthOfFieldEnabledAtEnd}");
+        Console.WriteLine(JsonSerializer.Serialize(new{mission=mission.scene,missionStarted=missionComponent.Started,missionEnded=missionComponent.missionEnded,missionSuccess=missionComponent.missionSuccess,allRenderedSafe=missionComponent.Occupants.AllRenderedSafe,allDisabledEventCount,allRoomsChecked=missionComponent.AllRoomsChecked,roomsClearedThroughSource,spawnedOccupants=spawnedOccupants.Length,allOccupantsRagdoll=spawnedOccupants.All(body=>body.IsRagdoll),allOccupantsRestrained=spawnedOccupants.All(body=>body.IsRestrained),outcomePath="Operator traversed room -> original CharacterBody room query -> original TeamController.UpdateMissionState/Room.Clear -> original Mission.UpdateMissionState -> original Occupant disable -> original CharacterBody.Restrain -> original Mission completion update -> Mission.EndMission",missionUiInitialization,cameraDepthOfFieldFound,cameraDepthOfFieldEnabledBeforeEnd,cameraDepthOfFieldEnabledAtEnd,endMenuVisible,presentationTransition=presentationBlocker==null?"completed":"blocked: "+presentationBlocker,ai=runOriginalAI?"original BehaviorTrees remained enabled with deserialized roots during the outcome":"suppressed; original BehaviorDesigner graph separately passes both actor prefabs",behaviorTrees=outcomeBehaviorTrees.Length,behaviorTreeStatus=outcomeBehaviorTrees.Select(tree=>new{root=tree.GetBehaviorSource().RootTask?.GetType().Name,execution=tree.ExecutionStatus.ToString()}).ToArray(),audio="silent adapter"}));
         return;
     }
     var liveTrees=world.Objects.OfType<BehaviorDesigner.Runtime.BehaviorTree>().Where(tree=>tree.enabled).ToArray();
