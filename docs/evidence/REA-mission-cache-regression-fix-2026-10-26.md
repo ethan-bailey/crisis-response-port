@@ -167,3 +167,27 @@ the original interruption path.
 - This static source contract does not execute reload state transitions or
   prove audible timing on the browser device. Those lifecycle and audio
   acceptance cases remain open. No C# gameplay source was changed.
+
+## Exact reload-contract checkpoint
+
+- Source commit `afc583ed333c0cd9221737d65f2091ce7da87baa`, tree
+  `6b49d4429ed26348b396a686628f80b3929bfbc3`; current `develop/wasm` code tip
+  at verification.
+- GitHub Actions run #23 (`40264784696`) passed on that exact SHA.
+- Full Node contracts: **129/129**; reload audio focused file: **7/7**; Python:
+  **43/43**; source dependency inventory freshness passed; EngineChecks:
+  **75**; FoundationChecks: **121**. Runtime contracts pass while preserving
+  `fullGameParity:false`.
+- SDK `/tmp/codex-dotnet-8.0.426/dotnet`, with
+  `LD_PRELOAD=/tmp/libprocshim.so`, reported **8.0.426**. Release WASM publish
+  from exact `afc583...` completed. Optional wasm-tools optimization is absent.
+- Exact package `status: verified`, sourceCommit `afc583...`, 2,684 files, 199
+  Blazor resources, 195 WASM files, 1,919 Mission assets (97,767,549 compressed
+  and 205,514,345 source bytes). HTTP smoke: `/`, `/game/`, and `/runtime-web/`
+  all returned 200 HTML; the 5,347,727-byte WASM returned `application/wasm`
+  with SHA-256 `7d4696e6273166308ce1f0db5dd5aee96c843b6e3722d96db7e4422aa1fbee1f`.
+- The reload change adds source-contract checks only; no original C# gameplay
+  changed. Quick/repeated/cancelled/interrupted/empty-reserve/weapon-switch
+  reload transitions still need actual runtime/device execution and audible
+  timing. The earlier test assertion typo was corrected and then covered by the
+  passing exact-SHA suite.
