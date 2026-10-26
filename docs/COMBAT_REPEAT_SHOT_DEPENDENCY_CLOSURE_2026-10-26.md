@@ -36,3 +36,8 @@ Run #60 reached the first source impact, then its additional pose/cycle ticks ca
 ## Boundaries
 
 The pass will prove two source-fired torso injuries and source-driven projectile removal through original runtime updates. It does not prove active armor penetration (the Mission armor types are all None), continued projectile travel's visual path, native physics, wound pixels, particles, real audio playback or device ergonomics. Keep those claims separate.
+
+
+## Current implementation checkpoint — run #63
+
+Commit 8d7027123f27ea87beefccf561328906d9fd8f63 removes the invalid minimum-age assertion. The contract now reports impact-time live projectiles and scaled age, advances only through original world updates up to a fixed tick bound, and requires zero owner-matched live source projectiles afterwards. It does not force-destroy objects or demand a one-second delay when original source collision, energy or bounds removes them sooner. Exact-source run #63 / ID 40318922083 is pending; no package or browser result yet.

@@ -30,6 +30,8 @@ Run #61 (source SHA a1ee8c34d242a2733a0209a60ed8e35d9988c5ef) demonstrated two d
 
 Run #62 on source SHA b83cf870811d461a35ff84c73f91ba1c1cd89e74 reached both distinct source Occupant hits and injury deltas. Its contract observed one live owner projectile at impact and the original RuntimeWorld removed it after six ticks; source age after newest SpawnTime was only 0.006753683 seconds. The test then failed only because it asserted that the one-second lifetime had elapsed. This is another test assumption defect: the recovered Projectile.Update destroys the object when a collision result is Stop/Error or when TestTermination is true (age >1.0s, energy <2, or bounds); age is only one of several possible source exits. No force destroy was used. The corrected acceptance checks source-driven removal after original RuntimeWorld ticks and records elapsed scaled Time without imposing a minimum. #62 did not reach package verification; its Chromium job was still installing at last poll and may be cancelled on the next source push.
 
+Current run #63 / exact SHA 8d7027123f27ea87beefccf561328906d9fd8f63 is validating the corrected source-driven repeat-shot cleanup assertion. The test records, rather than imposes, elapsed scaled Time; exact Release/package and Chromium results are pending.
+
 ## Batch exit checklist
 
 For each gate, the owning batch should record:
