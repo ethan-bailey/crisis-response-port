@@ -58,6 +58,8 @@ failure.
 
 ## Preflight
 
+A failed `command -v dotnet` only means the executable is not on the current `PATH`; it does not prove the SDK is absent. Before recording an SDK blocker, check the known runner locations `/tmp/codex-dotnet-8.0.426/dotnet` and `/root/.dotnet/dotnet`, plus the process shim at `/workspace/libprocshim.so` or `/tmp/libprocshim.so`. If the pinned executable exists, export `DOTNET_ROOT=/tmp/codex-dotnet-8.0.426`, prepend it to `PATH`, and load the available shim with `LD_PRELOAD`, then confirm `dotnet --version`. Do not download or reinstall the SDK when this verified copy is already present.
+
 If the SDK archive has to be restored, use the pinned official archive and
 verify its known SHA-256 before extracting. This checksum-verified archive path
 is the proven SDK setup; do not retry `dotnet-install.sh`, which attempted to
