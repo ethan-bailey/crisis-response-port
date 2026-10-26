@@ -96,7 +96,7 @@ public static class MissionPhysiologyContracts
             SetClock(oldTime,oldDelta);
         }
 
-        return JsonSerializer.Serialize(new{contract="recovered-original-actor-physiology",actors=allActors.Length,operatorCount=operators.Length,occupantCount=occupants.Length,serializedPrefabConfiguration="verified on loaded Mission actors",cappedTraumaAndTimedHemorrhage=bleedResult,hypoxicStateTransitions=hypoxiaResult,visualWoundOutput="suppressed",nativeJointPhysicsAdvanced=false});
+        return JsonSerializer.Serialize(new{contract="recovered-original-actor-physiology",actors=allActors.Length,operatorCount=operators.Length,occupantCount=occupants.Length,serializedStaticConfiguration="verified on loaded Mission actors",fitnessConfiguration="source prefab 0.85; runtime-adaptive",cappedTraumaAndTimedHemorrhage=bleedResult,hypoxicStateTransitions=hypoxiaResult,visualWoundOutput="suppressed",nativeJointPhysicsAdvanced=false});
     }
 
     static void VerifyRecoveredActorConfiguration(CharacterBody body)
@@ -114,7 +114,8 @@ public static class MissionPhysiologyContracts
         Near(nameof(Physiology.workOxygenFactor),physiology.workOxygenFactor,.3f);
         Near(nameof(Physiology.respirationRateAdaptionRate),physiology.respirationRateAdaptionRate,.1f);
         Near(nameof(Physiology.respirationDepthAdaptionRate),physiology.respirationDepthAdaptionRate,1f);
-        Near(nameof(Physiology.fitness),physiology.fitness,.85f);
+        if(!float.IsFinite(physiology.fitness)||physiology.fitness<0f||physiology.fitness>1f)
+            throw new InvalidOperationException($"Recovered {body.name} runtime-adaptive fitness is outside the source range [0,1]: {physiology.fitness}");
         Near(nameof(Physiology.heartRateMax),physiology.heartRateMax,190f);
         Near(nameof(Physiology.respirationRateMax),physiology.respirationRateMax,160f);
         Near(nameof(Physiology.brainDamageFromLackOfOxygenSeconds),physiology.brainDamageFromLackOfOxygenSeconds,3f);
