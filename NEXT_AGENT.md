@@ -2,6 +2,12 @@
 
 ## Latest implementation batch
 
+- Source commit `5693194aef4d614a99764c8683c0c344a15ebe1b` adds a clear control scoped to the currently verified Mission manifest cache. It reports clear success, absence, unsupported storage, or errors; regression coverage checks that the versioned Mission cache is the only cache deleted. Evidence: [REA mission cache controls](docs/evidence/REA-mission-cache-controls-2026-10-26.md).
+- Focused loader/UI tests passed 8/8; full Node suite passed 127/127. Local .NET/WASM build and hosted exact-SHA status are not verified. CacheStorage eviction, quota handling, IndexedDB, iPhone Safari repeat-load measurement, and Site version 70 crosswalk remain open. No Site was published.
+- Next action: run/inspect exact-SHA CI for `5693194aef4d614a99764c8683c0c344a15ebe1b`, then close quota-aware storage and crosswalk work before any release.
+
+## Latest implementation batch
+
 - Source commit `a56a898232b2624c1613d72ed5bf5192be231bd4` reports whether each Mission asset was read from the verified device cache, fetched and successfully cached locally, or fetched without a successful local cache write. The regression suite covers these states plus corrupt-cache recovery. Evidence: [REA mission device-cache status](docs/evidence/REA-mission-device-cache-status-2026-10-26.md).
 - Local focused tests passed 7/7 and the full Node suite passed 126/126 after the locked npm install/vendor step. Local .NET/WASM build was not run (`dotnet` unavailable); exact-SHA hosted check status is not exposed by the available connector. No Site was published.
 - Next action: inspect the hosted CI run for `a56a898232b2624c1613d72ed5bf5192be231bd4`; continue with quota-aware storage/clear-cache behavior and the version 70 source crosswalk. Physical iPhone acceptance remains pending.
