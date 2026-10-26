@@ -15,7 +15,7 @@ public static class WeaponContracts {
   var localized=(System.Globalization.CultureInfo)System.Globalization.CultureInfo.InvariantCulture.Clone();localized.NumberFormat.PositiveInfinitySymbol="∞";localized.NumberFormat.NegativeInfinitySymbol="-∞";
   WeaponHost host;try{System.Globalization.CultureInfo.CurrentCulture=localized;host=new WeaponHost(config,input.handler);}finally{System.Globalization.CultureInfo.CurrentCulture=previousCulture;}
   if(Time.time!=before)throw new Exception("Weapon import reset clock");
-  JsonElement Step(bool fire=false,bool reload=false){input.Tick(.016f);return JsonSerializer.SerializeToElement(host.Step(JsonSerializer.Serialize(new{direction=1,position=new[]{-3f,1f,1.5f},operatorTransforms=new{},weaponPose=new{p=new[]{-3f,1.5f,1.5f},q=new[]{0f,0f,0f,1f}},fire,reload})));}
+  JsonElement StepOn(WeaponHost target,bool fire=false,bool reload=false,bool quickReload=false){input.Tick(.016f);return JsonSerializer.SerializeToElement(target.Step(JsonSerializer.Serialize(new{direction=1,position=new[]{-3f,1f,1.5f},operatorTransforms=new{},weaponPose=new{p=new[]{-3f,1.5f,1.5f},q=new[]{0f,0f,0f,1f}},fire,reload,quickReload})));}JsonElement Step(bool fire=false,bool reload=false)=>StepOn(host,fire,reload);
   JsonElement state=default;for(int i=0;i<20;i++)state=Step();
   var bindings=JsonDocument.Parse(config).RootElement.GetProperty("armRigBindings");
   foreach(var side in new[]{"right","left"}){
@@ -44,7 +44,25 @@ public static class WeaponContracts {
   if(reloadAudio.Any(item=>!float.IsFinite(item.Time)||!float.IsFinite(item.FrameTime)||item.Time>item.FrameTime+.0001f)||!reloadAudio.Select(item=>item.Time).SequenceEqual(reloadAudio.Select(item=>item.Time).OrderBy(time=>time)))throw new Exception("Original reload audio timestamps were invalid or nonmonotonic: "+string.Join(",",reloadAudio));
   if(state.GetProperty("reloading").GetBoolean()||!state.GetProperty("chamberLive").GetBoolean()||state.GetProperty("magazine").GetInt32()!=29||state.GetProperty("reserve").GetInt32()!=0)throw new Exception("Source reload/bolt/arm sequence failed or duplicated ammunition");
   int shots=state.GetProperty("shots").GetInt32();for(int i=0;i<20;i++)state=Step();if(state.GetProperty("shots").GetInt32()!=shots)throw new Exception("Weapon fires without trigger input");
-  return JsonSerializer.Serialize(new{weapons="PASS",initialRounds=31,emptyBoltLocks=true,originalReloadTasks=true,reloadedRounds=30,noInfiniteAmmo=true,localeIndependentTangents=true,originalIKUpdate=true,originalHandVisualActivation=true});
+  var quickHost=new WeaponHost(config,input.handler,reserveMagazines:2);JsonElement quickState=default;for(int i=0;i<20;i++)quickState=StepOn(quickHost);
+  for(int i=0;i<600;i++)quickState=StepOn(quickHost,true);
+  if(quickState.GetProperty("shots").GetInt32()!=31||quickState.GetProperty("magazine").GetInt32()!=0)throw new Exception("Quick-reload fixture did not empty its original M4A1 magazine");
+  var quickAudio=new List<string>();void CaptureQuick(JsonElement frame){foreach(var item in frame.GetProperty("events").EnumerateArray())if(item.GetProperty("type").GetString()=="audio")quickAudio.Add(item.GetProperty("value").GetString()!);}
+  quickState=StepOn(quickHost,false,true,true);CaptureQuick(quickState);for(int i=0;i<300;i++){quickState=StepOn(quickHost);CaptureQuick(quickState);}
+  string[] quickEvents={"audioExtractMagazine","audioInsertMagazine","audioBoltReturn"};
+  foreach(var name in quickEvents)if(quickAudio.Count(x=>x==name)!=1)throw new Exception("Quick source reload expected exactly one "+name+" callback, got "+quickAudio.Count(x=>x==name));
+  if(!(quickAudio.IndexOf(quickEvents[0])<quickAudio.IndexOf(quickEvents[1])&&quickAudio.IndexOf(quickEvents[1])<quickAudio.IndexOf(quickEvents[2])))throw new Exception("Quick source reload audio order invalid: "+string.Join(" -> ",quickAudio));
+  if(quickState.GetProperty("reloading").GetBoolean()||quickState.GetProperty("manipulating").GetBoolean()||quickState.GetProperty("magazine").GetInt32()!=29||quickState.GetProperty("reserve").GetInt32()!=30||!quickState.GetProperty("chamberLive").GetBoolean()||quickState.GetProperty("shots").GetInt32()!=31)throw new Exception("Quick source reload did not settle to 30+1 with one full reserve");
+  quickAudio.Clear();for(int i=0;i<600;i++)quickState=StepOn(quickHost,true);
+  if(quickState.GetProperty("shots").GetInt32()<=31||quickState.GetProperty("magazine").GetInt32()!=0||quickState.GetProperty("bolt").GetString()!="Open")throw new Exception("Second source magazine did not reach the empty state");
+  quickState=StepOn(quickHost,false,true,true);CaptureQuick(quickState);for(int i=0;i<300;i++){quickState=StepOn(quickHost);CaptureQuick(quickState);}
+  if(quickState.GetProperty("magazine").GetInt32()!=29||quickState.GetProperty("reserve").GetInt32()!=0||quickState.GetProperty("reloading").GetBoolean()||quickState.GetProperty("manipulating").GetBoolean())throw new Exception("Second quick reload with final reserve did not settle correctly");
+  if(quickAudio.Count(x=>x=="audioInsertMagazine")!=1||quickAudio.Count(x=>x=="audioExtractMagazine")!=1)throw new Exception("Second quick reload did not emit exactly one extract and insert event");
+  quickAudio.Clear();quickState=StepOn(quickHost,false,true,true);CaptureQuick(quickState);for(int i=0;i<120;i++){quickState=StepOn(quickHost);CaptureQuick(quickState);}
+  if(quickState.GetProperty("magazine").GetInt32()!=29||quickState.GetProperty("reserve").GetInt32()!=0||quickState.GetProperty("reloading").GetBoolean()||quickState.GetProperty("manipulating").GetBoolean())throw new Exception("No-reserve repeated reload changed source ammunition or did not release task state");
+  if(quickAudio.Any(x=>x=="audioInsertMagazine")||quickAudio.Any(x=>x=="audioBoltReturn"))throw new Exception("No-reserve reload incorrectly inserted a magazine or cycled the bolt");
+  return JsonSerializer.Serialize(new{weapons="PASS",initialRounds=31,emptyBoltLocks=true,originalReloadTasks=true,reloadedRounds=30,noInfiniteAmmo=true,localeIndependentTangents=true,originalIKUpdate=true,originalHandVisualActivation=true,quickReload=true,repeatReloadWithoutReserve=true});
+
  }
 }
 
