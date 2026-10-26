@@ -130,7 +130,6 @@ jobs:
             --incremental-root "Assets/Resources/ui/Interaction menu.prefab" \
             --incremental-root "Assets/Resources/characters/Operator.prefab" \
             --incremental-root "Assets/Scenes/Mission 01.unity" \
-
             --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
             | tee "$RUNNER_TEMP/cpr-package-build.json"
           python3 - "$RUNNER_TEMP/cpr-site-package/scene-data/fullsource/global-ui-mission-operator/manifest.json" "$GITHUB_WORKSPACE/scene-data/crisis-response-scenes.json.gz" <<'PY'
