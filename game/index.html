@@ -106,7 +106,7 @@ html,body,#stage,canvas,#controls,#movementStick,#controlsHelp,#controlsGuide{-w
 @media(prefers-reduced-motion:reduce){#movementStick .stick-thumb{transition:none}}
 
 
-#startOriginalMission{position:absolute;left:12px;top:max(60px,calc(env(safe-area-inset-top) + 56px));z-index:5;min-height:44px;padding:9px 12px;border:1px solid #86a9c5;border-radius:10px;background:#152432ed;color:#eef6ff;font-size:13px;font-weight:700;pointer-events:auto;touch-action:manipulation}#startOriginalMission:disabled{opacity:.55}
+#startOriginalMission,#clearMissionCache{position:absolute;left:12px;top:max(60px,calc(env(safe-area-inset-top) + 56px));z-index:5;min-height:44px;padding:9px 12px;border:1px solid #86a9c5;border-radius:10px;background:#152432ed;color:#eef6ff;font-size:13px;font-weight:700;pointer-events:auto;touch-action:manipulation}#startOriginalMission:disabled,#clearMissionCache:disabled{opacity:.55}#clearMissionCache{top:calc(max(60px,env(safe-area-inset-top) + 56px) + 50px);font-size:12px}
 #missionProgress{position:absolute;left:12px;top:calc(max(60px,env(safe-area-inset-top) + 56px) + 52px);z-index:6;width:min(420px,calc(100vw - 24px));padding:10px 12px;border:1px solid #86a9c5;border-radius:10px;background:#101820f2;color:#eef6ff;font-size:13px;line-height:1.4;box-shadow:0 8px 24px #0008;touch-action:manipulation}
 #missionProgress[hidden]{display:none}#missionProgressText{display:block;margin-bottom:8px;overflow-wrap:anywhere}
 #cancelMissionLoad{min-width:72px;min-height:40px;padding:7px 12px;touch-action:manipulation}
@@ -117,6 +117,7 @@ html,body,#stage,canvas,#controls,#movementStick,#controlsHelp,#controlsGuide{-w
 <div id="stage"></div>
 <div id="hud"><div id="title">Crisis Response · incomplete port</div><div id="status">Loading recovered scene and original Operator prefab…</div><div id="position"></div><div id="weaponStatus">Loading original weapons…</div></div>
 <button id="startOriginalMission" type="button" disabled>Start original Mission · 99 MB</button>
+<button id="clearMissionCache" type="button">Clear saved Mission data</button>
 <div id="missionProgress" role="status" aria-live="polite" hidden><span id="missionProgressText">Preparing original Mission download…</span><button id="copyMissionProgress" type="button">Copy report</button><button id="cancelMissionLoad" type="button">Cancel</button></div>
 <div id="help">A/D · Shift · S/W · drag or tap to aim · tap same spot to fire · <a href="../runtime-web/">Runtime checks</a></div>
 <button id="controlsHelp" type="button" aria-label="Show touch controls" aria-expanded="false" aria-controls="controlsGuide">?</button>
@@ -138,7 +139,7 @@ html,body,#stage,canvas,#controls,#movementStick,#controlsHelp,#controlsGuide{-w
 <div id="controls"><div class="cluster"><div id="movementStick" role="group" tabindex="0" aria-label="Movement joystick. Push left or right to walk; push past the rim to sprint. Push up or down to aim. Release to stop."><span class="stick-thumb" aria-hidden="true"></span><span class="stick-label" aria-hidden="true">MOVE</span></div></div><div class="cluster"><button id="magazineTouch" type="button" aria-label="M4 magazine ammunition unavailable"><span class="mag-body"><img class="mag-image" data-mag-image alt="" draggable="false"><span class="mag-window" data-mag-rounds aria-hidden="true"></span><span class="mag-count" data-mag-count aria-hidden="true">–</span></span></button><button id="kneel" class="action-icon" data-action="kneel" aria-label="Kneel" title="Kneel"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="18" cy="5" r="3"/><path d="M17 9l-6 7 8 3 5 8M11 16l-6 9h9M19 19h9"/></svg></button><button id="stand" class="action-icon" data-action="stand" aria-label="Stand up" title="Stand"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="5" r="3"/><path d="M16 9v10m0-7-7 6m7-6 7 6m-7 1-6 10m6-10 6 10"/></svg></button><button id="fire" class="action-icon" data-action="fire" aria-label="Hold to fire" title="Fire"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="9"/><circle cx="16" cy="16" r="3"/><path d="M16 1v7m0 16v7M1 16h7m16 0h7"/></svg></button></div></div>
 <script type="module">
 
-import { deliverIncrementalSourceProfile, loadOriginalScenePackage } from "../scene-data/scene-package-loader.mjs";
+import { clearIncrementalSourceCache, deliverIncrementalSourceProfile, loadOriginalScenePackage } from "../scene-data/scene-package-loader.mjs";
 import { stepBodyMovement, stepCharacterAnimation } from "./source-character-step.mjs";
 import * as THREE from "three";
 import { loadSourceCutoutMaterials, sourceCutoutMaterial } from "./source-cutout-materials.mjs";
@@ -159,6 +160,7 @@ import { createOriginalCasingRuntime } from "./original-casing-runtime.mjs";
 
 const weaponStatus=document.querySelector("#weaponStatus"),startOriginalMissionButton=document.querySelector("#startOriginalMission");
 const missionProgress=document.querySelector("#missionProgress"),missionProgressText=document.querySelector("#missionProgressText");
+const clearMissionCacheButton=document.querySelector("#clearMissionCache");
 const copyMissionProgressButton=document.querySelector("#copyMissionProgress");
 const stage=document.querySelector("#stage"), status=document.querySelector("#status"), positionLabel=document.querySelector("#position"), errorBox=document.querySelector("#error"),errorDetails=document.querySelector("#errorDetails"),errorHint=document.querySelector("#errorHint"),copyErrorStatus=document.querySelector("#copyErrorStatus"),retryErrorButton=document.querySelector("#retryError");
 // Catch failures during module startup too. In particular, WebGLRenderer can
@@ -511,6 +513,14 @@ async function load(){
    }catch(error){sourceActorMode=false;missionProgress.hidden=true;sourceLoadController=null;startOriginalMissionButton.disabled=false;startOriginalMissionButton.textContent="Start original Mission · 99 MB";if(window.__missionSourceDiagnostics){window.__missionSourceDiagnostics.status=error?.name==="AbortError"?"cancelled":"failed";window.__missionSourceDiagnostics.error={name:error?.name||"Error",message:String(error?.message||error)};}if(error?.name==="AbortError"){status.textContent="Mission download cancelled; tap Start original Mission to try again.";return;}const report=window.__missionSourceDiagnostics?`\n\nMission source transfer diagnostics:\n${JSON.stringify(window.__missionSourceDiagnostics,null,2)}`:"";showError(new Error(`${String(error?.stack||error)}${report}`),{hint:"Original Mission did not start; copy the error and transfer report to help diagnose the failure.",retry:()=>{startOriginalMissionButton.hidden=false;startOriginalMissionButton.click();}});}
   };
   document.querySelector("#cancelMissionLoad").addEventListener("click",()=>sourceLoadController?.abort());
+  clearMissionCacheButton.addEventListener("click",async()=>{
+   clearMissionCacheButton.disabled=true;
+   try{
+    const result=await clearIncrementalSourceCache("../scene-data/fullsource/global-ui-mission-operator/manifest.json");
+    status.textContent=result.available?(result.cleared?"Saved Mission data cleared from this device.":"No saved Mission data was found."):"This browser does not support clearing the local Mission cache.";
+   }catch(error){showError(error,{hint:"Could not clear the saved Mission data. Copy the error details if the problem continues."});}
+   finally{clearMissionCacheButton.disabled=false;}
+  });
   startOriginalMissionButton.addEventListener("click",startOriginalMission);
   startOriginalMissionButton.disabled=false;
  }catch(e){showError(e)}

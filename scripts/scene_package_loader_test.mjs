@@ -3,7 +3,7 @@ import { gzipSync } from "node:zlib";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { test } from "node:test";
-import { deliverIncrementalSourceProfile, loadOriginalScenePackage } from "../scene-data/scene-package-loader.mjs";
+import { clearIncrementalSourceCache, deliverIncrementalSourceProfile, loadOriginalScenePackage } from "../scene-data/scene-package-loader.mjs";
 
 const encoder = new TextEncoder();
 const originalFetch = globalThis.fetch;
@@ -245,6 +245,22 @@ test("stops source delivery when its abort signal is already cancelled", async (
     assert.equal(requested, false);
   } finally {
     globalThis.fetch = original;
+  }
+});
+
+test("clear control deletes only the manifest-versioned Mission source cache",async()=>{
+  const originalFetch=globalThis.fetch,originalCaches=globalThis.caches,originalSecureContext=globalThis.isSecureContext;
+  const sourceHash="b".repeat(64),deleted=[];
+  globalThis.isSecureContext=true;
+  globalThis.caches={delete:async name=>{deleted.push(name);return true;}};
+  globalThis.fetch=async()=>new Response(JSON.stringify({schemaVersion:1,encoding:"gzip-json-assets",sourcePackageSha256:sourceHash}),{status:200});
+  try{
+    assert.deepEqual(await clearIncrementalSourceCache("https://example.test/source/manifest.json"),{cleared:true,available:true});
+    assert.deepEqual(deleted,[`crisis-source-${sourceHash}`]);
+  }finally{
+    globalThis.fetch=originalFetch;
+    if(originalCaches===undefined)delete globalThis.caches;else globalThis.caches=originalCaches;
+    if(originalSecureContext===undefined)delete globalThis.isSecureContext;else globalThis.isSecureContext=originalSecureContext;
   }
 });
 

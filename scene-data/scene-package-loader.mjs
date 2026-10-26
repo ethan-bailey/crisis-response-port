@@ -141,6 +141,20 @@ function bytesToBase64(bytes) {
   return btoa(binary);
 }
 
+/** Delete only the immutable source cache selected by the current manifest. */
+export async function clearIncrementalSourceCache(manifestUrl) {
+  if (!globalThis.isSecureContext || !globalThis.caches?.delete)
+    return {cleared:false,available:false};
+  const response=await fetch(manifestUrl);
+  if(!response.ok)throw new Error(`Incremental source manifest unavailable: HTTP ${response.status}`);
+  const manifest=await response.json();
+  if(manifest.schemaVersion!==1||manifest.encoding!=="gzip-json-assets"
+      ||! /^[0-9a-f]{64}$/.test(manifest.sourcePackageSha256??""))
+    throw new Error("Incremental source profile manifest is invalid");
+  const cacheName=`crisis-source-${manifest.sourcePackageSha256}`;
+  return {cleared:await globalThis.caches.delete(cacheName),available:true};
+}
+
 /** Fetch a small bounded batch in parallel, then deliver verified assets in manifest order. */
 export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onProgress,signal} = {}) {
   const profileStarted = monotonicNow();
