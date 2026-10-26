@@ -1,11 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { gunzipSync } from 'node:zlib';
 import {
   MAX_WEAPON_OUTPUT_GAIN,
   classifyWeaponPlayback,
   clampWeaponEventGain,
   createSourceWeaponAudioDispatcher,
   createWeaponAudioRuntime,
+  preloadWeaponAudio,
 } from '../game/weapon-audio-runtime.mjs';
 
 class FakeNode {
@@ -73,6 +76,22 @@ test('gun output has a fixed master ceiling and per-event gain is bounded', asyn
   assert.equal(clampWeaponEventGain(Number.NaN), 0);
 });
 
+test('weapon readiness waits until every source audio clip has finished loading', async () => {
+  const audioData = { audioFire:{source:'fire.wav',url:'fire.ogg'}, audioInsertMagazine:{source:'in.wav',url:'in.ogg'}, unused:{url:'unused.ogg'} };
+  const pending = new Map(), calls = [];
+  const runtime = {load:(key,url)=>{calls.push([key,url]);return new Promise(resolve=>pending.set(key,resolve));}};
+  let settled = false;
+  const ready = preloadWeaponAudio(audioData,runtime).then(keys=>{settled=true;return keys;});
+  await Promise.resolve();
+  assert.deepEqual(calls,[['audioFire','fire.ogg'],['audioInsertMagazine','in.ogg']]);
+  assert.equal(settled,false,'weapons cannot become ready with a source clip still decoding');
+  pending.get('audioFire')({});
+  await Promise.resolve();
+  assert.equal(settled,false);
+  pending.get('audioInsertMagazine')({});
+  assert.deepEqual(await ready,['audioFire','audioInsertMagazine']);
+});
+
 test('FullSource gun events resolve by original clip path and retain source age', () => {
   const played = [], unmapped = [];
   const dispatcher = createSourceWeaponAudioDispatcher({
@@ -97,4 +116,23 @@ test('FullSource gun events resolve by original clip path and retain source age'
   assert.ok(Math.abs(played[1][1] - 0.8) < 1e-12);
   assert.ok(Math.abs(played[1][2] - 0.02) < 1e-12);
   assert.equal(unmapped.length, 2, 'unsupported loops and unknown source clips are counted rather than guessed');
+});
+
+test('original M4 reload and bolt audio clips are packaged and preloaded by the live weapon adapter', async () => {
+  const bytes = await readFile(new URL('../game/assets/weapon-runtime.json.gz', import.meta.url));
+  const data = JSON.parse(gunzipSync(bytes));
+  const expected = {
+    audioExtractMagazine: 'Assets/AudioClip/magazine-out-02.wav',
+    audioInsertMagazine: 'Assets/AudioClip/magazine-in-01.wav',
+    audioBoltExtract: 'Assets/AudioClip/bolt-extract-01.wav',
+    audioBoltReturn: 'Assets/AudioClip/bolt-return-02.wav',
+  };
+  for (const [key, source] of Object.entries(expected)) {
+    assert.equal(data.audio[key]?.source, source, `${key} must retain its original serialized clip`);
+    const path = new URL(`../game/${data.audio[key].url.slice(2)}`, import.meta.url);
+    assert.ok((await readFile(path)).byteLength > 0, `${key} audio bytes must be in the Site package`);
+  }
+  const adapter = await readFile(new URL('../game/weapon-runtime.mjs', import.meta.url), 'utf8');
+  assert.match(adapter, /preloadWeaponAudio\(data\.audio,data\.audioRuntime\)/);
+  assert.match(adapter, /if\(e\.type==='audio'\)audio\.play\(e\.value/);
 });
