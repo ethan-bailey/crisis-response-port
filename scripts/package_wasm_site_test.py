@@ -241,6 +241,19 @@ class PackageTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "differs from input commit"):
             self.build()
 
+    def test_excluded_node_modules_symlinks_do_not_block_site_package(self):
+        dependency_bin = self.repo / "game/node_modules/.bin"
+        dependency_bin.mkdir(parents=True)
+        (dependency_bin / "playwright").symlink_to(self.root / "external-playwright")
+        result = self.build()
+        self.assertEqual(result["status"], "verified")
+        self.assertFalse((self.site / "game/node_modules").exists())
+
+    def test_unexcluded_game_symlink_still_fails_package_input_scan(self):
+        (self.repo / "game/escape").symlink_to(self.root)
+        with self.assertRaisesRegex(ValueError, "Symlink is not a package input"):
+            self.build()
+
     def test_symlink_cannot_escape_manifest(self):
         self.build()
         (self.site / "game/escape").symlink_to(self.repo)

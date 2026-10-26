@@ -17,6 +17,8 @@
 
 ## Dependency-ordered gates
 
+- **First full-package workflow run #35, ID `40276509885` — FAILED at the new package step.** Node/Python/runtime/engine/foundation contracts, Release WASM publish, and Chromium IndexedDB job passed. `package_wasm_site.py` rejected `game/node_modules/.bin/playwright` as a symlink before applying its existing node_modules copy exclusion. Fix is to omit only the non-shipping top-level `game/node_modules` tree from the package-input symlink scan while retaining rejection of symlinks elsewhere; regression coverage is being added for both cases. Exact failure log: `ValueError: Symlink is not a package input: .../game/node_modules/.bin/playwright`.
+
 - **Full Mission package CI — ADDED, RUN PENDING.** The workflow packages the tracked 1,919-asset `global-ui-mission-operator` profile against the exact Release WASM publish output, independently verifies every package/Blazor hash, asserts the manifest source SHA equals `GITHUB_SHA`, creates a deterministic tar.gz with SHA-256 in the Actions summary, and retains the exact artifact for 14 days. Workflow paths include `scene-data/**` and original source-reference inputs. This gate does not establish complete gameplay parity or the Site v71 crosswalk. Inspect its exact-SHA run and artifact before publication.
 
 1. **Source reproducibility and CI — PASS at `ccc8b517a6d675ab030972e9dc857e7bf705b77e`.** Exact-SHA Actions run #34 passed source contracts, Release WASM build/publish, and the hosted Chromium IndexedDB fixture after the joystick aim change. Run #33 passed the preceding code/probe checkpoint; run #30 at runtime SHA `60399dd` separately records the cache fixture assertions. Site version 71 independently reports a successful full archive audit, but its recorded source hash cannot be mapped to a GitHub commit yet.
@@ -32,7 +34,7 @@
 
 ## Next dependency-ready batch
 
-0. Push the package-build workflow change, wait for its exact-SHA Actions run, require full-package build and independent verification to pass, download and inspect the retained artifact, then record actual hashes/results here before considering a Site version. Fix and rerun any package failure; do not stop at a failed gate.
+0. Fix package-input scanning for the `game/node_modules` symlink found in run #35; run package-specific regression cases, push, wait for the exact-SHA Actions run, require the full package build and independent verification to pass, download and inspect the retained artifact, and record actual hashes/results here before considering a Site version. If the rerun exposes another concrete issue, fix and rerun it.
 
 1. Reconcile Site v71 source SHA `37e6d5dcebaaba71c405d898d161b3e36e946a78` with its source tree. Exact/global GitHub commit searches on 2026-10-26 found no v71 or v70 commit, and the connected account lists no other likely source repository. The next useful input must be the Site source repository/branch identity or an authorized v71 archive/source crosswalk; repeating searches of the same available account is not progress. Do not assume the hash matches `develop/wasm`.
 2. Run the prepared clamp probe in Unity **2017.2.0f3** within the recovered project. Match its prefab/hierarchy records against the 31-record source inventory, preserve the JSON output, and compare over-limit velocity results at all four fixed-step sizes before mapping the behavior into the browser runtime.

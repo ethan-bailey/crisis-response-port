@@ -42,9 +42,13 @@ def digest(path):
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
-def files(root):
+def files(root, exclude_top_level=()):
     result = []
+    excluded = set(exclude_top_level)
     for path in sorted(root.rglob("*")):
+        relative = path.relative_to(root)
+        if relative.parts and relative.parts[0] in excluded:
+            continue
         require(not path.is_symlink(), f"Symlink is not a package input: {path}")
         if path.is_file():
             result.append(path)
@@ -305,7 +309,10 @@ def package(repo, published, output, toolchain, run_url, incremental_source_pack
             "Compiler SDK must be exact and stable")
     require(toolchain.get("dotnet") == sdk["version"],
             "Selected .NET SDK differs from tracked compiler pin")
-    files(repo / "game")
+    # npm ci may populate this excluded dependency tree with .bin symlinks.
+    # The Site package explicitly omits node_modules; scan every shipped game
+    # input for symlinks while excluding that non-shipping tree.
+    files(repo / "game", exclude_top_level=("node_modules",))
     files(repo / "scene-data")
     files(published)
     inventory = []
