@@ -11,6 +11,19 @@ import {
   preloadWeaponAudio,
 } from '../game/weapon-audio-runtime.mjs';
 
+function methodBody(source, signature) {
+  const start=source.indexOf(signature);
+  assert.notEqual(start,-1,`source method missing: ${signature}`);
+  const open=source.indexOf('{',start);
+  assert.notEqual(open,-1,`method body missing: ${signature}`);
+  let depth=0;
+  for(let index=open;index<source.length;index++){
+    if(source[index]==='{')depth++;
+    else if(source[index]==='}'&&--depth===0)return source.slice(open,index+1);
+  }
+  assert.fail(`unterminated method body: ${signature}`);
+}
+
 class FakeNode {
   constructor() { this.gain = { value: 1 }; }
   connect(next) { return next; }
@@ -135,4 +148,38 @@ test('original M4 reload and bolt audio clips are packaged and preloaded by the 
   const adapter = await readFile(new URL('../game/weapon-runtime.mjs', import.meta.url), 'utf8');
   assert.match(adapter, /preloadWeaponAudio\(data\.audio,data\.audioRuntime\)/);
   assert.match(adapter, /if\(e\.type==='audio'\)audio\.play\(e\.value/);
+});
+
+test('original magazine reload, interrupt, and internal-magazine audio branches stay source-owned',async()=>{
+  const weapon=await readFile(new URL('../runtime/Original/FullSource/WeaponBase.cs',import.meta.url),'utf8');
+  const reload=await readFile(new URL('../runtime/Original/CharacterBehavior/CharacterBehavior/ChangeMagazine.cs',import.meta.url),'utf8');
+  const insert=methodBody(weapon,'public bool InsertMagazine(Magazine magazine)');
+  assert.ok(insert.indexOf('if (magazine == null)')<insert.indexOf('audioInsertMagazine.Play'),
+    'null magazine insert exits before the original insert sound');
+  assert.ok(insert.indexOf('onNewMagazine.Invoke()')<insert.indexOf('audioInsertMagazine.Play'),
+    'the source magazine ownership event precedes its authored insert sound');
+
+  const remove=methodBody(weapon,'public void RemoveMagazine(bool drop = false, bool audio = true)');
+  assert.ok(remove.indexOf('if (fireFromMagazine)')<remove.indexOf('audioExtractMagazine.Play'),
+    'internal magazine path selects its source extraction event');
+  assert.ok(remove.indexOf('audioExtractMagazine.Play')<remove.indexOf('if (cyclingBolt.chamber.childCount <= 0)'),
+    'fire-from-magazine source plays extraction before the empty-chamber early return');
+  assert.match(remove,/if \(Magazine != null\)\s*\{\s*audioExtractMagazine\.Play/,
+    'detachable magazine extraction sound is conditional on an owned magazine');
+  assert.match(remove,/if \(!useInternalMagazine\)\s*\{\s*ComponentMagazine\.Drop\(\);\s*Magazine = null;/,
+    'detachable magazine drop and ownership release remain source-controlled');
+
+  const onUpdate=methodBody(reload,'public override TaskStatus OnUpdate()');
+  assert.match(onUpdate,/self\.ActiveWeapon != weapon \|\| \(input\.Keys\.fire\.Down && state >= State\.State9\)/,
+    'weapon switch and late reload fire interrupt the source task');
+  assert.ok(onUpdate.indexOf('self.ActiveWeapon != weapon')<onUpdate.indexOf('magazineArm.SetOnWeapon'),
+    'interrupt cleanup retargets the source arm without fabricating an audio event');
+  const onEnd=methodBody(reload,'public override void OnEnd()');
+  assert.match(onEnd,/self\.PendingAction = CharacterBody\.CharacterAction\.None;/);
+  assert.match(onEnd,/self\.IsManipulatingEquipment = false;/);
+  assert.doesNotMatch(onEnd,/audio(?:Extract|Insert)Magazine\.Play/,
+    'cancelling the source task does not invent completion audio');
+  assert.match(onUpdate,/weapon\.RemoveMagazine\(true\)/,'quick reload uses the authored removal path');
+  assert.match(onUpdate,/self\.ActiveWeapon\.InsertMagazine\(fullestMagazineForWeapon\)/,'normal reload uses the authored insertion path');
+  assert.match(onUpdate,/self\.ActiveWeapon\.ReturnMagazine\(\)/,'internal magazine closure uses its authored return event');
 });

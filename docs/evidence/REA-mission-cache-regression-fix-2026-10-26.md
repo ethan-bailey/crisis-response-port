@@ -143,3 +143,27 @@ zero limit in this Unity 2017.2 source/runtime, and verify local-space
 transforms and damping order with a native source capture or version-matched
 fixture. Then add the smallest contract and runtime implementation for the
 observed behavior.
+
+## Reload audio source-path checks
+
+Read the authoritative `runtime/Original/FullSource/WeaponBase.cs` and
+`runtime/Original/CharacterBehavior/CharacterBehavior/ChangeMagazine.cs` paths.
+Added an audio runtime contract that locks these source behaviors: a null
+magazine insert exits before audio; successful insertion invokes the source
+magazine event before its insert sound; detachable-magazine extraction is
+conditional on magazine ownership; the fire-from-magazine extraction sound
+precedes the empty-chamber early return; detachable drop/ownership stays source
+controlled; quick/full reload select the original removal/insertion calls; the
+internal-magazine path uses `ReturnMagazine`; and task end clears its state
+without inventing completion audio. Weapon switching and late-reload fire retain
+the original interruption path.
+
+- Focused `node --test scripts/weapon_audio_runtime_test.mjs`: **7/7 passed**.
+- Full `node --test scripts/*_test.mjs scripts/*_contracts.mjs`: **129/129
+  passed**.
+- The first new test attempt asserted `weapon.InsertMagazine(...)`; the original
+  code calls `self.ActiveWeapon.InsertMagazine(...)`. Corrected the expectation
+  to match source, reran the focused test and full Node suite, both passed.
+- This static source contract does not execute reload state transitions or
+  prove audible timing on the browser device. Those lifecycle and audio
+  acceptance cases remain open. No C# gameplay source was changed.

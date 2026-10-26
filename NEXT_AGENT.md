@@ -19,9 +19,10 @@ Live commits `3c17b11` and `59cb7b8` changed Mission asset delivery to largest-f
 For the implementation tree:
 
 - Focused loader/cache contracts: **7/7**.
-- Full Node contracts: **128/128**. Fresh worktrees need the documented `npm ci --prefix game --ignore-scripts && npm run --prefix game vendor` generated PhysX adapter recovery.
+- Full Node contracts: **129/129**. Fresh worktrees need the documented `npm ci --prefix game --ignore-scripts && npm run --prefix game vendor` generated PhysX adapter recovery.
 - Python tests: **43/43**; source dependency inventory freshness passed (810 sources, 1,710 symbols, 1,384 reachable files, 127 ambiguous names still needing ownership review).
 - EngineChecks **75**, FoundationChecks **121**, runtime contracts passed with `fullGameParity:false`.
+- Added source-bound reload audio branch checks: the original detachable/internal magazine extraction and insertion paths, the chamber-empty early return, task cancellation cleanup, weapon-switch/late-fire interruption, and original internal-magazine return sound are checked directly against `WeaponBase.cs` and `ChangeMagazine.cs`. These are source-contract checks, not a dynamic reload simulation.
 - Release WASM publish and exact package verification passed. Optional `wasm-tools` optimization was not installed.
 - The first `dotnet --version` call reproduced the known `/proc` failure; the pinned SDK plus process shim succeeded with `8.0.426`.
 
@@ -39,4 +40,4 @@ For the implementation tree:
 
 ## Next dependency-ready action
 
-Continue particle dependency closure from `docs/MISSION_PARTICLE_DEPENDENCY_CLOSURE_2026-10-25.md` and `docs/mission-particle-dependency-inventory-2026-10-25.json.gz`. The packaged 14 impact prefabs have 14 active `ClampVelocityModule`s across three serialized configurations; trace Unity 2017.2's exact serialized magnitude/axis mapping and damping order before implementing a real runtime-path assertion. Current `magnitude.scalar=0` with `separateAxis=0` makes a guess unsafe. Independently locate a real Chromium/WebKit runner for IndexedDB acceptance. If runner or exact Spark source is unavailable, record attempted paths and evidence, defer only those acceptances, and continue source-backed gameplay work.
+The latest Node suite is **129/129** after the reload source-contract addition; rerun the focused and complete verification on its pushed SHA. Continue particle dependency closure from `docs/MISSION_PARTICLE_DEPENDENCY_CLOSURE_2026-10-25.md` and `docs/mission-particle-dependency-inventory-2026-10-25.json.gz`. The packaged 14 impact prefabs have 14 active `ClampVelocityModule`s across three serialized configurations; trace Unity 2017.2's exact serialized magnitude/axis mapping and damping order before implementing a real runtime-path assertion. Current `magnitude.scalar=0` with `separateAxis=0` makes a guess unsafe. Independently locate a real Chromium/WebKit runner for IndexedDB acceptance. If runner or exact Spark source is unavailable, record attempted paths and evidence, defer only those acceptances, and continue source-backed gameplay work.
