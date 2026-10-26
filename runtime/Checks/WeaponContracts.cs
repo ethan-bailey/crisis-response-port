@@ -34,7 +34,10 @@ public static class WeaponContracts {
   if(!state.GetProperty("chamberLive").GetBoolean()||state.GetProperty("magazine").GetInt32()!=30)throw new Exception("Original source starts with chamber plus full magazine");
   for(int i=0;i<600;i++)state=Step(true);
   if(state.GetProperty("shots").GetInt32()!=31||state.GetProperty("bolt").GetString()!="Open")throw new Exception("Original bolt must lock open after 30+1, no infinite ammunition");
-  state=Step(false,true);for(int i=0;i<300;i++)state=Step();
+  var reloadAudio=new HashSet<string>(StringComparer.Ordinal);
+  void CaptureReloadAudio(JsonElement frame){foreach(var item in frame.GetProperty("events").EnumerateArray())if(item.GetProperty("type").GetString()=="audio")reloadAudio.Add(item.GetProperty("value").GetString()!);}
+  state=Step(false,true);CaptureReloadAudio(state);for(int i=0;i<300;i++){state=Step();CaptureReloadAudio(state);}
+  foreach(var expected in new[]{"audioExtractMagazine","audioInsertMagazine","audioBoltReturn"})if(!reloadAudio.Contains(expected))throw new Exception("Original reload did not emit its source audio event: "+expected+" (seen: "+string.Join(",",reloadAudio)+")");
   if(state.GetProperty("reloading").GetBoolean()||!state.GetProperty("chamberLive").GetBoolean()||state.GetProperty("magazine").GetInt32()!=29||state.GetProperty("reserve").GetInt32()!=0)throw new Exception("Source reload/bolt/arm sequence failed or duplicated ammunition");
   int shots=state.GetProperty("shots").GetInt32();for(int i=0;i<20;i++)state=Step();if(state.GetProperty("shots").GetInt32()!=shots)throw new Exception("Weapon fires without trigger input");
   return JsonSerializer.Serialize(new{weapons="PASS",initialRounds=31,emptyBoltLocks=true,originalReloadTasks=true,reloadedRounds=30,noInfiniteAmmo=true,localeIndependentTangents=true,originalIKUpdate=true,originalHandVisualActivation=true});
