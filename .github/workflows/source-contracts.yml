@@ -108,3 +108,27 @@ jobs:
           test -s "$root/index.html"
           test -s "$root/browser-input.mjs"
           find "$root" -type f -name '*.wasm' -print -quit | grep -q .
+
+  indexeddb-browser:
+    name: Chromium IndexedDB cache acceptance
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: game/package-lock.json
+
+      - name: Install pinned browser-test dependency
+        run: npm ci --prefix game --ignore-scripts
+
+      - name: Install Chromium
+        run: game/node_modules/.bin/playwright install --with-deps chromium
+
+      - name: Exercise production loader with browser IndexedDB
+        run: node scripts/indexeddb_browser_smoke.mjs
