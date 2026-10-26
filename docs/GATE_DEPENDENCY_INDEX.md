@@ -20,6 +20,12 @@ This index is the dependency-first entry point for continuing parity work. Gate 
 | 9 | iPhone Safari and deployed acceptance | Exact verified package/source SHA; active site version; iOS/Safari version and storage quota; cold and warm startup; persistence after reload; memory/progress; multitouch aim/movement/fire/reload; text/error overlay reachability; orientation/viewport/zoom; audio unlock; long-session state and recovery. | Requires owner-controlled physical iPhone Safari. Run #55 (`fc54324`) passed seven Chromium IndexedDB persistence/recovery/version checks; this is supporting evidence only and does not prove iPhone Safari behavior. v73 is the latest deployed package in the current handoff; checks-only CI commits do not change deployed runtime. |
 | 10 | Full parity closeout | All prior gates plus complete unresolved-reference closure or explicit disposition; full scene/component coverage; stable repeat runs; visual reference comparisons; performance and memory budget; source-backed behavior evidence; exact deployed artifact identity and rollback checkpoint. | Keep `fullGameParity:false`, `sourceVisualParity:false`, `nativeParityVerified:false`, `originalGameComplete:false`, and `offlineComplete:false` until each corresponding evidence set is complete. |
 
+
+
+## Gate 3 runtime-discovered projectile lifecycle — 2026-10-26
+
+Run #61 (source SHA a1ee8c34d242a2733a0209a60ed8e35d9988c5ef) demonstrated two distinct original M4A1 torso impacts and positive source injury deltas, but failed the test's immediate-cleanup assertion. This is a test assumption error: recovered Projectile.Update destroys its GameObject only when original TestTermination() is true. That predicate is age >1.0s since SpawnTime, energy <2, or the authored x/y/z bounds; a torso impact with Status=Continue does not imply cleanup. The second projectile was about 0.0023 seconds old at impact and both owner projectiles reported TestTermination=false. The next batch will retain the impact-time report, advance source ticks beyond one second from the newest spawn, then verify zero live owner projectiles. #61 did not reach package verification because of the assertion; its Chromium job was still installing at the last poll. See the updated pre-implementation closure note.
+
 ## Batch exit checklist
 
 For each gate, the owning batch should record:
