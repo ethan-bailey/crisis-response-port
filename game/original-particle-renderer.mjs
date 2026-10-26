@@ -12,7 +12,8 @@ function visualRandom(event,emitter,index,sourceSeed=null){
   if(sourceSeed===null)for(const c of String(event.value.source))x=Math.imul(x^c.charCodeAt(0),16777619);
   x^=x>>>16;x=Math.imul(x,0x7feb352d);x^=x>>>15;x=Math.imul(x,0x846ca68b);x^=x>>>16;
   const next=()=>{x=(Math.imul(x,1664525)+1013904223)|0;return (x>>>0)/4294967296;};
-  return {radius:next(),arc:next(),directionZ:next(),directionArc:next(),
+  return {radius:next(),arc:next(),hemisphereZ:next(),hemisphereArc:next(),
+    directionZ:next(),directionArc:next(),
     startSize:next(),startSpeed:next(),startLifetime:next(),startRotation:next(),color:next(),
     sizeOverLifetime:next(),rotationOverLifetime:next()};
 }

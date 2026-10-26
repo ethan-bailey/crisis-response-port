@@ -2,7 +2,7 @@ const TAU=Math.PI*2;
 const clamp01=x=>Math.max(0,Math.min(1,x));
 const unit=(v)=>{const n=Math.hypot(...v);return n>1e-9?v.map(x=>x/n):[0,0,1];};
 
-/** Sample the recovered Unity 2017 cone-base (4) and circle-edge (10) shapes.
+/** Sample recovered Unity 2017 hemisphere (2), cone-base (4), and circle-edge (10) shapes.
  * Random inputs are explicit so tests can cover deterministic boundary cases.
  * The app supplies a stable approximation because Unity's per-system random
  * seed/state is not part of the browser event contract yet.
@@ -14,17 +14,29 @@ export function sampleRecoveredParticleShape(shape,random={}) {
     return x;
   };
   const type=shape?.type,radius=shape?.radius?.value,arc=shape?.arc?.value;
-  if(![4,10].includes(type))throw new RangeError('Unsupported recovered Unity particle shape type: '+type);
+  if(![2,4,10].includes(type))throw new RangeError('Unsupported recovered Unity particle shape type: '+type);
   if(!Number.isFinite(radius)||radius<0||!Number.isFinite(arc)||arc<=0||arc>360)
     throw new RangeError('Recovered Unity particle shape has invalid radius or arc');
   const angle=TAU*arc/360*value('arc',.5),radiusSample=value('radius',.5);
-  const radial=type===10?radius:radius*Math.sqrt(radiusSample);
-  const position=[radial*Math.cos(angle),radial*Math.sin(angle),0];
+  let position;
   let direction;
+  if(type===2){
+    if((shape.randomPositionAmount||0)!==0||(shape.sphericalDirectionAmount||0)!==0)
+      throw new RangeError('Recovered Unity hemisphere has unsupported position or spherical-direction randomization');
+    const z=value('hemisphereZ',.5),phi=TAU*value('hemisphereArc',.5);
+    const thickness=clamp01(shape.radiusThickness??1),inner=radius*(1-thickness);
+    const radial=Math.cbrt(inner**3+radiusSample*(radius**3-inner**3));
+    const ring=Math.sqrt(Math.max(0,1-z*z));
+    position=[radial*ring*Math.cos(phi),radial*ring*Math.sin(phi),radial*z];
+    direction=unit(position);
+  }else{
+    const radial=type===10?radius:radius*Math.sqrt(radiusSample);
+    position=[radial*Math.cos(angle),radial*Math.sin(angle),0];
+  }
   if(type===4){
     const coneHalfAngle=(shape.angle||0)*Math.PI/180;
     direction=unit([Math.sin(coneHalfAngle)*Math.cos(angle),Math.sin(coneHalfAngle)*Math.sin(angle),Math.cos(coneHalfAngle)]);
-  }else direction=[0,0,1];
+  }else if(type===10)direction=[0,0,1];
   const randomDirection=clamp01(shape.randomDirectionAmount||0);
   if(randomDirection){
     const z=1-2*value('directionZ',.5),phi=TAU*value('directionArc',.5),r=Math.sqrt(Math.max(0,1-z*z));
