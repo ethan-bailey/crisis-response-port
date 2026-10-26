@@ -4,7 +4,7 @@
 
 This closes the serialized dependency inventory for the source `Emitter` wound/blood path and the optional `ProjectileTrace` path before further rendering work. It uses the full Mission particle inventory (decompressed SHA-256 `636935d6bf545dd0bf3610008bbc8759fae1fc765553852b8110da9eacc82407`; source package SHA-256 `92e84fff24b79ae9b482cfe50dc33346fe8d5d7f2afb948e7bb4cacf5fb7dafb`) and the original C# callbacks. It does not claim browser rendering parity.
 
-The source contract is `scripts/original_particle_lifecycle_dependency_test.mjs`. It checks prefab hashes, incoming references, component file IDs, renderer and ParticleSystem fields, source call ordering, all 27 prefab renderer references, and the exact unresolved runtime asset set below. Focused command: `node --test scripts/original_particle_lifecycle_dependency_test.mjs`.
+The source contract is `scripts/original_particle_lifecycle_dependency_test.mjs`. It checks prefab hashes, incoming references, component file IDs, renderer and ParticleSystem fields, source call ordering, all 27 prefab renderer references, and the exact unresolved runtime asset set below. It also binds Mission muzzle-smoke and head-bounce owners to their original source callbacks. Focused command: `node --test scripts/original_particle_lifecycle_dependency_test.mjs`.
 
 ## Whole-inventory runtime asset reconciliation
 
@@ -62,6 +62,12 @@ Current actor snapshots transport source `Emit`, `Simulate`, and `Play` commands
 | Tracer hit effect | `Assets/GameObject/Tracer hit.prefab`; SHA-256 `7ba0c2dc98e1ecc5479f7d36ea662cbfac82bd670f7014788725619444d3ea91` | Serialized hit prefab and incoming trace reference are inventoried |
 
 The default 5.56 mm FMJ projectile does not assign `tracePrefab`; the optional trace path is exercised only by tracer ammunition. The recovered source inventory therefore supports testing source `ProjectileTrace` ordering but cannot provide a complete runtime visual test. Next input for trace activation: all three authored tracer-ammo prefabs plus the exact LineRenderer material referenced by GUID. Keep the trace disabled for sources with a null `tracePrefab`; do not substitute a material or enable the trace on the default M4 round.
+
+## Mission weapon-smoke and head-bounce callbacks
+
+- `Weapon smoke emitter.prefab` (SHA-256 `a47a5d19fd2b3261c6e85d438bc464a9827fab5a7545fb743f82020bbf4437d2`) is owned by Mission's `weaponSmokeEmitterPrefab` field. `Mission.Awake` instantiates and parents it before initializing `MissionHelper`; `WeaponBase.EmitMuzzleSmoke` emits at the muzzle and, when suppressed, emits a second particle at the cycling bolt. The source ordering and owner link are checked.
+- `Head bounce brain emission.prefab` (SHA-256 `59a5b8b73f9d22264aaf12295d0c9ce7277bf5d55c920244f063fd18c21c9a00`) is owned by Operator and Occupant `headBrainBounce` fields. `Limb.OnCollisionEnter` applies the head shock and then creates the linked effect at the wound position; `BallisticHitEffect.PlayBounce` stamps Unity time/lifetime, invokes `BounceEmission`, and plays the source audio path. The source ordering and both prefab owners are checked.
+- These source contracts close the event/owner path only. Weapon-smoke material/texture and brain/bounce render assets remain in the whole-inventory missing set above; no visual playback claim is made.
 
 ## Gate disposition
 

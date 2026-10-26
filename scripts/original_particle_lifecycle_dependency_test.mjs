@@ -201,3 +201,36 @@ test('tracer projectile lifecycle retains source initialization, point update, f
   assert.match(projectile,/Trace\.AddPosition\(base\.transform\.position\)/);
   assert.match(projectile,/Trace\.SpawnHitEffect\(base\.transform\.position, hit\.transform, hit\.normal\)/);
 });
+
+test('mission weapon-smoke and head-bounce particle callbacks preserve original owner and order',()=>{
+  const smoke=inventory.prefabs['Assets/Resources/effects/Weapon smoke emitter.prefab'];
+  assert.equal(smoke.sha256,'a47a5d19fd2b3261c6e85d438bc464a9827fab5a7545fb743f82020bbf4437d2');
+  assert.deepEqual(smoke.incomingReferences.map(ref=>[ref.source,ref.fieldPath]),[
+    ['Assets/Scenes/Mission 01.unity','weaponSmokeEmitterPrefab']
+  ]);
+  const brain=inventory.prefabs['Assets/Resources/effects/Head bounce brain emission.prefab'];
+  assert.equal(brain.sha256,'59a5b8b73f9d22264aaf12295d0c9ce7277bf5d55c920244f063fd18c21c9a00');
+  assert.deepEqual(brain.incomingReferences.map(ref=>[ref.source,ref.fieldPath]).sort(),[
+    ['Assets/Resources/characters/Occupant.prefab','headBrainBounce'],
+    ['Assets/Resources/characters/Operator.prefab','headBrainBounce']
+  ]);
+  const mission=methodBody(readSource('Mission.cs'),'private void Awake()');
+  ordered(mission,['CreateContainers()','WeaponSmokeEmitter = Object.Instantiate(weaponSmokeEmitterPrefab)',
+    'WeaponSmokeEmitter.transform.SetParent(EmittersContainer)','MissionHelper.Instance.Initialize(this)',
+    'perfMgr = PerformanceManager.Instance'],'mission particle owner initialization order changed');
+  const muzzle=methodBody(readSource('WeaponBase.cs'),'private void EmitMuzzleSmoke()');
+  ordered(muzzle,['if (emitSmoke)','muzzleSmokeEmitter.transform.position = Muzzle.position',
+    'muzzleSmokeEmitter.transform.rotation = Muzzle.rotation','muzzleSmokeEmitter.Emit(1)',
+    'if (ComponentSuppressor != null)','muzzleSmokeEmitter.transform.position = cyclingBolt.transform.position',
+    'muzzleSmokeEmitter.transform.LookAt(cyclingBolt.transform.position + Vector3.back)',
+    'muzzleSmokeEmitter.Emit(1)'],'muzzle smoke source callback order changed');
+  const collision=methodBody(readSource('Limb.cs'),'private void OnCollisionEnter(Collision collision)');
+  ordered(collision,['if (id != LimbId.Head || !useImpactEmissions || collision.contacts.Length == 0)',
+    'LimbPhysiology.AddShock(num)','perfMgr.CreateGoreHitEffect(Body.headBrainBounce.GetComponent<BallisticHitEffect>())',
+    'ballisticHitEffect.transform.SetParent(MissionHelper.Instance.EffectsContainer, worldPositionStays: false)',
+    'ballisticHitEffect.transform.position = transform.TransformPoint(wound.LocalPosition)',
+    'ballisticHitEffect.PlayBounce(count, Rigidbody.velocity.magnitude)'],'head bounce particle/source callback order changed');
+  const bounce=methodBody(readSource('BallisticHitEffect.cs'),'public void PlayBounce(int count, float velocity)');
+  ordered(bounce,['spawnTime = Time.time','Lifetime = Global.Context.Settings.Performance.particlesLifetime',
+    'component.BounceEmission(count, velocity)','PlayAudio(null, 0.5f)'],'brain bounce emission source timing changed');
+});
