@@ -134,7 +134,7 @@ Continue dependency-ordered parity work. Physical iPhone Safari acceptance remai
 
 ## Remote handoff identity
 
-Current remote `develop/wasm` head is `9a70d16518959b957059c77cdb5ab816068815d1`, a documentation-only checkpoint on top of tested source SHA `b173b1daebcb0337fb1def6da948d08f3d990d79`. No runtime or test source changed after run #68.
+Current remote `develop/wasm` head is `1ecd9322eb9bf8dbf6358e9f01c79796c6c65943`, the run #69 candidate. Its `WeaponHost.cs` fixture edit failed the protected legacy-owner boundary (Python 3/45); Node and Chromium passed. No release WASM build or package was produced from this candidate.
 
 
 ## Run #68 — exact build, package, IndexedDB and headless audio passed — 2026-10-26
@@ -159,3 +159,11 @@ Resolve the Site-bound source integration path without merging the 1,291-commit 
 ## Reload lifecycle dependency inventory — 2026-10-26
 
 Before implementation, the source task, host, M4A1 detachable-magazine path, reserve ownership, IK transitions, source audio events, and test/package dependencies were inventoried in `docs/RELOAD_LIFECYCLE_DEPENDENCY_CLOSURE_2026-10-26.md`. Next: add test-only fixture controls for quick reload and a two-reserve setup, then assert quick reload and a no-reserve repeated reload through the original task. The current one-M4A1 fixture cannot reach the fire interruption branch (State9+) or a real weapon-switch guard; close those only after adding and inventorying original internal-magazine/secondary-weapon dependencies. Preserve the existing verified standard reload contract.
+
+
+## Run #69 — test-host boundary failure and correction — 2026-10-26
+
+- Candidate commit `1ecd9322eb9bf8dbf6358e9f01c79796c6c65943`, Actions run `40326371572`. Node contracts passed; Chromium IndexedDB/audio passed. Python boundary suite failed 3/45 because the candidate changed `runtime/Engine/WeaponHost.cs`, a frozen legacy gameplay owner protected by a reviewed hash audit. Runtime checks, Release WASM publish, source index/profile, package verifier, and artifact retention were skipped. No package was produced; this is not a publishable build.
+- Hidden dependency recorded before retry in the reload closure: all quick/reserve fixture setup must remain in `runtime/Checks/WeaponContracts.cs`. The correction is to revert `WeaponHost.cs` entirely and use reflection in the test to set `ChangeMagazine.quick` and add a source `Magazine` to the original `Equipment` reserve list. This still exercises the original source reload task and state transitions; it introduces no host or gameplay behavior change.
+- Site v73 was rechecked during this run. Sites reports v73 source commit `5ca69fc5a4b6538121b00aece66a8587997cf1f5`, archive hash `sha256:d893e55c88784cdd059d1e386445c217dddbf29f9ea5d6d5ac89fbd3105658dc`, 2,688 files, live URL `https://crisis-response-runtime.craftysnipe13.chatgpt.site`. GitHub `main` remains `d7af0076274ff0ae4da3da5f84e2d346e94e3292`; `develop/wasm` is on this independent WASM line. The exact source/branch mismatch remains unresolved, so no publish was attempted.
+- Next: revert the host edit, implement test-only reflection, rerun full CI and record any new hidden dependency before further changes.

@@ -35,4 +35,10 @@ If the source test shows unexpected ammo changes, state completion, or event ord
 
 ## Status before implementation
 
-Inventory is complete. The next implementation is limited to explicit contract-fixture controls for reserve count/quick mode plus source-driven quick and empty-reserve reload assertions; no production gameplay behavior is planned to change.
+Inventory is complete. The current CI-discovered boundary requires all fixture controls to remain in the contract test; do not edit `runtime/Engine/WeaponHost.cs`. Next implementation: use test-only reflection to add one original `Magazine` to Equipment and set the original `ChangeMagazine.quick` field, then drive the source task and assert quick/empty-reserve paths. No production gameplay behavior is planned to change.
+
+## Hidden dependency discovered — run #69 boundary audit
+
+The first implementation placed quick/reserve fixture controls in `runtime/Engine/WeaponHost.cs`. Node and Chromium passed, but Python failed 3/45 boundary tests because the legacy gameplay-owner audit rejects any change to that file unless a frozen-hash exception is reviewed. This is intentional: the host is explicitly protected as a transport adapter. The Release job stopped before runtime/engine checks, WASM publish, source profile, or package verification; therefore run #69 produced no verified package.
+
+Correction before retry: revert the host edit completely. Keep fixture setup in `runtime/Checks/WeaponContracts.cs` using reflection to access the already constructed host's original M4A1, Equipment reserve list, and ChangeMagazine task. No runtime host or original gameplay behavior change is needed. This setup still drives the original task/IK/bolt ticks; it does not directly mutate reload state. If reflection cannot provide a safe fixture, defer the quick-path test rather than changing the protected owner.

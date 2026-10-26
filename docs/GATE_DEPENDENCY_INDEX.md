@@ -58,3 +58,8 @@ Run #68 verified the exact `develop/wasm` build and complete package, but it can
 ## Gate 3 follow-up — magazine reload lifecycle dependency inventory — 2026-10-26
 
 The pre-implementation dependency closure is in `docs/RELOAD_LIFECYCLE_DEPENDENCY_CLOSURE_2026-10-26.md`. It traces the actual `ChangeMagazine` state machine, single-M4A1 `WeaponHost` limitation, reserve ownership, IK and source audio events. Next bounded assertions: quick detachable-magazine reload with two reserve magazines, then a second reload with no reserve; preserve the existing standard reload ordering assertion. Fire interruption at State9+ and weapon switching cannot be reached with the current M4A1-only fixture; the concrete source prefab/task prerequisites are itemized in the closure. Do not claim those paths passed.
+
+
+## Gate 3 hidden dependency — protected weapon host test fixture — run #69
+
+Run #69 / workflow `40326371572`, exact candidate SHA `1ecd9322eb9bf8dbf6358e9f01c79796c6c65943`: Node contracts passed; Chromium IndexedDB and weapon audio passed; Python failed 3/45 tests because editing `runtime/Engine/WeaponHost.cs` violates the legacy gameplay-owner frozen-hash boundary. Runtime/release/package stages were skipped and no artifact/package was produced. The fix is test-only reflection in `runtime/Checks/WeaponContracts.cs` to set the source task's `quick` flag and append an original Magazine to the source Equipment list; revert `WeaponHost.cs` completely. Detailed boundary and reload dependency are in the closure document.
