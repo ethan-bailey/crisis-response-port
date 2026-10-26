@@ -5,7 +5,7 @@ import { sourceEffectAge } from './source-effect-clock.mjs';
 import { createOriginalWindowVisuals } from './original-window-visuals.mjs';
 import { createOriginalParticleEventBinding } from './original-particle-event-binding.mjs';
 import { createOriginalParticleRenderer } from './original-particle-renderer.mjs';
-import { createWeaponAudioRuntime, createSourceWeaponAudioDispatcher } from './weapon-audio-runtime.mjs';
+import { createWeaponAudioRuntime, createSourceWeaponAudioDispatcher, preloadWeaponAudio } from './weapon-audio-runtime.mjs';
 export async function loadWeaponData(){
  const r=await fetch('./assets/weapon-runtime.json.gz');if(!r.ok)throw new Error('Original weapon settings unavailable');
  const data=await new Response(r.body.pipeThrough(new DecompressionStream('gzip'))).json();
@@ -13,8 +13,8 @@ export async function loadWeaponData(){
  // small weapon manifest is available. Waiting until the full character,
  // physics, and presentation graph is ready made the first shots silent.
  Object.defineProperty(data,'audioRuntime',{value:createWeaponAudioRuntime(data.audio),enumerable:false});
- for(const [name,info] of Object.entries(data.audio||{}))data.audioRuntime.load(name,info.url);
- data.renderMaterials=await loadSourceCutoutMaterials();return data;
+ const [,renderMaterials]=await Promise.all([preloadWeaponAudio(data.audio,data.audioRuntime),loadSourceCutoutMaterials()]);
+ data.renderMaterials=renderMaterials;return data;
 }
 export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,particleSources){
  const audio=data.audioRuntime||createWeaponAudioRuntime(data.audio);
