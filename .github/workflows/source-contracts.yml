@@ -42,7 +42,7 @@ concurrency:
 
 jobs:
   verify:
-    name: Contracts and Release WASM publish
+    name: Contracts, Release WASM and full-profile browser cache
     runs-on: ubuntu-24.04
     timeout-minutes: 40
     env:
@@ -278,6 +278,12 @@ jobs:
           path: ${{ runner.temp }}/cpr-site-package.tar.gz
           if-no-files-found: error
           retention-days: 14
+
+      - name: Install Chromium for full-profile persistence acceptance
+        run: game/node_modules/.bin/playwright install --with-deps chromium
+
+      - name: Exercise production loader with the complete Mission profile in IndexedDB
+        run: node scripts/indexeddb_fullprofile_browser_smoke.mjs "$RUNNER_TEMP/cpr-site-package/scene-data/fullsource/global-ui-mission-operator"
 
   indexeddb-browser:
     name: Chromium IndexedDB cache acceptance
