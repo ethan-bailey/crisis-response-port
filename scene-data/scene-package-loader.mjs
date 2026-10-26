@@ -111,8 +111,8 @@ async function fetchCompressedAsset(url, expected, label, signal, persistentCach
 
 // Blazor's byte[] JS interop path is version-sensitive and the hosted .NET 8
 // runtime rejects Uint8Array arguments as an unexpected JSON byte array.
-// Keep the interop payload an ordinary string, encoding only one asset at a
-// time so large profiles do not require retaining base64 copies for the batch.
+// .NET 8 expects byte[] arguments as base64 text. Encoding the bounded batch
+// also avoids retaining base64 copies for the entire source profile at once.
 function bytesToBase64(bytes) {
   let binary = "";
   const chunkSize = 0x8000;
@@ -229,7 +229,7 @@ export async function deliverIncrementalSourceProfile(bridge, manifestUrl, {onPr
         profileElapsedMs:monotonicNow()-profileStarted,batchElapsedMs:monotonicNow()-batchStarted});
       const bridgeStarted=monotonicNow();
       const result=JSON.parse(await bridge.invokeMethodAsync("AddIncrementalSourceGzipAssetBatch",
-        assets.map(asset=>asset.path),compressedLengths,compressedBatch));
+        assets.map(asset=>asset.path),compressedLengths,bytesToBase64(compressedBatch)));
       const bridgeBatchMs=monotonicNow()-bridgeStarted;
       throwIfAborted(signal);
       if(!Array.isArray(result.items)||result.items.length!==assets.length)
