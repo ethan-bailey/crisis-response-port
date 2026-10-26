@@ -14,12 +14,6 @@ if(args.Length==2&&args[0]=="--mission-fire-alarm-audio-contract"){
     var package=LoadSourcePackage(args[1]);
     var world=new RuntimeWorld();
     var session=Crisis.Runtime.Browser.BrowserEntryTeamMission.Start(package,world);
-    var sourceMixer=Global.Context?.Mixer?.audioMixer
-        ??throw new InvalidOperationException("EntryTeam source Mixer has no recovered AudioMixer");
-    var sourceMixerParameters=new[]{"EffectsVolume","VoiceVolume","AmbienceVolume","InterfaceVolume","RealtimePitch"};
-    var mixerSetFloatResults=sourceMixerParameters.ToDictionary(name=>name,name=>sourceMixer.SetFloat(name,.5f),StringComparer.Ordinal);
-    if(mixerSetFloatResults.Values.Any(applied=>applied))
-        throw new InvalidOperationException($"Mixer setter accepted source strings that are not in the recovered exposed-parameter list: {JsonSerializer.Serialize(mixerSetFloatResults)}");
     var bridge=new FullSourceActorBridge(world,session.Actor);
     var fireAlarms=session.Mission.objects.Values.OfType<Crisis.Runtime.FullSource.FireAlarm>().ToArray();
     if(fireAlarms.Length==0)throw new InvalidOperationException("Mission 01 source scene has no FireAlarm instances to validate");
@@ -100,6 +94,12 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
     var package=LoadSourcePackage(args[1]);
     var world=new RuntimeWorld();
     var session=Crisis.Runtime.Browser.BrowserEntryTeamMission.Start(package,world);
+    var sourceMixer=Crisis.Runtime.FullSource.Global.Context?.Mixer?.audioMixer
+        ??throw new InvalidOperationException("EntryTeam source Mixer has no recovered AudioMixer");
+    var sourceMixerParameters=new[]{"EffectsVolume","VoiceVolume","AmbienceVolume","InterfaceVolume","RealtimePitch"};
+    var mixerSetFloatResults=sourceMixerParameters.ToDictionary(name=>name,name=>sourceMixer.SetFloat(name,.5f),StringComparer.Ordinal);
+    if(mixerSetFloatResults.Values.Any(applied=>applied))
+        throw new InvalidOperationException($"Mixer setter accepted source strings that are not in the recovered exposed-parameter list: {JsonSerializer.Serialize(mixerSetFloatResults)}");
     var bridge=new FullSourceActorBridge(world,session.Actor);
     var fireAlarms=session.Mission.objects.Values.OfType<Crisis.Runtime.FullSource.FireAlarm>().ToArray();
     if(fireAlarms.Length==0)throw new InvalidOperationException("Mission 01 source scene has no FireAlarm instances to validate");
