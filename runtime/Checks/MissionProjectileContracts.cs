@@ -142,8 +142,8 @@ public static class MissionProjectileContracts
                 foreach(var projectile in observedProjectiles)
                     flightTrace.Add(DescribeProjectile("after-flight-tick",tick+1,world,shooter,projectile));
             }
-            object? secondShot=null;
-            CharacterBody? secondVictim=null;
+            object secondShot=null;
+            CharacterBody secondVictim=null;
             if(selectedVictim.LastHitLimb!=null){
                 secondVictim=victims.FirstOrDefault(victim=>!ReferenceEquals(victim,selectedVictim));
                 if(secondVictim!=null){
@@ -164,8 +164,8 @@ public static class MissionProjectileContracts
                         foreach(var source in world.Objects.OfType<AudioSource>())source.Driver??=new MissionContractSilentAudioDriver();
                         foreach(var system in world.Objects.OfType<ParticleSystem>())system.Driver??=particleDriver;
                     });
-                    if(!shooter.RightArm.OnTarget||!weapon.ReadyToFire)
-                        throw new InvalidOperationException($"Second original shot prerequisites did not recover after authored pose/cycle: rightArmOnTarget={shooter.RightArm.OnTarget}, ready={weapon.ReadyToFire}");
+                    if(!shooter.rightArm.OnTarget||!weapon.ReadyToFire)
+                        throw new InvalidOperationException($"Second original shot prerequisites did not recover after authored pose/cycle: rightArmOnTarget={shooter.rightArm.OnTarget}, ready={weapon.ReadyToFire}");
                     var secondDamageLimb=secondVictim.limbMap.TryGetValue(LimbId.Abdomen,out secondAbdomen)?secondAbdomen:secondVictim.limbMap[LimbId.Torso];
                     var secondDamageBefore=DescribeDamageState(secondVictim,secondDamageLimb);
                     var secondShotsBefore=shooter.ShotsFired;
