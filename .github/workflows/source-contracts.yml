@@ -33,6 +33,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: read
 
 concurrency:
@@ -113,69 +114,94 @@ jobs:
           test -s "$root/browser-input.mjs"
           find "$root" -type f -name '*.wasm' -print -quit | grep -q .
 
-      - name: Build and verify bounded Mission candidate package (Version prefab deferred)
+      - name: Download the pinned original Unity recovery artifact
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: crisis-response-recovery-direct-v3-1
+          repository: ${{ github.repository }}
+          run-id: 38582072502
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: ${{ runner.temp }}/recovery-artifact
+
+      - name: Verify and index complete original Unity source
+        id: recovered-source
         shell: bash
         run: |
           set -euo pipefail
-          printf '{"dotnet":"8.0.426"}\n' > "$RUNNER_TEMP/cpr-toolchain.json"
-          python3 scripts/package_wasm_site.py build \
-            --repo "$GITHUB_WORKSPACE" \
-            --published "$RUNNER_TEMP/cpr-browser-publish/wwwroot" \
-            --output "$RUNNER_TEMP/cpr-site-package" \
-            --toolchain "$RUNNER_TEMP/cpr-toolchain.json" \
-            --incremental-source-package "$GITHUB_WORKSPACE/scene-data/crisis-response-scenes.json.gz" \
-            --incremental-profile mission-recovered-roots-candidate \
-            --incremental-root "Assets/GameObject/Interior mode UI.prefab" \
-            --incremental-root "Assets/Resources/ui/Interaction menu.prefab" \
-            --incremental-root "Assets/Resources/characters/Operator.prefab" \
-            --incremental-root "Assets/Scenes/Mission 01.unity" \
-            --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
-            | tee "$RUNNER_TEMP/cpr-package-build.json"
-          python3 - "$RUNNER_TEMP/cpr-site-package/scene-data/fullsource/mission-recovered-roots-candidate/manifest.json" "$GITHUB_WORKSPACE/scene-data/crisis-response-scenes.json.gz" <<'PY'
+          recovery_archive="$(find "$RUNNER_TEMP/recovery-artifact" -maxdepth 1 -type f -print -quit)"
+          test -n "$recovery_archive"
+          expected_archive_sha="cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d"
+          printf '%s  %s\\n' "$expected_archive_sha" "$recovery_archive" | sha256sum -c -
+          unzip -tq "$recovery_archive"
+          project_root="$RUNNER_TEMP/recovered-project"
+          mkdir -p "$project_root"
+          unzip -q "$recovery_archive" -d "$project_root"
+          project="$project_root/export/ExportedProject"
+          test -s "$project/Assets/Scenes/Mission 01.unity"
+          python3 scripts/extract_runtime_scene.py "$project" "$RUNNER_TEMP/cpr-full-source.json"
+          echo "recovery_sha256=$expected_archive_sha" >> "$GITHUB_OUTPUT"
+          echo "source_index_sha256=$(sha256sum "$RUNNER_TEMP/cpr-full-source.json" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Build and verify complete Mission source package
+        shell: bash
+        env:
+          RECOVERY_SHA256: ${{ steps.recovered-source.outputs.recovery_sha256 }}
+          SOURCE_INDEX_SHA256: ${{ steps.recovered-source.outputs.source_index_sha256 }}
+        run: |
+          set -euo pipefail
+          printf '{"dotnet":"8.0.426","recoveryArchiveSha256":"%s","sourceIndexSha256":"%s"}\\n' "$RECOVERY_SHA256" "$SOURCE_INDEX_SHA256" > "$RUNNER_TEMP/cpr-toolchain.json"
+          python3 scripts/package_wasm_site.py build --repo "$GITHUB_WORKSPACE" --published "$RUNNER_TEMP/cpr-browser-publish/wwwroot" --output "$RUNNER_TEMP/cpr-site-package" --toolchain "$RUNNER_TEMP/cpr-toolchain.json" --incremental-source-package "$RUNNER_TEMP/cpr-full-source.json" --incremental-profile global-ui-mission-operator --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" | tee "$RUNNER_TEMP/cpr-package-build.json"
+          python3 - "$RUNNER_TEMP/cpr-site-package/scene-data/fullsource/global-ui-mission-operator/manifest.json" "$RUNNER_TEMP/cpr-full-source.json" "$RUNNER_TEMP/cpr-toolchain.json" <<'PY'
           import hashlib, json, sys
           profile = json.load(open(sys.argv[1], encoding="utf-8"))
-          archive = open(sys.argv[2], "rb").read()
-          expected = hashlib.sha256(archive).hexdigest()
-          if profile.get("profile") != "mission-recovered-roots-candidate":
-              raise SystemExit("generated Mission source profile has the wrong identity")
-          if profile.get("sourcePackageSha256") != expected:
-              raise SystemExit("generated Mission profile does not identify the tracked source archive")
+          source_index = open(sys.argv[2], "rb").read()
+          provenance = json.load(open(sys.argv[3], encoding="utf-8"))
           expected_roots = [
+              "Assets/Resources/Global context.prefab",
               "Assets/GameObject/Interior mode UI.prefab",
               "Assets/Resources/ui/Interaction menu.prefab",
               "Assets/Resources/characters/Operator.prefab",
+              "Assets/Resources/Version.prefab",
               "Assets/Scenes/Mission 01.unity",
           ]
-          if profile.get("rootAssets") != expected_roots:
-              raise SystemExit(f"unexpected candidate roots: {profile.get('rootAssets')}")
-          if profile.get("assetCount", 0) < len(expected_roots):
-              raise SystemExit("generated Mission candidate profile is incomplete")
-          print(f"Mission candidate source profile: {profile['assetCount']} assets; source archive SHA-256 {expected}; deferred roots: Assets/Resources/Global context.prefab and Assets/Resources/Version.prefab")
+          checks = {
+              "profile": profile.get("profile") == "global-ui-mission-operator",
+              "roots": profile.get("rootAssets") == expected_roots,
+              "source index identity": profile.get("sourcePackageSha256") == hashlib.sha256(source_index).hexdigest() == provenance.get("sourceIndexSha256"),
+              "recovery provenance": provenance.get("recoveryArchiveSha256") == "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
+              "asset count": profile.get("assetCount") == 1919,
+              "record count": profile.get("recordCount") == 22365,
+              "compressed bytes": profile.get("compressedAssetBytes") == 97767549,
+              "source bytes": profile.get("uncompressedAssetBytes") == 205514345,
+              "maximum source asset": profile.get("maximumAssetBytes") == 14858177,
+          }
+          failures = [name for name, ok in checks.items() if not ok]
+          if failures:
+              raise SystemExit("full Mission profile invariant failed: " + ", ".join(failures))
+          print("Full six-root Mission profile: 1,919 assets, 22,365 records, 97,767,549 compressed asset bytes, 205,514,345 source bytes; source index and recovery archive identities verified.")
           PY
-          python3 scripts/package_wasm_site.py verify "$RUNNER_TEMP/cpr-site-package" \
-            | tee "$RUNNER_TEMP/cpr-package-verify.json"
+          python3 scripts/package_wasm_site.py verify "$RUNNER_TEMP/cpr-site-package" | tee "$RUNNER_TEMP/cpr-package-verify.json"
           python3 - "$RUNNER_TEMP/cpr-site-package/build-manifest.json" "$GITHUB_SHA" <<'PY'
           import json, sys
           manifest = json.load(open(sys.argv[1], encoding="utf-8"))
           if manifest["sourceCommit"] != sys.argv[2]:
               raise SystemExit(f"package source {manifest['sourceCommit']} != workflow SHA {sys.argv[2]}")
           if manifest.get("scope", {}).get("originalGameComplete") is not False:
-              raise SystemExit("package parity scope must remain explicitly incomplete")
+              raise SystemExit("full-game parity must remain explicitly unclaimed")
           PY
-          tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner \
-            -cf "$RUNNER_TEMP/cpr-site-package.tar" -C "$RUNNER_TEMP/cpr-site-package" .
+          tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner -cf "$RUNNER_TEMP/cpr-site-package.tar" -C "$RUNNER_TEMP/cpr-site-package" .
           gzip -n -6 "$RUNNER_TEMP/cpr-site-package.tar"
           archive_sha="$(sha256sum "$RUNNER_TEMP/cpr-site-package.tar.gz" | cut -d' ' -f1)"
           package_files="$(find "$RUNNER_TEMP/cpr-site-package" -type f | wc -l | tr -d ' ')"
-          printf '\n### Bounded Mission package candidate\n\n- Source SHA: `%s`\n- Release eligibility: **NO — recovered source archive omits Assets/Resources/Global context.prefab and Assets/Resources/Version.prefab**\n- Package files (including build manifest): `%s`\n- Deterministic tar.gz SHA-256: `%s`\n- Build result: `%s`\n- Independent verify: `%s`\n' \
-            "$GITHUB_SHA" "$package_files" "$archive_sha" \
+          printf '\\n### Integrity-verified full Mission source package\\n\\n- Source SHA: `%s`\\n- Recovery archive SHA-256: `%s`\\n- Source index SHA-256: `%s`\\n- Package files (including build manifest): `%s`\\n- Deterministic tar.gz SHA-256: `%s`\\n- Full-game parity: **NOT CLAIMED**\\n- Build result: `%s`\\n- Independent package verify: `%s`\\n' \
+            "$GITHUB_SHA" "$RECOVERY_SHA256" "$SOURCE_INDEX_SHA256" "$package_files" "$archive_sha" \
             "$(cat "$RUNNER_TEMP/cpr-package-build.json")" \
             "$(cat "$RUNNER_TEMP/cpr-package-verify.json")" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Retain integrity-verified Mission candidate for analysis
+      - name: Retain integrity-verified complete Mission site package
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: crisis-response-site-candidate-${{ github.sha }}
+          name: crisis-response-site-package-${{ github.sha }}
           path: ${{ runner.temp }}/cpr-site-package.tar.gz
           if-no-files-found: error
           retention-days: 14
