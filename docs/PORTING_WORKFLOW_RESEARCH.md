@@ -19,7 +19,8 @@ Finally, measure behavior in layers. A source inventory, contract test, successf
 3. Inventory the full dependency closure. Batch recoverable dependencies and related fixes before implementing the dependent slice.
 4. Implement in original gameplay code or the smallest required browser compatibility adapter. Keep source identity and serialized data intact.
 5. Run existing relevant checks and the pinned .NET 8.0.426 browser build. The Actions workflow performs those checks for code changes; it does not deploy.
-6. Record exact SHA, commands, outcomes, measurements, limitations, and one next action in NEXT_AGENT.md. Keep device-only gates explicit and continue independent work.
+6. For a Site build, record the public GitHub source SHA separately from the Site source commit and package/archive hashes. Verify a file-level crosswalk; a different Site source tree is not covered by GitHub Actions for the public branch.
+7. Record exact SHA, commands, outcomes, measurements, limitations, and one next action in NEXT_AGENT.md. Keep device-only gates explicit and continue independent work.
 
 See the canonical agent prompt in AGENTS.md. NEXT_AGENT.md is the live progress record.
 
