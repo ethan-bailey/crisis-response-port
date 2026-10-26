@@ -94,9 +94,10 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
     var package=LoadSourcePackage(args[1]);
     var world=new RuntimeWorld();
     var session=Crisis.Runtime.Browser.BrowserEntryTeamMission.Start(package,world);
-    var listeners=session.Mission.world.Objects.OfType<AudioListener>().ToArray();
-    if(listeners.Length!=2||listeners.Count(listener=>listener.isActiveAndEnabled)!=1)
-        throw new InvalidOperationException($"Mission 01 listener import did not preserve the two authored components and active-scene selection: total={listeners.Length},active={listeners.Count(listener=>listener.isActiveAndEnabled)}");
+    var missionCameraListener=session.Mission.world.Objects.OfType<GameObject>().SingleOrDefault(go=>go.name=="Camera")?.GetComponent<AudioListener>();
+    var missionIntroListener=session.Mission.world.Objects.OfType<GameObject>().SingleOrDefault(go=>go.name=="Mission intro")?.GetComponent<AudioListener>();
+    if(missionCameraListener==null||missionIntroListener==null||!missionCameraListener.isActiveAndEnabled||missionIntroListener.isActiveAndEnabled)
+        throw new InvalidOperationException($"Mission 01 scene-owned AudioListeners did not retain their authored owners and active states: camera={missionCameraListener?.isActiveAndEnabled},intro={missionIntroListener?.isActiveAndEnabled},allListeners={session.Mission.world.Objects.OfType<AudioListener>().Count()}");
     var authoredAudio=session.Mission.world.Objects.OfType<AudioSource>().SingleOrDefault(source=>source.gameObject.name=="Room 4 door")
         ??throw new InvalidOperationException("Mission 01 Room 4 door has no imported AudioSource");
     if(!float.IsFinite(authoredAudio.dopplerLevel)||authoredAudio.dopplerLevel!=0f||authoredAudio.minDistance!=1f||authoredAudio.maxDistance!=10f||authoredAudio.rolloffMode!=1||authoredAudio.rolloffCustomCurve==null||authoredAudio.rolloffCustomCurve.length!=2)
