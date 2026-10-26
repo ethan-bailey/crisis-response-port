@@ -43,9 +43,33 @@ rejected that request before the queue could handle it.
 
 ## Release and remaining acceptance
 
-No release provenance is recorded until the changed source is pushed and the
-exact Site source SHA is rebuilt, packaged, and independently verified.
-Recheck the production deployment after that exact archive is saved.
+Site v83 is deployed from exact Site source commit
+`9c875e649f113d1c9fe91fbf6b34b59b091401ee` at the existing owner-private URL.
+Saved version ID:
+`appgprj_6acfef7174888191bc2bc2f269f60acc~appgver_79849b3c7700819191cfa83dc9a264b6`.
+Deployment ID: `appgdep_6adfc00174208191b605e69abf497e5a`.
+
+The package verifier passed with 2,686 files, 199 Blazor resources, 195 WASM
+files, and 1,919 Mission assets / 22,365 records. The profile contains
+95,091,064 compressed asset bytes and 180,193,684 source bytes; source package
+SHA-256 `b2332a1c325c3cee0e2a42e26b05affd3282696a3e840bc7ad134f05dbb2a04b`.
+An independent sequential audit of the exact Site archive matched every
+manifest file hash and size, the build manifest, and the project hosting
+identity: 2,688 regular files total, no missing or extra files, and zero hash
+mismatches. Local archive SHA-256
+`9c95a47fef6d9409083c9e5c16b947b7e2719662e6db735d82ab04c1c839aace`; Sites
+archive metadata reports
+`sha256:38923e48beded1d0822c1d7e6bea5da3dafa36e2f86ec51b6129e598461e359a`.
+
+Public run #89 on commit `3aecf75ed4c19f55828bbb837caca4c2da63209d` failed
+in the full-profile mission-outcome check because that headless fixture had
+not bound its silent audio driver at world scope before scene-created
+AudioSources activated; it also rejected an undecoded scene light-hum clip.
+The independent Chromium cache/audio job passed. The fixture now binds the
+deferred silent driver before loading the scene. Local
+`--mission-outcome-contract` passed after the correction, including the
+authored MissionEndMenu camera transition. Exact-source CI for this follow-up
+is pending.
 
 Owner iPhone Safari frame rate, operator pose/grip alignment, visual/audio
 output, particle rendering, and full game parity remain open. These headless

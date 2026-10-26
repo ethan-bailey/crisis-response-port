@@ -276,6 +276,10 @@ if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-ui-contra
     // graph; suppress those roots before their Awake callbacks, as a UI driver
     // would, while preserving the mission, operators, occupants, and systems.
     if(runWithOriginalUI)Console.Error.WriteLine("MISSION-UI stage: loading scene records");
+    // Scene records can instantiate AudioSources whose Awake callbacks play
+    // authored hums before the post-load setup runs. Bind the headless driver
+    // at world scope so every newly imported scene source inherits it.
+    world.AudioSourceDriver=new MissionContractSilentAudioDriver();
     var mission=SceneLoader.Load(package,"Assets/Scenes/Mission 01.unity",world,loaded=>{
         if(runWithOriginalUI)Console.Error.WriteLine("MISSION-UI stage: scene records loaded; activating authored UI");
         if(!runWithOriginalUI)foreach(var ui in loaded.objects.Values.OfType<Crisis.Runtime.FullSource.MissionUI>())ui.gameObject.SetActive(false);
@@ -705,7 +709,7 @@ if(args.Length>0){
     Console.WriteLine(SpawnerGameplayContracts.Run(package));
 }
 
-sealed class MissionContractSilentAudioDriver:IAudioClipPlaybackDriver {
+sealed class MissionContractSilentAudioDriver:IAudioClipPlaybackDriver,IDeferredAudioSourceDriver {
     public bool IsPlaying=>false;
     public void PlayOneShot(AudioClip clip,float volume,int priority){}
     public void Play(AudioClip clip,float volume,float pitch,bool loop,bool muted,int priority){}
