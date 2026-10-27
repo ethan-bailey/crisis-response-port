@@ -7,11 +7,11 @@
 - Local verification: focused diagnostic tests 2/2; full Node suite 168/168 after pinned PhysX vendor materialization; Python suite 53/53; `git diff --check` passed. No local .NET SDK 8.0.426 or canonical recovery archive is present, so Release/package/provenance checks are not run. Pushed with expected-HEAD from `fe83b2d`; remote ref confirmed `62c793dfc59f609335f0b2b80263fed1b170a217`. Actions run `40474259967` / #129 completed successfully on that exact SHA, including the exact source build/package and browser job (see workflow record). This diagnostic is not acceptance of visual grounding; no Site publish.
 - Next: run the diagnostic on the actual production Mission page through the browser harness, capture the same actor before/after contact settling, compare source/contact/projected root and identified floor top; only then decide whether there is a real render/contact defect. Continue independent source-ready work while hosted checks run. No Site publish.
 
-## Grounding diagnostic stage-order follow-up (local; ready to push)
+## Grounding diagnostic stage-order follow-up — source SHA `f60a3ad74204cfe208acdf391332c8520aff15a1`
 
 Review of the first diagnostic found that its `sourceRoot` field was sampled after synchronization, so it duplicated the contact root and could not expose the displacement across the frame. The follow-up now captures four distinct stages: FullSource snapshot before contact stepping, contact state before stepping, contact state after stepping, and synchronized source position, then compares the projected render root. It also reports both the initial capsule-bottom estimate and the current post-contact estimate. This is a diagnostic correction, not a gameplay fix.
 
-Focused grounding tests pass 2/2; full Node suite passes 168/168 on the local follow-up. `git diff --check` passes. Python previously passed 53/53 on the same parent code; no .NET SDK 8.0.426 is installed locally. After pushing, run the exact hosted workflow and use the actual Mission browser harness to collect stage telemetry; leave visual acceptance unclaimed until a real frame is inspected.
+Focused grounding tests pass 2/2; full Node suite passes 168/168 on the local follow-up. `git diff --check` passes. Python previously passed 53/53 on the same parent code; no .NET SDK 8.0.426 is installed locally. The batch was pushed by expected-HEAD from `bbf5bfb`; remote ref confirms this SHA. Exact Actions run `40478883858` is queued (previous diagnostic SHA `62c793d` passed run #129). Use the actual Mission browser harness to collect stage telemetry; leave visual acceptance unclaimed until a real frame is inspected.
 
 ## Latest exact-source checkpoint — Actions #128 (2026-10-27)
 
