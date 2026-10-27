@@ -45,3 +45,7 @@ Local checks on the unpushed repair based on source SHA
 
 This closes no visual, native physics, or iPhone acceptance. Gate 2 touch/aim
 feel and gate 5 rendered/native pose remain open until their own evidence passes.
+
+## User-confirmed deployed aim failure — 2026-10-27
+
+The user reports the live page still throws `Can't find variable: aimQuadTarget` at `game/:581:22`. Read-only Sites metadata confirms the publication remains v85; the source fix is present on current `develop/wasm` (declaration at script scope before `frame()`) but has not been published. This is a deployed/source version mismatch, not evidence that the current source fix failed. Exact-source Actions #141 and its packaged Mission browser acceptance are still pending. No Site publish or access-policy change is authorized in this recurring run. Following the separate release gate, publish only after exact source build and package integrity pass and only under a separate explicit release request.
