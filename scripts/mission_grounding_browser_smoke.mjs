@@ -178,6 +178,45 @@ try {
   assert.ok(Number.isFinite(capsule.bottom) && Number.isFinite(capsule.verticalHalfExtent), 'authored capsule axis and lower bound must be reported');
   assert.ok(Array.isArray(floorCandidates), 'authored nearby floor candidates must be reported');
   assert.deepEqual(pageErrors, [], 'packaged Mission page must not throw browser runtime errors');
+  const movementStick = page.locator('#movementStick');
+  const stickBox = await movementStick.boundingBox();
+  assert.ok(stickBox && stickBox.width >= 176 && stickBox.height >= 176, 'packaged Mission keeps the enlarged thumb joystick');
+  const stickGeometry = await movementStick.evaluate(surface => {
+    const thumb = surface.querySelector('.stick-thumb');
+    const rect = surface.getBoundingClientRect();
+    return { rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height }, thumbWidth: thumb.offsetWidth, thumbHeight: thumb.offsetHeight };
+  });
+  const stickCenter = { x: stickGeometry.rect.left + stickGeometry.rect.width / 2, y: stickGeometry.rect.top + stickGeometry.rect.height / 2 };
+  const aimBeforeStick = await page.evaluate(() => window.__gameState().aimPoint);
+  await page.mouse.move(stickCenter.x, stickCenter.y);
+  await page.mouse.down();
+  const aimOnStickDown = await page.evaluate(() => window.__gameState().aimPoint);
+  assert.ok(Math.abs(aimOnStickDown[1] - aimBeforeStick[1]) < 1e-4, 'touch-down on the movement stick must preserve the current absolute aim');
+  await page.mouse.move(stickCenter.x, stickCenter.y - 24, { steps: 4 });
+  await page.waitForFunction(y => Math.abs(window.__gameState().aimPoint[1] - y) > 0.01, aimBeforeStick[1], { timeout: 5000 });
+  const verticalAim = await page.evaluate(() => window.__gameState().aimPoint[1]);
+  await page.mouse.move(stickCenter.x + 32, stickCenter.y - 24, { steps: 4 });
+  await page.waitForFunction(y => Math.abs(window.__gameState().aimPoint[1] - y) < 0.01, verticalAim, { timeout: 5000 });
+  const horizontalAim = await page.evaluate(() => window.__gameState().aimPoint[1]);
+  assert.ok(Math.abs(horizontalAim - verticalAim) < 0.01, 'horizontal joystick travel must leave the absolute vertical aim unchanged');
+  await page.mouse.up();
+  const releasedAim = await page.evaluate(() => window.__gameState().aimPoint[1]);
+  assert.ok(Math.abs(releasedAim - verticalAim) < 0.01, 'releasing the joystick must preserve the last absolute aim');
+  const travelX = (stickGeometry.rect.width - stickGeometry.thumbWidth) / 2 - 4;
+  await page.mouse.move(stickCenter.x, stickCenter.y);
+  await page.mouse.down();
+  await page.mouse.move(stickCenter.x + travelX * 1.5, stickCenter.y, { steps: 4 });
+  assert.equal(await movementStick.evaluate(surface => surface.classList.contains('sprinting')), false, 'the deliberate rim resistance must hold below the sprint wall');
+  await page.mouse.move(stickCenter.x + travelX * 1.8, stickCenter.y, { steps: 4 });
+  assert.equal(await movementStick.evaluate(surface => surface.classList.contains('sprinting')), true, 'pushing through the resistance wall must activate sprint');
+  const sprintPuck = await movementStick.evaluate(surface => {
+    const thumb = surface.querySelector('.stick-thumb');
+    const x = Number(thumb.style.transform.match(/translate3d\(([-\d.]+)px/)?.[1] ?? 0);
+    return { x, rim: surface.getBoundingClientRect().width / 2, radius: thumb.offsetWidth / 2 };
+  });
+  assert.ok(sprintPuck.x > sprintPuck.rim + sprintPuck.radius, 'the sprint puck must fully break through the outer rim');
+  await page.mouse.up();
+  assert.equal(await movementStick.evaluate(surface => surface.classList.contains('sprinting')), false, 'releasing the stick must clear the sprint wall state');
   const walkStart = state.playerX;
   await page.keyboard.down('KeyD');
   await page.waitForFunction(start => {

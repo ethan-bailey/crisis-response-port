@@ -64,10 +64,10 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 #copyErrorStatus{min-height:1.2em;color:#d9e8f1}
 #errorDetails{flex:1;min-height:0;margin:0;padding:9px;border-radius:7px;background:#140e0f;color:#fff1f1;white-space:pre-wrap;overflow:auto;overflow-wrap:anywhere;font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;user-select:text;-webkit-user-select:text;touch-action:pan-y}
 /* Thumb joystick: center spring, walk ring and sprint rim. Landscape safe area. */
-#movementStick{position:relative;display:block;width:144px;height:144px;min-width:144px;flex:none;border-radius:50%;border:2px solid #90a5b89c;background:radial-gradient(circle at center,#263a4a75 0 23%,#14212bc9 25% 64%,#233448dc 65% 100%);box-shadow:inset 0 0 0 2px #b8d4ea18,0 6px 18px #03080ca8;touch-action:none;user-select:none;-webkit-user-select:none;pointer-events:auto;--stick-power:0}
+#movementStick{position:relative;display:block;width:min(24vw,208px);height:min(24vw,208px);min-width:176px;flex:none;border-radius:50%;border:2px solid #90a5b89c;background:radial-gradient(circle at center,#263a4a75 0 23%,#14212bc9 25% 64%,#233448dc 65% 100%);box-shadow:inset 0 0 0 2px #b8d4ea18,0 6px 18px #03080ca8;touch-action:none;user-select:none;-webkit-user-select:none;pointer-events:auto;--stick-power:0}
 #movementStick:before{content:"";position:absolute;inset:18%;height:auto;left:18%;right:18%;top:18%;border:1px dashed #98b1c65e;border-radius:50%;transform:none;background:none}
 #movementStick:after{content:"";position:absolute;inset:5px;height:auto;top:5px;left:5px;bottom:5px;right:5px;border:2px solid #a4ceec5a;border-radius:50%;pointer-events:none}
-#movementStick .stick-thumb{position:absolute;left:calc(50% - 28px);top:calc(50% - 28px);width:56px;height:56px;border-radius:50%;border:2px solid #d6e9f2e8;background:radial-gradient(circle at 35% 30%,#5385a6,#25445f);box-shadow:0 3px 7px #0309119c,inset 0 0 0 6px #c9e7fc12;pointer-events:none;z-index:2;transition:transform .12s cubic-bezier(.2,.9,.2,1)}
+#movementStick .stick-thumb{position:absolute;left:calc(50% - 32px);top:calc(50% - 32px);width:64px;height:64px;border-radius:50%;border:2px solid #d6e9f2e8;background:radial-gradient(circle at 35% 30%,#5385a6,#25445f);box-shadow:0 3px 7px #0309119c,inset 0 0 0 6px #c9e7fc12;pointer-events:none;z-index:2;transition:transform .12s cubic-bezier(.2,.9,.2,1)}
 #movementStick.active .stick-thumb{transition:none;background:radial-gradient(circle at 35% 30%,#62a3cc,#275374)}
 #movementStick.sprinting{border-color:#e6c48c;box-shadow:inset 0 0 0 2px #e9d4aa30,0 0 16px #e6c48c24}
 #movementStick.detent:after{border-color:#e6c48c;transform:scale(.96)}
@@ -81,16 +81,16 @@ button:disabled{opacity:.45}#help a{color:#a8d9ff}
 #controls button.action-icon svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
 #controls #fire svg{width:30px;height:30px}
 #controls button.action-icon:focus-visible,#movementStick:focus-visible{outline:2px solid #b3dbf5;outline-offset:3px}
-@media(max-height:430px){#movementStick{width:128px;height:128px;min-width:128px}#movementStick .stick-thumb{width:48px;height:48px;left:calc(50% - 24px);top:calc(50% - 24px)}}
+@media(max-height:430px){#movementStick{width:176px;height:176px;min-width:176px}#movementStick .stick-thumb{width:56px;height:56px;left:calc(50% - 28px);top:calc(50% - 28px)}}
 @media(prefers-reduced-motion:reduce){#movementStick .stick-thumb{transition:none}}
 /* Restore the proven iPhone controls and suppress the system text callout. */
 html,body,#stage,canvas,#controls,#movementStick,#controlsHelp,#controlsGuide{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 #stage,canvas{-webkit-user-drag:none}
 *,*::before,*::after{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
-#movementStick{position:relative;display:block;width:144px;height:144px;min-width:144px;flex:none;border-radius:50%;border:2px solid #90a5b89c;background:radial-gradient(circle at center,#263a4a75 0 23%,#14212bc9 25% 64%,#233448dc 65% 100%);box-shadow:inset 0 0 0 2px #b8d4ea18,0 6px 18px #03080ca8;touch-action:none;user-select:none;-webkit-user-select:none;pointer-events:auto;--stick-power:0}
+#movementStick{position:relative;display:block;width:min(24vw,208px);height:min(24vw,208px);min-width:176px;flex:none;border-radius:50%;border:2px solid #90a5b89c;background:radial-gradient(circle at center,#263a4a75 0 23%,#14212bc9 25% 64%,#233448dc 65% 100%);box-shadow:inset 0 0 0 2px #b8d4ea18,0 6px 18px #03080ca8;touch-action:none;user-select:none;-webkit-user-select:none;pointer-events:auto;--stick-power:0}
 #movementStick:before{content:"";position:absolute;inset:18%;height:auto;left:18%;right:18%;top:18%;border:1px dashed #98b1c65e;border-radius:50%;transform:none;background:none}
 #movementStick:after{content:"";position:absolute;inset:5px;height:auto;top:5px;left:5px;bottom:5px;right:5px;border:2px solid #a4ceec5a;border-radius:50%;pointer-events:none}
-#movementStick .stick-thumb{position:absolute;left:calc(50% - 28px);top:calc(50% - 28px);width:56px;height:56px;border-radius:50%;border:2px solid #d6e9f2e8;background:radial-gradient(circle at 35% 30%,#5385a6,#25445f);box-shadow:0 3px 7px #0309119c,inset 0 0 0 6px #c9e7fc12;pointer-events:none;z-index:2;transition:transform .12s cubic-bezier(.2,.9,.2,1)}
+#movementStick .stick-thumb{position:absolute;left:calc(50% - 32px);top:calc(50% - 32px);width:64px;height:64px;border-radius:50%;border:2px solid #d6e9f2e8;background:radial-gradient(circle at 35% 30%,#5385a6,#25445f);box-shadow:0 3px 7px #0309119c,inset 0 0 0 6px #c9e7fc12;pointer-events:none;z-index:2;transition:transform .12s cubic-bezier(.2,.9,.2,1)}
 #movementStick.active .stick-thumb{transition:none;background:radial-gradient(circle at 35% 30%,#62a3cc,#275374)}
 #movementStick.sprinting{border-color:#e6c48c;box-shadow:inset 0 0 0 2px #e9d4aa30,0 0 16px #e6c48c24}
 #movementStick.detent:after{border-color:#e6c48c;transform:scale(.96)}
@@ -102,7 +102,7 @@ html,body,#stage,canvas,#controls,#movementStick,#controlsHelp,#controlsGuide{-w
 #controlsGuide{position:absolute;z-index:3;top:max(60px,calc(env(safe-area-inset-top) + 56px));right:max(8px,env(safe-area-inset-right));width:min(310px,calc(100vw - 24px));padding:14px 16px;border:1px solid #697887;border-radius:12px;background:#111820f2;box-shadow:0 12px 36px #0009;color:#e9eef5;font-size:13px;line-height:1.45;touch-action:auto}
 #controlsGuide h2{margin:0 40px 8px 0;font-size:16px}#controlsGuide p{margin:7px 0;color:#cbd5df}#controlsGuide strong{color:#fff}
 #controlsGuide .scope{margin-top:10px;padding-top:9px;border-top:1px solid #536170;color:#b8c7d4;font-size:12px}#controlsGuide[hidden]{display:none}
-@media(max-height:430px){#movementStick{width:128px;height:128px;min-width:128px}#movementStick .stick-thumb{width:48px;height:48px;left:calc(50% - 24px);top:calc(50% - 24px)}}
+@media(max-height:430px){#movementStick{width:176px;height:176px;min-width:176px}#movementStick .stick-thumb{width:56px;height:56px;left:calc(50% - 28px);top:calc(50% - 28px)}}
 @media(prefers-reduced-motion:reduce){#movementStick .stick-thumb{transition:none}}
 
 

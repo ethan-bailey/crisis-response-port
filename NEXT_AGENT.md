@@ -2,30 +2,33 @@
 
 ## Current live branch and verification status
 
-- Repository `ethan-bailey/crisis-response-port`, branch `develop/wasm`. Live remote HEAD is `55648848ce427b272708f25fc32c8226da048b05`, tree `fae5a231bb69127fe9088392b0dc1e17f3419456`. A clean detached worktree at that exact source SHA is `/workspace/scratch/crisis-response-port-live`; the original workspace at `/workspace/scratch/crisis-response-port-recovery` remains stale at `dc325dc` and has modified workflow/evidence/game files plus an untracked user archive. Preserve it; do not reset, merge, or overwrite those files. The pinned local .NET SDK is unavailable (`dotnet: command not found`); use hosted CI for SDK 8.0.426.
-- Site was previously verified at v85 with custom owner-only access, policy revision 1, and zero external visitors. This task does not publish or alter Site access.
+- Repository `ethan-bailey/crisis-response-port`, branch `develop/wasm`, live HEAD `747cb9494758b8c2cf759e060a6e893b107f4bec`, tree `f06f1b68d5b492a2acb46a38890143014507394c`. A clean worktree is available at `/workspace/scratch/crisis-response-port-input` for the next exact source batch. The original workspace at `/workspace/scratch/crisis-response-port-recovery` remains stale at `dc325dc` and has modified workflow/evidence/game files and an untracked archive; preserve it and do not reconcile/reset it. Local .NET SDK 8.0.426 is absent; use hosted CI.
+- Site was previously read-only verified at v85 with custom owner-only access, policy revision 1, and zero external visitors. Do not publish or alter access during this task.
 
-## Latest exact-source result — Actions #136, SHA `55648848`
+## Latest exact source result — adapter repair at `747cb949`
 
-Run `40485228497`, main job `122125219982`, tested exactly `55648848ce427b272708f25fc32c8226da048b05`. Node/Python/runtime/browser-audio/engine/FoundationChecks, pinned Release/WASM, recovered source/index provenance, complete Mission package integrity/retention, and profile IndexedDB loading passed. Full profile: 1,919 assets; transfer and hash verification finished in about 36.2 s. Packaged Mission startup then failed before the frame loop at the mixer handoff: `TypeError: audioStats.updateSourceAudioMixer is not a function` in `game/weapon-runtime.mjs`, called by `presentation.mjs` and `index.html` startup. `createWeaponEffects` forwarded two methods through `audioStats`, but that object exposed only `snapshot`. Independent Chromium job `122125219552` passed IndexedDB and production audio. Retained browser artifact `12725391858`, 188,281 bytes, SHA-256 `8c36d7c87df53a4195160c121dba39f10fca938e0d9b08801dfc00284dc83da2`.
+Actions run #137 (`40487614431`) is in progress on exact source SHA `747cb9494758b8c2cf759e060a6e893b107f4bec`. Its parent #136 (`40485228497`) on `55648848ce427b272708f25fc32c8226da048b05` passed source contracts, pinned Release/WASM, archive/index provenance, complete 1,919-asset Mission package integrity/retention, IndexedDB and independent Chromium audio, then failed the packaged Mission startup at the mixer call: `audioStats.updateSourceAudioMixer is not a function`. The wrapper returned by `createWeaponEffects` forwarded mixer and source-state methods but its statistics object only implemented `snapshot`; the real `createWeaponAudioRuntime` provides both. The adapter repair is `game/weapon-audio-stats.mjs`, used by `game/weapon-runtime.mjs`.
 
-## Prepared focused repair and local verification
+Local regression evidence on source contents based on `55648848`:
 
-Added `game/weapon-audio-stats.mjs` as a narrow adapter over the existing production audio runtime. `createWeaponEffects` now creates that facade, and `scripts/weapon_audio_runtime_test.mjs` asserts the exact startup mixer/event/time and per-frame state/time arguments and return values, plus production wiring. This repairs the evidenced caller/callee mismatch without altering recovered assets, owners, event ordering, or physics.
+- `node --test scripts/weapon_audio_runtime_test.mjs scripts/source_audio_mixer_test.mjs`: **31/31 passed**.
+- After `npm ci --prefix game --ignore-scripts` and `npm run --prefix game vendor`, `node --test scripts/*_test.mjs scripts/*_contracts.mjs`: **169/169 passed**.
+- `python3 -m unittest discover -s scripts -p '*test.py'`: **53/53 passed**.
+- `dotnet` unavailable locally, so local pinned build/package was **not run**. Exact hosted result for #137 is pending.
 
-- Focused: `node --test scripts/weapon_audio_runtime_test.mjs scripts/source_audio_mixer_test.mjs` — **31/31 passed**.
-- Full Node: after `npm ci --prefix game --ignore-scripts` and `npm run --prefix game vendor`, `node --test scripts/*_test.mjs scripts/*_contracts.mjs` — **169/169 passed**.
-- Python: `python3 -m unittest discover -s scripts -p '*test.py'` — **53/53 passed**.
-- `git diff --check` passed before the final evidence edits; rerun before commit. Local .NET/Release/package is **not run** because the SDK is absent.
-- Repair/evidence edits currently live in detached worktree `/workspace/scratch/crisis-response-port-live`; they have not yet been committed or pushed. **Next action:** rerun `git diff --check`, commit the repair and evidence, push by fast-forward/expected-HEAD from `55648848ce427b272708f25fc32c8226da048b05`, verify remote HEAD/tree, then inspect the exact CI run and packaged Mission startup log for that SHA. Do not mark the source package/startup gate passed until that run succeeds.
+## Dependency-ready touch-input batch
+
+The next source batch is prepared on top of live parent `747cb949` in `/workspace/scratch/crisis-response-port-input`: enlarge both actual circular-stick CSS definitions to `min(24vw,208px)` with a 176px floor, increase the thumb from 56px to 64px, and raise both compact-landscape overrides from 128px/48px to 176px/56px. The packaged FullSource browser smoke test now exercises the actual page: joystick size, touch-down aim anchoring, vertical-only aim change, horizontal aim invariance, aim preservation on release, deliberate below/above-wall sprint response, puck fully clearing the outer rim, and sprint clearing on release. Existing source movement algorithm remains unchanged.
+
+- Relevant full dependency closure read: `docs/APPROVED_IPHONE_ANALOG_MOVEMENT.md`, `docs/IPHONE_INPUT_AND_PARITY_AUDIT_2026-10-14.md`, and gate 2 in `docs/GATE_DEPENDENCY_INDEX.md`. Original input mapping, pointer capture/cancel/background reset, vertical absolute aim and 1.75×/1.5× wall/hysteresis remain intact.
+- Local verification on modified contents based on `747cb949`: `node --check scripts/mission_grounding_browser_smoke.mjs`; `node --test scripts/browser_input_test.mjs` **20/20**; complete Node suite **169/169** after PhysX vendor install; selector/override and assertion-presence check passed; `git diff --check` passed. The package-backed browser assertions have **not** yet run on these contents; exact hosted verification is required. No iPhone Safari acceptance is claimed.
+- **Immediate next action:** commit these two source changes and the updated handoff/index to the current branch head, push with expected parent `747cb9494758b8c2cf759e060a6e893b107f4bec`, verify the pushed tree and run #138, then inspect #137/#138. If #137 is superseded, #138 is the exact package/build/browser run for both adapter and joystick changes. Continue after the run’s next failure/pass; do not end at one repaired batch.
 
 ## Remaining dependency-ready work
 
-1. After the mixer repair is pushed, continue the separate joystick sizing/browser acceptance slice already present as local edits in the stale recovery checkout: inspect and transplant only the targeted CSS/test changes onto current live sources, then run browser-input and complete local suites before pushing.
-2. Use the repaired exact-package browser run to continue Mission startup, then inspect the real grounding telemetry and retained image before any source physics or render adjustment.
-3. Continue the source archive/decompiler and camera/audio-spatial closures; preserve exact-version requirements and record missing inputs once without repeating blocked searches.
-4. Continue actor/equipment, projectile/physiology, animation/IK, AI, rendering, particle, physics, audio and combined parity dependencies listed in `docs/GATE_DEPENDENCY_INDEX.md`. Keep platform/native/device claims deferred when evidence is unavailable; do not stop other work.
-5. Keep all parity flags false. Do not publish/deploy or alter access policy in this recurring engineering task.
+1. Finish the exact-source packaged Mission startup and handle the next failure from its actual CI step/log; inspect grounding telemetry/image only after the production page reaches a stable frame.
+2. Continue source archive/decompiler, camera postprocessing, spatial audio, source gameplay, native physics, particles, rendering, mission/AI and combined parity gates in `docs/GATE_DEPENDENCY_INDEX.md`.
+3. Device-owned iPhone Safari input/storage/audio, native solver and rendered pixel acceptance remain untested; defer only those claims and continue feasible repository work. Keep all parity flags false.
 
 ---
 

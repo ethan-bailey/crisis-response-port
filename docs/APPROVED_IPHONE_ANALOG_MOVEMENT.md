@@ -41,3 +41,19 @@ Focused regression: `node --test scripts/browser_input_test.mjs` checks half pul
 ## Product philosophy
 
 The owner permits **deliberate, beneficial usability enhancements**, especially on iPhone, if they improve the final product. This permission does **not** authorize placeholder or invented substitutes for recovered original gameplay systems. Explicitly flag each enhancement in a permanent document and separate it from claims of exact original-game parity.
+
+
+## Packaged Mission size and rim acceptance — prepared 2026-10-27
+
+The source input algorithm remains on the approved 1.75× sprint-entry / 1.5×
+exit hysteresis. A dependency-ready batch based on live parent
+`747cb9494758b8c2cf759e060a6e893b107f4bec` increases the stick's mobile minimum
+from 144px to 176px (max 208px) in both active CSS definitions, increases the
+standard thumb from 56px to 64px, and raises both compact-landscape overrides
+from 128px/48px to 176px/56px. Its actual packaged FullSource browser smoke
+additions measure the rendered stick, preserve aim on touch-down/release,
+exercise vertical and horizontal-only movement, test below/above the sprint wall,
+and require the puck to clear the rim fully. Local browser-input tests pass
+20/20 and full Node passes 169/169, but these new packaged-page assertions have
+not yet run in hosted CI and iPhone Safari feel/zoom remain untested. Do not
+claim the enhanced physical-device experience until owner-device acceptance.
