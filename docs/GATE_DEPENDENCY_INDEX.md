@@ -1,3 +1,9 @@
+# Current dependency checkpoint (2026-10-27)
+
+Live `develop/wasm` SHA `2be43c16e68dab271a6b30d00f6c761f08553204`, tree `cf2bbe705871019f9b1fa0161421b0533742b89d`. Actions #145 (`40499379145`) is testing this exact source. Pinned .NET 8.0.426 Release/WASM build and all contracts through FoundationChecks passed; the job is at recovered source index verification. Independent Chromium IndexedDB/cache/audio job passed. Full Mission package integrity and packaged FullSource browser aim assertions are **pending**. Previous #144 on `f4cd527` failed only when the smoke compared shoulder-relative world `aimPoint.y` between separate animation frames; see the aim closure. The smoke now asserts stable `aimDirection` on neutral stick-down, vertical change, horizontal invariance and release. No gameplay or deployment change was made for this assertion repair. The Site is not published from this run.
+
+---
+
 # Crisis Response Port — dependency-first gate index (2026-10-27)
 
 This index is the active dependency order. Inventory the known serialized assets, source owners, lifecycle/update ordering, event/audio/render/physics dependencies, failure paths and exact assertions **before** implementation. Runtime failures can reveal genuinely hidden dependencies; add each to its owning closure before the next implementation batch. A recovered or indexed file is not proof of runtime behavior. A headless state result is not visual, device-audio, native physics or Safari proof.

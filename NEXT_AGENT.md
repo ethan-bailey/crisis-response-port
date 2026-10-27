@@ -1,3 +1,22 @@
+# Crisis Response Port — continuation handoff (2026-10-27, current run)
+
+## Exact pushed checkpoint
+
+- Live branch `develop/wasm`: `2be43c16e68dab271a6b30d00f6c761f08553204`; tree `cf2bbe705871019f9b1fa0161421b0533742b89d`. The latest source change repairs the FullSource packaged-page aim smoke to compare the stable `aimDirection` while preserving the animated shoulder-relative `aimPoint` and existing gameplay. Previous source commit `f4cd527335f2dc575d70e2c3dc8474c8a8064298` returns scalar JSON coordinates from the original aim bridge, preserving its body-local/world-point mutations.
+- The dependency closure and failed-assertion cause were committed as `12c10d7bf110fc525d90658ea88ccb454c7451b9`; this source-smoke repair is `2be43c16e68dab271a6b30d00f6c761f08553204`. Expected-HEAD fast-forward updates succeeded; compare from `f4cd527` confirms only the closure and browser smoke changed after that source batch.
+- Actions #145 / run `40499379145` is in progress on exact source SHA `2be43c16e68dab271a6b30d00f6c761f08553204`. Main job `122172913003` has passed Node/Python/runtime/browser-audio/engine/foundation, pinned .NET 8.0.426 Release/WASM build and publish-output, and is currently at “Verify recovered source and generate full source index” (step 20). Independent job `122172912771` has **passed**, including production Chromium IndexedDB and weapon audio. Do not infer package/profile/browser smoke pass until the main job concludes.
+- Last failed exact package acceptance: #144 / `40497736559` on `f4cd527`. Build, package/provenance, full-profile IndexedDB and independent cache/audio passed. FullSource page loaded with `pageErrors=[]`, all 1,919 assets and grounding ready, then the browser test failed at line 199 comparing `aimPoint[1]` across asynchronous frames. Since the point is shoulder-relative and authored animation advances, this comparison can move without changing aim direction. Exact trace and acceptance dependency are in `docs/FULLSOURCE_AIM_FRAME_DEPENDENCY_CLOSURE_2026-10-27.md`.
+- Focused checks on current source inputs in isolated scratch: mobile zoom/browser input **23/23**; aim/fire/error-panel **11/11**; source Animator/FullSource helper/hand projection **7/7**; scene package loader **7/7**. Exact fetched revised browser script passes `node --check`. These do not substitute for run #145 package acceptance; local workspace is not a git checkout and has no local .NET SDK.
+- Site was not deployed or published. Existing Site remains v85 under owner-only policy; no access edit. This task excludes publication.
+
+## Immediate next action
+
+1. Poll run #145 `40499379145` and inspect exact job steps. If full package browser step 29 passes, capture artifact ID, package hash, browser report and exact SHA; update this handoff, dependency index and aim closure with passed evidence.
+2. If it fails, inspect the exact step/log/artifact, record a falsifiable new dependency before editing, repair one issue, and launch the next exact-SHA run. The 503/retry, geometry, sprint wall, walking, mobile viewport and page-error assertions remain in the same packaged smoke.
+3. After that result, re-read the live dependency index and resume the next dependency-ready source closure (weapon reload/switch, authored rendering/physics, or source recovery according to verified gate order). Do not wait on ordinary open gates; do not deploy/publish. Owner iPhone Safari, actual device output and native/pixel parity remain untested/deferred where specifically required.
+
+---
+
 # Crisis Response Port — continuation handoff (2026-10-27)
 
 ## Current exact checkpoint — source batch pushed 2026-10-27
