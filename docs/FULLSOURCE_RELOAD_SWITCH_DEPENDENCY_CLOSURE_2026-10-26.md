@@ -47,3 +47,48 @@ The source switch contract proves authored M4A1↔Glock switching without an act
 `BrowserEntryTeamMission.Start` now accepts `enablePlayerBehavior` (default `false`, preserving existing behavior). When true, Mission startup still enables the player's serialized tree through `CharacterBody.OnMissionBegin`, then the browser fixture suppresses only nonplayer trees. `--mission-player-reload-contract` sends source `magazine` and `switchWeapons` input edges, observes the authored player task through `Behavior.GetActiveTasks()`, reports its private source state at interruption, and checks scheduler result/cleanup, source audio paths, active weapon and sequencer settlement. It does not assign PendingAction, task fields, magazines, weapon slots, or IK frames.
 
 The workflow invokes this runtime contract and the static graph contract against the same `global-ui-mission-operator` profile. Local Release build passed with 0 errors (two pre-existing nullable warnings); Node 143/143, Python 45/45, static graph, player reload, and AI fallback commands passed against the complete six-root Mission profile. The AI probe uses the original `OperatorSpawner` and explicitly excludes the unconfigured scene placeholder; see the separate AI closure for its runtime evidence. These local checks do not substitute for the exact pushed SHA workflow/package checks. The prior full canonical recovery export and CI-equivalent profile contain 1,919 assets, 22,365 records, 97,767,549 compressed asset bytes and 205,514,345 source bytes.
+
+
+## Production Mission entry disables the recovered player task tree — 2026-10-27
+
+A packaged-page trace for the user-visible magazine/reload path found that the
+browser does not currently enable the original player Behavior Designer tree:
+
+- `runtime/Browser/Program.cs` calls
+  `BrowserEntryTeamMission.Start(source, world)` without the optional flag.
+- `runtime/Browser/BrowserEntryTeamMission.cs` defaults
+  `enablePlayerBehavior=false`. Its `SuppressUnboundBehavior` disables every
+  BehaviorTree when that flag is false, including the player tree, and the
+  suppression is repeated before each normal `RuntimeWorld.Tick`.
+- `game/index.html` forwards the real magazine action through
+  `TickFullSourceActorBridge`; `FullSourceActorBridge.Step` applies InputHandler
+  levels and runs the original world lifecycle. But the player controller's
+  `PendingAction=SwitchMagazine` needs the serialized player tree to select
+  `RequestedReload` and schedule `CharacterBehavior.ChangeMagazine`. With the
+  tree disabled, the original extract/insert callbacks cannot be reached from
+  the production browser input path.
+- The source contract `SourceBehaviorReloadContracts` calls
+  `BrowserEntryTeamMission.Start(..., enablePlayerBehavior:true)`; it verifies
+  the real player scheduler enters the authored reload task, emits the recovered
+  extract/insert audio source paths, completes a reload, then receives a real
+  switch input and exits through the task's original cancellation/OnEnd path.
+  That passing contract therefore does not cover the production default call.
+
+The browser separately retrieves and decodes original mission audio clips,
+constructs the production `createSourceWeaponAudioDispatcher`, calls
+`playSourceAudioEvents` with each source bridge snapshot, and has a trusted
+pointer gesture path to resume WebAudio. The dependency set is present; the
+missing edge is player-tree activation at Mission startup.
+
+Repair requirement: the production EntryTeam initialization must enable only
+the source player tree while keeping all nonplayer trees suppressed. Preserve
+the original prefab's disabled serialized BehaviorTree bit and the normal
+`BrowserEntryTeamMission` default for callers that require deterministic
+suppression; change only the actual playable-page caller. Extend the exact
+integrity-verified packaged-page smoke to perform the original magazine
+down-drag and observe source reload playback through the real audio runtime
+after the browser gesture. Keep the source contract for actual task, ammo,
+callbacks and interruption as a separate assertion. Do not synthesize reload
+events, call the task directly, or count clip preloading alone as reload sound.
+This production integration is **untested** until an exact-SHA package/browser
+run passes.
