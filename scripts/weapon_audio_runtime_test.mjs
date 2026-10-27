@@ -6,6 +6,8 @@ import { gunzipSync } from 'node:zlib';
 import {
   MAX_WEAPON_OUTPUT_GAIN,
   MAX_DECODED_SOURCE_AUDIO_BYTES,
+  UNITY_REAL_VOICE_COUNT,
+  UNITY_VIRTUAL_VOICE_COUNT,
   classifyWeaponPlayback,
   clampWeaponEventGain,
   createSourceWeaponAudioDispatcher,
@@ -99,6 +101,7 @@ class FakeAudioContext {
   constructor() {
     activeContext = this;
     this.state = 'suspended';
+    this.currentTime = 0;
     this.destination = {};
     this.started = 0;
     this.master = null;
@@ -115,7 +118,7 @@ class FakeAudioContext {
   }
   createBufferSource() {
     const source = new FakeNode();
-    source.start = () => { this.started++; };
+    source.start = (when=0,offset=0) => { source.startOffset=offset;this.started++; };
     this.sources.push(source);
     return source;
   }
@@ -234,6 +237,94 @@ test('dynamic Mission source WAV events coalesce verified decode and preserve pe
   assert.equal(runtime.snapshot().unmappedSourceEvents,0);
   assert.equal(runtime.snapshot().sourceEventsDropped,0);
   assert.equal(unmapped.length,0);
+});
+
+test('production voice allocation enforces 64 real and 512 virtual slots using source priority and known gain', async () => {
+  const bytes=Uint8Array.from([2,4,6]),sourcePath='Assets/AudioClip/voice-pool.ogg';
+  const sourceSha256=[...new Uint8Array(await webcrypto.subtle.digest('SHA-256',bytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
+  const runtime=createWeaponAudioRuntime({}, {AudioContextClass:FakeAudioContext,maxRealVoices:1,maxVirtualVoices:2});runtime.unlock();await Promise.resolve();
+  const fetchSource=async path=>({assetPath:path,dataBase64:Buffer.from(bytes).toString('base64'),sourceSha256});
+  await runtime.loadOriginalSource(sourcePath,fetchSource);
+  const dispatch=createSourceWeaponAudioDispatcher({},runtime,fetchSource);
+  const events=[
+    {sourceId:10,priority:40,volume:.2},
+    {sourceId:11,priority:5,volume:.1},
+    {sourceId:12,priority:40,volume:1},
+    {sourceId:13,priority:150,volume:.8},
+  ].map((item,index)=>({action:'oneShot',sourcePath,time:3+index*.001,...item,
+    sourceState:{sourceId:item.sourceId,priority:item.priority,volume:item.volume,enabled:true,activeInHierarchy:true,muted:false}}));
+  dispatch(events,3.01);
+  const state=runtime.snapshot();
+  assert.equal(state.realVoices,1);
+  assert.equal(state.virtualVoices,2);
+  assert.equal(state.maxRealVoices,1);
+  assert.equal(state.maxVirtualVoices,2);
+  assert.equal(state.voicesRejected,1);
+  assert.equal(activeContext.started,2,'the first physical voice is demoted when the highest priority source arrives');
+  assert.ok(activeContext.sources.at(-1).stopped===0,'highest-priority source owns the physical voice');
+  assert.equal(runtime.updateSourceAudioStates([
+    {sourceId:10,priority:255,volume:.2,enabled:true,activeInHierarchy:true,muted:false,sourceTransform:{position:[0,0,0]}},
+    {sourceId:11,priority:254,volume:.1,enabled:true,activeInHierarchy:true,muted:false,sourceTransform:{position:[0,0,0]}},
+    {sourceId:12,priority:0,volume:1,enabled:true,activeInHierarchy:true,muted:false,sourceTransform:{position:[0,0,0]}},
+  ],3.1),true);
+  assert.equal(runtime.snapshot().voicesPromoted,1,'updated source priorities trigger a real-slot promotion');
+  assert.equal(activeContext.started,3);
+  assert.equal(runtime.snapshot().realVoices,1);
+});
+
+test('production allocator applies recovered 64-real and 512-virtual defaults at the boundary', async () => {
+  const bytes=Uint8Array.from([1,3,5]),sourcePath='Assets/AudioClip/default-voice-pool.ogg';
+  const sourceSha256=[...new Uint8Array(await webcrypto.subtle.digest('SHA-256',bytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
+  assert.equal(UNITY_REAL_VOICE_COUNT,64);
+  assert.equal(UNITY_VIRTUAL_VOICE_COUNT,512);
+  const runtime=createWeaponAudioRuntime({}, {AudioContextClass:FakeAudioContext});runtime.unlock();await Promise.resolve();
+  const fetchSource=async path=>({assetPath:path,dataBase64:Buffer.from(bytes).toString('base64'),sourceSha256});
+  await runtime.loadOriginalSource(sourcePath,fetchSource);
+  const dispatch=createSourceWeaponAudioDispatcher({},runtime,fetchSource);
+  const candidates=Array.from({length:UNITY_REAL_VOICE_COUNT+UNITY_VIRTUAL_VOICE_COUNT+1},(_,index)=>({
+    action:'oneShot',sourcePath,sourceId:1000+index,time:1+index*.00001,volume:.5,priority:128,
+  }));
+  dispatch(candidates,1.02);
+  const snapshot=runtime.snapshot();
+  assert.equal(snapshot.realVoices,64);
+  assert.equal(snapshot.virtualVoices,512);
+  assert.equal(snapshot.voicesRejected,1);
+  assert.equal(snapshot.sourceEventsDropped,1);
+  assert.equal(activeContext.started,64);
+});
+
+test('virtual source playback preserves offset when promoted and ends naturally while virtual', async () => {
+  const bytes=Uint8Array.from([7,8,9]),sourcePath='Assets/AudioClip/virtual.ogg';
+  const sourceSha256=[...new Uint8Array(await webcrypto.subtle.digest('SHA-256',bytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
+  const fetchSource=async path=>({assetPath:path,dataBase64:Buffer.from(bytes).toString('base64'),sourceSha256});
+  const runtime=createWeaponAudioRuntime({}, {AudioContextClass:FakeAudioContext,maxRealVoices:1,maxVirtualVoices:1});runtime.unlock();await Promise.resolve();
+  await runtime.loadOriginalSource(sourcePath,fetchSource);
+  const playing=[],dispatch=createSourceWeaponAudioDispatcher({},runtime,fetchSource,null,(id,isPlaying)=>playing.push([id,isPlaying]));
+  const sourceState=(sourceId,priority)=>({sourceId,priority,volume:.8,enabled:true,activeInHierarchy:true,muted:false});
+  dispatch([{action:'oneShot',sourcePath,sourceId:21,time:5,volume:.8,sourceState:sourceState(21,100)}],5.01);
+  const first=activeContext.sources.at(-1);
+  activeContext.currentTime=.04;
+  dispatch([{action:'oneShot',sourcePath,sourceId:22,time:5.02,volume:.8,sourceState:sourceState(22,5)}],5.03);
+  const higher=activeContext.sources.at(-1);
+  assert.equal(first.stopped,1,'lower-ranked active node is virtualized');
+  assert.equal(runtime.snapshot().virtualVoices,1);
+  higher.end();
+  const promoted=activeContext.sources.at(-1);
+  assert.notEqual(promoted,first,'promotion creates a new physical node for the surviving logical voice');
+  assert.ok(Math.abs(promoted.startOffset-.04)<1e-9,'virtual playback position is retained during promotion');
+  assert.equal(runtime.snapshot().realVoices,1);
+
+  const natural=createWeaponAudioRuntime({}, {AudioContextClass:FakeAudioContext,maxRealVoices:0,maxVirtualVoices:1});natural.unlock();await Promise.resolve();
+  await natural.loadOriginalSource(sourcePath,fetchSource);
+  const naturalStates=[],naturalDispatch=createSourceWeaponAudioDispatcher({},natural,fetchSource,null,(id,isPlaying)=>naturalStates.push([id,isPlaying]));
+  naturalDispatch([{action:'oneShot',sourcePath,sourceId:23,time:8,volume:.5,sourceState:sourceState(23,50)}],8.01);
+  assert.equal(natural.snapshot().virtualVoices,1);
+  activeContext.currentTime=.11;
+  natural.updateSourceAudioStates([],8.12);
+  assert.equal(natural.snapshot().virtualVoices,0,'a virtual non-looping voice expires at its decoded duration');
+  assert.equal(natural.snapshot().virtualNaturalEnds,1);
+  assert.deepEqual(naturalStates.at(-1),[23,false]);
+  assert.deepEqual(playing.at(-1),[22,false]);
 });
 
 test('PlayOneShot overlaps regular Play and one-shots; regular Play replaces only the prior regular voice', async () => {

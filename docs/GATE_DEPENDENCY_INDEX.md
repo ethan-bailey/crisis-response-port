@@ -4,10 +4,10 @@ This index is the active dependency order. Inventory the known serialized assets
 
 ## Current verified checkpoint
 
-- Public `develop/wasm` SHA `15da64339bfe435951188d6990b4e60be240ca4b` passed Actions run #111 (`40427969353`): main job `121938385337` and independent Chromium job `121938385001` succeeded. Pinned Release/WASM, recovered-source/index, complete Mission source package integrity/retention, full-profile IndexedDB and production Chromium audio all passed. Artifact `12700487870`: 138,571,489 bytes, SHA-256 `4c5f7bb9449d230eb46c92c3e233da3e524690a9815fc3cd0ee48a1848a09e7c`, expires 2026-11-10. Site v85 remains last deployment; no parity flag changed.
-- #110 closes AudioSource disable/deactivate/reparent-under-inactive/destroy transitions. #111 closes the tested overlap/replacement/natural-end/queue-cap source cases on its exact SHA.
-- Local #112 working batch adds AudioSource field/pose transport and a pure ranking/split contract. Full Node 155/155, Python 49/49, focused audio JS 21/21 and `git diff --check` pass locally. #112 is not yet on a hosted exact SHA; no source build/package/Chromium claims attach to it.
-- Run #109 (`40425510391`) failed runtime compilation because unsafe base64 chunking corrupted `Objects.cs`; #110 replaced it with a blob SHA matching the local object and passed dependent gates.
+- Public `develop/wasm` SHA `304278db13aabfe90b639e5a3120f7c853ab28f7` passed Actions run #113 (`40429556962`): main job `121943796555` and independent Chromium job `121943796847` succeeded. Corrected C# audio lifecycle contract, pinned Release/WASM, recovered-source/index, complete Mission package integrity/retention, full-profile IndexedDB and production Chromium audio passed. Artifact `12701781383`: 138,591,365 bytes, SHA-256 `11d5f5e044d759bcd45da1512c1fb9464dcc93d464bca7fb14d42ae4798b786c`, expires 2026-11-10. Site v85 remains last deployment; no parity flag changed.
+- Run #112 failed only because its C# contract expected Stop during `PlayOneShot`; commit `304278d` corrected event timing assertions and exact-SHA run #113 passed all downstream gates.
+- The current local, uncommitted batch integrates the voice-ranking helper into production audio: 64 physical nodes, up to 512 logical virtual voices, source-priority/gain-proxy ordering, promotion with playback-offset preservation, virtual `isPlaying`, and natural virtual completion. Local checks: focused audio 24/24, full Node 158/158, Python 49/49, `git diff --check`. Hosted Release/WASM/package/Chromium gates are required for this batch after commit/push. Gain proxy omits unrecovered `SpatialBlend` and unapplied mixer/snapshot gains; this is not full Unity audibility parity.
+- Run #109 failed at runtime compile due corrupted `Objects.cs`; #110 passed after replacing the file with blob-exact content. Earlier failure diagnoses remain indexed in the relevant gate records and commit history.
 
 ## Ordered gates and dependency closure
 

@@ -1,5 +1,9 @@
+import { rankSourceAudioVoices } from './source-audio-voice-arbitration.mjs';
+
 export const MAX_WEAPON_OUTPUT_GAIN = 0.16;
 export const MAX_DECODED_SOURCE_AUDIO_BYTES = 48 * 1024 * 1024;
+export const UNITY_REAL_VOICE_COUNT = 64;
+export const UNITY_VIRTUAL_VOICE_COUNT = 512;
 
 export function classifyWeaponPlayback({ eventAgeSeconds, contextState, bufferLoaded }) {
   if (!Number.isFinite(eventAgeSeconds) || eventAgeSeconds < -0.05 || eventAgeSeconds > 0.12)
@@ -48,18 +52,23 @@ export function createSourceWeaponAudioDispatcher(audioData, audioRuntime, fetch
   };
 }
 
-export function createWeaponAudioRuntime(audioData, { AudioContextClass, fetchAudio } = {}) {
+export function createWeaponAudioRuntime(audioData, { AudioContextClass, fetchAudio,
+  maxRealVoices=UNITY_REAL_VOICE_COUNT,maxVirtualVoices=UNITY_VIRTUAL_VOICE_COUNT } = {}) {
+  if(!Number.isInteger(maxRealVoices)||maxRealVoices<0)throw new RangeError('Real voice limit must be a non-negative integer');
+  if(!Number.isInteger(maxVirtualVoices)||maxVirtualVoices<0)throw new RangeError('Virtual voice limit must be a non-negative integer');
   const AudioContext = AudioContextClass ?? globalThis.AudioContext ?? globalThis.webkitAudioContext;
   const request = fetchAudio ?? globalThis.fetch?.bind(globalThis);
   const context = AudioContext ? new AudioContext() : null;
   const buffers = new Map();
   const loadingAudio = new Map();
-  const decodedBytes = new Map(),lastUsed = new Map(),pendingSourceEvents=new Map(),activeSources=new Map(),activeSourceKinds=new WeakMap(),sourceReporters=new Map();
+  const decodedBytes = new Map(),lastUsed = new Map(),pendingSourceEvents=new Map(),activeSources=new Map(),sourceReporters=new Map(),activeVoiceRecords=new Map();
+  let nextVoiceId=1,nextVoiceSequence=1;
   let latestSourceAudioStates = new Map(),latestSourceAudioStateTime=null;
   const stats = { played: 0, droppedSuspended: 0, droppedUnloaded: 0, droppedStale: 0,
     decodeErrors: 0, unlockFailures: 0, unmappedSourceEvents: 0,sourceDecodeErrors:0,
     sourceDecodeRequests:0,sourceDecodeCoalesced:0,sourceEventsDropped:0,sourceEventsPending:0,
-    sourceStateFrames:0,sourceStateErrors:0,
+    sourceStateFrames:0,sourceStateErrors:0,realVoices:0,virtualVoices:0,voicesRejected:0,
+    voicesPromoted:0,voicesVirtualized:0,virtualNaturalEnds:0,
     sourceBytesDecoded:0,peakDecodedSourceBytes:0,sourceStops:0,sourceLoopEvents:0 };
   const outputGain = context?.createGain() ?? null;
   const limiter = context?.createDynamicsCompressor() ?? null;
@@ -143,7 +152,99 @@ export function createWeaponAudioRuntime(audioData, { AudioContextClass, fetchAu
   }
 
   function reportSourcePlaying(report,sourceId){
-    try{Promise.resolve(report?.(sourceId,(activeSources.get(sourceId)?.size||0)>0)).catch(()=>{});}catch{/* playback-state diagnostics cannot block audio */}
+    try{Promise.resolve(report?.(sourceId,[...activeVoiceRecords.values()].some(voice=>voice.sourceId===sourceId))).catch(()=>{});}catch{/* playback-state diagnostics cannot block audio */}
+  }
+
+  function voiceOffset(voice,now=context?.currentTime??0){
+    if(voice.node&&voice.realSince!=null)return voice.offset+(now-voice.realSince)*voice.playbackRate;
+    if(voice.virtualSince!=null)return voice.offset+(now-voice.virtualSince)*voice.playbackRate;
+    return voice.offset;
+  }
+
+  function detachNode(voice,virtualizing=false){
+    if(!voice.node)return;
+    const source=voice.node,gain=voice.gainNode,now=context?.currentTime??0;voice.offset=voiceOffset(voice,now);voice.node=null;voice.gainNode=null;voice.realSince=null;
+    voice.virtualSince=virtualizing?now:null;
+    voice.suppressEnd=true;
+    try{source.stop();}catch{}
+    try{source.disconnect();gain?.disconnect();}catch{}
+    const items=activeSources.get(voice.sourceId);items?.delete(source);if(items?.size===0)activeSources.delete(voice.sourceId);
+    voice.suppressEnd=false;
+    if(virtualizing)stats.voicesVirtualized++;
+  }
+
+  function finishVoice(voice,{virtualEnd=false}={}){
+    if(!activeVoiceRecords.has(voice.id))return;
+    detachNode(voice,false);activeVoiceRecords.delete(voice.id);
+    if(virtualEnd)stats.virtualNaturalEnds++;
+    reportSourcePlaying(voice.reportPlaybackState,voice.sourceId);
+  }
+
+  function currentVoicePriority(voice){
+    const state=latestSourceAudioStates.get(voice.sourceId)||voice.sourceState;
+    return Number.isInteger(state?.priority)&&state.priority>=0&&state.priority<=255?state.priority:voice.priority;
+  }
+  function currentVoiceAudibility(voice){
+    const state=latestSourceAudioStates.get(voice.sourceId)||voice.sourceState;
+    if(voice.event.muted===true||state?.muted===true||state?.enabled===false||state?.activeInHierarchy===false)return 0;
+    // Until the recovered SpatialBlend value and mixer snapshots are available,
+    // use only known source/event gain for ordering. This is a bounded proxy,
+    // not Unity's post-distance/post-mixer audibility calculation.
+    const baseVolume=Number.isFinite(voice.sourceState?.volume)?voice.sourceState.volume:1;
+    const eventScale=baseVolume>0?voice.eventVolume/baseVolume:voice.eventVolume;
+    const sourceVolume=Number.isFinite(state?.volume)?state.volume:baseVolume;
+    return clampWeaponEventGain(eventScale*sourceVolume);
+  }
+
+  function startVoice(voice){
+    if(!context||context.state!=='running'||voice.node)return false;
+    const promotedFromVirtual=voice.virtualSince!=null;
+    const offset=voiceOffset(voice),duration=Number.isFinite(voice.buffer?.duration)?voice.buffer.duration:
+      (Number.isFinite(voice.buffer?.length)&&Number.isFinite(voice.buffer?.sampleRate)&&voice.buffer.sampleRate>0?voice.buffer.length/voice.buffer.sampleRate:Infinity);
+    if(!voice.loop&&offset>=duration){finishVoice(voice,{virtualEnd:true});return false;}
+    const source=context.createBufferSource(),gain=context.createGain();source.buffer=voice.buffer;
+    source.loop=voice.loop;source.playbackRate.value=voice.playbackRate;
+    gain.gain.value=currentVoiceAudibility(voice);source.connect(gain).connect(outputGain);
+    voice.node=source;voice.gainNode=gain;voice.realSince=context.currentTime??0;voice.virtualSince=null;
+    const cleanup=()=>{
+      if(voice.suppressEnd||voice.node!==source)return;
+      voice.offset=voiceOffset(voice);voice.node=null;voice.gainNode=null;voice.realSince=null;
+      try{source.disconnect();gain.disconnect();}catch{}
+      const items=activeSources.get(voice.sourceId);items?.delete(source);if(items?.size===0)activeSources.delete(voice.sourceId);
+      finishVoice(voice,{virtualEnd:false});
+      rebalanceVoices();
+    };
+    source.onended=cleanup;
+    if(!activeSources.has(voice.sourceId))activeSources.set(voice.sourceId,new Set());
+    activeSources.get(voice.sourceId).add(source);
+    try{source.start(0,offset);}catch{detachNode(voice);return false;}
+    if(promotedFromVirtual)stats.voicesPromoted++;
+    return true;
+  }
+
+  function rebalanceVoices(){
+    const now=context?.currentTime??0;
+    for(const voice of [...activeVoiceRecords.values()]){
+      const duration=Number.isFinite(voice.buffer?.duration)?voice.buffer.duration:
+        (Number.isFinite(voice.buffer?.length)&&Number.isFinite(voice.buffer?.sampleRate)&&voice.buffer.sampleRate>0?voice.buffer.length/voice.buffer.sampleRate:Infinity);
+      if(!voice.loop&&voiceOffset(voice,now)>=duration){finishVoice(voice,{virtualEnd:!voice.node});}
+    }
+    const candidates=[...activeVoiceRecords.values()].map(voice=>({voice,priority:currentVoicePriority(voice),
+      audibility:currentVoiceAudibility(voice),sequence:voice.sequence}));
+    const ranked=rankSourceAudioVoices(candidates),real=new Set(ranked.slice(0,maxRealVoices).map(item=>item.voice.id));
+    const retained=new Set(ranked.slice(0,maxRealVoices+maxVirtualVoices).map(item=>item.voice.id));
+    for(const voice of [...activeVoiceRecords.values()])if(!retained.has(voice.id)){
+      stats.voicesRejected++;stats.sourceEventsDropped++;finishVoice(voice);
+    }
+    for(const voice of activeVoiceRecords.values()){
+      if(real.has(voice.id)){
+        if(!voice.node)startVoice(voice);
+        if(voice.node&&voice.gainNode)voice.gainNode.gain.value=currentVoiceAudibility(voice);
+      }else if(voice.node)detachNode(voice,true);
+      else if(voice.virtualSince==null)voice.virtualSince=now;
+    }
+    stats.realVoices=[...activeVoiceRecords.values()].filter(voice=>!!voice.node).length;
+    stats.virtualVoices=activeVoiceRecords.size-stats.realVoices;
   }
 
   function playDecodedSource(event,sourceTime,keyOverride,reportPlaybackState) {
@@ -153,24 +254,19 @@ export function createWeaponAudioRuntime(audioData, { AudioContextClass, fetchAu
     if(disposition==='stale'){stats.droppedStale++;stats.sourceEventsDropped++;reportSourcePlaying(reportPlaybackState,id);return disposition;}
     if(disposition==='suspended'){stats.droppedSuspended++;stats.sourceEventsDropped++;reportSourcePlaying(reportPlaybackState,id);return disposition;}
     if(disposition==='unloaded'){stats.droppedUnloaded++;stats.sourceEventsDropped++;reportSourcePlaying(reportPlaybackState,id);return disposition;}
-    const source=context.createBufferSource(),gain=context.createGain();source.buffer=buffer;
-    source.loop=event.action==='play'&&event.loop===true;
-    source.playbackRate.value=Number.isFinite(event.pitch)?Math.max(0.01,Math.min(3,Math.abs(event.pitch))):1;
-    gain.gain.value=event.muted===true?0:clampWeaponEventGain(event.volume);
-    source.connect(gain).connect(outputGain);
-    const activeKey=id;
-    const cleanup=()=>{source.disconnect();gain.disconnect();const items=activeSources.get(activeKey);items?.delete(source);if(items?.size===0)activeSources.delete(activeKey);reportSourcePlaying(reportPlaybackState,activeKey);};
-    source.onended=cleanup;
-    if(event.action==='play')for(const prior of activeSources.get(activeKey)||[]){
-      // A regular Play replaces/restarts this AudioSource's assigned clip,
-      // while its PlayOneShot voices remain independent overlapping voices.
-      if(activeSourceKinds.get(prior)==='play')try{prior.stop();}catch{}
-    }
-    if(!activeSources.has(activeKey))activeSources.set(activeKey,new Set());
-    activeSourceKinds.set(source,event.action==='play'?'play':'oneShot');
-    activeSources.get(activeKey).add(source);source.start();reportSourcePlaying(reportPlaybackState,id);stats.played++;
-    if(source.loop)stats.sourceLoopEvents++;
-    lastUsed.set(key,performanceNow());return 'play';
+    if(event.action==='play')for(const prior of [...activeVoiceRecords.values()])
+      if(prior.sourceId===id&&prior.kind==='play')finishVoice(prior);
+    const sourceState=event.sourceState||latestSourceAudioStates.get(id)||null;
+    const voice={id:nextVoiceId++,sourceId:id,key,buffer,event,eventVolume:clampWeaponEventGain(event.volume),
+      sourceState,priority:Number.isInteger(sourceState?.priority)&&sourceState.priority>=0&&sourceState.priority<=255?sourceState.priority:
+        (Number.isInteger(event.priority)&&event.priority>=0&&event.priority<=255?event.priority:128),
+      sequence:nextVoiceSequence++,kind:event.action==='play'?'play':'oneShot',loop:event.action==='play'&&event.loop===true,
+      playbackRate:Number.isFinite(event.pitch)?Math.max(.01,Math.min(3,Math.abs(event.pitch))):1,offset:0,realSince:null,virtualSince:null,node:null,gainNode:null,
+      reportPlaybackState};
+    activeVoiceRecords.set(voice.id,voice);
+    if(voice.loop)stats.sourceLoopEvents++;
+    lastUsed.set(key,performanceNow());stats.played++;
+    rebalanceVoices();reportSourcePlaying(reportPlaybackState,id);return 'play';
   }
 
   function stopSource(sourceId,reportPlaybackState) {
@@ -182,8 +278,8 @@ export function createWeaponAudioRuntime(audioData, { AudioContextClass, fetchAu
       if(removed){stats.sourceEventsPending=Math.max(0,stats.sourceEventsPending-removed);stats.sourceEventsDropped+=removed;cancelled.push(...events.filter(item=>id===0||item.event.sourceId===id).map(item=>item.event.sourceId).filter(Number.isInteger));}
       if(kept.length)pendingSourceEvents.set(path,kept);else pendingSourceEvents.delete(path);
     }
-    const keys=id===0?[...activeSources.keys()]:[id];
-    for(const key of keys)for(const source of activeSources.get(key)||[]){try{source.stop();}catch{}}
+    const keys=id===0?[...new Set([...activeSources.keys(),...[...activeVoiceRecords.values()].map(voice=>voice.sourceId)])]:[id];
+    for(const voice of [...activeVoiceRecords.values()])if(id===0||voice.sourceId===id)finishVoice(voice);
     for(const sourceId of new Set([...keys,...cancelled]))reportSourcePlaying(reportPlaybackState,sourceId);
     stats.sourceStops++;
   }
@@ -254,7 +350,8 @@ export function createWeaponAudioRuntime(audioData, { AudioContextClass, fetchAu
       loadedBuffers: buffers.size, pendingBuffers: loadingAudio.size,
       decodedAudioBytes:[...decodedBytes.values()].reduce((a,b)=>a+b,0),maxDecodedAudioBytes:MAX_DECODED_SOURCE_AUDIO_BYTES,
       sourceStateFrames:stats.sourceStateFrames,sourceStateErrors:stats.sourceStateErrors,
-      activeSourceStateCount:latestSourceAudioStates.size,sourceStateTime:latestSourceAudioStateTime };
+      activeSourceStateCount:latestSourceAudioStates.size,sourceStateTime:latestSourceAudioStateTime,
+      realVoices:stats.realVoices,virtualVoices:stats.virtualVoices,maxRealVoices,maxVirtualVoices };
   }
 
   function noteUnmappedSourceEvent() { stats.unmappedSourceEvents++; }
@@ -268,7 +365,7 @@ export function createWeaponAudioRuntime(audioData, { AudioContextClass, fetchAu
         !Array.isArray(position)||position.length!==3||position.some(value=>!Number.isFinite(value))){stats.sourceStateErrors++;return false;}
       next.set(state.sourceId,state);
     }
-    latestSourceAudioStates=next;latestSourceAudioStateTime=sourceTime;stats.sourceStateFrames++;return true;
+    latestSourceAudioStates=next;latestSourceAudioStateTime=sourceTime;stats.sourceStateFrames++;rebalanceVoices();return true;
   }
 
   return { context, load, play, snapshot, unlock, noteUnmappedSourceEvent,
