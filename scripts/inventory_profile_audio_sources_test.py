@@ -29,6 +29,8 @@ class ProfileAudioSourceInventoryTests(unittest.TestCase):
             "profile": "fixture", "sourcePackageSha256": "a" * 64,
             "assetCount": 1, "assets": [{"path": descriptor["path"]}],
         }))
+        with gzip.open(profile / "metadata.json.gz", "wt", encoding="utf-8") as stream:
+            json.dump({"guidPaths": {"a" * 32: "Assets/Scripts/Movement.cs"}}, stream)
         return profile
 
     def test_inventory_records_missing_spatial_blend_and_source_fields(self):
@@ -67,6 +69,48 @@ AudioSource:
                 json.dump(descriptor, stream)
             with self.assertRaisesRegex(ValueError, "source text hash mismatch"):
                 INVENTORY.profile_inventory(profile)
+
+    def test_inventory_resolves_audio_source_parent_component_chain(self):
+        source = """--- !u!1 &1
+GameObject:
+  m_Name: Weapon
+--- !u!4 &2
+Transform:
+  m_GameObject: {fileID: 1}
+  m_Father: {fileID: 0}
+--- !u!54 &3
+Rigidbody:
+  m_GameObject: {fileID: 1}
+--- !u!114 &7
+MonoBehaviour:
+  m_GameObject: {fileID: 1}
+  m_Script: {fileID: 11500000, guid: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, type: 3}
+--- !u!1 &4
+GameObject:
+  m_Name: Muzzle
+--- !u!4 &5
+Transform:
+  m_GameObject: {fileID: 4}
+  m_Father: {fileID: 2}
+--- !u!82 &6
+AudioSource:
+  m_GameObject: {fileID: 4}
+  DopplerLevel: 1
+"""
+        with tempfile.TemporaryDirectory() as temp:
+            result = INVENTORY.profile_inventory(self.create_profile(Path(temp), source))
+        self.assertEqual(result["schemaVersion"], 2)
+        chain = result["transformHierarchyByAsset"]["Assets/Scenes/Mission.unity"][0]["chain"]
+        self.assertEqual([item["gameObjectName"] for item in chain], ["Muzzle", "Weapon"])
+        self.assertIn("Rigidbody", chain[1]["componentTypes"])
+        self.assertEqual(chain[1]["monoBehaviourScriptPaths"], ["Assets/Scripts/Movement.cs"])
+        summary = result["hierarchySummary"]
+        self.assertEqual(summary["audioSourceCount"], 1)
+        self.assertEqual(summary["transformFoundCount"], 1)
+        self.assertEqual(summary["sourceOwnerRigidbodyCount"], 0)
+        self.assertEqual(summary["sourceOwnerAndAncestorRigidbodyIncidences"], 1)
+        self.assertEqual(summary["audioSourcesWithOwnerRigidbody"], 0)
+        self.assertEqual(summary["audioSourcesWithOwnerOrAncestorRigidbody"], 1)
 
 
 if __name__ == "__main__":

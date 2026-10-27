@@ -1,5 +1,12 @@
 # Crisis Response Port — continuation handoff (2026-10-27)
 
+## Latest exact-source checkpoint — run #116 (2026-10-27)
+
+- Exact public `develop/wasm` SHA `72d756a9ecacc8e357d69abb7f1ab869907dad79` passed Actions run #116 (`40435327160`). Main job `121962512475` and independent Chromium cache/audio job `121962512085` both succeeded. Pinned .NET SDK 8.0.426 source build, Release/WASM publish, source-index verification, complete Mission profile package verification/retention, full-profile Chromium IndexedDB and production Chromium audio all passed.
+- Package verifier: `status=verified`, exact `sourceCommit=72d756a...`, 2,688 files / 199 Blazor resources / 195 WASM files; Mission profile 1,919 assets / 22,365 records / 97,767,549 compressed bytes / 205,514,345 source bytes. Source-index SHA-256 `9d866276582031d440c316c8e60d69d252506cf67a8ae9d03dbdbe0d91980f92`; recovered archive SHA-256 `cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d`; deterministic package tar.gz SHA-256 `2e6dd3b3c9bea23e5069bbdcaedbc8c49a8fad8da1e6f84f7342fe6d294ac063`.
+- Retained package artifact `12704505812`: 138,598,286 bytes, SHA-256 `2aa17da06ac220ebfab82c2c1a43d8f6a99d6e0337157d4f10f6d9234e6af52f`, expires 2026-11-10. Full-profile Chromium persisted 1,919/1,919 assets: cold 11,055 ms; cached reload 8,545 ms; 1,919 initial network assets; zero warm network assets; 1,919 verified cache hits. The independent audio job decoded seven clips and played the production graph (peak RMS `0.1622018879776632`). Browser bridge is modeled; these checks are not iPhone Safari or physical speaker evidence.
+- Site v85 remains the last deployment. This run verifies the public source package but does not authorize a publish. Completion flags stay false.
+
 ## Latest verified exact-source checkpoint — run #115 (2026-10-27)
 
 - Public `develop/wasm` SHA `42e90ef66f75f253fa4f421efe1310cf03a1e0fe` passed Actions run #115 (`40434187934`). Main job `121958819953` and independent Chromium job `121958820128` both succeeded. The pinned .NET SDK 8.0.426 source build, Release/WASM, recovered source/index, complete Mission package verifier/retention, full-profile IndexedDB and production Chromium audio all passed.
@@ -18,9 +25,9 @@
 
 ## Next dependency closure — audio spatialization inventory (2026-10-27)
 
-- A repeatable source scanner and fixture tests now cover the selected 1,919-asset Mission package (source package SHA `ea3592ff5bdd39534bb905cd0abac74f456578b46eb4b12cdd0cb79fe8520cf7`). It found 231 serialized AudioSource definitions: all omit serialized `SpatialBlend`; all include `DopplerLevel`, min/max distance, `Pan2D`, rolloff mode and custom curves. Doppler is 0 for 110 / 1 for 121; rolloff enum counts are 0:79 / 1:150 / 2:2. The compressed component inventory is `docs/audio/MISSION_SOURCE_AUDIO_SOURCES_2026-10-27.json.gz`, SHA-256 `28f16496f7233e81144e346bcfe31bfbc37fdbfd0d345fe39afcf6542ebb4118`.
+- A repeatable source scanner and fixture tests cover the selected 1,919-asset Mission package (source package SHA `ea3592ff5bdd39534bb905cd0abac74f456578b46eb4b12cdd0cb79fe8520cf7`). It found 231 serialized AudioSource definitions: all omit serialized `SpatialBlend`; all include `DopplerLevel`, min/max distance, `Pan2D`, rolloff mode and custom curves. Doppler is 0 for 110 / 1 for 121; rolloff enum counts are 0:79 / 1:150 / 2:2. Schema v2 also closes every source Transform chain, resolves script GUIDs through the profile map, and inventories 98 sources with an owner/ancestor Rigidbody (40 directly on the source GameObject); six UI script references remain unmapped. The compressed component/hierarchy inventory is `docs/audio/MISSION_SOURCE_AUDIO_SOURCES_2026-10-27.json.gz`, SHA-256 `8095c67c5fbe25652aaf41edfbe2b551774e098454291441f310877f5212f554`.
 - The selected profile contains four AudioListener records and eight Mission AudioReverbZones. Browser bridge emits source/listener positions, forward and rotation but no velocities; source hierarchy / moving-parent provenance is not yet closed. `Spatialize` is a plugin toggle and is not SpatialBlend.
-- Local scanner tests pass 2/2; complete Python suite passes 51/51. The Unity 2018.4 manual/API define blend semantics (0=2D, 1=3D) but not this project's omitted-field default. The recovered project snapshot lacks `ProjectVersion.txt` and a native editor fixture, so do not set a guessed default or implement guessed attenuation. Full dependency and next action: `docs/AUDIO_SPATIAL_RUNTIME_DEPENDENCY_CLOSURE_2026-10-27.md`.
+- Local scanner tests pass 3/3; complete Python suite passes 52/52, Node 164/164, and `git diff --check` passes on the current local transform-audit batch. The Unity 2018.4 manual/API define blend semantics (0=2D, 1=3D) but not this project's omitted-field default. The recovered project snapshot lacks `ProjectSettings/ProjectVersion.txt` and a native editor fixture, so do not set a guessed default or implement guessed attenuation. Full dependency and next action: `docs/AUDIO_SPATIAL_RUNTIME_DEPENDENCY_CLOSURE_2026-10-27.md`.
 
 ## Prior exact package checkpoint — run #104 and earlier history
 
@@ -107,12 +114,12 @@
 
 ## Next work, in dependency order
 
-1. Push the final local mixer commit to `develop/wasm` with expected old head `c8d4db1b85072c9c9f6ba54fdee9ab402c61b268`; verify the remote ref equals the pushed SHA. Require that SHA's pinned Release/WASM, source-index, complete Mission package integrity/retention, full-profile IndexedDB, and production Chromium audio jobs to pass. Repair and rerun any failure on its repaired SHA.
-2. On the exact package, verify all five authored snapshots and Mission source groups through the production audio adapter, including transition timing across pause and the audio mixer initial-session payload. Keep browser checks separate from physical iPhone proof.
-3. Close the remaining spatial inputs: recover/prove SpatialBlend semantics; inventory 2D/3D assignment, listener/source velocity and authored rolloff; implement panning, attenuation and Doppler only after the full source closure is known.
-4. Continue camera/render/particles, wound effects, physics and remaining actor/AI/animation gates. Inventory their owners, assets, curves and update order before implementation; add hidden runtime dependencies to the owning closure before continuing.
-5. Collect owner-device iPhone Safari evidence for joystick, absolute vertical-only aim, rapid taps, cold/warm storage, sound, performance and rendered pose. Do not mark parity flags true from headless checks.
-6. Site publication stays gated on exact Site-source identity, generated package identity, and independent archive file/hash verification. Site v85 remains deployed; do not publish a newer build until those release gates pass.
+1. Commit and push the current source-audio transform/script closure on top of `72d756a9ecacc8e357d69abb7f1ab869907dad79`; confirm the branch SHA/tree and run exact Actions release/package/full-profile Chromium gates (#117). Do not include the unrelated untracked `scene-data/.crisis-response-scenes.json.gz.X1Mw6M`.
+2. Continue source-backed spatial work: resolve the six UI script GUID references where possible; obtain a version-matched Unity editor/default fixture for omitted `SpatialBlend`; close movement-owner/update-order and listener-velocity semantics for the 98 Rigidbody-related and 133 transform/script-driven AudioSources. Do not ship speculative default, panning, attenuation, Doppler or reverb behavior.
+3. Independently batch any incomplete renderer/camera/particle/physics/actor lifecycle dependency closures into source-indexed inventory plus contract tests; keep the recovered authored curves, prefabs, shaders, materials, animation transitions, update order and native-vs-emulated runtime boundaries explicit.
+4. Then implement each gate whose full dependency closure is evidenced, with numeric/headless regressions, one exact pushed-SHA Release/WASM/package/retention/IndexedDB/Chromium run per bounded batch.
+5. Obtain owner-device iPhone Safari evidence for joystick, absolute vertical-only aim, rapid taps, cold/warm storage, sound, performance and rendered pose. Headless checks do not close this gate.
+6. Publication remains gated on exact Site-source identity, generated package identity, and independent archive file/hash verification. Site v85 remains deployed; no newer build may publish until all required release gates pass.
 
 ## Completion flags and durable evidence
 
@@ -120,6 +127,6 @@ Keep `fullGameParity:false`, `sourceVisualParity:false`, `nativeParityVerified:f
 
 ## Next action
 
-1. Finish and record run #115 on exact SHA `42e90ef66f75f253fa4f421efe1310cf03a1e0fe`; verify both jobs and retained artifact digest. Repair/rerun any failed gate.
-2. Commit and push the source-spatial inventory plus scanner, bind it to its exact Mission profile/hash, and close velocity source provenance. The missing SpatialBlend default has a concrete evidence gap (no recovered ProjectVersion or native editor fixture); continue independent camera/render/particle/physics closures while that is documented.
-3. Implement spatial audio only after that dependency set is evidenced; then run exact Release/WASM/package/IndexedDB/Chromium gates on the implementation SHA. Keep deployment blocked until exact Site-source identity and archive integrity pass.
+1. The mixer source batch is complete on `42e90ef...` (#115); the audio spatial inventory batch is complete on `72d756a...` (#116). Current local changes extend that scanner to parent transforms and exact MonoBehaviour paths and update the compressed inventory plus this handoff. Validate, commit, push, and bind to exact run #117.
+2. On #117 success, continue the spatial dependency work and independent visual/physics/actor source closures listed above; implement only fully evidenced behavior.
+3. Deployment and parity remain gated: Site v85 is last published, and full parity flags stay false pending exact Site archive integrity and physical iPhone acceptance.
