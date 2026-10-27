@@ -4,7 +4,7 @@
 
 - Branch: `develop/wasm`
 - Tested source/runtime SHA: `530c483266cf58d4ac6b9b65cb82ccb867c51643`
-- Current remote branch HEAD: `5445d7a2a0bffe2f1ae1e92cc18b7eda9fd2d1c7` (documentation-only descendants; source tree is unchanged)
+- Documentation/evidence updates were committed after this tested code SHA; verify current remote HEAD separately on the next run.
 - Actions run #128: `40444437888`
 - Main job: `121992691908` — succeeded
 - Independent Chromium job: `121992692081` — succeeded
