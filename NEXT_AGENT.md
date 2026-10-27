@@ -1,5 +1,11 @@
 # Crisis Response Port — continuation handoff (2026-10-27)
 
+## Latest exact-source attempt — run #119 (2026-10-27)
+
+- Exact pushed SHA `c04033174bd2af93fced1f91940ddfc19e58d2b6` ran as Actions #119 (`40439309599`). Independent Chromium IndexedDB/audio job `121975517405` passed both checks. Main job `121975517115` passed Node 164, Python 52, runtime/browser-audio/engine checks and the first partial-declaration compile error was removed; FoundationChecks then failed because its project excludes the recovered Casing body but compiles `CasingBrowserPhysicsAdapter.cs`, which calls the absent private `Disable()` method: `CasingBrowserPhysicsAdapter.cs(8,13): error CS0103`.
+- Follow-up compile-only repair: the FoundationChecks partial stub now declares a private no-op `Disable()` signature solely to let the adapter compile in this isolated assembly. It supplies no gameplay behavior and is not in `Crisis.Runtime`. Hosted FoundationChecks must confirm this boundary on the next exact SHA. Release/WASM and package steps did not run in #119.
+- New source trace in `docs/AUDIO_SPATIAL_RUNTIME_DEPENDENCY_CLOSURE_2026-10-27.md`: callback-time AudioSource pose is captured in `Enqueue`, active source pose is refreshed after `RuntimeWorld.Tick` and source lifecycle/coroutines, and the page dispatches events before applying the refreshed source-state array. Six unresolved script incidences are now tied to three UI source owners and a missing GUID-to-script `.meta`/assembly crosswalk. This closes call order and names the concrete recovery dependency; it does not establish Unity velocity semantics.
+
 ## Latest exact-source attempt — run #118 (2026-10-27)
 
 - Public `develop/wasm` SHA `043f3c32750bbd210b4611177f5d03676d78c60f` was checked by Actions run #118 (`40438909871`). Independent Chromium IndexedDB/audio job `121974216070` passed both steps. Main job `121974216311` passed Node (164), Python (52), runtime/browser-audio/engine contracts, then failed at FoundationChecks before Release/WASM or package steps: `FoundationSourceBoundaryStubs.cs(15,25): error CS0260`, because the compile-only `Casing` declaration was not marked `partial` after adding a separate browser adapter partial.
@@ -11,12 +17,12 @@
 - Live public `develop/wasm` SHA `84d7ed4c8baa9a6b867d28c601ff59524374819f` passed Actions run #117 (`40436578134`); both main job `121966548137` and independent Chromium job `121966547856` succeeded. Exact pinned .NET SDK 8.0.426, Release/WASM, source index, complete Mission package verification/retention, full-profile IndexedDB, and Chromium production audio all passed.
 - Retained artifact `12704409305`: 138,596,919 bytes, SHA-256 `69f9bc40b91072bc4bd506ca95ed2771c5013f0ddd4dbafb4fcb789d12737255`, expires 2026-11-10. This public package is not a Site deployment. Site v85 remains last deployed; parity flags remain false.
 
-## Current bounded source-provenance and spatial-source audit (pushed; CI repair in progress)
+## Current bounded source-provenance and spatial-source audit (source audit pushed; FoundationChecks repair staged)
 
 - Source inventory gzip SHA-256 is `2024fbdc9368de8121d42df4848998ff99b538ac9f22a34dba53d54373de0b6a`. Four AudioListeners are enabled but none is active in hierarchy in the recovered snapshot; their parent-mode activations must be traced. The scanner resolves all 231 AudioSource transform chains and records script paths; six UI script references remain unresolved.
 - Newly traced runtime ownership: 38 projectile audio-source hierarchies are moved by original `Projectile.Update` transform assignments; original `Casing.Eject` dynamically creates/configures Rigidbody and applies force/torque before bounce callbacks. A browser casing sleep helper has been moved out of recovered `Casing.cs` into a separately hashed port adapter. Recovered projectile/casing source methods are inventoried in `docs/AUDIO_SPATIAL_RUNTIME_DEPENDENCY_CLOSURE_2026-10-27.md`.
 - Provenance checker now passes both pinned archive and extracted-snapshot modes: `python3 scripts/verify_foundation_sources.py --archive /tmp/cpr-recovery-source.zip` and `python3 scripts/verify_foundation_sources.py --source-root /tmp/cpr-recovery-expanded`. Both report 484 hashed identities plus the pinned BehaviorDesigner assembly. Three known source adapters are precisely declared; the two qualifier guards were removed because they were redundant. Eight decompiled BehaviorDesigner body hashes remain explicitly unresolved because the original decompiler text is absent from the recovery artifact; exact delta hashes/status are in `runtime/Original/BehaviorDesigner/source-provenance.json` and `docs/SOURCE_PROVENANCE_AUDIT_2026-10-27.md`.
-- Local Python contracts, Node 164/164 contracts, both provenance commands, and `git diff --check` passed. New CI verifier step has not yet run against a pushed SHA. Unrelated untracked `scene-data/.crisis-response-scenes.json.gz.X1Mw6M` must remain untouched.
+- Local Python contracts, Node 164/164 contracts, both provenance commands, and `git diff --check` passed. CI run #118 verified the archive/extracted source checker and independent Chromium job but failed later in FoundationChecks; run #119 removed its initial partial-type error but exposed the absent adapter target in the isolated stub. New fix is being pushed for a third exact-SHA hosted FoundationChecks/build/package run. Unrelated untracked `scene-data/.crisis-response-scenes.json.gz.X1Mw6M` must remain untouched.
 
 ## Latest exact-source checkpoint — run #116 (2026-10-27)
 
@@ -132,7 +138,7 @@
 
 ## Next work, in dependency order
 
-1. Commit/push the FoundationChecks stub correction as a new child of live SHA `043f3c32750bbd210b4611177f5d03676d78c60f` using expected-HEAD update; monitor the new exact Actions run through FoundationChecks, Release/WASM, source index, complete profile package integrity/retention, Chromium IndexedDB and audio. Run #118 is a confirmed regression in that gate, not a passing build.
+1. Commit/push the FoundationChecks compile-only `Disable()` stub plus spatial trace update as a new child of live SHA `c04033174bd2af93fced1f91940ddfc19e58d2b6` using expected-HEAD update; monitor the new exact Actions run through FoundationChecks, Release/WASM, source index, complete profile package integrity/retention, Chromium IndexedDB and audio. Runs #118 and #119 are confirmed FoundationChecks regressions, not passing builds.
 2. Continue spatial source closure: resolve six UI script GUIDs if possible; recover a version-matched Unity project/editor fixture to establish omitted SpatialBlend default; trace projectile/casing audio pose timing and listener activation/velocity/update order. Do not guess spatial defaults or ship speculative attenuation, panning, Doppler or reverb.
 3. Recover/reproduce the exact BehaviorDesigner decompiler snapshots for the eight declared body-hash differences; keep the plugin DLL hash and each known runtime delta recorded until resolved. Continue independent source-complete camera/renderer/particle/physics/actor batches; inventory all assets, owners, curves, order and assertions before implementation.
 4. After those source inventories, implement only evidenced behavior with numeric/headless regressions and one exact pushed-SHA Release/WASM/package/retention/IndexedDB/Chromium run per coherent batch.
@@ -145,6 +151,6 @@ Keep `fullGameParity:false`, `sourceVisualParity:false`, `nativeParityVerified:f
 
 ## Next action
 
-1. Commit and push the one-line FoundationChecks partial declaration repair with expected live HEAD `043f3c32750bbd210b4611177f5d03676d78c60f`, verify the remote commit/tree, then follow the resulting exact Actions run until both jobs complete and inspect the FoundationChecks result.
+1. Push the compile-boundary `Disable()` signature and spatial timing/dependency documentation with expected live HEAD `c04033174bd2af93fced1f91940ddfc19e58d2b6`, verify remote commit/tree, then follow the resulting exact Actions run until both jobs complete and inspect FoundationChecks, Release/WASM and package integrity.
 2. Then start the dependency-complete audio event/velocity trace for Projectile and runtime-ejected Casing, while resolving the eight BehaviorDesigner decompiler lineages and advancing independent visual/physics/actor inventory work.
 3. Do not publish. Site v85 is the last deployment; full parity flags stay false pending exact Site package integrity and the owner iPhone Safari acceptance.

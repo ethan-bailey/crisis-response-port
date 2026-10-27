@@ -12,7 +12,11 @@ namespace Crisis.Runtime.FullSource
     public sealed class WeaponBase { }
     public sealed class Projectile { public string name; }
     public sealed class Calibre { public string name; }
-    public sealed partial class Casing { }
+    // The FoundationChecks build excludes the recovered Casing body but still
+    // compiles the browser adapter. Keep only the private target signature so
+    // that compile-boundary check can validate the adapter without simulating
+    // Casing behavior.
+    public sealed partial class Casing { private void Disable() { } }
     public sealed class UIAmmoRenderItem { }
     public sealed class MarksmanRound { }
     public sealed class AmmunitionBase : UnityEngine.MonoBehaviour
