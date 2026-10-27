@@ -42,6 +42,9 @@ public interface IAudioSourceEventDriver:IAudioClipPlaybackDriver {
 public sealed class AudioSource:Behaviour,IAudioSourceLifecycle {
     public UnityEngine.Audio.AudioMixerGroup outputAudioMixerGroup {get;set;}
     public bool playOnAwake=true,spatialize,spatializePostEffects,bypassEffects,bypassListenerEffects,bypassReverbZones;
+    // The recovered Unity YAML omits this field. Null means the source default
+    // has not been proven; an explicitly serialized value remains transportable.
+    public float? serializedSpatialBlend;
     public float dopplerLevel=1,minDistance=1,maxDistance=500,pan2D,reverbZoneMix=1;
     public int rolloffMode,spread;
     public AnimationCurve rolloffCustomCurve,panLevelCustomCurve,spreadCustomCurve,reverbZoneMixCustomCurve;

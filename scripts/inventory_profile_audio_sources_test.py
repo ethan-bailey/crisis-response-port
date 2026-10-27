@@ -51,11 +51,25 @@ AudioSource:
             result = INVENTORY.profile_inventory(self.create_profile(Path(temp), source))
         self.assertEqual(result["serializedAudioSourceCount"], 1)
         self.assertEqual(result["spatialBlendSerializedCount"], 0)
+        self.assertEqual(result["spatialBlendSerializedFieldNameCounts"], {})
         component = result["components"][0]
         self.assertEqual(component["gameObjectName"], "Gun")
         self.assertIsNone(component["fields"]["SpatialBlend"])
         self.assertEqual(component["fields"]["DopplerLevel"], "0")
         self.assertEqual(result["valueHistograms"]["rolloffMode"], {"1": 1})
+
+    def test_inventory_detects_unity_serialized_spatial_blend_field_name(self):
+        source = """--- !u!82 &82
+AudioSource:
+  m_GameObject: {fileID: 1}
+  m_SpatialBlend: 0.625
+"""
+        with tempfile.TemporaryDirectory() as temp:
+            result = INVENTORY.profile_inventory(self.create_profile(Path(temp), source))
+        self.assertEqual(result["spatialBlendSerializedCount"], 1)
+        self.assertEqual(result["spatialBlendSerializedFieldNameCounts"], {"m_SpatialBlend": 1})
+        self.assertEqual(result["components"][0]["fields"]["m_SpatialBlend"], "0.625")
+        self.assertEqual(result["components"][0]["fields"]["SpatialBlend"], "0.625")
 
     def test_inventory_rejects_source_text_hash_mismatch(self):
         source = "--- !u!82 &82\nAudioSource:\n"
@@ -105,7 +119,7 @@ AudioListener:
 """
         with tempfile.TemporaryDirectory() as temp:
             result = INVENTORY.profile_inventory(self.create_profile(Path(temp), source))
-        self.assertEqual(result["schemaVersion"], 2)
+        self.assertEqual(result["schemaVersion"], 3)
         chain = result["transformHierarchyByAsset"]["Assets/Scenes/Mission.unity"][0]["chain"]
         self.assertEqual([item["gameObjectName"] for item in chain], ["Muzzle", "Weapon"])
         self.assertIn("Rigidbody", chain[1]["componentTypes"])

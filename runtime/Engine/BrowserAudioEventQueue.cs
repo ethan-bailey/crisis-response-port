@@ -118,7 +118,7 @@ public sealed class BrowserAudioEventQueue : IAudioSourceEventDriver, IDeferredA
         ownerName=source.name,ownerAssetPath=source.OriginalAssetPath,ownerAssetGuid=source.OriginalAssetGuid,ownerAssetFileID=source.OriginalAssetFileID,
         enabled=source.enabled,activeSelf=source.gameObject.activeSelf,activeInHierarchy=source.gameObject.activeInHierarchy,
         priority=source.priority,volume=source.volume,pitch=source.pitch,muted=source.mute,loop=source.loop,
-        spatialize=source.spatialize,spatializePostEffects=source.spatializePostEffects,dopplerLevel=source.dopplerLevel,
+        spatialize=source.spatialize,spatializePostEffects=source.spatializePostEffects,spatialBlend=source.serializedSpatialBlend,dopplerLevel=source.dopplerLevel,
         minDistance=source.minDistance,maxDistance=source.maxDistance,pan2D=source.pan2D,rolloffMode=source.rolloffMode,
         rolloffCustomCurve=DescribeCurve(source.rolloffCustomCurve),panLevelCustomCurve=DescribeCurve(source.panLevelCustomCurve),
         spread=source.spread,spreadCustomCurve=DescribeCurve(source.spreadCustomCurve),reverbZoneMix=source.reverbZoneMix,

@@ -39,7 +39,7 @@ if(args.Length==1&&args[0]=="--browser-audio-event-contract"){
     var clip=new AudioClip("Assets/AudioClip/hurt-07.ogg",.4f);
     var listenerObject=new GameObject("Contract listener",world);listenerObject.transform.position=new Vector3(3f,4f,5f);listenerObject.AddComponent<AudioListener>();
     var go=new GameObject("Audio source",world);
-    var source=go.AddComponent<AudioSource>();source.clip=clip;source.volume=.4f;source.minDistance=2f;source.maxDistance=12f;source.dopplerLevel=.5f;source.rolloffMode=2;source.pan2D=-.25f;
+    var source=go.AddComponent<AudioSource>();source.clip=clip;source.volume=.4f;source.minDistance=2f;source.maxDistance=12f;source.dopplerLevel=.5f;source.rolloffMode=2;source.pan2D=-.25f;source.serializedSpatialBlend=.375f;
     source.rolloffCustomCurve=new AnimationCurve(new Keyframe(0,1,0,0),new Keyframe(1,0,0,0));
     source.PlayOneShot(clip,.5f);var reportsPlaying=source.isPlaying;
     using var events=JsonDocument.Parse(JsonSerializer.Serialize(queue.Drain()));
@@ -53,7 +53,7 @@ if(args.Length==1&&args[0]=="--browser-audio-event-contract"){
        sourceState.GetProperty("listenerTransform").GetProperty("ownerName").GetString()!="Contract listener"||
        sourceState.GetProperty("listenerTransform").GetProperty("position")[2].GetSingle()!=5f||
        sourceState.GetProperty("minDistance").GetSingle()!=2f||sourceState.GetProperty("maxDistance").GetSingle()!=12f||
-       sourceState.GetProperty("dopplerLevel").GetSingle()!=.5f||sourceState.GetProperty("rolloffMode").GetInt32()!=2||
+       sourceState.GetProperty("spatialBlend").GetSingle()!=.375f||sourceState.GetProperty("dopplerLevel").GetSingle()!=.5f||sourceState.GetProperty("rolloffMode").GetInt32()!=2||
        sourceState.GetProperty("rolloffCustomCurve").GetProperty("keys").GetArrayLength()!=2||!reportsPlaying)
         throw new InvalidOperationException($"Browser audio bridge lost source identity, source gain, or stop order: {items}");
     go.transform.position=new Vector3(1f,0f,0f);
@@ -73,6 +73,14 @@ if(args.Length==1&&args[0]=="--browser-audio-event-contract"){
     if(pressureEvents.RootElement.GetArrayLength()!=64||pressureEvents.RootElement[63].GetProperty("action").GetString()!="stop"||
        pressureQueue.DroppedEvents!=1||pressureSource.isPlaying)
         throw new InvalidOperationException($"A full browser audio queue discarded the source Stop control: dropped={pressureQueue.DroppedEvents}, sourcePlaying={pressureSource.isPlaying}, events={pressureEvents.RootElement}");
+    string SpatialBlendPrefab(float? blend){
+        var blendField=blend.HasValue?$",\"m_SpatialBlend\":{blend.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)}":"";
+        return """{"assets":{"Fixture.prefab":{"records":[{"classID":1,"fileID":"1","fields":{"m_Name":"Fixture audio","m_Layer":0,"m_TagString":"Untagged","m_IsActive":1}},{"classID":4,"fileID":"2","fields":{"m_GameObject":{"fileID":1},"m_LocalPosition":{"x":0,"y":0,"z":0},"m_LocalScale":{"x":1,"y":1,"z":1},"m_LocalRotation":{"x":0,"y":0,"z":0,"w":1},"m_Father":{"fileID":0},"m_Children":[]}},{"classID":82,"fileID":"3","fields":{"m_GameObject":{"fileID":1},"m_Enabled":1$SPATIAL_BLEND$}}]}}}""".Replace("$SPATIAL_BLEND$",blendField,StringComparison.Ordinal);
+    }
+    var importedBlend=SceneLoader.LoadPrefab(SpatialBlendPrefab(.625f),"Fixture.prefab",new RuntimeWorld()).prefabRoot.GetComponent<AudioSource>();
+    var unknownBlend=SceneLoader.LoadPrefab(SpatialBlendPrefab(null),"Fixture.prefab",new RuntimeWorld()).prefabRoot.GetComponent<AudioSource>();
+    if(importedBlend.serializedSpatialBlend!=.625f||unknownBlend.serializedSpatialBlend is not null)
+        throw new InvalidOperationException($"AudioSource spatial blend import must preserve explicit values without guessing omitted values: explicit={importedBlend.serializedSpatialBlend},omitted={unknownBlend.serializedSpatialBlend}");
     (int sourceId,string[] actions,bool isPlaying) RunLifecycleCase(string transition){
         var lifecycleWorld=new RuntimeWorld();var lifecycleQueue=new Crisis.Runtime.BrowserAudioEventQueue();lifecycleWorld.AudioSourceDriver=lifecycleQueue;
         var lifecycleClip=new AudioClip("Assets/AudioClip/hurt-07.ogg",.4f);

@@ -19,7 +19,7 @@ GAME_OBJECT_RE = re.compile(r"(?ms)^--- !u!1 &(\S+)\nGameObject:\n(.*?)(?=^--- !
 COMPONENT_RE = re.compile(r"(?ms)^--- !u!(\d+) &(\S+)\n([^\n]+):\n(.*?)(?=^--- !u!|\Z)")
 SOURCE_FIELDS = (
     "m_Enabled", "m_audioClip", "OutputAudioMixerGroup", "m_PlayOnAwake", "m_Volume",
-    "m_Pitch", "Loop", "Mute", "Spatialize", "SpatializePostEffects", "Priority",
+    "m_Pitch", "Loop", "Mute", "Spatialize", "SpatializePostEffects", "m_SpatialBlend", "Priority",
     "DopplerLevel", "MinDistance", "MaxDistance", "Pan2D", "rolloffMode",
     "rolloffCustomCurve", "panLevelCustomCurve", "spreadCustomCurve", "ReverbZoneMix",
     "reverbZoneMixCustomCurve", "BypassEffects", "BypassListenerEffects", "BypassReverbZones",
@@ -108,7 +108,8 @@ def profile_inventory(profile_dir: Path) -> dict:
             fields = set(values)
             field_counts.update(fields)
             # SpatialBlend is a runtime API property; record its serialized absence explicitly.
-            spatial = scalar(block, "SpatialBlend")
+            spatial = scalar(block, "m_SpatialBlend") or scalar(block, "SpatialBlend")
+            spatial_names = [name for name in ("m_SpatialBlend", "SpatialBlend") if scalar(block, name) is not None]
             values["SpatialBlend"] = spatial if spatial is not None else None
             for field in value_counts:
                 value_counts[field][str(values.get(field, "<omitted>"))] += 1
@@ -118,6 +119,7 @@ def profile_inventory(profile_dir: Path) -> dict:
                 "gameObjectFileID": owner_id,
                 "gameObjectName": object_names.get(owner_id),
                 "fields": values,
+                "serializedSpatialBlendFieldNames": spatial_names,
             })
             chain = []
             seen = set()
@@ -212,12 +214,15 @@ def profile_inventory(profile_dir: Path) -> dict:
             unresolved_script_guids.update(guid for guid in node["monoBehaviourScriptGuids"] if not guid_paths.get(guid))
     listeners = [item for entries in listener_hierarchy_by_asset.values() for item in entries]
     return {
-        "schemaVersion": 2,
+        "schemaVersion": 3,
         "profile": manifest["profile"],
         "sourcePackageSha256": manifest["sourcePackageSha256"],
         "assetCount": manifest["assetCount"],
         "serializedAudioSourceCount": len(components),
-        "spatialBlendSerializedCount": sum(item["fields"]["SpatialBlend"] is not None for item in components),
+        "spatialBlendSerializedCount": sum(bool(item["serializedSpatialBlendFieldNames"]) for item in components),
+        "spatialBlendSerializedFieldNameCounts": dict(sorted(collections.Counter(
+            name for item in components for name in item["serializedSpatialBlendFieldNames"]
+        ).items())),
         "fieldPresenceCounts": dict(sorted(field_counts.items())),
         "valueHistograms": {key: dict(sorted(counter.items())) for key, counter in value_counts.items()},
         "components": components,
@@ -261,7 +266,7 @@ def main() -> int:
         args.output_json.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         print(json.dumps({key: result[key] for key in (
             "profile", "sourcePackageSha256", "assetCount", "serializedAudioSourceCount",
-            "spatialBlendSerializedCount", "fieldPresenceCounts", "valueHistograms",
+            "spatialBlendSerializedCount", "spatialBlendSerializedFieldNameCounts", "fieldPresenceCounts", "valueHistograms",
         )}, sort_keys=True))
         return 0
     except (OSError, ValueError, KeyError, json.JSONDecodeError) as error:
