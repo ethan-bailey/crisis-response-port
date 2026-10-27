@@ -154,6 +154,17 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
     if(mixerSetFloatResults.Values.Any(applied=>applied))
         throw new InvalidOperationException($"Mixer setter accepted source strings that are not in the recovered exposed-parameter list: {JsonSerializer.Serialize(mixerSetFloatResults)}");
     var bridge=new FullSourceActorBridge(world,session.Actor);
+    using var mixerFrame=JsonDocument.Parse(JsonSerializer.Serialize(bridge.Snapshot()));
+    var mixerConfiguration=mixerFrame.RootElement.GetProperty("audioMixerConfiguration");
+    var mixerGroups=mixerConfiguration.GetProperty("groups");
+    var mixerSnapshots=mixerConfiguration.GetProperty("snapshots");
+    if(mixerGroups.GetArrayLength()!=19||mixerSnapshots.GetArrayLength()!=5||
+       mixerGroups.EnumerateArray().Any(group=>!group.GetProperty("fields").TryGetProperty("m_Volume",out _)||!group.GetProperty("fields").TryGetProperty("m_Pitch",out _))||
+       mixerSnapshots.EnumerateArray().Any(snapshot=>!snapshot.GetProperty("fields").TryGetProperty("m_FloatValues",out var values)||values.EnumerateObject().Count()!=47))
+        throw new InvalidOperationException($"EntryTeam did not transport the complete recovered AudioMixer graph (19 groups, five 47-parameter snapshots): groups={mixerGroups.GetArrayLength()},snapshots={mixerSnapshots.GetArrayLength()},payload={mixerConfiguration}");
+    var mixerTransitions=mixerFrame.RootElement.GetProperty("audioMixerEvents");
+    if(mixerTransitions.EnumerateArray().Any(item=>item.GetProperty("action").GetString()!="transition"||!item.GetProperty("snapshotFields").TryGetProperty("m_FloatValues",out _)))
+        throw new InvalidOperationException($"Recovered AudioMixer snapshot transition lost its authored values: {mixerTransitions}");
     var fireAlarms=session.Mission.objects.Values.OfType<Crisis.Runtime.FullSource.FireAlarm>().ToArray();
     if(fireAlarms.Length==0)throw new InvalidOperationException("Mission 01 source scene has no FireAlarm instances to validate");
     var fireAlarm=fireAlarms.FirstOrDefault(value=>value.GetComponent<AudioSource>()?.clip!=null)
@@ -177,7 +188,7 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
         throw new InvalidOperationException($"The eased browser stick magnitude did not scale the original walk speed cap and restore the authored speed: forceX={forceX}, fullWalkForce={fullWalkForce}, authoredWalkSpeed={session.Actor.walkSpeed}, snapshot={state}");
     var sourceClip=session.Mission.world.Objects.OfType<AudioClip>().FirstOrDefault(clip=>!string.IsNullOrEmpty(clip.OriginalAssetPath))
         ??throw new InvalidOperationException("Mission source profile has no identified original audio clips");
-    var sourceAudio=session.Mission.world.Objects.OfType<AudioSource>().FirstOrDefault()
+    var sourceAudio=session.Mission.world.Objects.OfType<AudioSource>().FirstOrDefault(source=>source.outputAudioMixerGroup!=null)
         ??throw new InvalidOperationException("Mission source profile has no original AudioSource");
     var audioQueue=world.AudioSourceDriver as Crisis.Runtime.BrowserAudioEventQueue
         ??throw new InvalidOperationException("Mission EntryTeam session has no original browser audio event queue");
@@ -189,6 +200,8 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
     var expectedSourceGain=Math.Clamp(sourceAudio.volume*.37f,0f,1f);
     if(audioEvents.GetArrayLength()!=64||audioCapture.RootElement.GetProperty("droppedAudioEvents").GetInt32()!=droppedBefore+1||audioEvents[0].GetProperty("sourcePath").GetString()!=sourceClip.OriginalAssetPath||
        MathF.Abs(audioEvents[0].GetProperty("volume").GetSingle()-expectedSourceGain)>.001f||
+       audioEvents[0].GetProperty("sourceState").GetProperty("outputAudioMixerGroupGuid").GetString()!=sourceAudio.outputAudioMixerGroup.OriginalAssetGuid||
+       audioEvents[0].GetProperty("sourceState").GetProperty("outputAudioMixerGroupFileID").GetString()!=sourceAudio.outputAudioMixerGroup.OriginalAssetFileID||
        MathF.Abs(audioCapture.RootElement.GetProperty("sourceTime").GetSingle()-audioEvents[0].GetProperty("time").GetSingle())>.1f)
         throw new InvalidOperationException($"Original AudioSource callback was not delivered as one bounded, timestamped browser event: {audioCapture.RootElement}");
     var sourceWeapon=session.Actor.ActiveWeapon??throw new InvalidOperationException("FullSource Mission actor has no original active weapon");

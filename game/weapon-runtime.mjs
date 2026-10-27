@@ -106,6 +106,7 @@ export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,part
  }
  function audioSnapshot(){return audioStats.snapshot();}
  return {update,playSourceAudioEvents:dispatchSourceAudio,
+  updateSourceAudioMixer:(configuration,events,sourceTime)=>audioStats.updateSourceAudioMixer(configuration,events,sourceTime),
   updateSourceAudioStates:(states,sourceTime)=>audioStats.updateSourceAudioStates(states,sourceTime),
   observeSourceParticleCommands:(events,sourceTime,dropped)=>{
    originalParticleEvents.observeSourceCommands(events,sourceTime,dropped);

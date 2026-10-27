@@ -50,9 +50,12 @@ internal static class SerializedAssetResolver {
         created.name=fields.TryGetProperty("m_Name",out var name)?name.GetString():path;
         created.OriginalAssetGuid=guid;created.OriginalAssetFileID=fileID;created.OriginalAssetPath=path;
         foreach(var property in fields.EnumerateObject())created.OriginalSerializedFields[property.Name]=property.Value.Clone();
+        // Register the requested object before hydrating its mixer siblings so
+        // the complete source graph reuses this exact instance from the cache.
+        world.Register(created);cache[key]=created;
         if(created is Audio.AudioMixerGroup mixerGroup)mixerGroup.audioMixer=ResolveSiblingMixer(assetRecords,guid,path,world,cache);
         if(created is Audio.AudioMixerSnapshot mixerSnapshot)mixerSnapshot.audioMixer=ResolveSiblingMixer(assetRecords,guid,path,world,cache);
-        world.Register(created);cache[key]=created;return created;
+        return created;
         } finally { package.ReleaseParsedAsset(path); }
     }
     static Audio.AudioMixer ResolveSiblingMixer(JsonElement assetRecords,string guid,string path,RuntimeWorld world,Dictionary<string,Object> cache){
@@ -62,7 +65,28 @@ internal static class SerializedAssetResolver {
         if(record.ValueKind==JsonValueKind.Undefined)throw new KeyNotFoundException($"Audio mixer asset {path} has no serialized mixer object {mixerID}");
         var fields=record.GetProperty("fields");var mixer=new Audio.AudioMixer{name=fields.GetProperty("m_Name").GetString(),OriginalAssetGuid=guid,OriginalAssetFileID=mixerID,OriginalAssetPath=path};
         foreach(var property in fields.EnumerateObject())mixer.OriginalSerializedFields[property.Name]=property.Value.Clone();
-        world.Register(mixer);cache[key]=mixer;return mixer;
+        world.Register(mixer);cache[key]=mixer;
+        // The mixer is one serialized asset containing the whole authored
+        // routing graph. Recover all 19 groups and five snapshots together,
+        // instead of letting whichever source happens to load first define
+        // an incomplete runtime graph.
+        foreach(var sibling in assetRecords.EnumerateArray()){
+            var siblingFields=sibling.GetProperty("fields");
+            bool isGroup=siblingFields.TryGetProperty("m_GroupID",out _);
+            bool isSnapshot=siblingFields.TryGetProperty("m_FloatValues",out _);
+            if(!isGroup&&!isSnapshot)continue;
+            string siblingID=sibling.GetProperty("fileID").GetString();
+            string siblingKey=guid+":"+siblingID;
+            if(cache.ContainsKey(siblingKey))continue;
+            var value=isGroup?(Object)new Audio.AudioMixerGroup():new Audio.AudioMixerSnapshot();
+            value.name=siblingFields.TryGetProperty("m_Name",out var siblingName)?siblingName.GetString():path;
+            value.OriginalAssetGuid=guid;value.OriginalAssetFileID=siblingID;value.OriginalAssetPath=path;
+            foreach(var property in siblingFields.EnumerateObject())value.OriginalSerializedFields[property.Name]=property.Value.Clone();
+            if(value is Audio.AudioMixerGroup group)group.audioMixer=mixer;
+            if(value is Audio.AudioMixerSnapshot snapshot)snapshot.audioMixer=mixer;
+            world.Register(value);cache[siblingKey]=value;
+        }
+        return mixer;
     }
     static Texture2D ResolvePngTexture(OriginalSourcePackage package,JsonElement asset,string guid,string fileID,string path,byte[] bytes,RuntimeWorld world,Dictionary<string,Object> cache) {
         if(!path.EndsWith(".png",StringComparison.OrdinalIgnoreCase))throw new NotSupportedException($"Binary Texture2D format is unsupported: {path}");

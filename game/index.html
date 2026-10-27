@@ -508,6 +508,10 @@ async function load(){
     const session=JSON.parse(await runtimeCall("InitializeIncrementalEntryTeamMission"));
     if(session.snapshot?.owner!=="FullSource.CharacterBody")throw new Error("Original Mission did not return the source-owned player actor");
     sourceActorSnapshot=session.snapshot;
+    // InitializeIncrementalEntryTeamMission returns the one-time mixer graph
+    // and startup transitions in its initial actor snapshot. Consume them
+    // before the following per-frame tick, which intentionally sends no graph.
+    upperBody.updateSourceAudioMixer(sourceActorSnapshot.audioMixerConfiguration,sourceActorSnapshot.audioMixerEvents,sourceActorSnapshot.audioMixerTime);
     missionProgressText.textContent="Decoding active Mission audio before controls are enabled…";
     const sourceAudioPaths=JSON.parse(await runtimeCall("GetMissionAudioSourcePaths"));
     const mappedWeaponAudioPaths=new Set(Object.values(weaponData.audio||{}).map(info=>info.source).filter(Boolean));
@@ -584,6 +588,7 @@ async function frame(now){
   const sourceMoveMagnitude=sourceMoveDirection===0?1:input.movementProfile(sourceMoveDirection,
    contactPhysics.data.character.movement.walkSpeed,contactPhysics.data.character.movement.sprintSpeed,rawActions.sprint).magnitude;
   sourceActorSnapshot=JSON.parse(await runtimeCall("TickFullSourceActorBridge",elapsed,JSON.stringify(rawActions),mouseX,mouseY,sourceMoveMagnitude));
+  upperBody.updateSourceAudioMixer(sourceActorSnapshot.audioMixerConfiguration,sourceActorSnapshot.audioMixerEvents,sourceActorSnapshot.audioMixerTime);
   upperBody.playSourceAudioEvents(sourceActorSnapshot.audioEvents,sourceActorSnapshot.sourceTime);
   upperBody.updateSourceAudioStates(sourceActorSnapshot.audioSourceStates,sourceActorSnapshot.sourceTime);
   upperBody.observeSourceParticleCommands(sourceActorSnapshot.particleEvents,sourceActorSnapshot.sourceTime,sourceActorSnapshot.droppedParticleEvents);

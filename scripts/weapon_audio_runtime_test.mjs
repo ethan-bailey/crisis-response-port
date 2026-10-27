@@ -54,8 +54,16 @@ test('full-source frame snapshots are forwarded through the production game audi
     readFile(new URL('../game/weapon-runtime.mjs',import.meta.url),'utf8'),
   ]);
   assert.match(page,/updateSourceAudioStates\(sourceActorSnapshot\.audioSourceStates,sourceActorSnapshot\.sourceTime\)/);
+  assert.match(page,/updateSourceAudioMixer\(sourceActorSnapshot\.audioMixerConfiguration,sourceActorSnapshot\.audioMixerEvents,sourceActorSnapshot\.audioMixerTime\)/);
+  const startupSnapshot=page.indexOf('sourceActorSnapshot=session.snapshot;');
+  const startupMixer=page.indexOf('upperBody.updateSourceAudioMixer(sourceActorSnapshot.audioMixerConfiguration,sourceActorSnapshot.audioMixerEvents,sourceActorSnapshot.audioMixerTime);',startupSnapshot);
+  const sourceModeEnabled=page.indexOf('sourceActorMode=true;',startupSnapshot);
+  assert.ok(startupSnapshot>=0&&startupMixer>startupSnapshot&&sourceModeEnabled>startupMixer,
+    'consume the one-time mixer graph and startup transitions before enabling the Mission frame loop');
   assert.match(presentation,/updateSourceAudioStates\(states,sourceTime\)\{effects\.updateSourceAudioStates\(states,sourceTime\);\}/);
+  assert.match(presentation,/updateSourceAudioMixer\(configuration,events,sourceTime\)\{effects\.updateSourceAudioMixer\(configuration,events,sourceTime\);\}/);
   assert.match(weapon,/updateSourceAudioStates:\(states,sourceTime\)=>audioStats\.updateSourceAudioStates\(states,sourceTime\)/);
+  assert.match(weapon,/updateSourceAudioMixer:\(configuration,events,sourceTime\)=>audioStats\.updateSourceAudioMixer\(configuration,events,sourceTime\)/);
 });
 
 test('voice arbitration selects exactly 64 real voices from a 513-candidate deterministic profile', () => {
@@ -106,10 +114,12 @@ class FakeAudioContext {
     this.started = 0;
     this.master = null;
     this.sources=[];
+    this.gains=[];
   }
   createGain() {
     const node = new FakeNode();
     if (!this.master) this.master = node;
+    this.gains.push(node);
     return node;
   }
   createDynamicsCompressor() {
@@ -125,6 +135,32 @@ class FakeAudioContext {
   decodeAudioData() { return Promise.resolve({ decoded: true,length:this.decodedBufferLength??4800,numberOfChannels:1,sampleRate:48000 }); }
   resume() { this.state = 'running'; return Promise.resolve(); }
 }
+
+test('source audio applies authored mixer group gain and snapshot pitch to active output',async()=>{
+  const sourcePath='Assets/AudioClip/mixer-route.ogg',bytes=Uint8Array.from([1,2,7]);
+  const sourceSha256=[...new Uint8Array(await webcrypto.subtle.digest('SHA-256',bytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
+  const runtime=createWeaponAudioRuntime({}, {AudioContextClass:FakeAudioContext});runtime.unlock();await Promise.resolve();
+  const fetchSource=async path=>({assetPath:path,dataBase64:Buffer.from(bytes).toString('base64'),sourceSha256});
+  await runtime.loadOriginalSource(sourcePath,fetchSource);
+  const mixerGuid='mixer-guid';
+  const configuration={mixers:[{guid:mixerGuid,fields:{m_StartSnapshot:{fileID:'24500001'},m_TargetSnapshot:{fileID:'24500001'}}}],
+    groups:[{guid:mixerGuid,fileID:'24300000',fields:{m_GroupID:'master',m_Volume:'master-volume',m_Pitch:'master-pitch',m_Children:[{fileID:'24300004'}],m_Mute:0}},
+      {guid:mixerGuid,fileID:'24300004',fields:{m_GroupID:'effects',m_Volume:'effects-volume',m_Pitch:'effects-pitch',m_Children:[],m_Mute:0}}],
+    snapshots:[{guid:mixerGuid,fileID:'24500001',fields:{m_FloatValues:{'master-volume':0,'effects-volume':0,'master-pitch':1,'effects-pitch':1}}},
+      {guid:mixerGuid,fileID:'24500002',fields:{m_FloatValues:{'master-volume':-6,'effects-volume':-6,'master-pitch':2,'effects-pitch':2}}}]};
+  const transition={action:'transition',time:1,duration:1,snapshotFileID:'24500002',snapshotFields:configuration.snapshots[1].fields};
+  assert.equal(runtime.updateSourceAudioMixer(configuration,[transition],1),true);
+  const sourceState={sourceId:991,priority:80,volume:.8,pitch:1,enabled:true,activeInHierarchy:true,muted:false,
+    outputAudioMixerGroupGuid:mixerGuid,outputAudioMixerGroupFileID:'24300004',sourceTransform:{position:[0,0,0]}};
+  const dispatch=createSourceWeaponAudioDispatcher({},runtime,fetchSource);
+  dispatch([{action:'oneShot',sourcePath,sourceId:991,time:1.01,volume:.8,pitch:1,sourceState}],1.02);
+  assert.equal(runtime.updateSourceAudioStates([sourceState],1.5),true);
+  const outputGain=activeContext.gains.at(-1);
+  assert.ok(Math.abs(outputGain.gain.value-.8*10**(-6/20))<1e-9,`expected interpolated group/master gain, got ${outputGain.gain.value}`);
+  assert.equal(activeContext.sources.at(-1).playbackRate.value,2.25,'parent and child snapshot pitch multiply at the active buffer source');
+  runtime.updateSourceAudioMixer(null,[],2);
+  assert.ok(Math.abs(outputGain.gain.value-.8*10**(-12/20))<1e-9);
+});
 
 test('one-frame gun audio rejects stale, future, suspended, and unloaded events', () => {
   assert.equal(classifyWeaponPlayback({ eventAgeSeconds: 0.121, contextState: 'running', bufferLoaded: true }), 'stale');

@@ -1,18 +1,58 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace Crisis.Runtime;
 
 /// <summary>Bounded bridge from recovered AudioSource callbacks to browser audio.</summary>
-public sealed class BrowserAudioEventQueue : IAudioSourceEventDriver, IDeferredAudioSourceDriver
+public sealed class BrowserAudioEventQueue : IAudioSourceEventDriver, IDeferredAudioSourceDriver, IAudioMixerDriver
 {
     const int MaximumPendingEvents = 64;
+    const int MaximumPendingMixerEvents = 32;
     readonly List<object> pending = [];
+    readonly List<object> pendingMixerEvents = [];
     readonly Dictionary<int,bool> playback = [];
     readonly Dictionary<int,AudioSource> sources = [];
+    bool mixerConfigurationSent;
     public int DroppedEvents { get; private set; }
+    public int DroppedMixerEvents { get; private set; }
     public bool IsPlaying => playback.Values.Any(value=>value);
     public bool IsSourcePlaying(AudioSource source)=>source!=null&&playback.GetValueOrDefault(source.GetInstanceID());
     public void ReportPlaybackState(int sourceId,bool isPlaying){if(sourceId==0)return;playback[sourceId]=isPlaying;if(!isPlaying)sources.Remove(sourceId);}
+
+    // The recovered exposed parameter names do not match source C# callers.
+    // Preserve Unity's false result; never alias names by guesswork.
+    public bool SetFloat(string exposedParameter,float value)=>false;
+
+    public void TransitionTo(AudioMixerSnapshot snapshot,float timeToReach)
+    {
+        if(snapshot==null)throw new ArgumentNullException(nameof(snapshot));
+        if(pendingMixerEvents.Count>=MaximumPendingMixerEvents){pendingMixerEvents.RemoveAt(0);DroppedMixerEvents++;}
+        pendingMixerEvents.Add(new
+        {
+            // AudioMixer snapshots continue across Time.timeScale pauses.
+            // Timestamp them on Unity's unscaled realtime clock.
+            action="transition",time=Time.realtimeSinceStartup,duration=timeToReach,
+            snapshotName=snapshot.name,snapshotGuid=snapshot.OriginalAssetGuid,
+            snapshotFileID=snapshot.OriginalAssetFileID,
+            snapshotFields=snapshot.OriginalSerializedFields
+        });
+    }
+
+    public object[] DrainMixerEvents(){var events=pendingMixerEvents.ToArray();pendingMixerEvents.Clear();return events;}
+
+    /// <summary>Send the resolved, source-owned mixer graph once per browser session.</summary>
+    public object TakeMixerConfiguration(RuntimeWorld world)
+    {
+        if(mixerConfigurationSent)return null;
+        var mixers=world.Objects.OfType<AudioMixer>().Where(value=>value).DistinctBy(value=>(value.OriginalAssetGuid,value.OriginalAssetFileID)).ToArray();
+        var groups=world.Objects.OfType<AudioMixerGroup>().Where(value=>value).DistinctBy(value=>(value.OriginalAssetGuid,value.OriginalAssetFileID))
+            .Select(value=>new{guid=value.OriginalAssetGuid,fileID=value.OriginalAssetFileID,name=value.name,fields=value.OriginalSerializedFields}).ToArray();
+        var snapshots=world.Objects.OfType<AudioMixerSnapshot>().Where(value=>value).DistinctBy(value=>(value.OriginalAssetGuid,value.OriginalAssetFileID))
+            .Select(value=>new{guid=value.OriginalAssetGuid,fileID=value.OriginalAssetFileID,name=value.name,fields=value.OriginalSerializedFields}).ToArray();
+        mixerConfigurationSent=mixers.Length==1&&groups.Length==19&&snapshots.Length==5;
+        return new{expectedGroupCount=19,expectedSnapshotCount=5,
+            mixers=mixers.Select(value=>new{guid=value.OriginalAssetGuid,fileID=value.OriginalAssetFileID,name=value.name,fields=value.OriginalSerializedFields}).ToArray(),groups,snapshots};
+    }
 
     /// <summary>Current source-owned input for browser-side spatial/mixer/voice evaluation.</summary>
     public object[] ActiveSourceStates()=>playback.Where(item=>item.Value&&sources.TryGetValue(item.Key,out var source)&&source&&source.isActiveAndEnabled)
@@ -85,6 +125,7 @@ public sealed class BrowserAudioEventQueue : IAudioSourceEventDriver, IDeferredA
         reverbZoneMixCustomCurve=DescribeCurve(source.reverbZoneMixCustomCurve),bypassEffects=source.bypassEffects,
         bypassListenerEffects=source.bypassListenerEffects,bypassReverbZones=source.bypassReverbZones,
         outputAudioMixerGroupGuid=source.outputAudioMixerGroup?.OriginalAssetGuid,
+        outputAudioMixerGroupFileID=source.outputAudioMixerGroup?.OriginalAssetFileID,
         sourceTransform=DescribeTransform(source.transform,source),activeListenerCount=activeListeners.Length,
         listenerTransform=selectedListener==null?null:DescribeTransform(selectedListener.transform,selectedListener),
         time=Time.time

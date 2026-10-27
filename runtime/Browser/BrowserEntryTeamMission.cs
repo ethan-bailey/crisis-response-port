@@ -32,12 +32,6 @@ public static class BrowserEntryTeamMission
         public void LoadScene(string sceneName) => throw new NotSupportedException("Browser EntryTeam session does not change scenes");
     }
 
-    sealed class SilentMixerDriver : UnityEngine.Audio.IAudioMixerDriver
-    {
-        public bool SetFloat(string exposedParameter, float value) => false;
-        public void TransitionTo(UnityEngine.Audio.AudioMixerSnapshot snapshot, float timeToReach) { }
-    }
-
     public static Session Start(OriginalSourcePackage package, RuntimeWorld world, bool enablePlayerBehavior = false)
     {
         ArgumentNullException.ThrowIfNull(package);
@@ -51,7 +45,7 @@ public static class BrowserEntryTeamMission
         Shader.Resolver ??= name => new Shader { name = name, isSupported = false };
         UnityEngine.SceneManagement.SceneManager.Bind(world, new SceneDriver());
         Material.TextureDriver ??= (_, _) => { };
-        UnityEngine.Audio.AudioMixer.Bind(world, new SilentMixerDriver());
+        UnityEngine.Audio.AudioMixer.Bind(world, audioEvents);
 
         SceneLoader.LoadPrefabInstance(package, "Assets/Resources/Global context.prefab", world, requireComplete: false);
         foreach (var source in world.Objects.OfType<AudioSource>()) source.Driver = audioEvents;

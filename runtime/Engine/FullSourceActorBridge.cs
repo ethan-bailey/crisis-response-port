@@ -370,6 +370,7 @@ public sealed class FullSourceActorBridge
         {
             owner = "FullSource.CharacterBody",
             sourceTime = Time.time,
+            audioMixerTime = Time.realtimeSinceStartup,
             playerController = controller.GetInstanceID(),
             actor = body.name,
             position = new[] { body.transform.position.x, body.transform.position.y, body.transform.position.z },
@@ -379,6 +380,9 @@ public sealed class FullSourceActorBridge
             kneeling = body.IsKneeling,
             weapon = body.ActiveWeapon ? body.ActiveWeapon.name : null,
             poses,
+            audioMixerConfiguration = audioEventQueue?.TakeMixerConfiguration(world),
+            audioMixerEvents = audioEventQueue?.DrainMixerEvents() ?? Array.Empty<object>(),
+            droppedAudioMixerEvents = audioEventQueue?.DroppedMixerEvents ?? 0,
             physics = new
             {
                 fixedSteps = lastFixedSteps,
