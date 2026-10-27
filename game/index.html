@@ -186,7 +186,7 @@ const camera=new THREE.PerspectiveCamera(20,innerWidth/innerHeight,5,20);
 camera.position.set(-3,1.2,9.8);
 const world=new THREE.Group();scene.add(world);
 const character=new THREE.Group();character.name="Original Operator prefab";scene.add(character);
-const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(2,0,0),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,contactPhysicsModule=null,contactPhysicsData=null,physicsState=null,physicsTime=0,sprintBlend=0,gaitPhase=0,upperBody=null,presentationData=null,weaponData=null,ballisticsData=null,hasAimPointer=false,aimDirty=false,aimGeneration=0,settledAimGeneration=-1,tapPending=0,tapFrame=false,reloadPending=false,weaponState=null,handRenderers=null,armRig=null,sourceActorMode=false,sourceActorSnapshot=null,originalCasingRuntime=null,projectFullSourceSnapshot=()=>{};const lockedAim=new AimDirection(),aimFireGate=new AimFireGate();
+const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(2,0,0),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,contactPhysicsModule=null,contactPhysicsData=null,physicsState=null,physicsTime=0,sprintBlend=0,gaitPhase=0,upperBody=null,presentationData=null,weaponData=null,ballisticsData=null,hasAimPointer=false,aimDirty=false,aimGeneration=0,settledAimGeneration=-1,tapPending=0,tapFrame=false,reloadPending=false,weaponState=null,handRenderers=null,armRig=null,sourceActorMode=false,sourceActorSnapshot=null,originalCasingRuntime=null,groundingFrame=null,projectFullSourceSnapshot=()=>{};const lockedAim=new AimDirection(),aimFireGate=new AimFireGate();
 const loadStart=performance.now(),loadingTimings={};window.__loadingTimings=loadingTimings;
 let sourceLoadController=null;
 bindMobileZoomGuard(document);
@@ -457,7 +457,7 @@ async function load(){
   physicsState=contactPhysics.snapshot();document.body.classList.add('playing');loaded=true;markLoaded("playable");
   // The inactive sidearm must not delay play. Fetch it after the first playable frame.
   requestAnimationFrame(()=>setTimeout(()=>buildWeapon("Glock-18","Pelvis/Abdomen/Torso/Right upper arm/Right lower arm/Right hand/Pistol pivot").then(w=>{w.root.visible=false;weaponInstances["Glock-18"]=w;markLoaded("sidearmReady");}).catch(()=>{weaponStatus.textContent="Original active weapon loaded · sidearm preview unavailable";}),0));
-  window.__gameState=()=>({loaded,grounding:sourceActorMode&&sourceActorSnapshot?describeGrounding({sourcePosition:sourceActorSnapshot.position,physics:physicsState,projectedPosition:character.position.toArray(),capsule:contactPhysicsData.character.capsule,center:{x:(isKneeling?-.15:0)*facingDirection,y:contactPhysicsData.character.movement.colliderVerticalOffset,z:0},boxes:contactPhysicsData.boxes}):null,originalInputActive:!!runtimeCall,originalInput:originalInputState,playerX,playerY,velocity,pelvisLocalPosition:nodeByPath.get("Pelvis").position.toArray(),physics:physicsState,physicsTime,sprintBlend,gaitPhase,loadingTimings,presentation:upperBody.snapshot(),originalPhysicalArms:armRig?.snapshot(),originalHands:handRenderers?.snapshot(),originalCasings:originalCasingRuntime?.snapshot(),projection:{type:camera.type,fov:camera.fov,near:camera.near,far:camera.far,position:camera.position.toArray()},facingDirection,aimPoint:[aimPoint.x,aimPoint.y,physicsState.z],aimFireLocked:aimFireGate.locked,limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,weaponActionsImplemented:true,weaponState,aimDirection:lockedAim.vector,weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
+  window.__gameState=()=>({loaded,grounding:sourceActorMode&&sourceActorSnapshot?describeGrounding({...groundingFrame,sourcePosition:sourceActorSnapshot.position,physics:physicsState,projectedPosition:character.position.toArray(),capsule:contactPhysicsData.character.capsule,center:{x:(isKneeling?-.15:0)*facingDirection,y:contactPhysicsData.character.movement.colliderVerticalOffset,z:0},boxes:contactPhysicsData.boxes}):null,originalInputActive:!!runtimeCall,originalInput:originalInputState,playerX,playerY,velocity,pelvisLocalPosition:nodeByPath.get("Pelvis").position.toArray(),physics:physicsState,physicsTime,sprintBlend,gaitPhase,loadingTimings,presentation:upperBody.snapshot(),originalPhysicalArms:armRig?.snapshot(),originalHands:handRenderers?.snapshot(),originalCasings:originalCasingRuntime?.snapshot(),projection:{type:camera.type,fov:camera.fov,near:camera.near,far:camera.far,position:camera.position.toArray()},facingDirection,aimPoint:[aimPoint.x,aimPoint.y,physicsState.z],aimFireLocked:aimFireGate.locked,limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,weaponActionsImplemented:true,weaponState,aimDirection:lockedAim.vector,weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
   status.textContent="Original C# camera and arm IK · tap or drag to aim; tap same spot to fire.";
   positionLabel.textContent="Walk 1.5 m/s · Sprint 4.2 m/s · original spawn X −3";
   const startOriginalMission=async()=>{
@@ -594,6 +594,7 @@ async function frame(now){
   upperBody.updateSourceAudioStates(sourceActorSnapshot.audioSourceStates,sourceActorSnapshot.sourceTime);
   upperBody.observeSourceParticleCommands(sourceActorSnapshot.particleEvents,sourceActorSnapshot.sourceTime,sourceActorSnapshot.droppedParticleEvents);
   const physics=sourceActorSnapshot.physics,step=contactPhysics.data.fixedDeltaTime,commands=physics.commands||[];
+  groundingFrame={sourceBeforeContact:[...sourceActorSnapshot.position],contactBefore:[physicsState.x,physicsState.y,physicsState.z]};
   originalCasingRuntime.consume(physics.worldCommands||[]);
   originalCasingRuntime.reconcile(sourceActorSnapshot.casings||[]);
   for(let index=0;index<physics.fixedSteps;index++){
@@ -601,11 +602,13 @@ async function frame(now){
    contactPhysics.setPoseState(!!sourceActorSnapshot.kneeling,sourceActorSnapshot.direction,step);
    physicsState=contactPhysics.step(step);physicsTime+=step;
   }
+  groundingFrame.contactAfter=[physicsState.x,physicsState.y,physicsState.z];
   const casingStates=originalCasingRuntime.stepVisuals();
   sourceActorSnapshot.casings=JSON.parse(await runtimeCall("SynchronizeFullSourceCasingPhysics",JSON.stringify(casingStates)));
   originalCasingRuntime.reconcile(sourceActorSnapshot.casings);
   const x=physicsState.x,y=physicsState.y,z=physicsState.z,vx=physicsState.velocity;
   sourceActorSnapshot=JSON.parse(await runtimeCall("SynchronizeFullSourceActorPhysics",x,y,z,vx,0,0));
+  groundingFrame.synchronizedPosition=[...sourceActorSnapshot.position];
   projectFullSourceSnapshot(sourceActorSnapshot);await applyAnimation(dt,true);weaponStatus.textContent=`Original source weapon callbacks · ${sourceActorSnapshot.weapon??"unarmed"}`;
   positionLabel.textContent=`Original Mission · X ${playerX.toFixed(2)} · speed ${Math.abs(velocity).toFixed(2)} m/s`;
   renderer.render(scene,camera);return;
