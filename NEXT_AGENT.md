@@ -1,3 +1,9 @@
+## Latest exact-source attempt — run #122 (2026-10-27)
+
+- Public branch SHA 4eac44e91584d75c9dc8a5aa1e80839df7cda300; Actions run #122 (40440483156). The pinned .NET 8.0.426 main job passed Node/Python/runtime/browser-audio/engine/foundation contracts, Release/WASM build, and publish-output checks, then failed the provenance assertion WeaponComponent.cs in “Verify recovered source and generate full source index”. Independent Chromium job 121979382034 passed. Local checkout remains clean at stale SHA 32c75319fc2a6237a13e3bf9ffb3054590adf8f4 (ahead 5); dotnet --version is unavailable, so use hosted Actions for .NET.
+- Root cause of that CI failure: commit #121 edited recovered original matcher files, which must remain byte-identical to the pinned archive. Restore both to their exact archived versions. Apply the null/omitted-string compatibility default only at SceneLoader.AssignSerializedFields import boundary for the four original qualifier fields. Extend focused WeaponContracts regression to load original FullSource types from serialized component records and check imported empty-value behavior. Full Mission package source-entry contract remains the acceptance for authored Operator spawn/loadout; no Mission acceptance passed in #122.
+- Exact live branch and run status were re-read through GitHub REST. No Site publication. Preserve local untracked data if ever reconciling the stale checkout.
+
 # Crisis Response Port — continuation handoff (2026-10-27)
 
 ## Latest exact-source attempt — run #121 (2026-10-27)

@@ -4,6 +4,11 @@ This index is the active dependency order. Inventory the known serialized assets
 
 ## Current verified checkpoint
 
+## Latest exact-source attempt — run #122
+
+Actions run #122 (40440483156) checked SHA 4eac44e91584d75c9dc8a5aa1e80839df7cda300. The independent Chromium job passed. The main job passed runtime/foundation contracts, Release/WASM and publish-output checks, then failed source provenance at WeaponComponent.cs: the recovered file was edited although it is archive-hash-locked. Restore both FullSource matcher files to archived bytes and keep bounded compatibility normalization in the SceneLoader serialized-field import boundary. The local checkout is clean but stale at 32c7531; local .NET SDK is unavailable. Hosted Actions is required for exact pinned SDK 8.0.426 build and complete Mission-package gate.
+
+
 - Public `develop/wasm` SHA `84d7ed4c8baa9a6b867d28c601ff59524374819f` passed exact Actions run #117 (`40436578134`): main job `121966548137` and independent Chromium job `121966547856` succeeded. Release/WASM, recovered source/index, complete Mission package verifier/retention, 1,919-asset IndexedDB cold/warm acceptance, and Chromium source-audio checks passed. Retained package artifact `12704409305`: 138,596,919 bytes, SHA-256 `69f9bc40b91072bc4bd506ca95ed2771c5013f0ddd4dbafb4fcb789d12737255`, expires 2026-11-10. This is a source package checkpoint, not a Site deployment or iPhone acceptance.
 - Local dependency batch after #117: source inventory now records listener ancestry/activation (four enabled, zero active in hierarchy) and exposed runtime-only audio movement paths (38 transform-driven Projectile sources; casing Rigidbody is added by `Casing.Eject`). Provenance scan now passes 484 hash-locked identities against both the pinned archive and extracted snapshot. Eight BehaviorDesigner decompiler-body deltas are explicitly hash-inventoried as unresolved because their decompiler text is absent from the recovery artifact. Exact verification and scope: `docs/SOURCE_PROVENANCE_AUDIT_2026-10-27.md`. The new verifier CI step has not yet run on an exact pushed SHA.
 
@@ -20,7 +25,7 @@ Actions run #121 on `1390af2e7db4ca24dafa7bf37aaf843ff17e5b60` passed the indepe
 
 ## Latest Mission startup failure
 
-Exact-source Actions run #120 on `79fddeb94e4ad4fe4550e0ff0f7ff5df28a7bdfd` failed the full Mission package source-entry contract after `OperatorSpawner.Awake` reached the original M4A1 default-component compatibility check. `WeaponComponentSlot.QualifierMatch` split a null qualifier argument, aborting `WeaponBase.Deserialize` during `CharacterBody.InitializeEquipment`; the source Mission player/loadout did not finish initialization. Both original qualifier matchers now normalize null to their established empty-string semantics, with direct regression assertions and an exact packaged Mission rerun required. This failure explains an incomplete Mission start but does not prove the separate airborne visual pose.
+Exact-source Actions run #120 on `79fddeb94e4ad4fe4550e0ff0f7ff5df28a7bdfd` failed the full Mission package source-entry contract after `OperatorSpawner.Awake` reached the original M4A1 default-component compatibility check. `WeaponComponentSlot.QualifierMatch` split a null qualifier argument, aborting `WeaponBase.Deserialize` during `CharacterBody.InitializeEquipment`; the source Mission player/loadout did not finish initialization. The recovered matcher files are restored byte-for-byte; the importer defaults absent/null original qualifier strings at deserialization. A serialized-component regression and exact packaged Mission rerun are required. This failure explains an incomplete Mission start but does not prove the separate airborne visual pose.
 
 ## Ordered gates and dependency closure
 

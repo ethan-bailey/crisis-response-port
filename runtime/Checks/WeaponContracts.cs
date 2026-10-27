@@ -1,10 +1,20 @@
 using System.IO.Compression;using System.Reflection;using System.Text.Json;using Crisis.Runtime;using Crisis.Runtime.Weapons;using UnityEngine;
 public static class WeaponContracts {
  public static string Run(string path){
-  var qualifierSlot=new Crisis.Runtime.FullSource.WeaponComponentSlot{componentQualifiers="M4"};
-  if(!qualifierSlot.QualifierMatch(null)||!qualifierSlot.QualifierMatch(string.Empty)||!qualifierSlot.QualifierMatch("M4")||qualifierSlot.QualifierMatch("Glock")) throw new Exception("Original slot qualifier matching changed null/empty or token semantics");
-  var qualifierComponent=new Crisis.Runtime.FullSource.WeaponComponent{slotQualifiers="rail"};
-  if(qualifierComponent.QualifierMatch(null)||qualifierComponent.QualifierMatch(string.Empty)||!qualifierComponent.QualifierMatch("rail")||qualifierComponent.QualifierMatch("optic")) throw new Exception("Original component qualifier matching changed null/empty or token semantics");
+  const string qualifierAsset="Assets/Resources/weapons/QualifierImportContract.prefab",slotGuid="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",componentGuid="cccccccccccccccccccccccccccccccc";
+  object QualifierRef(string id)=>new{fileID=id};
+  var qualifierRecords=new object[]{
+   new{fileID="1",classID=1,className="GameObject",fields=new{m_Name="QualifierImportContract",m_Layer=0,m_TagString="Untagged",m_StaticEditorFlags=0,m_IsActive=true}},
+   new{fileID="2",classID=4,className="Transform",fields=new{m_GameObject=QualifierRef("1"),m_LocalPosition=new{x=0f,y=0f,z=0f},m_LocalScale=new{x=1f,y=1f,z=1f},m_LocalRotation=new{x=0f,y=0f,z=0f,w=1f},m_Father=QualifierRef("0"),m_Children=Array.Empty<object>()}},
+   new{fileID="3",classID=114,className="MonoBehaviour",fields=new{m_GameObject=QualifierRef("1"),m_Enabled=true,m_Script=new{fileID="11500000",guid=slotGuid,type=3},componentQualifiers="M4"}},
+   new{fileID="4",classID=114,className="MonoBehaviour",fields=new{m_GameObject=QualifierRef("1"),m_Enabled=true,m_Script=new{fileID="11500000",guid=componentGuid,type=3},slotQualifiers="rail",qualifiers=(string?)null}}
+  };
+  var qualifierPackage=JsonSerializer.Serialize(new{guidPaths=new Dictionary<string,string>{{slotGuid,"Assets/Scripts/WeaponComponentSlot.cs"},{componentGuid,"Assets/Scripts/WeaponComponent.cs"}},assets=new Dictionary<string,object>{{qualifierAsset,new{records=qualifierRecords}}}});
+  var qualifierRoot=SceneLoader.LoadPrefab(qualifierPackage,qualifierAsset,new RuntimeWorld(),true).prefabRoot;
+  var qualifierSlot=qualifierRoot.GetComponent<Crisis.Runtime.FullSource.WeaponComponentSlot>()!;
+  var qualifierComponent=qualifierRoot.GetComponent<Crisis.Runtime.FullSource.WeaponComponent>()!;
+  if(qualifierSlot.qualifiers!=string.Empty||qualifierSlot.componentQualifiers!="M4"||!qualifierSlot.QualifierMatch(qualifierSlot.qualifiers))throw new Exception("Imported source slot did not preserve empty qualifier compatibility semantics");
+  if(qualifierComponent.qualifiers!=string.Empty||qualifierComponent.slotQualifiers!="rail"||qualifierComponent.QualifierMatch(qualifierComponent.qualifiers))throw new Exception("Imported source component did not preserve empty qualifier compatibility semantics");
   using var stream=new GZipStream(File.OpenRead(path),CompressionMode.Decompress);var configRoot=System.Text.Json.Nodes.JsonNode.Parse(new StreamReader(stream).ReadToEnd())!.AsObject();configRoot["armPhysics"]=System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(Path.Combine(Path.GetDirectoryName(path)!,"original-arm-physics.json")));string config=configRoot.ToJsonString();
   using var serializedPackage=JsonDocument.Parse(config);var packageRoot=serializedPackage.RootElement;
   var ammoPackage=packageRoot.GetProperty("ammoPackage");

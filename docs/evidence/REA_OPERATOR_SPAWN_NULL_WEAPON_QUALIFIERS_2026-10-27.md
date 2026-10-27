@@ -18,3 +18,10 @@ Run the focused source contract and broader checks on the exact pushed SHA throu
 ## Follow-up Actions run #121
 
 - SHA `1390af2e7db4ca24dafa7bf37aaf843ff17e5b60`; run `40440324867`. Chromium job `121978853027` passed. Main job `121978852778` failed before FoundationChecks: the new regression expected `M4A1` to match a `M4` qualifier, but the original implementation tokenizes qualifiers and compares each exact token. The test is corrected to use exact `M4` and retains null/empty/negative cases; no product matcher change is indicated by this failure.
+
+
+## Follow-up Actions run #122
+
+- SHA 4eac44e91584d75c9dc8a5aa1e80839df7cda300; run 40440483156. Main job passed runtime, FoundationChecks, Release/WASM and publish output, then provenance/index verification failed on WeaponComponent.cs. The recovered matcher was modified by the prior attempted fix; the archive verifier correctly rejected it. Independent Chromium cache/audio job 121979382034 passed.
+- Revised falsifiable cause: original method receives null from an imported MonoBehaviour compatibility field when the serialized field is omitted or explicitly null. Keep original method/source unchanged; normalize the four qualifier fields at SceneLoader.AssignSerializedFields after imported fields are applied. Regression loads actual Crisis.Runtime.FullSource.WeaponComponent and WeaponComponentSlot types from serialized component records, including an omitted and explicit-null qualifier, and checks non-throwing empty qualifier paths. The full Mission source-entry contract is still needed to verify authored Operator spawn and Mission initialization.
+- Local source verification is unavailable for .NET: dotnet --version returns command not found. GitHub Actions must run the pinned .NET 8.0.426 suite on the new exact SHA. No Site deployment was made.

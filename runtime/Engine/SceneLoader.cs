@@ -388,6 +388,10 @@ if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("S
             try{field.SetValue(component,ReadValue(property.Value,field.FieldType,result));}
             catch(Exception error){throw new NotSupportedException($"Cannot load original field {id}:{property.Name} ({field.FieldType.FullName})",error);}
         }
+        // Unity-authored empty compatibility strings deserialize as empty text in the source actor graph.
+        // Keep recovered FullSource matchers byte-identical and normalize only their imported data.
+        if(component is Crisis.Runtime.FullSource.WeaponComponent weaponComponent){weaponComponent.qualifiers??=string.Empty;weaponComponent.slotQualifiers??=string.Empty;}
+        else if(component is Crisis.Runtime.FullSource.WeaponComponentSlot weaponSlot){weaponSlot.qualifiers??=string.Empty;weaponSlot.componentQualifiers??=string.Empty;}
     }
     static object ReadAnimationCurve(JsonElement value,SceneLoadResult result){
         if(value.ValueKind!=JsonValueKind.Object)throw new NotSupportedException("Expected serialized AnimationCurve object");
