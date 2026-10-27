@@ -192,21 +192,24 @@ try {
     return { rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height }, thumbWidth: thumb.offsetWidth, thumbHeight: thumb.offsetHeight };
   });
   const stickCenter = { x: stickGeometry.rect.left + stickGeometry.rect.width / 2, y: stickGeometry.rect.top + stickGeometry.rect.height / 2 };
-  const aimBeforeStick = await page.evaluate(() => window.__gameState().aimPoint);
+  // The world-space aim point is shoulder-relative and can move between
+  // evaluations as the authored source animation advances. Assert the stable
+  // absolute aim direction instead of comparing that animated world position.
+  const aimBeforeStick = await page.evaluate(() => window.__gameState().aimDirection);
   await page.mouse.move(stickCenter.x, stickCenter.y);
   await page.mouse.down();
-  const aimOnStickDown = await page.evaluate(() => window.__gameState().aimPoint);
-  assert.ok(Math.abs(aimOnStickDown[1] - aimBeforeStick[1]) < 1e-4, 'touch-down on the movement stick must preserve the current absolute aim');
+  const aimOnStickDown = await page.evaluate(() => window.__gameState().aimDirection);
+  assert.ok(near(aimOnStickDown, aimBeforeStick), 'touch-down on the movement stick must preserve the current absolute aim direction');
   await page.mouse.move(stickCenter.x, stickCenter.y - 24, { steps: 4 });
-  await page.waitForFunction(y => Math.abs(window.__gameState().aimPoint[1] - y) > 0.01, aimBeforeStick[1], { timeout: 5000 });
-  const verticalAim = await page.evaluate(() => window.__gameState().aimPoint[1]);
+  await page.waitForFunction(y => Math.abs(window.__gameState().aimDirection[1] - y) > 0.01, aimBeforeStick[1], { timeout: 5000 });
+  const verticalAim = await page.evaluate(() => window.__gameState().aimDirection);
   await page.mouse.move(stickCenter.x + 32, stickCenter.y - 24, { steps: 4 });
-  await page.waitForFunction(y => Math.abs(window.__gameState().aimPoint[1] - y) < 0.01, verticalAim, { timeout: 5000 });
-  const horizontalAim = await page.evaluate(() => window.__gameState().aimPoint[1]);
-  assert.ok(Math.abs(horizontalAim - verticalAim) < 0.01, 'horizontal joystick travel must leave the absolute vertical aim unchanged');
+  await page.waitForFunction(y => Math.abs(window.__gameState().aimDirection[1] - y) < 0.01, verticalAim[1], { timeout: 5000 });
+  const horizontalAim = await page.evaluate(() => window.__gameState().aimDirection);
+  assert.ok(Math.abs(horizontalAim[1] - verticalAim[1]) < 0.01, 'horizontal joystick travel must leave the absolute vertical aim direction unchanged');
   await page.mouse.up();
-  const releasedAim = await page.evaluate(() => window.__gameState().aimPoint[1]);
-  assert.ok(Math.abs(releasedAim - verticalAim) < 0.01, 'releasing the joystick must preserve the last absolute aim');
+  const releasedAim = await page.evaluate(() => window.__gameState().aimDirection);
+  assert.ok(Math.abs(releasedAim[1] - verticalAim[1]) < 0.01, 'releasing the joystick must preserve the last absolute vertical aim direction');
   const travelX = (stickGeometry.rect.width - stickGeometry.thumbWidth) / 2 - 4;
   await page.mouse.move(stickCenter.x, stickCenter.y);
   await page.mouse.down();
