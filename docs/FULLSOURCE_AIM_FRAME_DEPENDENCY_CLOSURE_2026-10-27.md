@@ -49,3 +49,42 @@ feel and gate 5 rendered/native pose remain open until their own evidence passes
 ## User-confirmed deployed aim failure — 2026-10-27
 
 The user reports the live page still throws `Can't find variable: aimQuadTarget` at `game/:581:22`. Read-only Sites metadata confirms the publication remains v85; the source fix is present on current `develop/wasm` (declaration at script scope before `frame()`) but has not been published. This is a deployed/source version mismatch, not evidence that the current source fix failed. Exact-source Actions #141 and its packaged Mission browser acceptance are still pending. No Site publish or access-policy change is authorized in this recurring run. Following the separate release gate, publish only after exact source build and package integrity pass and only under a separate explicit release request.
+
+## Newly exposed JS interop serialization edge — Actions #143
+
+The current source frame now reaches the original aim bridge; the earlier
+script-scope aimQuadTarget failure is no longer the observed failure on this
+source revision. On exact source SHA
+`2781d978d7d1c672c3b7749294ef38cc9268122a`, Actions #143 run
+`40494519086` passed the pinned .NET 8.0.426 source build, WASM publish/output,
+full Mission package integrity, and the 1,919-asset cold/warm IndexedDB loader.
+The independent Chromium cache/audio job also passed. The packaged FullSource
+Mission grounding step failed when its first frame called
+`RuntimeBridge.SetFullSourceActorAimTarget`:
+
+```
+System.Text.Json.JsonException: A possible object cycle was detected
+Path: $.normalized.normalized...sqrMagnitude
+at RuntimeBridge.SetFullSourceActorAimTarget(Single x, Single y, Single z)
+```
+
+The caller in `game/index.html` passes a target and awaits but does not consume
+the return value. The source bridge in
+`runtime/Engine/FullSourceActorBridge.cs` correctly applies the supplied world
+point to the original `WeaponPointer.localPoint` and `WorldPoint`; however,
+`runtime/Browser/Program.cs` wraps the returned Unity `Vector3` in
+`JsonSerializer.Serialize`. Unity's computed `normalized` property returns
+another `Vector3`, recursively exposing the same property graph to
+System.Text.Json and throwing at the JS interop response boundary after the
+source state mutation. This is a serialization boundary failure, not evidence
+that the source pointer/raycast or body-local conversion is incorrect.
+
+Acceptance dependency and regression: retain the current exact-packaged-page
+Mission grounding browser smoke. It checks the visible runtime error panel is
+absent, then exercises the aim/frame path on the integrity-verified package
+whose manifest sourceCommit matches workflow `GITHUB_SHA`. This assertion
+failed before the response-shape repair. The repair must preserve original
+bridge side effects and return only plain scalar coordinates (or an equally
+finite JSON-safe DTO); rerun the package build, hash/integrity verification, and
+this exact browser step on the new source SHA. Do not infer a successful aim
+pixel or native pointer visualization from an error-free interop response.
