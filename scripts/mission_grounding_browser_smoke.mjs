@@ -3,6 +3,7 @@ import { createServer } from 'node:http';
 import { readFile, stat, mkdir } from 'node:fs/promises';
 import { resolve, sep, extname } from 'node:path';
 import { chromium } from '../game/node_modules/playwright/index.mjs';
+import { compareSourceArmPoses } from '../game/source-arm-pose.mjs';
 
 const packageRoot = resolve(process.argv[2] ?? '');
 const outputRoot = resolve(process.argv[3] ?? '');
@@ -273,6 +274,7 @@ try {
 
   const reloadBefore = await page.evaluate(() => ({
     weapon: window.__gameState().weaponState,
+    sourceArmPoses: window.__gameState().sourceArmPoses,
     audio: window.__gameState().presentation.weaponAudio,
     eventCount: window.__missionSourceDiagnostics?.sourceAudioEvents?.length ?? 0,
     unavailable: document.querySelector('#magazineTouch')?.classList.contains('mag-unavailable'),
@@ -280,7 +282,15 @@ try {
   assert.deepEqual(reloadBefore.weapon, {
     weaponId: 'M4A1', magazine: 30, magazineCapacity: 30, chamberLive: true, reserve: 30, reloading: false,
   }, 'FullSource HUD must use the recovered active M4A1 and reserve magazine graph');
+  assert.ok(reloadBefore.sourceArmPoses.length >= 6, 'FullSource Mission must expose both original upper/lower-arm and hand pose chains');
   assert.equal(reloadBefore.unavailable, false, 'the source magazine control must accept its authored drag gesture');
+  const idleArmTrace = [];
+  for (let sample = 0; sample < 6; sample++) {
+    await page.waitForTimeout(50);
+    idleArmTrace.push(await page.evaluate(() => window.__gameState().sourceArmPoses));
+  }
+  const idleArmDrift = idleArmTrace.map(sample => compareSourceArmPoses(reloadBefore.sourceArmPoses, sample))
+    .reduce((best, value) => value.maximum > best.maximum ? value : best, { maximum: 0, matchedPaths: [], deltas: [] });
   const magazineTouch = page.locator('#magazineTouch');
   const magazineBox = await magazineTouch.boundingBox();
   assert.ok(magazineBox, 'the source magazine drag control must be visible');
@@ -294,12 +304,31 @@ try {
     droppedUnloaded: reloadBefore.audio.droppedUnloaded, droppedSuspended: reloadBefore.audio.droppedSuspended,
     unmapped: reloadBefore.audio.unmappedSourceEvents,
   };
+  const reloadArmTrace = [];
+  const reloadDeadline = Date.now() + 30000;
+  let reloadPoseStarted = false;
+  while (Date.now() < reloadDeadline) {
+    const sample = await page.evaluate(() => {
+      const state = window.__gameState();
+      return { reloading: state.weaponState?.reloading === true, sourceArmPoses: state.sourceArmPoses };
+    });
+    if (sample.reloading) {
+      reloadPoseStarted = true;
+      reloadArmTrace.push(sample.sourceArmPoses);
+    } else if (reloadPoseStarted) break;
+    await page.waitForTimeout(25);
+  }
+  assert.ok(reloadPoseStarted && reloadArmTrace.length > 0,
+    `real magazine drag did not enter the source reload task; arm trace=${JSON.stringify(reloadArmTrace)}`);
+  const reloadPoseChange = reloadArmTrace.map(sample => compareSourceArmPoses(reloadBefore.sourceArmPoses, sample))
+    .reduce((best, value) => value.maximum > best.maximum ? value : best, { maximum: 0, matchedPaths: [], deltas: [] });
+  assert.ok(reloadPoseChange.maximum > idleArmDrift.maximum,
+    `original reload task did not move a source arm/hand beyond observed idle drift; idle=${JSON.stringify(idleArmDrift)} reload=${JSON.stringify(reloadPoseChange)}`);
   await page.waitForFunction(({ played, eventCount, droppedUnloaded, droppedSuspended, unmapped }) => {
     const state = window.__gameState();
     const audio = state.presentation.weaponAudio;
     const emitted = window.__missionSourceDiagnostics?.sourceAudioEvents?.slice(eventCount) ?? [];
-    return state.weaponState?.reloading === true &&
-      emitted.some(event => typeof event?.sourcePath === 'string') &&
+    return emitted.some(event => typeof event?.sourcePath === 'string') &&
       audio.contextState === 'running' && audio.played > played &&
       audio.droppedUnloaded <= droppedUnloaded && audio.droppedSuspended <= droppedSuspended &&
       audio.unmappedSourceEvents <= unmapped;
@@ -307,6 +336,7 @@ try {
   await page.waitForFunction(() => window.__gameState()?.weaponState?.reloading === false, null, { timeout: 30000 });
   const reloadAfter = await page.evaluate(() => ({
     weapon: window.__gameState().weaponState,
+    sourceArmPoses: window.__gameState().sourceArmPoses,
     audio: window.__gameState().presentation.weaponAudio,
     events: window.__missionSourceDiagnostics?.sourceAudioEvents ?? [],
   }));
@@ -346,7 +376,7 @@ try {
     missionLoadUi: { initialAttempt: initialAttemptUi, failedAttempt: failedAttemptUi, retryLoading: loadingUi, completed: loadedUi },
     injectedFailure: { path: injectedFailurePath, initialAttemptFailed: true, diagnosticCopied: copiedErrorText === failedAttemptUi.errorText, retrySucceeded: true },
     grounding: state.grounding,
-    reloadAudio: { before: reloadBefore, after: reloadAfter, sourceEvents: reloadAfter.events.slice(reloadBefore.eventCount) },
+    reloadAudio: { before: reloadBefore, after: reloadAfter, sourceEvents: reloadAfter.events.slice(reloadBefore.eventCount), armPose: { idleDrift: idleArmDrift, activeReload: reloadPoseChange, settled: compareSourceArmPoses(reloadBefore.sourceArmPoses, reloadAfter.sourceArmPoses), sampleCount: reloadArmTrace.length } },
     movement: {
       before: { x: walkStart, animation: state.animation },
       whileHeld: { x: moving.playerX, velocity: moving.velocity, animation: moving.animation, sourceInput: moving.originalInput?.left?.Pressed, sourceMovement: moving.sourceMovement },

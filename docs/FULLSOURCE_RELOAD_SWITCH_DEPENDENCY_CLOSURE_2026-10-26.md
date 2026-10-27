@@ -49,93 +49,15 @@ The source switch contract proves authored M4A1↔Glock switching without an act
 The workflow invokes this runtime contract and the static graph contract against the same `global-ui-mission-operator` profile. Local Release build passed with 0 errors (two pre-existing nullable warnings); Node 143/143, Python 45/45, static graph, player reload, and AI fallback commands passed against the complete six-root Mission profile. The AI probe uses the original `OperatorSpawner` and explicitly excludes the unconfigured scene placeholder; see the separate AI closure for its runtime evidence. These local checks do not substitute for the exact pushed SHA workflow/package checks. The prior full canonical recovery export and CI-equivalent profile contain 1,919 assets, 22,365 records, 97,767,549 compressed asset bytes and 205,514,345 source bytes.
 
 
-## Production Mission entry disables the recovered player task tree — 2026-10-27
+## Production reload controls — source edges wired; browser acceptance pending — 2026-10-27
 
-A packaged-page trace for the user-visible magazine/reload path found that the
-browser does not currently enable the original player Behavior Designer tree:
+Current `develop/wasm` source inspection confirms that the production actor and touch-HUD paths are wired; the remaining gate is actual packaged browser acceptance:
 
-- `runtime/Browser/Program.cs` calls
-  `BrowserEntryTeamMission.Start(source, world)` without the optional flag.
-- `runtime/Browser/BrowserEntryTeamMission.cs` defaults
-  `enablePlayerBehavior=false`. Its `SuppressUnboundBehavior` disables every
-  BehaviorTree when that flag is false, including the player tree, and the
-  suppression is repeated before each normal `RuntimeWorld.Tick`.
-- `game/index.html` forwards the real magazine action through
-  `TickFullSourceActorBridge`; `FullSourceActorBridge.Step` applies InputHandler
-  levels and runs the original world lifecycle. But the player controller's
-  `PendingAction=SwitchMagazine` needs the serialized player tree to select
-  `RequestedReload` and schedule `CharacterBehavior.ChangeMagazine`. With the
-  tree disabled, the original extract/insert callbacks cannot be reached from
-  the production browser input path.
-- The source contract `SourceBehaviorReloadContracts` calls
-  `BrowserEntryTeamMission.Start(..., enablePlayerBehavior:true)`; it verifies
-  the real player scheduler enters the authored reload task, emits the recovered
-  extract/insert audio source paths, completes a reload, then receives a real
-  switch input and exits through the task's original cancellation/OnEnd path.
-  That passing contract therefore does not cover the production default call.
-
-The browser separately retrieves and decodes original mission audio clips,
-constructs the production `createSourceWeaponAudioDispatcher`, calls
-`playSourceAudioEvents` with each source bridge snapshot, and has a trusted
-pointer gesture path to resume WebAudio. The dependency set is present; the
-missing edge is player-tree activation at Mission startup.
-
-Repair requirement: the production EntryTeam initialization must enable only
-the source player tree while keeping all nonplayer trees suppressed. Preserve
-the original prefab's disabled serialized BehaviorTree bit and the normal
-`BrowserEntryTeamMission` default for callers that require deterministic
-suppression; change only the actual playable-page caller. Extend the exact
-integrity-verified packaged-page smoke to perform the original magazine
-down-drag and observe source reload playback through the real audio runtime
-after the browser gesture. Keep the source contract for actual task, ammo,
-callbacks and interruption as a separate assertion. Do not synthesize reload
-events, call the task directly, or count clip preloading alone as reload sound.
-This production integration is **untested** until an exact-SHA package/browser
-run passes.
-
-
-## Packaged touch HUD does not receive FullSource magazine state — 2026-10-27
-
-A second caller/callee trace found that the normal touchscreen reload gesture is
-also disconnected from the active FullSource weapon:
-
-- `game/magazine-hud.mjs` sets its private `ready` flag only when
-  `render(state)` receives a recognized `weaponId` and valid magazine
-  capacity. `bindMagazineDrag` calls `onReload` only when
-  `canDrop() === ready && !reloading`; a drag gesture cannot start a reload
-  while the HUD has no source state.
-- The control is initially rendered with `null`. In the legacy branch,
-  `game/index.html` updates the HUD from `weaponState` after
-  `upperBody.update(...)`. The FullSource branch instead returns from
-  `frame()` after `TickFullSourceActorBridge`/projection and never calls
-  `magazineHud.render` or updates the HUD-owned `weaponState`.
-- `runtime/Engine/FullSourceActorBridge.cs` currently snapshots only the active
-  weapon's name; the original live state is available through
-  `CharacterBody.ActiveWeapon`, `WeaponBase.Magazine.roundCount/capacity`,
-  `WeaponBase.ChamberStatus`, `CharacterBody.Equipment` and
-  `CharacterBody.IsManipulatingEquipment`. The source enum defines chambered
-  round as `WeaponBase.ChamberState.Live`. Primary/secondary reserve magazines
-  are owned by `Equipment.PrimaryMagazines` / `SecondaryMagazines` and are
-  filtered by `Magazine.calibre`.
-- The actual touchscreen control only accepts a downward drag of at least 45
-  CSS pixels (then checks its ready/reloading state); tapping it is intentionally
-  not a reload. The browser input bridge forwards that action as the source
-  `magazine` key. The current source behavior-tree default further prevents the
-  original reload task from running, as documented immediately above.
-
-Implementation dependency: snapshot the source-owned active magazine values
-needed by `magazinePresentation` (`weaponId`, `magazine`,
-`magazineCapacity`, `chamberLive`), reserve count for the HUD/status, and
-`reloading` from source state; feed this snapshot to `magazineHud.render` on
-every FullSource frame. Enable only the player behavior tree at the production
-EntryTeam startup call; keep nonplayer trees suppressed and do not mutate the
-prefab's serialized BehaviorTree flag. The exact packaged browser regression
-must see a ready HUD, perform the production 45px+ touch drag, observe the
-source task's audio event and actual WebAudio playback after the trusted
-gesture, and check that the control returns from reloading. The existing
-source scheduler contract remains responsible for task/OnEnd, ammo, magazine
-identity and interruption details. This production touch/audio integration is
-**untested** until the exact-SHA packaged page passes.
+- `runtime/Browser/Program.cs` calls `BrowserEntryTeamMission.Start(source,world,enablePlayerBehavior:true)`. `BrowserEntryTeamMission.SuppressUnboundBehavior` enables the original player-owned BehaviorTree only and suppresses null-owner/nonplayer trees on each world tick. The Operator prefab's serialized disabled bit is preserved.
+- `game/index.html` forwards the real magazine action through `TickFullSourceActorBridge`; after source tick and contact synchronization it assigns `weaponState=sourceActorSnapshot.weaponState` and calls `magazineHud.render(weaponState)`. `FullSourceActorBridge.ActiveWeaponState()` provides source-owned weaponId, active rounds/capacity, chamber state, calibre-filtered reserve count, and equipment-manipulation state.
+- `game/magazine-hud.mjs` accepts only a downward drag of at least 45 CSS pixels and blocks gestures while source state is unknown or already reloading. It maps the gesture to original `InputMapping.magazine`; taps and canceled gestures do not trigger reload.
+- The exact-profile `--mission-player-reload-contract` passes through the original player tree, `RequestedReload` and `ChangeMagazine`, emits recovered extract/insert audio callbacks, and tests actual ammo/task/OnEnd/interruption state. This source-level contract does not substitute for the browser pointer, audio-decoder, or WebAudio gate.
+- Exact packaged browser assertions are already in `scripts/mission_grounding_browser_smoke.mjs`: verified source weapon state, usable HUD, real downward drag, original source audio callback, active WebAudio playback, settled reload and no page errors. **Untested:** these assertions have not run to completion because run #148 failed earlier at movement. The source edges are present; do not re-implement them without new failing evidence.
 
 ## Packaged reload arm-pose acceptance — 2026-10-27 (next source batch)
 
@@ -157,4 +79,20 @@ Use stable joint path identity and quaternion-safe comparison (absolute quaterni
 ### Status
 
 - **Passed:** bridge and projection source inventory described above; exact-source headless regression asserts projected source poses precede the source Animator sample and body clips do not overwrite arm/hand paths.
-- **Untested:** packaged browser observation of IK arm motion during the original active reload task. Run #146 failed earlier at the movement assertion, before the reload sequence. Run #147 on code SHA 37f48498d1eb6f0aa7d51b6f47902792e91f4aa4 is in progress; do not claim this acceptance passed from its earlier staged build until the browser step completes.
+- **Untested:** packaged browser observation of IK arm motion during the original active reload task. Actions #149 completed its package and IndexedDB checks but failed earlier at the authored-animation wait, so the reload section was never reached. The exact failure was a 30-second timeout waiting for `Body walk`, `Body walk backward`, or `Body sprint`; Left input and at least 0.1 m displacement had already passed. Thus no reload pose, reload audio, or mobile device acceptance is claimed from #149.
+
+## Live source correction and pose instrumentation — 2026-10-27
+
+The two production-edge observations above were stale relative to `develop/wasm` tree `59748c4f8221d6d42d1bbc5e83a14cda4beaaf11`:
+
+- **Passed by source inspection:** `runtime/Browser/Program.cs` calls `BrowserEntryTeamMission.Start(source,world,enablePlayerBehavior:true)`. Its `SuppressUnboundBehavior` keeps only the original player BehaviorTree enabled and continues suppressing trees without a player owner and all nonplayer trees. The serialized Operator prefab flag is not rewritten.
+- **Passed by source inspection and exact-profile source contract:** after `TickFullSourceActorBridge`, the production FullSource frame reads `sourceActorSnapshot.weaponState` and calls `magazineHud.render(weaponState)` on each frame. `FullSourceActorBridge.ActiveWeaponState()` snapshots the source weapon/magazine/chamber/reserve/manipulation owner state. The normal 45 CSS px+ `magazineTouch` drag reaches the original magazine input. The source-enabled task graph was exercised by the exact-profile player reload/interrupt contract.
+- **Still untested:** packaged browser touch→reload audio/visual integration; #148 stopped at locomotion before these assertions. Do not treat the source graph, HUD snapshot, headless reload contract, or a source code read as browser or iPhone acceptance.
+- The browser now exposes only the original left/right upper arm, lower arm, and hand paths from `sourceActorSnapshot.poses`. It records a stable idle trace and snapshots while the actual serialized reload task reports `weaponState.reloading`. Quaternion comparison normalizes both values and treats `q` and `-q` as the same rotation. The acceptance requires measured active reload pose change to exceed the observed idle drift and stores joint deltas and sample count. It does not set task/solver/transform state. `scripts/fullsource_reload_pose_test.mjs` covers filtering, quaternion sign equivalence, measured movement, player-tree ownership, and per-frame HUD/pose plumbing.
+- **Local verification:** focused reload-pose/animator/HUD tests passed 18/18, full Node passed 175/175, and browser smoke syntax passed. Exact package and hosted browser acceptance on this observation batch remain pending.
+
+## Exact package checkpoint — 2026-10-27
+
+- Local source commit `683050369990b307202d9168bd6d5db92263b593`, tree `e5db3fe8b03271575886fd2adac1bbe5c4536741`: package build and `verify` **passed**, with 2,691 files, 199 Blazor resources, 195 WASM files and all 1,919 profile assets.
+- Exact profile `browser-entryteam-session`, `mission-player-reload`, and `behavior-graph` contracts **passed**. Reload pose unit contract passed 3/3; full Node suite passed 174/174; Python unittest discovery passed 67/67; movement snapshot contract passed; smoke syntax and `git diff --check` passed.
+- Hosted packaged reload observation is pending. Local browser execution remains unavailable after one bounded Playwright download attempt failed. Current remote HEAD before pushing this batch is `4795aaa5b767efb64b26732599360ff999fe3ffe`.
