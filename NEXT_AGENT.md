@@ -1,27 +1,31 @@
 # Crisis Response Port — continuation handoff (2026-10-27)
 
-## Parallel camera-source recovery result
+## Current live branch and verification status
 
-A bounded GitHub connector search found a non-authoritative candidate repository with matching Standard Assets Image Effects `.meta` GUIDs, but its Unity version is 5.6.2f1 while this source project is 2017.2.0f3. No source was adopted; exact source-recovery details and next action are now in `docs/CAMERA_POSTPROCESS_DEPENDENCY_CLOSURE_2026-10-26.md`. Custom `ExteriorCamera.cs` remains absent. Continue with the current packaged Mission acceptance while CI runs.
+- Repository: `ethan-bailey/crisis-response-port`; branch `develop/wasm`; live head `1ff0012b90de4a33f6d0455820361af748de58da`; tree `d5a571aca04b5190e9f6d04d6439b54978685436`. This is the expected parent for the pending diagnostic harness batch. The local workspace is a separate stale/divergent checkout; do not reconcile/reset it. Preserve dirty `.github/workflows/source-contracts.yml`, `docs/CHARACTER_ANIMATION_EXECUTION_GAPS_2026-10-16.md`, untracked browser harness, and user temp archive. The .NET SDK 8.0.426 runtime is unavailable locally; use hosted pinned CI.
+- Current Site: v85, active, custom access policy revision 1, zero external visitors. No version saved, deployed or access policy changed.
 
-## Current packaged Mission failure/retry checkpoint
+## Exact failed acceptance inspected
 
-- Live source SHA: `a24165c708846a36adc7688098f2cc9008782ccc`; live tree: `18933c0e3d99046134968b953fb48f15941019e4`. The expected-HEAD update from `5428a3167771b14e19782b102147843d293beaaf` succeeded. The code batch adds `scripts/mission_grounding_browser_smoke.mjs`, which drives the exact integrity-built Mission package in Chromium. Before the normal Mission run, its local package server returns one deliberate HTTP 503 for the first asset path under the exact Mission profile. The browser must show the actual error and retry controls, re-enable Start and close progress, then the actual Retry button must restart progress and complete the verified Mission load. It continues with grounding-stage and original locomotion observations. No source asset or serialized prefab/scene is substituted.
-- Local checks on this workspace: Node `--test scripts/*_test.mjs scripts/*_contracts.mjs` **168/168 passed**; Python `python3 -m unittest discover -s scripts -p '*test.py'` **53/53 passed**; browser script `node --check`, workflow YAML parse and `git diff --check` passed. This source-browser harness has not been run locally: the workspace has neither .NET SDK `8.0.426` nor the exact full Mission profile/package.
-- Exact-source CI: run #134 `40480716641` on `f7a8910fb9eedfb0dfd51fdb16cbe0a7ba1d30a5` was cancelled by the next source push while at package verification; its independent Chromium IndexedDB/audio job passed. Run #135 `40481392427` is running on this exact SHA. Its workflow already passed Node, Python, runtime, browser-audio, engine, FoundationChecks, Release/WASM publish-output and source archive/provenance steps; main job `122110197277` is at “Build and verify complete Mission source package”. The specific packaged error/retry step and its retained report/screenshot have **not yet passed**. Recheck its exact job/step/artifact before updating this evidence.
-- A focused harness review caught and fixed an integration-script defect before push: the final JSON report was reading `window` in the Node process. It now gathers source actor and Mission diagnostics through `page.evaluate`. Do not treat local unit contracts as package-browser acceptance.
-- Do not publish/deploy the Site. Existing live version is v85 by previous read-only check; no access policy changes were made. Keep all parity flags false.
+Actions #135 (`40481392427`) ran source SHA `a24165c708846a36adc7688098f2cc9008782ccc` (ancestor of current live head). Main job `122112493275` passed Node/Python/runtime/browser-audio/engine/FoundationChecks, Release/WASM, source archive/index provenance, complete Mission package build/integrity/retention and full-profile IndexedDB work. Step 26 `Exercise FullSource Mission grounding on the packaged page` failed at `scripts/mission_grounding_browser_smoke.mjs:111` with `page.waitForFunction: Timeout 900000ms exceeded`; the retry never exposed a loaded game plus three synchronized-source coordinates within 15 minutes. Independent Chromium job `122112493569` passed IndexedDB/cache and production audio.
 
-## Dependency-ordered remaining work
+Artifact `12725000332` (179,609 bytes, SHA-256 `416f133be606c82403ffc901dd92c4a556264c37bebe383d8b47b2c37a71dec8`) contains diagnostics, but the GitHub connector’s bounded ZIP retrieval attempt failed because binary artifact downloads are not supported. The exact loader/actor stall stage remains **unknown**; no speculative runtime fix was made.
 
-1. Verify packaged full-profile progress, HTTP failure/error UI, retry, Mission initialization, then inspect the exact #135 telemetry and screenshots. Make a focused code correction only if an exact check fails.
-2. Continue Mission actor grounding, authored IK/animation and rendered-pose inspection from the browser artifact; numeric stage equality does not establish foot contact or pixel parity. iPhone Safari/touch acceptance remains external.
-3. Continue source-ready render/audio/physics closures. Audio SpatialBlend default and transform-driven source/listener velocity still require a Unity 2017.2.0f3 fixture or version-matched authoritative source; the current source search did not establish either. The documented camera postprocess gap still requires the exact missing source implementation and enabled WebGL pixels. Keep unknowns explicit and do not substitute guessed behavior.
-4. Continue independent gameplay/asset parity gates from `docs/GATE_DEPENDENCY_INDEX.md`; missing owner-device evidence defers only that acceptance, not repository work.
+## Prepared batch, local checks and exact next action
 
-## Immediate next action
+Prepared source changes add a five-minute retry-to-playable bound and 15-second compact CI checkpoints for progress/UI/error, source-loader stage/progress/audio/slowest fetch and bridge calls, actor state, grounding stage and timings. The test logs the final full diagnostics before failing and retains screenshot/JSON. It also asserts error copy clipboard equals visible HTTP 503 detail, actual retry resets progress, normal original FullSource initialization/grounding, KeyD movement/release and mobile-touch emulation remains at viewport scale 1. This is diagnostic and acceptance coverage, not gameplay parity or an inferred source correction.
 
-Poll Actions run `40481392427` on `a24165c708846a36adc7688098f2cc9008782ccc`; when it completes, inspect the main job’s “Exercise FullSource Mission grounding on the packaged page” step, download the retained grounding artifact, review `mission-grounding.json` plus screenshots, and update this handoff with exact outcome before beginning the next dependency-ready batch. Never publish from this recurring engineering task.
+Local checks on the exact prepared contents passed: `node --check scripts/mission_grounding_browser_smoke.mjs`; `node --test scripts/*_test.mjs scripts/*_contracts.mjs` **168/168**; `python3 -m unittest discover -s scripts -p '*test.py'` **53/53**; workflow YAML parse; `git diff --check`. Actual package browser/.NET build acceptance is **pending** the next pushed SHA; local `dotnet --version` reports command not found.
+
+Next: push only the browser harness, workflow invocation/artifact retention and matching evidence updates to `develop/wasm` with expected HEAD `1ff0012b90de4a33f6d0455820361af748de58da`; verify the resulting remote SHA/tree, then inspect its exact Actions steps and log checkpoints. If it fails, repair only the substage evidenced in the log and rerun on a new exact SHA. While the run executes, continue an independent dependency-ready source/recovery task; do not stop at the pending gate. Do not publish/deploy. Keep every parity flag false.
+
+## Dependency order and open acceptance
+
+1. Re-run packaged Mission retry/start path with diagnostics; locate actual stalled source stage before any behavior change.
+2. Use successful browser telemetry/screenshots to investigate source actor grounding, authored IK/animation and projected/rendered pose. Numeric equality is not foot-contact or pixel evidence; iPhone Safari remains untested.
+3. Continue exact-version source recovery for camera postprocessing and audio spatial semantics; no version-mismatched substitute or guessed Unity defaults.
+4. Continue independent gameplay/runtime, physics/particles/audio, mission/AI and combined parity gates in `docs/GATE_DEPENDENCY_INDEX.md`; defer only device/native/visual acceptance requiring unavailable hardware or exact source.
+5. Preserve Site v85/custom access; this recurring engineering work must not publish.
 
 ---
 ## Exact pushed checkpoint — packaged Mission startup, grounding and locomotion browser acceptance (2026-10-27)

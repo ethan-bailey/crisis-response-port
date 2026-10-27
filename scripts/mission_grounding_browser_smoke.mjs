@@ -90,13 +90,22 @@ try {
     progressVisible: !document.querySelector('#missionProgress')?.hidden,
     retryVisible: !document.querySelector('#retryError')?.hidden,
     errorVisible: !document.querySelector('#error')?.hidden,
+    copyVisible: !document.querySelector('#copyError')?.hidden,
+    errorText: document.querySelector('#errorDetails')?.textContent,
     diagnostics: window.__missionSourceDiagnostics?.error,
   }));
   assert.equal(failedAttemptUi.startDisabled, false, 'failed source fetch must return the Mission action to a retryable state');
   assert.equal(failedAttemptUi.progressVisible, false, 'failed source fetch must close the progress panel');
   assert.equal(failedAttemptUi.retryVisible, true, 'failed source fetch must expose the retry action');
   assert.equal(failedAttemptUi.errorVisible, true, 'failed source fetch must leave an accessible error panel');
+  assert.equal(failedAttemptUi.copyVisible, true, 'failed source fetch must expose the error copy action');
+  assert.match(failedAttemptUi.errorText, /HTTP 503/, 'the accessible error must preserve the concrete asset-fetch status');
   assert.ok(injectedFailurePath, 'the package server must have injected exactly one source-asset failure');
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write'], { origin: `http://127.0.0.1:${address.port}` });
+  await page.locator('#copyError').click();
+  await page.waitForFunction(() => document.querySelector('#copyErrorStatus')?.textContent.includes('Copied'));
+  const copiedErrorText = await page.evaluate(() => navigator.clipboard.readText());
+  assert.equal(copiedErrorText, failedAttemptUi.errorText, 'Copy details must place the full visible HTTP failure diagnostic on the clipboard');
   await page.locator('#retryError').click();
   await page.waitForFunction(() => {
     const button = document.querySelector('#startOriginalMission');
@@ -108,10 +117,38 @@ try {
     progressVisible: !document.querySelector('#missionProgress')?.hidden,
     progressText: document.querySelector('#missionProgressText')?.textContent,
   }));
-  await page.waitForFunction(() => {
-    const game = window.__gameState?.();
-    return game?.loaded && game?.grounding?.stages?.synchronizedSource?.length === 3;
-  }, null, { timeout: 900000 });
+  const loadStartedAt = Date.now();
+  let playableSnapshot = null;
+  while (Date.now() - loadStartedAt < 300000) {
+    const checkpoint = await page.evaluate(() => {
+      const game = window.__gameState?.();
+      const trace = window.__missionSourceDiagnostics;
+      return {
+        ui: {
+          progress: document.querySelector('#missionProgressText')?.textContent,
+          status: document.querySelector('#status')?.textContent,
+          error: document.querySelector('#errorDetails')?.textContent,
+        },
+        diagnostics: trace && {
+          status: trace.status, stage: trace.stage, progress: trace.progress,
+          audio: trace.audio, error: trace.error,
+          slowestFetches: trace.slowestFetches, slowestBridgeCalls: trace.slowestBridgeCalls,
+        },
+        game: game && {
+          loaded: game.loaded, originalInputActive: game.originalInputActive,
+          groundingStages: game.grounding?.stages ?? null, animation: game.animation,
+          loadingTimings: game.loadingTimings,
+        },
+      };
+    });
+    if (checkpoint.game?.loaded && checkpoint.game.groundingStages?.synchronizedSource?.length === 3) {
+      playableSnapshot = checkpoint;
+      break;
+    }
+    console.log(`Mission playable-state checkpoint +${Date.now() - loadStartedAt}ms ${JSON.stringify(checkpoint)}`);
+    await page.waitForTimeout(15000);
+  }
+  assert.ok(playableSnapshot, `FullSource Mission did not reach a playable grounding frame within 300000ms; last state: ${JSON.stringify(await page.evaluate(() => ({progress: document.querySelector('#missionProgressText')?.textContent,status: document.querySelector('#status')?.textContent,diagnostics: window.__missionSourceDiagnostics,game: window.__gameState?.()})))}`);
   const state = await page.evaluate(() => window.__gameState());
   const loadedUi = await page.evaluate(() => ({
     startHidden: document.querySelector('#startOriginalMission')?.hidden,
@@ -160,6 +197,23 @@ try {
   assert.ok(Number.isFinite(stopped.playerX), 'released Mission actor must retain a finite source position');
   assert.equal(stopped.originalInput?.right?.Pressed, false, 'released browser input must reach the original source controller');
   assert.deepEqual(pageErrors, [], 'Mission walk/release must not throw browser runtime errors');
+  const mobilePage = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  mobilePage.on('pageerror', error => pageErrors.push(String(error)));
+  await mobilePage.goto(`http://127.0.0.1:${address.port}/game/`, { waitUntil: 'domcontentloaded', timeout: 120000 });
+  await mobilePage.waitForSelector('#stage', { state: 'visible', timeout: 30000 });
+  const mobileZoom = await mobilePage.evaluate(async () => {
+    const before = window.visualViewport?.scale ?? null;
+    const stage = document.querySelector('#stage').getBoundingClientRect();
+    const point = { x: stage.left + stage.width * 0.5, y: stage.top + stage.height * 0.5 };
+    return { before, point };
+  });
+  assert.equal(mobileZoom.before, 1, 'mobile packaged page must start at its authored viewport scale');
+  await mobilePage.touchscreen.tap(mobileZoom.point.x, mobileZoom.point.y);
+  await mobilePage.touchscreen.tap(mobileZoom.point.x, mobileZoom.point.y);
+  await mobilePage.waitForTimeout(150);
+  const mobileZoomAfter = await mobilePage.evaluate(() => window.visualViewport?.scale ?? null);
+  assert.equal(mobileZoomAfter, 1, 'rapid taps over the actual game surface must not zoom the mobile page');
+  await mobilePage.close();
   const runtimeReport = await page.evaluate(() => ({
     sourceActors: window.__fullSourceMission?.session?.sourceActors ?? null,
     missionDiagnostics: window.__missionSourceDiagnostics?.summary ?? null,
@@ -171,13 +225,14 @@ try {
     runtimePath: 'packaged /game/ → Start original Mission → verified FullSource EntryTeam actor → browser contact solver → projected Three.js hierarchy',
     browser: 'Chromium with SwiftShader WebGL',
     missionLoadUi: { initialAttempt: initialAttemptUi, failedAttempt: failedAttemptUi, retryLoading: loadingUi, completed: loadedUi },
-    injectedFailure: { path: injectedFailurePath, initialAttemptFailed: true, retrySucceeded: true },
+    injectedFailure: { path: injectedFailurePath, initialAttemptFailed: true, diagnosticCopied: copiedErrorText === failedAttemptUi.errorText, retrySucceeded: true },
     grounding: state.grounding,
     movement: {
       before: { x: walkStart, animation: state.animation },
       whileHeld: { x: moving.playerX, velocity: moving.velocity, animation: moving.animation, sourceInput: moving.originalInput?.right?.Pressed },
       released: { x: stopped.playerX, velocity: stopped.velocity, animation: stopped.animation },
     },
+    mobileZoom: { before: mobileZoom.before, afterRapidGameSurfaceTaps: mobileZoomAfter, browser: 'Chromium mobile touch emulation; not iPhone Safari' },
     ...runtimeReport,
     pageErrors,
     visualAcceptance: 'untested; screenshot retained for inspection; numeric hierarchy diagnostics do not prove pixel parity or correct foot contact',
@@ -191,6 +246,7 @@ try {
     game: await page.evaluate(() => window.__gameState?.() ?? null).catch(() => null),
   };
   await page.screenshot({ path: resolve(outputRoot, 'mission-grounding-failure.png'), fullPage: true }).catch(() => {});
+  console.error('Packaged Mission browser failure report:', JSON.stringify(report));
   throw error;
 } finally {
   if (report) await import('node:fs/promises').then(fs => fs.writeFile(resolve(outputRoot, 'mission-grounding.json'), JSON.stringify(report, null, 2)));
