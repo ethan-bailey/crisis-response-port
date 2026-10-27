@@ -268,6 +268,7 @@ jobs:
           source_index = open(sys.argv[2], "rb").read()
           provenance = json.load(open(sys.argv[3], encoding="utf-8"))
           expected_roots = [
+              "ProjectSettings/TimeManager.asset",
               "Assets/Resources/Global context.prefab",
               "Assets/GameObject/Interior mode UI.prefab",
               "Assets/Resources/ui/Interaction menu.prefab",
@@ -280,16 +281,16 @@ jobs:
               "roots": profile.get("rootAssets") == expected_roots,
               "source index identity": profile.get("sourcePackageSha256") == hashlib.sha256(source_index).hexdigest() == provenance.get("sourceIndexSha256"),
               "recovery provenance": provenance.get("recoveryArchiveSha256") == "cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d",
-              "asset count": profile.get("assetCount") == 1919,
-              "record count": profile.get("recordCount") == 22365,
-              "compressed bytes": profile.get("compressedAssetBytes") == 97767549,
-              "source bytes": profile.get("uncompressedAssetBytes") == 205514345,
+              "asset count": profile.get("assetCount") == 1920,
+              "record count": profile.get("recordCount") == 22366,
+              "compressed bytes": profile.get("compressedAssetBytes") == 97767924,
+              "source bytes": profile.get("uncompressedAssetBytes") == 205515099,
               "maximum source asset": profile.get("maximumAssetBytes") == 14858177,
           }
           failures = [name for name, ok in checks.items() if not ok]
           if failures:
               raise SystemExit("full Mission profile invariant failed: " + ", ".join(failures))
-          print("Full six-root Mission profile: 1,919 assets, 22,365 records, 97,767,549 compressed asset bytes, 205,514,345 source bytes; source index and recovery archive identities verified.")
+          print("Full seven-root Mission profile: 1,920 assets, 22,366 records, 97,767,924 compressed asset bytes, 205,515,099 source bytes; source index and recovery archive identities verified.")
           PY
           python3 scripts/verify_audio_listener_profile.py "$RUNNER_TEMP/cpr-site-package/scene-data/fullsource/global-ui-mission-operator" | tee "$RUNNER_TEMP/cpr-audio-listener-profile.json"
           python3 scripts/package_wasm_site.py verify "$RUNNER_TEMP/cpr-site-package" | tee "$RUNNER_TEMP/cpr-package-verify.json"

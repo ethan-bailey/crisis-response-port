@@ -9,7 +9,16 @@ const profileDir = resolve(process.argv[2] ?? "");
 assert.ok(process.argv[2], "Pass the verified incremental profile directory");
 const manifest = JSON.parse(await readFile(resolve(profileDir, "manifest.json"), "utf8"));
 assert.equal(manifest.profile, "global-ui-mission-operator");
-assert.equal(manifest.assetCount, 1919);
+assert.equal(manifest.assetCount, 1920);
+assert.deepEqual(manifest.rootAssets,[
+  "ProjectSettings/TimeManager.asset",
+  "Assets/Resources/Global context.prefab",
+  "Assets/GameObject/Interior mode UI.prefab",
+  "Assets/Resources/ui/Interaction menu.prefab",
+  "Assets/Resources/characters/Operator.prefab",
+  "Assets/Resources/Version.prefab",
+  "Assets/Scenes/Mission 01.unity",
+]);
 const metadataBytes = await readFile(resolve(profileDir, manifest.metadata.file));
 assert.equal(metadataBytes.byteLength, manifest.metadata.compressedBytes);
 assert.equal(createHash("sha256").update(metadataBytes).digest("hex"), manifest.metadata.compressedSha256);

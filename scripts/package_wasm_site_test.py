@@ -195,6 +195,7 @@ class PackageTests(unittest.TestCase):
 
     def test_default_incremental_profile_matches_mission_page_and_includes_scene_root(self):
         roots = [
+            "ProjectSettings/TimeManager.asset",
             "Assets/Resources/Global context.prefab",
             "Assets/GameObject/Interior mode UI.prefab",
             "Assets/Resources/ui/Interaction menu.prefab",

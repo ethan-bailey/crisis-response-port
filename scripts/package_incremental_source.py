@@ -7,6 +7,9 @@ import json
 from pathlib import Path
 
 DEFAULT_ROOTS = [
+    # SceneLoader reads this explicit project-settings path for every scene.
+    # It has no serialized GUID edge, so dependency traversal cannot discover it.
+    "ProjectSettings/TimeManager.asset",
     "Assets/Resources/Global context.prefab",
     "Assets/GameObject/Interior mode UI.prefab",
     "Assets/Resources/ui/Interaction menu.prefab",
