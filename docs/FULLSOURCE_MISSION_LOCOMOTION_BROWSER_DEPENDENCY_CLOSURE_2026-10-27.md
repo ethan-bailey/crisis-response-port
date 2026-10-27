@@ -89,3 +89,34 @@ any behavioral movement repair.
 - Actions #153 `40532260745` is **in progress** on that exact SHA. Main job `122287962398` has passed preflight through source-index generation currently in progress; independent Chromium cache/audio job `122287962868` passed. Package build/integrity and packaged Mission browser are not yet reported.
 - Local exact-tree evidence: focused animation tests 19/19, workflow Node 182/182, Python 67/67, module/smoke syntax and diff checks passed. Runner lacks .NET, so the new C# source Animator snapshot contract and SDK 8.0.426 build remain pending hosted CI.
 - Do not count the fix as packaged animation parity until #153's C# contract and browser acceptance pass. If the source Animator `Moving` flag remains false while the browser records only position drift, trace the contact geometry/MovementDelta; do not weaken the predicate. Reload pose remains later in the same browser flow and must be reported separately.
+
+## Actions #153 exact browser result — movement remains failed
+
+Actions #153 (`40532260745`) on source SHA
+`37bb00dd21aba92f60ac51d4487140172e1b9bbc` passed contracts, pinned .NET
+8.0.426 Release/WASM, recovered-source/provenance checks, the full 1,919-asset
+Mission package/integrity, production IndexedDB, and the independent Chromium
+cache/audio job. The only failure was packaged FullSource Mission browser step
+29. Retained artifact `12748315438` has reported archive digest
+`sha256:fe1f411fe9563e4852250aecc6903c5a9870243e686613b872e0798e2748af9d`;
+`mission-grounding.json` SHA-256 is
+`8e73199df22982ecf97f9f8ed39d1264148c7c1e1142284569fb6ccb7a68ec3d`.
+
+The source Animator should remain stationary: Left was pressed, but original
+`sourceIsMoving=false` and original Animator `Moving=false`;
+`MovementDelta=-0.025131702` while source/contact X velocity was approximately
+zero. Only `Body stand` and a small kneel blend were selected. The smoke's
+initial 0.125 m displacement came from contact correction and did not
+establish movement. No browser page errors occurred. The trace showed source
+acceleration `-1`, 16–17 fixed steps, and one force command but did not include
+the vector, so the force magnitude/direction and contact cause remain unknown.
+Do not change animation thresholds or source force/collision behavior based on
+this failure.
+
+The follow-up source commit
+`d202f150789c3c4e6c63bc5c6a67b72f26db411b` adds the actual returned force
+vector to bounded frame and timeout evidence. Exact Actions #154
+(`40534716763`) is in progress. Inspect its packaged browser artifact next. If
+the vector is absent, trace the bridge response boundary; keep movement
+acceptance failed. Reload-pose acceptance remains contingent on reaching the
+post-locomotion reload section of the browser flow.
