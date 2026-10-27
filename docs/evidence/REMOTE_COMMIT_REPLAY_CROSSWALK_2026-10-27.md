@@ -42,3 +42,8 @@ Remote `develop/wasm` at the time of this crosswalk update was `a671cebf9dfb2823
 ## Packaged-browser and inventory handoff replay — 2026-10-27
 
 The local documentation commit `99cd21af171e4ff32366a5ded82a7c3486bd60a4` was replayed to the live branch as remote commit `a3656cbe48fbc1e8df28c274bd614672e8843727`. Both point to tree `fd0412a414d5150552b7f1873b607d41241824b1`; the remote expected parent was `6425b858af8e542de2be85cfad66c47d59e17569` and the ref now resolves to `a3656cbe48fbc1e8df28c274bd614672e8843727`. This records the latest existing source/docs commits as pushed; new work in this run must be separately committed and CAS-updated.
+
+
+## Authoritative inventory checkpoint replay — 2026-10-27
+
+The local documentation commit `e0655f06d39c87ddb5f5d1b37e2803f937883ac6` was pushed as remote `d4522f7dad1e88f2dae0ffd39f057edbdef26b2c` by an expected-parent update from `a3656cbe48fbc1e8df28c274bd614672e8843727`. Both have tree `4137bfa2dd3748652e26af30048c9ed577511327`. This batch makes `NEXT_AGENT.md` and the dependency index authoritative about the recovered profile, missing `.308` mesh edges, pushed-commit accounting and next action.
