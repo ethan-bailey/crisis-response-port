@@ -136,3 +136,25 @@ gesture, and check that the control returns from reloading. The existing
 source scheduler contract remains responsible for task/OnEnd, ammo, magazine
 identity and interruption details. This production touch/audio integration is
 **untested** until the exact-SHA packaged page passes.
+
+## Packaged reload arm-pose acceptance — 2026-10-27 (next source batch)
+
+### Newly inventoried observable dependency
+
+The existing reload smoke checks active source weapon/ammunition, original reload callback audio, and task completion, but it does not yet retain an observable baseline for the original IK arm pose. The serialized reload task's movement must be proven through the original source actor, not inferred from the magazine HUD or a browser-only hand mesh.
+
+- runtime/Engine/FullSourceActorBridge.cs: Snapshot() traverses the FullSource body transform tree and returns each local pose as path, position p, rotation q, scale s, and activeSelf. This includes Operator upper/lower-arm transforms and hand transforms.
+- game/index.html: projectFullSourceSnapshot() maps those original transforms to the packaged Operator hierarchy before applyAnimation(dt, true). SourceCharacterAnimator samples the recovered body controller after source projection; original controller tracks intentionally omit upper-arm, lower-arm, and hand paths so body clips do not overwrite source IK.
+- runtime/Original/CharacterBehavior/CharacterBehavior/ChangeMagazine.cs: the source Behavior Designer owner selects the magazine arm from the active weapon's fireFromMagazine setting, requests the serialized magazine/bolt target transitions, and its OnEnd clears task state. runtime/Original/FullSource/ArmIKSolver.cs updates its two-bone solution and upper/lower arm rotations; runtime/Original/FullSource/IKArmSequencer.cs advances the source-authored frames by solver readiness and sibling waits.
+- The M4A1 reload entry must still be triggered by the actual touch magazine gesture through InputHandler, RequestedReload, and the serialized Operator behavior graph. Do not construct a task, force a pending action, move a solver frame, or set transform values in the test.
+
+### Exact packaged assertion to add
+
+After run #147 resolves the prior locomotion acceptance, add a package-browser observation to the same live Mission flow: capture the source arm transform baseline while the weapon is not reloading; issue the trusted touch magazine pull; while weaponState.reloading is true, require a measurable change in at least one original upper/lower-arm local rotation or position from the same source poses snapshot. Continue requiring the source reload audio callback and active WebAudio playback; then wait for source reload completion and verify M4A1/magazine/chamber state, settled input, and no browser exceptions. Retain before/during/after source arm samples in the evidence report so a failure can be attributed to the original task or solver rather than the HUD.
+
+Use stable joint path identity and quaternion-safe comparison (absolute quaternion dot product); choose the movement threshold from the source pose values observed in the exact packaged Mission run, not an invented fixture. If the source action is too brief to sample at the current frame cadence, add bounded runtime sampling of the actual source snapshots during the task rather than bypassing their lifecycle.
+
+### Status
+
+- **Passed:** bridge and projection source inventory described above; exact-source headless regression asserts projected source poses precede the source Animator sample and body clips do not overwrite arm/hand paths.
+- **Untested:** packaged browser observation of IK arm motion during the original active reload task. Run #146 failed earlier at the movement assertion, before the reload sequence. Run #147 on code SHA 37f48498d1eb6f0aa7d51b6f47902792e91f4aa4 is in progress; do not claim this acceptance passed from its earlier staged build until the browser step completes.
