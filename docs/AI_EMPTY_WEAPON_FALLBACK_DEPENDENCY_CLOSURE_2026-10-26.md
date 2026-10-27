@@ -44,3 +44,8 @@ Command: `dotnet runtime/Checks/bin/Release/net8.0/Crisis.Runtime.Checks.dll --m
 - Casing ejection force uses a no-op headless sink. Native PhysX casing motion, rendered output, and iPhone Safari are not claimed.
 
 The source runtime command has been added to `.github/workflows/source-contracts.yml` after the static graph and player reload contracts. Full exact-source workflow/package verification remains required for this changed SHA.
+
+
+## Exact-source pass — Actions #124
+
+On SHA 27ab7a17a9c18ff32a4c80e23aebd946a02afe78, Actions #124 runtime contract exercised this live route and passed. Mission.BeginMission enabled nonplayer Operator 2's deserialized 91-task tree. The contract confirmed a loaded M4A1 does not trigger fallback, genuinely depleted original magazine/reserve/chamber state plus loaded Glock triggers the authored SwitchWeapon task, M4A1→Glock settles in 46 frames, both IK sequencers are Ready, PendingAction is cleared, no shot is fired, and Glock ammunition remains 17. With both source weapons empty, 120 ticks produced no action or swap. The headless casing force sink does not verify native physics. The exact full Mission package, recovered source/index provenance, and Chromium browser jobs passed the same SHA. This closes the headless source fallback gate; rendered AI/perception/behavior in the published page and physical/device acceptance remain open.

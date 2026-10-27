@@ -31,3 +31,11 @@ Run the focused source contract and broader checks on the exact pushed SHA throu
 
 - SHA 552319ed9a3a0e4f93e1622351def0e4f79fafe2; run 40441042407. Node/Python/runtime/browser-audio/engine checks and independent Chromium job 121981196135 passed. Runtime contracts include the serialized import regression for actual FullSource types. Main job 121981196682 failed FoundationChecks compilation because its reduced assembly excludes the recovered FullSource types while SceneLoader referenced them directly (CS0234). Build, provenance and Mission package steps were skipped.
 - The loader adapter must not create a compile-time dependency from Engine/SceneLoader to FullSource. Use exact type full names plus reflected string fields, retaining source-file hashes. The authored Mission source-entry gate from #120 remains open.
+
+
+## Exact-source Mission acceptance — Actions #124
+
+- SHA 27ab7a17a9c18ff32a4c80e23aebd946a02afe78 passed Actions run 40441240466: main job 121981831401 and independent Chromium job 121981831528 succeeded. The pinned .NET 8.0.426 workflow passed source provenance/index, Release/WASM, the full six-root Mission package build/verify/retention, and the --mission-source-entry-contract path after the null qualifier failure observed in #120. The archived FullSource matcher blobs match the source-verified originals.
+- The same exact run passed full-profile Chromium IndexedDB: 1,919/1,919 verified assets persisted, 8,075 ms cold load, 5,967 ms cached reload, 0 warm network requests. This is source/browser-loader evidence, not a rendered iPhone Safari or visual actor-pose acceptance.
+- Package artifact 12706855071: 138,597,540 bytes, artifact SHA-256 c69c9134ea62da8f5b20a6e955b7f38bbc10d6654f8d73930a35ec83a6af890e, expires 2026-11-10. Deterministic package tar.gz SHA-256 aa351e1c83bdbdd78c70e34c08ba0dc4da63bac6a593ce3156b8c846ed0aa432.
+- Thus the null-qualifier failure that aborted the headless source Mission path is resolved on this SHA. The airborne appearance and detached hand/gun reported in the user's screenshot are still unverified visual issues; do not infer their resolution from source-entry success.
