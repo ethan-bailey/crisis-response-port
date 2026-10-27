@@ -10,7 +10,16 @@ namespace Crisis.Runtime.FullSource
 {
     public sealed class CharacterBody { }
     public sealed class WeaponBase { }
-    public sealed class Projectile { public string name; }
+    // Browser audio snapshots compile against the boundary type here. Keep
+    // these members as compile-only signatures; production behavior lives in
+    // the recovered FullSource Projectile implementation.
+    public sealed class Projectile
+    {
+        public string name;
+        public UnityEngine.Transform transform;
+        public float Velocity { get; }
+        public UnityEngine.Vector3 GravityVelocityAtTime(float time) => default;
+    }
     public sealed class Calibre { public string name; }
     // The FoundationChecks build excludes the recovered Casing body but still
     // compiles the browser adapter. Keep only the private target signature so
