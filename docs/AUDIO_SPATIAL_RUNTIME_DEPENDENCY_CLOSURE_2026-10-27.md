@@ -1,5 +1,11 @@
 # Audio spatial runtime dependency closure (2026-10-27)
 
+## Exact CI checkpoint — Actions #128 (2026-10-27)
+
+On exact branch SHA `530c483266cf58d4ac6b9b65cb82ccb867c51643`, Actions run `40444437888` passed the pinned .NET 8.0.426 contracts, Release/WASM, source provenance/index, complete Mission profile package, and two Chromium jobs. The complete Mission profile has 231 AudioSource definitions and four AudioListener records; the packaged listener inventory contract passed. The Mission hurt-audio contract passed for Occupant source `CharacterAudio.Hurt -> PlayHurt -> AudioSource.PlayOneShot`, clip `Assets/AudioClip/hurt-07.ogg`, with deferred decode supported by the browser queue. This prevents the earlier not-decoded sample from aborting source ticks, but it is not proof of audible device playback. Main CI Mission entry reports `missionStarted=true`; neither contract runs the normal rendered page.
+
+The full-profile Chromium cold/warm cache acceptance passed (1,919 assets, 14,440ms cold, 10,261ms cached, zero warm network requests). Exact package tar SHA-256 is `cc97c7117c0d972db9da40ec0c67f7f9623ecd544beec88771a7c4b2c5a0d4fc`; retained artifact `12708155836` SHA-256 `def8f8a835647f2367c48136c8fc6a86aa81d7aa3387c62d6fef3d7b2caf1692`. These checks do not resolve the absent SpatialBlend default, velocity sampling, spatial output, native audio, or Safari acceptance.
+
 ## Exact source inventory
 
 - Reproducible scanner: `scripts/inventory_profile_audio_sources.py`; tests: `scripts/inventory_profile_audio_sources_test.py`. Schema v3 records each source Transform-parent chain, owner/ancestor component types, script paths resolved through the profile GUID index, and checks both `m_SpatialBlend` and `SpatialBlend` serialized spellings.

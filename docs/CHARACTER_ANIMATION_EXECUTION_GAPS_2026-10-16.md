@@ -1,4 +1,4 @@
-# Character animation and source actor execution status — refreshed 2026-10-26
+# Character animation and source actor execution status — refreshed 2026-10-27
 
 ## Current source/runtime path
 
@@ -17,26 +17,35 @@ The normal-page actor transform and animation boundary is hybrid: source `Runtim
 | Casing and actor physics | Original source Casing Rigidbody callbacks plus browser physics synchronization | Source firing emits original casing force/torque requests; player position and velocity round-trip | Browser adapter is not native PhysX parity; impact/contact trajectory remains unverified |
 | Render and animation | Recovered actor hierarchy, AnimatorController graph/clip data, actor-owned IK and hand/weapon presentation | Original actor snapshot hierarchy drives render-node poses; source arm/weapon callbacks execute in the contract | Contract does not render pixels, evaluate Unity's native Animator, or verify the source animation's complete transition curve on iPhone |
 
-## Verification on 2026-10-26
+## Source hand-mode visibility and the remaining pose seam
 
-Command:
+The source `Hand.SetMode` owner activates/deactivates its fist, trigger and forward-assist GameObjects. `game/original-hand-renderers.mjs` attaches recovered hand meshes under those original nodes and initializes visibility from the serialized renderer state. The FullSource snapshot formerly carried pose TRS only, so the page could not observe later source GameObject active-state transitions. On current SHA `530c483266cf58d4ac6b9b65cb82ccb867c51643`, `FullSourceActorBridge.Snapshot` includes `activeSelf`; `projectFullSourceSnapshot` applies it as the projected source group’s visibility. The mesh remains attached under its original owner. `scripts/source_character_animator_test.mjs` asserts the original mode toggles, snapshot field, projected visibility, and hand mesh parenting. The Node contract passed in Actions #128.
 
+This closes the source-state transport defect for hand layer visibility; it does not prove arm IK accuracy, gun grip alignment, or image output. Actions #128 also passed the complete Mission source-entry package contract and the deferred hurt-audio contract, but it did not run the normal post-download rendered page.
+
+Static source geometry predicts a separate root/ground mismatch: authored Operator spawn Y=1.5; capsule height=1 with center offset=-0.64; Mission floor top Y=0; source foot/toe chain is near the actor root. Capsule bottom is rootY-1.14, so contact settling against the floor can leave the source visual root approximately 1.14m above the floor. This is an inferred prediction pending an observed production-path contact and rendered-root trace. Do not alter source collider values or add an offset until that diagnostic and the original authored behavior resolve the discrepancy.
+
+## Exact-package verification — Actions #128 (2026-10-27)
+
+Branch `develop/wasm`, exact source SHA `530c483266cf58d4ac6b9b65cb82ccb867c51643`; run `40444437888`, main job `121992691908`, independent Chromium job `121992692081`. The workflow used pinned .NET SDK 8.0.426. Both jobs passed.
+
+The package-build job ran the source-entry session command against the exact package it created:
 ```sh
-DOTNET_ROOT=/tmp/codex-dotnet-8.0.426 PATH=/tmp/codex-dotnet-8.0.426:$PATH LD_PRELOAD=/tmp/libprocshim.so \
-  dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -c Release -- \
-  --browser-entryteam-session-contract /tmp/cpr-site-v83-package/scene-data/fullsource/global-ui-mission-operator
+dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -c Release -- \
+  --browser-entryteam-session-contract "$RUNNER_TEMP/cpr-site-package/scene-data/fullsource/global-ui-mission-operator"
 ```
+Result: `status=passed`, Mission 01, Operator 1 with M4A1, source Mission actors and interaction menu initialized, one original source shot, arm ready, one identity-verified particle event, zero dropped particle events, one casing force and torque request, original input press/hold/release, horizontal-independent absolute aim, and source/browser position-velocity synchronization. Source actor count was six in this invocation and is not treated as an authored invariant.
 
-Result: **passed twice** on source HEAD `44cf92ac552b1c65d45afed883ffec4e19f504a7`; package SHA-256 `ea3592ff5bdd39534bb905cd0abac74f456578b46eb4b12cdd0cb79fe8520cf7`. The first invocation reported six original source actors and nine source audio events; the latest rerun reported seven and ten respectively. The source Mission actor count is a runtime snapshot, not a stable authored invariant. Both runs reported Mission 01, Operator 1, one source M4A1 shot, arm readiness, enabled original fire input, one identity-verified particle event, one casing force and torque request, 0.5-magnitude source movement, horizontal-X-independent absolute aim, and player position/velocity synchronization. Latest command output is preserved in `/tmp/cpr-entryteam-44cf.log`. Runtime emitted expected disabled-effect notices for unsupported `NoiseAndGrain` and `BloomOptimized` shaders; it did not fail. Build emitted existing compiler warnings, including nullable annotations on existing contract code.
+The complete Mission contract separately reported `missionStarted=true`, `globalContextInstantiated=false`, two Operators and four Occupants for that test path. Its authored UI/outcome and AI contracts passed; the UI still uses the test harness path rather than the normal rendered Mission page. The independent full-profile browser acceptance used production incremental loading in Chromium IndexedDB; it modeled the Blazor bridge and did not render or control the Mission scene. Full details and package hashes are in `docs/evidence/GATE5_HAND_LAYER_VISIBILITY_2026-10-27.md`.
 
-This contract was run locally in this work session and is **not yet a step in** `.github/workflows/source-contracts.yml`. It must be added after package construction so the exact CI-generated profile is exercised. Then rerun the focused command and the exact-SHA workflow before marking this source-entry slice CI-verified.
+This is stronger exact-package startup evidence than the 2026-10-26 local run below; the older result is retained as history. It does not test on iPhone Safari, verify post-contact rendered root/feet, pixel-equivalent animation, native Unity Animator or native PhysX.
 
 ## Remaining Gate 2/5 acceptance
 
-- Add the already-existing source-entry integration command to CI against `$RUNNER_TEMP/cpr-site-package/scene-data/fullsource/global-ui-mission-operator`.
+- Source-entry integration command is now in CI and passed against the exact package built on SHA `530c483` in Actions #128.
 - Keep full-page pixel/pose inspection separate from source state. Verify the actual render output on an enabled WebGL device and iPhone Safari.
 - Complete native/browser joint, ragdoll, casing-contact and physics acceptance; headless force sinks and round-trips do not prove native solver behavior.
-- Verify authored AnimatorController transitions, source transition timing and two-arm visual continuity on the real rendered actor. Existing authored Pelvis-transition checks are headless and do not close device presentation.
+- Add a production Mission-page contact diagnostic for source root, capsule center/bottom, floor top, contact-solver output and projected render root; compare its first settled frame against the authored source geometry. Verify authored AnimatorController transitions, source transition timing and two-arm visual continuity on rendered output.
 - Keep parity flags false until combined Mission flow and device/render/physics evidence pass.
 
 ## Evidence
