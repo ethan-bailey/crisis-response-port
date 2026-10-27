@@ -58,6 +58,27 @@ if(args.Length==1&&args[0]=="--browser-audio-event-contract"){
     if(pressureEvents.RootElement.GetArrayLength()!=64||pressureEvents.RootElement[63].GetProperty("action").GetString()!="stop"||
        pressureQueue.DroppedEvents!=1||pressureSource.isPlaying)
         throw new InvalidOperationException($"A full browser audio queue discarded the source Stop control: dropped={pressureQueue.DroppedEvents}, sourcePlaying={pressureSource.isPlaying}, events={pressureEvents.RootElement}");
+    (int sourceId,string[] actions,bool isPlaying) RunLifecycleCase(string transition){
+        var lifecycleWorld=new RuntimeWorld();var lifecycleQueue=new Crisis.Runtime.BrowserAudioEventQueue();lifecycleWorld.AudioSourceDriver=lifecycleQueue;
+        var lifecycleClip=new AudioClip("Assets/AudioClip/hurt-07.ogg",.4f);
+        var lifecycleObject=new GameObject("Lifecycle source",lifecycleWorld);var lifecycleSource=lifecycleObject.AddComponent<AudioSource>();lifecycleSource.clip=lifecycleClip;
+        var inactiveParent=new GameObject("Inactive parent",lifecycleWorld);inactiveParent.SetActive(false);
+        lifecycleWorld.Initialize();lifecycleSource.PlayOneShot(lifecycleClip);
+        switch(transition){
+            case "component-disabled":lifecycleSource.enabled=false;break;
+            case "object-disabled":lifecycleObject.SetActive(false);break;
+            case "reparented-inactive":lifecycleObject.transform.SetParent(inactiveParent.transform,false);break;
+            case "destroyed":UnityEngine.Object.Destroy(lifecycleObject);lifecycleWorld.Tick(0f);break;
+            default:throw new ArgumentOutOfRangeException(nameof(transition));
+        }
+        using var json=JsonDocument.Parse(JsonSerializer.Serialize(lifecycleQueue.Drain()));
+        return(lifecycleSource.GetInstanceID(),json.RootElement.EnumerateArray().Select(value=>value.GetProperty("action").GetString()).ToArray(),lifecycleSource.isPlaying);
+    }
+    foreach(var transition in new[]{"component-disabled","object-disabled","reparented-inactive","destroyed"}){
+        var lifecycle=RunLifecycleCase(transition);
+        if(lifecycle.actions.Length!=2||lifecycle.actions[0]!="oneShot"||lifecycle.actions[1]!="stop"||lifecycle.isPlaying)
+            throw new InvalidOperationException($"AudioSource lifecycle transition {transition} did not cancel source playback: {JsonSerializer.Serialize(lifecycle)}");
+    }
     Console.WriteLine(JsonSerializer.Serialize(new{status="passed",sourceId=source.GetInstanceID(),events=items,sourceGainApplied=true,sourceScopedStop=true,sourceIsPlayingMirrored=true,clipLoadState=clip.loadState.ToString()}));
     return;
 }

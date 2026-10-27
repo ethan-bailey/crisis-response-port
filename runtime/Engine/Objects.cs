@@ -75,7 +75,7 @@ public class GameObject:Object {
         if(!typeof(Component).IsAssignableFrom(type)||type.IsAbstract) throw new ArgumentException("Not a concrete component");
         if(typeof(Transform).IsAssignableFrom(type)) throw new InvalidOperationException("A GameObject already has its Transform");
         var c=(Component)Activator.CreateInstance(type);Attach(c);
-        if(world.Initialized)world.Activate(c);
+        if(world.Initialized){world.Activate(c);if(c is AudioSource)world.RefreshActivation();}
         return c;
     }
     public T GetComponent<T>() where T:class => components.OfType<T>().FirstOrDefault(c=>c is not Object o||o);
@@ -291,6 +291,7 @@ public sealed class RuntimeWorld {
     public ParticleSystem.IParticleDriver ParticleSystemDriver;
     public IAudioSourceDriver AudioSourceDriver;
     readonly HashSet<Object> destroyQueue=[];
+    readonly HashSet<int> activeAudioSourceIds=[];
     readonly List<CoroutineHandle> routines=[];
     readonly Dictionary<(Type,string),MethodInfo> messages=[];
     readonly Dictionary<(Type,string),MethodInfo> collisionMessages=[];
@@ -332,6 +333,7 @@ public sealed class RuntimeWorld {
     }
     public void Initialize(){Initialized=true;RefreshActivation();}
     internal void RefreshActivation(){
+        RefreshAudioSourceActivation();
         if(!Initialized||activationDeferrals>0||activationPassInProgress)return;
         activationPassInProgress=true;
         try{
@@ -340,6 +342,7 @@ public sealed class RuntimeWorld {
                     if(m.gameObject.activeInHierarchy)Activate(m);
                     if(!m.isActiveAndEnabled&&m.enableNotified){m.enableNotified=false;Invoke(m,"OnDisable");}
                 }
+                RefreshAudioSourceActivation();
                 bool pending=Objects.OfType<MonoBehaviour>().Any(m=>m.gameObject.activeInHierarchy
                     ?!m.awoken||(m.isActiveAndEnabled&&!m.enableNotified)
                     :m.enableNotified);
@@ -373,8 +376,20 @@ public sealed class RuntimeWorld {
         .OrderBy(item=>HierarchyDepth(item.component.transform)).ThenBy(item=>item.index)
         .Select(item=>item.component).ToArray();
     static int HierarchyDepth(Transform transform){int depth=0;for(var parent=transform.parent;parent!=null;parent=parent.parent)depth++;return depth;}
+    void RefreshAudioSourceActivation(){
+        foreach(var source in Objects.OfType<AudioSource>().ToArray()){
+            if(!source){activeAudioSourceIds.Remove(source.GetInstanceID());continue;}
+            var id=source.GetInstanceID();
+            if(source.enabled&&source.gameObject.activeInHierarchy){activeAudioSourceIds.Add(id);continue;}
+            if(activeAudioSourceIds.Remove(id))StopAudioSourceIfPlaying(source);
+        }
+    }
+    void StopAudioSourceIfPlaying(AudioSource source){
+        if(source?.Driver is IAudioSourceEventDriver events&&events.IsSourcePlaying(source))events.Stop(source);
+    }
     internal void DestroyNow(Object obj){if(!obj)return;
         if(obj is GameObject go){foreach(var child in go.transform.children.ToArray())DestroyNow(child.gameObject);foreach(var c in go.components.ToArray())DestroyNow(c);go.transform.parent?.children.Remove(go.transform);}
+        if(obj is AudioSource audio){StopAudioSourceIfPlaying(audio);activeAudioSourceIds.Remove(audio.GetInstanceID());}
         if(obj is MonoBehaviour m){if(m.enableNotified)Invoke(m,"OnDisable");if(m.awoken)Invoke(m,"OnDestroy");StopRoutines(m);}
         obj.destroyed=true;Objects.Remove(obj);
         if(obj is Component component)component.gameObject.components.Remove(component);
