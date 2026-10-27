@@ -327,7 +327,7 @@ async function load(){
     if(pose.path===snapshot.actor)continue;
     const path=pose.path.startsWith(rootPrefix)?pose.path.slice(rootPrefix.length):pose.path;
     const group=nodeByPath.get(path);if(!group)continue;
-    group.position.fromArray(pose.p);group.quaternion.fromArray(pose.q);group.scale.fromArray(pose.s);
+    group.visible=pose.activeSelf;group.position.fromArray(pose.p);group.quaternion.fromArray(pose.q);group.scale.fromArray(pose.s);
    }
    playerX=snapshot.position[0];playerY=snapshot.position[1];velocity=snapshot.velocity?.[0]??0;
    facingDirection=snapshot.direction??facingDirection;isKneeling=!!snapshot.kneeling;

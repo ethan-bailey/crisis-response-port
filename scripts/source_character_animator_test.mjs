@@ -49,6 +49,9 @@ test('no interrupted transitions or invented clip graph',()=>{
 });
 
 
+const fullSourceBridge=fs.readFileSync(new URL('../runtime/Engine/FullSourceActorBridge.cs',import.meta.url),'utf8');
+const originalHand=fs.readFileSync(new URL('../runtime/Original/FullSource/Hand.cs',import.meta.url),'utf8');
+const handRenderers=fs.readFileSync(new URL('../game/original-hand-renderers.mjs',import.meta.url),'utf8');
 const page=fs.readFileSync(new URL('../game/index.html',import.meta.url),'utf8');
 const operator=JSON.parse(fs.readFileSync(new URL('../game/assets/operator/operator.json',import.meta.url),'utf8'));
 const animations=JSON.parse(fs.readFileSync(new URL('../game/assets/operator/animations.json',import.meta.url),'utf8'));
@@ -73,4 +76,20 @@ test('FullSource Mission frame samples original body clips after source pose pro
  for(const path of trackPaths)assert.ok(nodePaths.has(path),'original clip target is absent from Operator prefab: '+path);
  assert.ok(![...trackPaths].some(path=>/Right upper arm|Left upper arm|Right hand|Left hand/.test(path)),
   'the body clip sampler must not overwrite the source IK hand and arm transforms');
+});
+
+
+test('FullSource projection follows original GameObject activation for authored hand layers',()=>{
+ assert.match(originalHand,/forwardAssist\.SetActive\(false\)/);
+ assert.match(originalHand,/fist\.SetActive\(true\)/);
+ assert.match(originalHand,/trigger\.SetActive\(true\)/);
+ assert.match(fullSourceBridge,/activeSelf\s*=\s*transform\.gameObject\.activeSelf/,
+  'source snapshots must transport each original transform GameObject activeSelf state');
+ const projectStart=page.indexOf('projectFullSourceSnapshot=snapshot=>');
+ const projectEnd=page.indexOf('const aimQuadTarget=',projectStart);
+ const projection=page.slice(projectStart,projectEnd);
+ assert.match(projection,/group\.visible=pose\.activeSelf;/,
+  'the renderer must apply source GameObject activation before drawing descendants');
+ assert.match(handRenderers,/node\.add\(mesh\)/,
+  'recovered hand layer meshes must remain children of their source GameObjects');
 });

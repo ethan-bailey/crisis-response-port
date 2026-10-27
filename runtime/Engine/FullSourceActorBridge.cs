@@ -356,7 +356,8 @@ public sealed class FullSourceActorBridge
                 path,
                 p = new[] { position.x, position.y, position.z },
                 q = new[] { rotation.x, rotation.y, rotation.z, rotation.w },
-                s = new[] { scale.x, scale.y, scale.z }
+                s = new[] { scale.x, scale.y, scale.z },
+                activeSelf = transform.gameObject.activeSelf
             });
             for (var i = transform.childCount - 1; i >= 0; i--)
             {
