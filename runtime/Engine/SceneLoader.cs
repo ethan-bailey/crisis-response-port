@@ -136,6 +136,7 @@ public static class SceneLoader {
                     // AudioListener is a scene component on the Mission camera;
                     // preserve it even when the original scene object is inactive.
                     case 81:component=go.AddComponent<AudioListener>();break;
+                    case 167:component=go.AddComponent<AudioReverbZone>();break;
                     case 54 when prefab:component=go.AddComponent<Rigidbody>();break;
                     case 59 when prefab:component=go.AddComponent<HingeJoint>();break;
                     case 61 when prefab:component=go.AddComponent<BoxCollider2D>();break;
@@ -327,6 +328,14 @@ if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("S
                 SetField("rolloffCustomCurve","rolloffCustomCurve",typeof(AnimationCurve));SetField("panLevelCustomCurve","panLevelCustomCurve",typeof(AnimationCurve));
                 SetField("spreadCustomCurve","spreadCustomCurve",typeof(AnimationCurve));SetField("reverbZoneMixCustomCurve","reverbZoneMixCustomCurve",typeof(AnimationCurve));
                 SetField("Spread","spread",typeof(int));SetField("ReverbZoneMix","reverbZoneMix",typeof(float));External("OutputAudioMixerGroup");break;
+            case 167:
+                SetField("m_MinDistance","minDistance",typeof(float));SetField("m_MaxDistance","maxDistance",typeof(float));
+                SetField("m_ReverbPreset","reverbPreset",typeof(int));SetField("m_Room","room",typeof(int));SetField("m_RoomHF","roomHF",typeof(float));
+                SetField("m_DecayTime","decayTime",typeof(float));SetField("m_DecayHFRatio","decayHFRatio",typeof(float));
+                SetField("m_Reflections","reflections",typeof(float));SetField("m_ReflectionsDelay","reflectionsDelay",typeof(float));
+                SetField("m_Reverb","reverb",typeof(float));SetField("m_ReverbDelay","reverbDelay",typeof(float));
+                SetField("m_HFReference","hfReference",typeof(float));SetField("m_Diffusion","diffusion",typeof(float));SetField("m_Density","density",typeof(float));
+                SetField("m_LFReference","lfReference",typeof(float));SetField("m_RoomLF","roomLF",typeof(float));break;
             case 95:
                 SetField("m_CullingMode","cullingMode",typeof(AnimatorCullingMode));SetField("m_UpdateMode","updateMode",typeof(AnimatorUpdateMode));
                 SetField("m_ApplyRootMotion","applyRootMotion",typeof(bool));SetField("m_LinearVelocityBlending","linearVelocityBlending",typeof(bool));

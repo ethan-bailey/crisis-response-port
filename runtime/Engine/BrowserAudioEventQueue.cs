@@ -49,9 +49,15 @@ public sealed class BrowserAudioEventQueue : IAudioSourceEventDriver, IDeferredA
             .Select(value=>new{guid=value.OriginalAssetGuid,fileID=value.OriginalAssetFileID,name=value.name,fields=value.OriginalSerializedFields}).ToArray();
         var snapshots=world.Objects.OfType<AudioMixerSnapshot>().Where(value=>value).DistinctBy(value=>(value.OriginalAssetGuid,value.OriginalAssetFileID))
             .Select(value=>new{guid=value.OriginalAssetGuid,fileID=value.OriginalAssetFileID,name=value.name,fields=value.OriginalSerializedFields}).ToArray();
+        var reverbZones=world.Objects.OfType<AudioReverbZone>().Where(value=>value).Select(value=>new{
+            ownerName=value.name,enabled=value.enabled,activeSelf=value.gameObject.activeSelf,activeInHierarchy=value.gameObject.activeInHierarchy,
+            transform=DescribeTransform(value.transform,value),value.minDistance,value.maxDistance,value.reverbPreset,value.room,value.roomHF,
+            value.decayTime,value.decayHFRatio,value.reflections,value.reflectionsDelay,value.reverb,value.reverbDelay,
+            value.hfReference,value.diffusion,value.density,value.lfReference,value.roomLF
+        }).ToArray();
         mixerConfigurationSent=mixers.Length==1&&groups.Length==19&&snapshots.Length==5;
         return new{expectedGroupCount=19,expectedSnapshotCount=5,
-            mixers=mixers.Select(value=>new{guid=value.OriginalAssetGuid,fileID=value.OriginalAssetFileID,name=value.name,fields=value.OriginalSerializedFields}).ToArray(),groups,snapshots};
+            mixers=mixers.Select(value=>new{guid=value.OriginalAssetGuid,fileID=value.OriginalAssetFileID,name=value.name,fields=value.OriginalSerializedFields}).ToArray(),groups,snapshots,reverbZones};
     }
 
     /// <summary>Current source-owned input for browser-side spatial/mixer/voice evaluation.</summary>

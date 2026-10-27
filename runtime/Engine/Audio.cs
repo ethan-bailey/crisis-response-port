@@ -19,6 +19,12 @@ public sealed class AudioClip:Object {
 }
 /// <summary>Recovered Unity listener marker. Host spatialization must select an active source listener explicitly.</summary>
 public sealed class AudioListener:Behaviour { }
+/// <summary>Serialized Unity reverb-zone definition. Browser output remains a separate host responsibility.</summary>
+public sealed class AudioReverbZone:Behaviour {
+    public float minDistance,maxDistance,roomHF,decayTime,decayHFRatio,reflections,reflectionsDelay;
+    public float reverb,reverbDelay,hfReference,diffusion,density,lfReference,roomLF;
+    public int reverbPreset,room;
+}
 public interface IAudioSourceDriver {
     bool IsPlaying {get;}
     void PlayOneShot(AudioClip clip,float volume,int priority);
