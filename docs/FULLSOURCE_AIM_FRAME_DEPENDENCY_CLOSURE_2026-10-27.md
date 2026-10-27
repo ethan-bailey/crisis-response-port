@@ -26,7 +26,8 @@ because FullSource mode exits through its own frame branch.
 
 ## Repair and regressions
 
-The helper is now declared once at script scope. It retains the same raycast,
+The helper is now declared once at script scope on pushed source SHA
+`b9c9d095486a3ef21e57164c11420aa166c12afa`. It retains the same raycast,
 shoulder/body-local target conversion and bridge call, and remains ordered
 before `TickFullSourceActorBridge`. The packaged-page wait loop checks the
 visible runtime-error panel every 500 ms (instead of waiting 15 seconds between
@@ -40,7 +41,7 @@ Local checks on the unpushed repair based on source SHA
 - `node --test scripts/*_test.mjs scripts/*_contracts.mjs`: **170/170 passed** after `npm ci --prefix game --ignore-scripts && npm run --prefix game vendor`.
 - `python3 -m unittest discover -s scripts -p '*test.py'`: **58/58 passed**.
 - Inline page module `node --check`, browser smoke script `node --check`, and `git diff --check`: **passed**.
-- Actual packaged-page acceptance for the repair: **not yet run**; must pass on the next exact-source Actions package after the repair is pushed.
+- Exact Actions run #140 (`40490722710`) was queued on this repair SHA; actual packaged-page acceptance was **not yet run** at the next batch's start. A follow-on workflow change may supersede it; the latest exact-SHA run is the source of acceptance truth.
 
 This closes no visual, native physics, or iPhone acceptance. Gate 2 touch/aim
 feel and gate 5 rendered/native pose remain open until their own evidence passes.

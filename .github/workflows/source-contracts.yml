@@ -202,6 +202,38 @@ jobs:
           echo "recovery_sha256=cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d" >> "$GITHUB_OUTPUT"
           echo "source_index_sha256=$(sha256sum "$RUNNER_TEMP/cpr-full-source.json" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
 
+      - name: Reproduce pinned BehaviorDesigner decompiler output
+        id: behavior-designer-decompiler
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          plugin_source="$RUNNER_TEMP/recovery-artifact/export/AuxiliaryFiles/GameAssemblies/BehaviorDesignerRuntime.dll"
+          decompiled="$RUNNER_TEMP/behavior-designer-ilspy"
+          mkdir -p "$decompiled"
+          dotnet tool install ilspycmd --version 9.1.0.7988 --tool-path "$RUNNER_TEMP/ilspycmd"
+          ilspy_version="$("$RUNNER_TEMP/ilspycmd/ilspycmd" --version 2>&1)"
+          printf '%s\n' "$ilspy_version"
+          grep -Fq '9.1.0.7988' <<< "$ilspy_version"
+          "$RUNNER_TEMP/ilspycmd/ilspycmd" -p -o "$decompiled" "$plugin_source"
+          python3 scripts/verify_behaviordesigner_ilspy.py "$decompiled" --decompiler-version 9.1.0.7988
+
+      - name: Retain failed BehaviorDesigner decompiler output
+        if: always() && steps.behavior-designer-decompiler.outcome != 'success'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: behaviordesigner-ilspy-diagnostics-${{ github.sha }}
+          path: ${{ runner.temp }}/behavior-designer-ilspy/
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Require exact BehaviorDesigner decompiler lineage
+        if: always()
+        shell: bash
+        env:
+          DECOMPILER_OUTCOME: ${{ steps.behavior-designer-decompiler.outcome }}
+        run: test "$DECOMPILER_OUTCOME" = success
+
       - name: Refresh verified Unity source snapshot
         if: steps.recovery-input.outputs.refresh == 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

@@ -42,6 +42,22 @@ def verify_source_adaptation(name, item, original, runtime):
     assert runtime == expected, f"source adaptation differs from exact archived original: {name}"
 
 
+def normalize_ilspy_runtime(name, runtime):
+    """Undo only the compile aliases recorded for the decompiled plugin sources."""
+    aliases = (
+        b"using TaskStatus = BehaviorDesigner.Runtime.Tasks.TaskStatus;\n",
+        b"using Object = UnityEngine.Object;\n",
+        b"using Task = BehaviorDesigner.Runtime.Tasks.Task;\n",
+    )
+    for prefix in aliases:
+        if runtime.startswith(prefix):
+            runtime = runtime[len(prefix):]
+    if name in {"BehaviorDesigner.Runtime/ExternalBehavior.cs", "BehaviorDesigner.Runtime/Behavior.cs"}:
+        assert runtime.count(b"\tint IBehavior.GetInstanceID()") == 1
+        runtime = runtime.replace(b"\tint IBehavior.GetInstanceID()", b"\tvirtual int IBehavior.GetInstanceID()")
+    return runtime
+
+
 def verify(archive_path=None, source_root=None):
     assert not (archive_path and source_root), "choose either --archive or --source-root"
     archive = None
@@ -197,23 +213,13 @@ def verify(archive_path=None, source_root=None):
         assembly = recovered(manifest["assemblyEntry"])
         if assembly is not None:
             assert sha(assembly) == manifest["assemblySha256"]
-        aliases = (
-            b"using TaskStatus = BehaviorDesigner.Runtime.Tasks.TaskStatus;\n",
-            b"using Object = UnityEngine.Object;\n",
-            b"using Task = BehaviorDesigner.Runtime.Tasks.Task;\n",
-        )
         source_backed = set()
         for name, item in manifest["sources"].items():
             data = (ROOT / item["runtimePath"]).read_bytes()
             assert sha(data) == item["runtimeSha256"], name
             runtime_data = data
-            for prefix in aliases:
-                if data.startswith(prefix):
-                    data = data[len(prefix):]
-            if name in {"BehaviorDesigner.Runtime/ExternalBehavior.cs", "BehaviorDesigner.Runtime/Behavior.cs"}:
-                assert data.count(b"\tint IBehavior.GetInstanceID()") == 1
-                data = data.replace(b"\tint IBehavior.GetInstanceID()", b"\tvirtual int IBehavior.GetInstanceID()")
-            normalized_hash = sha(data)
+            normalized_runtime = normalize_ilspy_runtime(name, data)
+            normalized_hash = sha(normalized_runtime)
             if normalized_hash != item["decompiledSha256"]:
                 delta = manifest.get("decompilationDeltas", {}).get(name)
                 source_entry = item.get("sourceArchiveEntry")
