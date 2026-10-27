@@ -7,6 +7,7 @@ import { compareSourceArmPoses } from '../game/source-arm-pose.mjs';
 
 const packageRoot = resolve(process.argv[2] ?? '');
 const outputRoot = resolve(process.argv[3] ?? '');
+const reloadOnly=process.argv.includes('--reload-only');
 assert.ok(process.argv[2], 'Pass the complete, integrity-verified Site package directory');
 assert.ok(process.argv[3], 'Pass a directory for the browser report and screenshot');
 await mkdir(outputRoot, { recursive: true });
@@ -184,6 +185,8 @@ try {
   assert.ok(Number.isFinite(capsule.bottom) && Number.isFinite(capsule.verticalHalfExtent), 'authored capsule axis and lower bound must be reported');
   assert.ok(Array.isArray(floorCandidates), 'authored nearby floor candidates must be reported');
   assert.deepEqual(pageErrors, [], 'packaged Mission page must not throw browser runtime errors');
+  let movementReport={skipped:true,reason:'independent reload-only acceptance'};
+  if(!reloadOnly){
   const movementStick = page.locator('#movementStick');
   const stickBox = await movementStick.boundingBox();
   assert.ok(stickBox && stickBox.width >= 176 && stickBox.height >= 176, 'packaged Mission keeps the enlarged thumb joystick');
@@ -293,6 +296,12 @@ try {
   assert.ok(Number.isFinite(stopped.playerX), 'released Mission actor must retain a finite source position');
   assert.equal(stopped.originalInput?.left?.Pressed, false, 'released browser input must reach the original source controller');
   assert.deepEqual(pageErrors, [], 'Mission walk/release must not throw browser runtime errors');
+  movementReport={
+    before:{x:walkStart,animation:state.animation},
+    whileHeld:{x:moving.playerX,velocity:moving.velocity,animation:moving.animation,sourceInput:moving.originalInput?.left?.Pressed,sourceMovement:moving.sourceMovement},
+    released:{x:stopped.playerX,velocity:stopped.velocity,animation:stopped.animation},
+  };
+  }
 
   const reloadBefore = await page.evaluate(() => ({
     weapon: window.__gameState().weaponState,
@@ -399,11 +408,7 @@ try {
     injectedFailure: { path: injectedFailurePath, initialAttemptFailed: true, diagnosticCopied: copiedErrorText === failedAttemptUi.errorText, retrySucceeded: true },
     grounding: state.grounding,
     reloadAudio: { before: reloadBefore, after: reloadAfter, sourceEvents: reloadAfter.events.slice(reloadBefore.eventCount), armPose: { idleDrift: idleArmDrift, activeReload: reloadPoseChange, settled: compareSourceArmPoses(reloadBefore.sourceArmPoses, reloadAfter.sourceArmPoses), sampleCount: reloadArmTrace.length } },
-    movement: {
-      before: { x: walkStart, animation: state.animation },
-      whileHeld: { x: moving.playerX, velocity: moving.velocity, animation: moving.animation, sourceInput: moving.originalInput?.left?.Pressed, sourceMovement: moving.sourceMovement },
-      released: { x: stopped.playerX, velocity: stopped.velocity, animation: stopped.animation },
-    },
+    movement: movementReport,
     mobileZoom: { before: mobileZoom.before, afterRapidGameSurfaceTaps: mobileZoomAfter, browser: 'Chromium mobile touch emulation; not iPhone Safari' },
     ...runtimeReport,
     pageErrors,

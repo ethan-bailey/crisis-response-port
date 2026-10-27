@@ -95,4 +95,10 @@ The two production-edge observations above were stale relative to `develop/wasm`
 
 - Local source commit `683050369990b307202d9168bd6d5db92263b593`, tree `e5db3fe8b03271575886fd2adac1bbe5c4536741`: package build and `verify` **passed**, with 2,691 files, 199 Blazor resources, 195 WASM files and all 1,919 profile assets.
 - Exact profile `browser-entryteam-session`, `mission-player-reload`, and `behavior-graph` contracts **passed**. Reload pose unit contract passed 3/3; full Node suite passed 174/174; Python unittest discovery passed 67/67; movement snapshot contract passed; smoke syntax and `git diff --check` passed.
+
+## Independent packaged reload acceptance — 2026-10-27
+
+The packaged Mission browser workflow now invokes the same integrity-verified package twice. The normal invocation retains joystick, absolute-aim, sprint, source locomotion/Animator, reload, audio, pose and mobile-zoom acceptance. A second `--reload-only` invocation skips only the joystick/aim/locomotion interaction block and still performs package startup/retry/grounding checks, the trusted 55-pixel magazine pull, source task entry/completion, arm/hand pose change beyond measured idle drift, source audio callback plus active WebAudio playback, settled weapon state, mobile rapid-tap zoom and page-error assertions. Both invocations run before the workflow returns either status, and their reports/logs are retained separately.
+
+This separation prevents an earlier locomotion failure from leaving reload untested; it does not weaken either acceptance or count a reload-only pass as locomotion evidence. Regression: `scripts/fullsource_reload_isolation_test.mjs`. Hosted exact-package results remain **untested** until this source chain is integrated and built with pinned SDK 8.0.426.
 - Hosted packaged reload observation is pending. Local browser execution remains unavailable after one bounded Playwright download attempt failed. Current remote HEAD before pushing this batch is `4795aaa5b767efb64b26732599360ff999fe3ffe`.
