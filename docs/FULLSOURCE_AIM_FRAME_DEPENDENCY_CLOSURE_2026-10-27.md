@@ -125,3 +125,42 @@ Keep the exact-package/sourceCommit check, intentional HTTP 503 retry case,
 grounding evidence, sprint wall geometry and walk/release assertions. Rerun
 the packaged page on the next exact pushed source SHA; until then aim browser
 acceptance is **failed** on #144 and the test repair is **untested**.
+
+## Module-scope animation state failure — Actions #151
+
+Actions #151 (`40520039071`) built and integrity-verified the full 1,919-asset
+Mission package from source SHA
+`c7706ac5d12701013401af91496bee2e9f23d713` with pinned .NET SDK 8.0.426.
+Source/provenance, Release/WASM publish, IndexedDB cold/warm, and independent
+Chromium cache/audio checks passed. The packaged FullSource browser reached
+the game frame, then failed with `ReferenceError: activeAnimation is not
+defined` at `game/:624:74`.
+
+The source call/lifecycle trace is direct: module-level `async function frame()`
+records `activeAnimation` every FullSource frame and `window.__gameState()`
+reports it. Before repair, that mutable value was introduced inside
+`async function load()` after loading the authored AnimatorController; the
+module-scope frame therefore had no binding and aborted. The correction moves
+the existing initialized state (`"Body stand"`) into the existing module-level
+state declaration and removes only the shadowing local declaration. The
+animator still updates the same variable from the selected authored clip after
+`SourceCharacterAnimator.step`; no serialized state, threshold, transition,
+clip, input, or update order changed.
+
+The new regression in
+`scripts/fullsource_animation_diagnostics_test.mjs` asserts the state is
+declared before `load()`, that no declaration shadows it between `load()` and
+`frame()`, and that the frame diagnostic reads that shared state. It failed
+against the original scope and passed after the fix. Focused animation,
+movement, reload, and animator checks passed **14/14**; the complete Node suite
+passed **178/178** and Python suite **67/67** on the corrected local source.
+The modified tracked files are `game/index.html` and that regression test.
+
+The corrected source-package/browser acceptance is pending. SDK 8.0.426 was
+not available locally. The #151 compiled runtime artifact may be reused only
+because no `runtime/**` or `global.json` changes exist since the exact compiled
+SHA; its failure artifact is not success evidence. Rebuild the package from the
+new pushed source SHA, verify all listed files and the 1,919-profile asset
+hashes, then rerun the actual FullSource browser scenario. This failure belongs
+to gates 2 and 5; it does not close rendered/native animation parity or iPhone
+acceptance.

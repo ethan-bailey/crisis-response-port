@@ -6,6 +6,19 @@ const page=fs.readFileSync(new URL('../game/index.html',import.meta.url),'utf8')
 const smoke=fs.readFileSync(new URL('./mission_grounding_browser_smoke.mjs',import.meta.url),'utf8');
 const adapter=fs.readFileSync(new URL('../game/source-character-step.mjs',import.meta.url),'utf8');
 
+test('the module-scope animation frame reads a module-scope mutable clip state',()=>{
+ const loadStart=page.indexOf('async function load(){');
+ const frameStart=page.indexOf('async function frame(');
+ assert.ok(loadStart>=0&&frameStart>loadStart,'Mission loading and animation frame must remain separate lifecycle scopes');
+ const stateMatch=page.slice(0,loadStart).match(/\blet\s+[^;]*\bactiveAnimation\s*=/);
+ assert.ok(stateMatch&&stateMatch.index<loadStart,
+  'activeAnimation must be declared before load() so the module-scope frame can read it');
+ assert.doesNotMatch(page.slice(loadStart,frameStart),/\b(?:let|const|var)\s+activeAnimation\b/,
+  'load() must not shadow the clip state consumed by frame()');
+ assert.match(page.slice(frameStart),/sourceAnimationTrace\.push\(\{[^}]*animation:activeAnimation/,
+  'the source frame diagnostic must read the shared clip state');
+});
+
 test('FullSource animation evidence records actual adapter inputs, source/contact motion and selected authored clips',()=>{
  const applyStart=page.indexOf('applyAnimation=async function(dt,preserveSourcePose=false)');
  const applyEnd=page.indexOf('rightUpperArm=nodeByPath',applyStart);
