@@ -58,6 +58,19 @@ failure.
 
 ## Preflight
 
+Run the repository preflight as the first toolchain action in every fresh
+checkout, before deciding that .NET is unavailable:
+
+```sh
+source scripts/env/dotnet-8.0.426-preflight.sh
+```
+
+It checks the documented SDK locations, loads the runner shim if present, and
+requires the exact pinned version. A successful message is the required
+checkpoint before any build/test/restore/publish command. `NEXT_AGENT.md` must
+record the exact SDK path/version result so the next run does not repeat the
+bare-PATH mistake.
+
 A failed `command -v dotnet` only means the executable is not on the current `PATH`; it does not prove the SDK is absent. Before recording an SDK blocker, check the known runner locations `/tmp/codex-dotnet-8.0.426/dotnet` and `/root/.dotnet/dotnet`, plus the process shim at `/workspace/libprocshim.so` or `/tmp/libprocshim.so`. If the pinned executable exists, export `DOTNET_ROOT=/tmp/codex-dotnet-8.0.426`, prepend it to `PATH`, and load the available shim with `LD_PRELOAD`, then confirm `dotnet --version`. Do not download or reinstall the SDK when this verified copy is already present.
 
 If the SDK archive has to be restored, use the pinned official archive and
