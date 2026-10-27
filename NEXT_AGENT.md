@@ -1,5 +1,25 @@
 # Crisis Response Port — continuation handoff (2026-10-27)
 
+## Current packaged Mission failure/retry checkpoint
+
+- Live source SHA: `a24165c708846a36adc7688098f2cc9008782ccc`; live tree: `18933c0e3d99046134968b953fb48f15941019e4`. The expected-HEAD update from `5428a3167771b14e19782b102147843d293beaaf` succeeded. The code batch adds `scripts/mission_grounding_browser_smoke.mjs`, which drives the exact integrity-built Mission package in Chromium. Before the normal Mission run, its local package server returns one deliberate HTTP 503 for the first asset path under the exact Mission profile. The browser must show the actual error and retry controls, re-enable Start and close progress, then the actual Retry button must restart progress and complete the verified Mission load. It continues with grounding-stage and original locomotion observations. No source asset or serialized prefab/scene is substituted.
+- Local checks on this workspace: Node `--test scripts/*_test.mjs scripts/*_contracts.mjs` **168/168 passed**; Python `python3 -m unittest discover -s scripts -p '*test.py'` **53/53 passed**; browser script `node --check`, workflow YAML parse and `git diff --check` passed. This source-browser harness has not been run locally: the workspace has neither .NET SDK `8.0.426` nor the exact full Mission profile/package.
+- Exact-source CI: run #134 `40480716641` on `f7a8910fb9eedfb0dfd51fdb16cbe0a7ba1d30a5` was cancelled by the next source push while at package verification; its independent Chromium IndexedDB/audio job passed. Run #135 `40481392427` is running on this exact SHA. Its workflow already passed Node, Python, runtime, browser-audio, engine, FoundationChecks, Release/WASM publish-output and source archive/provenance steps; main job `122110197277` is at “Build and verify complete Mission source package”. The specific packaged error/retry step and its retained report/screenshot have **not yet passed**. Recheck its exact job/step/artifact before updating this evidence.
+- A focused harness review caught and fixed an integration-script defect before push: the final JSON report was reading `window` in the Node process. It now gathers source actor and Mission diagnostics through `page.evaluate`. Do not treat local unit contracts as package-browser acceptance.
+- Do not publish/deploy the Site. Existing live version is v85 by previous read-only check; no access policy changes were made. Keep all parity flags false.
+
+## Dependency-ordered remaining work
+
+1. Verify packaged full-profile progress, HTTP failure/error UI, retry, Mission initialization, then inspect the exact #135 telemetry and screenshots. Make a focused code correction only if an exact check fails.
+2. Continue Mission actor grounding, authored IK/animation and rendered-pose inspection from the browser artifact; numeric stage equality does not establish foot contact or pixel parity. iPhone Safari/touch acceptance remains external.
+3. Continue source-ready render/audio/physics closures. Audio SpatialBlend default and transform-driven source/listener velocity still require a Unity 2017.2.0f3 fixture or version-matched authoritative source; the current source search did not establish either. The documented camera postprocess gap still requires the exact missing source implementation and enabled WebGL pixels. Keep unknowns explicit and do not substitute guessed behavior.
+4. Continue independent gameplay/asset parity gates from `docs/GATE_DEPENDENCY_INDEX.md`; missing owner-device evidence defers only that acceptance, not repository work.
+
+## Immediate next action
+
+Poll Actions run `40481392427` on `a24165c708846a36adc7688098f2cc9008782ccc`; when it completes, inspect the main job’s “Exercise FullSource Mission grounding on the packaged page” step, download the retained grounding artifact, review `mission-grounding.json` plus screenshots, and update this handoff with exact outcome before beginning the next dependency-ready batch. Never publish from this recurring engineering task.
+
+---
 ## Exact pushed checkpoint — packaged Mission startup, grounding and locomotion browser acceptance (2026-10-27)
 
 - Live source SHA `f7a8910fb9eedfb0dfd51fdb16cbe0a7ba1d30a5`, tree `0291e321f6c3570dbc8c3fc28f2ea76237ec9c7c`, parent `cfb78b1810c88db5c326e17af73df4e878666898`; expected-HEAD update succeeded. This source revision finalizes the browser-only acceptance with three connected production-page behaviors: Start shows disabled/progress state during the profile delivery and closes only after source verification + actor startup; FullSource grounding stages and root identities are captured; KeyD moves the original actor into authored Body walk/sprint then release returns it to Body stand.
