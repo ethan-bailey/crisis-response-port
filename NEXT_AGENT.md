@@ -1,5 +1,11 @@
 # Crisis Response Port — continuation handoff (2026-10-27)
 
+## Latest exact-source attempt — run #120 (2026-10-27)
+
+- Exact pushed SHA `79fddeb94e4ad4fe4550e0ff0f7ff5df28a7bdfd` ran as Actions #120 (`40439724709`). Chromium IndexedDB/audio job `121976902804` passed. Main job `121976902566` passed FoundationChecks after the compile-only stub repair, Release/WASM publication, and recovered source/index verification; the complete Mission package step failed inside the Mission source-entry contract.
+- Failure trace: `OperatorSpawner.Awake -> SpawnTeam -> CharacterBody.InitializeEquipment -> EquipmentHelper.SpawnWeapon -> WeaponBase.Deserialize -> WeaponComponent.Compatible -> WeaponComponentSlot.QualifierMatch` threw `NullReferenceException` at `qualifiers.Split`. The authored default M4A1 component is checked during original Operator spawn, aborting the source Mission player's equipment initialization. This can leave a partial actor visible without a playable Mission. It does not alone prove the airborne pose cause.
+- Both original qualifier matchers establish empty-string behavior with `string.IsNullOrEmpty` but split nullable inputs before reaching it. A null-to-empty guard and regression for null, empty, matching, and nonmatching values are being committed; the existing full Mission source-entry contract will validate original spawn and loadout on the next exact SHA.
+
 ## Latest exact-source attempt — run #119 (2026-10-27)
 
 - Exact pushed SHA `c04033174bd2af93fced1f91940ddfc19e58d2b6` ran as Actions #119 (`40439309599`). Independent Chromium IndexedDB/audio job `121975517405` passed both checks. Main job `121975517115` passed Node 164, Python 52, runtime/browser-audio/engine checks and the first partial-declaration compile error was removed; FoundationChecks then failed because its project excludes the recovered Casing body but compiles `CasingBrowserPhysicsAdapter.cs`, which calls the absent private `Disable()` method: `CasingBrowserPhysicsAdapter.cs(8,13): error CS0103`.
@@ -151,6 +157,6 @@ Keep `fullGameParity:false`, `sourceVisualParity:false`, `nativeParityVerified:f
 
 ## Next action
 
-1. Push the compile-boundary `Disable()` signature and spatial timing/dependency documentation with expected live HEAD `c04033174bd2af93fced1f91940ddfc19e58d2b6`, verify remote commit/tree, then follow the resulting exact Actions run until both jobs complete and inspect FoundationChecks, Release/WASM and package integrity.
-2. Then start the dependency-complete audio event/velocity trace for Projectile and runtime-ejected Casing, while resolving the eight BehaviorDesigner decompiler lineages and advancing independent visual/physics/actor inventory work.
-3. Do not publish. Site v85 is the last deployment; full parity flags stay false pending exact Site package integrity and the owner iPhone Safari acceptance.
+1. Push null-as-empty guards in both original weapon qualifier matchers and null/empty/token regressions using expected live HEAD `79fddeb94e4ad4fe4550e0ff0f7ff5df28a7bdfd`. Follow exact-SHA Actions through the packaged Mission source-entry contract, Release/WASM, profile/package integrity/retention, and Chromium IndexedDB/audio.
+2. After Mission actor/loadout initialization passes, continue browser spawn/grounded-pose acceptance separately; the qualifier fix does not by itself resolve airborne rendering. Continue Projectile/Casing spatial audio provenance and the missing script GUID/BehaviorDesigner source closures as independent batches.
+3. Do not publish. Site v85 remains last deployment; keep all parity flags false pending rendered/device acceptance.

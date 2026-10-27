@@ -14,6 +14,10 @@ This index is the active dependency order. Inventory the known serialized assets
 - The dependency-complete spatial audit is now reproducible: 231 Mission-profile serialized AudioSources, zero with serialized SpatialBlend, 110 DopplerLevel=0 / 121=1, 79/150/2 rolloff enum distribution, four AudioListeners and eight Mission AudioReverbZones. Details and exact profile/inventory hashes: `docs/AUDIO_SPATIAL_RUNTIME_DEPENDENCY_CLOSURE_2026-10-27.md` and `docs/audio/MISSION_SOURCE_AUDIO_SOURCES_2026-10-27.json.gz`. The omitted SpatialBlend default and source/listener velocity remain unproven; no spatial behavior is inferred.
 - Run #109 failed at runtime compile due corrupted `Objects.cs`; #110 passed after replacing the file with blob-exact content. Earlier failure diagnoses remain indexed in the relevant gate records and commit history.
 
+## Latest Mission startup failure
+
+Exact-source Actions run #120 on `79fddeb94e4ad4fe4550e0ff0f7ff5df28a7bdfd` failed the full Mission package source-entry contract after `OperatorSpawner.Awake` reached the original M4A1 default-component compatibility check. `WeaponComponentSlot.QualifierMatch` split a null qualifier argument, aborting `WeaponBase.Deserialize` during `CharacterBody.InitializeEquipment`; the source Mission player/loadout did not finish initialization. Both original qualifier matchers now normalize null to their established empty-string semantics, with direct regression assertions and an exact packaged Mission rerun required. This failure explains an incomplete Mission start but does not prove the separate airborne visual pose.
+
 ## Ordered gates and dependency closure
 
 | Order | Gate | Complete known dependency set before implementation/acceptance | Evidence and remaining work |
