@@ -59,10 +59,29 @@ try {
   assert.equal(startupError, false, await page.locator('#errorDetails').textContent().catch(() => 'Mission page failed before the source load button became available'));
   await page.locator('#startOriginalMission').click();
   await page.waitForFunction(() => {
+    const button = document.querySelector('#startOriginalMission');
+    const progress = document.querySelector('#missionProgress');
+    return button?.disabled && progress && !progress.hidden;
+  }, null, { timeout: 10000 });
+  const loadingUi = await page.evaluate(() => ({
+    startDisabled: document.querySelector('#startOriginalMission')?.disabled,
+    progressVisible: !document.querySelector('#missionProgress')?.hidden,
+    progressText: document.querySelector('#missionProgressText')?.textContent,
+  }));
+  await page.waitForFunction(() => {
     const game = window.__gameState?.();
     return game?.loaded && game?.grounding?.stages?.synchronizedSource?.length === 3;
   }, null, { timeout: 900000 });
   const state = await page.evaluate(() => window.__gameState());
+  const loadedUi = await page.evaluate(() => ({
+    startHidden: document.querySelector('#startOriginalMission')?.hidden,
+    progressHidden: document.querySelector('#missionProgress')?.hidden,
+    status: document.querySelector('#status')?.textContent,
+    sourceTransfer: window.__missionSourceDiagnostics?.status,
+  }));
+  assert.equal(loadedUi.startHidden, true, 'Start original Mission must leave the UI after successful initialization');
+  assert.equal(loadedUi.progressHidden, true, 'download progress must close only after Mission initialization');
+  assert.equal(loadedUi.sourceTransfer, 'verified', 'Mission UI completion must follow verified source delivery');
   assert.equal(state.originalInputActive, true, 'normal Mission must be ticking the original FullSource actor');
   assert.ok(state.grounding, 'production Mission frame must expose grounding diagnostics');
   const { stages, sourceRoot, contactRoot, projectedRoot, capsule, floorCandidates } = state.grounding;
@@ -107,6 +126,7 @@ try {
     sourceCommit: build.sourceCommit,
     runtimePath: 'packaged /game/ → Start original Mission → verified FullSource EntryTeam actor → browser contact solver → projected Three.js hierarchy',
     browser: 'Chromium with SwiftShader WebGL',
+    missionLoadUi: { loading: loadingUi, completed: loadedUi },
     grounding: state.grounding,
     movement: {
       before: { x: walkStart, animation: state.animation },
