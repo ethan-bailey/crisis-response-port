@@ -37,6 +37,7 @@ if(args.Length==1&&args[0]=="--browser-audio-event-contract"){
     // asset provenance is assigned by the source-package resolver and is
     // internal to the runtime assembly.
     var clip=new AudioClip("Assets/AudioClip/hurt-07.ogg",.4f);
+    var listenerObject=new GameObject("Contract listener",world);listenerObject.transform.position=new Vector3(3f,4f,5f);listenerObject.AddComponent<AudioListener>();
     var go=new GameObject("Audio source",world);
     var source=go.AddComponent<AudioSource>();source.clip=clip;source.volume=.4f;source.PlayOneShot(clip,.5f);var reportsPlaying=source.isPlaying;source.Stop();var stopped=source.isPlaying;
     using var events=JsonDocument.Parse(JsonSerializer.Serialize(queue.Drain()));
@@ -44,6 +45,10 @@ if(args.Length==1&&args[0]=="--browser-audio-event-contract"){
     if(items.GetArrayLength()!=2||items[0].GetProperty("action").GetString()!="oneShot"||
        items[0].GetProperty("sourceId").GetInt32()!=source.GetInstanceID()||
        MathF.Abs(items[0].GetProperty("volume").GetSingle()-.2f)>.001f||
+       items[0].GetProperty("sourceTransform").GetProperty("position")[0].GetSingle()!=0f||
+       items[0].GetProperty("activeListenerCount").GetInt32()!=1||
+       items[0].GetProperty("listenerTransform").GetProperty("ownerName").GetString()!="Contract listener"||
+       items[0].GetProperty("listenerTransform").GetProperty("position")[2].GetSingle()!=5f||
        items[1].GetProperty("action").GetString()!="stop"||items[1].GetProperty("sourceId").GetInt32()!=source.GetInstanceID()||!reportsPlaying||stopped)
         throw new InvalidOperationException($"Browser audio bridge lost source identity, source gain, or stop order: {items}");
     var pressureWorld=new RuntimeWorld();var pressureQueue=new Crisis.Runtime.BrowserAudioEventQueue();pressureWorld.AudioSourceDriver=pressureQueue;
@@ -98,6 +103,10 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
     var missionIntroListener=session.Mission.world.Objects.OfType<GameObject>().SingleOrDefault(go=>go.name=="Mission intro")?.GetComponent<AudioListener>();
     if(missionCameraListener==null||missionIntroListener==null||!missionCameraListener.enabled||!missionCameraListener.gameObject.activeSelf||missionCameraListener.gameObject.activeInHierarchy||!missionIntroListener.enabled||missionIntroListener.gameObject.activeSelf||missionIntroListener.gameObject.activeInHierarchy)
         throw new InvalidOperationException($"Mission 01 scene-owned AudioListeners did not preserve authored enabled/active hierarchy fields: cameraEnabled={missionCameraListener?.enabled},cameraSelf={missionCameraListener?.gameObject.activeSelf},cameraHierarchy={missionCameraListener?.gameObject.activeInHierarchy},introEnabled={missionIntroListener?.enabled},introSelf={missionIntroListener?.gameObject.activeSelf},introHierarchy={missionIntroListener?.gameObject.activeInHierarchy}");
+    var sourceMission=session.Mission.world.Objects.OfType<Crisis.Runtime.FullSource.Mission>().Single();
+    var activeListeners=world.Objects.OfType<AudioListener>().Where(listener=>listener.enabled&&listener.gameObject.activeInHierarchy).ToArray();
+    if(activeListeners.Length!=1||activeListeners[0].name!="Audio listener"||activeListeners[0].OriginalAssetPath!="Assets/GameObject/Interior mode.prefab"||activeListeners[0].GetComponentInParent<Crisis.Runtime.FullSource.InteriorMode>()!=sourceMission.InteriorMode||!sourceMission.InteriorMode.gameObject.activeInHierarchy)
+        throw new InvalidOperationException($"EntryTeam must select the sole AudioListener cloned from the Interior mode prefab: mode={sourceMission.Mode?.name},activeListeners={JsonSerializer.Serialize(activeListeners.Select(listener=>new{owner=listener.name,active=listener.gameObject.activeInHierarchy,source=listener.OriginalAssetPath,fileId=listener.OriginalAssetFileID}))}");
     var authoredAudio=session.Mission.world.Objects.OfType<AudioSource>().SingleOrDefault(source=>source.gameObject.name=="Room 4 door")
         ??throw new InvalidOperationException("Mission 01 Room 4 door has no imported AudioSource");
     if(!float.IsFinite(authoredAudio.dopplerLevel)||authoredAudio.dopplerLevel!=0f||authoredAudio.minDistance!=1f||authoredAudio.maxDistance!=10f||authoredAudio.rolloffMode!=1||authoredAudio.rolloffCustomCurve==null||authoredAudio.rolloffCustomCurve.length!=2)

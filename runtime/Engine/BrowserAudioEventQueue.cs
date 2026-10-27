@@ -40,6 +40,9 @@ public sealed class BrowserAudioEventQueue : IAudioSourceEventDriver, IDeferredA
         ArgumentNullException.ThrowIfNull(clip);
         if (pending.Count >= MaximumPendingEvents) { DroppedEvents++; return; }
         if(source!=null)playback[source.GetInstanceID()]=true;
+        var activeListeners=source?.world?.Objects.OfType<AudioListener>()
+            .Where(listener=>listener.enabled&&listener.gameObject.activeInHierarchy).ToArray()??Array.Empty<AudioListener>();
+        var selectedListener=activeListeners.Length==1?activeListeners[0]:null;
         pending.Add(new
         {
             action,
@@ -51,8 +54,22 @@ public sealed class BrowserAudioEventQueue : IAudioSourceEventDriver, IDeferredA
             pitch = float.IsFinite(pitch) ? Math.Clamp(pitch, -3f, 3f) : 1f,
             loop,
             muted,
-            priority
+            priority,
+            sourceTransform=source==null?null:DescribeTransform(source.transform,source),
+            outputAudioMixerGroupGuid=source?.outputAudioMixerGroup?.OriginalAssetGuid,
+            activeListenerCount=activeListeners.Length,
+            listenerTransform=selectedListener==null?null:DescribeTransform(selectedListener.transform,selectedListener)
         });
+    }
+
+    static object DescribeTransform(Transform transform,UnityEngine.Object owner)
+    {
+        var position=transform.position;var forward=transform.forward;var rotation=transform.rotation;
+        return new
+        {
+            ownerName=owner.name,ownerAssetPath=owner.OriginalAssetPath,ownerAssetGuid=owner.OriginalAssetGuid,ownerAssetFileID=owner.OriginalAssetFileID,
+            position=new[]{position.x,position.y,position.z},forward=new[]{forward.x,forward.y,forward.z},rotation=new[]{rotation.x,rotation.y,rotation.z,rotation.w}
+        };
     }
 
     public object[] Drain()
