@@ -1,10 +1,10 @@
 # Crisis Response Port — continuation handoff (2026-10-27)
 
-## Grounding diagnostic batch (local verification pending push)
+## Grounding diagnostic batch — source SHA `62c793dfc59f609335f0b2b80263fed1b170a217`
 
 - Starting live branch: `fe83b2d68f859200375e9051acce05d6d1e4bc42` (tree verified clean). The source/contact/render sequence was traced: FullSource tick → contact fixed steps → `SynchronizeFullSourceActorPhysics` → `projectFullSourceSnapshot` → animation/render. Contact adapter uses capsule direction `m_Direction=0`; therefore its vertical half extent is radius, not `height/2`. With authored radius 0.3 and runtime center offset -0.64, candidate bottom at root Y=1.5 is 0.56, before floor contact. This corrects the older handoff estimate that used -1.14 by treating the capsule as vertical. It remains a geometric prediction; actual post-settle browser telemetry is required.
 - Added read-only `game/grounding-diagnostics.mjs` and wired it into `window.__gameState().grounding`, reporting source root, contact root, projected root, axis-aware capsule bounds and nearby authored box tops. Added two unit cases for horizontal and vertical capsule axes. No physics, source prefab, or visual offset was changed.
-- Local verification: focused diagnostic tests 2/2; full Node suite 168/168 after pinned PhysX vendor materialization; Python suite 53/53; `git diff --check` passed. No local .NET SDK 8.0.426 or canonical recovery archive is present, so Release/package/provenance checks are not run. Exact resulting source SHA and hosted Actions status must be recorded after push.
+- Local verification: focused diagnostic tests 2/2; full Node suite 168/168 after pinned PhysX vendor materialization; Python suite 53/53; `git diff --check` passed. No local .NET SDK 8.0.426 or canonical recovery archive is present, so Release/package/provenance checks are not run. Pushed with expected-HEAD from `fe83b2d`; remote ref confirmed `62c793dfc59f609335f0b2b80263fed1b170a217`. Actions run `40474259967` is in progress on that exact SHA. This diagnostic is not acceptance of visual grounding; no Site publish.
 - Next: run the diagnostic on the actual production Mission page through the browser harness, capture the same actor before/after contact settling, compare source/contact/projected root and identified floor top; only then decide whether there is a real render/contact defect. Continue independent source-ready work while hosted checks run. No Site publish.
 
 ## Latest exact-source checkpoint — Actions #128 (2026-10-27)
