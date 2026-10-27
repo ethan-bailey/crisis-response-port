@@ -54,7 +54,7 @@ export function createWeaponAudioRuntime(audioData, { AudioContextClass, fetchAu
   const context = AudioContext ? new AudioContext() : null;
   const buffers = new Map();
   const loadingAudio = new Map();
-  const decodedBytes = new Map(),lastUsed = new Map(),pendingSourceEvents=new Map(),activeSources=new Map(),sourceReporters=new Map();
+  const decodedBytes = new Map(),lastUsed = new Map(),pendingSourceEvents=new Map(),activeSources=new Map(),activeSourceKinds=new WeakMap(),sourceReporters=new Map();
   const stats = { played: 0, droppedSuspended: 0, droppedUnloaded: 0, droppedStale: 0,
     decodeErrors: 0, unlockFailures: 0, unmappedSourceEvents: 0,sourceDecodeErrors:0,
     sourceDecodeRequests:0,sourceDecodeCoalesced:0,sourceEventsDropped:0,sourceEventsPending:0,
@@ -159,8 +159,13 @@ export function createWeaponAudioRuntime(audioData, { AudioContextClass, fetchAu
     const activeKey=id;
     const cleanup=()=>{source.disconnect();gain.disconnect();const items=activeSources.get(activeKey);items?.delete(source);if(items?.size===0)activeSources.delete(activeKey);reportSourcePlaying(reportPlaybackState,activeKey);};
     source.onended=cleanup;
-    if(event.action==='play')for(const prior of activeSources.get(activeKey)||[]){try{prior.stop();}catch{}}
+    if(event.action==='play')for(const prior of activeSources.get(activeKey)||[]){
+      // A regular Play replaces/restarts this AudioSource's assigned clip,
+      // while its PlayOneShot voices remain independent overlapping voices.
+      if(activeSourceKinds.get(prior)==='play')try{prior.stop();}catch{}
+    }
     if(!activeSources.has(activeKey))activeSources.set(activeKey,new Set());
+    activeSourceKinds.set(source,event.action==='play'?'play':'oneShot');
     activeSources.get(activeKey).add(source);source.start();reportSourcePlaying(reportPlaybackState,id);stats.played++;
     if(source.loop)stats.sourceLoopEvents++;
     lastUsed.set(key,performanceNow());return 'play';

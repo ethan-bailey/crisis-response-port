@@ -30,7 +30,8 @@ class FakeNode {
   constructor() { this.gain = { value: 1 }; this.playbackRate={value:1};this.stopped=0; }
   connect(next) { return next; }
   disconnect() {}
-  stop() { this.stopped++;this.onended?.(); }
+  stop() { if(this.stopped)return;this.stopped++;this.onended?.(); }
+  end() { this.onended?.(); }
 }
 
 let activeContext;
@@ -41,6 +42,7 @@ class FakeAudioContext {
     this.destination = {};
     this.started = 0;
     this.master = null;
+    this.sources=[];
   }
   createGain() {
     const node = new FakeNode();
@@ -54,6 +56,7 @@ class FakeAudioContext {
   createBufferSource() {
     const source = new FakeNode();
     source.start = () => { this.started++; };
+    this.sources.push(source);
     return source;
   }
   decodeAudioData() { return Promise.resolve({ decoded: true,length:this.decodedBufferLength??4800,numberOfChannels:1,sampleRate:48000 }); }
@@ -171,6 +174,70 @@ test('dynamic Mission source WAV events coalesce verified decode and preserve pe
   assert.equal(runtime.snapshot().unmappedSourceEvents,0);
   assert.equal(runtime.snapshot().sourceEventsDropped,0);
   assert.equal(unmapped.length,0);
+});
+
+test('PlayOneShot overlaps regular Play and one-shots; regular Play replaces only the prior regular voice', async () => {
+  const bytes=Uint8Array.from([1,4,9]),sourcePath='Assets/AudioClip/hurt-07.ogg';
+  const sourceSha256=[...new Uint8Array(await webcrypto.subtle.digest('SHA-256',bytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
+  const runtime=createWeaponAudioRuntime({}, {AudioContextClass:FakeAudioContext});runtime.unlock();await Promise.resolve();
+  const fetchSource=async path=>({assetPath:path,dataBase64:Buffer.from(bytes).toString('base64'),sourceSha256});
+  await runtime.loadOriginalSource(sourcePath,fetchSource);
+  const states=[],dispatch=createSourceWeaponAudioDispatcher({},runtime,fetchSource,null,(id,isPlaying)=>states.push([id,isPlaying]));
+  dispatch([{action:'play',sourcePath,sourceId:42,time:2,volume:.8,loop:true}],2.01);
+  const firstPlay=activeContext.sources.at(-1);
+  dispatch([{action:'oneShot',sourcePath,sourceId:42,time:2.02,volume:.6}],2.03);
+  const oneShot=activeContext.sources.at(-1);
+  assert.equal(firstPlay.stopped,0,'PlayOneShot must not interrupt the assigned Play voice');
+  oneShot.end();
+  assert.deepEqual(states.at(-1),[42,true],'natural one-shot completion leaves the assigned Play active');
+  dispatch([{action:'play',sourcePath,sourceId:42,time:2.04,volume:.5,loop:true}],2.05);
+  const replacementPlay=activeContext.sources.at(-1);
+  assert.equal(firstPlay.stopped,1,'a new Play restarts/replaces an earlier assigned-clip Play');
+  assert.equal(replacementPlay.stopped,0);
+  assert.deepEqual(states.at(-1),[42,true]);
+  replacementPlay.end();
+  assert.deepEqual(states.at(-1),[42,false],'natural completion clears the final active voice');
+  assert.equal(runtime.snapshot().played,3);
+});
+
+test('overlapping PlayOneShot voices keep isPlaying true until the last natural end', async () => {
+  const bytes=Uint8Array.from([2,5,8]),sourcePath='Assets/AudioClip/impact.ogg';
+  const sourceSha256=[...new Uint8Array(await webcrypto.subtle.digest('SHA-256',bytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
+  const runtime=createWeaponAudioRuntime({}, {AudioContextClass:FakeAudioContext});runtime.unlock();await Promise.resolve();
+  const fetchSource=async path=>({assetPath:path,dataBase64:Buffer.from(bytes).toString('base64'),sourceSha256});
+  await runtime.loadOriginalSource(sourcePath,fetchSource);
+  const states=[],dispatch=createSourceWeaponAudioDispatcher({},runtime,fetchSource,null,(id,isPlaying)=>states.push([id,isPlaying]));
+  dispatch([
+    {action:'oneShot',sourcePath,sourceId:8,time:7,volume:.4},
+    {action:'oneShot',sourcePath,sourceId:8,time:7.01,volume:.5},
+  ],7.02);
+  const [first,second]=activeContext.sources.slice(-2);
+  assert.deepEqual(states.at(-1),[8,true]);
+  first.end();
+  assert.deepEqual(states.at(-1),[8,true]);
+  second.end();
+  assert.deepEqual(states.at(-1),[8,false]);
+});
+
+test('source decode queue accepts 16 same-clip events and records later events as dropped', async () => {
+  const bytes=Uint8Array.from([3,6,9]),sourcePath='Assets/AudioClip/burst.ogg';
+  const sourceSha256=[...new Uint8Array(await webcrypto.subtle.digest('SHA-256',bytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
+  let finishFetch;
+  const fetchSource=path=>new Promise(resolve=>{finishFetch=()=>resolve({assetPath:path,dataBase64:Buffer.from(bytes).toString('base64'),sourceSha256});});
+  const runtime=createWeaponAudioRuntime({}, {AudioContextClass:FakeAudioContext});runtime.unlock();await Promise.resolve();
+  const dispatch=createSourceWeaponAudioDispatcher({},runtime,fetchSource);
+  dispatch(Array.from({length:17},(_,index)=>({action:'oneShot',sourcePath,sourceId:99,time:10+index*.001,volume:.5})),10.02);
+  await Promise.resolve();
+  assert.equal(runtime.snapshot().sourceEventsPending,16);
+  assert.equal(runtime.snapshot().sourceEventsDropped,1);
+  assert.equal(runtime.snapshot().droppedUnloaded,1);
+  finishFetch();
+  await runtime.loadOriginalSource(sourcePath,fetchSource);
+  await Promise.resolve();
+  await Promise.resolve();
+  assert.equal(runtime.snapshot().sourceEventsPending,0);
+  assert.equal(runtime.snapshot().played,16);
+  assert.equal(runtime.snapshot().sourceEventsDropped,1);
 });
 
 test('source decode failure and stale event are recorded without late playback', async () => {
