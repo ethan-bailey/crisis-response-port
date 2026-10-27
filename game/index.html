@@ -187,7 +187,7 @@ const camera=new THREE.PerspectiveCamera(20,innerWidth/innerHeight,5,20);
 camera.position.set(-3,1.2,9.8);
 const world=new THREE.Group();scene.add(world);
 const character=new THREE.Group();character.name="Original Operator prefab";scene.add(character);
-const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(2,0,0),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,contactPhysicsModule=null,contactPhysicsData=null,physicsState=null,physicsTime=0,sprintBlend=0,gaitPhase=0,upperBody=null,presentationData=null,weaponData=null,ballisticsData=null,hasAimPointer=false,aimDirty=false,aimGeneration=0,settledAimGeneration=-1,tapPending=0,tapFrame=false,reloadPending=false,weaponState=null,handRenderers=null,armRig=null,sourceActorMode=false,sourceActorSnapshot=null,originalCasingRuntime=null,groundingFrame=null,projectFullSourceSnapshot=()=>{};const lockedAim=new AimDirection(),aimFireGate=new AimFireGate();
+const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(2,0,0),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,contactPhysicsModule=null,contactPhysicsData=null,physicsState=null,physicsTime=0,sprintBlend=0,gaitPhase=0,upperBody=null,presentationData=null,weaponData=null,ballisticsData=null,hasAimPointer=false,aimDirty=false,aimGeneration=0,settledAimGeneration=-1,tapPending=0,tapFrame=false,reloadPending=false,weaponState=null,handRenderers=null,armRig=null,sourceActorMode=false,sourceActorSnapshot=null,originalCasingRuntime=null,groundingFrame=null,animationDiagnostics=null,sourceAnimationTrace=[],projectFullSourceSnapshot=()=>{};const lockedAim=new AimDirection(),aimFireGate=new AimFireGate();
 const loadStart=performance.now(),loadingTimings={};window.__loadingTimings=loadingTimings;
 let sourceLoadController=null;
 bindMobileZoomGuard(document);
@@ -405,12 +405,18 @@ async function load(){
     crippledRatio:0,operator:true,deltaTime:dt
    });
    if(original.ragdoll){return;} // PhysX owns bones after original source ragdoll.
-   const timeline=sourceAnimator.step(dt,{
+   const animationInputs={
     Moving:original.moving,Backwards:original.backwards,
     MoveSpeed:original.moveSpeed,KneelRatio:original.KneelRatio,
     CrippledRatio:original.crippled
-   });
+   };
+   const timeline=sourceAnimator.step(dt,animationInputs);
    const selected=timeline.clips;
+   animationDiagnostics={dt,animationInputs,sourceAnimatorState:sourceAnimator.state,
+    sourceAnimatorTransition:timeline.transition,selectedClips:timeline.clips.map(c=>({clip:c.clip,weight:c.weight,time:c.time})),
+    sourcePosition:sourceActorSnapshot?.position?.[0]??playerX,contactPosition:physicsState?.x??playerX,
+    sourceVelocity:sourceActorSnapshot?.velocity?.[0]??velocity,contactVelocity:physicsState?.velocity??velocity,
+    sourceMovement:sourceActorSnapshot?.movementState??null};
    activeAnimation=selected.reduce((best,c)=>!best||c.weight>best.weight?c:best,null)?.clip??"Body stand";
    animationTime+=dt;
    sprintBlend=selected.filter(c=>c.clip==="Body sprint").reduce((a,c)=>a+c.weight,0);
@@ -458,7 +464,7 @@ async function load(){
   physicsState=contactPhysics.snapshot();document.body.classList.add('playing');loaded=true;markLoaded("playable");
   // The inactive sidearm must not delay play. Fetch it after the first playable frame.
   requestAnimationFrame(()=>setTimeout(()=>buildWeapon("Glock-18","Pelvis/Abdomen/Torso/Right upper arm/Right lower arm/Right hand/Pistol pivot").then(w=>{w.root.visible=false;weaponInstances["Glock-18"]=w;markLoaded("sidearmReady");}).catch(()=>{weaponStatus.textContent="Original active weapon loaded · sidearm preview unavailable";}),0));
-  window.__gameState=()=>({loaded,grounding:sourceActorMode&&sourceActorSnapshot?describeGrounding({...groundingFrame,sourcePosition:sourceActorSnapshot.position,physics:physicsState,projectedPosition:character.position.toArray(),capsule:contactPhysicsData.character.capsule,center:{x:(isKneeling?-.15:0)*facingDirection,y:contactPhysicsData.character.movement.colliderVerticalOffset,z:0},boxes:contactPhysicsData.boxes}):null,originalInputActive:!!runtimeCall,originalInput:originalInputState,sourceMovement:sourceActorSnapshot?.movementState??null,sourceArmPoses:extractSourceArmPoses(sourceActorSnapshot),playerX,playerY,velocity,pelvisLocalPosition:nodeByPath.get("Pelvis").position.toArray(),physics:physicsState,physicsTime,sprintBlend,gaitPhase,loadingTimings,presentation:upperBody.snapshot(),originalPhysicalArms:armRig?.snapshot(),originalHands:handRenderers?.snapshot(),originalCasings:originalCasingRuntime?.snapshot(),projection:{type:camera.type,fov:camera.fov,near:camera.near,far:camera.far,position:camera.position.toArray()},facingDirection,aimPoint:[aimPoint.x,aimPoint.y,physicsState.z],aimFireLocked:aimFireGate.locked,limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,weaponActionsImplemented:true,weaponState,aimDirection:lockedAim.vector,weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
+  window.__gameState=()=>({loaded,grounding:sourceActorMode&&sourceActorSnapshot?describeGrounding({...groundingFrame,sourcePosition:sourceActorSnapshot.position,physics:physicsState,projectedPosition:character.position.toArray(),capsule:contactPhysicsData.character.capsule,center:{x:(isKneeling?-.15:0)*facingDirection,y:contactPhysicsData.character.movement.colliderVerticalOffset,z:0},boxes:contactPhysicsData.boxes}):null,originalInputActive:!!runtimeCall,originalInput:originalInputState,sourceMovement:sourceActorSnapshot?.movementState??null,sourceArmPoses:extractSourceArmPoses(sourceActorSnapshot),animationDiagnostics,sourceAnimationTrace:sourceAnimationTrace.slice(-96),playerX,playerY,velocity,pelvisLocalPosition:nodeByPath.get("Pelvis").position.toArray(),physics:physicsState,physicsTime,sprintBlend,gaitPhase,loadingTimings,presentation:upperBody.snapshot(),originalPhysicalArms:armRig?.snapshot(),originalHands:handRenderers?.snapshot(),originalCasings:originalCasingRuntime?.snapshot(),projection:{type:camera.type,fov:camera.fov,near:camera.near,far:camera.far,position:camera.position.toArray()},facingDirection,aimPoint:[aimPoint.x,aimPoint.y,physicsState.z],aimFireLocked:aimFireGate.locked,limbCount:manifest.limbs.length,sceneMesh:!!sceneMesh,animation:activeAnimation,weapon:activeWeaponName,weaponActionsImplemented:true,weaponState,aimDirection:lockedAim.vector,weaponsLoaded:Object.keys(weaponInstances).length===2,sceneBounds:sceneBounds?{min:sceneBounds.min.toArray(),max:sceneBounds.max.toArray()}:null});
   status.textContent="Original C# camera and arm IK · tap or drag to aim; tap same spot to fire.";
   positionLabel.textContent="Walk 1.5 m/s · Sprint 4.2 m/s · original spawn X −3";
   const startOriginalMission=async()=>{
@@ -615,6 +621,8 @@ async function frame(now){
   sourceActorSnapshot=JSON.parse(await runtimeCall("SynchronizeFullSourceActorPhysics",x,y,z,vx,0,0));
   groundingFrame.synchronizedPosition=[...sourceActorSnapshot.position];
   projectFullSourceSnapshot(sourceActorSnapshot);await applyAnimation(dt,true);
+  sourceAnimationTrace.push({time:physicsTime,playerX,velocity,animation:activeAnimation,...animationDiagnostics});
+  if(sourceAnimationTrace.length>96)sourceAnimationTrace.splice(0,sourceAnimationTrace.length-96);
   weaponState=sourceActorSnapshot.weaponState;activeWeaponName=weaponState?.weaponId??sourceActorSnapshot.weapon??activeWeaponName;
   magazineHud.render(weaponState);
   weaponStatus.textContent=weaponState?`${weaponState.weaponId} · ${weaponState.magazine} + ${weaponState.chamberLive?1:0} · reserve ${weaponState.reserve}${weaponState.reloading?" · reloading":""}`:`Original source weapon callbacks · ${sourceActorSnapshot.weapon??"unarmed"}`;

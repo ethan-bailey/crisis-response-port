@@ -257,9 +257,25 @@ try {
     await page.waitForTimeout(250);
   }
   assert.ok(moving, `original Mission input did not produce leftward movement; start=${walkStart}; last source/controller/physics samples=${JSON.stringify(movementTrace)}`);
-  await page.waitForFunction(() =>
-    ['Body walk', 'Body walk backward', 'Body sprint'].includes(window.__gameState?.().animation),
-    null, { timeout: 30000 });
+  try {
+    await page.waitForFunction(() =>
+      ['Body walk', 'Body walk backward', 'Body sprint'].includes(window.__gameState?.().animation),
+      null, { timeout: 30000 });
+  } catch (error) {
+    const trace = await page.evaluate(() => {
+      const state = window.__gameState?.();
+      return state && {
+        sourceInput: state.originalInput,
+        currentAnimation: state.animation,
+        currentAnimationDiagnostics: state.animationDiagnostics,
+        sourceAnimationTrace: state.sourceAnimationTrace,
+      };
+    });
+    throw new Error(`${error}; leftStart=${walkStart}; displacementSample=${JSON.stringify(moving && {
+      playerX: moving.playerX, velocity: moving.velocity, animation: moving.animation,
+      sourceMovement: moving.sourceMovement, animationDiagnostics: moving.animationDiagnostics,
+    })}; animationTrace=${JSON.stringify(trace)}`);
+  }
   await page.keyboard.up('KeyA');
   await page.waitForFunction(() => {
     const current = window.__gameState?.();
