@@ -47,3 +47,30 @@ test('no interrupted transitions or invented clip graph',()=>{
  assert.throws(()=>new SourceCharacterAnimator({...json,sourceSha256:'wrong'}));
  assert.throws(()=>a.step(-1,basic));
 });
+
+
+const page=fs.readFileSync(new URL('../game/index.html',import.meta.url),'utf8');
+const operator=JSON.parse(fs.readFileSync(new URL('../game/assets/operator/operator.json',import.meta.url),'utf8'));
+const animations=JSON.parse(fs.readFileSync(new URL('../game/assets/operator/animations.json',import.meta.url),'utf8'));
+test('FullSource Mission frame samples original body clips after source pose projection without resetting source IK pose',()=>{
+ const frameStart=page.indexOf('async function frame(');
+ const branchStart=page.indexOf('if(sourceActorMode){',frameStart);
+ const legacyStart=page.indexOf('const fireAimReady=',branchStart);
+ assert.ok(frameStart>=0&&branchStart>frameStart&&legacyStart>branchStart,'source actor frame branch must exist');
+ const sourceFrame=page.slice(branchStart,legacyStart);
+ assert.match(sourceFrame,/projectFullSourceSnapshot\(sourceActorSnapshot\);await applyAnimation\(dt,true\);/,
+  'source snapshot must be projected before the authored AnimatorController pose is sampled');
+ const applyStart=page.indexOf('applyAnimation=async function(dt,preserveSourcePose=false)');
+ const applyEnd=page.indexOf('rightUpperArm=nodeByPath',applyStart);
+ assert.ok(applyStart>=0&&applyEnd>applyStart,'authored pose sampler must be available to the source frame');
+ const sampler=page.slice(applyStart,applyEnd);
+ assert.match(sampler,/if\(!preserveSourcePose\)resetPose\(\);/,
+  'source pose mode must preserve projected transforms outside the authored clip tracks');
+ const nodePaths=new Set(operator.nodes.map(node=>node.path));
+ const trackPaths=new Set(Object.values(animations.clips).flatMap(clip=>clip.tracks.map(track=>track.path)));
+ assert.ok(trackPaths.has('Pelvis')&&trackPaths.has('Pelvis/Left upper leg/Left lower leg'),
+  'the original clips must continue to animate pelvis and leg transforms');
+ for(const path of trackPaths)assert.ok(nodePaths.has(path),'original clip target is absent from Operator prefab: '+path);
+ assert.ok(![...trackPaths].some(path=>/Right upper arm|Left upper arm|Right hand|Left hand/.test(path)),
+  'the body clip sampler must not overwrite the source IK hand and arm transforms');
+});

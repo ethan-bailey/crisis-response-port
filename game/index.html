@@ -392,7 +392,7 @@ async function load(){
   }}
   function samplePose(track,time,clip){const value=sample(track,time);return track.property==="position"?posePosition(track,value,clip,animationData.animator.applyRootMotion):value;}
   function applyTrack(track,time,clip){const group=nodeByPath.get(track.path);if(!group)return;const value=samplePose(track,time,clip);if(track.property==="rotation")group.quaternion.fromArray(value);else if(track.property==="position")group.position.fromArray(value);else if(track.property==="scale")group.scale.fromArray(value)}
-  applyAnimation=async function(dt){
+  applyAnimation=async function(dt,preserveSourcePose=false){
    // The original StepCharacterAnimation bridge was deferred and is absent
    // from the current compiled WASM assembly. Apply the recovered source
    // formulas to the authored AnimatorController data without a missing call.
@@ -415,7 +415,7 @@ async function load(){
    gaitPhase=(gaitPhase+dt)%1;
    // The original controller mixes recovered AnimationClip tracks using
    // the authored state/transition weights and authored blend thresholds.
-   resetPose();
+   if(!preserveSourcePose)resetPose();
    const mixed=new Map();
    for(const item of selected){
     const clip=clips[item.clip];if(!clip||item.weight<=0)continue;
@@ -605,7 +605,7 @@ async function frame(now){
   originalCasingRuntime.reconcile(sourceActorSnapshot.casings);
   const x=physicsState.x,y=physicsState.y,z=physicsState.z,vx=physicsState.velocity;
   sourceActorSnapshot=JSON.parse(await runtimeCall("SynchronizeFullSourceActorPhysics",x,y,z,vx,0,0));
-  projectFullSourceSnapshot(sourceActorSnapshot);weaponStatus.textContent=`Original source weapon callbacks · ${sourceActorSnapshot.weapon??"unarmed"}`;
+  projectFullSourceSnapshot(sourceActorSnapshot);await applyAnimation(dt,true);weaponStatus.textContent=`Original source weapon callbacks · ${sourceActorSnapshot.weapon??"unarmed"}`;
   positionLabel.textContent=`Original Mission · X ${playerX.toFixed(2)} · speed ${Math.abs(velocity).toFixed(2)} m/s`;
   renderer.render(scene,camera);return;
  }
