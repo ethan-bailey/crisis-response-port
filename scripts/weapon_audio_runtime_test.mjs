@@ -52,7 +52,7 @@ test('Unity 2018.4 audio arbitration ranks priority first, then audibility, with
 
 test('active source snapshots reach the audio runtime each frame and reject malformed updates atomically', async () => {
   const runtime=createWeaponAudioRuntime({}, {AudioContextClass:FakeAudioContext});
-  const state={sourceId:19,priority:5,sourceTransform:{position:[1,2,3]}};
+  const state={sourceId:19,priority:5,sourceTransform:{position:[1,2,3],motion:{kind:'projectileFlight',velocity:[340,-1,0],angularVelocity:null}}};
   assert.equal(runtime.updateSourceAudioStates([state],3.5),true);
   assert.equal(runtime.snapshot().sourceStateFrames,1);
   assert.equal(runtime.snapshot().sourceStateErrors,0);
@@ -61,6 +61,11 @@ test('active source snapshots reach the audio runtime each frame and reject malf
   assert.equal(runtime.updateSourceAudioStates([{...state,sourceTransform:{position:[1,2]}}],4),false);
   assert.equal(runtime.snapshot().activeSourceStateCount,1,'malformed frame must not replace the last complete snapshot');
   assert.equal(runtime.snapshot().sourceStateErrors,1);
+  assert.equal(runtime.updateSourceAudioStates([{...state,sourceTransform:{position:[1,2,3],motion:{kind:'projectileFlight',velocity:[Number.NaN,0,0],angularVelocity:null}}}],4.1),false);
+  assert.equal(runtime.updateSourceAudioStates([{...state,sourceTransform:{position:[1,2,3],motion:{kind:'invented',velocity:[0,0,0],angularVelocity:null}}}],4.2),false);
+  assert.equal(runtime.snapshot().activeSourceStateCount,1,'invalid motion provenance must leave the complete prior frame intact');
+  assert.equal(runtime.snapshot().sourceStateErrors,3);
+  assert.equal(runtime.updateSourceAudioStates([{...state,sourceTransform:{position:[1,2,3],motion:{kind:'rigidbody',velocity:[2,0,0],angularVelocity:[0,0,4]}}}],4.3),true);
   assert.equal(runtime.updateSourceAudioStates([],4.5),true);
   assert.equal(runtime.snapshot().activeSourceStateCount,0,'an empty active set clears stale source poses');
 });

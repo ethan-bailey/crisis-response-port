@@ -384,8 +384,15 @@ export function createWeaponAudioRuntime(audioData, { AudioContextClass, fetchAu
     const next=new Map();
     for(const state of states){
       const position=state?.sourceTransform?.position;
+      const motion=state?.sourceTransform?.motion;
+      const motionVelocity=motion?.velocity;
+      const motionAngularVelocity=motion?.angularVelocity;
+      const validMotion=motion==null||
+        ((motion.kind==='rigidbody'||motion.kind==='projectileFlight')&&
+         Array.isArray(motionVelocity)&&motionVelocity.length===3&&motionVelocity.every(Number.isFinite)&&
+         (motionAngularVelocity==null||(Array.isArray(motionAngularVelocity)&&motionAngularVelocity.length===3&&motionAngularVelocity.every(Number.isFinite))));
       if(!Number.isInteger(state?.sourceId)||!Number.isInteger(state?.priority)||state.priority<0||state.priority>255||
-        !Array.isArray(position)||position.length!==3||position.some(value=>!Number.isFinite(value))){stats.sourceStateErrors++;return false;}
+        !Array.isArray(position)||position.length!==3||position.some(value=>!Number.isFinite(value))||!validMotion){stats.sourceStateErrors++;return false;}
       next.set(state.sourceId,state);
     }
     latestSourceAudioStates=next;latestSourceAudioStateTime=sourceTime;currentSourceAudioTime=sourceTime;stats.sourceStateFrames++;rebalanceVoices();return true;

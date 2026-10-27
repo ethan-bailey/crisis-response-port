@@ -152,8 +152,33 @@ public sealed class BrowserAudioEventQueue : IAudioSourceEventDriver, IDeferredA
         return new
         {
             ownerName=owner.name,ownerAssetPath=owner.OriginalAssetPath,ownerAssetGuid=owner.OriginalAssetGuid,ownerAssetFileID=owner.OriginalAssetFileID,
-            position=new[]{position.x,position.y,position.z},forward=new[]{forward.x,forward.y,forward.z},rotation=new[]{rotation.x,rotation.y,rotation.z,rotation.w}
+            position=new[]{position.x,position.y,position.z},forward=new[]{forward.x,forward.y,forward.z},rotation=new[]{rotation.x,rotation.y,rotation.z,rotation.w},
+            motion=DescribeMotion(transform)
         };
+    }
+
+    // Preserve directly source-owned motion without guessing Unity's internal
+    // AudioSource velocity/update policy. Runtime-added casing bodies and
+    // authored Rigidbody ancestors win. FullSource projectiles are moved by
+    // Transform in Update, so expose the recovered flight derivative when no
+    // Rigidbody owns the hierarchy. The browser validates this record but does
+    // not apply Doppler until the version-matched Unity fixture closes it.
+    static object DescribeMotion(Transform transform)
+    {
+        var rigidbody=transform.GetComponentInParent<Rigidbody>();
+        if(rigidbody!=null)
+        {
+            var velocity=rigidbody.velocity;var angularVelocity=rigidbody.angularVelocity;
+            return new{kind="rigidbody",velocity=new[]{velocity.x,velocity.y,velocity.z},
+                angularVelocity=new[]{angularVelocity.x,angularVelocity.y,angularVelocity.z}};
+        }
+        var projectile=transform.GetComponentInParent<Crisis.Runtime.FullSource.Projectile>();
+        if(projectile!=null)
+        {
+            var velocity=projectile.transform.forward * projectile.Velocity + projectile.GravityVelocityAtTime(Time.time);
+            return new{kind="projectileFlight",velocity=new[]{velocity.x,velocity.y,velocity.z},angularVelocity=(float[])null};
+        }
+        return null;
     }
 
     public object[] Drain()

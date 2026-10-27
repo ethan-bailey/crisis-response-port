@@ -177,7 +177,7 @@ test('head impact and bounce audio lock the eight authored clips and distinct Au
   assert.deepEqual([bounceAudio.Priority,bounceAudio.DopplerLevel,bounceAudio.MaxDistance,bounceAudio.m_PlayOnAwake],[128,1,50,1]);
 });
 
-test('impact audio preserves callback and teardown order while browser transport remains pose-only',()=>{
+test('impact audio preserves callback and teardown order while browser transport keeps source-owned motion separate from output',()=>{
   const effect=scriptSource('BallisticHitEffect.cs');
   for(const [signature,emission] of [['public void PlayEntry(','EntryEmission'],['public void PlayExit(','ExitEmission'],['public void PlayBounce(','BounceEmission']])
     ordered(methodBody(effect,signature),['spawnTime = Time.time','Lifetime = Global.Context.Settings.Performance.particlesLifetime',
@@ -193,6 +193,8 @@ test('impact audio preserves callback and teardown order while browser transport
   assert.match(describe,/position=new\[\]\{position\.x,position\.y,position\.z\}/);
   assert.match(describe,/forward=new\[\]\{forward\.x,forward\.y,forward\.z\}/);
   assert.match(describe,/rotation=new\[\]\{rotation\.x,rotation\.y,rotation\.z,rotation\.w\}/);
-  assert.doesNotMatch(describe,/velocity|angularVelocity/,
-    'velocity must remain explicitly unimplemented until Unity sampling semantics are proven');
+  assert.match(describe,/motion=DescribeMotion\(transform\)/,
+    'callback-time transform must include separately provenance-tagged source motion');
+  assert.doesNotMatch(describe,/doppler|spatial/,
+    'transform capture must not treat source motion as proven Unity Doppler or spatial output');
 });
