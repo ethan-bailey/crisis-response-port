@@ -19,9 +19,18 @@ const mimeTypes = new Map([
   ['.png', 'image/png'], ['.jpg', 'image/jpeg'], ['.jpeg', 'image/jpeg'],
   ['.css', 'text/css; charset=utf-8'], ['.wav', 'audio/wav'], ['.mp3', 'audio/mpeg'],
 ]);
+let injectedAssetFailure = true;
+let injectedFailurePath = null;
 const server = createServer(async (request, response) => {
   try {
     const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
+    if (injectedAssetFailure && pathname.startsWith('/scene-data/fullsource/global-ui-mission-operator/assets/')) {
+      injectedAssetFailure = false;
+      injectedFailurePath = pathname;
+      response.writeHead(503, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' });
+      response.end('Intentional one-time Mission asset failure for retry acceptance');
+      return;
+    }
     const requested = resolve(packageRoot, `.${pathname}`);
     if (requested !== packageRoot && !requested.startsWith(packageRoot + sep)) {
       response.writeHead(403).end('forbidden');
@@ -62,6 +71,37 @@ try {
     const button = document.querySelector('#startOriginalMission');
     const progress = document.querySelector('#missionProgress');
     return button?.disabled && progress && !progress.hidden;
+  }, null, { timeout: 10000 });
+  const initialAttemptUi = await page.evaluate(() => ({
+    startDisabled: document.querySelector('#startOriginalMission')?.disabled,
+    progressVisible: !document.querySelector('#missionProgress')?.hidden,
+    progressText: document.querySelector('#missionProgressText')?.textContent,
+  }));
+  assert.equal(initialAttemptUi.startDisabled, true);
+  assert.equal(initialAttemptUi.progressVisible, true);
+  await page.waitForFunction(() => {
+    const error = document.querySelector('#error');
+    const retry = document.querySelector('#retryError');
+    const game = window.__missionSourceDiagnostics;
+    return error && !error.hidden && retry && !retry.hidden && game?.status === 'failed';
+  }, null, { timeout: 30000 });
+  const failedAttemptUi = await page.evaluate(() => ({
+    startDisabled: document.querySelector('#startOriginalMission')?.disabled,
+    progressVisible: !document.querySelector('#missionProgress')?.hidden,
+    retryVisible: !document.querySelector('#retryError')?.hidden,
+    errorVisible: !document.querySelector('#error')?.hidden,
+    diagnostics: window.__missionSourceDiagnostics?.error,
+  }));
+  assert.equal(failedAttemptUi.startDisabled, false, 'failed source fetch must return the Mission action to a retryable state');
+  assert.equal(failedAttemptUi.progressVisible, false, 'failed source fetch must close the progress panel');
+  assert.equal(failedAttemptUi.retryVisible, true, 'failed source fetch must expose the retry action');
+  assert.equal(failedAttemptUi.errorVisible, true, 'failed source fetch must leave an accessible error panel');
+  assert.ok(injectedFailurePath, 'the package server must have injected exactly one source-asset failure');
+  await page.locator('#retryError').click();
+  await page.waitForFunction(() => {
+    const button = document.querySelector('#startOriginalMission');
+    const progress = document.querySelector('#missionProgress');
+    return button?.disabled && progress && !progress.hidden && document.querySelector('#error')?.hidden;
   }, null, { timeout: 10000 });
   const loadingUi = await page.evaluate(() => ({
     startDisabled: document.querySelector('#startOriginalMission')?.disabled,
@@ -120,21 +160,25 @@ try {
   assert.ok(Number.isFinite(stopped.playerX), 'released Mission actor must retain a finite source position');
   assert.equal(stopped.originalInput?.right?.Pressed, false, 'released browser input must reach the original source controller');
   assert.deepEqual(pageErrors, [], 'Mission walk/release must not throw browser runtime errors');
+  const runtimeReport = await page.evaluate(() => ({
+    sourceActors: window.__fullSourceMission?.session?.sourceActors ?? null,
+    missionDiagnostics: window.__missionSourceDiagnostics?.summary ?? null,
+  }));
   await page.screenshot({ path: resolve(outputRoot, 'mission-grounding-walk.png'), fullPage: true });
   report = {
     status: 'passed',
     sourceCommit: build.sourceCommit,
     runtimePath: 'packaged /game/ → Start original Mission → verified FullSource EntryTeam actor → browser contact solver → projected Three.js hierarchy',
     browser: 'Chromium with SwiftShader WebGL',
-    missionLoadUi: { loading: loadingUi, completed: loadedUi },
+    missionLoadUi: { initialAttempt: initialAttemptUi, failedAttempt: failedAttemptUi, retryLoading: loadingUi, completed: loadedUi },
+    injectedFailure: { path: injectedFailurePath, initialAttemptFailed: true, retrySucceeded: true },
     grounding: state.grounding,
     movement: {
       before: { x: walkStart, animation: state.animation },
       whileHeld: { x: moving.playerX, velocity: moving.velocity, animation: moving.animation, sourceInput: moving.originalInput?.right?.Pressed },
       released: { x: stopped.playerX, velocity: stopped.velocity, animation: stopped.animation },
     },
-    sourceActors: window.__fullSourceMission?.session?.sourceActors ?? null,
-    missionDiagnostics: window.__missionSourceDiagnostics?.summary ?? null,
+    ...runtimeReport,
     pageErrors,
     visualAcceptance: 'untested; screenshot retained for inspection; numeric hierarchy diagnostics do not prove pixel parity or correct foot contact',
   };
