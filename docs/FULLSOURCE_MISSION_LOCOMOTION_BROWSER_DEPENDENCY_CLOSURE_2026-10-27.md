@@ -145,3 +145,10 @@ original predicate. Compare those values against the observed delta first;
 only then trace PhysX/contact or source synchronization if the time threshold
 does not explain the false flag. Reload pose/audio remains untested in #154
 because the browser flow stops at locomotion.
+
+
+## Diagnostic clock serialization regression — local candidate
+
+The source-clock fields added to the snapshot must describe the same frame that the original source uses. `RuntimeWorld.Tick` sets `Time.deltaTime` in `BeginUpdate`, calls source `Update` then `LateUpdate`, and returns without resetting the clock; `FullSourceActorBridge.Step` serializes its snapshot after that call. A focused C# check now compares `sourceDeltaTime` to `Time.deltaTime`, `sourceFixedDeltaTime` to `Time.fixedDeltaTime`, and `sourceMovingThreshold` to `sourceDeltaTime * 0.1f`; its Node contract guards the runtime check and the recovered predicate. This prevents a stale/incorrect diagnostic from being used to explain a browser failure.
+
+On local commit `7ca5e0d2d63be905ccafb90f6884e5998f68db9a`, tree `145e5ecf58ca88e2a3b3e2774566ccc20b4a8ad7`, focused movement/animation tests **6/6**, full Node suite **183/183**, Python suite **67/67**, browser-smoke syntax, and whitespace checks passed. The C# check has **not** run locally because this host lacks .NET. It is not pushed: one push attempt failed exactly with `fatal: could not read Username for 'https://github.com': No such device or address`. Do not repeat absent a changed credential environment. Exact-SHA pinned SDK 8.0.426 runtime verification remains untested. The currently running #155 uses parent source SHA `3ba69af…`, not this added assertion.
