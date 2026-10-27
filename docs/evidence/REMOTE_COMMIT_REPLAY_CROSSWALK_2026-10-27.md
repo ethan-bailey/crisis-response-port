@@ -34,5 +34,6 @@ These additional local commits were pushed as ordered, tree-identical remote com
 | `2b52a8289c887004267f4773003b8fa381dc212c` | `3a33a6df7d74681cf4074976ec9ca9d3845a56ea` | `49e905df226b5a794b2c15970bf434514c1e6e02` | Fix authored Mission reverb zone field import |
 | `7ef07ed0606f58f63fafd7d6a1bff5818d2f24a5` | `458320dc51d6469339cacbd0667ba8c59d8e6475` | `9bdf86189ff8b00487ead4e856298292fbb9fab7` | docs: record verified profile reverb repair checkpoint |
 | `9b84bb1200f92441f27bed0ee30fedad3b2eaf8d` | `a671cebf9dfb28232e0544b0883bc7ada4b6db7f` | `a481e257e1b62f37327723744aab2fc6a55bd035` | docs: inventory unresolved full-source 308 mesh edges |
+| `7f0cea926085b5b45ffe0d9331af9dc6ca1bc1f8` | `6425b858af8e542de2be85cfad66c47d59e17569` | `21fd297505c250e3a9af273a94c183140d4fe7f3` | docs: map follow-up source commits and checkout sync |
 
 Remote `develop/wasm` at the time of this crosswalk update was `a671cebf9dfb28232e0544b0883bc7ada4b6db7f`, tree `a481e257e1b62f37327723744aab2fc6a55bd035`; the local tracking checkout was fetched and confirmed at the same commit/tree. The untracked scene gzip remains excluded.
