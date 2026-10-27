@@ -42,6 +42,10 @@ if(args.Length==1&&args[0]=="--browser-audio-event-contract"){
     var source=go.AddComponent<AudioSource>();source.clip=clip;source.volume=.4f;source.minDistance=2f;source.maxDistance=12f;source.dopplerLevel=.5f;source.rolloffMode=2;source.pan2D=-.25f;source.serializedSpatialBlend=.375f;
     source.rolloffCustomCurve=new AnimationCurve(new Keyframe(0,1,0,0),new Keyframe(1,0,0,0));
     source.PlayOneShot(clip,.5f);var reportsPlaying=source.isPlaying;
+    // FullSourceActorBridge drains callbacks after the source tick. The event must
+    // retain callback-time source/listener poses while active states advance.
+    go.transform.position=new Vector3(1f,0f,0f);
+    listenerObject.transform.position=new Vector3(8f,9f,10f);
     using var events=JsonDocument.Parse(JsonSerializer.Serialize(queue.Drain()));
     var items=events.RootElement;
     var sourceState=items[0].GetProperty("sourceState");
@@ -49,17 +53,17 @@ if(args.Length==1&&args[0]=="--browser-audio-event-contract"){
        items[0].GetProperty("sourceId").GetInt32()!=source.GetInstanceID()||
        MathF.Abs(items[0].GetProperty("volume").GetSingle()-.2f)>.001f||
        sourceState.GetProperty("sourceTransform").GetProperty("position")[0].GetSingle()!=0f||
+       sourceState.GetProperty("listenerTransform").GetProperty("position")[2].GetSingle()!=5f||
        sourceState.GetProperty("activeListenerCount").GetInt32()!=1||
        sourceState.GetProperty("listenerTransform").GetProperty("ownerName").GetString()!="Contract listener"||
-       sourceState.GetProperty("listenerTransform").GetProperty("position")[2].GetSingle()!=5f||
        sourceState.GetProperty("minDistance").GetSingle()!=2f||sourceState.GetProperty("maxDistance").GetSingle()!=12f||
        sourceState.GetProperty("spatialBlend").GetSingle()!=.375f||sourceState.GetProperty("dopplerLevel").GetSingle()!=.5f||sourceState.GetProperty("rolloffMode").GetInt32()!=2||
        sourceState.GetProperty("rolloffCustomCurve").GetProperty("keys").GetArrayLength()!=2||!reportsPlaying)
         throw new InvalidOperationException($"Browser audio bridge lost source identity, source gain, or stop order: {items}");
-    go.transform.position=new Vector3(1f,0f,0f);
     using var activeStates=JsonDocument.Parse(JsonSerializer.Serialize(queue.ActiveSourceStates()));
     if(activeStates.RootElement.GetArrayLength()!=1||activeStates.RootElement[0].GetProperty("sourceId").GetInt32()!=source.GetInstanceID()||
-       activeStates.RootElement[0].GetProperty("sourceTransform").GetProperty("position")[0].GetSingle()!=1f)
+       activeStates.RootElement[0].GetProperty("sourceTransform").GetProperty("position")[0].GetSingle()!=1f||
+       activeStates.RootElement[0].GetProperty("listenerTransform").GetProperty("position")[2].GetSingle()!=10f)
         throw new InvalidOperationException($"Active source state did not stream its updated transform: {activeStates.RootElement}");
     source.Stop();var stopped=!source.isPlaying;
     using var stoppedEvents=JsonDocument.Parse(JsonSerializer.Serialize(queue.Drain()));
