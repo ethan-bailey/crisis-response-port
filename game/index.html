@@ -589,6 +589,7 @@ async function frame(now){
   const sourceMoveMagnitude=sourceMoveDirection===0?1:input.movementProfile(sourceMoveDirection,
    contactPhysics.data.character.movement.walkSpeed,contactPhysics.data.character.movement.sprintSpeed,rawActions.sprint).magnitude;
   sourceActorSnapshot=JSON.parse(await runtimeCall("TickFullSourceActorBridge",elapsed,JSON.stringify(rawActions),mouseX,mouseY,sourceMoveMagnitude));
+  originalInputState=sourceActorSnapshot.originalInput;
   const sourceAudioEvents=Array.isArray(sourceActorSnapshot.audioEvents)?sourceActorSnapshot.audioEvents:[];
   const sourceDiagnostics=window.__missionSourceDiagnostics;
   if(sourceDiagnostics&&sourceAudioEvents.length){sourceDiagnostics.sourceAudioEvents.push(...sourceAudioEvents);if(sourceDiagnostics.sourceAudioEvents.length>64)sourceDiagnostics.sourceAudioEvents.splice(0,sourceDiagnostics.sourceAudioEvents.length-64);}

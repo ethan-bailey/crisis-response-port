@@ -394,6 +394,25 @@ public sealed class FullSourceActorBridge
             sourceTime = Time.time,
             audioMixerTime = Time.realtimeSinceStartup,
             playerController = controller.GetInstanceID(),
+            originalInput = actions.ToDictionary(pair => pair.Key, pair =>
+            {
+                var item = (InputKey)pair.Value.GetValue(input.Keys);
+                return new
+                {
+                    Pressed = item.Pressed,
+                    PressedLong = item.PressedLong,
+                    Down = item.Down,
+                    DownLong = item.DownLong,
+                    Up = item.Up,
+                    UpShort = item.UpShort,
+                    UpLong = item.UpLong,
+                    DownHandled = item.DownHandled,
+                    UpHandled = item.UpHandled,
+                    Enabled = item.Enabled,
+                    axisValue = item.axisValue,
+                    key = item.KeyName
+                };
+            }),
             actor = body.name,
             position = new[] { body.transform.position.x, body.transform.position.y, body.transform.position.z },
             rotation = new[] { body.transform.rotation.x, body.transform.rotation.y, body.transform.rotation.z, body.transform.rotation.w },
