@@ -12,7 +12,7 @@ namespace Crisis.Runtime.FullSource
     public sealed class WeaponBase { }
     public sealed class Projectile { public string name; }
     public sealed class Calibre { public string name; }
-    public sealed class Casing { }
+    public sealed partial class Casing { }
     public sealed class UIAmmoRenderItem { }
     public sealed class MarksmanRound { }
     public sealed class AmmunitionBase : UnityEngine.MonoBehaviour
