@@ -37,3 +37,8 @@ These additional local commits were pushed as ordered, tree-identical remote com
 | `7f0cea926085b5b45ffe0d9331af9dc6ca1bc1f8` | `6425b858af8e542de2be85cfad66c47d59e17569` | `21fd297505c250e3a9af273a94c183140d4fe7f3` | docs: map follow-up source commits and checkout sync |
 
 Remote `develop/wasm` at the time of this crosswalk update was `a671cebf9dfb28232e0544b0883bc7ada4b6db7f`, tree `a481e257e1b62f37327723744aab2fc6a55bd035`; the local tracking checkout was fetched and confirmed at the same commit/tree. The untracked scene gzip remains excluded.
+
+
+## Packaged-browser and inventory handoff replay — 2026-10-27
+
+The local documentation commit `99cd21af171e4ff32366a5ded82a7c3486bd60a4` was replayed to the live branch as remote commit `a3656cbe48fbc1e8df28c274bd614672e8843727`. Both point to tree `fd0412a414d5150552b7f1873b607d41241824b1`; the remote expected parent was `6425b858af8e542de2be85cfad66c47d59e17569` and the ref now resolves to `a3656cbe48fbc1e8df28c274bd614672e8843727`. This records the latest existing source/docs commits as pushed; new work in this run must be separately committed and CAS-updated.
