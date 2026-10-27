@@ -1,18 +1,13 @@
-# Current dependency checkpoint (2026-10-27)
-
-The latest exact run, Actions #147 (`40503778240`), tested code SHA `37f48498d1eb6f0aa7d51b6f47902792e91f4aa4` and failed only packaged FullSource browser step 29 at `mission_grounding_browser_smoke.mjs:234:14`. Contracts, pinned .NET 8.0.426 Release/WASM build, recovered-source/decompiler provenance, all 1,919 Mission assets and package integrity/retention, and full-profile IndexedDB passed; independent Chromium IndexedDB/audio job `122187786238` passed. Exact root cause and focused red/green repair: `docs/FULLSOURCE_MISSION_LOCOMOTION_BROWSER_DEPENDENCY_CLOSURE_2026-10-27.md`. The browser smoke observed stale legacy `originalInputState` because FullSource snapshots omitted original `InputHandler.Keys`; movement acceptance therefore timed out without proving movement. New regression failed against pre-fix bridge and passed with source input snapshot + projection. The packaged browser and exact-source rebuild of this repair are pending Actions on the new pushed SHA. Site v85 remains unpublished; owner-only access policy is unchanged.
-
----
-
----
-
 # Crisis Response Port — dependency-first gate index (2026-10-27)
 
-This index is the active dependency order. Inventory the known serialized assets, source owners, lifecycle/update ordering, event/audio/render/physics dependencies, failure paths and exact assertions **before** implementation. Runtime failures can reveal genuinely hidden dependencies; add each to its owning closure before the next implementation batch. A recovered or indexed file is not proof of runtime behavior. A headless state result is not visual, device-audio, native physics or Safari proof.
+This index is the active dependency order. Inventory known serialized assets, source owners, lifecycle/update ordering, event/audio/render/physics dependencies, failure paths, and exact assertions **before** implementation. Runtime failures can reveal genuinely hidden dependencies; add each to its owning closure before the next implementation batch. A recovered or indexed file is not proof of runtime behavior. A headless state result is not visual, device-audio, native physics, or Safari proof.
 
-## Current exact checkpoint (2026-10-27)
+## Current exact checkpoint
 
-Actions #147 on `37f48498d1eb6f0aa7d51b6f47902792e91f4aa4` failed only packaged FullSource browser assertion at `mission_grounding_browser_smoke.mjs:234:14` because the FullSource frame exposed legacy stale `originalInputState` instead of the active `InputHandler.Keys`. All preceding source contracts, SDK 8.0.426 Release/WASM build, source/ILSpy provenance, 1,919-asset package integrity/retention and profile IndexedDB passed; independent Chromium IndexedDB/audio passed. The fix serializes source key levels/edges in `FullSourceActorBridge.Snapshot()` and projects the post-tick state to `__gameState()`. Local regression is red on the pre-fix source and green 1/1 with the repair. Exact rerun package and browser acceptance remain pending; see the locomotion dependency closure for failure artifacts and source ordering.
+- Latest tested source SHA `fdb0a5b530247b57858efdf5fa4edef884a92a0f`; the source run is being validated by Actions #148 (`40506709013`). The repository HEAD at audit start was docs-only commit `cd451360625431f6ae21ab288a1c185dc639df0a`.
+- At 13:01 UTC, #148 had completed contracts, pinned .NET 8.0.426 Release/WASM build, source/decompiler provenance, complete 1,919-asset package and integrity/retention, and profile IndexedDB steps. Its main job was still exercising packaged FullSource Mission grounding (step 29); the independent Chromium IndexedDB/audio job had passed. Treat the packaged browser gate and final source run as pending until CI completes.
+- #147's only failure was packaged FullSource movement assertion at `mission_grounding_browser_smoke.mjs:234:14`: the page exposed stale legacy `originalInputState` instead of active `InputHandler.Keys`. The fix serializes original key levels/edges through `FullSourceActorBridge.Snapshot()` and projects the post-tick source state. Local regression was red on pre-fix `37f48498d1eb6f0aa7d51b6f47902792e91f4aa4` and green on source SHA `fdb0a5b530247b57858efdf5fa4edef884a92a0f`. See `docs/FULLSOURCE_MISSION_LOCOMOTION_BROWSER_DEPENDENCY_CLOSURE_2026-10-27.md` and `NEXT_AGENT.md` for details and next action.
+- Site v85 remains unpublished; owner-only access policy is unchanged.
 
 ## Ordered gates and dependency closure
 
