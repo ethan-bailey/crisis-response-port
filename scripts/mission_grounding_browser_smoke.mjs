@@ -82,12 +82,36 @@ try {
   assert.ok(Number.isFinite(capsule.bottom) && Number.isFinite(capsule.verticalHalfExtent), 'authored capsule axis and lower bound must be reported');
   assert.ok(Array.isArray(floorCandidates), 'authored nearby floor candidates must be reported');
   assert.deepEqual(pageErrors, [], 'packaged Mission page must not throw browser runtime errors');
+  const walkStart = state.playerX;
+  await page.keyboard.down('KeyD');
+  await page.waitForFunction(start => {
+    const current = window.__gameState?.();
+    return current?.originalInput?.right?.Pressed && current.playerX > start + 0.1;
+  }, walkStart, { timeout: 30000 });
+  await page.waitForFunction(() => ['Body walk', 'Body sprint'].includes(window.__gameState?.().animation), null, { timeout: 30000 });
+  const moving = await page.evaluate(() => window.__gameState());
+  await page.keyboard.up('KeyD');
+  await page.waitForFunction(() => {
+    const current = window.__gameState?.();
+    return current && Math.abs(current.velocity) < 0.05 && current.animation === 'Body stand';
+  }, null, { timeout: 30000 });
+  const stopped = await page.evaluate(() => window.__gameState());
+  assert.ok(moving.playerX > walkStart + 0.1, 'original Mission input must move the source actor through contact synchronization');
+  assert.ok(['Body walk', 'Body sprint'].includes(moving.animation), 'source movement must select a recovered authored locomotion clip');
+  assert.ok(stopped.playerX >= moving.playerX - 0.2, 'releasing movement must settle without an unbounded position jump');
+  assert.deepEqual(pageErrors, [], 'Mission walk/release must not throw browser runtime errors');
+  await page.screenshot({ path: resolve(outputRoot, 'mission-grounding-walk.png'), fullPage: true });
   report = {
     status: 'passed',
     sourceCommit: build.sourceCommit,
     runtimePath: 'packaged /game/ → Start original Mission → verified FullSource EntryTeam actor → browser contact solver → projected Three.js hierarchy',
     browser: 'Chromium with SwiftShader WebGL',
     grounding: state.grounding,
+    movement: {
+      before: { x: walkStart, animation: state.animation },
+      whileHeld: { x: moving.playerX, velocity: moving.velocity, animation: moving.animation, sourceInput: moving.originalInput?.right?.Pressed },
+      released: { x: stopped.playerX, velocity: stopped.velocity, animation: stopped.animation },
+    },
     sourceActors: window.__fullSourceMission?.session?.sourceActors ?? null,
     missionDiagnostics: window.__missionSourceDiagnostics?.summary ?? null,
     pageErrors,
