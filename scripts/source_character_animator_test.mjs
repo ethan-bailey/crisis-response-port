@@ -78,6 +78,21 @@ test('FullSource Mission frame samples original body clips after source pose pro
   'the body clip sampler must not overwrite the source IK hand and arm transforms');
 });
 
+test('FullSource aim target helper is visible to the top-level Mission frame',()=>{
+ const loadStart=page.indexOf('async function load(){');
+ const frameStart=page.indexOf('async function frame(');
+ const aimStart=page.indexOf('async function aimQuadTarget(){');
+ const aimEnd=page.indexOf('\n}\nasync function load(){',aimStart);
+ assert.ok(aimStart>=0&&aimStart<loadStart&&loadStart<frameStart,
+  'the aim helper must live at script scope so the later top-level frame can call it');
+ assert.ok(aimEnd>aimStart,'the shared aim helper must have a complete function body before load begins');
+ assert.match(page.slice(aimStart,aimEnd),/SetFullSourceActorAimTarget/,
+  'the shared helper must write the source actor-owned WeaponPointer target');
+ const sourceFrame=page.slice(page.indexOf('if(sourceActorMode){',frameStart),page.indexOf('const fireAimReady=',frameStart));
+ assert.ok(sourceFrame.indexOf('await aimQuadTarget()')>=0&&sourceFrame.indexOf('await aimQuadTarget()')<sourceFrame.indexOf('TickFullSourceActorBridge'),
+  'FullSource frame must update its actor-owned aim target before the original actor tick');
+});
+
 
 test('FullSource projection follows original GameObject activation for authored hand layers',()=>{
  assert.match(originalHand,/forwardAssist\.SetActive\(false\)/);
@@ -86,7 +101,7 @@ test('FullSource projection follows original GameObject activation for authored 
  assert.match(fullSourceBridge,/activeSelf\s*=\s*transform\.gameObject\.activeSelf/,
   'source snapshots must transport each original transform GameObject activeSelf state');
  const projectStart=page.indexOf('projectFullSourceSnapshot=snapshot=>');
- const projectEnd=page.indexOf('const aimQuadTarget=',projectStart);
+ const projectEnd=page.indexOf('let textured=0;',projectStart);
  const projection=page.slice(projectStart,projectEnd);
  assert.match(projection,/group\.visible=pose\.activeSelf;/,
   'the renderer must apply source GameObject activation before drawing descendants');

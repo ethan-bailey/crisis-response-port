@@ -128,6 +128,7 @@ try {
           progress: document.querySelector('#missionProgressText')?.textContent,
           status: document.querySelector('#status')?.textContent,
           error: document.querySelector('#errorDetails')?.textContent,
+          errorVisible: Boolean(document.querySelector('#error') && !document.querySelector('#error').hidden),
         },
         diagnostics: trace && {
           status: trace.status, stage: trace.stage, progress: trace.progress,
@@ -145,8 +146,12 @@ try {
       playableSnapshot = checkpoint;
       break;
     }
-    console.log(`Mission playable-state checkpoint +${Date.now() - loadStartedAt}ms ${JSON.stringify(checkpoint)}`);
-    await page.waitForTimeout(15000);
+    assert.equal(checkpoint.ui.errorVisible, false,
+      `Mission startup reached its visible runtime error panel before the playable state: ${checkpoint.ui.error}`);
+    if (Date.now() - loadStartedAt >= 15000) {
+      console.log(`Mission playable-state checkpoint +${Date.now() - loadStartedAt}ms ${JSON.stringify(checkpoint)}`);
+    }
+    await page.waitForTimeout(500);
   }
   assert.ok(playableSnapshot, `FullSource Mission did not reach a playable grounding frame within 300000ms; last state: ${JSON.stringify(await page.evaluate(() => ({progress: document.querySelector('#missionProgressText')?.textContent,status: document.querySelector('#status')?.textContent,diagnostics: window.__missionSourceDiagnostics,game: window.__gameState?.()})))}`);
   const state = await page.evaluate(() => window.__gameState());

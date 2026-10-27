@@ -1,44 +1,31 @@
 # Crisis Response Port — continuation handoff (2026-10-27)
 
-## Current live branch and verification status
+## Current exact checkpoint
 
-- Repository `ethan-bailey/crisis-response-port`, branch `develop/wasm`, live HEAD `747cb9494758b8c2cf759e060a6e893b107f4bec`, tree `f06f1b68d5b492a2acb46a38890143014507394c`. A clean worktree is available at `/workspace/scratch/crisis-response-port-input` for the next exact source batch. The original workspace at `/workspace/scratch/crisis-response-port-recovery` remains stale at `dc325dc` and has modified workflow/evidence/game files and an untracked archive; preserve it and do not reconcile/reset it. Local .NET SDK 8.0.426 is absent; use hosted CI.
-- Site was previously read-only verified at v85 with custom owner-only access, policy revision 1, and zero external visitors. Do not publish or alter access during this task.
+- Live `develop/wasm` source SHA `5dc952aaf10de861601d3acdf408d425b477d8c5`, tree `3e058bba47b9c7c726775d2116037f8d2b2989ec`, parent `bfeee05761b196df658b74b380bfe10699f9c4c7`; verified by fetching `origin/develop/wasm`. Worktree `/workspace/scratch/crisis-response-port-5dc` was created clean from that exact SHA. Do not reset or reconcile the separate dirty checkout `/workspace/scratch/crisis-response-port-recovery` at `dc325dc` or the detached `/workspace/scratch/crisis-response-port-bfeee` source-audit worktree. Canonical recovery archive SHA-256 `cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d`. Local .NET SDK is absent; hosted workflow pins 8.0.426.
+- Site release/deployment was not changed. Last verified live Site remains v85 with owner-only access; recurring engineering must not publish.
+- Actions #138 (`40488053121`) on `bfeee057` was canceled by the subsequent expected-HEAD push after source package/integrity and full-profile IndexedDB succeeded. Its retained FullSource page diagnostics artifact (`12728530213`, SHA-256 `3a391df31502a99fed4c443d2560c9492a02cebbe829ceb7abab5dd0a3c73a3b`) proves the 1,919 assets finished verification, then the first source-mode frame showed `ReferenceError: aimQuadTarget is not defined` at `game/index.html:586`. Source cause: `aimQuadTarget` was declared inside `load()` but called by top-level `frame()`.
+- On the next clean worktree at `5dc952a`, the focused repair moves that same actor-owned AimQuad raycast/bridge helper to script scope; FullSource frame still calls it before `TickFullSourceActorBridge`. The new Node regression asserts helper scope and order, and the packaged browser smoke now fails as soon as the visible error panel appears (500ms poll rather than 15s). Full dependency closure: `docs/FULLSOURCE_AIM_FRAME_DEPENDENCY_CLOSURE_2026-10-27.md`.
+- Local checks on the not-yet-pushed repair: focused aim/input/error-panel Node **28/28**; full Node **170/170** after pinned browser physics vendor installation; Python **58/58**; inline HTML module and browser smoke syntax checks passed; `git diff --check` passed. The first full Node attempt was blocked by absent generated `game/vendor/physx-js-webidl.mjs`; `npm ci --prefix game --ignore-scripts && npm run --prefix game vendor` resolved that environment prerequisite, then all tests passed. Actual packaged browser acceptance for the fix is **not yet run**.
+- Concurrent exact source Actions #139 (`40489483378`) on `5dc952a` has its independent Chromium cache/audio job passed and its main job passed Node, Python, runtime/browser-audio, engine/Foundation checks, pinned Release/WASM, source/archive provenance, and complete Mission package/integrity/retention. At last poll main job `122139627332` was installing Chromium; full-profile browser and FullSource Mission steps were pending. This run predates the aim repair.
 
-## Latest exact source result — adapter repair at `747cb949`
+## Immediate next dependency-ready batch
 
-Actions run #137 (`40487614431`) is in progress on exact source SHA `747cb9494758b8c2cf759e060a6e893b107f4bec`. Its parent #136 (`40485228497`) on `55648848ce427b272708f25fc32c8226da048b05` passed source contracts, pinned Release/WASM, archive/index provenance, complete 1,919-asset Mission package integrity/retention, IndexedDB and independent Chromium audio, then failed the packaged Mission startup at the mixer call: `audioStats.updateSourceAudioMixer is not a function`. The wrapper returned by `createWeaponEffects` forwarded mixer and source-state methods but its statistics object only implemented `snapshot`; the real `createWeaponAudioRuntime` provides both. The adapter repair is `game/weapon-audio-stats.mjs`, used by `game/weapon-runtime.mjs`.
+1. Commit and push the scoped aim repair, fast-fail browser assertion, updated tests, this handoff/index, and `docs/FULLSOURCE_AIM_FRAME_DEPENDENCY_CLOSURE_2026-10-27.md` directly to `develop/wasm` using expected parent `5dc952aaf10de861601d3acdf408d425b477d8c5`; verify remote commit/tree and capture the new run ID.
+2. Inspect Actions #139 to completion; do not count the canceled #138 browser-grounding step as passed. The new exact-source run must reach the packaged FullSource page and pass the fast-fail assertion plus gameplay grounding/aim assertions. If it fails, inspect that step's report/screenshot and fix the exact cause on its next pushed SHA.
+3. While hosted checks run, take one bounded recovery attempt on the four remaining BehaviorDesigner decompiler deltas listed in `runtime/Original/BehaviorDesigner/source-provenance.json` (`BinaryDeserialization.cs`, `Behavior.cs`, `SharedVariable.cs`, `TaskUtility.cs`). The canonical artifact includes `BehaviorDesignerRuntime.dll`; provenance pins `ilspycmd 9.1.0.7988`. Check for an available exact decompiler/runtime path; if unavailable locally, record the bounded result and advance to independent ready source/runtime work rather than repeating the same blocked attempt.
+4. Continue earliest feasible gates in `docs/GATE_DEPENDENCY_INDEX.md`: package-backed boot/transfer, FullSource actor aiming and grounding, authored IK/rendered pose, source recovery and spatial audio. Keep source/device/native/pixel claims distinct and parity flags false.
 
-Local regression evidence on source contents based on `55648848`:
+## Remaining gate order and boundaries
 
-- `node --test scripts/weapon_audio_runtime_test.mjs scripts/source_audio_mixer_test.mjs`: **31/31 passed**.
-- After `npm ci --prefix game --ignore-scripts` and `npm run --prefix game vendor`, `node --test scripts/*_test.mjs scripts/*_contracts.mjs`: **169/169 passed**.
-- `python3 -m unittest discover -s scripts -p '*test.py'`: **53/53 passed**.
-- `dotnet` unavailable locally, so local pinned build/package was **not run**. Exact hosted result for #137 is pending.
-
-## Dependency-ready touch-input batch
-
-The next source batch is prepared on top of live parent `747cb949` in `/workspace/scratch/crisis-response-port-input`: enlarge both actual circular-stick CSS definitions to `min(24vw,208px)` with a 176px floor, increase the thumb from 56px to 64px, and raise both compact-landscape overrides from 128px/48px to 176px/56px. The packaged FullSource browser smoke test now exercises the actual page: joystick size, touch-down aim anchoring, vertical-only aim change, horizontal aim invariance, aim preservation on release, deliberate below/above-wall sprint response, puck fully clearing the outer rim, and sprint clearing on release. Existing source movement algorithm remains unchanged.
-
-- Relevant full dependency closure read: `docs/APPROVED_IPHONE_ANALOG_MOVEMENT.md`, `docs/IPHONE_INPUT_AND_PARITY_AUDIT_2026-10-14.md`, and gate 2 in `docs/GATE_DEPENDENCY_INDEX.md`. Original input mapping, pointer capture/cancel/background reset, vertical absolute aim and 1.75×/1.5× wall/hysteresis remain intact.
-- Local verification on modified contents based on `747cb949`: `node --check scripts/mission_grounding_browser_smoke.mjs`; `node --test scripts/browser_input_test.mjs` **20/20**; complete Node suite **169/169** after PhysX vendor install; selector/override and assertion-presence check passed; `git diff --check` passed. The package-backed browser assertions have **not** yet run on these contents; exact hosted verification is required. No iPhone Safari acceptance is claimed.
-- **Immediate next action:** commit these two source changes and the updated handoff/index to the current branch head, push with expected parent `747cb9494758b8c2cf759e060a6e893b107f4bec`, verify the pushed tree and run #138, then inspect #137/#138. If #137 is superseded, #138 is the exact package/build/browser run for both adapter and joystick changes. Continue after the run’s next failure/pass; do not end at one repaired batch.
-
-## Remaining dependency-ready work
-
-1. Finish the exact-source packaged Mission startup and handle the next failure from its actual CI step/log; inspect grounding telemetry/image only after the production page reaches a stable frame.
-2. Continue source archive/decompiler, camera postprocessing, spatial audio, source gameplay, native physics, particles, rendering, mission/AI and combined parity gates in `docs/GATE_DEPENDENCY_INDEX.md`.
-3. Device-owned iPhone Safari input/storage/audio, native solver and rendered pixel acceptance remain untested; defer only those claims and continue feasible repository work. Keep all parity flags false.
-
----
-
-## Dependency order and open acceptance
-
-1. Re-run packaged Mission retry/start path with diagnostics; locate actual stalled source stage before any behavior change.
-2. Use successful browser telemetry/screenshots to investigate source actor grounding, authored IK/animation and projected/rendered pose. Numeric equality is not foot-contact or pixel evidence; iPhone Safari remains untested.
-3. Continue exact-version source recovery for camera postprocessing and audio spatial semantics; no version-mismatched substitute or guessed Unity defaults.
-4. Continue independent gameplay/runtime, physics/particles/audio, mission/AI and combined parity gates in `docs/GATE_DEPENDENCY_INDEX.md`; defer only device/native/visual acceptance requiring unavailable hardware or exact source.
-5. Preserve Site v85/custom access; this recurring engineering work must not publish.
+1. Provenance, archive mapping, exact pinned build/package integrity (Actions #139 is still in flight at handoff preparation).
+2. Mission boot/progress/storage and packaged browser retry/loading.
+3. Touch, aim, locomotion, zoom, and animation coupling; the source actor frame-scope failure above is under focused repair. iPhone Safari is untested.
+4. Actor lifecycle/equipment/reload and Mission/NPC/AI contracts; preserve serialized ownership.
+5. Authored animation/IK and the observed post-contact actor/render synchronization; browser values do not establish pixel parity.
+6. Fire/projectile/injury/physiology/outcome and source audio lifecycle.
+7. Exact-version rendering, particles, native physics, spatial output; deferred only where source/device/runtime evidence is specifically absent.
+8. Combined parity and owner-device acceptance. No parity declaration while feasible gates remain.
 
 ---
 ## Exact pushed checkpoint — packaged Mission startup, grounding and locomotion browser acceptance (2026-10-27)

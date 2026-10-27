@@ -239,6 +239,16 @@ controlsHelp.addEventListener("click",()=>setControlsGuide(controlsGuide.hidden)
 for(const type of ["blur","pagehide","resize"])addEventListener(type,()=>{tapPending=0;tapFrame=false;reloadPending=false;magazineHud.resetGesture();});
 document.addEventListener("visibilitychange",()=>{if(document.hidden){tapPending=0;tapFrame=false;reloadPending=false;magazineHud.resetGesture();}});
 function setMeshMaterials(root){root.traverse(o=>{if(o.isMesh){o.material=new THREE.MeshStandardMaterial({color:0x858b91,roughness:1,metalness:0,side:THREE.DoubleSide});o.castShadow=false;o.receiveShadow=true}})}
+async function aimQuadTarget(){
+ if(!aimQuad||!rightUpperArm)return;
+ aimQuad.position.set(playerX+facingDirection*20,2.5,1.5);
+ character.updateMatrixWorld(true);aimQuad.updateMatrixWorld(true);camera.updateMatrixWorld(true);
+ aimRaycaster.setFromCamera(pointerNdc,camera);
+ const shoulder=rightUpperArm.getWorldPosition(new THREE.Vector3());
+ if(aimDirty){const hit=aimRaycaster.intersectObject(aimQuad,false)[0];if(hit)lockedAim.set(hit.point.toArray(),shoulder.toArray());aimDirty=false;}
+ const target=lockedAim.target(shoulder.toArray());aimPoint.set(target[0],target[1]);
+ await runtimeCall("SetFullSourceActorAimTarget",target[0],target[1],sourceActorSnapshot?.position?.[2]??0);
+}
 async function load(){
  try{
   markLoaded("start");
@@ -333,16 +343,6 @@ async function load(){
    playerX=snapshot.position[0];playerY=snapshot.position[1];velocity=snapshot.velocity?.[0]??0;
    facingDirection=snapshot.direction??facingDirection;isKneeling=!!snapshot.kneeling;
    character.updateWorldMatrix(true,true);
-  };
-  const aimQuadTarget=async()=>{
-   if(!aimQuad||!rightUpperArm)return;
-   aimQuad.position.set(playerX+facingDirection*20,2.5,1.5);
-   character.updateMatrixWorld(true);aimQuad.updateMatrixWorld(true);camera.updateMatrixWorld(true);
-   aimRaycaster.setFromCamera(pointerNdc,camera);
-   const shoulder=rightUpperArm.getWorldPosition(new THREE.Vector3());
-   if(aimDirty){const hit=aimRaycaster.intersectObject(aimQuad,false)[0];if(hit)lockedAim.set(hit.point.toArray(),shoulder.toArray());aimDirty=false;}
-   const target=lockedAim.target(shoulder.toArray());aimPoint.set(target[0],target[1]);
-   await runtimeCall("SetFullSourceActorAimTarget",target[0],target[1],sourceActorSnapshot?.position?.[2]??0);
   };
   let textured=0;
   const skinReady=Promise.all(manifest.limbs.map(async limb=>{
