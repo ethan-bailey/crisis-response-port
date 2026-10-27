@@ -242,7 +242,8 @@ try {
         elapsedMs: Math.round(performance.now()), playerX: current.playerX, velocity: current.velocity,
         animation: current.animation, facingDirection: current.facingDirection,
         originalLeftPressed: current.originalInput?.left?.Pressed,
-        sourceMovement: current.sourceMovement, physics: current.physics,
+        sourceMovement: current.sourceMovement, sourcePhysicsCommands: current.sourcePhysicsCommands,
+        physics: current.physics,
       };
     });
     if (sample && movementTrace.length < 8) movementTrace.push(sample);
@@ -272,6 +273,7 @@ try {
         sourceInput: state.originalInput,
         currentAnimation: state.animation,
         currentAnimationDiagnostics: state.animationDiagnostics,
+        sourcePhysicsCommands: state.sourcePhysicsCommands,
         sourceAnimationTrace: state.sourceAnimationTrace,
       };
     });

@@ -35,6 +35,29 @@ The assertion must test movement caused by the new keyboard input. A pre-interac
 
 Run and inspect the exact SHA containing the input-snapshot repair. Require the existing source-input-plus-leftward-displacement assertion and authored locomotion acceptance to pass before recording packaged locomotion parity. If another acceptance fails, extract that exact step and retained artifact and add the newly discovered source or observability dependency here before making its focused repair. Continue to reload/IK source-arm-pose acceptance only after locomotion has passed.
 
+## Source force-vector observability follow-up — pending exact-SHA validation
+
+The #152 retained browser trace established input, controller eligibility,
+acceleration sign/magnitude, fixed-step count and that one original force
+command was emitted, but the failure artifact did not retain the command's
+actual vector. Since the FullSource bridge already returns each force as
+`physics.commands[{force, position, mode}]`, the focused follow-up exposes those
+source-produced command records in `window.__gameState()`, the existing bounded
+96-frame animation trace, and the movement/animation timeout samples. It does
+not synthesize force, alter its application, or change collision solving.
+
+The new `scripts/fullsource_movement_force_trace_test.mjs` verifies the exact
+source `FixedUpdate` vector flows from `FullSourceActorBridge` through the
+production page and into both browser failure paths. On base source tree
+`78fdc31d5bb17954d3f193e2e9ff6d5f86d13cff` plus this local batch, focused
+animation/movement checks passed **9/9**, full Node suite **183/183**, Python
+unittest suite **67/67**, smoke syntax and `git diff --check` passed. These
+results are local only. The batch must be pushed against current remote tip
+`a686cf4f5c2d38cabb9c42a0e74f6b51af66429c`, then verified by its exact hosted
+package/browser run. Actions #153 on source SHA `37bb00d` is independently
+in progress; its current browser result must be inspected separately before
+any behavioral movement repair.
+
 ## Follow-up observability batch — 2026-10-27
 
 - **Failed evidence inspected:** run #148 browser report and retained failure artifact `12735084098` (SHA-256 `a0de5140820a25f2a4c65d16b41c389400ad5a290e045ea59022710061f3a434`). `InputKey.Left.Pressed` was true, but `playerX=-1.8160572`, `Body stand`, and the >0.1 displacement predicate never became true. That report did not include the original controller's early-return predicates, acceleration, fixed-step count, or actor force emissions, so it cannot distinguish a rejected source update from a movement/physics response. Do not infer that the remaining cause is the tolerance.
