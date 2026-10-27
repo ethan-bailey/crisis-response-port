@@ -18,6 +18,30 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
+def restore_source_aliases(data, aliases, insert_after=None):
+    """Apply the exact compile aliases recorded for an archived source file."""
+    if not aliases:
+        return data
+    encoded = [line.encode("utf-8") + b"\n" for line in aliases]
+    insertion = b"".join(encoded)
+    if insert_after is None:
+        return insertion + b"\n" + data
+    marker = insert_after.encode("utf-8") + b"\n\n"
+    assert data.count(marker) == 1, f"source alias insertion marker missing or ambiguous: {insert_after}"
+    return data.replace(marker, insert_after.encode("utf-8") + b"\n" + insertion + b"\n", 1)
+
+
+def verify_source_adaptation(name, item, original, runtime):
+    """Require the runtime source to be exactly the archived file plus aliases."""
+    assert sha(original) == item["decompiledSha256"], f"archived source identity mismatch: {name}"
+    expected = restore_source_aliases(
+        original,
+        item.get("sourceAdaptationAliases", []),
+        item.get("sourceAdaptationInsertAfter"),
+    )
+    assert runtime == expected, f"source adaptation differs from exact archived original: {name}"
+
+
 def verify(archive_path=None, source_root=None):
     assert not (archive_path and source_root), "choose either --archive or --source-root"
     archive = None
@@ -178,9 +202,11 @@ def verify(archive_path=None, source_root=None):
             b"using Object = UnityEngine.Object;\n",
             b"using Task = BehaviorDesigner.Runtime.Tasks.Task;\n",
         )
+        source_backed = set()
         for name, item in manifest["sources"].items():
             data = (ROOT / item["runtimePath"]).read_bytes()
             assert sha(data) == item["runtimeSha256"], name
+            runtime_data = data
             for prefix in aliases:
                 if data.startswith(prefix):
                     data = data[len(prefix):]
@@ -190,8 +216,15 @@ def verify(archive_path=None, source_root=None):
             normalized_hash = sha(data)
             if normalized_hash != item["decompiledSha256"]:
                 delta = manifest.get("decompilationDeltas", {}).get(name)
-                assert delta and delta["normalizedRuntimeSha256"] == normalized_hash, name
-                assert delta["status"] == "unresolved: decompiled source snapshot omitted from recovery artifact", name
+                source_entry = item.get("sourceArchiveEntry")
+                if source_entry:
+                    original = recovered(source_entry)
+                    if original is not None:
+                        verify_source_adaptation(name, item, original, runtime_data)
+                        source_backed.add(name)
+                if name not in source_backed:
+                    assert delta and delta["normalizedRuntimeSha256"] == normalized_hash, name
+                    assert delta["status"] == "unresolved: decompiled source snapshot omitted from recovery artifact", name
             else:
                 assert name not in manifest.get("decompilationDeltas", {}), name
             count += 1
@@ -203,7 +236,8 @@ def verify(archive_path=None, source_root=None):
                 assert data == archived
             count += 1
         delta_count = len(manifest.get("decompilationDeltas", {}))
-        print(f"PASS: {count} hashed source identities and pinned plugin assembly; {delta_count} decompiler body hashes have explicitly inventoried unresolved lineages")
+        unresolved = delta_count - len(source_backed)
+        print(f"PASS: {count} hashed source identities and pinned plugin assembly; {len(source_backed)} task bodies match exact archived game sources plus recorded aliases; {unresolved} decompiler body hashes remain unresolved")
     finally:
         if archive:
             archive.close()

@@ -322,7 +322,10 @@
       "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/ConditionalEvaluator.cs",
       "compiled": true,
       "sourceArchiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/ConditionalEvaluator.cs",
-      "adaptation": "Original source with explicit Behavior Designer TaskStatus/Action aliases for .NET 8."
+      "adaptation": "Original source with explicit Behavior Designer TaskStatus/Action aliases for .NET 8.",
+      "sourceAdaptationAliases": [
+        "using TaskStatus = BehaviorDesigner.Runtime.Tasks.TaskStatus;"
+      ]
     },
     "BehaviorDesigner.Runtime.Tasks/EntryTask.cs": {
       "decompiledSha256": "e7feb4195361bb2c1ac3f74309a6b4e80768fbd80e1854635675fdc8dca2de15",
@@ -330,7 +333,10 @@
       "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/EntryTask.cs",
       "compiled": true,
       "sourceArchiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/EntryTask.cs",
-      "adaptation": "Original source with explicit Behavior Designer TaskStatus/Action aliases for .NET 8."
+      "adaptation": "Original source with explicit Behavior Designer TaskStatus/Action aliases for .NET 8.",
+      "sourceAdaptationAliases": [
+        "using TaskStatus = BehaviorDesigner.Runtime.Tasks.TaskStatus;"
+      ]
     },
     "BehaviorDesigner.Runtime.Tasks/RandomProbability.cs": {
       "decompiledSha256": "6cf839039683f233b164eda4edbc79dfd75c4663eb01e772c943c2447a89a89b",
@@ -338,7 +344,12 @@
       "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/RandomProbability.cs",
       "compiled": true,
       "sourceArchiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/RandomProbability.cs",
-      "adaptation": "Original source with explicit Behavior Designer TaskStatus/Action aliases for .NET 8."
+      "adaptation": "Original source with explicit Behavior Designer TaskStatus/Action aliases for .NET 8.",
+      "sourceAdaptationAliases": [
+        "using TaskStatus = BehaviorDesigner.Runtime.Tasks.TaskStatus;",
+        "using Action = BehaviorDesigner.Runtime.Tasks.Action;"
+      ],
+      "sourceAdaptationInsertAfter": "using System;"
     },
     "BehaviorDesigner.Runtime.Tasks/RestartBehaviorTree.cs": {
       "decompiledSha256": "688c0ae18815a402b80a209dfb31a1866223be0b2feb005170c0a8684317771d",
@@ -346,7 +357,10 @@
       "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime.Tasks/RestartBehaviorTree.cs",
       "compiled": true,
       "sourceArchiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/Tasks/RestartBehaviorTree.cs",
-      "adaptation": "Original source with explicit Behavior Designer Action alias for .NET 8."
+      "adaptation": "Original source with explicit Behavior Designer Action alias for .NET 8.",
+      "sourceAdaptationAliases": [
+        "using Action = BehaviorDesigner.Runtime.Tasks.Action;"
+      ]
     }
   },
   "adaptationRules": [
@@ -386,19 +400,19 @@
     },
     "BehaviorDesigner.Runtime.Tasks/ConditionalEvaluator.cs": {
       "normalizedRuntimeSha256": "30b54e9bb3c78703a5accd231f7fecf6a3d019e9ae6c6b88d592ff7928d6c5e9",
-      "status": "unresolved: decompiled source snapshot omitted from recovery artifact"
+      "status": "resolved: exact archived game-task source plus recorded compiler aliases; ILSpy output bytes are not archived"
     },
     "BehaviorDesigner.Runtime.Tasks/EntryTask.cs": {
       "normalizedRuntimeSha256": "f9b2a435d8d9325b410201850e77b48d399aeef13321e4d8ba07dbecf130c228",
-      "status": "unresolved: decompiled source snapshot omitted from recovery artifact"
+      "status": "resolved: exact archived game-task source plus recorded compiler aliases; ILSpy output bytes are not archived"
     },
     "BehaviorDesigner.Runtime.Tasks/RandomProbability.cs": {
       "normalizedRuntimeSha256": "6aae140acf00e3e17f9a303d4b17636b37ea46e1bff4bc221828e205cddd80d5",
-      "status": "unresolved: decompiled source snapshot omitted from recovery artifact"
+      "status": "resolved: exact archived game-task source plus recorded compiler aliases; ILSpy output bytes are not archived"
     },
     "BehaviorDesigner.Runtime.Tasks/RestartBehaviorTree.cs": {
       "normalizedRuntimeSha256": "306d4e047ce3f38619119315d3665c7fe62300cb59cffc5a445f8c03b27af2a1",
-      "status": "unresolved: decompiled source snapshot omitted from recovery artifact"
+      "status": "resolved: exact archived game-task source plus recorded compiler aliases; ILSpy output bytes are not archived"
     }
   }
 }
