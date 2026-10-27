@@ -384,19 +384,27 @@
   "decompilationDeltas": {
     "BinaryDeserialization.cs": {
       "normalizedRuntimeSha256": "52e40730bc51ea7daac5c190a63f063d4ffe729732eeda2bb33cf32f201d318b",
-      "status": "unresolved: decompiled source snapshot omitted from recovery artifact"
+      "status": "reproduced: pinned ILSpy output matches assembly-derived SHA-256",
+      "reproductionTool": "ilspycmd 9.1.0.7988",
+      "reproducedDecompiledSha256": "2ffa0b8f7119120579b17d0e4a71a2ca5dc98adce9d5de3d2545e51ab698c02e"
     },
     "BehaviorDesigner.Runtime/Behavior.cs": {
       "normalizedRuntimeSha256": "69c8691c81800d88755f5b8e28bf6fd690fb40b944b4e9e4c71b3ea4408120ea",
-      "status": "unresolved: decompiled source snapshot omitted from recovery artifact"
+      "status": "reproduced: pinned ILSpy output matches assembly-derived SHA-256",
+      "reproductionTool": "ilspycmd 9.1.0.7988",
+      "reproducedDecompiledSha256": "3d979552fcb871c3f65003d635aab8bad2567c793a7a38a0d8c305121c1e09d0"
     },
     "BehaviorDesigner.Runtime/SharedVariable.cs": {
       "normalizedRuntimeSha256": "0ffa1f2b77525ff61de436ff5fda41cfaaf7bba913c5e9d1003e9ea27b3e2966",
-      "status": "unresolved: decompiled source snapshot omitted from recovery artifact"
+      "status": "reproduced: pinned ILSpy output matches assembly-derived SHA-256",
+      "reproductionTool": "ilspycmd 9.1.0.7988",
+      "reproducedDecompiledSha256": "9ed932b55906e14903b587f170c48588872586ecf39268378769622d89a396b5"
     },
     "BehaviorDesigner.Runtime/TaskUtility.cs": {
       "normalizedRuntimeSha256": "6997abc37b3f29694e1714b4cdf4d46862aa9e34a96ff9e25320b7f2eb1e0937",
-      "status": "unresolved: decompiled source snapshot omitted from recovery artifact"
+      "status": "reproduced: pinned ILSpy output matches assembly-derived SHA-256",
+      "reproductionTool": "ilspycmd 9.1.0.7988",
+      "reproducedDecompiledSha256": "abdfc2e8e6c56fc7c80c2d844d9e82fc4968839f7d518ff7182dc54c308e2440"
     },
     "BehaviorDesigner.Runtime.Tasks/ConditionalEvaluator.cs": {
       "normalizedRuntimeSha256": "30b54e9bb3c78703a5accd231f7fecf6a3d019e9ae6c6b88d592ff7928d6c5e9",

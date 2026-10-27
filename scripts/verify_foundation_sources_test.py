@@ -9,6 +9,35 @@ SPEC.loader.exec_module(VERIFY)
 
 
 class SourceAdaptationTests(unittest.TestCase):
+
+    def test_pinned_ilspy_reproduction_is_distinct_from_runtime_adaptation(self):
+        delta = {
+            "status": "reproduced: pinned ILSpy output matches assembly-derived SHA-256",
+            "normalizedRuntimeSha256": "runtime-adaptation-hash",
+            "reproductionTool": "ilspycmd 9.1.0.7988",
+            "reproducedDecompiledSha256": "assembly-output-hash",
+        }
+        item = {"decompiledSha256": "assembly-output-hash"}
+        self.assertEqual(
+            "reproduced",
+            VERIFY.verify_plugin_decompilation_delta("Plugin.cs", item, delta, "runtime-adaptation-hash"),
+        )
+
+    def test_rejects_reproduction_claim_for_different_decompiler_bytes(self):
+        delta = {
+            "status": "reproduced: pinned ILSpy output matches assembly-derived SHA-256",
+            "normalizedRuntimeSha256": "runtime-adaptation-hash",
+            "reproductionTool": "ilspycmd 9.1.0.7988",
+            "reproducedDecompiledSha256": "wrong-output-hash",
+        }
+        item = {"decompiledSha256": "assembly-output-hash"}
+        with self.assertRaises(AssertionError):
+            VERIFY.verify_plugin_decompilation_delta("Plugin.cs", item, delta, "runtime-adaptation-hash")
+
+    def test_rejects_unknown_plugin_lineage_status(self):
+        delta = {"status": "verified by code presence", "normalizedRuntimeSha256": "runtime-hash"}
+        with self.assertRaisesRegex(AssertionError, "unknown plugin decompilation status"):
+            VERIFY.verify_plugin_decompilation_delta("Plugin.cs", {"decompiledSha256": "x"}, delta, "runtime-hash")
     def test_aliases_are_inserted_before_original_namespace(self):
         original = b"namespace Example\n{\n}\n"
         aliases = ["using TaskStatus = Example.TaskStatus;"]

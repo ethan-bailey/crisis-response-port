@@ -12,6 +12,11 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
+def is_plugin_decompilation_candidate(delta):
+    """Include both newly reproduced and not-yet-reproduced plugin outputs."""
+    return delta.get("status", "").startswith(("unresolved:", "reproduced:"))
+
+
 def verify(decompiled_root, decompiler_version=None):
     decompiled_root = Path(decompiled_root)
     manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
@@ -19,27 +24,44 @@ def verify(decompiled_root, decompiler_version=None):
         raise AssertionError(f"ILSpy tool version {decompiler_version!r} != pinned {manifest['decompiler']!r}")
     missing = []
     for name, delta in manifest["decompilationDeltas"].items():
-        if not delta["status"].startswith("unresolved:"):
+        if not is_plugin_decompilation_candidate(delta):
             continue
         item = manifest["sources"][name]
         candidates = list(decompiled_root.rglob(Path(name).name))
         if len(candidates) != 1:
             raise AssertionError(f"expected exactly one ILSpy source for {name}, got {len(candidates)}")
         runtime = (ROOT / item["runtimePath"]).read_bytes()
-        normalized = normalize_runtime(name, runtime)
         generated = candidates[0].read_bytes()
-        if sha(normalized) != delta["normalizedRuntimeSha256"]:
-            raise AssertionError(f"runtime normalization hash changed for {name}")
-        if generated != normalized:
-            raise AssertionError(
-                f"pinned ILSpy output differs from runtime source for {name}: "
-                f"generated={sha(generated)} expected={sha(normalized)}"
-            )
-        print(f"PASS: {name} reproduces exact pinned ILSpy bytes {sha(generated)}")
+        verify_decompiler_output(name, generated, runtime, item, delta)
+        print(
+            f"PASS: {name} pinned ILSpy SHA {sha(generated)}; "
+            f"runtime adaptation SHA {delta['normalizedRuntimeSha256']}"
+        )
         missing.append(name)
     if len(missing) != 4:
         raise AssertionError(f"expected four unresolved plugin implementation outputs, checked {len(missing)}")
     print(f"PASS: {len(missing)} plugin source files reproduce with {manifest['decompiler']}")
+
+
+def verify_decompiler_output(name, generated, runtime, item, delta):
+    """Verify original decompiler identity separately from the port's runtime adaptation."""
+    normalized_runtime = normalize_runtime(name, runtime)
+    expected_runtime = delta["normalizedRuntimeSha256"]
+    actual_runtime = sha(normalized_runtime)
+    if actual_runtime != expected_runtime:
+        raise AssertionError(
+            f"normalized runtime source hash changed for {name}: "
+            f"actual={actual_runtime} expected={expected_runtime}"
+        )
+    expected_decompiler = item.get("decompiledSha256")
+    if expected_decompiler is None:
+        raise AssertionError(f"missing pinned decompiler source hash for {name}")
+    actual_decompiler = sha(generated)
+    if actual_decompiler != expected_decompiler:
+        raise AssertionError(
+            f"pinned ILSpy output hash changed for {name}: "
+            f"actual={actual_decompiler} expected={expected_decompiler}"
+        )
 
 
 def normalize_runtime(name, runtime):

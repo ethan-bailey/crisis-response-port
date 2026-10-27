@@ -58,6 +58,20 @@ def normalize_ilspy_runtime(name, runtime):
     return runtime
 
 
+def verify_plugin_decompilation_delta(name, item, delta, normalized_hash):
+    """Keep original pinned ILSpy identity distinct from intentional runtime fixes."""
+    assert delta is not None, name
+    assert delta["normalizedRuntimeSha256"] == normalized_hash, name
+    status = delta["status"]
+    if status == "unresolved: decompiled source snapshot omitted from recovery artifact":
+        return "unresolved"
+    if status == "reproduced: pinned ILSpy output matches assembly-derived SHA-256":
+        assert delta["reproductionTool"] == "ilspycmd 9.1.0.7988", name
+        assert delta["reproducedDecompiledSha256"] == item["decompiledSha256"], name
+        return "reproduced"
+    raise AssertionError(f"unknown plugin decompilation status for {name}: {status!r}")
+
+
 def verify(archive_path=None, source_root=None):
     assert not (archive_path and source_root), "choose either --archive or --source-root"
     archive = None
@@ -214,6 +228,8 @@ def verify(archive_path=None, source_root=None):
         if assembly is not None:
             assert sha(assembly) == manifest["assemblySha256"]
         source_backed = set()
+        plugin_reproduced = set()
+        plugin_unresolved = set()
         for name, item in manifest["sources"].items():
             data = (ROOT / item["runtimePath"]).read_bytes()
             assert sha(data) == item["runtimeSha256"], name
@@ -229,8 +245,11 @@ def verify(archive_path=None, source_root=None):
                         verify_source_adaptation(name, item, original, runtime_data)
                         source_backed.add(name)
                 if name not in source_backed:
-                    assert delta and delta["normalizedRuntimeSha256"] == normalized_hash, name
-                    assert delta["status"] == "unresolved: decompiled source snapshot omitted from recovery artifact", name
+                    state = verify_plugin_decompilation_delta(name, item, delta, normalized_hash)
+                    if state == "reproduced":
+                        plugin_reproduced.add(name)
+                    else:
+                        plugin_unresolved.add(name)
             else:
                 assert name not in manifest.get("decompilationDeltas", {}), name
             count += 1
@@ -241,9 +260,12 @@ def verify(archive_path=None, source_root=None):
             if archived is not None:
                 assert data == archived
             count += 1
-        delta_count = len(manifest.get("decompilationDeltas", {}))
-        unresolved = delta_count - len(source_backed)
-        print(f"PASS: {count} hashed source identities and pinned plugin assembly; {len(source_backed)} task bodies match exact archived game sources plus recorded aliases; {unresolved} decompiler body hashes remain unresolved")
+        print(
+            f"PASS: {count} hashed source identities and pinned plugin assembly; "
+            f"{len(source_backed)} task bodies match exact archived game sources plus recorded aliases; "
+            f"{len(plugin_reproduced)} plugin sources have reproduced pinned ILSpy output; "
+            f"{len(plugin_unresolved)} plugin decompiler lineages remain unresolved"
+        )
     finally:
         if archive:
             archive.close()
