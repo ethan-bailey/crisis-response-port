@@ -20,5 +20,6 @@ test('FullSource Mission snapshots publish live original InputHandler action sta
  const tick=frame.indexOf('TickFullSourceActorBridge');
  const input=frame.indexOf('originalInputState=sourceActorSnapshot.originalInput');
  assert.ok(tick>=0&&input>tick,'FullSource frame must refresh diagnostic input state from the original actor snapshot after source update');
- assert.match(smoke,/current\?\.originalInput\?\.left\?\.Pressed && current\.playerX < start - 0\.1/,'grounding smoke must observe original source input and resulting leftward movement together');
+ assert.match(smoke,/sample\?\.originalLeftPressed && sample\.playerX < walkStart - 0\.1/,'grounding smoke must observe original source input and resulting leftward movement together');
+ assert.match(smoke,/movementTrace/,'grounding smoke must retain sampled controller and physics state when locomotion times out');
 });

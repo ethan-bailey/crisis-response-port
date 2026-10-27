@@ -230,15 +230,35 @@ try {
   // clear spawn-side corridor so the authored movement check is not already
   // satisfied by the prior sprint or stalled against the counter collision.
   const walkStart = await page.evaluate(() => window.__gameState().playerX);
+  const movementTrace = [];
   await page.keyboard.down('KeyA');
-  await page.waitForFunction(start => {
-    const current = window.__gameState?.();
-    return current?.originalInput?.left?.Pressed && current.playerX < start - 0.1;
-  }, walkStart, { timeout: 30000 });
+  const movementDeadline = Date.now() + 30000;
+  let moving = null;
+  while (Date.now() < movementDeadline) {
+    const sample = await page.evaluate(() => {
+      const current = window.__gameState?.();
+      return current && {
+        elapsedMs: Math.round(performance.now()), playerX: current.playerX, velocity: current.velocity,
+        animation: current.animation, facingDirection: current.facingDirection,
+        originalLeftPressed: current.originalInput?.left?.Pressed,
+        sourceMovement: current.sourceMovement, physics: current.physics,
+      };
+    });
+    if (sample && movementTrace.length < 8) movementTrace.push(sample);
+    else if (sample) {
+      movementTrace.push(sample);
+      if (movementTrace.length > 24) movementTrace.splice(8, 1);
+    }
+    if (sample?.originalLeftPressed && sample.playerX < walkStart - 0.1) {
+      moving = await page.evaluate(() => window.__gameState());
+      break;
+    }
+    await page.waitForTimeout(250);
+  }
+  assert.ok(moving, `original Mission input did not produce leftward movement; start=${walkStart}; last source/controller/physics samples=${JSON.stringify(movementTrace)}`);
   await page.waitForFunction(() =>
     ['Body walk', 'Body walk backward', 'Body sprint'].includes(window.__gameState?.().animation),
     null, { timeout: 30000 });
-  const moving = await page.evaluate(() => window.__gameState());
   await page.keyboard.up('KeyA');
   await page.waitForFunction(() => {
     const current = window.__gameState?.();
@@ -329,7 +349,7 @@ try {
     reloadAudio: { before: reloadBefore, after: reloadAfter, sourceEvents: reloadAfter.events.slice(reloadBefore.eventCount) },
     movement: {
       before: { x: walkStart, animation: state.animation },
-      whileHeld: { x: moving.playerX, velocity: moving.velocity, animation: moving.animation, sourceInput: moving.originalInput?.right?.Pressed },
+      whileHeld: { x: moving.playerX, velocity: moving.velocity, animation: moving.animation, sourceInput: moving.originalInput?.left?.Pressed, sourceMovement: moving.sourceMovement },
       released: { x: stopped.playerX, velocity: stopped.velocity, animation: stopped.animation },
     },
     mobileZoom: { before: mobileZoom.before, afterRapidGameSurfaceTaps: mobileZoomAfter, browser: 'Chromium mobile touch emulation; not iPhone Safari' },

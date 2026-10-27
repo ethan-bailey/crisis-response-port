@@ -27,6 +27,7 @@ public sealed class FullSourceActorBridge
     readonly List<object> worldPhysicsCommands=[];
     readonly Dictionary<int, GameObject> trackedCasingObjects=[];
     readonly FieldInfo accelerationField;
+    readonly FieldInfo accelerationMagnitudeField;
     readonly BrowserAudioEventQueue audioEventQueue;
     int lastFixedSteps;
     float pendingMovementMagnitude = 1f;
@@ -62,6 +63,8 @@ public sealed class FullSourceActorBridge
         rigidbody = body.Rigidbody ? body.Rigidbody : throw new InvalidOperationException("FullSource player actor has no authored Rigidbody");
         accelerationField = typeof(CharacterBody).GetField("acceleration", BindingFlags.Instance | BindingFlags.NonPublic)
             ?? throw new MissingFieldException(typeof(CharacterBody).FullName, "acceleration");
+        accelerationMagnitudeField = typeof(CharacterBody).GetField("accelerationMagnitude", BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? throw new MissingFieldException(typeof(CharacterBody).FullName, "accelerationMagnitude");
         priorActorPhysicsSink = rigidbody.PhysicsForceSink;
         rigidbody.PhysicsForceSink = (force, position, mode) =>
         {
@@ -388,6 +391,7 @@ public sealed class FullSourceActorBridge
         }
 
         var velocity = body.Rigidbody ? body.Rigidbody.velocity : Vector3.zero;
+        var mission = Global.Context.Mission;
         return new
         {
             owner = "FullSource.CharacterBody",
@@ -419,6 +423,21 @@ public sealed class FullSourceActorBridge
             velocity = new[] { velocity.x, velocity.y, velocity.z },
             direction = body.Direction,
             kneeling = body.IsKneeling,
+            movementState = new
+            {
+                missionView = mission?.View.ToString(),
+                missionPaused = mission?.Paused ?? false,
+                playerControllerActive = controller.isActiveAndEnabled,
+                bodyRagdoll = body.IsRagdoll,
+                sprinting = body.IsSprinting,
+                acceleration = (float)(accelerationField.GetValue(body) ?? 0f),
+                accelerationMagnitude = (float)(accelerationMagnitudeField.GetValue(body) ?? 0f),
+                sourceVelocity = velocity.x,
+                walkSpeed = body.walkSpeed,
+                sprintSpeed = body.sprintSpeed,
+                fixedSteps = lastFixedSteps,
+                emittedForceCommands = physicsCommands.Count
+            },
             weapon = body.ActiveWeapon ? body.ActiveWeapon.name : null,
             weaponState = ActiveWeaponState(),
             poses,
