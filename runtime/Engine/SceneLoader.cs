@@ -388,10 +388,18 @@ if(classID==82){SetField("m_PlayOnAwake","playOnAwake",typeof(bool));SetField("S
             try{field.SetValue(component,ReadValue(property.Value,field.FieldType,result));}
             catch(Exception error){throw new NotSupportedException($"Cannot load original field {id}:{property.Name} ({field.FieldType.FullName})",error);}
         }
-        // Unity-authored empty compatibility strings deserialize as empty text in the source actor graph.
-        // Keep recovered FullSource matchers byte-identical and normalize only their imported data.
-        if(component is Crisis.Runtime.FullSource.WeaponComponent weaponComponent){weaponComponent.qualifiers??=string.Empty;weaponComponent.slotQualifiers??=string.Empty;}
-        else if(component is Crisis.Runtime.FullSource.WeaponComponentSlot weaponSlot){weaponSlot.qualifiers??=string.Empty;weaponSlot.componentQualifiers??=string.Empty;}
+        // Original matchers define empty strings as the no-qualifier value. Keep recovered
+        // FullSource files byte-identical and normalize only the imported source component data.
+        string sourceType=component.GetType().FullName;
+        string[] defaultStringFields=sourceType switch{
+            "Crisis.Runtime.FullSource.WeaponComponent"=>["qualifiers","slotQualifiers"],
+            "Crisis.Runtime.FullSource.WeaponComponentSlot"=>["qualifiers","componentQualifiers"],
+            _=>Array.Empty<string>()
+        };
+        foreach(var fieldName in defaultStringFields){
+            var field=component.GetType().GetField(fieldName,BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
+            if(field?.FieldType==typeof(string)&&field.GetValue(component)==null)field.SetValue(component,string.Empty);
+        }
     }
     static object ReadAnimationCurve(JsonElement value,SceneLoadResult result){
         if(value.ValueKind!=JsonValueKind.Object)throw new NotSupportedException("Expected serialized AnimationCurve object");

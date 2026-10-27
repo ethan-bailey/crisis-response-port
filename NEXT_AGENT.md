@@ -1,3 +1,9 @@
+## Latest exact-source attempt — run #123 (2026-10-27)
+
+- Exact SHA 552319ed9a3a0e4f93e1622351def0e4f79fafe2; Actions run #123 (40441042407). Node/Python/runtime/browser-audio/engine checks and independent Chromium cache/audio job 121981196135 passed, including the new serialized FullSource qualifier-import regression. Main job 121981196682 failed FoundationChecks compile because that boundary intentionally excludes FullSource and SceneLoader referenced WeaponComponent/WeaponComponentSlot directly (CS0234 at SceneLoader.cs 393-394). Release/WASM, source provenance/index, Mission package verification, and retention were skipped.
+- Fix the adapter with exact FullSource type-name and field-name reflection inside SceneLoader, preserving source-byte identity and the FoundationChecks boundary. Add the discovered import/default dependency to the weapon source closure. Then push by expected-HEAD and rerun exact Actions; the full Mission source-entry failure from #120 is still not accepted as resolved until the packaged Mission step passes.
+- Live remote branch is 552319ed9a3a0e4f93e1622351def0e4f79fafe2. Local checkout remains clean/stale at 32c75319fc2a6237a13e3bf9ffb3054590adf8f4; dotnet is unavailable locally. Do not publish the Site.
+
 ## Latest exact-source attempt — run #122 (2026-10-27)
 
 - Public branch SHA 4eac44e91584d75c9dc8a5aa1e80839df7cda300; Actions run #122 (40440483156). The pinned .NET 8.0.426 main job passed Node/Python/runtime/browser-audio/engine/foundation contracts, Release/WASM build, and publish-output checks, then failed the provenance assertion WeaponComponent.cs in “Verify recovered source and generate full source index”. Independent Chromium job 121979382034 passed. Local checkout remains clean at stale SHA 32c75319fc2a6237a13e3bf9ffb3054590adf8f4 (ahead 5); dotnet --version is unavailable, so use hosted Actions for .NET.

@@ -4,6 +4,11 @@ This index is the active dependency order. Inventory the known serialized assets
 
 ## Current verified checkpoint
 
+## Latest exact-source attempt — run #123
+
+On SHA 552319ed9a3a0e4f93e1622351def0e4f79fafe2, Actions #123 (40441042407) passed Node/Python/runtime contracts (including serialized original-type qualifier import), browser audio, engine checks, and independent Chromium job 121981196135. Main job 121981196682 failed FoundationChecks compile: SceneLoader references FullSource WeaponComponent/WeaponComponentSlot types that the FoundationChecks assembly intentionally excludes (CS0234, lines 393-394). Build/provenance/Mission package steps did not run. Keep source files pristine; replace compile-time references with exact-type-name reflection, update the weapon closure, and rerun.
+
+
 ## Latest exact-source attempt — run #122
 
 Actions run #122 (40440483156) checked SHA 4eac44e91584d75c9dc8a5aa1e80839df7cda300. The independent Chromium job passed. The main job passed runtime/foundation contracts, Release/WASM and publish-output checks, then failed source provenance at WeaponComponent.cs: the recovered file was edited although it is archive-hash-locked. Restore both FullSource matcher files to archived bytes and keep bounded compatibility normalization in the SceneLoader serialized-field import boundary. The local checkout is clean but stale at 32c7531; local .NET SDK is unavailable. Hosted Actions is required for exact pinned SDK 8.0.426 build and complete Mission-package gate.
@@ -25,7 +30,7 @@ Actions run #121 on `1390af2e7db4ca24dafa7bf37aaf843ff17e5b60` passed the indepe
 
 ## Latest Mission startup failure
 
-Exact-source Actions run #120 on `79fddeb94e4ad4fe4550e0ff0f7ff5df28a7bdfd` failed the full Mission package source-entry contract after `OperatorSpawner.Awake` reached the original M4A1 default-component compatibility check. `WeaponComponentSlot.QualifierMatch` split a null qualifier argument, aborting `WeaponBase.Deserialize` during `CharacterBody.InitializeEquipment`; the source Mission player/loadout did not finish initialization. The recovered matcher files are restored byte-for-byte; the importer defaults absent/null original qualifier strings at deserialization. A serialized-component regression and exact packaged Mission rerun are required. This failure explains an incomplete Mission start but does not prove the separate airborne visual pose.
+Exact-source Actions run #120 on `79fddeb94e4ad4fe4550e0ff0f7ff5df28a7bdfd` failed the full Mission package source-entry contract after `OperatorSpawner.Awake` reached the original M4A1 default-component compatibility check. `WeaponComponentSlot.QualifierMatch` split a null qualifier argument, aborting `WeaponBase.Deserialize` during `CharacterBody.InitializeEquipment`; the source Mission player/loadout did not finish initialization. The recovered matcher files are restored byte-for-byte; the importer defaults absent/null original qualifier strings at deserialization. Run #123 confirms the serialized source-type regression but exposed a FoundationChecks compile boundary; use reflection and rerun the complete Mission package acceptance. A serialized-component regression and exact packaged Mission rerun are required. This failure explains an incomplete Mission start but does not prove the separate airborne visual pose.
 
 ## Ordered gates and dependency closure
 
