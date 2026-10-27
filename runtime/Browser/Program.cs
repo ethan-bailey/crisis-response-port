@@ -145,7 +145,10 @@ public static class RuntimeBridge {
         audioEvents.ReportPlaybackState(sourceId,isPlaying);
         return JsonSerializer.Serialize(new{sourceId,isPlaying});
     }
-    [JSInvokable] public static string SetFullSourceActorAimTarget(float x,float y,float z)=>JsonSerializer.Serialize((fullSourceActor??throw new InvalidOperationException("FullSource actor bridge is not initialized")).SetAimWorldPoint(x,y,z));
+    [JSInvokable] public static string SetFullSourceActorAimTarget(float x,float y,float z){
+        var point=(fullSourceActor??throw new InvalidOperationException("FullSource actor bridge is not initialized")).SetAimWorldPoint(x,y,z);
+        return JsonSerializer.Serialize(new{x=point.x,y=point.y,z=point.z});
+    }
     [JSInvokable] public static string TickFullSourceActorBridge(float elapsedSeconds,string actionsJson,float mouseX,float mouseY,float movementMagnitude)=>JsonSerializer.Serialize((fullSourceActor??throw new InvalidOperationException("FullSource actor bridge is not initialized")).Step(elapsedSeconds,actionsJson,mouseX,mouseY,movementMagnitude));
     [JSInvokable] public static string SynchronizeFullSourceActorPhysics(float x,float y,float z,float velocityX,float velocityY,float velocityZ)=>JsonSerializer.Serialize((fullSourceActor??throw new InvalidOperationException("FullSource actor bridge is not initialized")).SynchronizePhysics(x,y,z,velocityX,velocityY,velocityZ));
     [JSInvokable] public static string SynchronizeFullSourceCasingPhysics(string statesJson)=>JsonSerializer.Serialize((fullSourceActor??throw new InvalidOperationException("FullSource actor bridge is not initialized")).SynchronizeCasingPhysics(statesJson));
