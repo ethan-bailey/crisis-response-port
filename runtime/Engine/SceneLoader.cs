@@ -171,7 +171,7 @@ public static class SceneLoader {
                     }
                     result.objects[id]=component;
                     if(component is Behaviour b)b.enabled=Flag(fields,"m_Enabled");
-                    if(cls!=114&&(prefab||cls is 20 or 23 or 33 or 81 or 82))builtinFields.Add((component,fields,id,cls));
+                    if(cls!=114&&(prefab||cls is 20 or 23 or 33 or 81 or 82 or 167))builtinFields.Add((component,fields,id,cls));
                 } else result.unsupportedComponents[label]=result.unsupportedComponents.GetValueOrDefault(label)+1;
             }
             foreach(var (component,fields,id,classID) in builtinFields){

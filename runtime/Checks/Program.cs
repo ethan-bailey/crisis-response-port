@@ -181,13 +181,21 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
     var mixerGroups=mixerConfiguration.GetProperty("groups");
     var mixerSnapshots=mixerConfiguration.GetProperty("snapshots");
     var reverbZones=mixerConfiguration.GetProperty("reverbZones");
+    var inactiveReverbZones=reverbZones.EnumerateArray().Where(zone=>!zone.GetProperty("activeInHierarchy").GetBoolean()).ToArray();
+    var tutorialReverbZone=inactiveReverbZones.Length==1&&
+        inactiveReverbZones[0].GetProperty("activeSelf").GetBoolean()&&
+        inactiveReverbZones[0].GetProperty("ownerName").GetString()=="Carpeted room reverb zone"&&
+        inactiveReverbZones[0].GetProperty("transform").GetProperty("position")[0].GetSingle()==37f&&
+        inactiveReverbZones[0].GetProperty("transform").GetProperty("position")[1].GetSingle()==1.25f&&
+        inactiveReverbZones[0].GetProperty("transform").GetProperty("position")[2].GetSingle()==-1.5f;
+    var activeReverbZoneCount=reverbZones.EnumerateArray().Count(zone=>zone.GetProperty("activeInHierarchy").GetBoolean());
     if(mixerGroups.GetArrayLength()!=19||mixerSnapshots.GetArrayLength()!=5||
        mixerGroups.EnumerateArray().Any(group=>!group.GetProperty("fields").TryGetProperty("m_Volume",out _)||!group.GetProperty("fields").TryGetProperty("m_Pitch",out _))||
        mixerSnapshots.EnumerateArray().Any(snapshot=>!snapshot.GetProperty("fields").TryGetProperty("m_FloatValues",out var values)||values.EnumerateObject().Count()!=47)||
-       reverbZones.GetArrayLength()!=8||reverbZones.EnumerateArray().Any(zone=>!zone.GetProperty("enabled").GetBoolean()||
-           !zone.GetProperty("activeInHierarchy").GetBoolean()||zone.GetProperty("reverbPreset").GetInt32()!=27||
+       reverbZones.GetArrayLength()!=8||activeReverbZoneCount!=7||!tutorialReverbZone||
+       reverbZones.EnumerateArray().Any(zone=>!zone.GetProperty("enabled").GetBoolean()||zone.GetProperty("reverbPreset").GetInt32()!=27||
            !float.IsFinite(zone.GetProperty("minDistance").GetSingle())||!float.IsFinite(zone.GetProperty("maxDistance").GetSingle())))
-        throw new InvalidOperationException($"EntryTeam did not transport the complete recovered AudioMixer/reverb graph (19 groups, five 47-parameter snapshots, eight active zones): groups={mixerGroups.GetArrayLength()},snapshots={mixerSnapshots.GetArrayLength()},zones={reverbZones.GetArrayLength()},payload={mixerConfiguration}");
+        throw new InvalidOperationException($"EntryTeam did not preserve the recovered AudioMixer/reverb graph (19 groups, five 47-parameter snapshots, eight enabled zones; seven active and one tutorial-inactive): groups={mixerGroups.GetArrayLength()},snapshots={mixerSnapshots.GetArrayLength()},zones={reverbZones.GetArrayLength()},activeZones={activeReverbZoneCount},tutorialInactive={tutorialReverbZone},payload={mixerConfiguration}");
     var mixerTransitions=mixerFrame.RootElement.GetProperty("audioMixerEvents");
     if(mixerTransitions.EnumerateArray().Any(item=>item.GetProperty("action").GetString()!="transition"||!item.GetProperty("snapshotFields").TryGetProperty("m_FloatValues",out _)))
         throw new InvalidOperationException($"Recovered AudioMixer snapshot transition lost its authored values: {mixerTransitions}");

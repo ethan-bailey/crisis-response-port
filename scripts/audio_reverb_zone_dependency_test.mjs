@@ -47,6 +47,8 @@ test('engine imports every serialized AudioReverbZone field as data only',()=>{
   assert.match(audio,/sealed class AudioReverbZone:Behaviour/);
   const loader=read('runtime/Engine/SceneLoader.cs');
   assert.match(loader,/case 167:component=go\.AddComponent<AudioReverbZone>\(\)/);
+  assert.match(loader,/if\(cls!=114&&\(prefab\|\|cls is 20 or 23 or 33 or 81 or 82 or 167\)\)builtinFields\.Add\(\(component,fields,id,cls\)\)/,
+    'scene AudioReverbZone fields must enter the same builtin assignment pass as their component');
   for(const field of ['m_MinDistance','m_MaxDistance','m_ReverbPreset','m_Room','m_RoomHF','m_DecayTime','m_DecayHFRatio',
     'm_Reflections','m_ReflectionsDelay','m_Reverb','m_ReverbDelay','m_HFReference','m_Diffusion','m_Density','m_LFReference','m_RoomLF'])
     assert.match(loader,new RegExp('SetField\\("'+field+'"'));
