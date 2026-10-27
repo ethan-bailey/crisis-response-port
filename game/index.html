@@ -462,7 +462,7 @@ async function load(){
   positionLabel.textContent="Walk 1.5 m/s · Sprint 4.2 m/s · original spawn X −3";
   const startOriginalMission=async()=>{
    startOriginalMissionButton.disabled=true;startOriginalMissionButton.textContent="Downloading Mission…";missionProgress.hidden=false;missionProgressText.textContent="Starting source download · 99 MB compressed. Keep this page open; progress will appear here.";sourceLoadController=new AbortController();sourceActorMode=false;
-   window.__missionSourceDiagnostics={profile:"global-ui-mission-operator",status:"downloading",samples:[],slowestFetches:[],slowestBridgeCalls:[]};
+   window.__missionSourceDiagnostics={profile:"global-ui-mission-operator",status:"downloading",samples:[],slowestFetches:[],slowestBridgeCalls:[],sourceAudioEvents:[]};
    try{
     status.textContent="Downloading the original Mission, UI and Operator dependencies…";
     const delivery=await deliverIncrementalSourceProfile({invokeMethodAsync:runtimeCall},"../scene-data/fullsource/global-ui-mission-operator/manifest.json",{
@@ -589,8 +589,11 @@ async function frame(now){
   const sourceMoveMagnitude=sourceMoveDirection===0?1:input.movementProfile(sourceMoveDirection,
    contactPhysics.data.character.movement.walkSpeed,contactPhysics.data.character.movement.sprintSpeed,rawActions.sprint).magnitude;
   sourceActorSnapshot=JSON.parse(await runtimeCall("TickFullSourceActorBridge",elapsed,JSON.stringify(rawActions),mouseX,mouseY,sourceMoveMagnitude));
+  const sourceAudioEvents=Array.isArray(sourceActorSnapshot.audioEvents)?sourceActorSnapshot.audioEvents:[];
+  const sourceDiagnostics=window.__missionSourceDiagnostics;
+  if(sourceDiagnostics&&sourceAudioEvents.length){sourceDiagnostics.sourceAudioEvents.push(...sourceAudioEvents);if(sourceDiagnostics.sourceAudioEvents.length>64)sourceDiagnostics.sourceAudioEvents.splice(0,sourceDiagnostics.sourceAudioEvents.length-64);}
   upperBody.updateSourceAudioMixer(sourceActorSnapshot.audioMixerConfiguration,sourceActorSnapshot.audioMixerEvents,sourceActorSnapshot.audioMixerTime);
-  upperBody.playSourceAudioEvents(sourceActorSnapshot.audioEvents,sourceActorSnapshot.sourceTime);
+  upperBody.playSourceAudioEvents(sourceAudioEvents,sourceActorSnapshot.sourceTime);
   upperBody.updateSourceAudioStates(sourceActorSnapshot.audioSourceStates,sourceActorSnapshot.sourceTime);
   upperBody.observeSourceParticleCommands(sourceActorSnapshot.particleEvents,sourceActorSnapshot.sourceTime,sourceActorSnapshot.droppedParticleEvents);
   const physics=sourceActorSnapshot.physics,step=contactPhysics.data.fixedDeltaTime,commands=physics.commands||[];
@@ -609,7 +612,10 @@ async function frame(now){
   const x=physicsState.x,y=physicsState.y,z=physicsState.z,vx=physicsState.velocity;
   sourceActorSnapshot=JSON.parse(await runtimeCall("SynchronizeFullSourceActorPhysics",x,y,z,vx,0,0));
   groundingFrame.synchronizedPosition=[...sourceActorSnapshot.position];
-  projectFullSourceSnapshot(sourceActorSnapshot);await applyAnimation(dt,true);weaponStatus.textContent=`Original source weapon callbacks · ${sourceActorSnapshot.weapon??"unarmed"}`;
+  projectFullSourceSnapshot(sourceActorSnapshot);await applyAnimation(dt,true);
+  weaponState=sourceActorSnapshot.weaponState;activeWeaponName=weaponState?.weaponId??sourceActorSnapshot.weapon??activeWeaponName;
+  magazineHud.render(weaponState);
+  weaponStatus.textContent=weaponState?`${weaponState.weaponId} · ${weaponState.magazine} + ${weaponState.chamberLive?1:0} · reserve ${weaponState.reserve}${weaponState.reloading?" · reloading":""}`:`Original source weapon callbacks · ${sourceActorSnapshot.weapon??"unarmed"}`;
   positionLabel.textContent=`Original Mission · X ${playerX.toFixed(2)} · speed ${Math.abs(velocity).toFixed(2)} m/s`;
   renderer.render(scene,camera);return;
  }

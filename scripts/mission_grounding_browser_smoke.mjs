@@ -244,6 +244,52 @@ try {
   assert.ok(Number.isFinite(stopped.playerX), 'released Mission actor must retain a finite source position');
   assert.equal(stopped.originalInput?.right?.Pressed, false, 'released browser input must reach the original source controller');
   assert.deepEqual(pageErrors, [], 'Mission walk/release must not throw browser runtime errors');
+
+  const reloadBefore = await page.evaluate(() => ({
+    weapon: window.__gameState().weaponState,
+    audio: window.__gameState().presentation.weaponAudio,
+    eventCount: window.__missionSourceDiagnostics?.sourceAudioEvents?.length ?? 0,
+    unavailable: document.querySelector('#magazineTouch')?.classList.contains('mag-unavailable'),
+  }));
+  assert.deepEqual(reloadBefore.weapon, {
+    weaponId: 'M4A1', magazine: 30, magazineCapacity: 30, chamberLive: true, reserve: 30, reloading: false,
+  }, 'FullSource HUD must use the recovered active M4A1 and reserve magazine graph');
+  assert.equal(reloadBefore.unavailable, false, 'the source magazine control must accept its authored drag gesture');
+  const magazineTouch = page.locator('#magazineTouch');
+  const magazineBox = await magazineTouch.boundingBox();
+  assert.ok(magazineBox, 'the source magazine drag control must be visible');
+  const magazineStart = { x: magazineBox.x + magazineBox.width / 2, y: magazineBox.y + 16 };
+  await page.mouse.move(magazineStart.x, magazineStart.y);
+  await page.mouse.down();
+  await page.mouse.move(magazineStart.x, magazineStart.y + 55, { steps: 5 });
+  await page.mouse.up();
+  const reloadBaseline = {
+    played: reloadBefore.audio.played, eventCount: reloadBefore.eventCount,
+    droppedUnloaded: reloadBefore.audio.droppedUnloaded, droppedSuspended: reloadBefore.audio.droppedSuspended,
+    unmapped: reloadBefore.audio.unmappedSourceEvents,
+  };
+  await page.waitForFunction(({ played, eventCount, droppedUnloaded, droppedSuspended, unmapped }) => {
+    const state = window.__gameState();
+    const audio = state.presentation.weaponAudio;
+    const emitted = window.__missionSourceDiagnostics?.sourceAudioEvents?.slice(eventCount) ?? [];
+    return state.weaponState?.reloading === true &&
+      emitted.some(event => typeof event?.sourcePath === 'string') &&
+      audio.contextState === 'running' && audio.played > played &&
+      audio.droppedUnloaded <= droppedUnloaded && audio.droppedSuspended <= droppedSuspended &&
+      audio.unmappedSourceEvents <= unmapped;
+  }, reloadBaseline, { timeout: 30000 });
+  await page.waitForFunction(() => window.__gameState()?.weaponState?.reloading === false, null, { timeout: 30000 });
+  const reloadAfter = await page.evaluate(() => ({
+    weapon: window.__gameState().weaponState,
+    audio: window.__gameState().presentation.weaponAudio,
+    events: window.__missionSourceDiagnostics?.sourceAudioEvents ?? [],
+  }));
+  assert.equal(reloadAfter.weapon.weaponId, 'M4A1');
+  assert.equal(reloadAfter.weapon.magazine, 30, 'the recovered active source magazine must remain populated after reload');
+  assert.equal(reloadAfter.weapon.chamberLive, true, 'the original live chamber must remain reflected in the HUD state');
+  assert.ok(reloadAfter.audio.played > reloadBefore.audio.played, 'the trusted magazine drag must play original source reload audio');
+  assert.ok(reloadAfter.events.length > reloadBefore.eventCount, 'the browser must receive original source audio callbacks during reload');
+  assert.deepEqual(pageErrors, [], 'source reload and audio callbacks must not throw browser runtime errors');
   const mobilePage = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   mobilePage.on('pageerror', error => pageErrors.push(String(error)));
   await mobilePage.goto(`http://127.0.0.1:${address.port}/game/`, { waitUntil: 'domcontentloaded', timeout: 120000 });
@@ -274,6 +320,7 @@ try {
     missionLoadUi: { initialAttempt: initialAttemptUi, failedAttempt: failedAttemptUi, retryLoading: loadingUi, completed: loadedUi },
     injectedFailure: { path: injectedFailurePath, initialAttemptFailed: true, diagnosticCopied: copiedErrorText === failedAttemptUi.errorText, retrySucceeded: true },
     grounding: state.grounding,
+    reloadAudio: { before: reloadBefore, after: reloadAfter, sourceEvents: reloadAfter.events.slice(reloadBefore.eventCount) },
     movement: {
       before: { x: walkStart, animation: state.animation },
       whileHeld: { x: moving.playerX, velocity: moving.velocity, animation: moving.animation, sourceInput: moving.originalInput?.right?.Pressed },

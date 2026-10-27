@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text.Json;
+using System.Linq;
 using Crisis.Runtime.FullSource;
 using UnityEngine;
 
@@ -337,6 +338,26 @@ public sealed class FullSourceActorBridge
             throw new NotSupportedException("FullSource actor stepping requires the recovered Mission InteriorMode UI and InteractionMenu; refusing to tick a partial player context");
     }
 
+    object? ActiveWeaponState()
+    {
+        var weapon = body.ActiveWeapon;
+        if (!weapon || body.Equipment == null) return null;
+        var magazine = weapon.Magazine;
+        var reserveMagazines = weapon.IsPrimary ? body.Equipment.PrimaryMagazines : body.Equipment.SecondaryMagazines;
+        var reserve = reserveMagazines
+            .Where(candidate => candidate != null && candidate.calibre == weapon.calibre && !object.ReferenceEquals(candidate, magazine))
+            .Sum(candidate => candidate.roundCount);
+        return new
+        {
+            weaponId = weapon.name,
+            magazine = magazine?.roundCount ?? 0,
+            magazineCapacity = weapon.ComponentMagazine?.capacity ?? magazine?.capacity ?? 0,
+            chamberLive = weapon.ChamberStatus == WeaponBase.ChamberState.Live,
+            reserve,
+            reloading = body.IsManipulatingEquipment
+        };
+    }
+
     public object Snapshot() => Snapshot([], []);
 
     object Snapshot(object[] audioEvents, object[] particleEvents)
@@ -380,6 +401,7 @@ public sealed class FullSourceActorBridge
             direction = body.Direction,
             kneeling = body.IsKneeling,
             weapon = body.ActiveWeapon ? body.ActiveWeapon.name : null,
+            weaponState = ActiveWeaponState(),
             poses,
             audioMixerConfiguration = audioEventQueue?.TakeMixerConfiguration(world),
             audioMixerEvents = audioEventQueue?.DrainMixerEvents() ?? Array.Empty<object>(),

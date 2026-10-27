@@ -101,7 +101,7 @@ public static class RuntimeBridge {
     [JSInvokable] public static string InitializeIncrementalEntryTeamMission(){
         var source=originalSourcePackage??throw new InvalidOperationException("Incremental source package is not initialized");
         var world=incrementalSourceWorld??throw new InvalidOperationException("Incremental source world is not initialized");
-        var session=Crisis.Runtime.Browser.BrowserEntryTeamMission.Start(source,world);
+        var session=Crisis.Runtime.Browser.BrowserEntryTeamMission.Start(source,world,enablePlayerBehavior:true);
         scene=session.Mission;
         fullSourceActor=new(scene.world,session.Actor);
         return JsonSerializer.Serialize(new{mission=session.Mission.scene,actor=session.Actor.name,sourceActors=session.SourceActorCount,snapshot=fullSourceActor.Snapshot()});
