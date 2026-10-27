@@ -198,6 +198,20 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
     var fullWalkForce=authoredWalkSpeed*Time.fixedDeltaTime*750f;
     if(!(forceX>0f&&forceX<fullWalkForce*.6f)||MathF.Abs(session.Actor.walkSpeed-authoredWalkSpeed)>.001f)
         throw new InvalidOperationException($"The eased browser stick magnitude did not scale the original walk speed cap and restore the authored speed: forceX={forceX}, fullWalkForce={fullWalkForce}, authoredWalkSpeed={session.Actor.walkSpeed}, snapshot={state}");
+    var sourceAnimator=session.Actor.GetComponent<Animator>()
+        ??throw new InvalidOperationException("Original EntryTeam CharacterBody has no Animator for the FullSource render boundary");
+    var sourcePosition=session.Actor.transform.position;
+    bridge.SynchronizePhysics(sourcePosition.x-.25f,sourcePosition.y,sourcePosition.z,-.5f,0f,0f);
+    bridge.Step(1f/60f,"{}",640f,360f); // LateUpdate records the synchronized source displacement.
+    using var animationFrame=JsonDocument.Parse(JsonSerializer.Serialize(bridge.Step(1f/60f,"{}",640f,360f)));
+    var animationParameters=animationFrame.RootElement.GetProperty("animationParameters");
+    if(!sourceAnimator.GetBool("Moving")||
+       animationParameters.GetProperty("moving").GetBoolean()!=sourceAnimator.GetBool("Moving")||
+       animationParameters.GetProperty("backwards").GetBoolean()!=sourceAnimator.GetBool("Backwards")||
+       MathF.Abs(animationParameters.GetProperty("moveSpeed").GetSingle()-sourceAnimator.GetFloat("MoveSpeed"))>.0001f||
+       MathF.Abs(animationParameters.GetProperty("kneelRatio").GetSingle()-sourceAnimator.GetFloat("KneelRatio"))>.0001f||
+       MathF.Abs(animationParameters.GetProperty("crippledRatio").GetSingle()-sourceAnimator.GetFloat("CrippledRatio"))>.0001f)
+        throw new InvalidOperationException($"FullSource snapshot did not preserve the original Animator values for the source MovementDelta frame: source={JsonSerializer.Serialize(new{moving=sourceAnimator.GetBool("Moving"),backwards=sourceAnimator.GetBool("Backwards"),moveSpeed=sourceAnimator.GetFloat("MoveSpeed"),kneelRatio=sourceAnimator.GetFloat("KneelRatio"),crippledRatio=sourceAnimator.GetFloat("CrippledRatio")})},snapshot={animationParameters}");
     var sourceClip=session.Mission.world.Objects.OfType<AudioClip>().FirstOrDefault(clip=>!string.IsNullOrEmpty(clip.OriginalAssetPath))
         ??throw new InvalidOperationException("Mission source profile has no identified original audio clips");
     var sourceAudio=session.Mission.world.Objects.OfType<AudioSource>().FirstOrDefault(source=>source.outputAudioMixerGroup!=null)

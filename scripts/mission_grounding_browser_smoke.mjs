@@ -259,7 +259,11 @@ try {
   assert.ok(moving, `original Mission input did not produce leftward movement; start=${walkStart}; last source/controller/physics samples=${JSON.stringify(movementTrace)}`);
   try {
     await page.waitForFunction(() =>
-      ['Body walk', 'Body walk backward', 'Body sprint'].includes(window.__gameState?.().animation),
+      (() => {
+        const current = window.__gameState?.();
+        return current && current.animationDiagnostics?.animationInputs?.Moving === true &&
+          ['Body walk', 'Body walk backward', 'Body sprint'].includes(current.animation);
+      })(),
       null, { timeout: 30000 });
   } catch (error) {
     const trace = await page.evaluate(() => {

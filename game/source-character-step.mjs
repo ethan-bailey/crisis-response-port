@@ -48,3 +48,29 @@ export function stepCharacterAnimation({
     ragdoll: false,
   };
 }
+
+// In FullSource mode, CharacterBody.UpdateAnimation has already written the
+// original Animator parameters before the browser contact solver advances.
+// Preserve that source frame's parameter values instead of deriving a second,
+// differently ordered animation state from post-contact velocity.
+export function sourceAnimatorParameters(snapshot) {
+  const parameters = snapshot?.animationParameters;
+  if (!parameters || typeof parameters !== 'object') {
+    throw new TypeError('FullSource snapshot is missing original Animator parameters');
+  }
+  if (typeof parameters.moving !== 'boolean' || typeof parameters.backwards !== 'boolean') {
+    throw new TypeError('FullSource Animator movement parameters must be booleans');
+  }
+  for (const key of ['moveSpeed', 'kneelRatio', 'crippledRatio']) {
+    if (!Number.isFinite(parameters[key])) {
+      throw new TypeError(`FullSource Animator parameter ${key} must be finite`);
+    }
+  }
+  return {
+    Moving: parameters.moving,
+    Backwards: parameters.backwards,
+    MoveSpeed: parameters.moveSpeed,
+    KneelRatio: parameters.kneelRatio,
+    CrippledRatio: parameters.crippledRatio,
+  };
+}

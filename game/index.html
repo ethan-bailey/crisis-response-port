@@ -140,7 +140,7 @@ html,body,#stage,canvas,#controls,#movementStick,#controlsHelp,#controlsGuide{-w
 <script type="module">
 
 import { clearIncrementalSourceCache, deliverIncrementalSourceProfile, loadOriginalScenePackage } from "../scene-data/scene-package-loader.mjs";
-import { stepBodyMovement, stepCharacterAnimation } from "./source-character-step.mjs";
+import { stepBodyMovement, stepCharacterAnimation, sourceAnimatorParameters } from "./source-character-step.mjs";
 import { describeGrounding } from "./grounding-diagnostics.mjs";
 import * as THREE from "three";
 import { loadSourceCutoutMaterials, sourceCutoutMaterial } from "./source-cutout-materials.mjs";
@@ -405,7 +405,7 @@ async function load(){
     crippledRatio:0,operator:true,deltaTime:dt
    });
    if(original.ragdoll){return;} // PhysX owns bones after original source ragdoll.
-   const animationInputs={
+   const animationInputs=sourceActorMode?sourceAnimatorParameters(sourceActorSnapshot):{
     Moving:original.moving,Backwards:original.backwards,
     MoveSpeed:original.moveSpeed,KneelRatio:original.KneelRatio,
     CrippledRatio:original.crippled

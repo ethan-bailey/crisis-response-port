@@ -391,6 +391,8 @@ public sealed class FullSourceActorBridge
         }
 
         var velocity = body.Rigidbody ? body.Rigidbody.velocity : Vector3.zero;
+        var sourceAnimator = body.GetComponent<Animator>()
+            ?? throw new InvalidOperationException("FullSource player CharacterBody has no original Animator component");
         var mission = Global.Context.Mission;
         return new
         {
@@ -430,6 +432,9 @@ public sealed class FullSourceActorBridge
                 playerControllerActive = controller.isActiveAndEnabled,
                 bodyRagdoll = body.IsRagdoll,
                 sprinting = body.IsSprinting,
+                movementDelta = body.MovementDelta,
+                sourceIsMoving = body.IsMoving,
+                sourceIsMovingBackwards = body.IsMovingBackwards,
                 acceleration = (float)(accelerationField.GetValue(body) ?? 0f),
                 accelerationMagnitude = (float)(accelerationMagnitudeField.GetValue(body) ?? 0f),
                 sourceVelocity = velocity.x,
@@ -437,6 +442,18 @@ public sealed class FullSourceActorBridge
                 sprintSpeed = body.sprintSpeed,
                 fixedSteps = lastFixedSteps,
                 emittedForceCommands = physicsCommands.Count
+            },
+            // CharacterBody.UpdateAnimation writes these on the source Animator
+            // before LateUpdate updates MovementDelta and before the browser
+            // contact step runs. Transport the source-owned values so the
+            // renderer does not recompute them from a later physics snapshot.
+            animationParameters = new
+            {
+                moving = sourceAnimator.GetBool("Moving"),
+                backwards = sourceAnimator.GetBool("Backwards"),
+                moveSpeed = sourceAnimator.GetFloat("MoveSpeed"),
+                kneelRatio = sourceAnimator.GetFloat("KneelRatio"),
+                crippledRatio = sourceAnimator.GetFloat("CrippledRatio")
             },
             weapon = body.ActiveWeapon ? body.ActiveWeapon.name : null,
             weaponState = ActiveWeaponState(),
