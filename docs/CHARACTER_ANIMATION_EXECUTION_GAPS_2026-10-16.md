@@ -48,6 +48,12 @@ This is stronger exact-package startup evidence than the 2026-10-26 local run be
 - Add a production Mission-page contact diagnostic for source root, capsule center/bottom, floor top, contact-solver output and projected render root; compare its first settled frame against the authored source geometry. Verify authored AnimatorController transitions, source transition timing and two-arm visual continuity on rendered output.
 - Keep parity flags false until combined Mission flow and device/render/physics evidence pass.
 
+### Packaged Mission grounding browser acceptance closure — prepared 2026-10-27
+
+Before implementation, the known serialized/runtime dependencies were checked against the existing Mission profile and frame owner: `Assets/Resources/characters/Operator.prefab` supplies the source capsule and spawn; `Assets/Scenes/Mission 01.unity` supplies the authored floor; the package's contact-physics export supplies capsule direction/radius/height, center offset, floor boxes, and fixed-step configuration. The normal post-download path is `InitializeIncrementalEntryTeamMission` → `TickFullSourceActorBridge` → capture source/contact-before → fixed contact steps → capture contact-after → `SynchronizeFullSourceActorPhysics` → `projectFullSourceSnapshot` → browser render. The authored Operator and Mission serialized files remain hash-locked; no substitute fixture or physics/visual offset is used.
+
+`scripts/mission_grounding_browser_smoke.mjs` runs the **integrity-built package** in Chromium with WebGL/SwiftShader, presses the actual Start original Mission button, waits for the FullSource frame, and checks that source-before-contact, contact-before/after, synchronized-source, contact-root and projected-root samples are finite. It checks only the known stage invariants (contact root equals the final contact result; synchronized source and projected root equal the source root), requires a finite authored capsule lower bound, and retains a screenshot plus machine-readable telemetry as a run artifact. It does not assert that the actor touches the floor or that pixels match Unity: the measured values and screenshot must be inspected before diagnosing a visual/physics defect. The workflow runs this after building and verifying the exact six-root Mission package and retains the diagnostics even if the browser acceptance fails.
+
 ## Evidence
 
 - EntryTeam integration contract: `runtime/Checks/Program.cs` (`--browser-entryteam-session-contract`).

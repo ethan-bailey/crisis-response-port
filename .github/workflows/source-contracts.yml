@@ -293,6 +293,18 @@ jobs:
       - name: Exercise production loader with the complete Mission profile in IndexedDB
         run: node scripts/indexeddb_fullprofile_browser_smoke.mjs "$RUNNER_TEMP/cpr-site-package/scene-data/fullsource/global-ui-mission-operator"
 
+      - name: Exercise FullSource Mission grounding on the packaged page
+        run: node scripts/mission_grounding_browser_smoke.mjs "$RUNNER_TEMP/cpr-site-package" "$RUNNER_TEMP/cpr-grounding-browser"
+
+      - name: Retain FullSource Mission grounding browser evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: crisis-response-grounding-browser-${{ github.sha }}
+          path: ${{ runner.temp }}/cpr-grounding-browser/
+          if-no-files-found: warn
+          retention-days: 14
+
   indexeddb-browser:
     name: Chromium IndexedDB cache acceptance
     runs-on: ubuntu-24.04
