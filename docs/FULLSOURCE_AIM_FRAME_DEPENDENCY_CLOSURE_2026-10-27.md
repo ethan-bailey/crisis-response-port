@@ -88,3 +88,40 @@ bridge side effects and return only plain scalar coordinates (or an equally
 finite JSON-safe DTO); rerun the package build, hash/integrity verification, and
 this exact browser step on the new source SHA. Do not infer a successful aim
 pixel or native pointer visualization from an error-free interop response.
+
+
+## Browser acceptance world-point measurement dependency — Actions #144
+
+Exact Actions #144 (run `40497736559`) tested source SHA
+`f4cd527335f2dc575d70e2c3dc8474c8a8064298`. The pinned .NET 8.0.426 build, WASM output, source/provenance,
+complete Mission package integrity, 1,919-asset FullSource profile, Chromium
+IndexedDB cold/warm acceptance, and independent cache/audio job passed. The
+packaged FullSource page loaded without page errors and reached the playable
+grounding state. The grounding smoke then failed at
+`scripts/mission_grounding_browser_smoke.mjs:199` on:
+
+```
+touch-down on the movement stick must preserve the current absolute aim
+```
+
+Trace the assertion before changing gameplay: `game/index.html` reports
+`aimPoint` by applying the locked aim direction from the currently animated
+source shoulder. The smoke reads that point before and after separate
+Playwright evaluations. The original animation may advance the shoulder
+between those reads, moving world-space `aimPoint.y` even when the
+`WeaponPointer` direction and vertical input anchor are unchanged. The
+movement-stick callback in `game/browser-input.mjs` anchors aim on pointer
+start and applies vertical-only corrections; horizontal movement is
+independent. This is a test measurement defect, not evidence that the input
+path reset aim.
+
+The smoke already exposes `aimDirection` from `window.__gameState()`. Repair
+the acceptance assertions to measure the stable direction: a neutral
+pointer-down must retain the current direction, vertical stick travel must
+change its vertical component, horizontal travel and release must preserve
+that vertical component. Do not compare the shoulder-relative world target
+across frames and do not freeze, offset, or otherwise alter source animation.
+Keep the exact-package/sourceCommit check, intentional HTTP 503 retry case,
+grounding evidence, sprint wall geometry and walk/release assertions. Rerun
+the packaged page on the next exact pushed source SHA; until then aim browser
+acceptance is **failed** on #144 and the test repair is **untested**.
