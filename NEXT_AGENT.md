@@ -1,5 +1,12 @@
 # Crisis Response Port — continuation handoff (2026-10-27)
 
+## Grounding diagnostic batch (local verification pending push)
+
+- Starting live branch: `fe83b2d68f859200375e9051acce05d6d1e4bc42` (tree verified clean). The source/contact/render sequence was traced: FullSource tick → contact fixed steps → `SynchronizeFullSourceActorPhysics` → `projectFullSourceSnapshot` → animation/render. Contact adapter uses capsule direction `m_Direction=0`; therefore its vertical half extent is radius, not `height/2`. With authored radius 0.3 and runtime center offset -0.64, candidate bottom at root Y=1.5 is 0.56, before floor contact. This corrects the older handoff estimate that used -1.14 by treating the capsule as vertical. It remains a geometric prediction; actual post-settle browser telemetry is required.
+- Added read-only `game/grounding-diagnostics.mjs` and wired it into `window.__gameState().grounding`, reporting source root, contact root, projected root, axis-aware capsule bounds and nearby authored box tops. Added two unit cases for horizontal and vertical capsule axes. No physics, source prefab, or visual offset was changed.
+- Local verification: focused diagnostic tests 2/2; full Node suite 168/168 after pinned PhysX vendor materialization; Python suite 53/53; `git diff --check` passed. No local .NET SDK 8.0.426 or canonical recovery archive is present, so Release/package/provenance checks are not run. Exact resulting source SHA and hosted Actions status must be recorded after push.
+- Next: run the diagnostic on the actual production Mission page through the browser harness, capture the same actor before/after contact settling, compare source/contact/projected root and identified floor top; only then decide whether there is a real render/contact defect. Continue independent source-ready work while hosted checks run. No Site publish.
+
 ## Latest exact-source checkpoint — Actions #128 (2026-10-27)
 
 - Actions #128 (`40444437888`) tested source/runtime SHA `530c483266cf58d4ac6b9b65cb82ccb867c51643` (tree `652b7315fb27786cc56193d7834484d6bb0c02c9`) at 2026-10-27 03:38:45Z. Main job `121992691908` and independent Chromium job `121992692081` both succeeded using .NET SDK `8.0.426`. Later commits in this run update handoff/evidence only; verify the live remote HEAD at the start of the next scheduled run.
