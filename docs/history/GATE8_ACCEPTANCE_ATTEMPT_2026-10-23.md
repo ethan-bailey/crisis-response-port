@@ -1,3 +1,5 @@
+SUPERSEDED NUMBERING — see docs/GATE_DEPENDENCY_INDEX.md for current gate status.
+
 # Gate 8 acceptance attempt — 2026-10-23
 
 ## Tested source and scope

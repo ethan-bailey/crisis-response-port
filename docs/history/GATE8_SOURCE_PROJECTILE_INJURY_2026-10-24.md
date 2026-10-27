@@ -1,3 +1,5 @@
+SUPERSEDED NUMBERING — see docs/GATE_DEPENDENCY_INDEX.md for current gate status.
+
 # Gate 8 source projectile and injury trace — 2026-10-24
 
 ## Result

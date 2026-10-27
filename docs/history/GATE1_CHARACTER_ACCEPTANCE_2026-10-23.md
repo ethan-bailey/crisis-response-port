@@ -1,3 +1,5 @@
+SUPERSEDED NUMBERING — see docs/GATE_DEPENDENCY_INDEX.md for current gate status.
+
 # Gate 1 — source character acceptance — 2026-10-23
 
 ## Scope and result

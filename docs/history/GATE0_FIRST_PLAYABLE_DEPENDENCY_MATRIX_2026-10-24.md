@@ -1,3 +1,5 @@
+SUPERSEDED NUMBERING — see docs/GATE_DEPENDENCY_INDEX.md for current gate status.
+
 # Gate 0 — first playable dependency matrix (2026-10-24)
 
 ## Scope and result

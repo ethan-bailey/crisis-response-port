@@ -1,6 +1,6 @@
 # Repository operations board — audited 2026-10-17
 
-> **Source of truth for agent routing, repository housekeeping, active PR boundaries and deployment provenance.** This is a point-in-time audit, not a claim that GitHub branch SHAs remain unchanged. Re-query GitHub before editing, merging, deploying or closing a PR. Read [AGENTS.md](../AGENTS.md) for binding operating rules and [NEXT_AGENT.md](../NEXT_AGENT.md) for implementation handoff. Historical prose below older dates is evidence, not current instructions.
+> **Source of truth for agent routing, repository housekeeping, active PR boundaries and deployment provenance.** This is a point-in-time audit, not a claim that GitHub branch SHAs remain unchanged. Re-query GitHub before editing, merging, deploying or closing a PR. Read [AGENTS.md](../../AGENTS.md) for binding operating rules and [NEXT_AGENT.md](../../NEXT_AGENT.md) for implementation handoff. Historical prose below older dates is evidence, not current instructions.
 
 ## Integration / release map
 
@@ -21,7 +21,7 @@
 - The latest recorded successful pre-merge **integrated game** native/.NET WASM/Chromium/WebKit suite for PR #55 is [38992669424](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38992669424) at feature commit `41472e69ce9dea5a3ed00e98c4bd87e1567e445c`; merged source `3f979366b1331bdcd6ba8aea679b0ff9c231db1d`. The current develop HEAD has subsequent housekeeping/handoff commits, which have not been asserted to have a matching new browser run.
 - PR #56's `Projectile.HandleLimbHit` change added required callback slots but **did not bind them**, and was not compiled in the prior session. A browser can boot while live NPC damage is still missing.
 - Source archive checksum pinned in the handoff: `cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d`, private Actions artifact `11903811738`. Maintain provenance and repository privacy.
-- The approved **circular** iPhone joystick uses 16% dead zone, a 65%-pull walk-to-sprint transition and icon action buttons. The older 22%-dead-zone / slider description later in [APPROVED_IPHONE_ANALOG_MOVEMENT.md](APPROVED_IPHONE_ANALOG_MOVEMENT.md) is historical and superseded. Preserve original input actions and the chamber-inclusive visual ammunition count.
+- The approved **circular** iPhone joystick uses 16% dead zone, a 65%-pull walk-to-sprint transition and icon action buttons. The older 22%-dead-zone / slider description later in [APPROVED_IPHONE_ANALOG_MOVEMENT.md](../APPROVED_IPHONE_ANALOG_MOVEMENT.md) is historical and superseded. Preserve original input actions and the chamber-inclusive visual ammunition count.
 
 ## Workflow and branch housekeeping
 

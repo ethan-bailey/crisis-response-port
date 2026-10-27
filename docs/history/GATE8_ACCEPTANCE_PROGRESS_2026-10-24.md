@@ -1,3 +1,5 @@
+SUPERSEDED NUMBERING — see docs/GATE_DEPENDENCY_INDEX.md for current gate status.
+
 # Gate 8 acceptance progress — 2026-10-24
 
 ## Tested source and injury result

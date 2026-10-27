@@ -67,7 +67,7 @@ A previously generated artifact, `CrisisResponseMobile_iPhone.zip`, contains a s
 - [ ] WebGL build; currently blocked by missing Unity license secrets.
 - [ ] iPhone Safari testing and subsystem parity verification.
 
-See [the porting status matrix](PORTING_STATUS.md) for the evidence and outstanding work for each subsystem.
+See [the porting status matrix](history/PORTING_STATUS.md) for the evidence and outstanding work for each subsystem.
 
 ## Current toolchain limitation
 

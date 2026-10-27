@@ -4,7 +4,7 @@ Date: 2026-10-14
 
 ## Source provenance
 
-The implementation was traced to the recovery artifact documented in [RECOVERY_RUN_2026-10-14.md](RECOVERY_RUN_2026-10-14.md). The decompiled gameplay assembly's SHA-256 matched the assembly extracted from the user's original archive.
+The implementation was traced to the recovery artifact documented in [RECOVERY_RUN_2026-10-14.md](history/RECOVERY_RUN_2026-10-14.md). The decompiled gameplay assembly's SHA-256 matched the assembly extracted from the user's original archive.
 
 Files inspected in that artifact:
 

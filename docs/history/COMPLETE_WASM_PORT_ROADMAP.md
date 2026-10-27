@@ -1,6 +1,6 @@
 # WASM port roadmap
 
-The old point-in-time roadmap mixed historical build state and workflow rules. Use the current [agent prompt](../AGENTS.md), [gameplay completion contract](GAMEPLAY_COMPLETION_ROADMAP.md), and [live handoff](../NEXT_AGENT.md) instead.
+The old point-in-time roadmap mixed historical build state and workflow rules. Use the current [agent prompt](../../AGENTS.md), [gameplay completion contract](GAMEPLAY_COMPLETION_ROADMAP.md), and [live handoff](../../NEXT_AGENT.md) instead.
 
 The durable port sequence is:
 

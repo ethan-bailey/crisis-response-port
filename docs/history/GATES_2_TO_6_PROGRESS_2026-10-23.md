@@ -1,9 +1,11 @@
+SUPERSEDED NUMBERING — see docs/GATE_DEPENDENCY_INDEX.md for current gate status.
+
 # Gates 2–6 integration progress — 2026-10-23
 
 Historical checkpoint. The 2026-10-24 source combat integration milestone supersedes
 the Gate 2 and Gate 3 status below where it records later sequencer/controller and
 projectile-to-physiology evidence; see
-[`SOURCE_COMBAT_INTEGRATION_MILESTONE_2026-10-24.md`](SOURCE_COMBAT_INTEGRATION_MILESTONE_2026-10-24.md).
+[`SOURCE_COMBAT_INTEGRATION_MILESTONE_2026-10-24.md`](../evidence/SOURCE_COMBAT_INTEGRATION_MILESTONE_2026-10-24.md).
 
 Branch: `develop/wasm`
 Base commit before this work: `5f1a2913e98c8a8049c39b5e3943263a3c85e8fe`

@@ -3,7 +3,7 @@
 Historical browser checkpoint. Its statements that the original controller and
 sequencer are not compiled were true for that build and are superseded by the
 current headless FullSource status in
-[`ORIGINAL_CHARACTER_SEQUENCER_EXECUTION.md`](ORIGINAL_CHARACTER_SEQUENCER_EXECUTION.md).
+[`ORIGINAL_CHARACTER_SEQUENCER_EXECUTION.md`](../ORIGINAL_CHARACTER_SEQUENCER_EXECUTION.md).
 The historical browser result still proves only the hand-mode/composition
 diagnostic it actually tested; it is not current live-game playback evidence.
 

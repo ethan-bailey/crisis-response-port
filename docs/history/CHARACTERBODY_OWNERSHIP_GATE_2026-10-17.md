@@ -1,3 +1,5 @@
+SUPERSEDED NUMBERING — see docs/GATE_DEPENDENCY_INDEX.md for current gate status.
+
 # Complete CharacterBody: type-ownership gate (2026-10-17)
 
 Integration target: `develop/wasm`. Working lane: PR #42 `feature/full-source-characterbody-integration`. This is a **blocking dependency map**, not a native-build success claim.

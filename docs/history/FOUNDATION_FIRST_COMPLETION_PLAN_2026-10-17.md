@@ -1,3 +1,5 @@
+SUPERSEDED NUMBERING — see docs/GATE_DEPENDENCY_INDEX.md for current gate status.
+
 # Crisis Response — foundation-first completion execution plan
 
 **Adopted:** 2026-10-17 · **Target runtime:** original C# on .NET 8 WebAssembly, pinned PhysX and source-authored assets · **Integration:** `develop/wasm`.

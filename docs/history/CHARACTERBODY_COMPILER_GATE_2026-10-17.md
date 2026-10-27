@@ -1,3 +1,5 @@
+SUPERSEDED NUMBERING — see docs/GATE_DEPENDENCY_INDEX.md for current gate status.
+
 # Full original CharacterBody native compilation: measured dependency failures
 
 **Exact source:** `ed089b5d39e9cf3a95379544c3cda2fa981cb96e`

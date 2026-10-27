@@ -1,45 +1,25 @@
-# Persistent continuation instructions
+# Persistent Crisis Response Port continuation policy
 
-This file is part of the Crisis Response WASM port workflow. Read it before
-ending every implementation run, including after a tool failure or context
-change. The handoff in `NEXT_AGENT.md` is the current state; verify it against
-the live `develop/wasm` branch before relying on its SHA or gate statuses.
+This is the repeatable engineering loop for `ethan-bailey/crisis-response-port` on `develop/wasm`. Read this file, `NEXT_AGENT.md`, and the canonical [gate dependency index](GATE_DEPENDENCY_INDEX.md) at the start of each run. `GATE_DEPENDENCY_INDEX.md` is the only gate list; do not reproduce numbered gate lists in handoffs or other documents.
 
-## Keep each execution advancing
+## Start with the live source
 
-This work is a recurring engineering loop, not a one-batch task. During each active run, do not return after one fix, one passing CI job, a documentation change, a bounded batch, or because a gate remains open. After each batch, refresh the live branch/CI state and immediately select the next dependency-ready implementation, source-recovery, or verification batch. Target at least five independently verifiable non-documentation work items in a run when feasible. A running hosted job is not a reason to wait: use that time for another ready local/source task. After any failure, inspect its exact step/log, make one focused repair, push the repair, and rerun on that exact SHA while continuing independent work. End only at the active execution-window boundary or when no safe dependency-ready work remains; persist exact evidence and the next concrete action. Do not claim project completion or promise work outside the active run.
+1. Use the protected project checkout when present, even when the task's working directory differs. Verify repository origin, branch, local SHA/tree, live GitHub SHA/tree, worktree status, every registered worktree, and all staged/unstaged/untracked changes before editing. Preserve owner changes; do not reset, clean, overwrite, or abandon them.
+2. Use the pinned .NET SDK **8.0.426** by sourcing `scripts/env/dotnet-8.0.426-preflight.sh` before .NET build/test/restore/publish commands. Confirm the browser test runner and a usable push route. Prefer the authorized GitHub connector with expected-HEAD compare-and-swap when shell Git authentication is unavailable. Avoid Codespaces while the owner's allowance is constrained. If one access or runner path fails, make one bounded alternate attempt, record the exact result, defer only dependent acceptance, and continue independent safe work.
+3. Verify the current hosted CI and deployment state from the exact live source SHA. Do not infer status from stale `origin/develop/wasm` refs or from a locally cached browser package.
 
-## Required closeout loop
+## Close known dependencies before implementing
 
-1. Read `docs/GATE_DEPENDENCY_INDEX.md` and its linked system closure notes.
-   List remaining parity gates in dependency order, verify the full known asset,
-   script, component, lifecycle, and acceptance dependency set for the selected
-   gate, and add any newly discovered dependency before implementation.
-2. Pick the next feasible, dependency-ready gate or the next bounded vertical
-   slice within it. Do implementation and acceptance work; a plan or an open
-   gate is not a stopping condition.
-3. If an exact external input is unavailable (for example, the user's iPhone,
-   a private source artifact, or an authenticated runner), record the concrete
-   missing input, attempted action, exact result, affected acceptance, and the
-   next action in the existing evidence and handoff documents. Defer only that
-   dependent acceptance and continue independent repository work.
-4. Run focused checks for each slice, then the relevant complete verification
-   suite when ready. Tie every result to the exact source SHA and actual runtime
-   path; distinguish passed, failed, not run, and user-device acceptance.
-5. Self-review provenance, ownership, behavior, and documentation. Commit and
-   push each coherent verified batch to the authorized branch using an
-   expected-HEAD update. Never rewrite shared history or publish a build
-   without separate authorization.
-6. Refresh `NEXT_AGENT.md` and the relevant REA evidence with the live branch,
-   exact tested and remote SHAs, test commands/results, known failures,
-   external dependencies, and one concrete next action.
-7. Before returning, reread this file and the updated handoff, print the
-   remaining gate list in the user-facing closeout, and continue all independent
-   work available in the current run. Do not say a gate is complete without its
-   acceptance evidence. Do not treat “still open,” “needs testing,” or a plan as
-   a stopping reason.
+Work the earliest dependency-ready gate in the index. Before changing code, inventory its original serialized assets and GUID/fileID references, source owners and components, callers/callees, initialization/update/fixed-update/teardown order, engine services, browser adapters, failure paths, and precise acceptance assertions. Use recovered original behavior and authored data as authority. Do not invent substitutes, synthetic gameplay, or unsupported asset mappings. Runtime failures can reveal hidden dependencies; record each newly discovered source edge in the owning subsystem record before continuing that batch.
 
-An assistant cannot continue executing after a turn has ended. Persist the
-unfinished work as exact next actions and resume this loop on the next run;
-never promise autonomous execution outside an active run.
+## Batch, verify, and push
 
+After each coherent source batch, run focused regressions that fail before the fix, relevant full verification, exact package-integrity checks, and hosted packaged-browser acceptance where applicable. Tie every result to the tested source SHA, runtime path, SDK/browser version, command, and output. Keep passed, failed, deferred, and untested results distinct. A pending CI job, device-only check, unavailable artifact, or open gate defers only its dependent acceptance; continue other ready work. Inspect the exact failed step/log, make one focused repair, rerun it on the next pushed SHA, and do not repeat a blocked recovery attempt without new evidence.
+
+Commit one logical change at a time, grouping all files belonging to that change. Push directly to `develop/wasm` with an expected-HEAD fast-forward update; after push, confirm the live commit and tree. Do not write to `main`, deploy, or publish from this recurring engineering task. Publication requires a separate release request after the exact-source build and package-integrity checks pass, and must preserve the existing Site access policy.
+
+## Keep the records useful
+
+Update `NEXT_AGENT.md` exactly once at session end, folded into the session's final commit. Keep it limited to the current source/head facts, verified checkpoint, external blockers, and a link to the canonical gate index. Do not duplicate the gate list or keep chronological history in the handoff. Do not create dated status/checkpoint/audit/closure documents; amend the existing subsystem record. For archive work, move obsolete snapshots to `docs/history/` and update links in the same logical commit. Never create a documentation-only correction commit for a record error; correct it in the next session-end commit.
+
+Before ending a run, reread this policy and the updated handoff, ensure each attempted action has an exact result, and state the next dependency-ready action. Do not claim overall parity while any feasible gate remains. Execution ends at the runtime's boundary; do not promise work outside that window.

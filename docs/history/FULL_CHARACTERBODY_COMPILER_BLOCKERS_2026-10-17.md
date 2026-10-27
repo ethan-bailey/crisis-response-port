@@ -1,6 +1,8 @@
+SUPERSEDED NUMBERING — see docs/GATE_DEPENDENCY_INDEX.md for current gate status.
+
 # Full original CharacterBody — concrete compiler dependency closure
 
-**New native checkpoint (2026-10-18 UTC):** [managed foundations and explicit remaining graph](FOUNDATION_RUNTIME_CLOSURE_2026-10-18.md). Original Behavior Designer scheduler/deserializers and source equipment/mission-scheduler/audio-surface foundations now compile in the focused harness; full CharacterBody remains blocked by 30 first-pass diagnostics / 21 original types. The inventory below is historical evidence, not the current error count.
+**New native checkpoint (2026-10-18 UTC):** [managed foundations and explicit remaining graph](../FOUNDATION_RUNTIME_CLOSURE_2026-10-18.md). Original Behavior Designer scheduler/deserializers and source equipment/mission-scheduler/audio-surface foundations now compile in the focused harness; full CharacterBody remains blocked by 30 first-pass diagnostics / 21 original types. The inventory below is historical evidence, not the current error count.
 
 **Baseline:** captured `compile-closure` GitHub Actions [run 38967474639](https://github.com/ethan-bailey/crisis-response-port/actions/runs/38967474639), job `117197426524` (**FAILED**, before the later ArmController alias fix). Exact developer-authored 2,454-line class: `runtime/Original/CharacterBody.Full.cs` in `Crisis.Runtime.FullSource`; its original method logic must not be replaced with guessed implementations.
 

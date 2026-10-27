@@ -2,7 +2,7 @@
 
 Historical engine checkpoint. The source controller/sequencer are now compiled
 and selected headless callbacks pass; see
-[`ORIGINAL_CHARACTER_SEQUENCER_EXECUTION.md`](ORIGINAL_CHARACTER_SEQUENCER_EXECUTION.md).
+[`ORIGINAL_CHARACTER_SEQUENCER_EXECUTION.md`](../ORIGINAL_CHARACTER_SEQUENCER_EXECUTION.md).
 The pending items below remain relevant to full source ragdoll and native
 physics acceptance, but their older “IK playback is not compiled” wording has
 been superseded.

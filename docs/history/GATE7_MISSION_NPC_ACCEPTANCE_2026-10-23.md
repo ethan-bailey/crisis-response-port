@@ -1,3 +1,5 @@
+SUPERSEDED NUMBERING — see docs/GATE_DEPENDENCY_INDEX.md for current gate status.
+
 # Gate 7 — Mission and NPC flow acceptance — 2026-10-23
 
 ## Result

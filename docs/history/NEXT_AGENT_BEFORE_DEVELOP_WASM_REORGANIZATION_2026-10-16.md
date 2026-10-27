@@ -18,7 +18,7 @@ One single private native run is now [Actions #38895140830](https://github.com/e
 **Status at the prior native-experiment documentation update: running**; no runtime browser/Unity result should be claimed until the CI job ends. Avoid duplicate Unity CI. This isolated branch is based on the earlier exact tested native commit, and is NOT an edit to independent Unity PR #7, WASM PR #9 gameplay code, or `main`. It is not a full Mission 01 native build and is not physical iPhone Safari acceptance. SDK8 compiler packaging PR #19 and source/UI audit PR #20 remain distinct, unmerged, verified metadata checkpoints. Reconsider any route change only with actual native runtime evidence.
 
 
-Read this file first, then [WORKSPACE.md](WORKSPACE.md). This replaces the competing “latest” and “next” sections in the [archived handoff](docs/history/NEXT_AGENT_BEFORE_2026-10-16_REVIEW.md). The archive and dated ledger are historical evidence, not instructions to repeat completed work.
+Read this file first, then [WORKSPACE.md](../../WORKSPACE.md). This replaces the competing “latest” and “next” sections in the [archived handoff](NEXT_AGENT_BEFORE_2026-10-16_REVIEW.md). The archive and dated ledger are historical evidence, not instructions to repeat completed work.
 
 **The full game is unfinished.** Preserve the original developer's code, assets and behavior for iPhone Safari. Compilation, recovered data, browser execution, native parity, deployment and physical-device acceptance are separate milestones. Do not report a completion percentage.
 
@@ -79,7 +79,7 @@ Steps 2–3 expand the selected-source WASM runtime around original animation/ga
 - [Source-closure handoff on #20](https://github.com/ethan-bailey/crisis-response-port/blob/codex/full-source-closure-audit/docs/FULL_SOURCE_CLOSURE_HANDOFF_2026-10-16.md).
 - [Original UI bindings handoff on #20](https://github.com/ethan-bailey/crisis-response-port/blob/codex/full-source-closure-audit/docs/ORIGINAL_UI_BINDINGS_HANDOFF_2026-10-16.md).
 - [Native WebGL result review on #20](https://github.com/ethan-bailey/crisis-response-port/blob/codex/full-source-closure-audit/docs/NATIVE_WEBGL_RESULT_REVIEW_2026-10-16.md). These are branch URLs deliberately: files are not yet merged into the browser branch.
-- [Complete-game acceptance roadmap](docs/COMPLETE_WASM_PORT_ROADMAP.md): gates, not a mandate to finish every asset before testing a bounded runtime scenario.
-- [Chronological evidence ledger](docs/WORKSPACE_STATUS.md) and [historical handoff](docs/history/NEXT_AGENT_BEFORE_2026-10-16_REVIEW.md).
+- [Complete-game acceptance roadmap](COMPLETE_WASM_PORT_ROADMAP.md): gates, not a mandate to finish every asset before testing a bounded runtime scenario.
+- [Chronological evidence ledger](WORKSPACE_STATUS.md) and [historical handoff](NEXT_AGENT_BEFORE_2026-10-16_REVIEW.md).
 
 For every checkpoint record exact input SHA, changed paths, original hashes/GUIDs, commands/results, artifact IDs/expiry, remaining limits, next bounded action and selective rollback. On failure report the actual blocker; never replace original gameplay with stand-ins or imply full completion from a green build. Work occurs only during an active session; do not promise offline continuation.
