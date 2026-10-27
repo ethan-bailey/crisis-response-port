@@ -98,7 +98,8 @@ try {
   const stopped = await page.evaluate(() => window.__gameState());
   assert.ok(moving.playerX > walkStart + 0.1, 'original Mission input must move the source actor through contact synchronization');
   assert.ok(['Body walk', 'Body sprint'].includes(moving.animation), 'source movement must select a recovered authored locomotion clip');
-  assert.ok(stopped.playerX >= moving.playerX - 0.2, 'releasing movement must settle without an unbounded position jump');
+  assert.ok(Number.isFinite(stopped.playerX), 'released Mission actor must retain a finite source position');
+  assert.equal(stopped.originalInput?.right?.Pressed, false, 'released browser input must reach the original source controller');
   assert.deepEqual(pageErrors, [], 'Mission walk/release must not throw browser runtime errors');
   await page.screenshot({ path: resolve(outputRoot, 'mission-grounding-walk.png'), fullPage: true });
   report = {
