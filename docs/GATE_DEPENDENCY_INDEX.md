@@ -4,9 +4,11 @@ This index is the active dependency order. Inventory the known serialized assets
 
 ## Current exact checkpoint (2026-10-27)
 
-Live `develop/wasm` before the decompiler-verifier repair is SHA `aad64d4b030b25c98c999655a299fbe8cbbd2ac5`, tree `463a5df0969b7eabafce2bbd8916f65afc7794b0`. Site v85 source is `01dd0b9397ce5b3d8fc49ac6bb2b2aeeacb4fcb7`; the user reports that this old publication still throws `Can't find variable: aimQuadTarget` at `game/:581:22`. Source fix `b9c9d09` exists in current branch ancestry, but exact packaged Mission acceptance is not yet passed; do not publish.
+Live `develop/wasm` is `a0f2da3375cd5b902a79b289610c3ad50b69992b`, tree `9c5fafc18f1a389d0fe2e5ace63084eda7c9a5a5`. Actions #142 (`40493077476`) runs against that exact source SHA and is currently in progress; the concurrent jobs were at setup when last checked.
 
-Actions #141 (`40491366196`) on `772f9c2` failed only at step 23, exact BehaviorDesigner decompiler lineage. Artifact `12728708824` (62,573 bytes; SHA-256 `ce612a7eedb984226bebbe188cf7d273cd189373dd2c2582cfe09d5378930811`) reproduces all four assembly-derived ILSpy output hashes using `ilspycmd 9.1.0.7988`. The verifier incorrectly equated decompiler source bytes with compatibility-modified runtime bytes. The focused repair separates the comparisons, recognizes verified reproductions, and adds regressions. Local isolated tests: ILSpy verifier 6/6, provenance verifier 8/8; all four exact artifact outputs passed integration. Hosted rerun, complete Mission package and packaged page acceptance remain pending.
+The exact user-reported aim error (`Can't find variable: aimQuadTarget`, `game/:581:22`) is reproduced on Site v85, saved source SHA `01dd0b9397ce5b3d8fc49ac6bb2b2aeeacb4fcb7`. Source fix `b9c9d09` exists in branch history, but the Site has not been published from the current source and no package/browser acceptance is claimed yet.
+
+Actions #141 (`40491366196`) failed at decompiler verifier step 23 only; parallel Chromium cache/audio passed. ILSpy output artifact `12728708824` (SHA-256 `ce612a7eedb984226bebbe188cf7d273cd189373dd2c2582cfe09d5378930811`) reproduced all four pinned assembly-derived output hashes. The failure was a bad equality assertion against intentionally compatibility-modified runtime sources. Commit `a0f2da3` repairs the verifier to check original decompiler identity and normalized runtime adaptation independently. Local focused regressions passed: 6/6 ILSpy tests, 8/8 provenance tests, exact artifact integration 4/4. Actions #142 must now verify the corrected workflow, complete Mission package, and FullSource packaged Mission path.
 
 ## Latest verified exact-source checkpoint — Actions #128 (2026-10-27)
 
