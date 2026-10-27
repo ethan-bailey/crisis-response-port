@@ -22,7 +22,7 @@ test("game errors are readable, selectable, copyable, and no longer covered by M
   assert.match(html, /fetchAndHashMs\.toFixed\(0\).*bridgeMs\.toFixed\(0\)/);
   assert.match(html, /slowestBridgeCalls/);
   assert.match(html, /sourceMoveDirection===0\?1:input\.movementProfile/);
-  assert.match(html, /TickFullSourceActorBridge",elapsed,JSON\.stringify\(rawActions\),mouseX,mouseY,sourceMoveMagnitude/);
+  assert.match(html, /TickFullSourceActorBridge",dt,JSON\.stringify\(rawActions\),mouseX,mouseY,sourceMoveMagnitude/);
   assert.match(html, /id="cancelMissionLoad" type="button">Cancel/);
   assert.match(html, /signal:sourceLoadController\.signal/);
   assert.match(html, /import \{ bindMobileZoomGuard \} from "\.\/mobile-zoom-guard\.mjs"/);

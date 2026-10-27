@@ -595,7 +595,7 @@ async function frame(now){
   const sourceMoveDirection=rawActions.left?-1:rawActions.right?1:0;
   const sourceMoveMagnitude=sourceMoveDirection===0?1:input.movementProfile(sourceMoveDirection,
    contactPhysics.data.character.movement.walkSpeed,contactPhysics.data.character.movement.sprintSpeed,rawActions.sprint).magnitude;
-  sourceActorSnapshot=JSON.parse(await runtimeCall("TickFullSourceActorBridge",elapsed,JSON.stringify(rawActions),mouseX,mouseY,sourceMoveMagnitude));
+  sourceActorSnapshot=JSON.parse(await runtimeCall("TickFullSourceActorBridge",dt,JSON.stringify(rawActions),mouseX,mouseY,sourceMoveMagnitude));
   originalInputState=sourceActorSnapshot.originalInput;
   const sourceAudioEvents=Array.isArray(sourceActorSnapshot.audioEvents)?sourceActorSnapshot.audioEvents:[];
   const sourceDiagnostics=window.__missionSourceDiagnostics;
@@ -635,7 +635,7 @@ async function frame(now){
  if(tapRequested){tapPending--;tapFrame=true;}
  rawActions.fire=resolveFireInput({heldFire:input.pressed('fire'),tapRequested,aimReady,fireAimReady});
  rawActions.magazine=reloadPending||input.pressed("magazine");reloadPending=false;
- originalInputState=JSON.parse(await runtimeCall("Tick",elapsed,JSON.stringify(rawActions)));
+ originalInputState=JSON.parse(await runtimeCall("Tick",dt,JSON.stringify(rawActions)));
  for(const action of Object.keys(keys))keys[action]=originalInputState[action].Pressed;
  if(originalInputState.kneel.Down)isKneeling=true;else if(originalInputState.stand.Down)isKneeling=false;
  // PlayerController.Update(): left takes precedence, then Body.Move(direction).
