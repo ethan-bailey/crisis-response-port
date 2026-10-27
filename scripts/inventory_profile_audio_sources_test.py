@@ -74,6 +74,7 @@ AudioSource:
         source = """--- !u!1 &1
 GameObject:
   m_Name: Weapon
+  m_IsActive: 1
 --- !u!4 &2
 Transform:
   m_GameObject: {fileID: 1}
@@ -88,6 +89,7 @@ MonoBehaviour:
 --- !u!1 &4
 GameObject:
   m_Name: Muzzle
+  m_IsActive: 1
 --- !u!4 &5
 Transform:
   m_GameObject: {fileID: 4}
@@ -96,6 +98,10 @@ Transform:
 AudioSource:
   m_GameObject: {fileID: 4}
   DopplerLevel: 1
+--- !u!81 &8
+AudioListener:
+  m_GameObject: {fileID: 4}
+  m_Enabled: 1
 """
         with tempfile.TemporaryDirectory() as temp:
             result = INVENTORY.profile_inventory(self.create_profile(Path(temp), source))
@@ -111,6 +117,10 @@ AudioSource:
         self.assertEqual(summary["sourceOwnerAndAncestorRigidbodyIncidences"], 1)
         self.assertEqual(summary["audioSourcesWithOwnerRigidbody"], 0)
         self.assertEqual(summary["audioSourcesWithOwnerOrAncestorRigidbody"], 1)
+        listeners = result["listenerHierarchySummary"]
+        self.assertEqual(listeners["listenerCount"], 1)
+        self.assertEqual(listeners["enabledCount"], 1)
+        self.assertEqual(listeners["activeInHierarchyCount"], 1)
 
 
 if __name__ == "__main__":

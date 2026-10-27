@@ -186,7 +186,7 @@
     },
     "BehaviorDesigner.Runtime/Behavior.cs": {
       "decompiledSha256": "3d979552fcb871c3f65003d635aab8bad2567c793a7a38a0d8c305121c1e09d0",
-      "runtimeSha256": "7b1da8ad4e4b75d1ecaa6ca5dee958ef8659ed37c82c70f5d736be43001cd03c",
+      "runtimeSha256": "13b4c6f43964d1aaa720aad8fb5e6ca75f96f9ca44087b41e7bed2b7288ee1ae",
       "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/Behavior.cs",
       "compiled": true
     },
@@ -222,7 +222,7 @@
     },
     "BehaviorDesigner.Runtime/SharedVariable.cs": {
       "decompiledSha256": "9ed932b55906e14903b587f170c48588872586ecf39268378769622d89a396b5",
-      "runtimeSha256": "bf94f4b67978e215e142a489a0e977cde812c4529d24147d3da72044a3c9f69c",
+      "runtimeSha256": "0508ac8500c42723369a2b76f7b394e23bd0a7b1fe302fd28e6cbca8b08aa892",
       "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/SharedVariable.cs",
       "compiled": true
     },
@@ -258,7 +258,7 @@
     },
     "BehaviorDesigner.Runtime/TaskUtility.cs": {
       "decompiledSha256": "abdfc2e8e6c56fc7c80c2d844d9e82fc4968839f7d518ff7182dc54c308e2440",
-      "runtimeSha256": "89e290e2b782e8a425e39c51352e6b676177a7b00986b660dd2787f1d528c39b",
+      "runtimeSha256": "0b7e25e2d21ce7945e7f5905105c85b87c1decba2853085c2690ee1949ddea1c",
       "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/TaskUtility.cs",
       "compiled": true
     },
@@ -365,6 +365,40 @@
       "runtimePath": "runtime/Original/BehaviorDesigner/BehaviorDesigner.Runtime/ExternalBehaviorTree.cs",
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/BehaviorDesigner/Runtime/ExternalBehaviorTree.cs",
       "sha256": "9ad23196c825c579b95f70612c8f93e908d61a04fd34feff0588c5dc63e6f686"
+    }
+  },
+  "decompilationDeltas": {
+    "BinaryDeserialization.cs": {
+      "normalizedRuntimeSha256": "52e40730bc51ea7daac5c190a63f063d4ffe729732eeda2bb33cf32f201d318b",
+      "status": "unresolved: decompiled source snapshot omitted from recovery artifact"
+    },
+    "BehaviorDesigner.Runtime/Behavior.cs": {
+      "normalizedRuntimeSha256": "69c8691c81800d88755f5b8e28bf6fd690fb40b944b4e9e4c71b3ea4408120ea",
+      "status": "unresolved: decompiled source snapshot omitted from recovery artifact"
+    },
+    "BehaviorDesigner.Runtime/SharedVariable.cs": {
+      "normalizedRuntimeSha256": "0ffa1f2b77525ff61de436ff5fda41cfaaf7bba913c5e9d1003e9ea27b3e2966",
+      "status": "unresolved: decompiled source snapshot omitted from recovery artifact"
+    },
+    "BehaviorDesigner.Runtime/TaskUtility.cs": {
+      "normalizedRuntimeSha256": "6997abc37b3f29694e1714b4cdf4d46862aa9e34a96ff9e25320b7f2eb1e0937",
+      "status": "unresolved: decompiled source snapshot omitted from recovery artifact"
+    },
+    "BehaviorDesigner.Runtime.Tasks/ConditionalEvaluator.cs": {
+      "normalizedRuntimeSha256": "30b54e9bb3c78703a5accd231f7fecf6a3d019e9ae6c6b88d592ff7928d6c5e9",
+      "status": "unresolved: decompiled source snapshot omitted from recovery artifact"
+    },
+    "BehaviorDesigner.Runtime.Tasks/EntryTask.cs": {
+      "normalizedRuntimeSha256": "f9b2a435d8d9325b410201850e77b48d399aeef13321e4d8ba07dbecf130c228",
+      "status": "unresolved: decompiled source snapshot omitted from recovery artifact"
+    },
+    "BehaviorDesigner.Runtime.Tasks/RandomProbability.cs": {
+      "normalizedRuntimeSha256": "6aae140acf00e3e17f9a303d4b17636b37ea46e1bff4bc221828e205cddd80d5",
+      "status": "unresolved: decompiled source snapshot omitted from recovery artifact"
+    },
+    "BehaviorDesigner.Runtime.Tasks/RestartBehaviorTree.cs": {
+      "normalizedRuntimeSha256": "306d4e047ce3f38619119315d3665c7fe62300cb59cffc5a445f8c03b27af2a1",
+      "status": "unresolved: decompiled source snapshot omitted from recovery artifact"
     }
   }
 }

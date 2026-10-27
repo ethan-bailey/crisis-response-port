@@ -172,8 +172,8 @@
     "Casing.cs": {
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Casing.cs",
       "sha256": "eeed2cb0abbe5ea92ba50453b8a8a222e9983f02e81a7ff76649100b8aae81d8",
-      "runtimeSha256": "c4e1d228ee0905e8d340a9774a77bd01d75ea1c6cc6eae9cf36e44e80a8ddd7c",
-      "adaptation": "FullSource namespace wrapper only"
+      "runtimeSha256": "2aad3f80166e02ca80f7d5bd095d3124c76d5b03f88b8e51f96b63b710ad9617",
+      "adaptation": "FullSource namespace wrapper and Casing partial modifier for browser adapter"
     },
     "CellPhone.cs": {
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/CellPhone.cs",
@@ -1192,8 +1192,8 @@
     "Serializer.cs": {
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Serializer.cs",
       "sha256": "b7367dc25d1ef27bb186223bb111be0f30cdcce3e4d26894792e8183ebab581d",
-      "runtimeSha256": "1fe54f492260f75f48b2f97b5ad1825928690d183d18bce1469112877bcea76f",
-      "adaptation": "FullSource namespace wrapper, weapon namespace import and Unity Random/Object aliases"
+      "runtimeSha256": "a94ba7fca473ce16f10677594d48f9206f9b223ed07e59faecc07ab36a265cce",
+      "adaptation": "FullSource namespace wrapper, weapon namespace import, Unity aliases and save-directory creation adapter"
     },
     "ServerConnection.cs": {
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/ServerConnection.cs",
@@ -1971,8 +1971,8 @@
       "runtimePath": "runtime/Original/FullSource/Usage/Statistics.cs",
       "archiveEntry": "export/ExportedProject/Assets/Scripts/Assembly-CSharp/Usage/Statistics.cs",
       "sha256": "4667d48b437e32a462f0c133a0a24323f50ef43a7190a2ffafdd5154e92a53a2",
-      "runtimeSha256": "d245893d8a48ce1c61d1c11c2eb1e1fae9da977bb47692f1ec5c3d08f8549675",
-      "adaptation": "Original namespace preserved with FullSource import"
+      "runtimeSha256": "c6de828abbc45d8df9ce76dcfb052aefe298cb090fc7a62493291e26372cff93",
+      "adaptation": "Original namespace preserved with FullSource import and first-run client save"
     },
     "HTTPRequest.cs": {
       "runtimePath": "runtime/Original/FullSource/HTTPRequest.cs",
@@ -2073,6 +2073,13 @@
       "sha256": "4673f8c8b6b8072dc1956cadc47d39eb1ad854f101232d1c94dd52581585a131",
       "runtimeSha256": "4673f8c8b6b8072dc1956cadc47d39eb1ad854f101232d1c94dd52581585a131",
       "adaptation": "exact recovered source preserved as noncompiled reference"
+    }
+  },
+  "portAdapters": {
+    "CasingBrowserPhysicsAdapter.cs": {
+      "runtimePath": "runtime/Engine/CasingBrowserPhysicsAdapter.cs",
+      "sha256": "37529d8bf9d35cebc522ea35c43e346a1e9eb0f9d34af7a89928aa1b7b912324",
+      "kind": "browser adapter"
     }
   }
 }

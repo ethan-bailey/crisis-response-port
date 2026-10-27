@@ -3,7 +3,7 @@ namespace Crisis.Runtime.FullSource
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Casing : MonoBehaviour
+public partial class Casing : MonoBehaviour
 {
 	[Tooltip("Mass of the empty casing. In grams.")]
 	public float mass = 5f;
@@ -103,12 +103,6 @@ public class Casing : MonoBehaviour
 		Object.Destroy(audioSource);
 		Object.Destroy(rigidBody);
 		Object.Destroy(this);
-	}
-
-	/// <summary>Mirror the original OnCollisionStay disable path after browser PhysX sleeps this casing.</summary>
-	public void DisablePhysicsFromBrowser()
-	{
-		Disable();
 	}
 }
 
