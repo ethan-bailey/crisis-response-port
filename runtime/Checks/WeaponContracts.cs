@@ -2,7 +2,7 @@ using System.IO.Compression;using System.Reflection;using System.Text.Json;using
 public static class WeaponContracts {
  public static string Run(string path){
   var qualifierSlot=new Crisis.Runtime.FullSource.WeaponComponentSlot{componentQualifiers="M4"};
-  if(!qualifierSlot.QualifierMatch(null)||!qualifierSlot.QualifierMatch(string.Empty)||!qualifierSlot.QualifierMatch("M4A1")||qualifierSlot.QualifierMatch("Glock")) throw new Exception("Original slot qualifier matching changed null/empty or token semantics");
+  if(!qualifierSlot.QualifierMatch(null)||!qualifierSlot.QualifierMatch(string.Empty)||!qualifierSlot.QualifierMatch("M4")||qualifierSlot.QualifierMatch("Glock")) throw new Exception("Original slot qualifier matching changed null/empty or token semantics");
   var qualifierComponent=new Crisis.Runtime.FullSource.WeaponComponent{slotQualifiers="rail"};
   if(qualifierComponent.QualifierMatch(null)||qualifierComponent.QualifierMatch(string.Empty)||!qualifierComponent.QualifierMatch("rail")||qualifierComponent.QualifierMatch("optic")) throw new Exception("Original component qualifier matching changed null/empty or token semantics");
   using var stream=new GZipStream(File.OpenRead(path),CompressionMode.Decompress);var configRoot=System.Text.Json.Nodes.JsonNode.Parse(new StreamReader(stream).ReadToEnd())!.AsObject();configRoot["armPhysics"]=System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(Path.Combine(Path.GetDirectoryName(path)!,"original-arm-physics.json")));string config=configRoot.ToJsonString();

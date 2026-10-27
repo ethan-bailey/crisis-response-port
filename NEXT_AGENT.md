@@ -1,5 +1,10 @@
 # Crisis Response Port — continuation handoff (2026-10-27)
 
+## Latest exact-source attempt — run #121 (2026-10-27)
+
+- Exact SHA `1390af2e7db4ca24dafa7bf37aaf843ff17e5b60` ran as Actions #121 (`40440324867`). Independent Chromium IndexedDB/audio job `121978853027` passed. Main job `121978852778` stopped at runtime contracts because a newly added qualifier assertion expected substring matching (`M4A1`) while the original method matches split qualifier tokens; the source fix compiled but the Mission package/build acceptance was not reached.
+- Regression correction: assert the exact authored `M4` token, keep nonmatching `Glock`, null and empty cases. This changes only the test expectation; original source behavior and null-to-empty normalization are unchanged.
+
 ## Latest exact-source attempt — run #120 (2026-10-27)
 
 - Exact pushed SHA `79fddeb94e4ad4fe4550e0ff0f7ff5df28a7bdfd` ran as Actions #120 (`40439724709`). Chromium IndexedDB/audio job `121976902804` passed. Main job `121976902566` passed FoundationChecks after the compile-only stub repair, Release/WASM publication, and recovered source/index verification; the complete Mission package step failed inside the Mission source-entry contract.
@@ -157,6 +162,6 @@ Keep `fullGameParity:false`, `sourceVisualParity:false`, `nativeParityVerified:f
 
 ## Next action
 
-1. Push null-as-empty guards in both original weapon qualifier matchers and null/empty/token regressions using expected live HEAD `79fddeb94e4ad4fe4550e0ff0f7ff5df28a7bdfd`. Follow exact-SHA Actions through the packaged Mission source-entry contract, Release/WASM, profile/package integrity/retention, and Chromium IndexedDB/audio.
-2. After Mission actor/loadout initialization passes, continue browser spawn/grounded-pose acceptance separately; the qualifier fix does not by itself resolve airborne rendering. Continue Projectile/Casing spatial audio provenance and the missing script GUID/BehaviorDesigner source closures as independent batches.
-3. Do not publish. Site v85 remains last deployment; keep all parity flags false pending rendered/device acceptance.
+1. Push the qualifier regression correction (`M4` exact token, not `M4A1` substring) using expected live HEAD `1390af2e7db4ca24dafa7bf37aaf843ff17e5b60`. Follow exact-SHA Actions through runtime/foundation, the packaged Mission startup contract, Release/WASM, source profile/package integrity/retention, and Chromium IndexedDB/audio.
+2. If Mission startup passes, continue browser spawn/grounded-pose acceptance separately; the qualifier fix does not prove the airborne visual cause. Continue Projectile/Casing audio provenance and missing source GUID/BehaviorDesigner closures independently.
+3. Do not publish. Site v85 remains the last deployment; keep all parity flags false pending rendered/device acceptance.

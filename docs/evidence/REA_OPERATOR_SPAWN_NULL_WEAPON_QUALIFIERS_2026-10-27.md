@@ -13,3 +13,8 @@ Both original qualifier matchers already use `string.IsNullOrEmpty` to define th
 ## Acceptance and outstanding checks
 
 Run the focused source contract and broader checks on the exact pushed SHA through Actions: Node/Python/runtime/engine/foundation, Release/WASM, recovered source/profile/package integrity and retention, and independent Chromium IndexedDB/audio. Keep the new package Mission contract failure visible until that exact run passes. iPhone rendered spawn position, ground contact, operator pose, and apparent gameplay start remain separate owner/device acceptance; do not claim the qualifier fix resolves the airborne visuals.
+
+
+## Follow-up Actions run #121
+
+- SHA `1390af2e7db4ca24dafa7bf37aaf843ff17e5b60`; run `40440324867`. Chromium job `121978853027` passed. Main job `121978852778` failed before FoundationChecks: the new regression expected `M4A1` to match a `M4` qualifier, but the original implementation tokenizes qualifiers and compares each exact token. The test is corrected to use exact `M4` and retains null/empty/negative cases; no product matcher change is indicated by this failure.
