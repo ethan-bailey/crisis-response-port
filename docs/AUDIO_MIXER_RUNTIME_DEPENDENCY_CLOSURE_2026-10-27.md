@@ -36,3 +36,26 @@
 ## Local checkpoint
 
 - Mixer unit and production audio tests pass locally (Node 164/164, Python 49/49 at the mixer commit). The workspace has no `dotnet` executable; exact hosted run #115 passed the pinned build/runtime/package gates and closes this mixer batch at SHA `42e90ef66f75f253fa4f421efe1310cf03a1e0fe`.
+
+## Hidden startup adapter gap — Actions #136 (2026-10-27)
+
+The exact packaged Mission path passed mixer/source/archive preparation, verified
+all 1,919 profile assets, and then failed before enabling the Mission frame loop.
+The source startup snapshot correctly carried the mixer configuration and
+transitions, but the browser `createWeaponEffects` facade forwarded
+`updateSourceAudioMixer` and `updateSourceAudioStates` to an `audioStats` object
+that only implemented `snapshot`. The production `createWeaponAudioRuntime`
+already owns both methods. `createWeaponAudioStats` now delegates all three API
+calls, and the regression exercises the mixer configuration/event/source-time
+arguments, active state/time arguments, and return values while separately
+asserting that the production weapon adapter instantiates the facade.
+
+Focused mixer/audio tests pass 31/31, full Node contracts pass 169/169 after
+materializing the pinned PhysX package, and Python contracts pass 53/53 on the
+local source checkout based on `55648848ce427b272708f25fc32c8226da048b05`.
+The exact Release/WASM build, complete Mission package, and packaged browser
+startup for the repair are pending hosted CI on the pushed repair SHA. The
+previous Actions #136 / run `40485228497` failed specifically at
+`TypeError: audioStats.updateSourceAudioMixer is not a function`; its separate
+Chromium IndexedDB/audio job passed. This adapter repair does not establish
+Mission visual, iPhone speaker, spatial mixer, or native Unity audio parity.

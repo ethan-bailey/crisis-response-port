@@ -2,22 +2,32 @@
 
 ## Current live branch and verification status
 
-- Repository: `ethan-bailey/crisis-response-port`; branch `develop/wasm`; live head `1ff0012b90de4a33f6d0455820361af748de58da`; tree `d5a571aca04b5190e9f6d04d6439b54978685436`. This is the expected parent for the pending diagnostic harness batch. The local workspace is a separate stale/divergent checkout; do not reconcile/reset it. Preserve dirty `.github/workflows/source-contracts.yml`, `docs/CHARACTER_ANIMATION_EXECUTION_GAPS_2026-10-16.md`, untracked browser harness, and user temp archive. The .NET SDK 8.0.426 runtime is unavailable locally; use hosted pinned CI.
-- Current Site: v85, active, custom access policy revision 1, zero external visitors. No version saved, deployed or access policy changed.
+- Repository `ethan-bailey/crisis-response-port`, branch `develop/wasm`. Live remote HEAD is `55648848ce427b272708f25fc32c8226da048b05`, tree `fae5a231bb69127fe9088392b0dc1e17f3419456`. A clean detached worktree at that exact source SHA is `/workspace/scratch/crisis-response-port-live`; the original workspace at `/workspace/scratch/crisis-response-port-recovery` remains stale at `dc325dc` and has modified workflow/evidence/game files plus an untracked user archive. Preserve it; do not reset, merge, or overwrite those files. The pinned local .NET SDK is unavailable (`dotnet: command not found`); use hosted CI for SDK 8.0.426.
+- Site was previously verified at v85 with custom owner-only access, policy revision 1, and zero external visitors. This task does not publish or alter Site access.
 
-## Exact failed acceptance inspected
+## Latest exact-source result — Actions #136, SHA `55648848`
 
-Actions #135 (`40481392427`) ran source SHA `a24165c708846a36adc7688098f2cc9008782ccc` (ancestor of current live head). Main job `122112493275` passed Node/Python/runtime/browser-audio/engine/FoundationChecks, Release/WASM, source archive/index provenance, complete Mission package build/integrity/retention and full-profile IndexedDB work. Step 26 `Exercise FullSource Mission grounding on the packaged page` failed at `scripts/mission_grounding_browser_smoke.mjs:111` with `page.waitForFunction: Timeout 900000ms exceeded`; the retry never exposed a loaded game plus three synchronized-source coordinates within 15 minutes. Independent Chromium job `122112493569` passed IndexedDB/cache and production audio.
+Run `40485228497`, main job `122125219982`, tested exactly `55648848ce427b272708f25fc32c8226da048b05`. Node/Python/runtime/browser-audio/engine/FoundationChecks, pinned Release/WASM, recovered source/index provenance, complete Mission package integrity/retention, and profile IndexedDB loading passed. Full profile: 1,919 assets; transfer and hash verification finished in about 36.2 s. Packaged Mission startup then failed before the frame loop at the mixer handoff: `TypeError: audioStats.updateSourceAudioMixer is not a function` in `game/weapon-runtime.mjs`, called by `presentation.mjs` and `index.html` startup. `createWeaponEffects` forwarded two methods through `audioStats`, but that object exposed only `snapshot`. Independent Chromium job `122125219552` passed IndexedDB and production audio. Retained browser artifact `12725391858`, 188,281 bytes, SHA-256 `8c36d7c87df53a4195160c121dba39f10fca938e0d9b08801dfc00284dc83da2`.
 
-Artifact `12725000332` (179,609 bytes, SHA-256 `416f133be606c82403ffc901dd92c4a556264c37bebe383d8b47b2c37a71dec8`) contains diagnostics, but the GitHub connector’s bounded ZIP retrieval attempt failed because binary artifact downloads are not supported. The exact loader/actor stall stage remains **unknown**; no speculative runtime fix was made.
+## Prepared focused repair and local verification
 
-## Prepared batch, local checks and exact next action
+Added `game/weapon-audio-stats.mjs` as a narrow adapter over the existing production audio runtime. `createWeaponEffects` now creates that facade, and `scripts/weapon_audio_runtime_test.mjs` asserts the exact startup mixer/event/time and per-frame state/time arguments and return values, plus production wiring. This repairs the evidenced caller/callee mismatch without altering recovered assets, owners, event ordering, or physics.
 
-Prepared source changes add a five-minute retry-to-playable bound and 15-second compact CI checkpoints for progress/UI/error, source-loader stage/progress/audio/slowest fetch and bridge calls, actor state, grounding stage and timings. The test logs the final full diagnostics before failing and retains screenshot/JSON. It also asserts error copy clipboard equals visible HTTP 503 detail, actual retry resets progress, normal original FullSource initialization/grounding, KeyD movement/release and mobile-touch emulation remains at viewport scale 1. This is diagnostic and acceptance coverage, not gameplay parity or an inferred source correction.
+- Focused: `node --test scripts/weapon_audio_runtime_test.mjs scripts/source_audio_mixer_test.mjs` — **31/31 passed**.
+- Full Node: after `npm ci --prefix game --ignore-scripts` and `npm run --prefix game vendor`, `node --test scripts/*_test.mjs scripts/*_contracts.mjs` — **169/169 passed**.
+- Python: `python3 -m unittest discover -s scripts -p '*test.py'` — **53/53 passed**.
+- `git diff --check` passed before the final evidence edits; rerun before commit. Local .NET/Release/package is **not run** because the SDK is absent.
+- Repair/evidence edits currently live in detached worktree `/workspace/scratch/crisis-response-port-live`; they have not yet been committed or pushed. **Next action:** rerun `git diff --check`, commit the repair and evidence, push by fast-forward/expected-HEAD from `55648848ce427b272708f25fc32c8226da048b05`, verify remote HEAD/tree, then inspect the exact CI run and packaged Mission startup log for that SHA. Do not mark the source package/startup gate passed until that run succeeds.
 
-Local checks on the exact prepared contents passed: `node --check scripts/mission_grounding_browser_smoke.mjs`; `node --test scripts/*_test.mjs scripts/*_contracts.mjs` **168/168**; `python3 -m unittest discover -s scripts -p '*test.py'` **53/53**; workflow YAML parse; `git diff --check`. Actual package browser/.NET build acceptance is **pending** the next pushed SHA; local `dotnet --version` reports command not found.
+## Remaining dependency-ready work
 
-Next: push only the browser harness, workflow invocation/artifact retention and matching evidence updates to `develop/wasm` with expected HEAD `1ff0012b90de4a33f6d0455820361af748de58da`; verify the resulting remote SHA/tree, then inspect its exact Actions steps and log checkpoints. If it fails, repair only the substage evidenced in the log and rerun on a new exact SHA. While the run executes, continue an independent dependency-ready source/recovery task; do not stop at the pending gate. Do not publish/deploy. Keep every parity flag false.
+1. After the mixer repair is pushed, continue the separate joystick sizing/browser acceptance slice already present as local edits in the stale recovery checkout: inspect and transplant only the targeted CSS/test changes onto current live sources, then run browser-input and complete local suites before pushing.
+2. Use the repaired exact-package browser run to continue Mission startup, then inspect the real grounding telemetry and retained image before any source physics or render adjustment.
+3. Continue the source archive/decompiler and camera/audio-spatial closures; preserve exact-version requirements and record missing inputs once without repeating blocked searches.
+4. Continue actor/equipment, projectile/physiology, animation/IK, AI, rendering, particle, physics, audio and combined parity dependencies listed in `docs/GATE_DEPENDENCY_INDEX.md`. Keep platform/native/device claims deferred when evidence is unavailable; do not stop other work.
+5. Keep all parity flags false. Do not publish/deploy or alter access policy in this recurring engineering task.
+
+---
 
 ## Dependency order and open acceptance
 

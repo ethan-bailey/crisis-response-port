@@ -6,6 +6,7 @@ import { createOriginalWindowVisuals } from './original-window-visuals.mjs';
 import { createOriginalParticleEventBinding } from './original-particle-event-binding.mjs';
 import { createOriginalParticleRenderer } from './original-particle-renderer.mjs';
 import { createWeaponAudioRuntime, createSourceWeaponAudioDispatcher, preloadWeaponAudio } from './weapon-audio-runtime.mjs';
+import { createWeaponAudioStats } from './weapon-audio-stats.mjs';
 export async function loadWeaponData(){
  const r=await fetch('./assets/weapon-runtime.json.gz');if(!r.ok)throw new Error('Original weapon settings unavailable');
  const data=await new Response(r.body.pipeThrough(new DecompressionStream('gzip'))).json();
@@ -19,7 +20,7 @@ export async function loadWeaponData(){
 export function createWeaponEffects(data,scene,ballisticsData,sourceWindows,particleSources,runtimeCall){
  const audio=data.audioRuntime||createWeaponAudioRuntime(data.audio);
  for(const info of Object.values(ballisticsData?.effects||{}))for(const url of info.audio)audio.load(url,url);
- const audioStats={snapshot:()=>audio.snapshot()};
+ const audioStats=createWeaponAudioStats(audio);
  const fetchOriginalSourceAudio=async path=>JSON.parse(await runtimeCall('GetOriginalAudioAssetData',path));
  const reportOriginalAudioState=async(path,state)=>JSON.parse(await runtimeCall('SetOriginalAudioLoadState',path,state));
  const reportOriginalAudioPlaying=async(sourceId,isPlaying)=>JSON.parse(await runtimeCall('SetBrowserAudioSourcePlaying',sourceId,isPlaying));

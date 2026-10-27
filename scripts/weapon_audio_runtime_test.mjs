@@ -15,6 +15,24 @@ import {
   preloadWeaponAudio,
 } from '../game/weapon-audio-runtime.mjs';
 import { planSourceAudioVoices, rankSourceAudioVoices } from '../game/source-audio-voice-arbitration.mjs';
+import { createWeaponAudioStats } from '../game/weapon-audio-stats.mjs';
+
+test('weapon effects audio statistics forwards startup mixer and per-frame source snapshots', () => {
+  const calls=[];
+  const audio={
+    snapshot:()=>({loaded:true}),
+    updateSourceAudioMixer:(...args)=>{calls.push(['mixer',...args]);return 'mixer-result';},
+    updateSourceAudioStates:(...args)=>{calls.push(['states',...args]);return 'states-result';},
+  };
+  const stats=createWeaponAudioStats(audio);
+  const configuration={groups:[{fileID:'24300000'}]};
+  const events=[{fileID:'24500084',time:7}];
+  const states=[{sourceId:17,sourceTime:8}];
+  assert.deepEqual(stats.snapshot(),{loaded:true});
+  assert.equal(stats.updateSourceAudioMixer(configuration,events,7.5),'mixer-result');
+  assert.equal(stats.updateSourceAudioStates(states,8),'states-result');
+  assert.deepEqual(calls,[['mixer',configuration,events,7.5],['states',states,8]]);
+});
 
 test('Unity 2018.4 audio arbitration ranks priority first, then audibility, with a stable tie order', () => {
   const candidates = [
@@ -53,6 +71,8 @@ test('full-source frame snapshots are forwarded through the production game audi
     readFile(new URL('../game/presentation.mjs',import.meta.url),'utf8'),
     readFile(new URL('../game/weapon-runtime.mjs',import.meta.url),'utf8'),
   ]);
+  assert.match(weapon,/import \{ createWeaponAudioStats \} from '\.\/weapon-audio-stats\.mjs'/);
+  assert.match(weapon,/const audioStats=createWeaponAudioStats\(audio\)/);
   assert.match(page,/updateSourceAudioStates\(sourceActorSnapshot\.audioSourceStates,sourceActorSnapshot\.sourceTime\)/);
   assert.match(page,/updateSourceAudioMixer\(sourceActorSnapshot\.audioMixerConfiguration,sourceActorSnapshot\.audioMixerEvents,sourceActorSnapshot\.audioMixerTime\)/);
   const startupSnapshot=page.indexOf('sourceActorSnapshot=session.snapshot;');

@@ -1,5 +1,33 @@
 # Character animation and source actor execution status — refreshed 2026-10-27
 
+## Packaged Mission startup failure — Actions #136 (2026-10-27)
+
+Exact source SHA `55648848ce427b272708f25fc32c8226da048b05`, workflow run
+`40485228497`, main job `122125219982`. Node/Python/runtime/browser-audio,
+engine/FoundationChecks, pinned Release/WASM, recovered source/index provenance,
+the complete 1,919-asset Mission package/integrity check, package retention and
+full-profile IndexedDB loading all passed. The packaged FullSource Mission page
+also transferred and verified all 1,919 assets in about 36.2 seconds, then failed
+during original actor startup. The exact error was
+`TypeError: audioStats.updateSourceAudioMixer is not a function` from
+`game/weapon-runtime.mjs`, reached through `game/presentation.mjs` and the
+Mission start handler. `createWeaponEffects` exposed only `audioStats.snapshot`
+although its returned public API forwarded `updateSourceAudioMixer` and
+`updateSourceAudioStates` through that facade. The recovered audio runtime does
+implement both methods. The startup snapshot is consumed before the Mission
+frame loop; this is an adapter wiring defect, not an absent serialized mixer
+asset or transfer stall. Independent Chromium IndexedDB/audio job
+`122125219552` passed. Retained browser artifact `12725391858` is 188,281 bytes,
+digest `sha256:8c36d7c87df53a4195160c121dba39f10fca938e0d9b08801dfc00284dc83da2`.
+
+The repair introduces a narrow `createWeaponAudioStats` pass-through and a
+regression that asserts exact startup-mixer and per-frame-state arguments and
+return values, plus production facade wiring. The previous text-only contract
+checked the facade's outbound call but did not instantiate the object behind
+it. No original source, serialized identity, event ordering, or physics values
+are changed. Re-run the exact packaged Mission test and package gates on the
+repair SHA; do not treat the local regression alone as playable Mission parity.
+
 ## Current source/runtime path
 
 The normal Mission launch now uses the recovered original actor path. After the incremental Mission profile verifies, `RuntimeBridge.InitializeIncrementalEntryTeamMission` calls `BrowserEntryTeamMission.Start`, initializes Global Context/Mission and the source EntryTeam actor, and constructs `FullSourceActorBridge`. The page then ticks original input/controller/CharacterBody/weapon owners through `TickFullSourceActorBridge`, synchronizes the browser physics state back to the source actor, and renders the source actor transform hierarchy. The older initial playable preview still uses a narrower presentation host; it is not evidence of the post-download Mission actor.
