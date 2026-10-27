@@ -1,5 +1,9 @@
 # Crisis Response Port — continuation handoff (2026-10-27)
 
+## Parallel camera-source recovery result
+
+A bounded GitHub connector search found a non-authoritative candidate repository with matching Standard Assets Image Effects `.meta` GUIDs, but its Unity version is 5.6.2f1 while this source project is 2017.2.0f3. No source was adopted; exact source-recovery details and next action are now in `docs/CAMERA_POSTPROCESS_DEPENDENCY_CLOSURE_2026-10-26.md`. Custom `ExteriorCamera.cs` remains absent. Continue with the current packaged Mission acceptance while CI runs.
+
 ## Current packaged Mission failure/retry checkpoint
 
 - Live source SHA: `a24165c708846a36adc7688098f2cc9008782ccc`; live tree: `18933c0e3d99046134968b953fb48f15941019e4`. The expected-HEAD update from `5428a3167771b14e19782b102147843d293beaaf` succeeded. The code batch adds `scripts/mission_grounding_browser_smoke.mjs`, which drives the exact integrity-built Mission package in Chromium. Before the normal Mission run, its local package server returns one deliberate HTTP 503 for the first asset path under the exact Mission profile. The browser must show the actual error and retry controls, re-enable Start and close progress, then the actual Retry button must restart progress and complete the verified Mission load. It continues with grounding-stage and original locomotion observations. No source asset or serialized prefab/scene is substituted.
