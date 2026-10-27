@@ -585,6 +585,7 @@ async function frame(now){
    contactPhysics.data.character.movement.walkSpeed,contactPhysics.data.character.movement.sprintSpeed,rawActions.sprint).magnitude;
   sourceActorSnapshot=JSON.parse(await runtimeCall("TickFullSourceActorBridge",elapsed,JSON.stringify(rawActions),mouseX,mouseY,sourceMoveMagnitude));
   upperBody.playSourceAudioEvents(sourceActorSnapshot.audioEvents,sourceActorSnapshot.sourceTime);
+  upperBody.updateSourceAudioStates(sourceActorSnapshot.audioSourceStates,sourceActorSnapshot.sourceTime);
   upperBody.observeSourceParticleCommands(sourceActorSnapshot.particleEvents,sourceActorSnapshot.sourceTime,sourceActorSnapshot.droppedParticleEvents);
   const physics=sourceActorSnapshot.physics,step=contactPhysics.data.fixedDeltaTime,commands=physics.commands||[];
   originalCasingRuntime.consume(physics.worldCommands||[]);

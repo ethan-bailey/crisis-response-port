@@ -39,18 +39,32 @@ if(args.Length==1&&args[0]=="--browser-audio-event-contract"){
     var clip=new AudioClip("Assets/AudioClip/hurt-07.ogg",.4f);
     var listenerObject=new GameObject("Contract listener",world);listenerObject.transform.position=new Vector3(3f,4f,5f);listenerObject.AddComponent<AudioListener>();
     var go=new GameObject("Audio source",world);
-    var source=go.AddComponent<AudioSource>();source.clip=clip;source.volume=.4f;source.PlayOneShot(clip,.5f);var reportsPlaying=source.isPlaying;source.Stop();var stopped=source.isPlaying;
+    var source=go.AddComponent<AudioSource>();source.clip=clip;source.volume=.4f;source.minDistance=2f;source.maxDistance=12f;source.dopplerLevel=.5f;source.rolloffMode=2;source.pan2D=-.25f;
+    source.rolloffCustomCurve=new AnimationCurve(new Keyframe(0,1,0,0),new Keyframe(1,0,0,0));
+    source.PlayOneShot(clip,.5f);var reportsPlaying=source.isPlaying;
     using var events=JsonDocument.Parse(JsonSerializer.Serialize(queue.Drain()));
     var items=events.RootElement;
+    var sourceState=items[0].GetProperty("sourceState");
     if(items.GetArrayLength()!=2||items[0].GetProperty("action").GetString()!="oneShot"||
        items[0].GetProperty("sourceId").GetInt32()!=source.GetInstanceID()||
        MathF.Abs(items[0].GetProperty("volume").GetSingle()-.2f)>.001f||
-       items[0].GetProperty("sourceTransform").GetProperty("position")[0].GetSingle()!=0f||
-       items[0].GetProperty("activeListenerCount").GetInt32()!=1||
-       items[0].GetProperty("listenerTransform").GetProperty("ownerName").GetString()!="Contract listener"||
-       items[0].GetProperty("listenerTransform").GetProperty("position")[2].GetSingle()!=5f||
-       items[1].GetProperty("action").GetString()!="stop"||items[1].GetProperty("sourceId").GetInt32()!=source.GetInstanceID()||!reportsPlaying||stopped)
+       sourceState.GetProperty("sourceTransform").GetProperty("position")[0].GetSingle()!=0f||
+       sourceState.GetProperty("activeListenerCount").GetInt32()!=1||
+       sourceState.GetProperty("listenerTransform").GetProperty("ownerName").GetString()!="Contract listener"||
+       sourceState.GetProperty("listenerTransform").GetProperty("position")[2].GetSingle()!=5f||
+       sourceState.GetProperty("minDistance").GetSingle()!=2f||sourceState.GetProperty("maxDistance").GetSingle()!=12f||
+       sourceState.GetProperty("dopplerLevel").GetSingle()!=.5f||sourceState.GetProperty("rolloffMode").GetInt32()!=2||
+       sourceState.GetProperty("rolloffCustomCurve").GetProperty("keys").GetArrayLength()!=2||!reportsPlaying)
         throw new InvalidOperationException($"Browser audio bridge lost source identity, source gain, or stop order: {items}");
+    go.transform.position=new Vector3(1f,0f,0f);
+    using var activeStates=JsonDocument.Parse(JsonSerializer.Serialize(queue.ActiveSourceStates()));
+    if(activeStates.RootElement.GetArrayLength()!=1||activeStates.RootElement[0].GetProperty("sourceId").GetInt32()!=source.GetInstanceID()||
+       activeStates.RootElement[0].GetProperty("sourceTransform").GetProperty("position")[0].GetSingle()!=1f)
+        throw new InvalidOperationException($"Active source state did not stream its updated transform: {activeStates.RootElement}");
+    source.Stop();var stopped=!source.isPlaying;
+    using var stoppedStates=JsonDocument.Parse(JsonSerializer.Serialize(queue.ActiveSourceStates()));
+    if(items[1].GetProperty("action").GetString()!="stop"||items[1].GetProperty("sourceId").GetInt32()!=source.GetInstanceID()||!stopped||stoppedStates.RootElement.GetArrayLength()!=0)
+        throw new InvalidOperationException($"Source Stop did not clear the active source state: events={items},states={stoppedStates.RootElement}");
     var pressureWorld=new RuntimeWorld();var pressureQueue=new Crisis.Runtime.BrowserAudioEventQueue();pressureWorld.AudioSourceDriver=pressureQueue;
     var pressureSource=new GameObject("Saturated audio source",pressureWorld).AddComponent<AudioSource>();pressureSource.clip=clip;
     for(var index=0;index<64;index++)pressureSource.PlayOneShot(clip);

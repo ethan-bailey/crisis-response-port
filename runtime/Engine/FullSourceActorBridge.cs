@@ -393,6 +393,7 @@ public sealed class FullSourceActorBridge
                     !casing && !casingBody ? CasingState(item.Key, item.Value, null, true) : null;
             }).Where(item => item != null).ToArray(),
             audioEvents,
+            audioSourceStates = audioEventQueue?.ActiveSourceStates() ?? Array.Empty<object>(),
             droppedAudioEvents = audioEventQueue?.DroppedEvents ?? 0,
             particleEvents,
             droppedParticleEvents = (world.ParticleSystemDriver as BrowserParticleEventQueue)?.DroppedEvents ?? 0,

@@ -12,6 +12,66 @@ import {
   createWeaponAudioRuntime,
   preloadWeaponAudio,
 } from '../game/weapon-audio-runtime.mjs';
+import { planSourceAudioVoices, rankSourceAudioVoices } from '../game/source-audio-voice-arbitration.mjs';
+
+test('Unity 2018.4 audio arbitration ranks priority first, then audibility, with a stable tie order', () => {
+  const candidates = [
+    { id:'quiet-important', priority:5, audibility:.01, sequence:4 },
+    { id:'loud-ordinary', priority:40, audibility:1, sequence:1 },
+    { id:'quiet-ordinary', priority:40, audibility:.1, sequence:2 },
+    { id:'same-audibility-first', priority:128, audibility:.5, sequence:3 },
+    { id:'same-audibility-second', priority:128, audibility:.5, sequence:5 },
+  ];
+  assert.deepEqual(rankSourceAudioVoices(candidates).map(item=>item.id), [
+    'quiet-important','loud-ordinary','quiet-ordinary','same-audibility-first','same-audibility-second',
+  ]);
+  const allocation=planSourceAudioVoices(candidates,2);
+  assert.deepEqual(allocation.real.map(item=>item.id),['quiet-important','loud-ordinary']);
+  assert.deepEqual(allocation.virtual.map(item=>item.id),['quiet-ordinary','same-audibility-first','same-audibility-second']);
+});
+
+test('active source snapshots reach the audio runtime each frame and reject malformed updates atomically', async () => {
+  const runtime=createWeaponAudioRuntime({}, {AudioContextClass:FakeAudioContext});
+  const state={sourceId:19,priority:5,sourceTransform:{position:[1,2,3]}};
+  assert.equal(runtime.updateSourceAudioStates([state],3.5),true);
+  assert.equal(runtime.snapshot().sourceStateFrames,1);
+  assert.equal(runtime.snapshot().sourceStateErrors,0);
+  assert.equal(runtime.snapshot().activeSourceStateCount,1);
+  assert.equal(runtime.snapshot().sourceStateTime,3.5);
+  assert.equal(runtime.updateSourceAudioStates([{...state,sourceTransform:{position:[1,2]}}],4),false);
+  assert.equal(runtime.snapshot().activeSourceStateCount,1,'malformed frame must not replace the last complete snapshot');
+  assert.equal(runtime.snapshot().sourceStateErrors,1);
+  assert.equal(runtime.updateSourceAudioStates([],4.5),true);
+  assert.equal(runtime.snapshot().activeSourceStateCount,0,'an empty active set clears stale source poses');
+});
+
+test('full-source frame snapshots are forwarded through the production game audio adapter', async () => {
+  const [page,presentation,weapon]=await Promise.all([
+    readFile(new URL('../game/index.html',import.meta.url),'utf8'),
+    readFile(new URL('../game/presentation.mjs',import.meta.url),'utf8'),
+    readFile(new URL('../game/weapon-runtime.mjs',import.meta.url),'utf8'),
+  ]);
+  assert.match(page,/updateSourceAudioStates\(sourceActorSnapshot\.audioSourceStates,sourceActorSnapshot\.sourceTime\)/);
+  assert.match(presentation,/updateSourceAudioStates\(states,sourceTime\)\{effects\.updateSourceAudioStates\(states,sourceTime\);\}/);
+  assert.match(weapon,/updateSourceAudioStates:\(states,sourceTime\)=>audioStats\.updateSourceAudioStates\(states,sourceTime\)/);
+});
+
+test('voice arbitration selects exactly 64 real voices from a 513-candidate deterministic profile', () => {
+  const candidates=Array.from({length:513},(_,index)=>({id:index,priority:index%256,
+    audibility:(index%101)/100,sequence:index}));
+  const allocation=planSourceAudioVoices(candidates,64);
+  const ranked=rankSourceAudioVoices(candidates);
+  assert.equal(allocation.real.length,64);
+  assert.equal(allocation.virtual.length,449);
+  assert.ok(allocation.real.every((voice,index)=>voice===ranked[index]));
+  assert.equal(allocation.real[0].priority,0);
+});
+
+test('source voice ranking rejects invalid priority and incomplete audibility estimates', () => {
+  assert.throws(()=>rankSourceAudioVoices([{priority:256,audibility:1}]),/priority/);
+  assert.throws(()=>rankSourceAudioVoices([{priority:1,audibility:Number.NaN}]),/audibility/);
+  assert.throws(()=>planSourceAudioVoices([], -1),/Real voice count/);
+});
 
 function methodBody(source, signature) {
   const start=source.indexOf(signature);

@@ -55,9 +55,11 @@ export function createWeaponAudioRuntime(audioData, { AudioContextClass, fetchAu
   const buffers = new Map();
   const loadingAudio = new Map();
   const decodedBytes = new Map(),lastUsed = new Map(),pendingSourceEvents=new Map(),activeSources=new Map(),activeSourceKinds=new WeakMap(),sourceReporters=new Map();
+  let latestSourceAudioStates = new Map(),latestSourceAudioStateTime=null;
   const stats = { played: 0, droppedSuspended: 0, droppedUnloaded: 0, droppedStale: 0,
     decodeErrors: 0, unlockFailures: 0, unmappedSourceEvents: 0,sourceDecodeErrors:0,
     sourceDecodeRequests:0,sourceDecodeCoalesced:0,sourceEventsDropped:0,sourceEventsPending:0,
+    sourceStateFrames:0,sourceStateErrors:0,
     sourceBytesDecoded:0,peakDecodedSourceBytes:0,sourceStops:0,sourceLoopEvents:0 };
   const outputGain = context?.createGain() ?? null;
   const limiter = context?.createDynamicsCompressor() ?? null;
@@ -250,10 +252,24 @@ export function createWeaponAudioRuntime(audioData, { AudioContextClass, fetchAu
     return { ...stats, contextState: context?.state ?? 'unavailable',
       outputGain: outputGain?.gain.value ?? 0, maxOutputGain: MAX_WEAPON_OUTPUT_GAIN,
       loadedBuffers: buffers.size, pendingBuffers: loadingAudio.size,
-      decodedAudioBytes:[...decodedBytes.values()].reduce((a,b)=>a+b,0),maxDecodedAudioBytes:MAX_DECODED_SOURCE_AUDIO_BYTES };
+      decodedAudioBytes:[...decodedBytes.values()].reduce((a,b)=>a+b,0),maxDecodedAudioBytes:MAX_DECODED_SOURCE_AUDIO_BYTES,
+      sourceStateFrames:stats.sourceStateFrames,sourceStateErrors:stats.sourceStateErrors,
+      activeSourceStateCount:latestSourceAudioStates.size,sourceStateTime:latestSourceAudioStateTime };
   }
 
   function noteUnmappedSourceEvent() { stats.unmappedSourceEvents++; }
+
+  function updateSourceAudioStates(states,sourceTime){
+    if(!Array.isArray(states)||!Number.isFinite(sourceTime)){stats.sourceStateErrors++;return false;}
+    const next=new Map();
+    for(const state of states){
+      const position=state?.sourceTransform?.position;
+      if(!Number.isInteger(state?.sourceId)||!Number.isInteger(state?.priority)||state.priority<0||state.priority>255||
+        !Array.isArray(position)||position.length!==3||position.some(value=>!Number.isFinite(value))){stats.sourceStateErrors++;return false;}
+      next.set(state.sourceId,state);
+    }
+    latestSourceAudioStates=next;latestSourceAudioStateTime=sourceTime;stats.sourceStateFrames++;return true;
+  }
 
   return { context, load, play, snapshot, unlock, noteUnmappedSourceEvent,
     loadOriginalSource:(path,fetchSource,reportState)=>decodeSource(path,fetchSource,reportState),
@@ -268,7 +284,7 @@ export function createWeaponAudioRuntime(audioData, { AudioContextClass, fetchAu
       const residentSet=new Set(resident);
       return {loaded:resident,decoded:decodedPaths,evicted:decodedPaths.filter(path=>!residentSet.has(path)),failed:[...new Set(failed)],...snapshot()};
     },
-    playOriginalSourceEvent,playLoadedSourceEvent,playMappedSourceEvent,stopSource };
+    playOriginalSourceEvent,playLoadedSourceEvent,playMappedSourceEvent,stopSource,updateSourceAudioStates };
 }
 
 function performanceNow(){return globalThis.performance?.now?.()??Date.now();}
