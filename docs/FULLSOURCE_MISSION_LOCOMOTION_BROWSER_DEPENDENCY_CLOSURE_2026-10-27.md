@@ -116,7 +116,32 @@ this failure.
 The follow-up source commit
 `d202f150789c3c4e6c63bc5c6a67b72f26db411b` adds the actual returned force
 vector to bounded frame and timeout evidence. Exact Actions #154
-(`40534716763`) is in progress. Inspect its packaged browser artifact next. If
-the vector is absent, trace the bridge response boundary; keep movement
-acceptance failed. Reload-pose acceptance remains contingent on reaching the
-post-locomotion reload section of the browser flow.
+(`40534716763`) completed on 2026-10-27. Pinned .NET 8.0.426 contracts,
+Release/WASM build/publish, recovered-source provenance, full Mission package
+integrity, IndexedDB acceptance and independent Chromium cache/audio passed.
+Only packaged FullSource Mission browser step 29 failed. Retained browser
+artifact `12748007859` has digest
+`sha256:85c7c075c068002594064ef20a78beb550697c8e0fc8dc7d67695e9d8360f0b0`;
+report SHA-256 is `ad4ce53c51372ef5300b2e02f0740c788cc4ec9d569e3acb2f4f51f705d63acb`,
+and screenshot SHA-256 is
+`e9d7954115efdf39614a5b5aef55d9a4eeff1e832b6cfbcd13903168e3a74acf`.
+
+The exact failure still requires authored locomotion after Left input. Unlike
+#153, the report now includes the original force vector: input is true and
+`CharacterBody.FixedUpdate` emits `ForceMode.Acceleration` `[-22.499994,0,0]`;
+the source/contact pose is synchronized, but velocity is about `-3.93e-7`,
+`MovementDelta=-0.025131702`, source `IsMoving=false`, and the Animator remains
+`Body stand`. The initial 0.125m X displacement satisfied the smoke's position
+threshold but was not source movement; subsequent position changes also did
+not meet the original movement/Animator predicate. The page error list is
+empty. Do not weaken the source predicate or alter the force/collision model.
+
+Recovered source confirms `CharacterBody.IsMoving` is
+`Mathf.Abs(MovementDelta) > Time.deltaTime * 0.1f` and `UpdateAnimation()`
+samples it before `LateUpdate()` updates `MovementDelta`. The next diagnostic
+batch exposes source `Time.deltaTime`, the exact computed threshold, and
+`Time.fixedDeltaTime` in `movementState`, with a regression tied to this
+original predicate. Compare those values against the observed delta first;
+only then trace PhysX/contact or source synchronization if the time threshold
+does not explain the false flag. Reload pose/audio remains untested in #154
+because the browser flow stops at locomotion.
