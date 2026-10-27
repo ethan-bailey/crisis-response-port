@@ -1,10 +1,11 @@
 # Crisis Response Port — continuation handoff (2026-10-27)
 
-## Latest verified exact-source checkpoint — run #114 (2026-10-27)
+## Latest verified exact-source checkpoint — run #115 (2026-10-27)
 
-- Public `develop/wasm` SHA `c8d4db1b85072c9c9f6ba54fdee9ab402c61b268` passed Actions run #114 (`40430920970`). Main job `121948085779` and independent Chromium job `121948086107` both succeeded, including pinned Release/WASM, source recovery/index, complete Mission package integrity and retention, full-profile IndexedDB, and production Chromium audio.
-- Retained artifact `12701986431`: 138,589,626 bytes, SHA-256 `84706df6be68cc2e953b193c6b6ada0b27fa4965782a43aa3586bfe0c09882a5`, expires 2026-11-10. This is not a Site deployment. Site v85 is the last deployed version; no release or parity flag changed.
-- Run #114 closes the production 64-real/512-virtual voice-allocation batch at that exact SHA. The prior exact run #113 (`40429556962`, SHA `304278db13aabfe90b639e5a3120f7c853ab28f7`) also passed its package and Chromium gates.
+- Public `develop/wasm` SHA `42e90ef66f75f253fa4f421efe1310cf03a1e0fe` passed Actions run #115 (`40434187934`). Main job `121958819953` and independent Chromium job `121958820128` both succeeded. The pinned .NET SDK 8.0.426 source build, Release/WASM, recovered source/index, complete Mission package verifier/retention, full-profile IndexedDB and production Chromium audio all passed.
+- Package verifier: `status=verified`, exact source SHA `42e90ef...`, 2,688 files / 199 Blazor resources / 195 WASM files; Mission profile 1,919 assets / 22,365 records / 97,767,549 compressed bytes / 205,514,345 source bytes. Source-index SHA-256 `9d866276582031d440c316c8e60d69d252506cf67a8ae9d03dbdbe0d91980f92`; recovery archive SHA-256 `cc94b34da675969f881df10158d6c1b9c161cbcf620b5c0aea71c0cea4bc3a1d`.
+- Retained artifact `12703765727`: 138,599,551 bytes, SHA-256 `69e5c44c0e202503e11927c14015b38778f640da54242e7a4dbc2d5e25ab23a1`, expires 2026-11-10. Full-profile Chromium persisted 1,919/1,919 assets; first load 13,552 ms; cached reload 10,333 ms; 1,919 initial network assets, zero warm network assets, 1,919 verified warm hits. Independent production Chromium audio decoded seven source clips and measured peak analyser RMS `0.16220188828971008`. This models the Blazor bridge, not iPhone Safari/audio.
+- Run #114 (`40430920970`, SHA `c8d4db1...`) remains the exact pass that closed the 64-real/512-virtual allocator. Run #115 closes the source mixer routing/snapshot batch. Site v85 remains the last deployment; no publish or parity flag changed.
 - Local-only untracked `scene-data/.crisis-response-scenes.json.gz.X1Mw6M` is unrelated; preserve and do not commit it.
 
 ## Active bounded implementation batch — complete source mixer route
@@ -12,8 +13,14 @@
 - Pre-implementation dependency inventory and source audit: `docs/AUDIO_MIXER_RUNTIME_DEPENDENCY_CLOSURE_2026-10-27.md`, alongside the voice/listener inventory in `docs/AUDIO_VOICE_ARBITRATION_DEPENDENCY_CLOSURE_2026-10-27.md`. Recovered mixer source SHA is `73854ffc3e2e052fc521e3cee96310c561d039c21660664b92c25b66734a1250`; it contains 19 groups and five snapshots with 47 values each.
 - Local code hydrates all sibling groups/snapshots when a mixer object is resolved; transports original group GUID + fileID and source snapshot transition fields; uses Unity unscaled realtime for mixer interpolation; applies snapshot volume/pitch along the group parent chain to browser output and voice ranking. The Mission receives the one-time graph/startup transitions in `session.snapshot`; the page consumes that before the first per-frame tick. A regression assertion covers this call order.
 - Exposed `AudioMixer.SetFloat` callers still return `false` because their strings do not match the five recovered exposed names. Unknown group IDs fail open to neutral and are counted. SpatialBlend is absent; distance, Doppler, velocity, PannerNode, sends/effects DSP, native mixer behavior, and physical iPhone output are not claimed.
-- Local verification on the current mixer tree: Node 164/164, Python 49/49, and `git diff --check` pass. The direct source-fixture test traverses all five recovered `.mixer` snapshots through the Mission music group. There is no local `dotnet`; the hosted pinned build is mandatory.
-- The complete mixer batch and its closure documents are committed locally; the final amended SHA is not yet pushed or hosted-verified. Run #115 is required on that exact SHA; Site v85 remains deployed.
+- Local verification on the pushed mixer tree: Node 164/164, Python 49/49 at push time, and `git diff --check` pass. The direct source-fixture test traverses all five recovered `.mixer` snapshots through the Mission music group. There is no local `dotnet`; exact hosted run #115 supplied the pinned build/package proof.
+- Exact run #115 passed every source, package, cache and Chromium audio gate on the pushed mixer SHA; the source-mixer batch is closed at that exact SHA. Do not treat this as full audio or Site parity.
+
+## Next dependency closure — audio spatialization inventory (2026-10-27)
+
+- A repeatable source scanner and fixture tests now cover the selected 1,919-asset Mission package (source package SHA `ea3592ff5bdd39534bb905cd0abac74f456578b46eb4b12cdd0cb79fe8520cf7`). It found 231 serialized AudioSource definitions: all omit serialized `SpatialBlend`; all include `DopplerLevel`, min/max distance, `Pan2D`, rolloff mode and custom curves. Doppler is 0 for 110 / 1 for 121; rolloff enum counts are 0:79 / 1:150 / 2:2. The compressed component inventory is `docs/audio/MISSION_SOURCE_AUDIO_SOURCES_2026-10-27.json.gz`, SHA-256 `28f16496f7233e81144e346bcfe31bfbc37fdbfd0d345fe39afcf6542ebb4118`.
+- The selected profile contains four AudioListener records and eight Mission AudioReverbZones. Browser bridge emits source/listener positions, forward and rotation but no velocities; source hierarchy / moving-parent provenance is not yet closed. `Spatialize` is a plugin toggle and is not SpatialBlend.
+- Local scanner tests pass 2/2; complete Python suite passes 51/51. The Unity 2018.4 manual/API define blend semantics (0=2D, 1=3D) but not this project's omitted-field default. The recovered project snapshot lacks `ProjectVersion.txt` and a native editor fixture, so do not set a guessed default or implement guessed attenuation. Full dependency and next action: `docs/AUDIO_SPATIAL_RUNTIME_DEPENDENCY_CLOSURE_2026-10-27.md`.
 
 ## Prior exact package checkpoint — run #104 and earlier history
 
@@ -30,7 +37,7 @@
 
 ## Remaining gates, dependency order
 
-1. **Voice/mixer/spatialization runtime:** listener selection and source lifecycle are now instrumented; implement dependency-complete voice arbitration, group/snapshot routing and browser spatial output contracts. Keep false mixer setters and missing SpatialBlend/unsupported DSP explicit. Run exact source-to-WASM/package and both Chromium gates.
+1. **Voice/mixer/spatialization runtime:** #114 passed voice arbitration; mixer routing is at pushed `42e90ef` pending #115. Then establish the Unity version and omitted-field default for SpatialBlend, trace source/listener velocity provenance and close custom rolloff/panning/Doppler/reverb-zone dependencies. Keep false mixer setters and unsupported DSP explicit.
 2. **Interactive gameplay and real-device input/audio:** validate proportional walk, rim-resistance sprint, absolute vertical aim, aim-before-fire, sustained-fire movement, reload timing/sound, tap-zoom suppression, audio output and cold/warm storage in physical iPhone Safari. Chromium does not close this gate.
 3. **Actor/mission/combat lifecycle:** validate interactive actors, ownership/destruction, transitions and the full fire/reload/impact/injury/bleeding/oxygen/shock/unconsciousness/death/ragdoll chain against original source behavior.
 4. **NPC/animation/IK/rendering/particles/native physics:** close recovered dependency sets, authored curves, camera/shader/effect behavior, joints/forces and pixel/device comparisons; record unsupported APIs and unrecovered assets explicitly.
@@ -41,7 +48,7 @@
 - Exact Actions run #97 (`40409209243`) on `7d3839ae398995d64d072288828069c6df569284`: Node/Python, runtime contracts, Browser audio contracts, EngineChecks, FoundationChecks, Release source build, WASM publish and WASM output verification all passed. The exact Mission EntryTeam package build then failed its `--browser-entryteam-session-contract` assertion at `runtime/Checks/Program.cs:129`. The source event correctly reported gain `0.148`, because the authored AudioSource volume is `0.4` and `PlayOneShot` volumeScale is `0.37`; the contract incorrectly expected `0.37`. Run #97 independent Chromium job `121874961464` passed. Complete package verification/retention, archive integrity and full-profile browser steps were skipped, so this is not an exact package pass.
 - Repair now clears earlier queued scene audio before measuring saturation, asserts the cumulative drop count relative to baseline, and expects `clamp(sourceAudio.volume * 0.37, 0, 1)`. This preserves source-level gain semantics; it does not weaken the 64-event bound, clip identity or source-time assertions.
 - Local validation after patch: Node 147/147, Python 49/49, and `git diff --check` passed. This workspace has no .NET SDK, so the source compile and contract repair requires exact Actions.
-- The voice/mixer dependency inventory is in `docs/AUDIO_VOICE_AND_MIXER_DEPENDENCY_CLOSURE_2026-10-26.md`, including the 64 real / 512 virtual limits, 19 groups and full parent/child tree, five snapshots, full-project source priority/group counts, Mission listener state, missing serialized spatialBlend, current event/voice lifecycle and acceptance matrix. Do not start voice/spatial/mixer implementation until dynamic audio package gates pass and the serialized mixer setter-name discrepancy is resolved.
+- Historical plan superseded by the completed #114 voice run and pushed mixer run #115: the voice/mixer inventory remains in `docs/AUDIO_VOICE_AND_MIXER_DEPENDENCY_CLOSURE_2026-10-26.md`; spatial dependencies are further closed in `docs/AUDIO_SPATIAL_RUNTIME_DEPENDENCY_CLOSURE_2026-10-27.md`. Mixer setter names remain mismatched and must keep returning false; no guessed aliases.
 
 ## Newest exact checkpoint — corrected inventory source SHA passed
 
@@ -113,6 +120,6 @@ Keep `fullGameParity:false`, `sourceVisualParity:false`, `nativeParityVerified:f
 
 ## Next action
 
-1. Push the final local mixer commit to `develop/wasm` using a lease against exact old head `c8d4db1b85072c9c9f6ba54fdee9ab402c61b268`; verify the remote head and workflow SHA.
-2. Require the exact SHA's pinned Release/WASM, source-index, Mission package integrity/retention, full-profile IndexedDB and production Chromium audio jobs to pass. Repair and rerun failures on the repaired SHA; capture artifact ID, byte count, digest and expiry.
-3. After that checkpoint, inventory/implement the next complete audio dependency closure (SpatialBlend, attenuation, Doppler, velocities, pan) and continue independent camera/render/particle/physics gates. Keep deployment blocked until exact Site-source identity and archive integrity pass.
+1. Finish and record run #115 on exact SHA `42e90ef66f75f253fa4f421efe1310cf03a1e0fe`; verify both jobs and retained artifact digest. Repair/rerun any failed gate.
+2. Commit and push the source-spatial inventory plus scanner, bind it to its exact Mission profile/hash, and close velocity source provenance. The missing SpatialBlend default has a concrete evidence gap (no recovered ProjectVersion or native editor fixture); continue independent camera/render/particle/physics closures while that is documented.
+3. Implement spatial audio only after that dependency set is evidenced; then run exact Release/WASM/package/IndexedDB/Chromium gates on the implementation SHA. Keep deployment blocked until exact Site-source identity and archive integrity pass.
