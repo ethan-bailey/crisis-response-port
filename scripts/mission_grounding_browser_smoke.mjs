@@ -225,24 +225,30 @@ try {
   assert.ok(sprintPuck.x > sprintPuck.rim + sprintPuck.radius, 'the sprint puck must fully break through the outer rim');
   await page.mouse.up();
   assert.equal(await movementStick.evaluate(surface => surface.classList.contains('sprinting')), false, 'releasing the stick must clear the sprint wall state');
-  const walkStart = state.playerX;
-  await page.keyboard.down('KeyD');
+  // The pre-interaction state snapshot predates the joystick sprint test.
+  // Capture the actual actor after sprint release, then walk back through the
+  // clear spawn-side corridor so the authored movement check is not already
+  // satisfied by the prior sprint or stalled against the counter collision.
+  const walkStart = await page.evaluate(() => window.__gameState().playerX);
+  await page.keyboard.down('KeyA');
   await page.waitForFunction(start => {
     const current = window.__gameState?.();
-    return current?.originalInput?.right?.Pressed && current.playerX > start + 0.1;
+    return current?.originalInput?.left?.Pressed && current.playerX < start - 0.1;
   }, walkStart, { timeout: 30000 });
-  await page.waitForFunction(() => ['Body walk', 'Body sprint'].includes(window.__gameState?.().animation), null, { timeout: 30000 });
+  await page.waitForFunction(() =>
+    ['Body walk', 'Body walk backward', 'Body sprint'].includes(window.__gameState?.().animation),
+    null, { timeout: 30000 });
   const moving = await page.evaluate(() => window.__gameState());
-  await page.keyboard.up('KeyD');
+  await page.keyboard.up('KeyA');
   await page.waitForFunction(() => {
     const current = window.__gameState?.();
     return current && Math.abs(current.velocity) < 0.05 && current.animation === 'Body stand';
   }, null, { timeout: 30000 });
   const stopped = await page.evaluate(() => window.__gameState());
-  assert.ok(moving.playerX > walkStart + 0.1, 'original Mission input must move the source actor through contact synchronization');
-  assert.ok(['Body walk', 'Body sprint'].includes(moving.animation), 'source movement must select a recovered authored locomotion clip');
+  assert.ok(moving.playerX < walkStart - 0.1, 'original Mission input must move the source actor through contact synchronization in the clear spawn-side corridor');
+  assert.ok(['Body walk', 'Body walk backward', 'Body sprint'].includes(moving.animation), 'source movement must select a recovered authored forward, backward, or sprint locomotion clip');
   assert.ok(Number.isFinite(stopped.playerX), 'released Mission actor must retain a finite source position');
-  assert.equal(stopped.originalInput?.right?.Pressed, false, 'released browser input must reach the original source controller');
+  assert.equal(stopped.originalInput?.left?.Pressed, false, 'released browser input must reach the original source controller');
   assert.deepEqual(pageErrors, [], 'Mission walk/release must not throw browser runtime errors');
 
   const reloadBefore = await page.evaluate(() => ({
