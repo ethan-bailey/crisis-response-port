@@ -45,7 +45,7 @@ if(args.Length==1&&args[0]=="--browser-audio-event-contract"){
     using var events=JsonDocument.Parse(JsonSerializer.Serialize(queue.Drain()));
     var items=events.RootElement;
     var sourceState=items[0].GetProperty("sourceState");
-    if(items.GetArrayLength()!=2||items[0].GetProperty("action").GetString()!="oneShot"||
+    if(items.GetArrayLength()!=1||items[0].GetProperty("action").GetString()!="oneShot"||
        items[0].GetProperty("sourceId").GetInt32()!=source.GetInstanceID()||
        MathF.Abs(items[0].GetProperty("volume").GetSingle()-.2f)>.001f||
        sourceState.GetProperty("sourceTransform").GetProperty("position")[0].GetSingle()!=0f||
@@ -62,9 +62,10 @@ if(args.Length==1&&args[0]=="--browser-audio-event-contract"){
        activeStates.RootElement[0].GetProperty("sourceTransform").GetProperty("position")[0].GetSingle()!=1f)
         throw new InvalidOperationException($"Active source state did not stream its updated transform: {activeStates.RootElement}");
     source.Stop();var stopped=!source.isPlaying;
+    using var stoppedEvents=JsonDocument.Parse(JsonSerializer.Serialize(queue.Drain()));
     using var stoppedStates=JsonDocument.Parse(JsonSerializer.Serialize(queue.ActiveSourceStates()));
-    if(items[1].GetProperty("action").GetString()!="stop"||items[1].GetProperty("sourceId").GetInt32()!=source.GetInstanceID()||!stopped||stoppedStates.RootElement.GetArrayLength()!=0)
-        throw new InvalidOperationException($"Source Stop did not clear the active source state: events={items},states={stoppedStates.RootElement}");
+    if(stoppedEvents.RootElement.GetArrayLength()!=1||stoppedEvents.RootElement[0].GetProperty("action").GetString()!="stop"||stoppedEvents.RootElement[0].GetProperty("sourceId").GetInt32()!=source.GetInstanceID()||!stopped||stoppedStates.RootElement.GetArrayLength()!=0)
+        throw new InvalidOperationException($"Source Stop did not clear the active source state: events={stoppedEvents.RootElement},states={stoppedStates.RootElement}");
     var pressureWorld=new RuntimeWorld();var pressureQueue=new Crisis.Runtime.BrowserAudioEventQueue();pressureWorld.AudioSourceDriver=pressureQueue;
     var pressureSource=new GameObject("Saturated audio source",pressureWorld).AddComponent<AudioSource>();pressureSource.clip=clip;
     for(var index=0;index<64;index++)pressureSource.PlayOneShot(clip);
