@@ -92,3 +92,47 @@ callbacks and interruption as a separate assertion. Do not synthesize reload
 events, call the task directly, or count clip preloading alone as reload sound.
 This production integration is **untested** until an exact-SHA package/browser
 run passes.
+
+
+## Packaged touch HUD does not receive FullSource magazine state — 2026-10-27
+
+A second caller/callee trace found that the normal touchscreen reload gesture is
+also disconnected from the active FullSource weapon:
+
+- `game/magazine-hud.mjs` sets its private `ready` flag only when
+  `render(state)` receives a recognized `weaponId` and valid magazine
+  capacity. `bindMagazineDrag` calls `onReload` only when
+  `canDrop() === ready && !reloading`; a drag gesture cannot start a reload
+  while the HUD has no source state.
+- The control is initially rendered with `null`. In the legacy branch,
+  `game/index.html` updates the HUD from `weaponState` after
+  `upperBody.update(...)`. The FullSource branch instead returns from
+  `frame()` after `TickFullSourceActorBridge`/projection and never calls
+  `magazineHud.render` or updates the HUD-owned `weaponState`.
+- `runtime/Engine/FullSourceActorBridge.cs` currently snapshots only the active
+  weapon's name; the original live state is available through
+  `CharacterBody.ActiveWeapon`, `WeaponBase.Magazine.roundCount/capacity`,
+  `WeaponBase.ChamberStatus`, `CharacterBody.Equipment` and
+  `CharacterBody.IsManipulatingEquipment`. The source enum defines chambered
+  round as `WeaponBase.ChamberState.Live`. Primary/secondary reserve magazines
+  are owned by `Equipment.PrimaryMagazines` / `SecondaryMagazines` and are
+  filtered by `Magazine.calibre`.
+- The actual touchscreen control only accepts a downward drag of at least 45
+  CSS pixels (then checks its ready/reloading state); tapping it is intentionally
+  not a reload. The browser input bridge forwards that action as the source
+  `magazine` key. The current source behavior-tree default further prevents the
+  original reload task from running, as documented immediately above.
+
+Implementation dependency: snapshot the source-owned active magazine values
+needed by `magazinePresentation` (`weaponId`, `magazine`,
+`magazineCapacity`, `chamberLive`), reserve count for the HUD/status, and
+`reloading` from source state; feed this snapshot to `magazineHud.render` on
+every FullSource frame. Enable only the player behavior tree at the production
+EntryTeam startup call; keep nonplayer trees suppressed and do not mutate the
+prefab's serialized BehaviorTree flag. The exact packaged browser regression
+must see a ready HUD, perform the production 45px+ touch drag, observe the
+source task's audio event and actual WebAudio playback after the trusted
+gesture, and check that the control returns from reloading. The existing
+source scheduler contract remains responsible for task/OnEnd, ammo, magazine
+identity and interruption details. This production touch/audio integration is
+**untested** until the exact-SHA packaged page passes.
