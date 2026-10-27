@@ -16,8 +16,10 @@ namespace UnityEngine
 
     // Object attachment wires this optional component to RuntimeWorld. The
     // isolated engine contracts do not exercise audio playback.
-    public sealed class AudioSource : Behaviour
+    public sealed class AudioSource : Behaviour, IAudioSourceLifecycle
     {
         public IAudioSourceDriver Driver { get; set; }
+        bool IAudioSourceLifecycle.IsLifecyclePlaying => false;
+        void IAudioSourceLifecycle.StopLifecyclePlayback() { }
     }
 }

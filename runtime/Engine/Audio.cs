@@ -39,7 +39,7 @@ public interface IAudioSourceEventDriver:IAudioClipPlaybackDriver {
     void Play(AudioSource source,AudioClip clip,float volume,float pitch,bool loop,bool muted,int priority);
     void Stop(AudioSource source);
 }
-public sealed class AudioSource:Behaviour {
+public sealed class AudioSource:Behaviour,IAudioSourceLifecycle {
     public UnityEngine.Audio.AudioMixerGroup outputAudioMixerGroup {get;set;}
     public bool playOnAwake=true,spatialize,spatializePostEffects,bypassEffects,bypassListenerEffects,bypassReverbZones;
     public float dopplerLevel=1,minDistance=1,maxDistance=500,pan2D,reverbZoneMix=1;
@@ -52,6 +52,8 @@ public sealed class AudioSource:Behaviour {
     public IAudioSourceDriver Driver {get;set;}
     IAudioSourceDriver RequiredDriver=>Driver??throw new NotSupportedException("Decoded original audio playback driver is not bound");
     public bool isPlaying { get { var driver=RequiredDriver;return driver is IAudioSourceEventDriver sourceEvents?sourceEvents.IsSourcePlaying(this):driver.IsPlaying; } }
+    bool IAudioSourceLifecycle.IsLifecyclePlaying=>Driver is IAudioSourceEventDriver sourceEvents&&sourceEvents.IsSourcePlaying(this);
+    void IAudioSourceLifecycle.StopLifecyclePlayback(){if(Driver is IAudioSourceEventDriver sourceEvents)sourceEvents.Stop(this);}
     public void PlayOneShot(AudioClip clip,float volumeScale=1){
         ArgumentNullException.ThrowIfNull(clip);
         var driver=RequiredDriver;

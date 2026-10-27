@@ -5,6 +5,13 @@ using N = System.Numerics;
 
 namespace UnityEngine;
 
+// Engine lifecycle hooks must remain usable by EngineChecks, which excludes
+// the full audio transport. AudioSource supplies this narrow adapter.
+public interface IAudioSourceLifecycle {
+    bool IsLifecyclePlaying {get;}
+    void StopLifecyclePlayback();
+}
+
 public class Object {
     static int nextID;
     internal bool destroyed;
@@ -377,19 +384,19 @@ public sealed class RuntimeWorld {
         .Select(item=>item.component).ToArray();
     static int HierarchyDepth(Transform transform){int depth=0;for(var parent=transform.parent;parent!=null;parent=parent.parent)depth++;return depth;}
     void RefreshAudioSourceActivation(){
-        foreach(var source in Objects.OfType<AudioSource>().ToArray()){
-            if(!source){activeAudioSourceIds.Remove(source.GetInstanceID());continue;}
-            var id=source.GetInstanceID();
-            if(source.enabled&&source.gameObject.activeInHierarchy){activeAudioSourceIds.Add(id);continue;}
+        foreach(var source in Objects.OfType<IAudioSourceLifecycle>().ToArray()){
+            if(source is not Behaviour component||!component){continue;}
+            var id=component.GetInstanceID();
+            if(component.enabled&&component.gameObject.activeInHierarchy){activeAudioSourceIds.Add(id);continue;}
             if(activeAudioSourceIds.Remove(id))StopAudioSourceIfPlaying(source);
         }
     }
-    void StopAudioSourceIfPlaying(AudioSource source){
-        if(source?.Driver is IAudioSourceEventDriver events&&events.IsSourcePlaying(source))events.Stop(source);
+    void StopAudioSourceIfPlaying(IAudioSourceLifecycle source){
+        if(source?.IsLifecyclePlaying==true)source.StopLifecyclePlayback();
     }
     internal void DestroyNow(Object obj){if(!obj)return;
         if(obj is GameObject go){foreach(var child in go.transform.children.ToArray())DestroyNow(child.gameObject);foreach(var c in go.components.ToArray())DestroyNow(c);go.transform.parent?.children.Remove(go.transform);}
-        if(obj is AudioSource audio){StopAudioSourceIfPlaying(audio);activeAudioSourceIds.Remove(audio.GetInstanceID());}
+        if(obj is IAudioSourceLifecycle audio){StopAudioSourceIfPlaying(audio);if(audio is Behaviour component)activeAudioSourceIds.Remove(component.GetInstanceID());}
         if(obj is MonoBehaviour m){if(m.enableNotified)Invoke(m,"OnDisable");if(m.awoken)Invoke(m,"OnDestroy");StopRoutines(m);}
         obj.destroyed=true;Objects.Remove(obj);
         if(obj is Component component)component.gameObject.components.Remove(component);
