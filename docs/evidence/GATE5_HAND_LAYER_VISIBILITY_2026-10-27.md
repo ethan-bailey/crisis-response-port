@@ -33,7 +33,7 @@ Full-profile production-loader acceptance in real Chromium IndexedDB passed with
 
 ## Limits and next test
 
-This proves source active-state transport and a Node-level regression, not rendered arm IK, gun grip, post-download Mission-page pixels, or iPhone Safari. The existing Site remains v85; no publish was made in this recurring run.
+This proves source active-state transport and a Node-level regression, not rendered arm IK, gun grip, post-download Mission-page pixels, or iPhone Safari. The existing Site remains active at version 85 at `https://crisis-response-runtime.craftysnipe13.chatgpt.site`. A read-only Sites check on 2026-10-27 confirmed custom owner-only access with zero external visitors (policy revision 1). No publish or access change was made.
 
 A separate source geometry audit predicts a grounding defect: Operator spawn Y=1.5, capsule center offset=-0.64 and height=1, Mission floor top Y=0. The capsule bottom is rootY-1.14 while the inspected visual foot/toe chain is near root Y. This predicts an actor root around 1.14m above floor if that source capsule is used for contact settlement. It is not yet a measured page result. The next regression/diagnostic must record the same actor root, capsule center/bottom, floor top, browser contact output, and projected render root before/after contact settling on the production Mission path. Compare against the original scene, and do not introduce a synthetic mesh offset without original-source evidence.
 
