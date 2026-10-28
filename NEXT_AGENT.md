@@ -1,18 +1,18 @@
 # Crisis Response Port — current handoff
 
-## Live source and this session
+## Live source and verified checkpoint
 
-- Integrated branch: `develop/wasm`; verified remote and local base HEAD `4a9c52ad522064c247d722d7b8d998e34485be27`, tree `226176a0265bf2c4055a72444d1006bbb67907c5`.
-- The protected untracked file `scene-data/.crisis-response-scenes.json.gz.PSfVGg` was present in the checkout and left untouched.
-- This session adds a post-contact movement bookkeeping call: after browser PhysX pose/velocity synchronization, the bridge reuses original `CharacterBody.UpdateMovement()` so the next source animation update sees displacement from the solved contact pose. `git diff --check` passed. Compilation and browser acceptance are pending.
-- Local pinned-SDK preflight result: `Pinned .NET SDK 8.0.426 executable not found in known locations.` The runner could not compile this change.
+- Integrated branch: `develop/wasm`; latest tested remote source SHA `630d6f71dd64c4cf71ad50cf5d12b542a458e8e8`, tree `eb330d64a0981d5efeb1b7b3414f1d9da5a1338e`. The local checkout has the same tree; its local commit ID differs because source commits were replayed through the GitHub connector.
+- Hosted Actions run #161 (`40694642865`) passed contracts, pinned .NET 8.0.426 Release/WASM build, exact Mission source/package integrity, full-profile Chromium cache acceptance, Mission grounding, and independent reload acceptance.
+- Movement/contact ordering is accepted for the tested Mission interval: contact-solved root pose was synchronized, the following original movement sample was nonzero, original movement predicates became true, the authored state selected `Body walk backward`, and release returned to `Body stand`. The browser run marks rendered visual acceptance untested; see the movement record and canonical [gate index](docs/GATE_DEPENDENCY_INDEX.md).
+- The protected untracked `scene-data/.crisis-response-scenes.json.gz.PSfVGg` remains untouched and excluded from changes.
 
-## Verified runtime and open acceptance
+## Remaining external dependencies
 
-- Latest hosted full-profile acceptance remains Actions run #157 (`40572335603`), tested source SHA `3a33a6df7d74681cf4074976ec9ca9d3845a56ea`; it predates this session's change. Packaged Mission input moved the actor and selected the original backward-walk state, but that run did not prove authored rendered animation or visual contact parity.
-- Particle command transport and source dependency inventories exist. Source-material/mesh revision mismatches, generic particle rendering, and particle collision callbacks remain unresolved; do not bind mismatched assets or invent simulation output.
-- Browser contact uses PhysX 5.6.1 rather than the game's Unity 2017 PhysX version. Spatial audio/reverb output and iPhone Safari acceptance also remain open. No Site deployment was made.
+- Particle parity is blocked on reconciling the historical particle inventory with the complete-export material/texture/mesh hashes; generic wound/tracer particle commands have no renderer/collision driver. Do not map mismatched assets or synthesize results. The next dependency-ready action is recovering/re-extracting the nine historical Unity containers referenced by the inventory, then rerunning the source mesh/material crosswalk.
+- Physics uses browser PhysX 5.6.1; Unity 2017 numerical/cooking parity and full dynamic/joint collision coverage are unproven.
+- Audio events and source/listener metadata are transported, but browser spatialization, reverb, mixer DSP, and full voice audibility are not implemented. The serialized export omits `SpatialBlend`; no device audio acceptance exists.
+- Rendered authored animation/IK and foot-contact appearance, and iPhone Safari behavior, remain untested.
+- Local pinned SDK preflight still reports `Pinned .NET SDK 8.0.426 executable not found in known locations.` The hosted pinned runner passed.
 
-## Next action
-
-Compile and run the exact-source packaged Mission movement/contact acceptance on the new branch head when the pinned runner is available. Then continue Gate 7 using the dependency order and source/hash restrictions in the [gate index](docs/GATE_DEPENDENCY_INDEX.md).
+Continue in dependency order from [the gate index](docs/GATE_DEPENDENCY_INDEX.md). Do not declare overall parity while these gates remain open; do not deploy or publish from this engineering task.
