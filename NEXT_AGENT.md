@@ -9,10 +9,12 @@
 - Reload isolation: run #161's independent `--reload-only` packaged Chromium acceptance passed; original magazine-out/in audio and settling arm pose were observed. Active magazine instance changed, but magazine/reserve counters stayed 30/2, so the full ammo-count transition remains untested.
 - These run results correct the audit's then-current statements that no post-frame-clock step-29 result or independent reload result existed. The latest runtime-tested source is `630d6f7`; later commits in this checkout are docs/environment-preflight only.
 
-## Environment
+## Environment and session startup
 
-- Combined preflight `source scripts/env/environment-preflight.sh` passed: .NET SDK **8.0.426**, Chromium **156.0.8078.4** at `/root/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome`, and authenticated `git push --dry-run` (`Everything up-to-date`). SDK preflight used the available process-stat shim.
-- Push credential was applied only to this checkout for session pushes. Before ending the session, the remote URL was restored to the clean HTTPS address; never print or persist the credential.
+- Standing first step: from the checkout, run `scripts/env/bootstrap-environment.sh`, then source `scripts/env/environment-preflight.sh`. The environment removes installed tools after inactivity; a missing SDK or browser is an expected reset to recover with bootstrap, not a new project problem.
+- The bootstrap installs only .NET SDK 8.0.426 and the Playwright-locked Chromium build. It builds the repository's process-stat shim when the runner needs it and avoids archive-owner restoration during SDK extraction.
+- This session: SDK bootstrap verified .NET **8.0.426** at `/root/.dotnet/dotnet`. Playwright 1.64.1's five download attempts for Chromium 156.0.8078.4 failed with `End of central directory record signature not found`; no browser executable was installed. The combined preflight then passed the SDK check, failed Chromium because revision 1248 was absent, and failed push authentication with `fatal: could not read Username for 'https://github.com': No such device or address`.
+- Push credentials are owner-supplied per session and must never be stored in the repository.
 
 ## Branch disposition and deletion record
 
