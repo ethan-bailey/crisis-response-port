@@ -58,6 +58,22 @@ failure.
 
 ## Preflight
 
+At the beginning of a checkout session, source the combined environment
+preflight from any directory inside the repository:
+
+```sh
+source scripts/env/environment-preflight.sh
+```
+
+It checks the pinned SDK, the Chromium build specified by the installed
+Playwright lock, and `git push --dry-run` on `develop/wasm`. It continues
+through all three checks after a failure and redacts credentials from Git
+output. A missing result is an environment blocker; do not treat it as a
+source/build failure.
+
+Before the first .NET operation, source the SDK-specific preflight below. It
+exports the pinned SDK path and available process shim into the current shell.
+
 Run the repository preflight as the first toolchain action in every fresh
 checkout, before deciding that .NET is unavailable:
 
