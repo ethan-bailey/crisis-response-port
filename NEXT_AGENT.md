@@ -2,7 +2,7 @@
 
 ## Current source and gate status
 
-- Work branch: `develop/wasm`. Current source HEAD: `ad3e536a6485cd1cb43fbdfb921b6f41a071fa36`; live `origin/develop/wasm` matched this SHA after push. The two commits landed this session: `fad29fa` (gate evidence/docs archive) and `ad3e536` (combined environment preflight).
+- Work branch: `develop/wasm`. Live source HEAD before this session-end handoff update: `41294a8ceb3b1abfffe07334790c6275115c7a5c`. This session made no gate or capability changes; the branch-disposition handoff update is its only repository commit.
 - Current gate list and evidence classes: [docs/GATE_DEPENDENCY_INDEX.md](docs/GATE_DEPENDENCY_INDEX.md). It is the only gate list. Do not add another numbered list.
 - Frame-clock/TimeManager test: hosted Actions run #157 (`40572335603`, source `3a33a6df`) passed packaged Mission step 29. Left moved X `−0.6600008 → −0.8176373`; `MovementDelta=−0.030167103`; source moving/backward flags were true; `Body walk backward` selected; release returned to `Body stand`. The frame-clock change moved the prior #155 failure to a pass.
 - Post-contact test: run #161 (`40694642865`, source `630d6f71dd64c4cf71ad50cf5d12b542a458e8e8`, tree `eb330d64a0981d5efeb1b7b3414f1d9da5a1338e`) also passed step 29. X `−0.6600008 → −0.8176211`, contact Y `1.3901279 → 1.2841799`, `MovementDelta=−0.048979104`, source moving/backward flags true, `Body walk backward`, and release returned to `Body stand`. Contact-tick work changed `MovementDelta` from `−0.030167103` to `−0.048979104`; final X and velocity were nearly unchanged and the pass remained.
@@ -18,7 +18,7 @@
 
 ## Branch disposition
 
-All 18 requested live refs still matched their listed tip SHAs. No branch was deleted: the connected GitHub API exposes create/update-ref and file/commit writes but no delete-ref action, while shell push authentication is unavailable. Safe-delete candidates below are retained pending a delete-capable authorized route; no unlisted refs were touched.
+At session start, all 18 requested refs matched their listed tip SHAs. Four safe branches were deleted after checking each live tip SHA; a batched live-ref check confirms all four are absent and the other 14 requested refs still match their expected SHAs. The eight Group 1 branches remain kept; six remain needs-owner-decision. No main, preview, release, or unlisted refs were touched.
 
 ### Group 1 — keep
 
@@ -35,7 +35,7 @@ All 18 requested live refs still matched their listed tip SHAs. No branch was de
 
 - #70/#72 `codex/game-scene-name-normalization-20261023` — `b3640f02009147eb7a3350489db382bb9ad30983`: 24 develop-versus-tip differences span browser input, scene/package loading, runtime scene/UI/serialized resolvers, tests, and audit indexes; not all differences could be tied to later superseding commits. **Needs owner decision; retained.**
 - #73 `fix/touch-hold-fire-20261023` — `e6ac79c1c6439e543ad126a14e71f09dd75ea037`: three differences in browser input, page wiring, and its test; hold-fire behavior is not proven superseded. **Needs owner decision; retained.**
-- #67 `chore/live-state-guard-20261018` — `fa426667bfb24ecd08d8b3332d63bf563f30819b`: two differences are old AGENTS/NEXT_AGENT guidance; later canonical AGENTS and current handoff replace that live-state guard/checkpoint wording. **Safe-delete criteria met; retained because the API has no delete-ref action.**
+- #67 `chore/live-state-guard-20261018` — `fa426667bfb24ecd08d8b3332d63bf563f30819b`: two differences are old AGENTS/NEXT_AGENT guidance; later canonical AGENTS and current handoff replace that live-state guard/checkpoint wording. **Deleted 2026-10-28 after live tip verification; batched ref check confirms absent.**
 - #35 `feature/iphone-original-movement-joystick` — `7e5eec42b2c272b132272851977d5bc3145383ce`: two differences in browser input and page wiring; its horizontal-slider behavior differs from the current joystick/aim/sprint behavior and is not fully mapped to a later superseding change. **Needs owner decision; retained.**
 
 ### Group 3 — unique-work check
