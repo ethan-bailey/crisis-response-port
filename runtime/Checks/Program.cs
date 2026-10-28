@@ -156,770 +156,99 @@ if(args.Length==2&&args[0]=="--browser-entryteam-session-contract"){
     if(MathF.Abs(Time.fixedDeltaTime-authoredFixedDelta)>.000001f||
        MathF.Abs(Time.maximumDeltaTime-authoredMaximumDelta)>.000001f||
        MathF.Abs(Time.timeScale-authoredTimeScale)>.000001f)
-        throw new InvalidOperationException($"EntryTeam session did not apply the recovered TimeManager fields before source execution: authoredFixed={authoredFixedDelta},runtimeFixed={Time.fixedDeltaTime},authoredMaximum={authoredMaximumDelta},runtimeMaximum={Time.maximumDeltaTime},authoredScale={authoredTimeScale},runtimeScale={Time.timeScale}");
-    var missionCameraListener=session.Mission.world.Objects.OfType<GameObject>().SingleOrDefault(go=>go.name=="Camera")?.GetComponent<AudioListener>();
-    var missionIntroListener=session.Mission.world.Objects.OfType<GameObject>().SingleOrDefault(go=>go.name=="Mission intro")?.GetComponent<AudioListener>();
-    if(missionCameraListener==null||missionIntroListener==null||!missionCameraListener.enabled||!missionCameraListener.gameObject.activeSelf||missionCameraListener.gameObject.activeInHierarchy||!missionIntroListener.enabled||missionIntroListener.gameObject.activeSelf||missionIntroListener.gameObject.activeInHierarchy)
-        throw new InvalidOperationException($"Mission 01 scene-owned AudioListeners did not preserve authored enabled/active hierarchy fields: cameraEnabled={missionCameraListener?.enabled},cameraSelf={missionCameraListener?.gameObject.activeSelf},cameraHierarchy={missionCameraListener?.gameObject.activeInHierarchy},introEnabled={missionIntroListener?.enabled},introSelf={missionIntroListener?.gameObject.activeSelf},introHierarchy={missionIntroListener?.gameObject.activeInHierarchy}");
-    var sourceMission=session.Mission.world.Objects.OfType<Crisis.Runtime.FullSource.Mission>().Single();
-    var activeListeners=world.Objects.OfType<AudioListener>().Where(listener=>listener.enabled&&listener.gameObject.activeInHierarchy).ToArray();
-    if(activeListeners.Length!=1||activeListeners[0].name!="Audio listener"||activeListeners[0].OriginalAssetPath!="Assets/GameObject/Interior mode.prefab"||activeListeners[0].GetComponentInParent<Crisis.Runtime.FullSource.InteriorMode>()!=sourceMission.InteriorMode||!sourceMission.InteriorMode.gameObject.activeInHierarchy)
-        throw new InvalidOperationException($"EntryTeam must select the sole AudioListener cloned from the Interior mode prefab: mode={sourceMission.Mode?.name},activeListeners={JsonSerializer.Serialize(activeListeners.Select(listener=>new{owner=listener.name,active=listener.gameObject.activeInHierarchy,source=listener.OriginalAssetPath,fileId=listener.OriginalAssetFileID}))}");
-    var authoredAudio=session.Mission.world.Objects.OfType<AudioSource>().SingleOrDefault(source=>source.gameObject.name=="Room 4 door")
-        ??throw new InvalidOperationException("Mission 01 Room 4 door has no imported AudioSource");
-    if(!float.IsFinite(authoredAudio.dopplerLevel)||authoredAudio.dopplerLevel!=0f||authoredAudio.minDistance!=1f||authoredAudio.maxDistance!=10f||authoredAudio.rolloffMode!=1||authoredAudio.rolloffCustomCurve==null||authoredAudio.rolloffCustomCurve.length!=2)
-        throw new InvalidOperationException($"Room 4 door AudioSource authored distance/rolloff fields were not imported: doppler={authoredAudio.dopplerLevel},min={authoredAudio.minDistance},max={authoredAudio.maxDistance},mode={authoredAudio.rolloffMode},curveKeys={authoredAudio.rolloffCustomCurve?.length}");
-    var sourceMixer=Crisis.Runtime.FullSource.Global.Context?.Mixer?.audioMixer
-        ??throw new InvalidOperationException("EntryTeam source Mixer has no recovered AudioMixer");
-    var sourceMixerParameters=new[]{"EffectsVolume","VoiceVolume","AmbienceVolume","InterfaceVolume","RealtimePitch"};
-    var mixerSetFloatResults=sourceMixerParameters.ToDictionary(name=>name,name=>sourceMixer.SetFloat(name,.5f),StringComparer.Ordinal);
-    if(mixerSetFloatResults.Values.Any(applied=>applied))
-        throw new InvalidOperationException($"Mixer setter accepted source strings that are not in the recovered exposed-parameter list: {JsonSerializer.Serialize(mixerSetFloatResults)}");
-    var bridge=new FullSourceActorBridge(world,session.Actor);
-    using var mixerFrame=JsonDocument.Parse(JsonSerializer.Serialize(bridge.Snapshot()));
-    var mixerConfiguration=mixerFrame.RootElement.GetProperty("audioMixerConfiguration");
-    var mixerGroups=mixerConfiguration.GetProperty("groups");
-    var mixerSnapshots=mixerConfiguration.GetProperty("snapshots");
-    var reverbZones=mixerConfiguration.GetProperty("reverbZones");
-    var inactiveReverbZones=reverbZones.EnumerateArray().Where(zone=>!zone.GetProperty("activeInHierarchy").GetBoolean()).ToArray();
-    var tutorialReverbZone=inactiveReverbZones.Length==1&&
-        inactiveReverbZones[0].GetProperty("activeSelf").GetBoolean()&&
-        inactiveReverbZones[0].GetProperty("ownerName").GetString()=="Carpeted room reverb zone"&&
-        inactiveReverbZones[0].GetProperty("transform").GetProperty("position")[0].GetSingle()==37f&&
-        inactiveReverbZones[0].GetProperty("transform").GetProperty("position")[1].GetSingle()==1.25f&&
-        inactiveReverbZones[0].GetProperty("transform").GetProperty("position")[2].GetSingle()==-1.5f;
-    var activeReverbZoneCount=reverbZones.EnumerateArray().Count(zone=>zone.GetProperty("activeInHierarchy").GetBoolean());
-    if(mixerGroups.GetArrayLength()!=19||mixerSnapshots.GetArrayLength()!=5||
-       mixerGroups.EnumerateArray().Any(group=>!group.GetProperty("fields").TryGetProperty("m_Volume",out _)||!group.GetProperty("fields").TryGetProperty("m_Pitch",out _))||
-       mixerSnapshots.EnumerateArray().Any(snapshot=>!snapshot.GetProperty("fields").TryGetProperty("m_FloatValues",out var values)||values.EnumerateObject().Count()!=47)||
-       reverbZones.GetArrayLength()!=8||activeReverbZoneCount!=7||!tutorialReverbZone||
-       reverbZones.EnumerateArray().Any(zone=>!zone.GetProperty("enabled").GetBoolean()||zone.GetProperty("reverbPreset").GetInt32()!=27||
-           !float.IsFinite(zone.GetProperty("minDistance").GetSingle())||!float.IsFinite(zone.GetProperty("maxDistance").GetSingle())))
-        throw new InvalidOperationException($"EntryTeam did not preserve the recovered AudioMixer/reverb graph (19 groups, five 47-parameter snapshots, eight enabled zones; seven active and one tutorial-inactive): groups={mixerGroups.GetArrayLength()},snapshots={mixerSnapshots.GetArrayLength()},zones={reverbZones.GetArrayLength()},activeZones={activeReverbZoneCount},tutorialInactive={tutorialReverbZone},payload={mixerConfiguration}");
-    var mixerTransitions=mixerFrame.RootElement.GetProperty("audioMixerEvents");
-    if(mixerTransitions.EnumerateArray().Any(item=>item.GetProperty("action").GetString()!="transition"||!item.GetProperty("snapshotFields").TryGetProperty("m_FloatValues",out _)))
-        throw new InvalidOperationException($"Recovered AudioMixer snapshot transition lost its authored values: {mixerTransitions}");
-    var fireAlarms=session.Mission.objects.Values.OfType<Crisis.Runtime.FullSource.FireAlarm>().ToArray();
-    if(fireAlarms.Length==0)throw new InvalidOperationException("Mission 01 source scene has no FireAlarm instances to validate");
-    var fireAlarm=fireAlarms.FirstOrDefault(value=>value.GetComponent<AudioSource>()?.clip!=null)
-        ??throw new InvalidOperationException($"Mission 01 FireAlarm source components are incomplete: {string.Join(",",fireAlarms.Select(value=>$"{value.name}[AudioSource={value.GetComponent<AudioSource>()!=null},clip={value.GetComponent<AudioSource>()?.clip!=null}]"))}");
-    fireAlarm.ActivateIn(0f);
-    bridge.Step(1f/60f,"{}",640f,360f);
-    if(!fireAlarm.alarm)throw new InvalidOperationException("Original FireAlarm delayed activation did not reach SetState(true)");
-    var authoredWalkSpeed=session.Actor.walkSpeed;
-    bridge.SetAimWorldPoint(5f,2.5f,0f);
-    bridge.Step(1f/60f,"{\"right\":true}",640f,360f,.5f);
-    var state=JsonSerializer.Serialize(bridge.Step(1f/60f,"{\"right\":false}",640f,360f));
-    using var snapshot=JsonDocument.Parse(state);
-    var commands=snapshot.RootElement.GetProperty("physics").GetProperty("commands");
-    if(session.Mission.scene!="Assets/Scenes/Mission 01.unity"||session.Mission.world.Objects.OfType<Crisis.Runtime.FullSource.Mission>().Single().InteriorMode?.UI?.InteractionMenu==null)
-        throw new InvalidOperationException("Browser EntryTeam session did not retain the authored Mission UI contract");
-    if(commands.GetArrayLength()!=1||commands[0].GetProperty("mode").GetString()!="Acceleration")
-        throw new InvalidOperationException($"Original player movement did not emit the expected source acceleration command: {state}");
-    var forceX=commands[0].GetProperty("force")[0].GetSingle();
-    var fullWalkForce=authoredWalkSpeed*Time.fixedDeltaTime*750f;
-    if(!(forceX>0f&&forceX<fullWalkForce*.6f)||MathF.Abs(session.Actor.walkSpeed-authoredWalkSpeed)>.001f)
-        throw new InvalidOperationException($"The eased browser stick magnitude did not scale the original walk speed cap and restore the authored speed: forceX={forceX}, fullWalkForce={fullWalkForce}, authoredWalkSpeed={session.Actor.walkSpeed}, snapshot={state}");
-    var sourceAnimator=session.Actor.GetComponent<Animator>()
-        ??throw new InvalidOperationException("Original EntryTeam CharacterBody has no Animator for the FullSource render boundary");
-    var sourcePosition=session.Actor.transform.position;
-    bridge.SynchronizePhysics(sourcePosition.x-.25f,sourcePosition.y,sourcePosition.z,-.5f,0f,0f);
-    bridge.Step(1f/60f,"{}",640f,360f); // LateUpdate records the synchronized source displacement.
-    using var animationFrame=JsonDocument.Parse(JsonSerializer.Serialize(bridge.Step(1f/60f,"{}",640f,360f)));
-    var animationParameters=animationFrame.RootElement.GetProperty("animationParameters");
-    if(!sourceAnimator.GetBool("Moving")||
-       animationParameters.GetProperty("moving").GetBoolean()!=sourceAnimator.GetBool("Moving")||
-       animationParameters.GetProperty("backwards").GetBoolean()!=sourceAnimator.GetBool("Backwards")||
-       MathF.Abs(animationParameters.GetProperty("moveSpeed").GetSingle()-sourceAnimator.GetFloat("MoveSpeed"))>.0001f||
-       MathF.Abs(animationParameters.GetProperty("kneelRatio").GetSingle()-sourceAnimator.GetFloat("KneelRatio"))>.0001f||
-       MathF.Abs(animationParameters.GetProperty("crippledRatio").GetSingle()-sourceAnimator.GetFloat("CrippledRatio"))>.0001f)
-        throw new InvalidOperationException($"FullSource snapshot did not preserve the original Animator values for the source MovementDelta frame: source={JsonSerializer.Serialize(new{moving=sourceAnimator.GetBool("Moving"),backwards=sourceAnimator.GetBool("Backwards"),moveSpeed=sourceAnimator.GetFloat("MoveSpeed"),kneelRatio=sourceAnimator.GetFloat("KneelRatio"),crippledRatio=sourceAnimator.GetFloat("CrippledRatio")})},snapshot={animationParameters}");
-    var sourceClip=session.Mission.world.Objects.OfType<AudioClip>().FirstOrDefault(clip=>!string.IsNullOrEmpty(clip.OriginalAssetPath))
-        ??throw new InvalidOperationException("Mission source profile has no identified original audio clips");
-    var sourceAudio=session.Mission.world.Objects.OfType<AudioSource>().FirstOrDefault(source=>source.outputAudioMixerGroup!=null)
-        ??throw new InvalidOperationException("Mission source profile has no original AudioSource");
-    var audioQueue=world.AudioSourceDriver as Crisis.Runtime.BrowserAudioEventQueue
-        ??throw new InvalidOperationException("Mission EntryTeam session has no original browser audio event queue");
-    audioQueue.Drain(); // Keep the saturation assertion isolated from the earlier scene/audio callbacks.
-    var droppedBefore=audioQueue.DroppedEvents;
-    for(var index=0;index<65;index++)sourceAudio.PlayOneShot(sourceClip,.37f);
-    using var audioCapture=JsonDocument.Parse(JsonSerializer.Serialize(bridge.Step(1f/60f,"{}",640f,360f)));
-    var audioEvents=audioCapture.RootElement.GetProperty("audioEvents");
-    var expectedSourceGain=Math.Clamp(sourceAudio.volume*.37f,0f,1f);
-    if(audioEvents.GetArrayLength()!=64||audioCapture.RootElement.GetProperty("droppedAudioEvents").GetInt32()!=droppedBefore+1||audioEvents[0].GetProperty("sourcePath").GetString()!=sourceClip.OriginalAssetPath||
-       MathF.Abs(audioEvents[0].GetProperty("volume").GetSingle()-expectedSourceGain)>.001f||
-       audioEvents[0].GetProperty("sourceState").GetProperty("outputAudioMixerGroupGuid").GetString()!=sourceAudio.outputAudioMixerGroup.OriginalAssetGuid||
-       audioEvents[0].GetProperty("sourceState").GetProperty("outputAudioMixerGroupFileID").GetString()!=sourceAudio.outputAudioMixerGroup.OriginalAssetFileID||
-       MathF.Abs(audioCapture.RootElement.GetProperty("sourceTime").GetSingle()-audioEvents[0].GetProperty("time").GetSingle())>.1f)
-        throw new InvalidOperationException($"Original AudioSource callback was not delivered as one bounded, timestamped browser event: {audioCapture.RootElement}");
-    var sourceWeapon=session.Actor.ActiveWeapon??throw new InvalidOperationException("FullSource Mission actor has no original active weapon");
-    var actualFirePath=sourceWeapon.audioFire.sample?.OriginalAssetPath??string.Empty;
-    var actualCrackPath=sourceWeapon.audioSupersonic.sample?.OriginalAssetPath??string.Empty;
-    var particleDriver=new Crisis.Runtime.BrowserParticleEventQueue();
-    world.ParticleSystemDriver??=particleDriver;
-    foreach(var particles in world.Objects.OfType<ParticleSystem>())particles.Driver=particleDriver;
-    var casingPhysicsCommands=new List<JsonElement>();
-    var casingSourceStates=new List<JsonElement>();
-    var rightArm=session.Actor.rightArm;
-    var playerInput=session.Mission.world.Objects.OfType<Crisis.Runtime.FullSource.InputHandler>().Single().Keys;
-    for(var step=0;step<90&&!rightArm.OnTarget;step++)bridge.Step(1f/60f,"{}",640f,360f);
-    var armWasReady=rightArm.OnTarget;
-    for(var step=0;step<120&&!playerInput.fire.Enabled;step++)bridge.Step(1f/60f,"{}",640f,360f);
-    var fireEnabledAfterAuthoredStart=playerInput.fire.Enabled;
-    var shotsBefore=session.Actor.ShotsFired;
-    using var actualFireCapture=JsonDocument.Parse(JsonSerializer.Serialize(bridge.Step(1f/60f,"{\"fire\":true}",640f,360f)));
-    casingPhysicsCommands.AddRange(actualFireCapture.RootElement.GetProperty("physics").GetProperty("worldCommands").EnumerateArray().Select(value=>value.Clone()));
-    casingSourceStates.AddRange(actualFireCapture.RootElement.GetProperty("casings").EnumerateArray().Select(value=>value.Clone()));
-    var fireDownAtPulse=playerInput.fire.Down;
-    var firePressedAtPulse=playerInput.fire.Pressed;
-    var mouseHeldAtPulse=Input.GetKey(playerInput.fire.key);
-    var inputSuspendedField=typeof(Crisis.Runtime.FullSource.InputHandler).GetField("inputSuspended",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)!;
-    var inputSuspendedAtPulse=(bool)inputSuspendedField.GetValue(session.Mission.world.Objects.OfType<Crisis.Runtime.FullSource.InputHandler>().Single())!;
-    var triggerPulledField=typeof(Crisis.Runtime.FullSource.CharacterBody).GetField("triggerPulled",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)!;
-    var triggerPulledAtPulse=(bool)triggerPulledField.GetValue(session.Actor)!;
-    var actualShotEvents=new List<JsonElement>();
-    var actualParticleEvents=new List<JsonElement>();
-    var actualShotSourceTime=actualFireCapture.RootElement.GetProperty("sourceTime").GetSingle();
-    actualShotEvents.AddRange(actualFireCapture.RootElement.GetProperty("audioEvents").EnumerateArray().Select(value=>value.Clone()));
-    actualParticleEvents.AddRange(actualFireCapture.RootElement.GetProperty("particleEvents").EnumerateArray().Select(value=>value.Clone()));
-    for(var step=0;step<4&&session.Actor.ShotsFired==shotsBefore;step++){
-        using var shotResolution=JsonDocument.Parse(JsonSerializer.Serialize(bridge.Step(1f/60f,"{}",640f,360f)));
-        actualShotSourceTime=shotResolution.RootElement.GetProperty("sourceTime").GetSingle();
-        actualShotEvents.AddRange(shotResolution.RootElement.GetProperty("audioEvents").EnumerateArray().Select(value=>value.Clone()));
-        actualParticleEvents.AddRange(shotResolution.RootElement.GetProperty("particleEvents").EnumerateArray().Select(value=>value.Clone()));
-        casingPhysicsCommands.AddRange(shotResolution.RootElement.GetProperty("physics").GetProperty("worldCommands").EnumerateArray().Select(value=>value.Clone()));
-        casingSourceStates.AddRange(shotResolution.RootElement.GetProperty("casings").EnumerateArray().Select(value=>value.Clone()));
-    }
-    for(var step=0;step<3;step++){
-        using var cyclingResolution=JsonDocument.Parse(JsonSerializer.Serialize(bridge.Step(1f/60f,"{}",640f,360f)));
-        actualShotSourceTime=cyclingResolution.RootElement.GetProperty("sourceTime").GetSingle();
-        actualShotEvents.AddRange(cyclingResolution.RootElement.GetProperty("audioEvents").EnumerateArray().Select(value=>value.Clone()));
-        actualParticleEvents.AddRange(cyclingResolution.RootElement.GetProperty("particleEvents").EnumerateArray().Select(value=>value.Clone()));
-        casingPhysicsCommands.AddRange(cyclingResolution.RootElement.GetProperty("physics").GetProperty("worldCommands").EnumerateArray().Select(value=>value.Clone()));
-        casingSourceStates.AddRange(cyclingResolution.RootElement.GetProperty("casings").EnumerateArray().Select(value=>value.Clone()));
-    }
-    var capturedShotPaths=actualShotEvents.Select(item=>item.GetProperty("sourcePath").GetString()).ToArray();
-    var particleIdentityVerified=actualParticleEvents.Any(item=>
-        item.GetProperty("type").GetString()=="particleCommand"&&
-        !string.IsNullOrEmpty(item.GetProperty("sourceGuid").GetString())&&
-        !string.IsNullOrEmpty(item.GetProperty("sourceFileId").GetString())&&
-        !string.IsNullOrEmpty(item.GetProperty("sourcePath").GetString())&&
-        item.GetProperty("sourceAssetSha256").GetString() is {Length:64} sourceAssetHash&&sourceAssetHash.All(Uri.IsHexDigit)&&
-        item.GetProperty("sourceFields").ValueKind==JsonValueKind.Object&&item.GetProperty("sourceFields").EnumerateObject().Any()&&
-        item.GetProperty("renderer").ValueKind==JsonValueKind.Object&&
-        item.GetProperty("renderer").GetProperty("sourceAssetSha256").GetString()==sourceAssetHash&&
-        item.GetProperty("renderer").GetProperty("fields").EnumerateObject().Any()&&
-        float.IsFinite(item.GetProperty("time").GetSingle())&&
-        item.GetProperty("time").GetSingle()<=actualShotSourceTime+.0001f);
-    var weaponShotEvents=actualShotEvents.Where(item=>item.GetProperty("sourcePath").GetString()==actualFirePath||item.GetProperty("sourcePath").GetString()==actualCrackPath).ToArray();
-    var capturedWeaponPaths=capturedShotPaths;
-    var casingForceCommands=casingPhysicsCommands.Where(item=>item.GetProperty("source").GetString()=="Casing"&&item.GetProperty("operation").GetString()=="force"&&item.GetProperty("mode").GetString()=="VelocityChange").ToArray();
-    var casingTorqueCommands=casingPhysicsCommands.Where(item=>item.GetProperty("source").GetString()=="Casing"&&item.GetProperty("operation").GetString()=="torque"&&item.GetProperty("mode").GetString()=="Impulse").ToArray();
-    var casingStateIsTransportable=casingForceCommands.Length>0&&casingTorqueCommands.Length>0&&casingForceCommands.Zip(casingTorqueCommands).Any(pair=>
-        pair.First.GetProperty("body").GetInt32()==pair.Second.GetProperty("body").GetInt32()&&
-        pair.First.GetProperty("sourcePosition").GetArrayLength()==3&&pair.First.GetProperty("sourceRotation").GetArrayLength()==4&&
-        pair.First.GetProperty("sourcePosition").EnumerateArray().All(value=>float.IsFinite(value.GetSingle()))&&
-        pair.First.GetProperty("sourceRotation").EnumerateArray().All(value=>float.IsFinite(value.GetSingle()))&&
-        float.IsFinite(pair.First.GetProperty("time").GetSingle())&&
-        MathF.Abs(pair.First.GetProperty("mass").GetSingle()-.002f)<.0001f);
-    var casingRoundTripIsTransportable=casingForceCommands.Any(force=>casingSourceStates.Any(state=>
-        state.GetProperty("body").GetInt32()==force.GetProperty("body").GetInt32()&&
-        MathF.Abs(state.GetProperty("mass").GetSingle()-.002f)<.0001f&&
-        state.GetProperty("position").EnumerateArray().All(value=>float.IsFinite(value.GetSingle()))&&
-        state.GetProperty("rotation").EnumerateArray().All(value=>float.IsFinite(value.GetSingle()))&&
-        state.GetProperty("velocity").EnumerateArray().All(value=>float.IsFinite(value.GetSingle()))&&
-        state.GetProperty("angularVelocity").EnumerateArray().All(value=>float.IsFinite(value.GetSingle()))));
-    if(actualFirePath!="Assets/AudioClip/5.56x45mm-01-unsuppressed.wav"||actualCrackPath!="Assets/AudioClip/5.56x45mm-crack-interior.wav"||
-       !armWasReady||!fireEnabledAfterAuthoredStart||session.Actor.ShotsFired<=shotsBefore||!particleIdentityVerified||particleDriver.DroppedEvents!=0||!casingStateIsTransportable||!casingRoundTripIsTransportable||weaponShotEvents.Length<2||!capturedShotPaths.Contains(actualFirePath)||!capturedShotPaths.Contains(actualCrackPath)||weaponShotEvents.Any(item=>item.GetProperty("action").GetString()!="oneShot"||
-       !float.IsFinite(item.GetProperty("volume").GetSingle())||item.GetProperty("volume").GetSingle()<0||item.GetProperty("volume").GetSingle()>1||
-       MathF.Abs(actualShotSourceTime-item.GetProperty("time").GetSingle())>.1f))
-        throw new InvalidOperationException($"Real fire input did not produce one source shot with mapped audio, particle, and casing callbacks (armReady={armWasReady},fireEnabledAfterAuthoredStart={fireEnabledAfterAuthoredStart},shotsBefore={shotsBefore},shotsAfter={session.Actor.ShotsFired},particleEvents={actualParticleEvents.Count},particleIdentityVerified={particleIdentityVerified},droppedParticleEvents={particleDriver.DroppedEvents},casingForces={casingForceCommands.Length},casingTorques={casingTorqueCommands.Length},casingCallbacks={JsonSerializer.Serialize(casingPhysicsCommands)},capturedPaths={JsonSerializer.Serialize(capturedShotPaths)},fireKey={playerInput.fire.key},fireEnabled={playerInput.fire.Enabled},fireInAll={playerInput.All.Contains(playerInput.fire)},mouseHeldAtPulse={mouseHeldAtPulse},inputSuspendedAtPulse={inputSuspendedAtPulse},menuVisible={session.Mission.world.Objects.OfType<Crisis.Runtime.FullSource.Mission>().Single().InteriorMode!.UI.InteractionMenu.Visible},missionPaused={session.Mission.world.Objects.OfType<Crisis.Runtime.FullSource.Mission>().Single().Paused},fireDownAtPulse={fireDownAtPulse},firePressedAtPulse={firePressedAtPulse},triggerPulledAtPulse={triggerPulledAtPulse},mode={sourceWeapon.ActiveFireMode},held={sourceWeapon.IsHeld},owner={sourceWeapon.Owner?.name},hammerReady={sourceWeapon.HammerReady},boltLive={sourceWeapon.cyclingBolt.Live},weaponReady={sourceWeapon.ReadyToFire})");
-    var originalPointer=session.Actor.GetComponent<Crisis.Runtime.FullSource.PlayerController>()?.WeaponPointer
-        ??throw new InvalidOperationException("Browser EntryTeam actor has no original WeaponPointer");
-    if(originalPointer.enabled)
-        throw new InvalidOperationException("Browser source actor must keep the authored screen-ray pointer disabled; absolute browser aim owns its world target");
-    var absoluteAim=new Vector3(5f,2.5f,0f);
-    bridge.SetAimWorldPoint(absoluteAim.x,absoluteAim.y,absoluteAim.z);
-    bridge.Step(1f/60f,"{\"left\":true}",0f,360f);
-    if((originalPointer.WorldPoint-absoluteAim).magnitude>.001f)
-        throw new InvalidOperationException($"Horizontal movement or browser mouse X overwrote the absolute aim target while moving left: {originalPointer.WorldPoint}");
-    bridge.Step(1f/60f,"{\"right\":true}",1280f,360f);
-    if((originalPointer.WorldPoint-absoluteAim).magnitude>.001f)
-        throw new InvalidOperationException($"Horizontal movement or browser mouse X overwrote the absolute aim target while moving right: {originalPointer.WorldPoint}");
-    var before=session.Actor.transform.position;
-    var synced=JsonSerializer.Serialize(bridge.SynchronizePhysics(before.x+.25f,before.y,before.z,1f,0f,0f));
-    using var roundTrip=JsonDocument.Parse(synced);
-    var position=roundTrip.RootElement.GetProperty("position");
-    var velocity=roundTrip.RootElement.GetProperty("velocity");
-    if(MathF.Abs(position[0].GetSingle()-(before.x+.25f))>.001f||MathF.Abs(velocity[0].GetSingle()-1f)>.001f)
-        throw new InvalidOperationException("Browser PhysX position and velocity did not round trip into the source player actor");
-    var audioListenerInventory=world.Objects.OfType<AudioListener>().Select(listener=>new{
-        owner=listener.gameObject.name,parent=listener.transform.parent?.gameObject.name,
-        enabled=listener.enabled,activeSelf=listener.gameObject.activeSelf,activeInHierarchy=listener.gameObject.activeInHierarchy,
-        sourceAssetPath=listener.OriginalAssetPath,sourceAssetFileID=listener.OriginalAssetFileID,sourceAssetGuid=listener.OriginalAssetGuid
-    }).OrderBy(listener=>listener.sourceAssetPath,StringComparer.Ordinal).ThenBy(listener=>listener.owner,StringComparer.Ordinal).ToArray();
-    Console.WriteLine(JsonSerializer.Serialize(new{status="passed",mission=session.Mission.scene,actor=session.Actor.name,weapon=sourceWeapon.name,weaponFirePath=actualFirePath,weaponAudioPaths=capturedWeaponPaths,sourceShotAudioEvents=actualShotEvents.Count,sourceParticleEvents=actualParticleEvents.Count,particleIdentityVerified,droppedParticleEvents=particleDriver.DroppedEvents,sourceCasingForceRequests=casingForceCommands.Length,sourceCasingTorqueRequests=casingTorqueCommands.Length,sourceShots=session.Actor.ShotsFired-shotsBefore,armReady=armWasReady,weaponInputEnabled=fireEnabledAfterAuthoredStart,sourceActors=session.SourceActorCount,interactionMenu=true,input="original press/hold/release",movementForce=commands.GetArrayLength(),analogMovement="0.5 eased cap reaches source CharacterBody and restores authored speed",aim="absolute WeaponPointer world target unchanged by horizontal movement and mouse X",audio="real original fire input drives the source firing mechanism and emits mapped fire/crack clips with bounded volume and source time",audioListenerInventory,mixerSettingsApplied=mixerSetFloatResults.Values.Any(value=>value),mixerSetFloatResults,timeManager=new{fixedDeltaTime=authoredFixedDelta,maximumDeltaTime=authoredMaximumDelta,timeScale=authoredTimeScale,maximumParticleTimestep=authoredMaximumParticleTimestep,maximumParticleTimestepRuntimeConsumer=false},particleTransport="original ParticleSystem Emit/Simulate/Play commands carry prefab/component identity, pose, and source time",physics="position/velocity round trip; original casing force and torque requests transported with source body, mass, and ForceMode"}));
-    return;
-}
-if(args.Length==2&&args[0]=="--mission-weapon-switch-contract"){
-    var package=LoadSourcePackage(args[1]);
-    var world=new RuntimeWorld();
-    var session=Crisis.Runtime.Browser.BrowserEntryTeamMission.Start(package,world);
-    var bridge=new FullSourceActorBridge(world,session.Actor);
-    Console.WriteLine(Crisis.Runtime.Checks.SourceWeaponSwitchContracts.Run(package,world,session.Actor,bridge));
-    return;
-}
-if(args.Length==2&&args[0]=="--mission-player-reload-contract"){
-    var package=LoadSourcePackage(args[1]);
-    var world=new RuntimeWorld();
-    var session=Crisis.Runtime.Browser.BrowserEntryTeamMission.Start(package,world,enablePlayerBehavior:true);
-    var bridge=new FullSourceActorBridge(world,session.Actor);
-    Console.WriteLine(Crisis.Runtime.Checks.SourceBehaviorReloadContracts.Run(package,world,session.Actor,bridge));
-    return;
-}
-OriginalSourcePackage LoadSourcePackage(string path){
-    if(File.Exists(path))return OriginalSourcePackage.FromJson(File.ReadAllText(path));
-    using var profile=JsonDocument.Parse(File.ReadAllText(Path.Combine(path,"manifest.json")));
-    var manifest=profile.RootElement;var metadataInfo=manifest.GetProperty("metadata");
-    var metadataCompressed=File.ReadAllBytes(Path.Combine(path,metadataInfo.GetProperty("file").GetString()!));
-    if(metadataCompressed.LongLength!=metadataInfo.GetProperty("compressedBytes").GetInt64()||Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(metadataCompressed)).ToLowerInvariant()!=metadataInfo.GetProperty("compressedSha256").GetString())
-        throw new InvalidDataException("Incremental source profile metadata failed its compressed size or SHA-256 check");
-    byte[] metadataBytes;
-    using(var input=new MemoryStream(metadataCompressed,writable:false))
-    using(var gzip=new System.IO.Compression.GZipStream(input,System.IO.Compression.CompressionMode.Decompress))
-    using(var output=new MemoryStream()){gzip.CopyTo(output);metadataBytes=output.ToArray();}
-    if(metadataBytes.LongLength!=metadataInfo.GetProperty("bytes").GetInt64()||Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(metadataBytes)).ToLowerInvariant()!=metadataInfo.GetProperty("sha256").GetString())
-        throw new InvalidDataException("Incremental source profile metadata failed its source size or SHA-256 check");
-    var package=OriginalSourcePackage.CreateIncremental(System.Text.Encoding.UTF8.GetString(metadataBytes));
-    foreach(var asset in manifest.GetProperty("assets").EnumerateArray())
-        package.AddVerifiedGzipAsset(asset.GetProperty("path").GetString()!,File.ReadAllBytes(Path.Combine(path,asset.GetProperty("file").GetString()!)));
-    if(package.AssetCount!=manifest.GetProperty("assetCount").GetInt32()||package.DeliveredBytes!=manifest.GetProperty("uncompressedAssetBytes").GetInt64()||package.DeliveredCompressedBytes!=manifest.GetProperty("compressedAssetBytes").GetInt64())
-        throw new InvalidDataException("Incremental source profile totals differ from the verified runtime store");
-    return package;
-}
-if(args.Length==2&&args[0]=="--builtin-resource-contract"){
-    using var builtinPackage=JsonDocument.Parse(File.ReadAllText(args[1]));
-    Console.WriteLine(RuntimeContracts.RunBuiltinResource(builtinPackage.RootElement));
-    return;
-}
-if(args.Length==2&&args[0]=="--spawner-contract"){
-    Console.WriteLine(SpawnerGameplayContracts.Run(File.ReadAllText(args[1])));
-    return;
-}
-if(args.Length==2&&args[0]=="--behavior-graph-contract"){
-    Console.WriteLine(BehaviorDesignerContracts.Run(LoadSourcePackage(args[1])));
-    return;
-}
-if(args.Length==2&&args[0]=="--source-ui-prefab-contract"){
-    var package=File.ReadAllText(args[1]);var world=new RuntimeWorld();world.MakeCurrent();
-    var loaded=SceneLoader.LoadPrefab(package,"Assets/GameObject/Interior mode UI.prefab",world,requireComplete:false);
-    var rects=loaded.prefabRoot.GetComponentsInChildren<RectTransform>(true);
-    var canvases=loaded.prefabRoot.GetComponentsInChildren<Canvas>(true);var canvas=canvases.FirstOrDefault();
-    var scalers=loaded.prefabRoot.GetComponentsInChildren<UnityEngine.UI.CanvasScaler>(true);
-    var raycasters=loaded.prefabRoot.GetComponentsInChildren<UnityEngine.UI.GraphicRaycaster>(true);
-    var pointer=loaded.prefabRoot.GetComponentsInChildren<Crisis.Runtime.FullSource.WeaponPointer>(true).SingleOrDefault();
-    var physiology=loaded.prefabRoot.GetComponentsInChildren<Crisis.Runtime.FullSource.UIPhysiologyIndicator>(true).SingleOrDefault();
-    if(rects.Length==0||canvas==null||scalers.Length==0||raycasters.Length==0||pointer?.aimQuadPrefab==null||physiology?.circulationImage?.material==null)
-        throw new InvalidOperationException($"Authored UI prefab dependency graph missed required UI components (rects={rects.Length}, canvas={canvases.Length}, scalers={scalers.Length}, raycasters={raycasters.Length}, pointer={pointer!=null}, aimQuad={pointer?.aimQuadPrefab!=null}, physiologyMaterial={physiology?.circulationImage?.material!=null})");
-    if(canvas.renderMode!=RenderMode.ScreenSpaceOverlay||!canvas.receivesEvents||scalers[0].referenceResolution.x!=1280||scalers[0].referenceResolution.y!=720||!raycasters[0].ignoreReversedGraphics)
-        throw new InvalidOperationException("Authored UI Canvas, CanvasScaler, or GraphicRaycaster settings did not import");
-    if(pointer.aimQuadPrefab.OriginalAssetPath!="Assets/GameObject/Aim quad.prefab")throw new InvalidOperationException($"Authored WeaponPointer aim-quad prefab resolved as {pointer.aimQuadPrefab.OriginalAssetPath} ({pointer.aimQuadPrefab.name})");
-    var uiClone=UnityEngine.Object.Instantiate(loaded.prefabRoot);var clonedPhysiology=uiClone.GetComponentsInChildren<Crisis.Runtime.FullSource.UIPhysiologyIndicator>(true).Single();
-    if(clonedPhysiology.circulationImage.material==null||!ReferenceEquals(clonedPhysiology.circulationImage,uiClone.GetComponentsInChildren<UnityEngine.UI.Image>(true).First(image=>image.name==physiology.circulationImage.name)))
-        throw new InvalidOperationException("Instantiated authored UI did not retain the physiology overlay material and owned image reference");
-    Console.WriteLine(JsonSerializer.Serialize(new{prefab=loaded.scene,rectTransforms=rects.Length,canvasCount=canvases.Length,canvasScalerCount=scalers.Length,graphicRaycasterCount=raycasters.Length,canvasRenderMode=canvas.renderMode,referenceResolution=new{x=scalers[0].referenceResolution.x,y=scalers[0].referenceResolution.y},aimQuadPrefab=pointer.aimQuadPrefab.OriginalAssetPath,physiologyMaterial=physiology.circulationImage.material.OriginalAssetPath,physiologyMaterialCloned=clonedPhysiology.circulationImage.material!=null,unsupportedComponents=loaded.unsupportedComponents,unresolvedReferences=loaded.unresolvedReferences}));
-    return;
-}
-if(args.Length==3&&args[0]=="--ammunition-resource-contract"){
-    Console.WriteLine(JsonSerializer.Serialize(AmmunitionLoader.VerifyOriginalResource(File.ReadAllText(args[1]),args[2])));
-    return;
-}
-if(args.Length==2&&(args[0]=="--mission-contract"||args[0]=="--mission-ui-contract"||args[0]=="--mission-ui-incremental-contract"||args[0]=="--mission-outcome-contract"||args[0]=="--mission-ai-contract"||args[0]=="--mission-ai-outcome-contract"||args[0]=="--mission-projectile-contract"||args[0]=="--mission-ai-projectile-contract"||args[0]=="--mission-physiology-contract"||args[0]=="--mission-ai-switch-fallback-contract")){
-    var runOriginalAI=args[0].StartsWith("--mission-ai-",StringComparison.Ordinal);
-    var runWithOriginalUI=args[0] is "--mission-ui-contract" or "--mission-ui-incremental-contract";
-    var package=LoadSourcePackage(args[1]);
-    var world=new RuntimeWorld();
-    world.MakeCurrent();
-    UnityEngine.Application.persistentDataPath=System.IO.Path.Combine(System.IO.Path.GetTempPath(),"crisis-response-mission-contract-"+Guid.NewGuid().ToString("N"));
-    Resources.Configure(package,world);
-    // Scene AudioSources bind during SceneLoader.AddComponent, before the
-    // scene's PoweredLight/FireAlarm Awake callbacks. Model the browser's
-    // deferred audio boundary at that point, not only on prefab instances.
-    world.AudioSourceDriver=new MissionContractSilentAudioDriver();
-    var contextPrefab=SceneLoader.LoadPrefabInstance(package,"Assets/Resources/Global context.prefab",world,requireComplete:false);
-    UnityEngine.QualitySettings.Bind(world,new MissionContractQualitySettingsDriver());
-    UnityEngine.Shader.Resolver??=(name=>new UnityEngine.Shader{name=name,isSupported=false});
-    UnityEngine.SceneManagement.SceneManager.Bind(world,new MissionContractSceneManagerDriver());
-    Material.TextureDriver??=((_,_)=>{});
-    world.Initialize();
-    var context=Crisis.Runtime.FullSource.Global.Context??throw new InvalidOperationException("Instantiated original Global Context did not initialize before Mission 01 load");
-    context.Usage.enabled=false;
-    context.CommandHandler.enabled=false;
-    foreach(var clip in world.Objects.OfType<AudioClip>())clip.ReportLoadState(AudioDataLoadState.Loaded);
-    foreach(var source in world.Objects.OfType<AudioSource>())source.Driver=new MissionContractSilentAudioDriver();
-    UnityEngine.Audio.AudioMixer.Bind(world,new MissionContractSilentMixerDriver());
-    var team=new Crisis.Runtime.FullSource.SerializableTeam();
-    team.marksman.enabled=false;
-    var loadout=new SerializableEquipment();loadout.primary.prefabName="M4A1";loadout.primary.ammunitionPrefabName="5.56-FMJ";loadout.secondary.prefabName="Glock-18";loadout.secondary.ammunitionPrefabName="9-FMJ";
-    loadout.items.itemPrefabNames.AddRange(new[]{"Primary magazine","Secondary magazine","Plasticuffs","Gauze"});
-    team.entryMembers.Add(loadout);
-    if(args[0]=="--mission-ai-switch-fallback-contract")team.entryMembers.Add(loadout.Copy());
-    typeof(Crisis.Runtime.FullSource.OperatorSpawnData).GetProperty(nameof(Crisis.Runtime.FullSource.OperatorSpawnData.Team),System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.Public|System.Reflection.BindingFlags.NonPublic)!.SetValue(context.OperatorSpawnData,team);
-    context.MissionMetaData.DeactivateTutorial();
-    // Keep gate 7 focused on the real mission and actor flow in this headless
-    // host. The original menus instantiate a large presentation-only prefab
-    // graph; suppress those roots before their Awake callbacks, as a UI driver
-    // would, while preserving the mission, operators, occupants, and systems.
-    if(runWithOriginalUI)Console.Error.WriteLine("MISSION-UI stage: loading scene records");
-    // Scene records can instantiate AudioSources whose Awake callbacks play
-    // authored hums before the post-load setup runs. Bind the headless driver
-    // at world scope so every newly imported scene source inherits it.
-    world.AudioSourceDriver=new MissionContractSilentAudioDriver();
-    var mission=SceneLoader.Load(package,"Assets/Scenes/Mission 01.unity",world,loaded=>{
-        if(runWithOriginalUI)Console.Error.WriteLine("MISSION-UI stage: scene records loaded; activating authored UI");
-        if(!runWithOriginalUI)foreach(var ui in loaded.objects.Values.OfType<Crisis.Runtime.FullSource.MissionUI>())ui.gameObject.SetActive(false);
-        if(!runWithOriginalUI)foreach(var component in loaded.objects.Values.OfType<Crisis.Runtime.FullSource.Mission>()){
-            // Keep original InteriorMode gameplay state for PlayerController,
-            // but keep its original canvas initialized for weapon-pointer and
-            // physiology indicator references. The headless gate supplies the
-            // pointer's three image sinks below; menu and canvas callbacks are
-            // presentation-only.
-            if(component.interiorModePrefab!=null){
-                component.interiorModePrefab.gameObject.SetActive(false);
-                if(component.interiorModePrefab.uiPrefab!=null)
-                    component.interiorModePrefab.uiPrefab.gameObject.SetActive(false);
-            }
-        }
-        if(runWithOriginalUI)Console.Error.WriteLine("MISSION-UI stage: pre-activation configuration complete");
-    });
-    if(runWithOriginalUI)Console.Error.WriteLine("MISSION-UI stage: scene activation completed");
-    var missionComponent=mission.objects.Values.OfType<Crisis.Runtime.FullSource.Mission>().Single();
-    missionComponent.sandboxStartMode=runWithOriginalUI||args[0]=="--mission-ai-switch-fallback-contract"?Crisis.Runtime.FullSource.Mission.MissionView.EntryTeam:Crisis.Runtime.FullSource.Mission.MissionView.None;
-    mission.objects.Values.OfType<Crisis.Runtime.FullSource.MissionUI>().Single().missionIntro=null;
-    foreach(var renderer in world.Objects.OfType<Renderer>().ToArray())renderer.material.OnTextureAssigned??=((_,_)=>{});
-    // Fog of war presentation Starts before the Mission Start callback in this
-    // host's record order; it is excluded from this actor lifecycle contract.
-    foreach(var fog in world.Objects.OfType<Crisis.Runtime.FullSource.FogOfWarElement>())fog.enabled=false;
-    // The reticle and indicators are initialized; suppress only the headless
-    // pointer's camera/input polling Start callback.
-    foreach(var pointer in world.Objects.OfType<Crisis.Runtime.FullSource.WeaponPointer>()){
-        pointer.enabled=false;
-        var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
-        void BindImage(string field,UnityEngine.Transform dot){if(dot!=null&&dot.GetComponent<UnityEngine.UI.Image>() is { } image)pointer.GetType().GetField(field,flags)!.SetValue(pointer,image);}
-        BindImage("mainImage",pointer.mainDot);BindImage("startImage",pointer.startDot);BindImage("endImage",pointer.endDot);
-    }
-    // RuntimeWorld has no native/browser audio device. Mark preserved source
-    // clips as accepted by a test adapter so original mission startup and music
-    // calls execute without claiming decoded or audible output.
-    foreach(var clip in world.Objects.OfType<AudioClip>())clip.ReportLoadState(AudioDataLoadState.Loaded);
-    foreach(var source in world.Objects.OfType<AudioSource>())source.Driver=new MissionContractSilentAudioDriver();
-    void DisableUnboundVocalizationPresentation(){foreach(var vocalization in world.Objects.OfType<Crisis.Runtime.FullSource.UIVocalizationText>().ToArray())vocalization.enabled=false;foreach(var source in world.Objects.OfType<AudioSource>())source.Driver??=new MissionContractSilentAudioDriver();if(!runOriginalAI)foreach(var tree in world.Objects.OfType<BehaviorDesigner.Runtime.BehaviorTree>().ToArray())tree.enabled=false;if(args[0]=="--mission-ai-switch-fallback-contract")foreach(var controller in world.Objects.OfType<Crisis.Runtime.FullSource.PlayerController>())controller.enabled=false;}
-    world.Tick(1f/60f,DisableUnboundVocalizationPresentation);
-    // Original AI/movement can emit forces on its next fixed tick. This
-    // contract records source force commands without claiming a PhysX solve.
-    var aiForceCommands=0;foreach(var rigidbody in world.Objects.OfType<Rigidbody>())rigidbody.PhysicsForceSink??=((_,_,_)=>aiForceCommands++);
-    world.Tick(1f/60f,DisableUnboundVocalizationPresentation);
-    var aiSimulationTicks=0;if(runOriginalAI&&args[0]!="--mission-ai-switch-fallback-contract")for(var aiTick=0;aiTick<60;aiTick++){world.Tick(1f/60f,DisableUnboundVocalizationPresentation);aiSimulationTicks++;}
-    missionComponent=world.Objects.OfType<Crisis.Runtime.FullSource.Mission>().SingleOrDefault()??throw new InvalidOperationException("Mission 01 did not initialize exactly one original Mission component");
-    var bodies=world.Objects.OfType<Crisis.Runtime.FullSource.CharacterBody>().ToArray();
-    if(!missionComponent.Started)throw new InvalidOperationException("Original Mission did not reach BeginMission during normal RuntimeWorld startup");
-    if(bodies.Length<2||!bodies.Any(body=>body.GetComponent<Crisis.Runtime.FullSource.TeamOperator>()!=null)||!bodies.Any(body=>body.GetComponent<Crisis.Runtime.FullSource.Occupant>()!=null))
-        throw new InvalidOperationException($"Mission 01 actor flow did not produce an Operator and Occupant; bodies={bodies.Length}");
-    if(args[0]=="--mission-ai-switch-fallback-contract"){
-        var aiOperator=bodies.FirstOrDefault(body=>!body.IsPlayer&&body.GetComponent<Crisis.Runtime.FullSource.TeamOperator>()!=null&&body.Equipment?.primaryWeapon!=null)
-            ??throw new InvalidOperationException("Mission 01 did not create a nonplayer Operator for the source AI fallback contract");
-        Console.WriteLine(Crisis.Runtime.Checks.SourceAIWeaponFallbackContracts.Run(world,aiOperator));
-        return;
-    }
-    var activePlayerControllers=world.Objects.OfType<Crisis.Runtime.FullSource.PlayerController>()
-        .Where(controller=>controller&&controller.isActiveAndEnabled&&controller.Body!=null&&controller.Body.IsPlayer).ToArray();
-    if(activePlayerControllers.Length!=1)
-        throw new InvalidOperationException($"FullSource actor bridge requires exactly one active original player actor; found {activePlayerControllers.Length}");
-    var fullSourceBridge=new FullSourceActorBridge(world,activePlayerControllers[0].Body);
-    using(var poseSnapshot=JsonDocument.Parse(JsonSerializer.Serialize(fullSourceBridge.Snapshot())))
-        if(poseSnapshot.RootElement.GetProperty("owner").GetString()!="FullSource.CharacterBody"||
-           poseSnapshot.RootElement.GetProperty("poses").GetArrayLength()<20)
-            throw new InvalidOperationException("FullSource actor bridge did not return the actor-owned authored hierarchy snapshot");
-    if(runWithOriginalUI){
-        if(missionComponent.InteriorMode?.UI?.InteractionMenu==null)throw new InvalidOperationException("EntryTeam mission did not initialize its original InteractionMenu");
-        var leftAction=Crisis.Runtime.FullSource.Global.Context.InputHandler.Keys.left;
-        var inputHandler=Crisis.Runtime.FullSource.Global.Context.InputHandler;
-        fullSourceBridge.Step(1f/60f,"{\"left\":true}",0f,0f);
-        if(!leftAction.Pressed)throw new InvalidOperationException($"FullSource bridge did not deliver the original left-action press to InputHandler (rawKey={UnityEngine.Input.GetKey(leftAction.key)}, key={leftAction.key}, enabled={leftAction.Enabled}, handlerEnabled={inputHandler.isActiveAndEnabled}, suspended={inputHandler.GetType().GetField("inputSuspended",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)!.GetValue(inputHandler)})");
-        using var physicsFrame=JsonDocument.Parse(JsonSerializer.Serialize(fullSourceBridge.Step(1f/60f,"{}",0f,0f)));
-        if(leftAction.Pressed||!leftAction.Up)throw new InvalidOperationException("FullSource bridge did not deliver the original left-action release to InputHandler");
-        var physics=physicsFrame.RootElement.GetProperty("physics");
-        var commands=physics.GetProperty("commands");
-        if(physics.GetProperty("fixedSteps").GetInt32()!=1||commands.GetArrayLength()!=1||commands[0].GetProperty("mode").GetString()!="Acceleration"||commands[0].GetProperty("force")[0].GetSingle()>=0f)
-            throw new InvalidOperationException("FullSource left movement did not emit one actor-owned acceleration command for the browser PhysX step");
-        using var synchronized=JsonDocument.Parse(JsonSerializer.Serialize(fullSourceBridge.SynchronizePhysics(1.25f,2.5f,1.5f,-.5f,0f,0f)));
-        if(MathF.Abs(synchronized.RootElement.GetProperty("position")[0].GetSingle()-1.25f)>.0001f||MathF.Abs(synchronized.RootElement.GetProperty("velocity")[0].GetSingle()+.5f)>.0001f)
-            throw new InvalidOperationException("Browser PhysX result was not synchronized back to the original FullSource actor Rigidbody and Transform");
-    }else try{
-        fullSourceBridge.Step(1f/60f,"{\"left\":true}",0f,0f);
-        throw new InvalidOperationException("FullSource bridge tick accepted Mission 01's intentionally incomplete, headless player UI");
-    }catch(NotSupportedException error) when(error.Message.Contains("InteractionMenu",StringComparison.Ordinal)){}
-    if(args[0]=="--mission-physiology-contract"){
-        Console.WriteLine(MissionPhysiologyContracts.Run(world,bodies));
-        return;
-    }
-    if(args[0]=="--mission-projectile-contract"||args[0]=="--mission-ai-projectile-contract"){
-        var report=MissionProjectileContracts.Describe(world,missionComponent,bodies);
-        Console.WriteLine(report);
-        using var reportDocument=JsonDocument.Parse(report);
-        var reportRoot=reportDocument.RootElement;
-        var firingStatus=reportRoot.GetProperty("firingStatus").GetString();
-        if(firingStatus!="source-fire-prerequisites-ready")
-            throw new InvalidOperationException($"Mission projectile contract was blocked before the original trigger: {report}");
-        var attempt=reportRoot.GetProperty("fireAttempt");
-        if(attempt.ValueKind!=JsonValueKind.Object)
-            throw new InvalidOperationException($"Mission projectile contract produced no fire attempt: {report}");
-        var result=attempt.GetProperty("result").GetString();
-        if(result!="source-projectile-hit-two-occupants")
-            throw new InvalidOperationException($"Mission two-shot projectile contract failed: {result}");
-        var selectedTarget=attempt.GetProperty("selectedTarget").GetString();
-        var secondShot=attempt.GetProperty("secondShot");
-        if(secondShot.ValueKind!=JsonValueKind.Object||!secondShot.GetProperty("hit").GetBoolean())
-            throw new InvalidOperationException("Second original projectile did not hit its distinct initialized Occupant");
-        if(secondShot.GetProperty("body").GetString()==selectedTarget)
-            throw new InvalidOperationException("Two source shots must verify distinct Occupant ownership");
-        if(secondShot.GetProperty("shotsAfter").GetInt32()!=secondShot.GetProperty("shotsBefore").GetInt32()+1)
-            throw new InvalidOperationException("One second trigger must increment source ShotsFired exactly once");
-        if(secondShot.GetProperty("spawnedProjectiles").GetInt32()!=secondShot.GetProperty("expectedProjectiles").GetInt32())
-            throw new InvalidOperationException("Second source shot did not register the serialized ammunition projectile count");
-        if(secondShot.GetProperty("liveOwnedProjectilesImmediatelyAfterImpact").GetInt32()<=0)
-            throw new InvalidOperationException("Source projectile lifecycle report lost the live owner-matched projectiles at impact");
-        if(secondShot.GetProperty("sourceTerminationTicks").GetInt32()<=0)
-            throw new InvalidOperationException("Source projectiles were not advanced through original RuntimeWorld updates before cleanup");
-        if(secondShot.GetProperty("liveOwnedProjectilesAfterSourceTermination").GetInt32()!=0)
-            throw new InvalidOperationException("Original source projectiles remained registered after TestTermination lifetime/bounds checks");
-        var firstHit=attempt.GetProperty("victimHits").EnumerateArray()
-            .FirstOrDefault(hit=>hit.GetProperty("body").GetString()==selectedTarget);
-        var secondHit=attempt.GetProperty("victimHits").EnumerateArray()
-            .FirstOrDefault(hit=>hit.GetProperty("body").GetString()==secondShot.GetProperty("body").GetString());
-        foreach(var hit in new[]{firstHit,secondHit}){
-            if(hit.ValueKind!=JsonValueKind.Object)
-                throw new InvalidOperationException("Mission projectile contract did not report both selected Occupant hits");
-            var damageBefore=hit.GetProperty("damageBefore");
-            var damageAfter=hit.GetProperty("damageAfter");
-            if(damageAfter.GetProperty("wounds").GetInt32()<=damageBefore.GetProperty("wounds").GetInt32()
-                ||damageAfter.GetProperty("damagedTissueVolume").GetSingle()<=damageBefore.GetProperty("damagedTissueVolume").GetSingle()
-                ||damageAfter.GetProperty("bodyShock").GetSingle()<=damageBefore.GetProperty("bodyShock").GetSingle())
-                throw new InvalidOperationException($"Mission projectile did not verify wound, tissue, and shock increases on {hit.GetProperty("body").GetString()}");
-        }
-        return;
-    }
-    var outcomeBehaviorTrees=world.Objects.OfType<BehaviorDesigner.Runtime.BehaviorTree>().Where(tree=>tree.enabled).ToArray();
-    if(runOriginalAI&&(outcomeBehaviorTrees.Length==0||outcomeBehaviorTrees.Any(tree=>tree.GetBehaviorSource().RootTask==null)))throw new InvalidOperationException($"Original Mission AI outcome did not retain enabled Behavior Trees with deserialized roots: activeTrees={outcomeBehaviorTrees.Length}");
-    if(args[0]=="--mission-outcome-contract"||args[0]=="--mission-ai-outcome-contract"){
-        var spawnedOccupants=bodies.Where(body=>body.GetComponent<Crisis.Runtime.FullSource.Occupant>()!=null).ToArray();
-        foreach(var source in world.Objects.OfType<AudioSource>())source.Driver=new MissionContractSilentAudioDriver();
-        var sourceOperator=bodies.Select(body=>body.GetComponent<Crisis.Runtime.FullSource.TeamOperator>()).FirstOrDefault(op=>op!=null&&op.Body!=null)??throw new InvalidOperationException("Mission outcome contract has no original TeamOperator with an initialized original CharacterBody reference");
-        var sourceRoomUpdate=typeof(Crisis.Runtime.FullSource.TeamController).GetMethod("UpdateMissionState",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)??throw new MissingMethodException("Original TeamController.UpdateMissionState");
-        var roomsClearedThroughSource=0;
-        foreach(var room in missionComponent.rooms.Where(room=>room!=null&&room.gameObject.activeInHierarchy)){
-            var actorPosition=sourceOperator.Body.transform.position;
-            actorPosition.x=room.CenterCoord;
-            sourceOperator.Body.transform.position=actorPosition;
-            sourceOperator.Body.Turn(1f);
-            world.Invoke(sourceOperator.Body,"UpdateMovement");
-            if(!ReferenceEquals(sourceOperator.Body.Room,room))throw new InvalidOperationException($"Original CharacterBody room query did not resolve room {room.name}");
-            sourceOperator.Body.VisibleRange=MathF.Max(0f,room.RightEdge-sourceOperator.Body.Eye.position.x+1f);
-            sourceRoomUpdate.Invoke(sourceOperator.Team,new object[]{sourceOperator});
-            if(!room.cleared)throw new InvalidOperationException($"Original TeamController.UpdateMissionState did not clear traversed room {room.name}");
-            roomsClearedThroughSource++;
-        }
-        if(roomsClearedThroughSource==0)throw new InvalidOperationException("Mission 01 has no active rooms to clear through the original Operator path");
-        world.Invoke(missionComponent,"UpdateMissionState");
-        if(!missionComponent.AllRoomsChecked)throw new InvalidOperationException("Original Mission.UpdateMissionState did not accept rooms cleared through the Operator path");
-        var allDisabledEventCount=0;missionComponent.Occupants.allDisabledEvent.AddListener(()=>allDisabledEventCount++);
-        foreach(var body in spawnedOccupants)body.SetUnconscious();
-        world.Tick(1f/60f,DisableUnboundVocalizationPresentation);
-        if(!missionComponent.Occupants.AllRenderedSafe||allDisabledEventCount!=1||spawnedOccupants.Any(body=>!body.IsRagdoll))
-            throw new InvalidOperationException($"Original Occupants manager failed to propagate all-disabled/ragdoll state before restraint: allRenderedSafe={missionComponent.Occupants.AllRenderedSafe}, eventCount={allDisabledEventCount}, ragdoll={spawnedOccupants.Count(body=>body.IsRagdoll)}/{spawnedOccupants.Length}");
-        // Restrain invokes the original CharacterBody callback and creates its
-        // source SpringJoints. Do not advance a physics tick here: the headless
-        // runner intentionally has no native PhysX joint driver. Recompute the
-        // original manager and Mission state immediately to verify completion.
-        foreach(var body in spawnedOccupants)body.Restrain();
-        world.Invoke(missionComponent.Occupants,"Update");
-        world.Invoke(missionComponent,"UpdateMissionState");
-        if(!missionComponent.Occupants.AllRestrained||spawnedOccupants.Any(body=>!body.IsRestrained)||!missionComponent.missionEnded)
-            throw new InvalidOperationException($"Original Mission completion did not propagate restraint and missionEnded state: allRestrained={missionComponent.Occupants.AllRestrained}, restrained={spawnedOccupants.Count(body=>body.IsRestrained)}/{spawnedOccupants.Length}, missionEnded={missionComponent.missionEnded}");
-        string presentationBlocker=null;string missionUiInitialization=null;
-        var missionUI=world.Objects.OfType<Crisis.Runtime.FullSource.MissionUI>().Single();
-        try{
-            missionUI.gameObject.SetActive(true);
-            if(missionUI.PauseMenu==null)world.Invoke(missionUI,"Awake");
-            if(missionUI.PauseMenu==null)throw new InvalidOperationException("Original MissionUI.Awake returned without instantiating its authored PauseMenu prefab");
-            missionUiInitialization="original MissionUI.Awake created the authored PauseMenu";
-        }catch(Exception error){missionUiInitialization=error.ToString();}
-        bool cameraDepthOfFieldFound=false;
-        bool cameraDepthOfFieldEnabledBeforeEnd=false;
-        var interiorCamera=missionComponent.InteriorMode?.interiorCamera;
-        if(interiorCamera!=null){
-            var depthOfField=interiorCamera.GetComponent<UnityStandardAssets.ImageEffects.DepthOfField>();
-            cameraDepthOfFieldFound=depthOfField!=null;
-            if(cameraDepthOfFieldFound){
-                world.Invoke(interiorCamera,"Awake");
-                cameraDepthOfFieldEnabledBeforeEnd=depthOfField!.enabled;
-            }
-        }
-        try{missionComponent.EndMission(0f);}
-        catch(Exception error){presentationBlocker=error.ToString();}
-        if(!missionComponent.missionSuccess)throw new InvalidOperationException("Original Mission.EndMission did not derive success from the checked-room and all-rendered-safe source state");
-        var endMenuVisible=missionUI.missionEndMenu?.Visible??false;
-        if(presentationBlocker==null&&!endMenuVisible)throw new InvalidOperationException("Original Mission.EndMission returned without showing the authored MissionEndMenu");
-        var cameraDepthOfFieldEnabledAtEnd=interiorCamera?.GetComponent<UnityStandardAssets.ImageEffects.DepthOfField>()?.enabled??false;
-        if(presentationBlocker==null&&cameraDepthOfFieldFound&&(!endMenuVisible||cameraDepthOfFieldEnabledBeforeEnd||!cameraDepthOfFieldEnabledAtEnd))
-            throw new InvalidOperationException($"Original MissionEndMenu transition did not enable Depth of Field from its disabled mission baseline: found={cameraDepthOfFieldFound}, enabledBefore={cameraDepthOfFieldEnabledBeforeEnd}, endMenuVisible={endMenuVisible}, enabledAfter={cameraDepthOfFieldEnabledAtEnd}");
-        Console.WriteLine(JsonSerializer.Serialize(new{mission=mission.scene,missionStarted=missionComponent.Started,missionEnded=missionComponent.missionEnded,missionSuccess=missionComponent.missionSuccess,allRenderedSafe=missionComponent.Occupants.AllRenderedSafe,allDisabledEventCount,allRoomsChecked=missionComponent.AllRoomsChecked,roomsClearedThroughSource,spawnedOccupants=spawnedOccupants.Length,allOccupantsRagdoll=spawnedOccupants.All(body=>body.IsRagdoll),allOccupantsRestrained=spawnedOccupants.All(body=>body.IsRestrained),outcomePath="Operator traversed room -> original CharacterBody room query -> original TeamController.UpdateMissionState/Room.Clear -> original Mission.UpdateMissionState -> original Occupant disable -> original CharacterBody.Restrain -> original Mission completion update -> Mission.EndMission",missionUiInitialization,cameraDepthOfFieldFound,cameraDepthOfFieldEnabledBeforeEnd,cameraDepthOfFieldEnabledAtEnd,endMenuVisible,presentationTransition=presentationBlocker==null?"completed":"blocked: "+presentationBlocker,ai=runOriginalAI?"original BehaviorTrees remained enabled with deserialized roots during the outcome":"suppressed; original BehaviorDesigner graph separately passes both actor prefabs",behaviorTrees=outcomeBehaviorTrees.Length,behaviorTreeStatus=outcomeBehaviorTrees.Select(tree=>new{root=tree.GetBehaviorSource().RootTask?.GetType().Name,execution=tree.ExecutionStatus.ToString()}).ToArray(),audio="silent adapter"}));
-        return;
-    }
-    var liveTrees=world.Objects.OfType<BehaviorDesigner.Runtime.BehaviorTree>().Where(tree=>tree.enabled).ToArray();
-    if(runOriginalAI&&(liveTrees.Length==0||liveTrees.Any(tree=>tree.GetBehaviorSource().RootTask==null)))throw new InvalidOperationException($"Original mission AI trees did not remain active with deserialized roots: activeTrees={liveTrees.Length}");
-    Console.WriteLine(JsonSerializer.Serialize(new{mission=mission.scene,missionStarted=missionComponent.Started,globalContext=context.gameObject.name,globalContextInstantiated=!ReferenceEquals(context.gameObject,contextPrefab.prefabRoot),sourceActors=bodies.Length,operators=bodies.Count(body=>body.GetComponent<Crisis.Runtime.FullSource.TeamOperator>()!=null),occupants=bodies.Count(body=>body.GetComponent<Crisis.Runtime.FullSource.Occupant>()!=null),fullSourceActorBridge=runWithOriginalUI?"snapshot passed; EntryTeam UI initialized; original left press and release passed":"snapshot passed; step correctly rejected missing authored InteractionMenu UI",ai=runOriginalAI?"original BehaviorTrees enabled for one simulated second":"suppressed in headless mission contract",aiSimulationTicks,aiForceCommands,behaviorTrees=liveTrees.Length,behaviorTreeStatus=liveTrees.Select(tree=>new{root=tree.GetBehaviorSource().RootTask?.GetType().Name,execution=tree.ExecutionStatus.ToString()}).ToArray(),sceneObjects=mission.gameObjects,originalComponents=mission.originalComponents,missionUnsupported=mission.unsupportedComponents,missionUnresolved=mission.unresolvedReferences,globalContextUnsupported=contextPrefab.unsupportedComponents,globalContextUnresolved=contextPrefab.unresolvedReferences,audio="silent test adapter; original decode/playback not verified"}));
-    return;
-}
-var runLifecycle=args.Contains("--prefab-lifecycle");if(runLifecycle||args.Contains("--prefab-instantiate")){
-    if(args.Length!=2)throw new ArgumentException("--prefab-lifecycle and --prefab-instantiate require the generated scene-package.json path");
-    var package=File.ReadAllText(args[1]);
-    var world=new RuntimeWorld();
-    world.MakeCurrent();
-    var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.Public|System.Reflection.BindingFlags.NonPublic;
-    var awakeField=typeof(UnityEngine.MonoBehaviour).GetField("awoken",flags)??throw new MissingFieldException("MonoBehaviour.awoken lifecycle state is unavailable");
-    var startedField=typeof(UnityEngine.MonoBehaviour).GetField("started",flags)??throw new MissingFieldException("MonoBehaviour.started lifecycle state is unavailable");
-    void SetProperty(object target,string name,object value)=>(target.GetType().GetProperty(name,flags)??throw new MissingMemberException(target.GetType().FullName,name)).SetValue(target,value);
-    // CharacterBody.Awake reads the real Global.Context.Mission, while the
-    // isolated prefab gate intentionally does not load a mission scene. Supply
-    // only those runtime dependencies; keep Mission disabled so its full scene
-    // startup is not implied by this actor-lifecycle check.
-    var contextObject=new UnityEngine.GameObject("Operator lifecycle context",world);contextObject.SetActive(false);
-    var context=contextObject.AddComponent<Crisis.Runtime.FullSource.GlobalContext>();
-    var settings=contextObject.AddComponent<Crisis.Runtime.FullSource.Settings>();
-    typeof(Crisis.Runtime.FullSource.GlobalContext).GetProperty(nameof(Crisis.Runtime.FullSource.GlobalContext.Settings),System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.Public|System.Reflection.BindingFlags.NonPublic)!.SetValue(context,settings);
-    Crisis.Runtime.FullSource.Global.Instance.Initialize(contextObject);
-    var missionObject=new UnityEngine.GameObject(Crisis.Runtime.FullSource.Mission.ObjectName,world);missionObject.SetActive(false);
-    var mission=missionObject.AddComponent<Crisis.Runtime.FullSource.Mission>();mission.enabled=false;awakeField.SetValue(mission,true);missionObject.SetActive(true);
-    var effectsContainer=new UnityEngine.GameObject("Operator lifecycle effects fixture",world);
-    SetProperty(mission,nameof(Crisis.Runtime.FullSource.Mission.EffectsContainer),effectsContainer.transform);
-    UnityEngine.Shader.Resolver??=(name=>new UnityEngine.Shader{name=name,isSupported=false});
-    Crisis.Runtime.FullSource.MissionHelper.Instance.Initialize(mission);
-    var operators=missionObject.AddComponent<Crisis.Runtime.FullSource.Operators>();operators.enabled=false;awakeField.SetValue(operators,true);
-    var teamObject=new UnityEngine.GameObject("Operator lifecycle team",world);teamObject.SetActive(false);
-    var mainGroup=teamObject.AddComponent<Crisis.Runtime.FullSource.TeamController>();mainGroup.enabled=false;awakeField.SetValue(mainGroup,true);startedField.SetValue(mainGroup,true);
-    SetProperty(operators,nameof(Crisis.Runtime.FullSource.Operators.MainGroup),mainGroup);
-    SetProperty(mission,nameof(Crisis.Runtime.FullSource.Mission.Operators),operators);
-    var uiObject=new UnityEngine.GameObject("Operator lifecycle mission UI",world);uiObject.SetActive(false);
-    var missionUI=uiObject.AddComponent<Crisis.Runtime.FullSource.MissionUI>();missionUI.enabled=false;awakeField.SetValue(missionUI,true);startedField.SetValue(missionUI,true);
-    var hitAnnouncementsObject=new UnityEngine.GameObject("Operator lifecycle hit announcements",world);hitAnnouncementsObject.SetActive(false);
-    var hitAnnouncements=hitAnnouncementsObject.AddComponent<Crisis.Runtime.FullSource.UIHitAnnouncements>();hitAnnouncements.enabled=false;awakeField.SetValue(hitAnnouncements,true);startedField.SetValue(hitAnnouncements,true);
-    missionUI.hitAnnouncements=hitAnnouncements;
-    var resourceCounterObject=new UnityEngine.GameObject("Operator lifecycle resource counter",world);resourceCounterObject.SetActive(false);
-    missionUI.resourceCounter=resourceCounterObject.AddComponent<Crisis.Runtime.FullSource.UIResourceCounter>();
-    var resourceEntryObject=new UnityEngine.GameObject("Operator lifecycle resource entry fixture",world);resourceEntryObject.SetActive(false);
-    var resourceEntry=resourceEntryObject.AddComponent<Crisis.Runtime.FullSource.UIResourceCounterEntry>();
-    var resourceLabelObject=new UnityEngine.GameObject("Operator lifecycle resource label fixture",world);resourceLabelObject.transform.SetParent(resourceEntryObject.transform,false);
-    var resourceValueObject=new UnityEngine.GameObject("Operator lifecycle resource value fixture",world);resourceValueObject.transform.SetParent(resourceEntryObject.transform,false);
-    resourceEntry.labelText=resourceLabelObject.AddComponent<UnityEngine.UI.Text>();
-    resourceEntry.valueText=resourceValueObject.AddComponent<UnityEngine.UI.Text>();
-    missionUI.resourceCounter.entryPrefab=resourceEntry;
-    mission.UI=missionUI;
-    var actors=new System.Collections.Generic.List<(string,UnityEngine.GameObject,UnityEngine.GameObject)>();
-    foreach(var name in new[]{"Operator","Occupant"}){
-        var path=$"Assets/Resources/characters/{name}.prefab";
-        var loaded=SceneLoader.LoadPrefab(package,path,world,requireComplete:true);
-        var instance=UnityEngine.Object.Instantiate(loaded.prefabRoot);
-        loaded.prefabRoot.SetActive(false);
-        // The original TeamOperator.Start runs after the mission spawner has
-        // attached Equipment. Supply an empty test-owned component so the
-        // actor can complete Start without claiming weapon/equipment parity.
-        var fixtureEquipmentObject=new UnityEngine.GameObject($"{name} lifecycle equipment fixture",world);
-        fixtureEquipmentObject.transform.SetParent(instance.transform,false);
-        var fixtureEquipment=fixtureEquipmentObject.AddComponent<Crisis.Runtime.FullSource.Equipment>();
-        var fixtureBody=instance.GetComponentsInChildren<UnityEngine.MonoBehaviour>(true).Single(component=>component.GetType().Name=="CharacterBody");
-        SetProperty(fixtureBody,"Equipment",fixtureEquipment);
-        actors.Add((name,loaded.prefabRoot,instance));
-    }
-    var enabledField=typeof(UnityEngine.MonoBehaviour).GetField("enableNotified",flags)??throw new MissingFieldException("MonoBehaviour.enableNotified lifecycle state is unavailable");
-    var startField=startedField;
-    // The actor lifecycle gate is physics/component focused. The browser
-    // renderer bridge is a separate acceptance gate, so retain material
-    // values while accepting texture assignments without claiming GPU output.
-    foreach(var renderer in world.Objects.OfType<UnityEngine.Renderer>().ToArray())
-        renderer.material.OnTextureAssigned??=((_,_)=>{});
-    if(runLifecycle)world.Tick(1f/60f);
-    if(runLifecycle)world.Tick(1f/60f);
-    var bodies=new System.Collections.Generic.List<UnityEngine.MonoBehaviour>();var curves=new System.Collections.Generic.List<UnityEngine.AnimationCurve>();
-    var physiologies=new System.Collections.Generic.List<Crisis.Runtime.FullSource.Physiology>();
-    var controllers=new System.Collections.Generic.List<Crisis.Runtime.FullSource.IKArmController>();
-    var rightSolvers=new System.Collections.Generic.List<Crisis.Runtime.FullSource.ArmIKSolver>();
-    var leftSolvers=new System.Collections.Generic.List<Crisis.Runtime.FullSource.ArmIKSolver>();
-    var equipmentRefs=new System.Collections.Generic.List<Crisis.Runtime.FullSource.Equipment>();
-    var limbGraphs=new System.Collections.Generic.List<Crisis.Runtime.FullSource.Limb[]>();
-    foreach(var actor in actors){
-        var behaviours=actor.Item3.GetComponentsInChildren<UnityEngine.MonoBehaviour>(true);
-        var active=behaviours.Where(component=>component.isActiveAndEnabled).ToArray();
-        var awoken=active.Count(component=>(bool)awakeField.GetValue(component)!);
-        var enabled=active.Count(component=>(bool)enabledField.GetValue(component)!);
-        var started=active.Count(component=>(bool)startField.GetValue(component)!);
-        var actorBodies=behaviours.Where(component=>component.GetType().Name=="CharacterBody").ToArray();
-        if(!actor.Item3.activeInHierarchy||actorBodies.Length!=1||active.Length==0||(runLifecycle&&(awoken!=active.Length||enabled!=active.Length||started!=active.Length))||(!runLifecycle&&(awoken!=0||enabled!=0||started!=0)))
-            throw new InvalidOperationException($"{actor.Item1} actual prefab lifecycle failed: active={actor.Item3.activeInHierarchy}, bodies={actorBodies.Length}, behaviours={active.Length}, Awake={awoken}, OnEnable={enabled}, Start={started}");
-        bodies.Add(actorBodies[0]);
-        var fullBody=(Crisis.Runtime.FullSource.CharacterBody)actorBodies[0];
-        var physiology=runLifecycle?fullBody.Physiology:null;
-        var controller=runLifecycle?fullBody.armController:null;
-        var rightSolver=runLifecycle?fullBody.rightArm:null;
-        var leftSolver=runLifecycle?fullBody.leftArm:null;
-        var equipment=runLifecycle?fullBody.Equipment:null;
-        if(runLifecycle){
-            if(physiology==null||controller==null||rightSolver==null||leftSolver==null)
-                throw new InvalidOperationException($"{actor.Item1} Awake did not bind its original physiology, IK controller, and both arm solvers");
-            Crisis.Runtime.FullSource.OriginalActorIdentity.RequirePhysiology(fullBody,physiology);
-            Crisis.Runtime.FullSource.OriginalActorIdentity.RequireController(fullBody,controller);
-            if(!behaviours.Any(component=>ReferenceEquals(component,physiology))||
-               !behaviours.Any(component=>ReferenceEquals(component,controller))||
-               !behaviours.Any(component=>ReferenceEquals(component,rightSolver))||
-               !behaviours.Any(component=>ReferenceEquals(component,leftSolver)))
-                throw new InvalidOperationException($"{actor.Item1} original CharacterBody references components outside its cloned prefab graph");
-            if(behaviours.OfType<Crisis.Runtime.FullSource.Physiology>().Count()!=1||
-               behaviours.OfType<Crisis.Runtime.FullSource.IKArmController>().Count()!=1||
-               behaviours.OfType<Crisis.Runtime.FullSource.ArmIKSolver>().Count()!=2)
-                throw new InvalidOperationException($"{actor.Item1} cloned prefab has duplicate or missing original physiology/controller/solver components");
-            if(fullBody.limbs==null||fullBody.limbMap==null||fullBody.limbs.Count!=fullBody.limbMap.Count||fullBody.limbs.Count<19)
-                throw new InvalidOperationException($"{actor.Item1} original CharacterBody limb registry is incomplete");
-            var actorLimbs=behaviours.OfType<Crisis.Runtime.FullSource.Limb>().ToArray();
-            var limbPhysiology=behaviours.OfType<Crisis.Runtime.FullSource.LimbPhysiology>().ToArray();
-            var limbMuscle=behaviours.OfType<Crisis.Runtime.FullSource.LimbMuscle>().ToArray();
-            if(actorLimbs.Length!=19||limbPhysiology.Length!=17||limbMuscle.Length!=16)
-                throw new InvalidOperationException($"{actor.Item1} original limb component inventory changed: limbs={actorLimbs.Length}, physiology={limbPhysiology.Length}, muscle={limbMuscle.Length}");
-            foreach(var limb in fullBody.limbs){
-                Crisis.Runtime.FullSource.OriginalActorIdentity.RequireLimb(fullBody,limb);
-                if(!behaviours.Any(component=>ReferenceEquals(component,limb))||
-                   (limb.LimbPhysiology!=null&&!ReferenceEquals(limb.GetComponent<Crisis.Runtime.FullSource.LimbPhysiology>(),limb.LimbPhysiology))||
-                   (limb.LimbMuscle!=null&&!ReferenceEquals(limb.GetComponent<Crisis.Runtime.FullSource.LimbMuscle>(),limb.LimbMuscle)))
-                    throw new InvalidOperationException($"{actor.Item1} limb {limb.id} is not bound to its actor-owned physiology and muscle components");
-            }
-            if(equipment!=null){
-                Crisis.Runtime.FullSource.OriginalActorIdentity.RequireEquipment(fullBody,equipment);
-                if(!behaviours.Any(component=>ReferenceEquals(component,equipment)))
-                    throw new InvalidOperationException($"{actor.Item1} CharacterBody equipment is not owned by its own prefab graph");
-            }
-        }
-        physiologies.Add(physiology);controllers.Add(controller);rightSolvers.Add(rightSolver);leftSolvers.Add(leftSolver);equipmentRefs.Add(equipment);
-        limbGraphs.Add(fullBody.limbs.ToArray());
-            var originalBody=actor.Item2.GetComponentsInChildren<UnityEngine.MonoBehaviour>(true).Single(component=>component.GetType().Name=="CharacterBody");
-            var curveField=originalBody.GetType().GetField("hitRecoveryCurve",flags)??throw new MissingFieldException(originalBody.GetType().FullName,"hitRecoveryCurve");
-            var authoredCurve=curveField.GetValue(originalBody) as UnityEngine.AnimationCurve??throw new InvalidOperationException($"{actor.Item1} source prefab has no authored hitRecoveryCurve");
-            var clonedCurve=curveField.GetValue(actorBodies[0]) as UnityEngine.AnimationCurve??throw new InvalidOperationException($"{actor.Item1} clone lost hitRecoveryCurve");
-            var authoredKeys=authoredCurve.keys;var clonedKeys=clonedCurve.keys;
-            if(ReferenceEquals(authoredCurve,clonedCurve)||authoredCurve.preWrapMode!=clonedCurve.preWrapMode||authoredCurve.postWrapMode!=clonedCurve.postWrapMode||authoredCurve.clampOutside!=clonedCurve.clampOutside||authoredCurve.serializedPreInfinity!=clonedCurve.serializedPreInfinity||authoredCurve.serializedPostInfinity!=clonedCurve.serializedPostInfinity||authoredCurve.serializedVersion!=clonedCurve.serializedVersion||authoredCurve.serializedRotationOrder!=clonedCurve.serializedRotationOrder||authoredKeys.Length!=clonedKeys.Length)throw new InvalidOperationException($"{actor.Item1} clone changed authored hitRecoveryCurve metadata");
-            for(var keyIndex=0;keyIndex<authoredKeys.Length;keyIndex++){var sourceKey=authoredKeys[keyIndex];var cloneKey=clonedKeys[keyIndex];if(!sourceKey.time.Equals(cloneKey.time)||!sourceKey.value.Equals(cloneKey.value)||!sourceKey.inTangent.Equals(cloneKey.inTangent)||!sourceKey.outTangent.Equals(cloneKey.outTangent)||sourceKey.tangentMode!=cloneKey.tangentMode||sourceKey.serializedVersion!=cloneKey.serializedVersion)throw new InvalidOperationException($"{actor.Item1} clone changed authored hitRecoveryCurve key {keyIndex}");}
-            curves.Add(clonedCurve);
-        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(new{mode=runLifecycle?"lifecycle":"instantiation",prefab=actor.Item1,instantiatedFromOriginalPrefab=true,activeBehaviours=active.Length,awake=awoken,onEnable=enabled,start=started,characterBody=actorBodies.Length,originalIKController=controller!=null,originalPhysiology=physiology!=null,testEquipmentFixtureAttached=equipment!=null,hitRecoveryCurveKeys=clonedCurve.keys.Length}));
-    }
-    if(ReferenceEquals(bodies[0],bodies[1])||ReferenceEquals(bodies[0].gameObject,bodies[1].gameObject)||ReferenceEquals(curves[0],curves[1]))throw new InvalidOperationException("Operator and Occupant share a CharacterBody or authored AnimationCurve instance");
-    if(runLifecycle&&(ReferenceEquals(physiologies[0],physiologies[1])||ReferenceEquals(controllers[0],controllers[1])||ReferenceEquals(rightSolvers[0],rightSolvers[1])||ReferenceEquals(leftSolvers[0],leftSolvers[1])||(equipmentRefs[0]!=null&&ReferenceEquals(equipmentRefs[0],equipmentRefs[1]))))
-        throw new InvalidOperationException("Operator and Occupant share physiology, IK controller, arm solvers, or initialized equipment");
-    if(runLifecycle){
-        var operatorBody=(Crisis.Runtime.FullSource.CharacterBody)bodies[0];
-        var operatorController=controllers[0];
-        if(rightSolvers[0].interpolation?.length!=2||leftSolvers[0].interpolation?.length!=2)
-            throw new InvalidOperationException($"Original Operator arm interpolation curves were not deserialized (right={rightSolvers[0].interpolation?.length}, left={leftSolvers[0].interpolation?.length})");
-        operatorController.Unarmed();
-        if(!operatorController.IsPlaying||
-           !ReferenceEquals(rightSolvers[0].TransitionTarget.parent,operatorBody.Pelvis.transform)||
-           !ReferenceEquals(leftSolvers[0].TransitionTarget.parent,operatorBody.Pelvis.transform))
-            throw new InvalidOperationException("Original Operator did not start its authored two-arm pelvis transition on the actor-owned rig");
-        var timeSetter=typeof(UnityEngine.Time).GetProperty(nameof(UnityEngine.Time.time),System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.Public|System.Reflection.BindingFlags.NonPublic)!.GetSetMethod(true)!;
-        var deltaSetter=typeof(UnityEngine.Time).GetProperty(nameof(UnityEngine.Time.deltaTime),System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.Public)!.GetSetMethod(true)!;
-        var controllerUpdate=typeof(Crisis.Runtime.FullSource.IKArmController).GetMethod("Update",flags)!;
-        var solverUpdate=typeof(Crisis.Runtime.FullSource.ArmIKSolver).GetMethod("Update",flags)!;
-        var sequenceStart=UnityEngine.Time.time;
-        for(var tick=1;tick<=40&&operatorController.IsPlaying;tick++){
-            const float step=.05f;
-            timeSetter.Invoke(null,new object[]{sequenceStart+tick*step});
-            deltaSetter.Invoke(null,new object[]{step});
-            controllerUpdate.Invoke(operatorController,null);
-            solverUpdate.Invoke(rightSolvers[0],null);
-            solverUpdate.Invoke(leftSolvers[0],null);
-        }
-        if(operatorController.IsPlaying||!operatorController.RightSequencer.IsReady||!operatorController.LeftSequencer.IsReady||
-           !rightSolvers[0].OnTarget||!leftSolvers[0].OnTarget||
-           !ReferenceEquals(rightSolvers[0].ikTarget.parent,operatorBody.Pelvis.transform)||
-           !ReferenceEquals(leftSolvers[0].ikTarget.parent,operatorBody.Pelvis.transform))
-            throw new InvalidOperationException($"Original Operator authored pelvis transitions did not reach both targets and complete (playing={operatorController.IsPlaying}, rightReady={operatorController.RightSequencer.IsReady}, leftReady={operatorController.LeftSequencer.IsReady}, rightOnTarget={rightSolvers[0].OnTarget}, leftOnTarget={leftSolvers[0].OnTarget}, rightParent={rightSolvers[0].ikTarget.parent?.name}, leftParent={leftSolvers[0].ikTarget.parent?.name})");
-        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(new{prefab="Operator",authoredIKSequence="Unarmed",transitionTarget="Pelvis",rightOnTarget=rightSolvers[0].OnTarget,leftOnTarget=leftSolvers[0].OnTarget,bothSequencersReady=true}));
-        if(limbGraphs[0].Length!=limbGraphs[1].Length||limbGraphs[0].Where((limb,index)=>ReferenceEquals(limb,limbGraphs[1][index])).Any())
-            throw new InvalidOperationException("Operator and Occupant share one or more original Limb components");
-        var operatorBloodBefore=physiologies[0].BloodVolume;var occupantBloodBefore=physiologies[1].BloodVolume;physiologies[0].RemoveBlood(100f);
-        if(physiologies[0].BloodVolume>=operatorBloodBefore||physiologies[1].BloodVolume!=occupantBloodBefore)
-            throw new InvalidOperationException("Operator physiology mutation changed or failed to isolate Occupant blood state");
-        equipmentRefs[0].gauze=1;
-        if(equipmentRefs[1].gauze!=0)throw new InvalidOperationException("Operator equipment fixture mutation changed Occupant equipment state");
-    }
-    Console.WriteLine(runLifecycle?"Operator and Occupant lifecycle, component ownership, and Operator authored two-arm transition completion passed in one RuntimeWorld.":"Operator and Occupant prefab instantiation and component ownership passed in one RuntimeWorld.");
-    foreach(var actor in actors){UnityEngine.Object.DestroyImmediate(actor.Item3);UnityEngine.Object.DestroyImmediate(actor.Item2);}
-    return;
-}
-if(args.Contains("--prefab-only")){
-    if(args.Length!=2)throw new ArgumentException("--prefab-only requires the generated scene-package.json path and loads the preserved Operator and Occupant prefabs");
-    var package=File.ReadAllText(args[1]);
-    foreach(var name in new[]{"Operator","Occupant"}){
-        var path=$"Assets/Resources/characters/{name}.prefab";
-        var world=new RuntimeWorld();
-        var loaded=SceneLoader.LoadPrefab(package,path,world,requireComplete:true);
-        Console.WriteLine(JsonSerializer.Serialize(loaded.Report()));
-        UnityEngine.Object.DestroyImmediate(loaded.prefabRoot);
-    }
-    return;
-}
-Console.WriteLine(RuntimeContracts.Run());
-Console.WriteLine(ScenePrefabContracts.Run());
-Console.WriteLine(ArmSequenceContracts.Run("game/assets/original-arm-sequences.json"));
-if(File.Exists("game/assets/presentation.json.gz"))Console.WriteLine(PresentationContracts.Run("game/assets/presentation.json.gz"));
-if(File.Exists("game/assets/weapon-runtime.json.gz"))Console.WriteLine(WeaponContracts.Run("game/assets/weapon-runtime.json.gz"));
-if(File.Exists("game/assets/ballistics.json.gz"))Console.WriteLine(BallisticContracts.Run());
-if(args.Length>0){
-    var package=File.ReadAllText(args[0]);
-    foreach(var path in new[]{"Assets/Scenes/Marksman range.unity","Assets/Scenes/Mission 01.unity"}){
-        var loaded=SceneLoader.Load(package,path);
-        if(loaded.unresolvedReferences.Count>0)throw new Exception("Unresolved supported fields");
-        if(path=="Assets/Scenes/Marksman range.unity"){
-            var glass=loaded.objects.Values.OfType<Crisis.Runtime.FullSource.BallisticWindow>()
-                .Select(window=>window.texture).FirstOrDefault(texture=>texture?.OriginalAssetPath=="Assets/Texture2D/window glass.png");
-            if(glass==null||glass.OriginalAssetGuid!="bb3d703bd542afc47a1423a6c37397aa"||glass.OriginalAssetFileID!="2800000"||
-               glass.OriginalImageBytes==null||Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(glass.OriginalImageBytes)).ToLowerInvariant()!="ba810cf6d18d29ac28aebfc07340188c0cd3d00f0c4fd4071f8e2a7b98d1d4b5"||
-               !glass.ImporterSourceText.Contains("  textureFormat: 5\n",StringComparison.Ordinal))
-                throw new InvalidOperationException("Original Marksman window texture lost its GUID, fileID, PNG source, or ARGB32 importer metadata");
-        }
-        Console.WriteLine(JsonSerializer.Serialize(loaded.Report()));
-        Console.WriteLine(JsonSerializer.Serialize(SceneLoader.VerifyImportedRay(loaded)));
-    }
-    foreach(var path in new[]{"Assets/Resources/weapons/ammunition/5.56-JHP.prefab","Assets/Resources/weapons/ammunition/308-Win-BSP.prefab"})
-        Console.WriteLine(JsonSerializer.Serialize(AmmunitionLoader.VerifyOriginalPrefab(package,path)));
-    Console.WriteLine(JsonSerializer.Serialize(AmmunitionLoader.VerifyOriginalResource(package,"5.56-JHP")));
-    Console.WriteLine(ResourcePrefabContracts.Run(package));
-    Console.WriteLine(SpawnerGameplayContracts.Run(package));
-}
+        throw new InvalidOperationException($"EntryTeam seÛ~tîÚ$z{-®éÜj×šYÚ[˜[\Ú[ÛÙŞKRÈÛÛ›Û\‹[™›İ\›HÛÛ™\œÈŠNÂˆÜš\Ú\Ë”[[YK‘[Ûİ\˜ÙK“ÜšYÚ[˜[XİÜ’Y[]K”™\]Z\™T\Ú[ÛÙŞJ[›ÙK\Ú[ÛÙŞJNÂˆÜš\Ú\Ë”[[YK‘[Ûİ\˜ÙK“ÜšYÚ[˜[XİÜ’Y[]K”™\]Z\™PÛÛ›Û\Š[›ÙKÛÛ›Û\ŠNÂˆYŠX™Z]š[İ\œË[JÛÛ\Û™[O”™Y™\™[˜ÙQ\]X[ÊÛÛ\Û™[\Ú[ÛÙŞJJ_ˆX™Z]š[İ\œË[JÛÛ\Û™[O”™Y™\™[˜ÙQ\]X[ÊÛÛ\Û™[ÛÛ›Û\ŠJ_ˆX™Z]š[İ\œË[JÛÛ\Û™[O”™Y™\™[˜ÙQ\]X[ÊÛÛ\Û™[šYÚÛÛ™\ŠJ_ˆX™Z]š[İ\œË[JÛÛ\Û™[O”™Y™\™[˜ÙQ\]X[ÊÛÛ\Û™[YÛÛ™\ŠJJBˆ›İÈ™]È[˜[YÜ\˜][Û‘^Ù\[ÛŠ	ØXİÜ‹’][L_HÜšYÚ[˜[Ú\˜Xİ\›ÙH™Y™\™[˜Ù\ÈÛÛ\Û™[Èİ]ÚYH]ÈÛÛ™Y™Y˜XˆÜ˜\ŠNÂˆYŠ™Z]š[İ\œË“Ù•\OÜš\Ú\Ë”[[YK‘[Ûİ\˜ÙK”\Ú[ÛÙŞOŠ
+KÛİ[
 
-sealed class MissionContractSilentAudioDriver:IAudioClipPlaybackDriver,IDeferredAudioSourceDriver {
-    public bool IsPlaying=>false;
-    public void PlayOneShot(AudioClip clip,float volume,int priority){}
-    public void Play(AudioClip clip,float volume,float pitch,bool loop,bool muted,int priority){}
-    public void Stop(){}
-}
-sealed class MissionContractSilentMixerDriver:UnityEngine.Audio.IAudioMixerDriver {
-    public bool SetFloat(string exposedParameter,float value)=>false;
-    public void TransitionTo(UnityEngine.Audio.AudioMixerSnapshot snapshot,float timeToReach){}
-}
-sealed class MissionContractQualitySettingsDriver:UnityEngine.IQualitySettingsDriver {
-    public T Get<T>(string property)=>default;
-    public void Set<T>(string property,T value){}
-}
-sealed class MissionContractSceneManagerDriver:UnityEngine.SceneManagement.ISceneManagerDriver {
-    public UnityEngine.SceneManagement.Scene GetActiveScene()=>new(3,"Mission 01");
-    public void LoadScene(int buildIndex)=>throw new NotSupportedException("Mission contract does not change scenes");
-    public void LoadScene(string sceneName)=>throw new NotSupportedException("Mission contract does not change scenes");
-}
+HOL_ˆ™Z]š[İ\œË“Ù•\OÜš\Ú\Ë”[[YK‘[Ûİ\˜ÙK’RĞ\›PÛÛ›Û\Š
+KÛİ[
+
+HOL_ˆ™Z]š[İ\œË“Ù•\OÜš\Ú\Ë”[[YK‘[Ûİ\˜ÙK\›RRÔÛÛ™\Š
+KÛİ[
+
+HOLŠBˆ›İÈ™]È[˜[YÜ\˜][Û‘^Ù\[ÛŠ	ØXİÜ‹’][L_HÛÛ™Y™Y˜Xˆ\È\XØ]HÜˆZ\ÜÚ[™ÈÜšYÚ[˜[\Ú[ÛÙŞKØÛÛ›Û\‹ÜÛÛ™\ˆÛÛ\Û™[ÈŠNÂˆYŠ[›ÙK›[XœÏO[[[›ÙK›[X“X\O[[[›ÙK›[XœËÛİ[OY[›ÙK›[X“X\Ûİ[[›ÙK›[XœËÛİ[NJBˆ›İÈ™]È[˜[YÜ\˜][Û‘^Ù\[ÛŠ	ØXİÜ‹’][L_HÜšYÚ[˜[Ú\˜Xİ\›ÙH[Xˆ™YÚ\İH\È[˜ÛÛ\]HŠNÂˆ˜\ˆXİÜ“[XœÏX™Z]š[İ\œË“Ù•\OÜš\Ú\Ë”[[YK‘[Ûİ\˜ÙK“[XŠ
+K•Ğ\œ˜^J
+NÂˆ˜\ˆ[X”\Ú[ÛÙŞOX™Z]š[İ\œË“Ù•\OÜš\Ú\Ë”[[YK‘[Ûİ\˜ÙK“[X”\Ú[ÛÙŞOŠ
+K•Ğ\œ˜^J
+NÂˆ˜\ˆ[X“]\ØÛOX™Z]š[İ\œË“Ù•\OÜš\Ú\Ë”[[YK‘[Ûİ\˜ÙK“[X“]\ØÛOŠ
+K•Ğ\œ˜^J
+NÂˆYŠXİÜ“[XœË“[™İOLN_[X”\Ú[ÛÙŞK“[™İOLMß[X“]\ØÛK“[™İOLMŠBˆ›İÈ™]È[˜[YÜ\˜][Û‘^Ù\[ÛŠ	ØXİÜ‹’][L_HÜšYÚ[˜[[XˆÛÛ\Û™[[™[ÜHÚ[™ÙYˆ[XœÏ^ØXİÜ“[XœË“[™İK\Ú[ÛÙŞO^Û[X”\Ú[ÛÙŞK“[™İK]\ØÛO^Û[X“]\ØÛK“[™İHŠNÂˆ›Ü™XXÚ
+˜\ˆ[Xˆ[ˆ[›ÙK›[XœÊ^ÂˆÜš\Ú\Ë”[[YK‘[Ûİ\˜ÙK“ÜšYÚ[˜[XİÜ’Y[]K”™\]Z\™S[XŠ[›ÙK[XŠNÂˆYŠX™Z]š[İ\œË[JÛÛ\Û™[O”™Y™\™[˜ÙQ\]X[ÊÛÛ\Û™[[XŠJ_ˆ
+[X‹“[X”\Ú[ÛÙŞHO[[	‰ˆT™Y™\™[˜ÙQ\]X[Ê[X‹‘Ù]ÛÛ\Û™[Üš\Ú\Ë”[[YK‘[Ûİ\˜ÙK“[X”\Ú[ÛÙŞOŠ
+K[X‹“[X”\Ú[ÛÙŞJJ_ˆ
+[X‹“[X“]\ØÛHO[[	‰ˆT™Y™\™[˜ÙQ\]X[Ê[X‹‘Ù]ÛÛ\Û™[Üš\Ú\Ë”[[YK‘[Ûİ\˜ÙK“[X“]\ØÛOŠ
+K[X‹“[X“]\ØÛJJJBˆ›İÈ™]È[˜[YÜ\˜][Û‘^Ù\[ÛŠ	ØXİÜ‹’][L_H[XˆÛ[X‹šYH\È›İ›İ[™È]ÈXİÜ‹[İÛ™Y\Ú[ÛÙŞH[™]\ØÛHÛÛ\Û™[ÈŠNÂˆBˆYŠ\]Z\Y[O[[
+^ÂˆÜš\Ú\Ë”[[YK‘[Ûİ\˜ÙK“ÜšYÚ[˜[XİÜ’Y[]K”™\]Z\™Q\]Z\Y[
+[›ÙK\]Z\Y[
+NÂˆYŠX™Z]š[İ\œË[JÛÛ\Û™[O”™Y™\™[˜ÙQ\]X[ÊÛÛ\Û™[\]Z\Y[
+JJBˆ›İÈ™]È[˜[YÜ\˜][Û‘^Ù\[ÛŠ	ØXİÜ‹’][L_HÚ\˜Xİ\›ÙH\]Z\Y[\È›İİÛ™YH]ÈİÛˆ™Y˜XˆÜ˜\ŠNÂˆBˆBˆ\Ú[ÛÙÚY\ËY
+\Ú[ÛÙŞJNØÛÛ›Û\œËY
+ÛÛ›Û\ŠNÜšYÚÛÛ™\œËY
+šYÚÛÛ™\ŠNÛYÛÛ™\œËY
+YÛÛ™\ŠNÙ\]Z\Y[™YœËY
+\]Z\Y[
+NÂˆ[X‘Ü˜\ËY
+[›ÙK›[XœË•Ğ\œ˜^J
+JNÂˆ˜\ˆÜšYÚ[˜[›ÙOXXİÜ‹’][L‹‘Ù]ÛÛ\Û™[Ò[Ú[™[[š]Q[™Ú[™K“[Û›Ğ™Z]š[İ\ŠYJK”Ú[™ÛJÛÛ\Û™[O˜ÛÛ\Û™[‘Ù]\J
+K“˜[YOOHÚ\˜Xİ\›ÙHŠNÂˆ˜\ˆİ\™QšY[[ÜšYÚ[˜[›ÙK‘Ù]\J
+K‘Ù]šY[
+š]™XÛİ™\Pİ\™H‹›YÜÊOÏİ›İÈ™]ÈZ\ÜÚ[™ÑšY[^Ù\[ÛŠÜšYÚ[˜[›ÙK‘Ù]\J
+K‘[˜[YKš]™XÛİ™\Pİ\™HŠNÂˆ˜\ˆ]]Ü™Yİ\™OXİ\™QšY[‘Ù]˜[YJÜšYÚ[˜[›ÙJH\È[š]Q[™Ú[™K[š[X][Ûİ\™OÏİ›İÈ™]È[˜[YÜ\˜][Û‘^Ù\[ÛŠ	ØXİÜ‹’][L_HÛİ\˜ÙH™Y˜Xˆ\È›È]]Ü™Y]™XÛİ™\Pİ\™HŠNÂˆ˜\ˆÛÛ™Yİ\™OXİ\™QšY[‘Ù]˜[YJXİÜ›ÙY\ÖÌJH\È[š]Q[™Ú[™K[š[X][Ûİ\™OÏİ›İÈ™]È[˜[YÜ\˜][Û‘^Ù\[ÛŠ	ØXİÜ‹’][L_HÛÛ™HÜİ]™XÛİ™\Pİ\™HŠNÂˆ˜\ˆ]]Ü™YÙ^\ÏX]]Ü™Yİ\™KšÙ^\Îİ˜\ˆÛÛ™YÙ^\ÏXÛÛ™Yİ\™KšÙ^\ÎÂˆYŠ™Y™\™[˜ÙQ\]X[Ê]]Ü™Yİ\™KÛÛ™Yİ\™J_]]Ü™Yİ\™Kœ™UÜ˜\[ÙHOXÛÛ™Yİ\™Kœ™UÜ˜\[Ù_]]Ü™Yİ\™KœÜİÜ˜\[ÙHOXÛÛ™Yİ\™KœÜİÜ˜\[Ù_]]Ü™Yİ\™K˜Û[\İ]ÚYHOXÛÛ™Yİ\™K˜Û[\İ]ÚY_]]Ü™Yİ\™KœÙ\šX[^™Y™R[™š[š]HOXÛÛ™Yİ\™KœÙ\šX[^™Y™R[™š[š]_]]Ü™Yİ\™KœÙ\šX[^™YÜİ[™š[š]HOXÛÛ™Yİ\™KœÙ\šX[^™YÜİ[™š[š]_]]Ü™Yİ\™KœÙ\šX[^™Y™\œÚ[ÛˆOXÛÛ™Yİ\™KœÙ\šX[^™Y™\œÚ[ÛŸ]]Ü™Yİ\™KœÙ\šX[^™Y›İ][Û“Ü™\ˆOXÛÛ™Yİ\™KœÙ\šX[^™Y›İ][Û“Ü™\Ÿ]]Ü™YÙ^\Ë“[™İOXÛÛ™YÙ^\Ë“[™İ
+]›İÈ™]È[˜[YÜ\˜][Û‘^Ù\[ÛŠ	ØXİÜ‹’][L_HÛÛ™HÚ[™ÙY]]Ü™Y]™XÛİ™\Pİ\™HY]Y]HŠNÂˆ›ÜŠ˜\ˆÙ^R[™^LÚÙ^R[™^]]Ü™YÙ^\Ë“[™İÚÙ^R[™^
+ÊÊ^İ˜\ˆÛİ\˜ÙRÙ^OX]]Ü™YÙ^\ÖÚÙ^R[™^Nİ˜\ˆÛÛ™RÙ^OXÛÛ™YÙ^\ÖÚÙ^R[™^NÚYŠ\Ûİ\˜ÙRÙ^K[YK‘\]X[ÊÛÛ™RÙ^K[YJ_\Ûİ\˜ÙRÙ^K˜[YK‘\]X[ÊÛÛ™RÙ^K˜[YJ_\Ûİ\˜ÙRÙ^Kš[•[™Ù[‘\]X[ÊÛÛ™RÙ^Kš[•[™Ù[
+_\Ûİ\˜ÙRÙ^K›İ][™Ù[‘\]X[ÊÛÛ™RÙ^K›İ][™Ù[
+_Ûİ\˜ÙRÙ^K[™Ù[[ÙHOXÛÛ™RÙ^K[™Ù[[Ù_Ûİ\˜ÙRÙ^KœÙ\šX[^™Y™\œÚ[ÛˆOXÛÛ™RÙ^KœÙ\šX[^™Y™\œÚ[ÛŠ]›İÈ™]È[˜[YÜ\˜][Û‘^Ù\[ÛŠ	ØXİÜ‹’][L_HÛÛ™HÚ[™ÙY]]Ü™Y]™XÛİ™\Pİ\™HÙ^HÚÙ^R[™^HŠNßBˆİ\™\ËY
+ÛÛ™Yİ\™JNÂˆÛÛœÛÛK•Üš]S[™JŞ\İ[K•^’œÛÛ‹’œÛÛ”Ù\šX[^™\‹”Ù\šX[^™J™]ŞÛ[ÙO\[“Y™XŞXÛOÈ›Y™XŞXÛHˆš[œİ[X][Ûˆ‹™Y˜XXXİÜ‹’][LK[œİ[X]Yœ›ÛSÜšYÚ[˜[™Y˜X]YKXİ]™P™Z]š[İ\œÏXXİ]™K“[™İ]ØZÙOX]ÛÚÙ[‹Û‘[˜X›OY[˜X›Yİ\\İ\YÚ\˜Xİ\›ÙOXXİÜ›ÙY\Ë“[™İÜšYÚ[˜[RĞÛÛ›Û\XÛÛ›Û\ˆO[[ÜšYÚ[˜[\Ú[ÛÙŞO\\Ú[ÛÙŞHO[[\İ\]Z\Y[š^\™P]XÚYY\]Z\Y[O[[]™XÛİ™\Pİ\™RÙ^\ÏXÛÛ™Yİ\™KšÙ^\Ë“[™İJJNÂˆBˆYŠ™Y™\™[˜ÙQ\]X[Ê›ÙY\ÖÌK›ÙY\ÖÌWJ_™Y™\™[˜ÙQ\]X[Ê›ÙY\ÖÌK™Ø[YSØš™Xİ›ÙY\ÖÌWK™Ø[YSØš™Xİ
+_™Y™\™[˜ÙQ\]X[Êİ\™\ÖÌKİ\™\ÖÌWJJ]›İÈ™]È[˜[YÜ\˜][Û‘^Ù\[ÛŠ“Ü\˜]Üˆ[™ØØİ\[Ú\™HHÚ\˜Xİ\›ÙHÜˆ]]Ü™Y[š[X][Ûİ\™H[œİ[˜ÙHŠNÂˆYŠ[“Y™XŞXÛI‰Š™Y™\™[˜ÙQ\]X[Ê\Ú[ÛÙÚY\ÖÌK\Ú[ÛÙÚY\ÖÌWJ_™Y™\™[˜ÙQ\]X[ÊÛÛ›Û\œÖÌKÛÛ›Û\œÖÌWJ_™Y™\™[˜ÙQ\]X[ÊšYÚÛÛ™\œÖÌKšYÚÛÛ™\œÖÌWJ_™Y™\™[˜ÙQ\]X[ÊYÛÛ™\œÖÌKYÛÛ™\œÖÌWJ_
+\]Z\Y[™YœÖÌHO[[	‰”™Y™\™[˜ÙQ\]X[Ê\]Z\Y[™YœÖÌK\]Z\Y[™YœÖÌWJJJJBˆ›İÈ™]È[˜[YÜ\˜][Û‘^Ù\[ÛŠ“Ü\˜]Üˆ[™ØØİ\[Ú\™H\Ú[ÛÙŞKRÈÛÛ›Û\‹\›HÛÛ™\œËÜˆ[š]X[^™Y\]Z\Y[ŠNÂˆYŠ[“Y™XŞXÛJ^Âˆ˜\ˆÜ\˜]Ü›ÙOJÜš\Ú\Ë”[[YK‘[Ûİ\˜ÙKÚ\˜Xİ\›ÙJX›ÙY\ÖÌNÂˆ˜\ˆÜ\˜]ÜÛÛ›Û\XÛÛ›Û\œÖÌNÂˆYŠšYÚÛÛ™\œÖÌKš[\œÛ][ÛË›[™İOLŸYÛÛ™\œÖÌKš[\œÛ][ÛË›[™İOLŠBˆ›İÈ™]È[˜[YÜ\˜][Û‘^Ù\[ÛŠ	“ÜšYÚ[˜[Ü\˜]Üˆ\›H[\œÛ][Ûˆİ\™\ÈÙ\™H›İ\Ù\šX[^™Y
+šYÚ^ÜšYÚÛÛ™\œÖÌKš[\œÛ][ÛË›[™İKY^ÛYÛÛ™\œÖÌKš[\œÛ][ÛË›[™İJHŠNÂˆÜ\˜]ÜÛÛ›Û\‹•[˜\›YY
+
+NÂˆYŠ[Ü\˜]ÜÛÛ›Û\‹’\Ô^Z[™ßˆT™Y™\™[˜ÙQ\]X[ÊšYÚÛÛ™\œÖÌK•˜[œÚ][Û•\™Ù]œ\™[Ü\˜]Ü›ÙK”[š\Ë˜[œÙ›Ü›J_ˆT™Y™\™[˜ÙQ\]X[ÊYÛÛ™\œÖÌK•˜[œÚ][Û•\™Ù]œ\™[Ü\˜]Ü›ÙK”[š\Ë˜[œÙ›Ü›JJBˆ›İÈ™]È[˜[YÜ\˜][Û‘^Ù\[ÛŠ“ÜšYÚ[˜[Ü\˜]ÜˆY›İİ\]È]]Ü™YÛËX\›H[š\È˜[œÚ][ÛˆÛˆHXİÜ‹[İÛ™YšYÈŠNÂˆ˜\ˆ[YTÙ]\]\[ÙŠ[š]Q[™Ú[™K•[YJK‘Ù]›Ü\J˜[Y[ÙŠ[š]Q[™Ú[™K•[YK[YJKŞ\İ[K”™Y›Xİ[Û‹š[™[™Ñ›YÜË”İ]XßŞ\İ[K”™Y›Xİ[Û‹š[™[™Ñ›YÜË”X›XßŞ\İ[K”™Y›Xİ[Û‹š[™[™Ñ›YÜË“›Û”X›XÊHK‘Ù]Ù]Y]Ù
+YJHNÂˆ˜\ˆ[TÙ]\]\[ÙŠ[š]Q[™Ú[™K•[YJK‘Ù]›Ü\J˜[Y[ÙŠ[š]Q[™Ú[™K•[YK™[U[YJKŞ\İ[K”™Y›Xİ[Û‹š[™[™Ñ›YÜË”İ]XßŞ\İ[K”™Y›Xİ[Û‹š[™[™Ñ›YÜË”X›XÊHK‘Ù]Ù]Y]Ù
+YJHNÂˆ˜\ˆÛÛ›Û\•\]O]\[ÙŠÜš\Ú\Ë”[[YK‘[Ûİ\˜ÙK’RĞ\›PÛÛ›Û\ŠK‘Ù]Y]Ù
+•\]H‹›YÜÊHNÂˆ˜\ˆÛÛ™\•\]O]\[ÙŠÜš\Ú\Ë”[[YK‘[Ûİ\˜ÙK\›RRÔÛÛ™\ŠK‘Ù]Y]Ù
+•\]H‹›YÜÊHNÂˆ˜\ˆÙ\]Y[˜ÙTİ\U[š]Q[™Ú[™K•[YK[YNÂˆ›ÜŠ˜\ˆXÚÏLNİXÚÏM	‰›Ü\˜]ÜÛÛ›Û\‹’\Ô^Z[™ÎİXÚÊÊÊ^ÂˆÛÛœİ›Ø]İ\KŒYÂˆ[YTÙ]\‹’[›ÚÙJ[™]ÈØš™Xİ×^ÜÙ\]Y[˜ÙTİ\
+İXÚÊœİ\JNÂˆ[TÙ]\‹’[›ÚÙJ[™]ÈØš™Xİ×^Üİ\JNÂˆÛÛ›Û\•\]K’[›ÚÙJÜ\˜]ÜÛÛ›Û\‹[
+NÂˆÛÛ™\•\]K’[›ÚÙJšYÚÛÛ™\œÖÌK[
+NÂˆÛÛ™\•\]K’[›ÚÙJYÛÛ™\œÖÌK[
+NÂˆBˆYŠÜ\˜]ÜÛÛ›Û\‹’\Ô^Z[™ß[Ü\˜]ÜÛÛ›Û\‹”šYÚÙ\]Y[˜Ù\‹’\Ô™XY_[Ü\˜]ÜÛÛ›Û\‹“YÙ\]Y[˜Ù\‹’\Ô™XY_ˆ\šYÚÛÛ™\œÖÌK“Û•\™Ù][YÛÛ™\œÖÌK“Û•\™Ù]ˆT™Y™\™[˜ÙQ\]X[ÊšYÚÛÛ™\œÖÌKšZÕ\™Ù]œ\™[Ü\˜]Ü›ÙK”[š\Ë˜[œÙ›Ü›J_ˆT™Y™\™[˜ÙQ\]X[ÊYÛÛ™\œÖÌKšZÕ\™Ù]œ\™[Ü\˜]Ü›ÙK”[š\Ë˜[œÙ›Ü›JJBˆ›İÈ™]È[˜[YÜ\˜][Û‘^Ù\[ÛŠ	“ÜšYÚ[˜[Ü\˜]Üˆ]]Ü™Y[š\È˜[œÚ][ÛœÈY›İ™XXÚ›İ\™Ù]È[™ÛÛ\]H
+^Z[™Ï^ÛÜ\˜]ÜÛÛ›Û\‹’\Ô^Z[™ßKšYÚ™XYO^ÛÜ\˜]ÜÛÛ›Û\‹”šYÚÙ\]Y[˜Ù\‹’\Ô™XY_KY™XYO^ÛÜ\˜]ÜÛÛ›Û\‹“YÙ\]Y[˜Ù\‹’\Ô™XY_KšYÚÛ•\™Ù]^ÜšYÚÛÛ™\œÖÌK“Û•\™Ù]KYÛ•\™Ù]^ÛYÛÛ™\œÖÌK“Û•\™Ù]KšYÚ\™[^ÜšYÚÛÛ™\œÖÌKšZÕ\™Ù]œ\™[Ë›˜[Y_KY\™[^ÛYÛÛ™\œÖÌKšZÕ\™Ù]œ\™[Ë›˜[Y_JHŠNÂˆÛÛœÛÛK•Üš]S[™JŞ\İ[K•^’œÛÛ‹’œÛÛ”Ù\šX[^™\‹”Ù\šX[^™J™]ŞÜ™Y˜XH“Ü\˜]Üˆ‹]]Ü™YRÔÙ\]Y[˜ÙOH•[˜\›YY‹˜[œÚ][Û•\™Ù]H”[š\È‹šYÚÛ•\™Ù]\šYÚÛÛ™\œÖÌK“Û•\™Ù]YÛ•\™Ù][YÛÛ™\œÖÌK“Û•\™Ù]›İÙ\]Y[˜Ù\œÔ™XYO]Y_JJNÂˆYŠ[X‘Ü˜\ÖÌK“[™İO[[X‘Ü˜\ÖÌWK“[™İ[X‘Ü˜\ÖÌK•Ú\™J
+[X‹[™^
+OO”™Y™\™[˜ÙQ\]X[Ê[X‹[X‘Ü˜\ÖÌWVÚ[™^JJK[J
+JBˆ›İÈ™]È[˜[YÜ\˜][Û‘^Ù\[ÛŠ“Ü\˜]Üˆ[™ØØİ\[Ú\™HÛ™HÜˆ[Ü™HÜšYÚ[˜[[XˆÛÛ\Û™[ÈŠNÂˆ˜\ˆÜ\˜]Ü›ÛÙ™Y›Ü™O\\Ú[ÛÙÚY\ÖÌK›ÛÙ›Û[YNİ˜\ˆØØİ\[›ÛÙ™Y›Ü™O\\Ú[ÛÙÚY\ÖÌWK›ÛÙ›Û[YNÜ\Ú[ÛÙÚY\ÖÌK”™[[İ™P›ÛÙ
+LŠNÂˆYŠ\Ú[ÛÙÚY\ÖÌK›ÛÙ›Û[YO[Ü\˜]Ü›ÛÙ™Y›Ü™_\Ú[ÛÙÚY\ÖÌWK›ÛÙ›Û[YHO[ØØİ\[›ÛÙ™Y›Ü™JBˆ›İÈ™]È[˜[YÜ\˜][Û‘^Ù\[ÛŠ“Ü\˜]Üˆ\Ú[ÛÙŞH]]][ÛˆÚ[™ÙYÜˆ˜Z[YÈ\ÛÛ]HØØİ\[›ÛÙİ]HŠNÂˆ\]Z\Y[™YœÖÌK™Ø]^™OLNÂˆYŠ\]Z\Y[™YœÖÌWK™Ø]^™HOL
+]›İÈ™]È[˜[YÜ\˜][Û‘^Ù\[ÛŠ“Ü\˜]Üˆ\]Z\Y[š^\™H]]][ÛˆÚ[™ÙYØØİ\[\]Z\Y[İ]HŠNÂˆBˆÛÛœÛÛK•Üš]S[™J[“Y™XŞXÛOÈ“Ü\˜]Üˆ[™ØØİ\[Y™XŞXÛKÛÛ\Û™[İÛ™\œÚ\[™Ü\˜]Üˆ]]Ü™YÛËX\›H˜[œÚ][ÛˆÛÛ\][Ûˆ\ÜÙY[ˆÛ™H[[YUÛÜ›ˆˆ“Ü\˜]Üˆ[™ØØİ\[™Y˜Xˆ[œİ[X][Ûˆ[™ÛÛ\Û™[İÛ™\œÚ\\ÜÙY[ˆÛ™H[[YUÛÜ›ˆŠNÂˆ›Ü™XXÚ
+˜\ˆXİÜˆ[ˆXİÜœÊ^Õ[š]Q[™Ú[™K“Øš™Xİ‘\İ›ŞR[[YYX]JXİÜ‹’][LÊNÕ[š]Q[™Ú[™K“Øš™Xİ‘\İ›ŞR[[YYX]JXİÜ‹’][LŠNßBˆ™]\›ÂŸBšYŠ\™ÜËÛÛZ[œÊ‹K\™Y˜X‹[Û›HŠJ^ÂˆYŠ\™ÜË“[™İOLŠ]›İÈ™]È\™İ[Y[^Ù\[ÛŠ‹K\™Y˜X‹[Û›H™\]Z\™\ÈHÙ[™\˜]YØÙ[™K\XÚØYÙKšœÛÛˆ][™ØYÈH™\Ù\™YÜ\˜]Üˆ[™ØØİ\[™Y˜XœÈŠNÂˆ˜\ˆXÚØYÙOQš[K”™XY[^
+\™ÜÖÌWJNÂˆ›Ü™XXÚ
+˜\ˆ˜[YH[ˆ™]Ö×^È“Ü\˜]Üˆ‹“ØØİ\[ŸJ^Âˆ˜\ˆ]I\ÜÙ]ËÔ™\Ûİ\˜Ù\ËØÚ\˜Xİ\œËŞÛ˜[Y_Kœ™Y˜XˆÂˆ˜\ˆÛÜ›[™]È[[YUÛÜ›
+
+NÂˆ˜\ˆØYYTØÙ[™SØY\‹“ØY™Y˜XŠXÚØYÙK]ÛÜ›™\]Z\™PÛÛ\]NYJNÂˆÛÛœÛÛK•Üš]S[™JœÛÛ”Ù\šX[^™\‹”Ù\šX[^™JØYY”™\Ü
+
+JJNÂˆ[š]Q[™Ú[™K“Øš™Xİ‘\İ›ŞR[[YYX]JØYYœ™Y˜X”›Ûİ
+NÂˆBˆ™]\›ÂŸBÛÛœÛÛK•Üš]S[™J[[YPÛÛ˜XİË”[Š
+JNÂÛÛœÛÛK•Üš]S[™JØÙ[™T™Y˜XÛÛ˜XİË”[Š
+JNÂÛÛœÛÛK•Üš]S[™J\›TÙ\]Y[˜ÙPÛÛ˜XİË”[Š™Ø[YKØ\ÜÙ]ËÛÜšYÚ[˜[X\›K\Ù\]Y[˜Ù\ËšœÛÛˆŠJNÂšYŠš[K‘^\İÊ™Ø[YKØ\ÜÙ]ËÜ™\Ù[][Û‹šœÛÛ‹™ŞˆŠJPÛÛœÛÛK•Üš]S[™J™\Ù[][ÛÛÛ˜XİË”[Š™Ø[YKØ\ÜÙ]ËÜ™\Ù[][Û‹šœÛÛ‹™ŞˆŠJNÂšYŠš[K‘^\İÊ™Ø[YKØ\ÜÙ]ËİÙX\Û‹\[[YKšœÛÛ‹™ŞˆŠJPÛÛœÛÛK•Üš]S[™JÙX\ÛÛÛ˜XİË”[Š™Ø[YKØ\ÜÙ]ËİÙX\Û‹\[[YKšœÛÛ‹™ŞˆŠJNÂšYŠš[K‘^\İÊ™Ø[YKØ\ÜÙ]ËØ˜[\İXÜËšœÛÛ‹™ŞˆŠJPÛÛœÛÛK•Üš]S[™J˜[\İXĞÛÛ˜XİË”[Š
+JNÂšYŠ\™ÜË“[™İŒ
+^Âˆ˜\ˆXÚØYÙOQš[K”™XY[^
+\™ÜÖÌJNÂˆ›Ü™XXÚ
+˜\ˆ][ˆ™]Ö×^È\ÜÙ]ËÔØÙ[™\ËÓX\šÜÛX[ˆ˜[™ÙK[š]H‹\ÜÙ]ËÔØÙ[™\ËÓZ\ÜÚ[ÛˆK[š]HŸJ^Âˆ˜\ˆØYYTØÙ[™SØY\‹“ØY
+XÚØYÙK]
+NÂˆYŠØYY[œ™\ÛÛ™Y™Y™\™[˜Ù\ËÛİ[Œ
+]›İÈ™]È^Ù\[ÛŠ•[œ™\ÛÛ™Yİ\ÜYšY[ÈŠNÂˆYŠ]OH\ÜÙ]ËÔØÙ[™\ËÓX\šÜÛX[ˆ˜[™ÙK[š]HŠ^Âˆ˜\ˆÛ\ÜÏ[ØYY›Øš™XİË•˜[Y\Ë“Ù•\OÜš\Ú\Ë”[[YK‘[Ûİ\˜ÙK˜[\İXÕÚ[™İÏŠ
+Bˆ”Ù[Xİ
+Ú[™İÏOÚ[™İË^\™JK‘š\œİÜ‘Y˜][
+^\™OO^\™OË“ÜšYÚ[˜[\ÜÙ]]OH\ÜÙ]ËÕ^\™L‘İÚ[™İÈÛ\ÜËœ™ÈŠNÂˆYŠÛ\ÜÏO[[Û\ÜË“ÜšYÚ[˜[\ÜÙ]İZYOH˜˜ŒÙÌØ™M˜Y˜ÍØLMŒØM˜ÌÍÌÎMØXHŸÛ\ÜË“ÜšYÚ[˜[\ÜÙ]š[RQOHŒŸˆÛ\ÜË“ÜšYÚ[˜[[XYÙP]\ÏO[[ÛÛ™\•Ò^İš[™ÊŞ\İ[K”ÙXİ\š]KÜ\ÙÜ˜\K”ÒLM‹’\Ú]JÛ\ÜË“ÜšYÚ[˜[[XYÙP]\ÊJK•ÓİÙ\’[˜\šX[
+
+HOH˜˜NLÙ™NXXÌYX™˜ÌÌÍNÌÙÙŒÍ™ÌYL˜MØNYHŸˆYÛ\ÜË’[\Ü\”Ûİ\˜ÙU^ÛÛZ[œÊˆ^\™Q›Ü›X]ˆWˆ‹İš[™ĞÛÛ\\š\ÛÛ‹“Ü™[˜[
+JBˆ›İÈ™]È[˜[YÜ\˜][Û‘^Ù\[ÛŠ“ÜšYÚ[˜[X\šÜÛX[ˆÚ[™İÈ^\™HÜİ]ÈÕRQš[RQ‘ÈÛİ\˜ÙKÜˆT‘ĞŒÌˆ[\Ü\ˆY]Y]HŠNÂˆBˆÛÛœÛÛK•Üš]S[™JœÛÛ”Ù\šX[^™\‹”Ù\šX[^™JØYY”™\Ü
+
+JJNÂˆÛÛœÛÛK•Üš]S[™JœÛÛ”Ù\šX[^™\‹”Ù\šX[^™JØÙ[™SØY\‹•™\šYR[\ÜY˜^JØYY
+JJNÂˆBˆ›Ü™XXÚ
+˜\ˆ][ˆ™]Ö×^È\ÜÙ]ËÔ™\Ûİ\˜Ù\ËİÙX\ÛœËØ[[][š][Û‹ÍKM‹R’œ™Y˜Xˆ‹\ÜÙ]ËÔ™\Ûİ\˜Ù\ËİÙX\ÛœËØ[[][š][Û‹ÌÌUÚ[‹P”Ôœ™Y˜XˆŸJBˆÛÛœÛÛK•Üš]S[™JœÛÛ”Ù\šX[^™\‹”Ù\šX[^™J[[][š][Û“ØY\‹•™\šYSÜšYÚ[˜[™Y˜XŠXÚØYÙK]
+JJNÂˆÛÛœÛÛK•Üš]S[™JœÛÛ”Ù\šX[^™\‹”Ù\šX[^™J[[][š][Û“ØY\‹•™\šYSÜšYÚ[˜[™\Ûİ\˜ÙJXÚØYÙKKM‹R’ŠJJNÂˆÛÛœÛÛK•Üš]S[™J™\Ûİ\˜ÙT™Y˜XÛÛ˜XİË”[ŠXÚØYÙJJNÂˆÛÛœÛÛK•Üš]S[™JÜ]Û™\‘Ø[Y\^PÛÛ˜XİË”[ŠXÚØYÙJJNÂŸB‚œÙX[YÛ\ÜÈZ\ÜÚ[ÛÛÛ˜XİÚ[[]Y[Ñš]™\’P]Y[ĞÛ\^X˜XÚÑš]™\‹QY™\œ™Y]Y[ÔÛİ\˜ÙQš]™\ˆÂˆX›XÈ›ÛÛ\Ô^Z[™ÏO™˜[ÙNÂˆX›XÈ›ÚY^SÛ™TÚİ
+]Y[ĞÛ\Û\›Ø]›Û[YK[š[Üš]J^ßBˆX›XÈ›ÚY^J]Y[ĞÛ\Û\›Ø]›Û[YK›Ø]]Ú›ÛÛÛÜ›ÛÛ]]Y[š[Üš]J^ßBˆX›XÈ›ÚYİÜ
+
+^ßBŸBœÙX[YÛ\ÜÈZ\ÜÚ[ÛÛÛ˜XİÚ[[Z^\‘š]™\•[š]Q[™Ú[™K]Y[Ë’P]Y[ÓZ^\‘š]™\ˆÂˆX›XÈ›ÛÛÙ]›Ø]
+İš[™È^ÜÙY\˜[Y]\‹›Ø]˜[YJOO™˜[ÙNÂˆX›XÈ›ÚY˜[œÚ][Û•Ê[š]Q[™Ú[™K]Y[Ë]Y[ÓZ^\”Û˜\ÚİÛ˜\Úİ›Ø][YUÔ™XXÚ
+^ßBŸBœÙX[YÛ\ÜÈZ\ÜÚ[ÛÛÛ˜Xİ]X[]TÙ][™ÜÑš]™\•[š]Q[™Ú[™K’T]X[]TÙ][™ÜÑš]™\ˆÂˆX›XÈÙ]Šİš[™È›Ü\JOO™Y˜][ÂˆX›XÈ›ÚYÙ]Šİš[™È›Ü\K˜[YJ^ßBŸBœÙX[YÛ\ÜÈZ\ÜÚ[ÛÛÛ˜XİØÙ[™SX[˜YÙ\‘š]™\•[š]Q[™Ú[™K”ØÙ[™SX[˜YÙ[Y[’TØÙ[™SX[˜YÙ\‘š]™\ˆÂˆX›XÈ[š]Q[™Ú[™K”ØÙ[™SX[˜YÙ[Y[”ØÙ[™HÙ]Xİ]™TØÙ[™J
+OO›™]ÊË“Z\ÜÚ[ÛˆHŠNÂˆX›XÈ›ÚYØYØÙ[™J[Z[[™^
+OO›İÈ™]È›İİ\ÜY^Ù\[ÛŠ“Z\ÜÚ[ÛˆÛÛ˜XİÙ\È›İÚ[™ÙHØÙ[™\ÈŠNÂˆX›XÈ›ÚYØYØÙ[™Jİš[™ÈØÙ[™S˜[YJOO›İÈ™]È›İİ\ÜY^Ù\[ÛŠ“Z\ÜÚ[ÛˆÛÛ˜XİÙ\È›İÚ[™ÙHØÙ[™\ÈŠNÂŸB
