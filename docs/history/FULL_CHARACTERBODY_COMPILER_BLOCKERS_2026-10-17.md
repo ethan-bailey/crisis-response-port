@@ -35,4 +35,4 @@ Compiler evidence includes **31 distinct missing types/namespaces** in `Characte
 - Do not "fix" CS0246 by adding no-op dummy implementations, skipping source methods or silently dropping original class branches.
 - Preserve the original circular iPhone movement control, analog proportional walk/sprint (16% dead zone, 65% breakpoint), keyboard full speed, icon buttons, and magazine ammo count inclusive of chamber.
 - Keep #42 draft until full source integration passes; #56 and #57 remain separate owners for wound/physiology and weapon-arm logic.
-- This document is a **Gate 0 error inventory**, not a working CharacterBody claim. The [canonical foundation-first master plan](https://github.com/ethan-bailey/crisis-response-port/blob/develop/wasm/docs/FOUNDATION_FIRST_COMPLETION_PLAN_2026-10-17.md) controls milestone priority.
+- This document is a **Gate 0 error inventory**, not a working CharacterBody claim. The [canonical foundation-first master plan](https://github.com/ethan-bailey/crisis-response-port/blob/develop/wasm/docs/history/FOUNDATION_FIRST_COMPLETION_PLAN_2026-10-17.md) controls milestone priority.

@@ -15,9 +15,9 @@ The probe enumerates all prefab assets and reports each active particle system's
 
 ## Acceptance limits
 
-- The JSON must report the exact Unity version and all 31 expected active modules from the recovered Mission source; compare asset paths and hierarchy paths to `docs/mission-particle-dependency-inventory-2026-10-25.json.gz`.
+- The JSON must report the exact Unity version and all 31 expected active modules from the recovered Mission source; compare asset paths and hierarchy paths to `docs/history/mission-particle-dependency-inventory-2026-10-25.json.gz`.
 - Do not infer native field mapping from the synthetic cases. The output is an observed behavior fixture, not proof that the source package is complete or that browser rendering matches Unity.
 - Preserve the output and compare controlled measurements across fixed-step sizes. Bind the resulting operation order and coordinate space to a browser runtime-path test before implementing module motion.
 - This fixture has not been compiled or executed in Unity. The current local check is source-only: `node --test scripts/mission_particle_clamp_velocity_serialization_test.mjs` passed **2/2**, while `command -v Unity` and `command -v unity` returned no executable. Current branch head `c23d7f8ed64ca7e7a44dc32bd986f21ec901ed87` passed Actions run **#33** (Contracts/Release WASM and Chromium jobs), but that workflow does not compile Editor scripts against Unity assemblies.
 
-The probe uses the Unity 2017.2 ParticleSystem scripting API (`LimitVelocityOverLifetimeModule`, `MinMaxCurve`, `SetParticles`, and fixed-step `Simulate`) as the readback/measurement surface. The official API pages are linked in `docs/particle-clamp-velocity-serialization-2026-10-26.md`.
+The probe uses the Unity 2017.2 ParticleSystem scripting API (`LimitVelocityOverLifetimeModule`, `MinMaxCurve`, `SetParticles`, and fixed-step `Simulate`) as the readback/measurement surface. The official API pages are linked in `docs/history/particle-clamp-velocity-serialization-2026-10-26.md`.

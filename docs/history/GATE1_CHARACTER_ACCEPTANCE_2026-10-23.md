@@ -4,7 +4,7 @@ SUPERSEDED NUMBERING — see docs/GATE_DEPENDENCY_INDEX.md for current gate stat
 
 ## Scope and result
 
-Gate 1 from `docs/FOUNDATION_FIRST_COMPLETION_PLAN_2026-10-17.md` is complete for the native focused source acceptance. The tested tree was based on `develop/wasm` at `4e5583ad9a7c4d38bb8242e153c6ddf590798bca`; only the Gate 1 check harness and acceptance record changed in this work.
+Gate 1 from `docs/history/FOUNDATION_FIRST_COMPLETION_PLAN_2026-10-17.md` is complete for the native focused source acceptance. The tested tree was based on `develop/wasm` at `4e5583ad9a7c4d38bb8242e153c6ddf590798bca`; only the Gate 1 check harness and acceptance record changed in this work.
 
 The original Operator and Occupant prefabs both completed Awake/OnEnable/Start on all active behaviors and retained one full-source CharacterBody, the original IK/Physiology components, and the authored three-key hit recovery curve. A combined source contract then exercised the original M4 aim alignment and facing, Occupant movement and kneeling animation, independent actor-owned trauma and physiology, shock, hemorrhage and oxygen loss, unconsciousness, ragdoll event dispatch, and source-timed hypoxic death.
 

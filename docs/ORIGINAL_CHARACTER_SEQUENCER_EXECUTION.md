@@ -27,4 +27,4 @@ The original scene package used by prior headless mission contracts is generated
 - `runtime/Checks/ArmSequenceContracts.cs` — composition and controller callback contracts.
 - `runtime/Original/FullSource/IKArmSequencer.cs` and `IKArmController.cs` — compiled source implementation.
 - `docs/evidence/SOURCE_COMBAT_INTEGRATION_MILESTONE_2026-10-24.md` — exact scene-package command and prior headless mission/combat contract results; those results do not prove browser or native-physics parity.
-- `docs/evidence/GATE0_FIRST_PLAYABLE_DEPENDENCY_MATRIX_2026-10-24.md` — first-playable dependency classification and normal-page startup limits.
+- `docs/history/GATE0_FIRST_PLAYABLE_DEPENDENCY_MATRIX_2026-10-24.md` — first-playable dependency classification and normal-page startup limits.

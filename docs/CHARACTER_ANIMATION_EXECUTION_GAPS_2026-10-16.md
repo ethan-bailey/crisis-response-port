@@ -86,7 +86,7 @@ Before implementation, the known serialized/runtime dependencies were checked ag
 
 - EntryTeam integration contract: `runtime/Checks/Program.cs` (`--browser-entryteam-session-contract`).
 - Browser source actor boundary: `runtime/Browser/Program.cs`, `runtime/Engine/FullSourceActorBridge.cs`, `runtime/Browser/BrowserEntryTeamMission.cs`, and the post-download path in `game/index.html`.
-- Authored IK transition checkpoint: `docs/evidence/GATE2_AUTHORED_IK_TRANSITION_2026-10-24.md`.
+- Authored IK transition checkpoint: `docs/history/GATE2_AUTHORED_IK_TRANSITION_2026-10-24.md`.
 - Gate order and current unverified platform boundaries: `docs/GATE_DEPENDENCY_INDEX.md`.
 
 

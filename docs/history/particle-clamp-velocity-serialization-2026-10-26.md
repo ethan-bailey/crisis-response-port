@@ -4,7 +4,7 @@
 
 This regression uses the complete serialized `global-ui-mission-operator` inventory, not a hand-picked prefab sample.
 
-- Inventory file: `docs/mission-particle-dependency-inventory-2026-10-25.json.gz`
+- Inventory file: `docs/history/mission-particle-dependency-inventory-2026-10-25.json.gz`
 - Decompressed inventory SHA-256: `636935d6bf545dd0bf3610008bbc8759fae1fc765553852b8110da9eacc82407`
 - Source package SHA-256: `92e84fff24b79ae9b482cfe50dc33346fe8d5d7f2afb948e7bb4cacf5fb7dafb`
 - Scope: 27 prefabs, 51 ParticleSystems, 31 active `ClampVelocityModule` records
