@@ -11,85 +11,40 @@
 
 ## Environment and session startup
 
-- Standing first step: from the checkout, run `scripts/env/bootstrap-environment.sh`, then source `scripts/env/environment-preflight.sh`. The environment removes installed tools after inactivity; a missing SDK or browser is an expected reset to recover with bootstrap, not a new project problem.
-- The bootstrap installs only .NET SDK 8.0.426 and the Playwright-locked Chromium build. It builds the repository's process-stat shim when the runner needs it and avoids archive-owner restoration during SDK extraction.
-- This session: SDK bootstrap verified .NET **8.0.426** at `/root/.dotnet/dotnet`. Playwright 1.64.1's five download attempts for Chromium 156.0.8078.4 failed with `End of central directory record signature not found`; no browser executable was installed. The combined preflight then passed the SDK check, failed Chromium because revision 1248 was absent, and failed push authentication with `fatal: could not read Username for 'https://github.com': No such device or address`.
-- Push credentials are owner-supplied per session and must never be stored in the repository.
+- Starting checkout for this session: `/workspace/crisis-response-port`; synced `develop/wasm` at baseline `470e43d5ac1d414f31b5cb3dc5840937fd23cbb1`.
+- Standing first step: run `scripts/env/bootstrap-environment.sh`, then source `scripts/env/environment-preflight.sh`. The environment wipes installed tools after inactivity, so restore the pinned runner tools through bootstrap instead of treating missing SDK/browser installs as a new project issue.
+- Bootstrap installs only .NET SDK 8.0.426 and Playwright-lock Chromium 156.0.8078.4. It now retries Chromium once with `PLAYWRIGHT_DOWNLOAD_HOST=https://playwright-akamai.azureedge.net` if the default host fails. It also applies the runner's no-owner-restore tar wrapper and builds the repository process-stat shim when needed.
+- Bootstrap fallback was verified in an isolated cache: SDK 8.0.426 and Chromium 156.0.8078.4 both passed; no cleanup-trap warning. Combined preflight passed SDK and Chromium. Shell push authentication failed as expected (`could not read Username for 'https://github.com'`); use the connected GitHub API for writes.
 
-## Branch disposition and deletion record
+## Branch disposition
 
-Branch audit corrected the brief's estimated counts. The 57 PR records refer to 56 unique PR-head branch names (PRs #70 and #72 share one); there are 37 ancestor branches, one path-identical merged branch, and 18 owner-decision branches. The remote also has unrelated preview/release refs not included in this PR-head disposition. Deleted 38 branches after checking live tip SHAs, ancestry for group I, and touched-path tree parity for group II; a batched live-ref check confirmed all deleted refs absent.
+All 18 requested live refs still matched their listed tip SHAs. No branch was deleted: the connected GitHub API exposes create/update-ref and file/commit writes but no delete-ref action, while shell push authentication is unavailable. Safe-delete candidates below are retained pending a delete-capable authorized route; no unlisted refs were touched.
 
-### (i) Tip is ancestor of `develop/wasm` — safe, deleted
+### Group 1 — keep
 
-- `docs/pr69-publish-verification-20261023` — `9de4061540ceddaac5cf57317660c339e0140d4d`
-- `fix/browser-publish-input-sdk-pin-20261023` — `7f38926cc953604499adb5fab07025c52a0103b7`
-- `codex/scene-package-from-original-obj-20261022` — `ebc83e3c52e3190653480f50d403d623333e22ad`
-- `chore/repository-audit-remediation-2026-10-18` — `389d8e8dcc3cc49d4327cc55588d874271dc4271`
-- `maintenance/verified-projectile-handoff-20261017` — `dd51eb575c832fcae4fbe8a43dbe89c6c5736f79`
-- `maintenance/fresh-agent-handoff-20261017` — `fee5fada74a703f6e8c221a6d84b3b6496c5e329`
-- `maintenance/replace-handoff-on-every-transfer` — `3ba5d970b17cc1ede6f0e338f0d2d8e45d5ccc19`
-- `maintenance/repository-hygiene-20261017` — `40c3872b217730ab1edd4f52bf5bd9eede90f8d1`
-- `feature/original-projectile-limb-material-closure` — `41472e69ce9dea5a3ed00e98c4bd87e1567e445c`
-- `feature/source-limb-texture-importers` — `59990ccdad45225ce17ab10954917b26c33cba0b`
-- `feature/live-original-limb-skin-binding` — `2baf1d4a4f16a1fe9792ef406cbbeb11d8c99db0`
-- `feature/original-limb-renderer-trace` — `11a2feea31d06744c720a5fb5d8313fc6925c28f`
-- `feature/live-character-limb-ballistic-damage` — `b7a4892f71f7dece1924ef5c764397610eb933d9`
-- `feature/characterbody-live-physiology-full-rig` — `1956ba2eaa51cf00729c3464857aff4d67f4956d`
-- `feature/iphone-radial-joystick-icon-controls` — `b9454d65f1d2ef164890fe770eff55dcd666cb2e`
-- `feature/source-limb-muscle-joint-trauma` — `d5672a00041258bb1b2e8c81c655672105197202`
-- `feature/source-character-physiology-ragdoll-animation-sequencer` — `66c92d04c2fbdf720189fae534a20b3e1d3348f2`
-- `feature/characterbody-original-animation-state` — `1453e685202141ba7924c56e4396a67dbfa53305`
-- `feature/source-physiology-blood-oxygen` — `781b6a7115bbb43954eb652439b85d12f38cd60b`
-- `feature/characterbody-dependency-primitives` — `cd86735d6ee92441f001fed4fc2601b72b2b7010`
-- `feature/characterbody-original-facing-helpers` — `edaaada760a05958a53fe97fa8777f70d696af1b`
-- `feature/full-source-characterbody-integration` — `b835196201650e7ef0be6efd9ca038b46e34259e`
-- `feature/characterbody-original-movement-execution` — `ec3f67633493ade13d7c9de6b6a4ada0eaade477`
-- `feature/analog-joystick-source-movement` — `b2bac4094d7ca702a60ee0f64d25c9bec30e9830`
-- `feature/original-character-sequencer-next` — `598dffeb23ec869da306c6b3a341c1a1771fdfd3`
-- `feature/animation-dependency-audit` — `6e779cfd7608d703cedc42869c29d582ac41892f`
-- `feature/26-arm-kinematic-pose-bridge` — `a745d1faf6580b6a532957572840541d2122830b`
-- `feature/26-hinge-spring-capsules` — `deee9e40769e23b74715dee0b27a2e4623f0d156`
-- `feature/26-original-arm-dynamics` — `c6c5dab6af0a3e80bb83e682a86aa373a640d2c0`
-- `feature/26-arm-physics-closure-gate` — `4db93ba6a4e6496a23af7cce93c7a3e8a497e9e0`
-- `fix/original-m4-muzzle-flash-frame` — `3e6fd9d80313984297fb42097aaee161217b2ef9`
-- `fix/m4-magazine-last-rounds-chamber` — `a2d51c2679f849b3e15cd24ea39c5294b6987b33`
-- `feature/original-m4-magazine-touch-hud` — `337cee572d7047d5facacd8474a333860577e4a9`
-- `feature/22-armcontroller-source-closure` — `a31a1dae5581680ba8c9f52f6cfefcce393fa538`
-- `feature/22-limb-hand-source` — `5136018aad8d5898660b381c447af556e6849c3b`
-- `feature/22-arm-controller` — `2aa507faf63b37e96bb37e47be9bdc591f7861fe`
-- `codex/projectile-material-impacts` — `2e23cd20813f6bf3e4d2077146edb8daebb06ed4`
+- #74 `codex/ik-sequence-binding-20261026` — `79845d580fe8a186cc39411c5e0cef6801a40221`: binds seven recovered IK sequences to original controller fields; Gate 5 authored animation/IK integration.
+- #57 `feature/source-ikarmcontroller-live-callbacks` — `2b73044c107b875d8545d03541bf6b2d35f64654`: original IK callbacks, live arm solver ordering, weapon grabs; Gate 5.
+- #56 `feature/original-projectile-limb-hit-runtime` — `fb96e92a848409014b85f6e094d995a9376fb731`: original projectile/injury runtime plus NPC source-weight and patrol-integrity regressions; Gates 4 and 6.
+- #65 `feature/extract-original-occupant-spawn-contracts` — `65d24413730b79fc4ee3c6d7994f24312646b3fd`: isolated original Occupant spawn contracts and serialized-area tests; Gate 6.
+- #64 `feature/extract-original-occupant-spawner-sources` — `6eba31d557ecdbb6e007c8e3be9cfe34d4772f71`: exact EquipmentList, SerializableOccupantSettings, Occupants and OccupantSpawner sources; Gate 6 source recovery.
+- #21 `codex/wasm-original-arm-sequences` — `097f1dfed194c670e736d7a4234c56a79766d16d`: six original arm-sequence classes with source-backed compile/Chromium/WebKit checks; Gate 5.
+- #34 `feature/26-source-arm-rig-import-audit` — `e71873f3d8c67eb330ff7ccb2b13cda819b0bc60`: exact ArmController rig/import dependency audit and compile gate; future Gate 5 integration.
+- #33 `fix/33-configured-grips-chamber` — `72662c9ddd2bef362d87e00c8403cff0633f3101`: configured grip/chamber contract and combined ready-ammo HUD without a chamber visual; Gates 3–4.
 
-### (ii) Merged PR branch, touched-path content matches — safe, deleted
+### Group 2 — touched-path comparison
 
-- `feature/extract-original-combat-dependency-sources` — `8b058baed299fd63918ebead1fd0b2efe0912ff1` (PR #63; zero differences over all PR-touched paths).
+- #70/#72 `codex/game-scene-name-normalization-20261023` — `b3640f02009147eb7a3350489db382bb9ad30983`: 24 develop-versus-tip differences span browser input, scene/package loading, runtime scene/UI/serialized resolvers, tests, and audit indexes; not all differences could be tied to later superseding commits. **Needs owner decision; retained.**
+- #73 `fix/touch-hold-fire-20261023` — `e6ac79c1c6439e543ad126a14e71f09dd75ea037`: three differences in browser input, page wiring, and its test; hold-fire behavior is not proven superseded. **Needs owner decision; retained.**
+- #67 `chore/live-state-guard-20261018` — `fa426667bfb24ecd08d8b3332d63bf563f30819b`: two differences are old AGENTS/NEXT_AGENT guidance; later canonical AGENTS and current handoff replace that live-state guard/checkpoint wording. **Safe-delete criteria met; retained because the API has no delete-ref action.**
+- #35 `feature/iphone-original-movement-joystick` — `7e5eec42b2c272b132272851977d5bc3145383ce`: two differences in browser input and page wiring; its horizontal-slider behavior differs from the current joystick/aim/sprint behavior and is not fully mapped to a later superseding change. **Needs owner decision; retained.**
 
-### (iii) Unique tip/content or touched-path differences — needs owner decision; preserved
+### Group 3 — unique-work check
 
-- #74 `codex/ik-sequence-binding-20261026` — `79845d580fe8a186cc39411c5e0cef6801a40221`: binds seven recovered IK sequences to original FullSource controller fields and updates contracts. `develop/wasm` does not call `BindAuthoredSequences`; likely needed for Gate 5 integration, but retain pending owner decision.
-- #73 `fix/touch-hold-fire-20261023` — `e6ac79c1c6439e543ad126a14e71f09dd75ea037`: touch hold-fire changes differ on three touched paths.
-- #70/#72 `codex/game-scene-name-normalization-20261023` — `b3640f02009147eb7a3350489db382bb9ad30983`: scene-name/SpriteRenderer/ARGB32 load and Site touch parity changes; 24 touched-path differences.
-- #67 `chore/live-state-guard-20261018` — `fa426667bfb24ecd08d8b3332d63bf563f30819b`: stale-state guard and handoff changes remain different.
-- #65 `feature/extract-original-occupant-spawn-contracts` — `65d24413730b79fc4ee3c6d7994f24312646b3fd`: occupant spawn contract/tests; branch-only workflow included.
-- #64 `feature/extract-original-occupant-spawner-sources` — `6eba31d557ecdbb6e007c8e3be9cfe34d4772f71`: recovered EquipmentList/OccupantSpawner/Occupants/SerializableOccupantSettings source refs absent at those paths.
-- #62 `maintenance/foundation-first-master-plan-20261017` — `a2988eef5c2213fc877b74c09af26e631c5a8786`: old plan/handoff differs from current archived/rewritten records.
-- #57 `feature/source-ikarmcontroller-live-callbacks` — `2b73044c107b875d8545d03541bf6b2d35f64654`: connects original IK controller callbacks to live character arms.
-- #56 `feature/original-projectile-limb-hit-runtime` — `fb96e92a848409014b85f6e094d995a9376fb731`: projectile combat notifications and source injury chain.
-- #36 `fix/original-impact-mesh-initial-load` — `2d832abf685cec6cd4a9dabe751aa7becca05952`: preserves Wood impact visuals during source mesh loading.
-- #35 `feature/iphone-original-movement-joystick` — `7e5eec42b2c272b132272851977d5bc3145383ce`: original-action iPhone movement joystick.
-- #34 `feature/26-source-arm-rig-import-audit` — `e71873f3d8c67eb330ff7ccb2b13cda819b0bc60`: authored arm hierarchy/physics import audit.
-- #33 `fix/33-configured-grips-chamber` — `72662c9ddd2bef362d87e00c8403cff0633f3101`: configured-grip/chamber contract change; unique tip absent from other remote refs (audit count correction).
-- #21 `codex/wasm-original-arm-sequences` — `097f1dfed194c670e736d7a4234c56a79766d16d`: original arm animation sequence dependencies.
-- #20 `codex/full-source-closure-audit` — `e888d2938c6ac6b12c28381a4aa06e79cd7bfa5d`: full-source dependency audit and Unity UI type inventory.
-- #19 `codex/wasm-compile-package` — `d67d446bd062466a4ec62fcf24bf49818825a5c9`: verifiable game/WASM package.
-- #8 `codex/weapon-actions-checkpoint` — `a824915c08b2d945a77de7c33297453680ef8034`: browser M4 firing/reload/retained aim.
-- #7 `codex/iphone-input-parity-foundation` — `ff2eed647e4eeb3446453b304bb4cbc4b6d31349`: movement/camera/scoped upper-body aim.
+- #62 `maintenance/foundation-first-master-plan-20261017` — `a2988eef5c2213fc877b74c09af26e631c5a8786`: old plan is archived at `docs/history/FOUNDATION_FIRST_COMPLETION_PLAN_2026-10-17.md`, but the branch copy differs by five insertions/seven deletions and its handoff also differs. Historical/non-runtime, but exact supersession is incomplete. **Needs owner decision; retained.**
+- #36 `fix/original-impact-mesh-initial-load` — `2d832abf685cec6cd4a9dabe751aa7becca05952`: both unique commits' touched runtime path `game/original-impact-mesh.mjs` is identical to develop. **Safe-delete criteria met; retained because the API has no delete-ref action.**
+- #20 `codex/full-source-closure-audit` — `e888d2938c6ac6b12c28381a4aa06e79cd7bfa5d`: six unique commits contain audit-only scripts/workflow and historical reports; no current workflow or source references those tools, so nothing is runtime/load-bearing. **Safe-delete criteria met; retained because the API has no delete-ref action.**
+- #19 `codex/wasm-compile-package` — `d67d446bd062466a4ec62fcf24bf49818825a5c9`: four unique commits include a private package workflow, handoff, SDK pin, and package-script/test changes not fully reconciled with the current packager. **Needs owner decision; retained.**
+- #8 `codex/weapon-actions-checkpoint` — `a824915c08b2d945a77de7c33297453680ef8034`: its sole unique tip commit disables automatic Vercel deployment; `vercel.json` is identical on develop. **Safe-delete criteria met; retained because the API has no delete-ref action.**
+- #7 `codex/iphone-input-parity-foundation` — `ff2eed647e4eeb3446453b304bb4cbc4b6d31349`: the recovery-preservation-2026-10-15 release contains the 7,231-file original Unity source archive, and `docs/history/NEXT_AGENT_BEFORE_DEVELOP_WASM_REORGANIZATION_2026-10-16.md` preserves the Unity run #38800542438 / artifact #12004975378 result (18 output files, 36,117,455 bytes; logs/manifests retained, compiled player not retained). The four detailed Oct 15 spike reports on this branch are absent from current `docs/history`, so full spike-history preservation is not confirmed. **Needs owner decision; retained.**
 
-No branch in group iii was deleted. PR-head totals differ from the brief's 39/7/11: observed counts are 37/1/18 across 56 unique branch names; the 18 owner-decision set includes the 11 expected tips plus PR #33 and six merged nonancestor branches whose touched-path diffs were nonempty.
-
-## Records and remaining work
-
-- Docs top-level file count: **57 → 52**; docs subtree total: **284** files before and after. Five dated snapshots were moved to `docs/history/`; 13 retired-numbering gate docs carry the required superseded-numbering first line. The existing deployment-alignment document was already in history.
-- `scripts/env/environment-preflight.sh` now checks pinned SDK, pinned Playwright Chromium, and push authentication together. The SDK and Chromium checks passed locally; no project source work was done.
-- Main remains untouched. Owner options: **retire `main`**; **make `develop/wasm` the default branch**.
-- Next work should follow the single-focus rule and the canonical gate index. Step 29 currently passes in hosted packaged Chromium; visual gait/foot-contact and device acceptance remain outside that demonstrated slice. Do not resume frozen audio, particle, inventory, or lineage threads unless they are on the locomotion critical path.
+The bootstrap-fix and branch-disposition commits are written through the GitHub API. Main and all preview/release refs remain untouched. Docs archive counts from the earlier restructure remain 57→52 top-level files and 284 total files under `docs/`.

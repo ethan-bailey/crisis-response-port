@@ -116,9 +116,13 @@ if [[ ! -x "$_browser_executable" ]]; then
   if [[ ! -x "$_playwright_cli" ]]; then
     fail 'Playwright Chromium' "pinned Playwright CLI is missing: $_playwright_cli"
   fi
-  if ! "$_playwright_cli" install chromium >"$_bootstrap_tmp/playwright-install.log" 2>&1; then
-    _error="$(cat "$_bootstrap_tmp/playwright-install.log")"
-    fail 'Playwright Chromium' "pinned Playwright install failed: ${_error:-playwright install failed}"
+  if ! "$_playwright_cli" install chromium >"$_bootstrap_tmp/playwright-install-default.log" 2>&1; then
+    if ! PLAYWRIGHT_DOWNLOAD_HOST=https://playwright-akamai.azureedge.net \
+      "$_playwright_cli" install chromium >"$_bootstrap_tmp/playwright-install-akamai.log" 2>&1; then
+      _default_error="$(tail -n 12 "$_bootstrap_tmp/playwright-install-default.log")"
+      _akamai_error="$(tail -n 12 "$_bootstrap_tmp/playwright-install-akamai.log")"
+      fail 'Playwright Chromium' "pinned install failed on default host: ${_default_error:-no output}; Akamai mirror failed: ${_akamai_error:-no output}"
+    fi
   fi
 fi
 if [[ ! -x "$_browser_executable" ]]; then
@@ -131,8 +135,9 @@ if [[ $_browser_status -ne 0 || "$_browser_version" != *"$_browser_expected"* ]]
 fi
 printf 'PASS Playwright Chromium %s at %s\n' "$_browser_expected" "$_browser_executable"
 
-unset _bootstrap_script_dir _bootstrap_root _bootstrap_tmp _installer _real_tar _sdk_path \
+unset _bootstrap_script_dir _bootstrap_root _installer _real_tar _sdk_path \
   _sdk_version _sdk_last_error _candidate _candidate_version _candidate_status \
-  _install_log _sdk_status _playwright_metadata _error _browser_info \
+  _install_log _sdk_status _playwright_metadata _error _default_error \
+  _akamai_error _browser_info \
   _browser_revision _browser_expected _browser_root _browser_executable \
   _playwright_cli _browser_version _browser_status
