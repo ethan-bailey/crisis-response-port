@@ -231,6 +231,11 @@ public sealed class FullSourceActorBridge
         world.MakeCurrent();
         body.transform.position = new Vector3(x, y, z);
         rigidbody.velocity = new Vector3(velocityX, velocityY, velocityZ);
+        // RuntimeWorld runs the source LateUpdate before the browser contact
+        // solver. Refresh the source movement delta after contact so the next
+        // CharacterBody.UpdateAnimation sees the same post-physics displacement
+        // that Unity's next rendered update would observe.
+        body.RefreshMovementAfterBrowserContact();
         return Snapshot();
     }
 

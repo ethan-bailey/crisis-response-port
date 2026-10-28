@@ -45,3 +45,9 @@ The browser runtime now also ports the following recovered chain:
 - The runtime no longer turns based on which side of the screen was tapped; the previous screen-side heuristic was removed.
 
 This is still a partial port: the browser scene does not yet reproduce all Unity camera/raycast ordering, Rigidbody/PhysX behavior, the `Limb.Flip()` visual-depth/attachment updates, active weapon muzzle transforms, precision aiming, or weapon firing. Those are documented gaps, not substituted systems.
+
+## Browser contact-to-animation ordering
+
+In the FullSource Mission path, `RuntimeWorld.Tick()` runs the source `CharacterBody.LateUpdate()` before the browser PhysX scene advances. The bridge then synchronizes the contact-solved root pose and velocity into the source actor. Without another movement-bookkeeping pass, `CharacterBody.UpdateAnimation()` on the next tick reads a `MovementDelta` sampled before the previous contact step. The browser bridge now calls the original `UpdateMovement()` bookkeeping after syncing the solved pose. This keeps the source `IsMoving` and `IsMovingBackwards` predicates and Animator parameter writes intact while aligning their next-frame input with contact motion.
+
+This source-order correction has not yet been compiled or exercised in the packaged browser. Its acceptance is a source-backed Mission movement interval with contact enabled: compare post-contact displacement, next-tick `MovementDelta`, original `Moving`/`Backwards`, and selected authored clip through acceleration, reversal, and release. It does not establish Unity PhysX numerical parity or iPhone Safari acceptance.
