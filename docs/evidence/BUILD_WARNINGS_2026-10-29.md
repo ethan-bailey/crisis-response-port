@@ -1,0 +1,53 @@
+# Full-source build warnings — 2026-10-29
+
+Command: `source scripts/env/dotnet-8.0.426-preflight.sh && dotnet build runtime/Crisis.Runtime.csproj -c Release --no-incremental`. SDK 8.0.426. Result: 0 errors, 49 warnings. The full compiler diagnostic set is recorded below (deduplicated across console rendering).
+
+- `CS0108` `runtime/Engine/WeaponHost.cs:25,69` — 'WeaponAmmunition.casing' hides inherited member 'AmmunitionBase.casing'. Use the new keyword if hiding was intended.
+- `CS0108` `runtime/Engine/WeaponHost.cs:25,102` — 'WeaponAmmunition.projectile' hides inherited member 'AmmunitionBase.projectile'. Use the new keyword if hiding was intended.
+- `CS0108` `runtime/Original/FullSource/Benchmark.cs:93,15` — 'Benchmark.started' hides inherited member 'MonoBehaviour.started'. Use the new keyword if hiding was intended.
+- `CS0108` `runtime/Engine/Objects.cs:101,43` — 'Component.OriginalSerializedFields' hides inherited member 'Object.OriginalSerializedFields'. Use the new keyword if hiding was intended.
+- `CS8632` `runtime/Engine/Rendering/GraphicsPrimitives.cs:144,21` — The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+- `CS0108` `runtime/Engine/Rendering/GraphicsPrimitives.cs:144,23` — 'ParticleSystemRenderer.staticBatchRoot' hides inherited member 'Renderer.staticBatchRoot'. Use the new keyword if hiding was intended.
+- `CS0108` `runtime/Engine/Rendering/GraphicsPrimitives.cs:33,20` — 'Material.hideFlags' hides inherited member 'Object.hideFlags'. Use the new keyword if hiding was intended.
+- `CS0109` `runtime/Engine/Rendering/GraphicsPrimitives.cs:96,24` — The member 'Renderer.staticBatchRoot' does not hide an accessible member. The new keyword is not required.
+- `CS0109` `runtime/Engine/Rendering/GraphicsPrimitives.cs:96,40` — The member 'Renderer.probeAnchor' does not hide an accessible member. The new keyword is not required.
+- `CS0109` `runtime/Engine/Rendering/GraphicsPrimitives.cs:96,52` — The member 'Renderer.lightProbeVolumeOverride' does not hide an accessible member. The new keyword is not required.
+- `CS8632` `runtime/Engine/FullSourceActorBridge.cs:349,11` — The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+- `SYSLIB0021` `runtime/Original/BehaviorDesigner/BinaryDeserialization.cs:595,18` — 'SHA1Managed' is obsolete: 'Derived cryptographic types are obsolete. Use the Create method on the base type instead.' (https://aka.ms/dotnet-warnings/SYSLIB0021)
+- `CS0219` `runtime/Original/CharacterBehavior/CharacterBehavior/VisualPerceive.cs:82,10` — The variable 'num' is assigned but its value is never used
+- `SYSLIB0006` `runtime/Original/FullSource/Threading/ThreadedJob.cs:74,5` — 'Thread.Abort()' is obsolete: 'Thread.Abort is not supported and throws PlatformNotSupportedException.' (https://aka.ms/dotnet-warnings/SYSLIB0006)
+- `SYSLIB0050` `runtime/Original/Foundation/FullSerializer/fsMetaType.cs:262,12` — 'FormatterServices' is obsolete: 'Formatter-based serialization is obsolete and should not be used.' (https://aka.ms/dotnet-warnings/SYSLIB0050)
+- `CS9113` `runtime/Engine/Math.cs:125,85` — Parameter 'text' is unread.
+- `CS9113` `runtime/Engine/Math.cs:124,86` — Parameter 'text' is unread.
+- `CS1717` `runtime/Original/FullSource/WeaponPointer.cs:116,3` — Assignment made to same variable; did you mean to assign something else?
+- `SYSLIB0011` `runtime/Original/FullSource/EngagementRules.cs:35,3` — 'BinaryFormatter' is obsolete: 'BinaryFormatter serialization is obsolete and should not be used. See https://aka.ms/binaryformatter for more information.' (https://aka.ms/dotnet-warnings/SYSLIB0011)
+- `SYSLIB0011` `runtime/Original/FullSource/EngagementRules.cs:35,41` — 'BinaryFormatter' is obsolete: 'BinaryFormatter serialization is obsolete and should not be used. See https://aka.ms/binaryformatter for more information.' (https://aka.ms/dotnet-warnings/SYSLIB0011)
+- `SYSLIB0022` `runtime/Original/FullSource/Encryption.cs:19,3` — 'RijndaelManaged' is obsolete: 'The Rijndael and RijndaelManaged types are obsolete. Use Aes instead.' (https://aka.ms/dotnet-warnings/SYSLIB0022)
+- `SYSLIB0022` `runtime/Original/FullSource/Encryption.cs:19,41` — 'RijndaelManaged' is obsolete: 'The Rijndael and RijndaelManaged types are obsolete. Use Aes instead.' (https://aka.ms/dotnet-warnings/SYSLIB0022)
+- `SYSLIB0022` `runtime/Original/FullSource/Encryption.cs:24,3` — 'RijndaelManaged' is obsolete: 'The Rijndael and RijndaelManaged types are obsolete. Use Aes instead.' (https://aka.ms/dotnet-warnings/SYSLIB0022)
+- `SYSLIB0022` `runtime/Original/FullSource/Encryption.cs:39,3` — 'RijndaelManaged' is obsolete: 'The Rijndael and RijndaelManaged types are obsolete. Use Aes instead.' (https://aka.ms/dotnet-warnings/SYSLIB0022)
+- `SYSLIB0022` `runtime/Original/FullSource/Encryption.cs:39,41` — 'RijndaelManaged' is obsolete: 'The Rijndael and RijndaelManaged types are obsolete. Use Aes instead.' (https://aka.ms/dotnet-warnings/SYSLIB0022)
+- `SYSLIB0022` `runtime/Original/FullSource/Encryption.cs:44,3` — 'RijndaelManaged' is obsolete: 'The Rijndael and RijndaelManaged types are obsolete. Use Aes instead.' (https://aka.ms/dotnet-warnings/SYSLIB0022)
+- `SYSLIB0011` `runtime/Original/FullSource/EngagementRules.cs:45,4` — 'BinaryFormatter' is obsolete: 'BinaryFormatter serialization is obsolete and should not be used. See https://aka.ms/binaryformatter for more information.' (https://aka.ms/dotnet-warnings/SYSLIB0011)
+- `SYSLIB0011` `runtime/Original/FullSource/EngagementRules.cs:45,42` — 'BinaryFormatter' is obsolete: 'BinaryFormatter serialization is obsolete and should not be used. See https://aka.ms/binaryformatter for more information.' (https://aka.ms/dotnet-warnings/SYSLIB0011)
+- `SYSLIB0014` `runtime/Original/FullSource/HTTPPost.cs:50,27` — 'WebRequest.Create(string)' is obsolete: 'WebRequest, HttpWebRequest, ServicePoint, and WebClient are obsolete. Use HttpClient instead.' (https://aka.ms/dotnet-warnings/SYSLIB0014)
+- `SYSLIB0011` `runtime/Original/FullSource/SerializableCampaign.cs:34,4` — 'BinaryFormatter' is obsolete: 'BinaryFormatter serialization is obsolete and should not be used. See https://aka.ms/binaryformatter for more information.' (https://aka.ms/dotnet-warnings/SYSLIB0011)
+- `SYSLIB0011` `runtime/Original/FullSource/SerializableCampaign.cs:34,42` — 'BinaryFormatter' is obsolete: 'BinaryFormatter serialization is obsolete and should not be used. See https://aka.ms/binaryformatter for more information.' (https://aka.ms/dotnet-warnings/SYSLIB0011)
+- `SYSLIB0011` `runtime/Original/FullSource/SerializableCampaign.cs:48,3` — 'BinaryFormatter' is obsolete: 'BinaryFormatter serialization is obsolete and should not be used. See https://aka.ms/binaryformatter for more information.' (https://aka.ms/dotnet-warnings/SYSLIB0011)
+- `SYSLIB0011` `runtime/Original/FullSource/SerializableCampaign.cs:48,41` — 'BinaryFormatter' is obsolete: 'BinaryFormatter serialization is obsolete and should not be used. See https://aka.ms/binaryformatter for more information.' (https://aka.ms/dotnet-warnings/SYSLIB0011)
+- `SYSLIB0011` `runtime/Original/FullSource/Serializer.cs:24,5` — 'BinaryFormatter' is obsolete: 'BinaryFormatter serialization is obsolete and should not be used. See https://aka.ms/binaryformatter for more information.' (https://aka.ms/dotnet-warnings/SYSLIB0011)
+- `SYSLIB0011` `runtime/Original/FullSource/Serializer.cs:24,43` — 'BinaryFormatter' is obsolete: 'BinaryFormatter serialization is obsolete and should not be used. See https://aka.ms/binaryformatter for more information.' (https://aka.ms/dotnet-warnings/SYSLIB0011)
+- `SYSLIB0011` `runtime/Original/FullSource/Serializer.cs:39,4` — 'BinaryFormatter' is obsolete: 'BinaryFormatter serialization is obsolete and should not be used. See https://aka.ms/binaryformatter for more information.' (https://aka.ms/dotnet-warnings/SYSLIB0011)
+- `SYSLIB0011` `runtime/Original/FullSource/Serializer.cs:39,42` — 'BinaryFormatter' is obsolete: 'BinaryFormatter serialization is obsolete and should not be used. See https://aka.ms/binaryformatter for more information.' (https://aka.ms/dotnet-warnings/SYSLIB0011)
+- `CS0649` `runtime/Engine/ProjectileMaterialHost.cs:10,52` — Field 'Projectile.segmentLength' is never assigned to, and will always have its default value 0
+- `CS0649` `runtime/Engine/ProjectileFlightHost.cs:12,30` — Field 'Projectile.segmentEndMagnitude' is never assigned to, and will always have its default value 0
+- `CS0649` `runtime/Original/FullSource/RecoilManager.cs:17,23` — Field 'RecoilManager.recoils' is never assigned to, and will always have its default value null
+- `CS0649` `runtime/Engine/ProjectileFlightHost.cs:12,8` — Field 'Projectile.segmentBeginMagnitude' is never assigned to, and will always have its default value 0
+- `CS0649` `runtime/Original/FullSource/UnityStandardAssets/ImageEffects/BloomOptimized.cs:32,22` — Field 'BloomOptimized.resolution' is never assigned to, and will always have its default value
+- `CS0169` `runtime/Engine/BoxCollider2D.cs:13,42` — The field 'BoxCollider2D.m_SpriteTilingProperty' is never used
+- `CS0169` `runtime/Original/CharacterBehavior/CharacterBehavior/TurnAround.cs:19,16` — The field 'TurnAround.resumeLookThroughSights' is never used
+- `CS0414` `runtime/Original/FullSource/Version.cs:11,24` — The field 'Version.Filename' is assigned but its value is never used
+- `CS0414` `runtime/Original/CharacterBehavior/Assets/Scripts/Characters/Behavior/Conditions/Occupants/Surrender.cs:26,27` — The field 'Surrender.action' is assigned but its value is never used
+- `CS0414` `runtime/Original/FullSource/DoorController.cs:108,15` — The field 'DoorController.forcedManipulation' is assigned but its value is never used
+- `CA1416` `runtime/Original/FullSource/GlobalContext.cs:414,4` — This call site is reachable on all platforms. 'Registry.CurrentUser' is only supported on: 'windows'. (https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1416)
+- `CA1416` `runtime/Original/FullSource/GlobalContext.cs:414,4` — This call site is reachable on all platforms. 'RegistryKey.DeleteSubKey(string)' is only supported on: 'windows'. (https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1416)

@@ -315,6 +315,23 @@ try {
   }, 'FullSource HUD must use the recovered active M4A1 and reserve magazine graph');
   assert.ok(reloadBefore.sourceArmPoses.length >= 6, 'FullSource Mission must expose both original upper/lower-arm and hand pose chains');
   assert.equal(reloadBefore.unavailable, false, 'the source magazine control must accept its authored drag gesture');
+  const fireButton = page.locator('#fire');
+  const ammunitionBefore = { magazine: reloadBefore.weapon.magazine, reserve: reloadBefore.weapon.reserve };
+  await fireButton.dispatchEvent('pointerdown', { pointerId: 91, pointerType: 'mouse', button: 0, buttons: 1 });
+  await page.waitForFunction((initial) => {
+    const state = window.__gameState()?.weaponState;
+    return state && initial.magazine - state.magazine >= 3;
+  }, ammunitionBefore, { timeout: 15000 });
+  await fireButton.dispatchEvent('pointerup', { pointerId: 91, pointerType: 'mouse', button: 0, buttons: 0 });
+  const ammunitionSpent = await page.evaluate(() => ({
+    magazine: window.__gameState().weaponState.magazine,
+    reserve: window.__gameState().weaponState.reserve,
+    chamberLive: window.__gameState().weaponState.chamberLive,
+  }));
+  assert.ok(ammunitionSpent.magazine <= ammunitionBefore.magazine - 3,
+    `the packaged source fire action must spend at least three rounds; before=${JSON.stringify(ammunitionBefore)} after=${JSON.stringify(ammunitionSpent)}`);
+  assert.equal(ammunitionSpent.reserve, ammunitionBefore.reserve,
+    'firing from the loaded magazine must not consume reserve ammunition');
   const idleArmTrace = [];
   for (let sample = 0; sample < 6; sample++) {
     await page.waitForTimeout(50);
@@ -372,7 +389,11 @@ try {
     events: window.__missionSourceDiagnostics?.sourceAudioEvents ?? [],
   }));
   assert.equal(reloadAfter.weapon.weaponId, 'M4A1');
-  assert.equal(reloadAfter.weapon.magazine, 30, 'the recovered active source magazine must remain populated after reload');
+  assert.equal(reloadAfter.weapon.magazine, 30, 'the recovered active source magazine must be replenished after reload');
+  assert.ok(reloadAfter.weapon.magazine > ammunitionSpent.magazine,
+    `reload must increase the loaded magazine after rounds were spent; before=${JSON.stringify(ammunitionSpent)} after=${JSON.stringify({magazine:reloadAfter.weapon.magazine,reserve:reloadAfter.weapon.reserve})}`);
+  assert.ok(reloadAfter.weapon.reserve < ammunitionSpent.reserve,
+    `reload must consume reserve ammunition after rounds were spent; before=${JSON.stringify(ammunitionSpent)} after=${JSON.stringify({magazine:reloadAfter.weapon.magazine,reserve:reloadAfter.weapon.reserve})}`);
   assert.equal(reloadAfter.weapon.chamberLive, true, 'the original live chamber must remain reflected in the HUD state');
   assert.ok(reloadAfter.audio.played > reloadBefore.audio.played, 'the trusted magazine drag must play original source reload audio');
   assert.ok(reloadAfter.events.length > reloadBefore.eventCount, 'the browser must receive original source audio callbacks during reload');
@@ -407,7 +428,7 @@ try {
     missionLoadUi: { initialAttempt: initialAttemptUi, failedAttempt: failedAttemptUi, retryLoading: loadingUi, completed: loadedUi },
     injectedFailure: { path: injectedFailurePath, initialAttemptFailed: true, diagnosticCopied: copiedErrorText === failedAttemptUi.errorText, retrySucceeded: true },
     grounding: state.grounding,
-    reloadAudio: { before: reloadBefore, after: reloadAfter, sourceEvents: reloadAfter.events.slice(reloadBefore.eventCount), armPose: { idleDrift: idleArmDrift, activeReload: reloadPoseChange, settled: compareSourceArmPoses(reloadBefore.sourceArmPoses, reloadAfter.sourceArmPoses), sampleCount: reloadArmTrace.length } },
+    reloadAudio: { before: reloadBefore, ammunitionBefore: ammunitionBefore, afterSpending: ammunitionSpent, afterReload: { magazine: reloadAfter.weapon.magazine, reserve: reloadAfter.weapon.reserve, chamberLive: reloadAfter.weapon.chamberLive }, after: reloadAfter, sourceEvents: reloadAfter.events.slice(reloadBefore.eventCount), armPose: { idleDrift: idleArmDrift, activeReload: reloadPoseChange, settled: compareSourceArmPoses(reloadBefore.sourceArmPoses, reloadAfter.sourceArmPoses), sampleCount: reloadArmTrace.length } },
     movement: movementReport,
     mobileZoom: { before: mobileZoom.before, afterRapidGameSurfaceTaps: mobileZoomAfter, browser: 'Chromium mobile touch emulation; not iPhone Safari' },
     ...runtimeReport,
