@@ -317,12 +317,18 @@ try {
   assert.equal(reloadBefore.unavailable, false, 'the source magazine control must accept its authored drag gesture');
   const fireButton = page.locator('#fire');
   const ammunitionBefore = { magazine: reloadBefore.weapon.magazine, reserve: reloadBefore.weapon.reserve };
-  await fireButton.dispatchEvent('pointerdown', { pointerId: 91, pointerType: 'mouse', button: 0, buttons: 1 });
-  await page.waitForFunction((initial) => {
-    const state = window.__gameState()?.weaponState;
-    return state && initial.magazine - state.magazine >= 3;
-  }, ammunitionBefore, { timeout: 15000 });
-  await fireButton.dispatchEvent('pointerup', { pointerId: 91, pointerType: 'mouse', button: 0, buttons: 0 });
+  const fireBox = await fireButton.boundingBox();
+  assert.ok(fireBox, 'the production fire control must be visible for the source trigger test');
+  await page.mouse.move(fireBox.x + fireBox.width / 2, fireBox.y + fireBox.height / 2);
+  await page.mouse.down();
+  try {
+    await page.waitForFunction((initial) => {
+      const state = window.__gameState()?.weaponState;
+      return state && initial.magazine - state.magazine >= 3;
+    }, ammunitionBefore, { timeout: 15000 });
+  } finally {
+    await page.mouse.up();
+  }
   const ammunitionSpent = await page.evaluate(() => ({
     magazine: window.__gameState().weaponState.magazine,
     reserve: window.__gameState().weaponState.reserve,
