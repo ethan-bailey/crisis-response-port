@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import {gunzipSync} from 'node:zlib';
 import {createHash} from 'node:crypto';
 
-const file=new URL('../docs/mission-particle-dependency-inventory-2026-10-25.json.gz',import.meta.url);
+const file=new URL('../docs/history/mission-particle-dependency-inventory-2026-10-25.json.gz',import.meta.url);
 const compressed=readFileSync(file);
 const raw=gunzipSync(compressed);
 const inventory=JSON.parse(raw.toString('utf8'));

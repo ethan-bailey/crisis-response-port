@@ -64,7 +64,7 @@ test('all 26 impact emitters use the recovered cone-base or circle-edge shape pa
 });
 
 test('all seven full-profile hemisphere systems retain supported source settings',()=>{
-  const inventory=JSON.parse(gunzipSync(readFileSync(new URL('../docs/mission-particle-dependency-inventory-2026-10-25.json.gz',import.meta.url))));
+  const inventory=JSON.parse(gunzipSync(readFileSync(new URL('../docs/history/mission-particle-dependency-inventory-2026-10-25.json.gz',import.meta.url))));
   const hemisphereSystems=[];
   for(const [path,prefab] of Object.entries(inventory.prefabs)){
     const records=new Map(prefab.records.map(record=>[String(record.fileID),record]));

@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import {gunzipSync} from 'node:zlib';
 import {stretchedBillboardParameters} from '../game/source-particle-render-modes.mjs';
 
-const inventory=JSON.parse(gunzipSync(readFileSync(new URL('../docs/mission-particle-dependency-inventory-2026-10-25.json.gz',import.meta.url))));
+const inventory=JSON.parse(gunzipSync(readFileSync(new URL('../docs/history/mission-particle-dependency-inventory-2026-10-25.json.gz',import.meta.url))));
 
 test('all six source stretched-billboard renderers retain their authored sizing inputs',()=>{
   let count=0;

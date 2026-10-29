@@ -7,7 +7,7 @@ import {gunzipSync} from 'node:zlib';
 const root=new URL('../',import.meta.url);
 const read=name=>readFileSync(new URL(name,root),'utf8');
 const jsonGzip=name=>JSON.parse(gunzipSync(readFileSync(new URL(name,root))));
-const particles=jsonGzip('docs/mission-particle-dependency-inventory-2026-10-25.json.gz');
+const particles=jsonGzip('docs/history/mission-particle-dependency-inventory-2026-10-25.json.gz');
 const audio=jsonGzip('docs/audio/MISSION_SOURCE_AUDIO_INVENTORY_2026-10-26.json.gz');
 const scenes=jsonGzip('scene-data/crisis-response-scenes.json.gz');
 const mission=scenes.assets['Assets/Scenes/Mission 01.unity'];
