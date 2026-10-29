@@ -137,7 +137,7 @@ jobs:
               refresh = (datetime.datetime.now(datetime.timezone.utc) - created).days >= 60
               values = {'artifact_id':str(selected['id']),'run_id':str(selected['workflow_run']['id']),'name':selected['name'],'is_seed':'false','refresh':str(refresh).lower()}
           else:
-              values = {'artifact_id':'11903811738','run_id':'38582072502','name':'crisis-response-recovery-direct-v3-1','is_seed':'true','refresh':'true'}
+              values = {'artifact_id':'12632426021','run_id':'40281343536','name':'cpr-recovered-unity-project-f012fa85de9bb7928c78dfc9ae846837a1f2c77c','is_seed':'false','refresh':'false'}
           with open(os.environ['GITHUB_OUTPUT'],'a') as output:
               for key,value in values.items():
                   print(f'{key}={value}',file=output)
