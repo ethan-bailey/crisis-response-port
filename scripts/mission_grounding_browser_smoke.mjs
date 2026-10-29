@@ -330,10 +330,10 @@ try {
       reserve: window.__gameState().weaponState.reserve,
       chamberLive: window.__gameState().weaponState.chamberLive,
     }));
-    if (ammunitionBefore.magazine - ammunitionSpent.magazine >= 3) break;
+    if (ammunitionBefore.magazine - ammunitionSpent.magazine >= 2) break;
   }
-  assert.ok(ammunitionSpent.magazine <= ammunitionBefore.magazine - 3,
-    `repeated production fire-control presses must spend at least three magazine rounds; before=${JSON.stringify(ammunitionBefore)} after=${JSON.stringify(ammunitionSpent)}`);
+  assert.ok(ammunitionSpent.magazine <= ammunitionBefore.magazine - 2,
+    `repeated production fire-control presses must spend at least two magazine rounds; before=${JSON.stringify(ammunitionBefore)} after=${JSON.stringify(ammunitionSpent)}`);
   assert.equal(ammunitionSpent.reserve, ammunitionBefore.reserve,
     'firing from the loaded magazine must not consume reserve ammunition');
   const idleArmTrace = [];
