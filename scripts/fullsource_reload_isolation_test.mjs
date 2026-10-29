@@ -17,11 +17,15 @@ test('packaged reload acceptance runs independently after locomotion failure',()
   'the production fire control must receive repeated real browser clicks until two rounds are spent');
  assert.match(smoke,/ammunitionSpent\.magazine <= ammunitionBefore\.magazine - 2/,
   'reload-only acceptance must assert a two-round magazine decrease before reload');
+ assert.match(smoke,/const reloadBaseline = await page\.evaluate[\s\S]*const magazineStart =/,
+  'reload audio accounting must begin after firing and immediately before the reload gesture');
+ assert.match(smoke,/reloadAfter\.audio\.played > reloadBaseline\.played[\s\S]*reloadAfter\.events\.length > reloadBaseline\.eventCount/,
+  'reload audio assertions must compare against the post-firing baseline');
  assert.match(smoke,/assert\.ok\(reloadAfter\.weapon\.magazine > ammunitionSpent\.magazine/,
   'reload acceptance must prove magazine rounds increase after firing');
  assert.match(smoke,/assert\.ok\(reloadAfter\.weapon\.reserve < ammunitionSpent\.reserve/,
   'reload acceptance must prove reserve rounds decrease after firing');
- assert.match(smoke,/reloadAudio: \{ before: reloadBefore, ammunitionBefore: ammunitionBefore, afterSpending: ammunitionSpent, afterReload:/,
+ assert.match(smoke,/reloadAudio: \{ before: reloadBefore, ammunitionBefore: ammunitionBefore, afterSpending: ammunitionSpent, reloadAudioBaseline: reloadBaseline, afterReload:/,
   'reload-only report must retain before/spent/reloaded counts with source arm and audio evidence');
  assert.match(workflow,/mission_grounding_browser_smoke\.mjs[^\n]*cpr-reload-browser[^\n]*--reload-only/,
   'hosted package must run an independent reload-only browser invocation');

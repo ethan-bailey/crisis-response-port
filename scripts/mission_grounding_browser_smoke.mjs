@@ -346,16 +346,21 @@ try {
   const magazineTouch = page.locator('#magazineTouch');
   const magazineBox = await magazineTouch.boundingBox();
   assert.ok(magazineBox, 'the source magazine drag control must be visible');
+  const reloadBaseline = await page.evaluate(() => {
+    const state = window.__gameState();
+    return {
+      played: state.presentation.weaponAudio.played,
+      eventCount: window.__missionSourceDiagnostics?.sourceAudioEvents?.length ?? 0,
+      droppedUnloaded: state.presentation.weaponAudio.droppedUnloaded,
+      droppedSuspended: state.presentation.weaponAudio.droppedSuspended,
+      unmapped: state.presentation.weaponAudio.unmappedSourceEvents,
+    };
+  });
   const magazineStart = { x: magazineBox.x + magazineBox.width / 2, y: magazineBox.y + 16 };
   await page.mouse.move(magazineStart.x, magazineStart.y);
   await page.mouse.down();
   await page.mouse.move(magazineStart.x, magazineStart.y + 55, { steps: 5 });
   await page.mouse.up();
-  const reloadBaseline = {
-    played: reloadBefore.audio.played, eventCount: reloadBefore.eventCount,
-    droppedUnloaded: reloadBefore.audio.droppedUnloaded, droppedSuspended: reloadBefore.audio.droppedSuspended,
-    unmapped: reloadBefore.audio.unmappedSourceEvents,
-  };
   const reloadArmTrace = [];
   const reloadDeadline = Date.now() + 30000;
   let reloadPoseStarted = false;
@@ -399,8 +404,8 @@ try {
   assert.ok(reloadAfter.weapon.reserve < ammunitionSpent.reserve,
     `reload must consume reserve ammunition after rounds were spent; before=${JSON.stringify(ammunitionSpent)} after=${JSON.stringify({magazine:reloadAfter.weapon.magazine,reserve:reloadAfter.weapon.reserve})}`);
   assert.equal(reloadAfter.weapon.chamberLive, true, 'the original live chamber must remain reflected in the HUD state');
-  assert.ok(reloadAfter.audio.played > reloadBefore.audio.played, 'the trusted magazine drag must play original source reload audio');
-  assert.ok(reloadAfter.events.length > reloadBefore.eventCount, 'the browser must receive original source audio callbacks during reload');
+  assert.ok(reloadAfter.audio.played > reloadBaseline.played, 'the trusted magazine drag must play original source reload audio');
+  assert.ok(reloadAfter.events.length > reloadBaseline.eventCount, 'the browser must receive original source audio callbacks during reload');
   assert.deepEqual(pageErrors, [], 'source reload and audio callbacks must not throw browser runtime errors');
   const mobilePage = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   mobilePage.on('pageerror', error => pageErrors.push(String(error)));
@@ -432,7 +437,7 @@ try {
     missionLoadUi: { initialAttempt: initialAttemptUi, failedAttempt: failedAttemptUi, retryLoading: loadingUi, completed: loadedUi },
     injectedFailure: { path: injectedFailurePath, initialAttemptFailed: true, diagnosticCopied: copiedErrorText === failedAttemptUi.errorText, retrySucceeded: true },
     grounding: state.grounding,
-    reloadAudio: { before: reloadBefore, ammunitionBefore: ammunitionBefore, afterSpending: ammunitionSpent, afterReload: { magazine: reloadAfter.weapon.magazine, reserve: reloadAfter.weapon.reserve, chamberLive: reloadAfter.weapon.chamberLive }, after: reloadAfter, sourceEvents: reloadAfter.events.slice(reloadBefore.eventCount), armPose: { idleDrift: idleArmDrift, activeReload: reloadPoseChange, settled: compareSourceArmPoses(reloadBefore.sourceArmPoses, reloadAfter.sourceArmPoses), sampleCount: reloadArmTrace.length } },
+    reloadAudio: { before: reloadBefore, ammunitionBefore: ammunitionBefore, afterSpending: ammunitionSpent, reloadAudioBaseline: reloadBaseline, afterReload: { magazine: reloadAfter.weapon.magazine, reserve: reloadAfter.weapon.reserve, chamberLive: reloadAfter.weapon.chamberLive }, after: reloadAfter, sourceEvents: reloadAfter.events.slice(reloadBaseline.eventCount), armPose: { idleDrift: idleArmDrift, activeReload: reloadPoseChange, settled: compareSourceArmPoses(reloadBefore.sourceArmPoses, reloadAfter.sourceArmPoses), sampleCount: reloadArmTrace.length } },
     movement: movementReport,
     mobileZoom: { before: mobileZoom.before, afterRapidGameSurfaceTaps: mobileZoomAfter, browser: 'Chromium mobile touch emulation; not iPhone Safari' },
     ...runtimeReport,
