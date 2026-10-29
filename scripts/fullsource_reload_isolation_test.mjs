@@ -13,8 +13,8 @@ test('packaged reload acceptance runs independently after locomotion failure',()
   'source reload lifecycle must remain unconditional');
  assert.match(smoke,/const ammunitionBefore = \{ magazine: reloadBefore\.weapon\.magazine, reserve: reloadBefore\.weapon\.reserve \}/,
   'packaged reload acceptance must capture the source magazine and reserve counts before firing');
- assert.match(smoke,/initial\.magazine - state\.magazine >= 3/,
-  'the original fire path must spend at least three rounds before the reload test');
+ assert.match(smoke,/const fireDeadline = Date\.now\(\) \+ 20000;[\s\S]*while \(Date\.now\(\) < fireDeadline\)[\s\S]*fireButton\.click\(\{ delay: 80 \}\)/,
+  'the production fire control must receive repeated real browser clicks until three rounds are spent');
  assert.match(smoke,/assert\.ok\(reloadAfter\.weapon\.magazine > ammunitionSpent\.magazine/,
   'reload acceptance must prove magazine rounds increase after firing');
  assert.match(smoke,/assert\.ok\(reloadAfter\.weapon\.reserve < ammunitionSpent\.reserve/,

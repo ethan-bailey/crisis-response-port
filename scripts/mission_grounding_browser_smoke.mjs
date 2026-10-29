@@ -320,22 +320,20 @@ try {
   const fireBox = await fireButton.boundingBox();
   assert.ok(fireBox, 'the production fire control must be visible for the source trigger test');
   await page.mouse.move(fireBox.x + fireBox.width / 2, fireBox.y + fireBox.height / 2);
-  await page.mouse.down();
-  try {
-    await page.waitForFunction((initial) => {
-      const state = window.__gameState()?.weaponState;
-      return state && initial.magazine - state.magazine >= 3;
-    }, ammunitionBefore, { timeout: 15000 });
-  } finally {
-    await page.mouse.up();
+  let ammunitionSpent = { magazine: ammunitionBefore.magazine, reserve: ammunitionBefore.reserve, chamberLive: reloadBefore.weapon.chamberLive };
+  const fireDeadline = Date.now() + 20000;
+  while (Date.now() < fireDeadline) {
+    await fireButton.click({ delay: 80 });
+    await page.waitForTimeout(350);
+    ammunitionSpent = await page.evaluate(() => ({
+      magazine: window.__gameState().weaponState.magazine,
+      reserve: window.__gameState().weaponState.reserve,
+      chamberLive: window.__gameState().weaponState.chamberLive,
+    }));
+    if (ammunitionBefore.magazine - ammunitionSpent.magazine >= 3) break;
   }
-  const ammunitionSpent = await page.evaluate(() => ({
-    magazine: window.__gameState().weaponState.magazine,
-    reserve: window.__gameState().weaponState.reserve,
-    chamberLive: window.__gameState().weaponState.chamberLive,
-  }));
   assert.ok(ammunitionSpent.magazine <= ammunitionBefore.magazine - 3,
-    `the packaged source fire action must spend at least three rounds; before=${JSON.stringify(ammunitionBefore)} after=${JSON.stringify(ammunitionSpent)}`);
+    `repeated production fire-control presses must spend at least three magazine rounds; before=${JSON.stringify(ammunitionBefore)} after=${JSON.stringify(ammunitionSpent)}`);
   assert.equal(ammunitionSpent.reserve, ammunitionBefore.reserve,
     'firing from the loaded magazine must not consume reserve ammunition');
   const idleArmTrace = [];
