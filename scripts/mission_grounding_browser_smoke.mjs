@@ -446,9 +446,25 @@ try {
       Object.assign(lateralReposition,{key,nearestVictim:nearestOffscreen.victim.body,
         aimedLimb:nearestOffscreen.limb.limb,projectedPoint:{x:nearestOffscreen.point.x,y:nearestOffscreen.point.y},
         startX:start[0],targetX});
-      await page.keyboard.down(key);
+      const sprintDirection=screenSide<0?-1:1;
+      const movementStick=page.locator('#movementStick');
+      const stickBox=await movementStick.boundingBox();
+      assert.ok(stickBox,'combat reposition requires the production movement joystick');
+      const stickGeometry=await movementStick.evaluate(surface=>{
+        const thumb=surface.querySelector('.stick-thumb');
+        const rect=surface.getBoundingClientRect();
+        return {center:{x:rect.left+rect.width/2,y:rect.top+rect.height/2},
+          travelX:(rect.width-thumb.offsetWidth)/2-4};
+      });
+      Object.assign(lateralReposition,{control:'production movement joystick sprint',sprintDirection});
+      await page.mouse.move(stickGeometry.center.x,stickGeometry.center.y);
+      await page.mouse.down();
       try{
-        const deadline=Date.now()+6000;
+        await page.mouse.move(stickGeometry.center.x+stickGeometry.travelX*sprintDirection*1.8,
+          stickGeometry.center.y,{steps:4});
+        await page.waitForFunction(()=>document.querySelector('#movementStick')?.classList.contains('sprinting'),
+          null,{timeout:5000});
+        const deadline=Date.now()+15000;
         while(Date.now()<deadline&&candidates.length===0){
           await page.waitForTimeout(500);
           const live=await page.evaluate(()=>window.__sourceCombatSnapshot());
@@ -458,7 +474,7 @@ try {
           await scanVisibleLimbs(live,false);
         }
       }finally{
-        await page.keyboard.up(key);
+        await page.mouse.up();
       }
     }
     candidates.sort((a,b)=>{
