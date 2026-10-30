@@ -323,9 +323,13 @@ try {
     eventCount: window.__missionSourceDiagnostics?.sourceAudioEvents?.length ?? 0,
     unavailable: document.querySelector('#magazineTouch')?.classList.contains('mag-unavailable'),
   }));
-  assert.deepEqual(reloadBefore.weapon, {
+  const reloadAmmunition = (({weaponId,magazine,magazineCapacity,chamberLive,reserve,reloading}) =>
+    ({weaponId,magazine,magazineCapacity,chamberLive,reserve,reloading}))(reloadBefore.weapon);
+  assert.deepEqual(reloadAmmunition, {
     weaponId: 'M4A1', magazine: 30, magazineCapacity: 30, chamberLive: true, reserve: 30, reloading: false,
   }, 'FullSource HUD must use the recovered active M4A1 and reserve magazine graph');
+  assert.ok(Number.isFinite(reloadBefore.weapon.aimAlignment),'FullSource weapon snapshot must report finite original aim alignment');
+  assert.equal(typeof reloadBefore.weapon.aimConverged,'boolean','FullSource weapon snapshot must report original arm/camera convergence');
   assert.ok(reloadBefore.sourceArmPoses.length >= 6, 'FullSource Mission must expose both original upper/lower-arm and hand pose chains');
   assert.equal(reloadBefore.unavailable, false, 'the source magazine control must accept its authored drag gesture');
   const fireButton = page.locator('#fire');
