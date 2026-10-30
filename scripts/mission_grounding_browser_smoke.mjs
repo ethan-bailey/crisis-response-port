@@ -407,6 +407,59 @@ try {
   assert.ok(reloadAfter.audio.played > reloadBaseline.played, 'the trusted magazine drag must play original source reload audio');
   assert.ok(reloadAfter.events.length > reloadBaseline.eventCount, 'the browser must receive original source audio callbacks during reload');
   assert.deepEqual(pageErrors, [], 'source reload and audio callbacks must not throw browser runtime errors');
+  let combatReport={skipped:true,reason:'reload-only acceptance'};
+  if(!reloadOnly){
+    const combatBefore=await page.evaluate(()=>window.__sourceCombatSnapshot());
+    assert.ok(combatBefore.shotsFired>=ammunitionBefore.magazine-ammunitionSpent.magazine,
+      `combat snapshot must observe the source Operator after its real fire-control presses: ${JSON.stringify(combatBefore)}`);
+    const candidates=combatBefore.occupants.filter(victim=>victim.alive&&victim.limbs.some(limb=>limb.limb==='Torso'))
+      .map(victim=>({victim,torso:victim.limbs.find(limb=>limb.limb==='Torso')}));
+    assert.ok(candidates.length>0, 'packaged FullSource Mission must expose a live serialized Occupant torso');
+    const attempts=[];
+    let acceptedHit=null;
+    for(const candidate of candidates){
+      const point=await page.evaluate(position=>window.__sourceCombatScreenPoint(position),candidate.torso.aimPoint);
+      if(!point.inside){attempts.push({victim:candidate.victim.body,skipped:'torso aim point outside packaged camera'});continue;}
+      const beforeSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
+      const beforeVictim=beforeSnapshot.occupants.find(victim=>victim.body===candidate.victim.body);
+      const shotsBefore=beforeSnapshot.shotsFired;
+      await page.mouse.move(point.x,point.y);
+      await page.waitForFunction(()=>window.__gameState()?.weaponState?.aimConverged===true,null,{timeout:15000});
+      await fireButton.click({delay:80});
+      const impactDeadline=Date.now()+10000;
+      let afterSnapshot=beforeSnapshot;
+      let changedLimb=null;
+      while(Date.now()<impactDeadline){
+        await page.waitForTimeout(150);
+        afterSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
+        const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===candidate.victim.body);
+        changedLimb=afterVictim?.limbs.find(limb=>{
+          const prior=beforeVictim.limbs.find(item=>item.limb===limb.limb);
+          return prior&&(limb.wounds>prior.wounds||limb.woundCavityVolume>prior.woundCavityVolume||limb.damagedTissueVolume>prior.damagedTissueVolume);
+        })??null;
+        if(afterSnapshot.shotsFired>shotsBefore&&changedLimb)break;
+      }
+      const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===candidate.victim.body);
+      attempts.push({
+        victim:candidate.victim.body,
+        aimPoint:candidate.torso.aimPoint,
+        screenPoint:{x:point.x,y:point.y},
+        shotsBefore,
+        shotsAfter:afterSnapshot.shotsFired,
+        lastHitLimb:afterVictim?.lastHitLimb??null,
+        damagedLimb:changedLimb,
+        projectiles:afterSnapshot.projectiles,
+      });
+      if(afterSnapshot.shotsFired>shotsBefore&&changedLimb){
+        acceptedHit={body:candidate.victim.body,limb:changedLimb.limb,damageBefore:beforeVictim.limbs.find(item=>item.limb===changedLimb.limb),damageAfter:changedLimb};
+        break;
+      }
+    }
+    assert.ok(acceptedHit,
+      `production fire input must reach an original FullSource projectile, limb hit callback, and injury state change: ${JSON.stringify(attempts)}`);
+    assert.deepEqual(pageErrors, [], 'packaged FullSource projectile hit and injury callbacks must not throw browser runtime errors');
+    combatReport={status:'passed',shotsBefore:combatBefore.shotsFired,shotsAfter:attempts.at(-1).shotsAfter,occupantsBefore:combatBefore.occupants.length,attempts,hit:acceptedHit,sourceProjectileAndPhysiologyCallbacks:true,nativePhysXIntegrationVerified:false,woundPixelsVerified:false};
+  }
   const mobilePage = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   mobilePage.on('pageerror', error => pageErrors.push(String(error)));
   await mobilePage.goto(`http://127.0.0.1:${address.port}/game/`, { waitUntil: 'domcontentloaded', timeout: 120000 });
@@ -438,6 +491,7 @@ try {
     injectedFailure: { path: injectedFailurePath, initialAttemptFailed: true, diagnosticCopied: copiedErrorText === failedAttemptUi.errorText, retrySucceeded: true },
     grounding: state.grounding,
     reloadAudio: { before: reloadBefore, ammunitionBefore: ammunitionBefore, afterSpending: ammunitionSpent, reloadAudioBaseline: reloadBaseline, afterReload: { magazine: reloadAfter.weapon.magazine, reserve: reloadAfter.weapon.reserve, chamberLive: reloadAfter.weapon.chamberLive }, after: reloadAfter, sourceEvents: reloadAfter.events.slice(reloadBaseline.eventCount), armPose: { idleDrift: idleArmDrift, activeReload: reloadPoseChange, settled: compareSourceArmPoses(reloadBefore.sourceArmPoses, reloadAfter.sourceArmPoses), sampleCount: reloadArmTrace.length } },
+    combat: combatReport,
     movement: movementReport,
     mobileZoom: { before: mobileZoom.before, afterRapidGameSurfaceTaps: mobileZoomAfter, browser: 'Chromium mobile touch emulation; not iPhone Safari' },
     ...runtimeReport,

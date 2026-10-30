@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Linq;
 using Crisis.Runtime.FullSource;
+using SourceProjectile = Crisis.Runtime.FullSource.Projectile;
 using UnityEngine;
 
 namespace Crisis.Runtime;
@@ -367,6 +368,66 @@ public sealed class FullSourceActorBridge
     }
 
     public object Snapshot() => Snapshot([], []);
+
+    /// <summary>Read-only combat evidence for the packaged source projectile acceptance.</summary>
+    public object CombatSnapshot()
+    {
+        world.MakeCurrent();
+        var occupants = world.Objects.OfType<CharacterBody>()
+            .Where(candidate => candidate && candidate.GetComponent<Occupant>() != null)
+            .Select(victim =>
+            {
+                var limbs = world.Objects.OfType<Limb>()
+                    .Where(limb => limb && ReferenceEquals(limb.Body, victim))
+                    .OrderBy(limb => limb.id)
+                    .Select(limb => new
+                    {
+                        limb = limb.id.ToString(),
+                        name = limb.name,
+                        position = new[] { limb.transform.position.x, limb.transform.position.y, limb.transform.position.z },
+                        aimPoint = new[] { limb.AimPoint.x, limb.AimPoint.y, limb.AimPoint.z },
+                        wounds = limb.LimbPhysiology?.wounds.Count ?? 0,
+                        woundCavityVolume = limb.LimbPhysiology?.WoundCavityVolume ?? 0f,
+                        damagedTissueVolume = limb.LimbPhysiology?.DamagedTissueVolume ?? 0f
+                    })
+                    .ToArray();
+                var lastHit = victim.LastHitLimb;
+                return new
+                {
+                    body = victim.name,
+                    position = new[] { victim.transform.position.x, victim.transform.position.y, victim.transform.position.z },
+                    lastHitLimb = lastHit ? lastHit.id.ToString() : null,
+                    alive = victim.Physiology?.Alive,
+                    conscious = victim.Physiology?.Conscious,
+                    shock = victim.Physiology?.Shock,
+                    limbs
+                };
+            })
+            .ToArray();
+        var projectiles = world.Objects.OfType<SourceProjectile>()
+            .Where(projectile => projectile)
+            .Select(projectile => new
+            {
+                id = projectile.Id,
+                owner = projectile.Owner?.name,
+                firstHitCharacter = projectile.FirstHitCharacter?.name,
+                status = projectile.Status.ToString(),
+                position = new[] { projectile.transform.position.x, projectile.transform.position.y, projectile.transform.position.z },
+                velocity = projectile.Velocity,
+                energy = projectile.Energy,
+                spawnTime = projectile.SpawnTime
+            })
+            .ToArray();
+        return new
+        {
+            observer = "FullSourceActorBridge",
+            shooter = body.name,
+            shotsFired = body.ShotsFired,
+            mission = Global.Context?.Mission?.gameObject.name,
+            occupants,
+            projectiles
+        };
+    }
 
     object Snapshot(object[] audioEvents, object[] particleEvents)
     {
