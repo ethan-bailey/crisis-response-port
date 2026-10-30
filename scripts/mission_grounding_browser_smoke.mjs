@@ -424,11 +424,17 @@ try {
         if(point.inside)candidates.push({victim,limb,point});
       }
     }
+    const viewport=await page.evaluate(()=>({width:innerWidth,height:innerHeight}));
+    candidates.sort((a,b)=>{
+      const centerDistance=point=>Math.hypot(point.x-viewport.width/2,point.y-viewport.height/2);
+      return centerDistance(a.point)-centerDistance(b.point);
+    });
+    const candidatesToTry=candidates.slice(0,12);
     assert.ok(combatBefore.occupants.some(victim=>victim.alive&&victim.limbs.length>0),
       'packaged FullSource Mission must expose live serialized Occupant limbs');
     const attempts=[];
     let acceptedHit=null;
-    for(const candidate of candidates){
+    for(const candidate of candidatesToTry){
       const point=candidate.point;
       const beforeSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
       const beforeVictim=beforeSnapshot.occupants.find(victim=>victim.body===candidate.victim.body);
@@ -436,7 +442,7 @@ try {
       await page.mouse.move(point.x,point.y);
       await page.waitForFunction(()=>window.__gameState()?.weaponState?.aimConverged===true,null,{timeout:15000});
       await fireButton.click({delay:80});
-      const impactDeadline=Date.now()+10000;
+      const impactDeadline=Date.now()+3000;
       let afterSnapshot=beforeSnapshot;
       let changedLimb=null;
       while(Date.now()<impactDeadline){
