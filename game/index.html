@@ -183,11 +183,12 @@ const scene=new THREE.Scene(); scene.background=new THREE.Color(0x11151b);
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false}); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(innerWidth,innerHeight); renderer.outputColorSpace=THREE.SRGBColorSpace; stage.appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xe8f0ff,0x55505a,2.0));
 const key=new THREE.DirectionalLight(0xffffff,1.5);key.position.set(-4,12,18);scene.add(key);
-const camera=new THREE.PerspectiveCamera(20,innerWidth/innerHeight,5,20);
+const camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,5,20);
 camera.position.set(-3,1.2,9.8);
 const world=new THREE.Group();scene.add(world);
 const character=new THREE.Group();character.name="Original Operator prefab";scene.add(character);
 const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},activeAnimation="Body stand",rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(2,0,0),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,contactPhysicsModule=null,contactPhysicsData=null,physicsState=null,physicsTime=0,sprintBlend=0,gaitPhase=0,upperBody=null,presentationData=null,weaponData=null,ballisticsData=null,hasAimPointer=false,aimDirty=false,aimGeneration=0,settledAimGeneration=-1,tapPending=0,tapFrame=false,reloadPending=false,weaponState=null,handRenderers=null,armRig=null,sourceActorMode=false,sourceActorSnapshot=null,originalCasingRuntime=null,groundingFrame=null,animationDiagnostics=null,sourceAnimationTrace=[],projectFullSourceSnapshot=()=>{};const lockedAim=new AimDirection(),aimFireGate=new AimFireGate();
+function followOperatorCamera(){camera.position.x=playerX;camera.updateMatrixWorld();}
 const loadStart=performance.now(),loadingTimings={};window.__loadingTimings=loadingTimings;
 let sourceLoadController=null;
 bindMobileZoomGuard(document);
@@ -590,6 +591,7 @@ async function frame(now){
  const aimReady=aimGeneration===settledAimGeneration;
  if(tapFrame){rawActions.fire=false;tapFrame=false;}
  if(sourceActorMode){
+  followOperatorCamera();
   rawActions.fire=input.pressed("fire")||tapPending>0;tapPending=0;
   rawActions.magazine=reloadPending||input.pressed("magazine");reloadPending=false;
   await aimQuadTarget();
@@ -669,6 +671,7 @@ async function frame(now){
   fixedAccumulator-=step;
  }
  character.position.set(playerX,playerY,physicsState.z);
+ followOperatorCamera();
  await applyAnimation(dt);
  character.updateWorldMatrix(true,true);
  // WeaponPointer.Update(): move the AimQuad from the operator, raycast the pointer against
