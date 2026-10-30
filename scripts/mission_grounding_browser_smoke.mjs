@@ -157,6 +157,9 @@ try {
   }
   assert.ok(playableSnapshot, `FullSource Mission did not reach a playable grounding frame within 300000ms; last state: ${JSON.stringify(await page.evaluate(() => ({progress: document.querySelector('#missionProgressText')?.textContent,status: document.querySelector('#status')?.textContent,diagnostics: window.__missionSourceDiagnostics,game: window.__gameState?.()})))}`);
   const state = await page.evaluate(() => window.__gameState());
+  const cameraFraming = {fov:state.projection.fov,operatorX:state.playerX,cameraX:state.projection.position[0]};
+  assert.equal(cameraFraming.fov,75,'packaged FullSource camera must retain its actor-framing FOV after recovered presentation updates');
+  assert.ok(Math.abs(cameraFraming.cameraX-cameraFraming.operatorX)<1e-4,'packaged camera must follow the live original Operator X');
   const loadedUi = await page.evaluate(() => ({
     startHidden: document.querySelector('#startOriginalMission')?.hidden,
     progressHidden: document.querySelector('#missionProgress')?.hidden,
@@ -269,6 +272,7 @@ try {
           ['Body walk', 'Body walk backward', 'Body sprint'].includes(current.animation);
       })(),
       null, { timeout: 30000 });
+    moving = await page.evaluate(() => window.__gameState());
   } catch (error) {
     const trace = await page.evaluate(() => {
       const state = window.__gameState?.();
@@ -559,6 +563,7 @@ try {
     missionLoadUi: { initialAttempt: initialAttemptUi, failedAttempt: failedAttemptUi, retryLoading: loadingUi, completed: loadedUi },
     injectedFailure: { path: injectedFailurePath, initialAttemptFailed: true, diagnosticCopied: copiedErrorText === failedAttemptUi.errorText, retrySucceeded: true },
     grounding: state.grounding,
+    cameraFraming,
     reloadAudio: { before: reloadBefore, ammunitionBefore: ammunitionBefore, afterSpending: ammunitionSpent, reloadAudioBaseline: reloadBaseline, afterReload: { magazine: reloadAfter.weapon.magazine, reserve: reloadAfter.weapon.reserve, chamberLive: reloadAfter.weapon.chamberLive }, after: reloadAfter, sourceEvents: reloadAfter.events.slice(reloadBaseline.eventCount), armPose: { idleDrift: idleArmDrift, activeReload: reloadPoseChange, settled: compareSourceArmPoses(reloadBefore.sourceArmPoses, reloadAfter.sourceArmPoses), sampleCount: reloadArmTrace.length } },
     combat: combatReport,
     movement: movementReport,

@@ -188,7 +188,7 @@ camera.position.set(-3,1.2,9.8);
 const world=new THREE.Group();scene.add(world);
 const character=new THREE.Group();character.name="Original Operator prefab";scene.add(character);
 const keys={left:false,right:false,sprint:false,fire:false};let velocity=0,loaded=false,playerX=-3,playerY=1.5,groundY=1.5,sceneBounds=null,sceneMesh=null,facingDirection=1,acceleration=0,fixedAccumulator=0,isKneeling=false,applyAnimation=()=>{},activeAnimation="Body stand",rightUpperArm=null,aimQuad=null,localAimPoint=new THREE.Vector3(2,0,0),aimRaycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(0,0),aimPoint=new THREE.Vector2(5,2.5),weaponInstances={},activeWeaponName="M4A1",runtimeCall=null,originalInputState=null,contactPhysics=null,contactPhysicsModule=null,contactPhysicsData=null,physicsState=null,physicsTime=0,sprintBlend=0,gaitPhase=0,upperBody=null,presentationData=null,weaponData=null,ballisticsData=null,hasAimPointer=false,aimDirty=false,aimGeneration=0,settledAimGeneration=-1,tapPending=0,tapFrame=false,reloadPending=false,weaponState=null,handRenderers=null,armRig=null,sourceActorMode=false,sourceActorSnapshot=null,originalCasingRuntime=null,groundingFrame=null,animationDiagnostics=null,sourceAnimationTrace=[],projectFullSourceSnapshot=()=>{};const lockedAim=new AimDirection(),aimFireGate=new AimFireGate();
-function followOperatorCamera(){camera.position.x=playerX;camera.updateMatrixWorld();}
+function followOperatorCamera(){camera.position.x=playerX;if(camera.fov!==75){camera.fov=75;camera.updateProjectionMatrix();}camera.updateMatrixWorld();}
 const loadStart=performance.now(),loadingTimings={};window.__loadingTimings=loadingTimings;
 let sourceLoadController=null;
 bindMobileZoomGuard(document);
@@ -624,7 +624,7 @@ async function frame(now){
   const x=physicsState.x,y=physicsState.y,z=physicsState.z,vx=physicsState.velocity;
   sourceActorSnapshot=JSON.parse(await runtimeCall("SynchronizeFullSourceActorPhysics",x,y,z,vx,0,0));
   groundingFrame.synchronizedPosition=[...sourceActorSnapshot.position];
-  projectFullSourceSnapshot(sourceActorSnapshot);await applyAnimation(dt,true);
+  projectFullSourceSnapshot(sourceActorSnapshot);await applyAnimation(dt,true);followOperatorCamera();
   sourceAnimationTrace.push({time:physicsTime,playerX,velocity,animation:activeAnimation,
    sourcePhysicsCommands:sourceActorSnapshot.physics?.commands??[],...animationDiagnostics});
   if(sourceAnimationTrace.length>96)sourceAnimationTrace.splice(0,sourceAnimationTrace.length-96);
@@ -696,6 +696,7 @@ async function frame(now){
  await upperBody.update({position:new THREE.Vector3(playerX,playerY,physicsState.z),velocity,direction:facingDirection,moving:Math.abs(velocity)>.1,sprinting:keys.sprint,kneeling:isKneeling,aim:new THREE.Vector3(aimPoint.x,aimPoint.y,physicsState.z),aspect:camera.aspect,fire:keys.fire,requireAimConvergence:aimFireGate.locked,reload:originalInputState.magazine.Down,physicsStep:contactPhysics.data.fixedDeltaTime},camera);
  if(aimGeneration===aimGenerationForUpdate)settledAimGeneration=aimGenerationForUpdate;
  weaponState=upperBody.weaponSnapshot();magazineHud.render(weaponState);weaponStatus.textContent=(weaponState.weaponId??"Equipped weapon")+" · "+weaponState.magazine+" + "+(weaponState.chamberLive?1:0)+" · reserve "+weaponState.reserve+(weaponState.reloading?" · reloading":"");
+ followOperatorCamera();
  positionLabel.textContent="X "+playerX.toFixed(2)+" · speed "+Math.abs(velocity).toFixed(2)+" m/s"+(keys.sprint?" · sprint input":"");
  }catch(error){loaded=false;showError(error)}finally{frameBusy=false;}}renderer.render(scene,camera)}
 requestAnimationFrame(frame);load();
