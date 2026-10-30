@@ -37,6 +37,7 @@ public static class BrowserEntryTeamMission
         ArgumentNullException.ThrowIfNull(package);
         ArgumentNullException.ThrowIfNull(world);
         world.MakeCurrent();
+        new CpuTextureTransferDriver(world).Bind();
         var audioEvents = new BrowserAudioEventQueue();
         world.AudioSourceDriver = audioEvents;
         Resources.Configure(package, world);
