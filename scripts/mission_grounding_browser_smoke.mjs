@@ -160,7 +160,7 @@ try {
   const cameraFraming = {source:state.sourceCamera,rendered:state.projection};
   assert.ok(cameraFraming.source,'packaged FullSource state must expose the original InteriorCamera projection');
   assert.equal(cameraFraming.source.fov,75,'original Mission InteriorCamera must use the actor-framing FOV');
-  assert.equal(cameraFraming.source.centerOffset,0,'original Mission camera must center the live subject so nearby serialized actors remain in frame');
+  assert.equal(cameraFraming.source.centerOffset,0.45,'original Mission camera must use its native look-ahead framing to keep the subject and nearby actors in view');
   assert.equal(cameraFraming.rendered.fov,cameraFraming.source.fov,'packaged renderer must use the original camera FOV so pointer rays match');
   assert.equal(cameraFraming.rendered.near,cameraFraming.source.near,'packaged renderer must share the original camera near plane');
   assert.equal(cameraFraming.rendered.far,cameraFraming.source.far,'packaged renderer must share the original camera far plane');
