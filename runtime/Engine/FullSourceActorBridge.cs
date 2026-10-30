@@ -394,6 +394,9 @@ public sealed class FullSourceActorBridge
     {
         var weapon = body.ActiveWeapon;
         if (!weapon || body.Equipment == null) return null;
+        var pointer=controller.WeaponPointer;
+        var aimAlignment=pointer==null?180f:Vector3.Angle(pointer.WorldPoint-weapon.Muzzle.position,weapon.transform.right);
+        var aimConverged=body.rightArm.OnTarget&&body.leftArm.OnTarget&&aimAlignment<=2f;
         var magazine = weapon.Magazine;
         var reserveMagazines = weapon.IsPrimary ? body.Equipment.PrimaryMagazines : body.Equipment.SecondaryMagazines;
         var reserve = reserveMagazines
@@ -405,6 +408,8 @@ public sealed class FullSourceActorBridge
             magazine = magazine?.roundCount ?? 0,
             magazineCapacity = weapon.ComponentMagazine?.capacity ?? magazine?.capacity ?? 0,
             chamberLive = weapon.ChamberStatus == WeaponBase.ChamberState.Live,
+            aimAlignment,
+            aimConverged,
             reserve,
             reloading = body.IsManipulatingEquipment
         };
