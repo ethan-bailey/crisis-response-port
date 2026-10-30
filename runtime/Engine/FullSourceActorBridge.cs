@@ -269,6 +269,7 @@ public sealed class FullSourceActorBridge
         dynamicFovMax.SetValue(interior,fieldOfView);
         interior.overrideFieldOfView=true;
         interior.fieldOfViewOverride=fieldOfView;
+        interior.centerOffset=0f;
         interior.interiorCamera.aspect=aspect;
         interior.interiorCamera.fieldOfView=fieldOfView;
         return SourceCameraSnapshot();
@@ -286,6 +287,7 @@ public sealed class FullSourceActorBridge
             position=new[]{position.x,position.y,position.z},
             rotation=new[]{rotation.x,rotation.y,rotation.z,rotation.w},
             fov=source.fieldOfView,
+            centerOffset=interior.centerOffset,
             near=source.nearClipPlane,
             far=source.farClipPlane,
             aspect=source.aspect
