@@ -251,6 +251,47 @@ public sealed class FullSourceActorBridge
         return point;
     }
 
+    /// <summary>
+    /// Keep the original Mission camera and browser renderer on one projection
+    /// so Unity WeaponPointer and Three.js interpret the same screen coordinates.
+    /// </summary>
+    public object ConfigureCameraFraming(float fieldOfView,float aspect)
+    {
+        if(!float.IsFinite(fieldOfView)||fieldOfView<1f||fieldOfView>150f)
+            throw new ArgumentOutOfRangeException(nameof(fieldOfView));
+        if(!float.IsFinite(aspect)||aspect<=0f)
+            throw new ArgumentOutOfRangeException(nameof(aspect));
+        world.MakeCurrent();
+        var interior=Global.Context.Mission?.InteriorMode?.interiorCamera
+            ??throw new InvalidOperationException("Original Mission has no InteriorCamera");
+        var dynamicFovMax=typeof(InteriorCamera).GetField("dynamicFovMax",BindingFlags.Instance|BindingFlags.NonPublic)
+            ??throw new MissingFieldException(typeof(InteriorCamera).FullName,"dynamicFovMax");
+        dynamicFovMax.SetValue(interior,fieldOfView);
+        interior.overrideFieldOfView=true;
+        interior.fieldOfViewOverride=fieldOfView;
+        interior.interiorCamera.aspect=aspect;
+        interior.interiorCamera.fieldOfView=fieldOfView;
+        return SourceCameraSnapshot();
+    }
+
+    object SourceCameraSnapshot()
+    {
+        var interior=Global.Context.Mission?.InteriorMode?.interiorCamera
+            ??throw new InvalidOperationException("Original Mission has no InteriorCamera");
+        var source=interior.interiorCamera??throw new InvalidOperationException("Original Mission InteriorCamera has no Camera");
+        var position=source.transform.position;
+        var rotation=source.transform.rotation;
+        return new
+        {
+            position=new[]{position.x,position.y,position.z},
+            rotation=new[]{rotation.x,rotation.y,rotation.z,rotation.w},
+            fov=source.fieldOfView,
+            near=source.nearClipPlane,
+            far=source.farClipPlane,
+            aspect=source.aspect
+        };
+    }
+
     /// <summary>Round-trip recovered casing Rigidbody state through the shared browser PhysX scene.</summary>
     public object SynchronizeCasingPhysics(string statesJson)
     {
@@ -526,6 +567,7 @@ public sealed class FullSourceActorBridge
             },
             weapon = body.ActiveWeapon ? body.ActiveWeapon.name : null,
             weaponState = ActiveWeaponState(),
+            sourceCamera = SourceCameraSnapshot(),
             poses,
             audioMixerConfiguration = audioEventQueue?.TakeMixerConfiguration(world),
             audioMixerEvents = audioEventQueue?.DrainMixerEvents() ?? Array.Empty<object>(),

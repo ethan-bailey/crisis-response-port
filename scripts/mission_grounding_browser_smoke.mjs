@@ -157,9 +157,16 @@ try {
   }
   assert.ok(playableSnapshot, `FullSource Mission did not reach a playable grounding frame within 300000ms; last state: ${JSON.stringify(await page.evaluate(() => ({progress: document.querySelector('#missionProgressText')?.textContent,status: document.querySelector('#status')?.textContent,diagnostics: window.__missionSourceDiagnostics,game: window.__gameState?.()})))}`);
   const state = await page.evaluate(() => window.__gameState());
-  const cameraFraming = {fov:state.projection.fov,operatorX:state.playerX,cameraX:state.projection.position[0]};
-  assert.equal(cameraFraming.fov,75,'packaged FullSource camera must retain its actor-framing FOV after recovered presentation updates');
-  assert.ok(Math.abs(cameraFraming.cameraX-cameraFraming.operatorX)<1e-4,'packaged camera must follow the live original Operator X');
+  const cameraFraming = {source:state.sourceCamera,rendered:state.projection};
+  assert.ok(cameraFraming.source,'packaged FullSource state must expose the original InteriorCamera projection');
+  assert.equal(cameraFraming.source.fov,75,'original Mission InteriorCamera must use the actor-framing FOV');
+  assert.equal(cameraFraming.rendered.fov,cameraFraming.source.fov,'packaged renderer must use the original camera FOV so pointer rays match');
+  assert.equal(cameraFraming.rendered.near,cameraFraming.source.near,'packaged renderer must share the original camera near plane');
+  assert.equal(cameraFraming.rendered.far,cameraFraming.source.far,'packaged renderer must share the original camera far plane');
+  assert.ok(Math.abs(cameraFraming.rendered.aspect-cameraFraming.source.aspect)<1e-5,'packaged renderer and original camera must share the viewport aspect');
+  assert.ok(Math.abs(cameraFraming.rendered.position[0]-cameraFraming.source.position[0])<1e-4,'packaged renderer must follow the original camera X');
+  assert.ok(Math.abs(cameraFraming.rendered.position[1]-cameraFraming.source.position[1])<1e-4,'packaged renderer must follow the original camera Y');
+  assert.ok(Math.abs(cameraFraming.rendered.position[2]+cameraFraming.source.position[2])<1e-4,'packaged renderer must mirror the original camera Z into the browser world');
   const loadedUi = await page.evaluate(() => ({
     startHidden: document.querySelector('#startOriginalMission')?.hidden,
     progressHidden: document.querySelector('#missionProgress')?.hidden,
