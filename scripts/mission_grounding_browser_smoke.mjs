@@ -416,14 +416,20 @@ try {
     const combatBefore=await page.evaluate(()=>window.__sourceCombatSnapshot());
     assert.ok(combatBefore.shotsFired>=ammunitionBefore.magazine-ammunitionSpent.magazine,
       `combat snapshot must observe the source Operator after its real fire-control presses: ${JSON.stringify(combatBefore)}`);
-    const candidates=combatBefore.occupants.filter(victim=>victim.alive&&victim.limbs.some(limb=>limb.limb==='Torso'))
-      .map(victim=>({victim,torso:victim.limbs.find(limb=>limb.limb==='Torso')}));
-    assert.ok(candidates.length>0, 'packaged FullSource Mission must expose a live serialized Occupant torso');
+    const candidates=[];
+    for(const victim of combatBefore.occupants.filter(value=>value.alive)){
+      const orderedLimbs=[...victim.limbs].sort((a,b)=>(a.limb==='Torso'?-1:b.limb==='Torso'?1:a.limb==='Head'?-1:b.limb==='Head'?1:0));
+      for(const limb of orderedLimbs){
+        const point=await page.evaluate(position=>window.__sourceCombatScreenPoint(position),limb.aimPoint);
+        if(point.inside)candidates.push({victim,limb,point});
+      }
+    }
+    assert.ok(combatBefore.occupants.some(victim=>victim.alive&&victim.limbs.length>0),
+      'packaged FullSource Mission must expose live serialized Occupant limbs');
     const attempts=[];
     let acceptedHit=null;
     for(const candidate of candidates){
-      const point=await page.evaluate(position=>window.__sourceCombatScreenPoint(position),candidate.torso.aimPoint);
-      if(!point.inside){attempts.push({victim:candidate.victim.body,skipped:'torso aim point outside packaged camera'});continue;}
+      const point=candidate.point;
       const beforeSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
       const beforeVictim=beforeSnapshot.occupants.find(victim=>victim.body===candidate.victim.body);
       const shotsBefore=beforeSnapshot.shotsFired;
@@ -446,7 +452,8 @@ try {
       const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===candidate.victim.body);
       attempts.push({
         victim:candidate.victim.body,
-        aimPoint:candidate.torso.aimPoint,
+        aimedLimb:candidate.limb.limb,
+        aimPoint:candidate.limb.aimPoint,
         screenPoint:{x:point.x,y:point.y},
         shotsBefore,
         shotsAfter:afterSnapshot.shotsFired,
@@ -460,7 +467,7 @@ try {
       }
     }
     assert.ok(acceptedHit,
-      `production fire input must reach an original FullSource projectile, limb hit callback, and injury state change: ${JSON.stringify(attempts)}`);
+      `production fire input must reach an original FullSource projectile, limb hit callback, and injury state change at a visible serialized Occupant aim point: ${JSON.stringify(attempts)}`);
     assert.deepEqual(pageErrors, [], 'packaged FullSource projectile hit and injury callbacks must not throw browser runtime errors');
     combatReport={status:'passed',shotsBefore:combatBefore.shotsFired,shotsAfter:attempts.at(-1).shotsAfter,occupantsBefore:combatBefore.occupants.length,attempts,hit:acceptedHit,sourceProjectileAndPhysiologyCallbacks:true,nativePhysXIntegrationVerified:false,woundPixelsVerified:false};
   }
