@@ -417,14 +417,50 @@ try {
     assert.ok(combatBefore.shotsFired>=ammunitionBefore.magazine-ammunitionSpent.magazine,
       `combat snapshot must observe the source Operator after its real fire-control presses: ${JSON.stringify(combatBefore)}`);
     const candidates=[];
-    for(const victim of combatBefore.occupants.filter(value=>value.alive)){
-      const orderedLimbs=[...victim.limbs].sort((a,b)=>(a.limb==='Torso'?-1:b.limb==='Torso'?1:a.limb==='Head'?-1:b.limb==='Head'?1:0));
-      for(const limb of orderedLimbs){
-        const point=await page.evaluate(position=>window.__sourceCombatScreenPoint(position),limb.aimPoint);
-        if(point.inside)candidates.push({victim,limb,point});
+    const viewport=await page.evaluate(()=>({width:innerWidth,height:innerHeight}));
+    let nearestOffscreen=null;
+    const scanVisibleLimbs=async(snapshot,allLimbs)=>{
+      for(const victim of snapshot.occupants.filter(value=>value.alive)){
+        const orderedLimbs=[...victim.limbs]
+          .filter(limb=>allLimbs||limb.limb==='Torso'||limb.limb==='Head')
+          .sort((a,b)=>(a.limb==='Torso'?-1:b.limb==='Torso'?1:a.limb==='Head'?-1:b.limb==='Head'?1:0));
+        for(const limb of orderedLimbs){
+          const point=await page.evaluate(position=>window.__sourceCombatScreenPoint(position),limb.aimPoint);
+          if(point.inside)candidates.push({victim,limb,point});
+          else if(allLimbs){
+            const distance=Math.hypot(point.x-viewport.width/2,point.y-viewport.height/2);
+            if(!nearestOffscreen||distance<nearestOffscreen.distance)nearestOffscreen={victim,limb,point,distance};
+          }
+        }
+      }
+    };
+    await scanVisibleLimbs(combatBefore,true);
+    const lateralReposition={attempted:false,scans:0};
+    if(candidates.length===0&&nearestOffscreen){
+      const start=await page.evaluate(()=>window.__gameState().grounding.sourceRoot);
+      const targetX=nearestOffscreen.victim.position[0];
+      const screenSide=nearestOffscreen.point.x-viewport.width/2;
+      const worldSide=targetX-start[0];
+      const key=screenSide===0?(worldSide<0?'KeyA':'KeyD'):(screenSide<0?'KeyA':'KeyD');
+      lateralReposition.attempted=true;
+      Object.assign(lateralReposition,{key,nearestVictim:nearestOffscreen.victim.body,
+        aimedLimb:nearestOffscreen.limb.limb,projectedPoint:{x:nearestOffscreen.point.x,y:nearestOffscreen.point.y},
+        startX:start[0],targetX});
+      await page.keyboard.down(key);
+      try{
+        const deadline=Date.now()+6000;
+        while(Date.now()<deadline&&candidates.length===0){
+          await page.waitForTimeout(500);
+          const live=await page.evaluate(()=>window.__sourceCombatSnapshot());
+          const position=await page.evaluate(()=>window.__gameState().grounding.sourceRoot);
+          lateralReposition.scans++;
+          lateralReposition.endX=position[0];
+          await scanVisibleLimbs(live,false);
+        }
+      }finally{
+        await page.keyboard.up(key);
       }
     }
-    const viewport=await page.evaluate(()=>({width:innerWidth,height:innerHeight}));
     candidates.sort((a,b)=>{
       const centerDistance=point=>Math.hypot(point.x-viewport.width/2,point.y-viewport.height/2);
       return centerDistance(a.point)-centerDistance(b.point);
@@ -473,7 +509,7 @@ try {
       }
     }
     assert.ok(acceptedHit,
-      `production fire input must reach an original FullSource projectile, limb hit callback, and injury state change at a visible serialized Occupant aim point: ${JSON.stringify(attempts)}`);
+      `production fire input must reach an original FullSource projectile, limb hit callback, and injury state change at a visible serialized Occupant aim point: ${JSON.stringify({attempts,lateralReposition,initiallyVisible:candidates.length>0})}`);
     assert.deepEqual(pageErrors, [], 'packaged FullSource projectile hit and injury callbacks must not throw browser runtime errors');
     combatReport={status:'passed',shotsBefore:combatBefore.shotsFired,shotsAfter:attempts.at(-1).shotsAfter,occupantsBefore:combatBefore.occupants.length,attempts,hit:acceptedHit,sourceProjectileAndPhysiologyCallbacks:true,nativePhysXIntegrationVerified:false,woundPixelsVerified:false};
   }
