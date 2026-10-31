@@ -440,9 +440,9 @@ try {
     assert.ok(exteriorVisibility.matchingRoomExteriorHierarchies>0,
       `the source Room event must deactivate its authored Exterior hierarchies: ${JSON.stringify(exteriorVisibility)}`);
     // Projectile traces showed the starting muzzle overlaps the entrance fixture
-    // cluster. Use the production movement stick to clear that authored geometry
-    // before assessing source fire and injury callbacks.
-    const combatLane={attempted:false,reason:'muzzle already past entrance fixtures'};
+    // cluster. Clear it in short production joystick pulses and sample after each
+    // release so the smoke cannot keep driving the source actor past the doorway.
+    const combatLane={attempted:false,reason:'muzzle already past entrance fixtures',pulses:[]};
     const laneStart=await page.evaluate(()=>window.__gameState().grounding.sourceRoot);
     if(laneStart[0]<-0.1){
       combatLane.attempted=true;
@@ -456,21 +456,23 @@ try {
         return {center:{x:rect.left+rect.width/2,y:rect.top+rect.height/2},
           travelX:(rect.width-thumb.offsetWidth)/2-4};
       });
-      await page.mouse.move(geometry.center.x,geometry.center.y);
-      await page.mouse.down();
-      try{
-        await page.mouse.move(geometry.center.x+geometry.travelX*1.8,geometry.center.y,{steps:4});
-        await page.waitForFunction(()=>document.querySelector('#movementStick')?.classList.contains('sprinting'),
-          null,{timeout:5000});
-        const deadline=Date.now()+12000;
-        while(Date.now()<deadline){
-          const position=await page.evaluate(()=>window.__gameState().grounding.sourceRoot);
-          combatLane.endX=position[0];
-          if(position[0]>=combatLane.targetX)break;
-          await page.waitForTimeout(200);
+      let position=laneStart;
+      for(let pulse=0;pulse<8&&position[0]<combatLane.targetX;pulse++){
+        await page.mouse.move(geometry.center.x,geometry.center.y);
+        await page.mouse.down();
+        try{
+          await page.mouse.move(geometry.center.x+geometry.travelX,geometry.center.y,{steps:2});
+          await page.waitForFunction(()=>document.querySelector('#movementStick')?.classList.contains('sprinting'),
+            null,{timeout:5000});
+          await page.waitForTimeout(180);
+        }finally{
+          await page.mouse.up();
         }
-      }finally{
-        await page.mouse.up();
+        await page.waitForTimeout(250);
+        position=await page.evaluate(()=>window.__gameState().grounding.sourceRoot);
+        combatLane.pulses.push({pulse: pulse+1,sourceX:position[0],sourceY:position[1]});
+        combatLane.endX=position[0];
+        if(position[0]>1.0)break;
       }
       assert.ok(combatLane.endX>=combatLane.targetX,
         `production movement must clear the entrance fixture cluster before source firing: ${JSON.stringify(combatLane)}`);
@@ -624,7 +626,7 @@ try {
       }
     }
     assert.ok(acceptedHit,
-      `production fire input must reach an original FullSource projectile, limb hit callback, and injury state change at a visible serialized Occupant aim point: ${JSON.stringify({attempts,lateralReposition,initiallyVisible:candidates.length>0})}`);
+      `production fire input must reach an original FullSource projectile, limb hit callback, and injury state change at a visible serialized Occupant aim point: ${JSON.stringify({attempts,combatLane,lateralReposition,initiallyVisible:candidates.length>0})}`);
     assert.equal(acceptedHit.limb,attempts.at(-1)?.aimedLimb,
       `the hit limb must match the selected serialized aim limb: ${JSON.stringify(attempts.at(-1))}`);
     const postHitRuntimeUi = await page.evaluate(() => ({
