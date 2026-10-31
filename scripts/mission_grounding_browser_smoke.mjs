@@ -449,8 +449,8 @@ try {
       body:target.body,limb:target.limb,...window.__sourceCombatScreenPoint(target.aimPoint),
     })),occupantTargets);
     const visibleOccupantFrames=occupantFrames.filter(point=>point.inside&&point.visible);
-    visibleOccupantFrames.sort((a,b)=>Math.hypot(a.x-innerWidth/2,a.y-innerHeight/2)-
-      Math.hypot(b.x-innerWidth/2,b.y-innerHeight/2));
+    visibleOccupantFrames.sort((a,b)=>Math.hypot(a.x-viewport.width/2,a.y-viewport.height/2)-
+      Math.hypot(b.x-viewport.width/2,b.y-viewport.height/2));
     const cameraFrame={operator:operatorFrame,occupant:visibleOccupantFrames[0]??null,
       visibleOccupants:visibleOccupantFrames.length,limbFrames:occupantFrames.length};
     assert.ok(cameraFrame.operator.inside&&cameraFrame.occupant,
