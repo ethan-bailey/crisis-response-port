@@ -543,6 +543,14 @@ try {
     }
     assert.ok(acceptedHit,
       `production fire input must reach an original FullSource projectile, limb hit callback, and injury state change at a visible serialized Occupant aim point: ${JSON.stringify({attempts,lateralReposition,initiallyVisible:candidates.length>0})}`);
+    const postHitRuntimeUi = await page.evaluate(() => ({
+      errorVisible: Boolean(document.querySelector('#error') && !document.querySelector('#error').hidden),
+      errorText: document.querySelector('#errorDetails')?.textContent ?? '',
+    }));
+    assert.equal(postHitRuntimeUi.errorVisible, false,
+      `packaged projectile acceptance must not leave the application's fatal error dialog visible: ${postHitRuntimeUi.errorText.slice(0, 1200)}`);
+    assert.ok(attempts.at(-1)?.projectiles?.every(projectile => projectile.status !== 'Error'),
+      `accepted injury must not leave an errored original projectile: ${JSON.stringify(attempts.at(-1)?.projectiles)}`);
     assert.deepEqual(pageErrors, [], 'packaged FullSource projectile hit and injury callbacks must not throw browser runtime errors');
     combatReport={status:'passed',shotsBefore:combatBefore.shotsFired,shotsAfter:attempts.at(-1).shotsAfter,occupantsBefore:combatBefore.occupants.length,attempts,hit:acceptedHit,sourceProjectileAndPhysiologyCallbacks:true,nativePhysXIntegrationVerified:false,woundPixelsVerified:false};
   }
