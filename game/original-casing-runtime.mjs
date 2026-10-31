@@ -33,7 +33,7 @@ export function createOriginalCasingRuntime({THREE,source,physics,scene,normalTe
  function create(command){
   const id=command.body;if(!Number.isSafeInteger(id)||!finite3(command.sourcePosition)||!finite4(command.sourceRotation)||
      !Number.isFinite(command.mass)||Math.abs(command.mass-collider.massKg)>1e-6)
-   throw new Error('Source casing Rigidbody identity, pose, or authored 2 g mass is invalid');
+   throw new Error('Source casing Rigidbody identity, pose, or authored 2 g mass is invalid: '+JSON.stringify({body:command.body,name:command.name,sourcePosition:command.sourcePosition,sourceRotation:command.sourceRotation,mass:command.mass,expectedMass:collider.massKg}));
   if(casings.has(id)||settled.has(id))throw new Error('Duplicate source casing Rigidbody: '+id);
   const body=physics.createOriginalCasing({position:command.sourcePosition,rotation:command.sourceRotation,
    mass:command.mass,halfExtents:collider.size.map(x=>x/2),center:collider.center,
