@@ -365,7 +365,9 @@ public sealed class FullSourceActorBridge
             centerOffset=interior.centerOffset,
             near=source.nearClipPlane,
             far=source.farClipPlane,
-            aspect=source.aspect
+            aspect=source.aspect,
+            pixelWidth=source.pixelWidth,
+            pixelHeight=source.pixelHeight
         };
     }
 
