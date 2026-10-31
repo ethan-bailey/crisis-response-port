@@ -33,11 +33,17 @@ def main():
         elif class_id == 114:
             script = re.search(r"m_Script: \{fileID: \d+, guid: ([0-9a-f]{32})", body)
             if script and script.group(1) == ROOM_SCRIPT_GUID:
+                exterior = re.search(r"^  exterior: (\d+)$", body, re.M)
                 rooms.append({"componentFileID": file_id, "gameObjectFileID": ref(body, "m_GameObject"),
-                              "exteriorTransformFileID": ref(body, "exteriorGeometry")})
+                              "exteriorTransformFileID": ref(body, "exteriorGeometry"),
+                              "isExteriorRoom": exterior is not None and exterior.group(1) == "1"})
             components.append((class_id, file_id, body))
         elif class_id in (23, 64, 65, 135, 136):
             components.append((class_id, file_id, body))
+    game_object_transforms = {item["gameObject"]: transform_id for transform_id, item in transforms.items()}
+    exterior_rooms = [room for room in rooms if room["isExteriorRoom"]]
+    if len(exterior_rooms) != 1:
+        raise ValueError(f"Expected one exterior Room hierarchy, found {len(exterior_rooms)}")
     children = {}
     for transform_id, item in transforms.items():
         children.setdefault(item["parent"], []).append(transform_id)
@@ -57,16 +63,39 @@ def main():
     all_indices, all_colliders = set(), set()
     for room in rooms:
         root = room["exteriorTransformFileID"]
-        if root == "0":
+        if root != "0":
+            stack, descendant_transforms = [root], []
+            while stack:
+                current = stack.pop()
+                if current in descendant_transforms:
+                    raise ValueError("Mission exterior hierarchy contains a cycle")
+                descendant_transforms.append(current)
+                stack.extend(children.get(current, []))
+            game_objects = {transforms[item]["gameObject"] for item in descendant_transforms if item in transforms}
+            room["visibilityRootKind"] = "exteriorGeometry"
+            room["visibilityRootTransformFileID"] = root
+        elif room["isExteriorRoom"]:
+            # The exterior Room has no exteriorGeometry reference. Its authored
+            # Entrance exterior wall must still follow disableExteriorWalls.
+            root = game_object_transforms.get(room["gameObjectFileID"], "0")
+            if root == "0":
+                raise ValueError("Exterior Room has no scene Transform")
+            stack, descendant_transforms = [root], []
+            while stack:
+                current = stack.pop()
+                if current in descendant_transforms:
+                    raise ValueError("Mission exterior hierarchy contains a cycle")
+                descendant_transforms.append(current)
+                stack.extend(children.get(current, []))
+            descendants = {transforms[item]["gameObject"] for item in descendant_transforms if item in transforms}
+            game_objects = {item for item in descendants
+                            if objects.get(item, {}).get("name", "").lower().endswith("exterior wall")}
+            if len(game_objects) != 1:
+                raise ValueError(f"Expected one authored exterior wall under the exterior Room, found {len(game_objects)}")
+            room["visibilityRootKind"] = "named-exterior-wall-descendant"
+            room["visibilityRootTransformFileID"] = root
+        else:
             continue
-        stack, descendant_transforms = [root], []
-        while stack:
-            current = stack.pop()
-            if current in descendant_transforms:
-                raise ValueError("Mission exterior hierarchy contains a cycle")
-            descendant_transforms.append(current)
-            stack.extend(children.get(current, []))
-        game_objects = {transforms[item]["gameObject"] for item in descendant_transforms if item in transforms}
         room["gameObjectFileIDs"] = sorted(game_objects, key=int)
         room["name"] = objects.get(room["gameObjectFileID"], {}).get("name", "")
         renderers = [item for item in renderer_data if item["gameObjectFileID"] in game_objects]

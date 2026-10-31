@@ -119,6 +119,7 @@
     "5120",
     "5121",
     "5122",
+    "5123",
     "5125",
     "5129",
     "5132",
@@ -482,6 +483,7 @@
         "1497",
         "1512"
       ],
+      "isExteriorRoom": false,
       "name": "Room 1",
       "renderers": [
         {
@@ -772,7 +774,9 @@
         594,
         595,
         596
-      ]
+      ],
+      "visibilityRootKind": "exteriorGeometry",
+      "visibilityRootTransformFileID": "2369"
     },
     {
       "colliderFileIDs": [
@@ -1126,6 +1130,7 @@
         "1506",
         "1517"
       ],
+      "isExteriorRoom": false,
       "name": "Room 3",
       "renderers": [
         {
@@ -1284,12 +1289,47 @@
         651,
         652,
         653
-      ]
+      ],
+      "visibilityRootKind": "exteriorGeometry",
+      "visibilityRootTransformFileID": "2011"
     },
     {
+      "colliderFileIDs": [
+        "5123"
+      ],
+      "colliders": [
+        {
+          "classID": 65,
+          "componentFileID": "5123",
+          "gameObjectFileID": "845"
+        }
+      ],
       "componentFileID": "6696",
       "exteriorTransformFileID": "0",
-      "gameObjectFileID": "951"
+      "gameObjectFileID": "951",
+      "gameObjectFileIDs": [
+        "845"
+      ],
+      "isExteriorRoom": true,
+      "name": "Exterior",
+      "renderers": [
+        {
+          "componentFileID": "3291",
+          "firstSubMesh": 0,
+          "gameObjectFileID": "845",
+          "subMeshCount": 6
+        }
+      ],
+      "submeshIndices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "visibilityRootKind": "named-exterior-wall-descendant",
+      "visibilityRootTransformFileID": "2317"
     },
     {
       "colliderFileIDs": [
@@ -1532,6 +1572,7 @@
         "1374",
         "1474"
       ],
+      "isExteriorRoom": false,
       "name": "Room 6",
       "renderers": [
         {
@@ -1645,7 +1686,9 @@
         366,
         367,
         564
-      ]
+      ],
+      "visibilityRootKind": "exteriorGeometry",
+      "visibilityRootTransformFileID": "1960"
     },
     {
       "colliderFileIDs": [
@@ -1836,6 +1879,7 @@
         "1491",
         "1498"
       ],
+      "isExteriorRoom": false,
       "name": "Room 4",
       "renderers": [
         {
@@ -1916,7 +1960,9 @@
         414,
         415,
         416
-      ]
+      ],
+      "visibilityRootKind": "exteriorGeometry",
+      "visibilityRootTransformFileID": "2720"
     },
     {
       "colliderFileIDs": [
@@ -2359,6 +2405,7 @@
         "1504",
         "1515"
       ],
+      "isExteriorRoom": false,
       "name": "Room 5",
       "renderers": [
         {
@@ -2519,12 +2566,15 @@
         472,
         473,
         474
-      ]
+      ],
+      "visibilityRootKind": "exteriorGeometry",
+      "visibilityRootTransformFileID": "2001"
     },
     {
       "componentFileID": "6991",
       "exteriorTransformFileID": "0",
-      "gameObjectFileID": "1329"
+      "gameObjectFileID": "1329",
+      "isExteriorRoom": false
     },
     {
       "colliderFileIDs": [
@@ -2723,6 +2773,7 @@
         "1478",
         "1479"
       ],
+      "isExteriorRoom": false,
       "name": "Room 2",
       "renderers": [
         {
@@ -2822,13 +2873,21 @@
         166,
         169,
         558
-      ]
+      ],
+      "visibilityRootKind": "exteriorGeometry",
+      "visibilityRootTransformFileID": "1558"
     }
   ],
   "scenePath": "Assets/Scenes/Mission 01.unity",
   "sceneSha256": "c43b36c415b4df14ef6223eaced686a8ddcead6c46f7504346aecb1a03c5743e",
   "submeshCount": 764,
   "submeshIndices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
     79,
     80,
     81,
