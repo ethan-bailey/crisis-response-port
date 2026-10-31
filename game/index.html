@@ -624,7 +624,7 @@ async function frame(now){
   rawActions.magazine=reloadPending||input.pressed("magazine");reloadPending=false;
   const frameAimGeneration=aimGeneration;
   await aimQuadTarget();
-  const mouseX=(pointerNdc.x+1)*640,mouseY=(1-pointerNdc.y)*360;
+  const mouseX=(pointerNdc.x+1)*640,mouseY=(pointerNdc.y+1)*360;
   const sourceMoveDirection=rawActions.left?-1:rawActions.right?1:0;
   const sourceMoveMagnitude=sourceMoveDirection===0?1:input.movementProfile(sourceMoveDirection,
    contactPhysics.data.character.movement.walkSpeed,contactPhysics.data.character.movement.sprintSpeed,rawActions.sprint).magnitude;
