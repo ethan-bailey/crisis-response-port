@@ -439,6 +439,16 @@ try {
       'the combat view must use the original Mission Extra that disables exterior walls');
     assert.ok(exteriorVisibility.matchingRoomExteriorHierarchies>0,
       `the source Room event must deactivate its authored Exterior hierarchies: ${JSON.stringify(exteriorVisibility)}`);
+    const cameraFrame={
+      operator:await page.evaluate(()=>{
+        const root=window.__gameState().grounding.sourceRoot;
+        return window.__sourceCombatScreenPoint([root[0],root[1]+0.8,root[2]]);
+      }),
+      occupant:await page.evaluate(point=>window.__sourceCombatScreenPoint(point),
+        combatBefore.occupants.find(victim=>victim.alive&&victim.limbs.length)?.limbs[0].aimPoint),
+    };
+    assert.ok(cameraFrame.operator.inside&&cameraFrame.occupant.inside,
+      `the synchronized source camera must frame the original Operator and Occupant: ${JSON.stringify(cameraFrame)}`);
     // Projectile traces showed the starting muzzle overlaps the entrance fixture
     // cluster. Clear it in short production joystick pulses and sample after each
     // release so the smoke cannot keep driving the source actor past the doorway.
@@ -446,7 +456,7 @@ try {
     const laneStart=await page.evaluate(()=>window.__gameState().grounding.sourceRoot);
     if(laneStart[0]<-0.1){
       combatLane.attempted=true;
-      Object.assign(combatLane,{startX:laneStart[0],targetX:-0.1,control:'production movement joystick sprint',direction:1});
+      Object.assign(combatLane,{startX:laneStart[0],targetX:-0.7,control:'production movement joystick sprint',direction:1});
       const movementStick=page.locator('#movementStick');
       const stickBox=await movementStick.boundingBox();
       assert.ok(stickBox,'combat lane clearance requires the production movement joystick');
@@ -457,7 +467,7 @@ try {
           travelX:(rect.width-thumb.offsetWidth)/2-4};
       });
       let position=laneStart;
-      for(let pulse=0;pulse<8&&position[0]<combatLane.targetX;pulse++){
+      for(let pulse=0;pulse<1&&position[0]<combatLane.targetX;pulse++){
         await page.mouse.move(geometry.center.x,geometry.center.y);
         await page.mouse.down();
         try{
@@ -543,7 +553,7 @@ try {
       const centerDistance=point=>Math.hypot(point.x-viewport.width/2,point.y-viewport.height/2);
       return centerDistance(a.point)-centerDistance(b.point);
     });
-    const candidatesToTry=candidates.slice(0,12);
+    const candidatesToTry=candidates.slice(0,1);
     assert.ok(combatBefore.occupants.some(victim=>victim.alive&&victim.limbs.length>0),
       'packaged FullSource Mission must expose live serialized Occupant limbs');
     const attempts=[];
@@ -626,7 +636,7 @@ try {
       }
     }
     assert.ok(acceptedHit,
-      `production fire input must reach an original FullSource projectile, limb hit callback, and injury state change at a visible serialized Occupant aim point: ${JSON.stringify({attempts,combatLane,lateralReposition,initiallyVisible:candidates.length>0})}`);
+      `production fire input must reach an original FullSource projectile, limb hit callback, and injury state change at a visible serialized Occupant aim point: ${JSON.stringify({attempts,cameraFrame,combatLane,lateralReposition,initiallyVisible:candidates.length>0})}`);
     assert.equal(acceptedHit.limb,attempts.at(-1)?.aimedLimb,
       `the hit limb must match the selected serialized aim limb: ${JSON.stringify(attempts.at(-1))}`);
     const postHitRuntimeUi = await page.evaluate(() => ({
@@ -638,7 +648,7 @@ try {
     assert.ok(attempts.at(-1)?.projectiles?.every(projectile => projectile.status !== 'Error'),
       `accepted injury must not leave an errored original projectile: ${JSON.stringify(attempts.at(-1)?.projectiles)}`);
     assert.deepEqual(pageErrors, [], 'packaged FullSource projectile hit and injury callbacks must not throw browser runtime errors');
-    combatReport={status:'passed',shotsBefore:combatBefore.shotsFired,shotsAfter:attempts.at(-1).shotsAfter,occupantsBefore:combatBefore.occupants.length,exteriorVisibility,combatLane,attempts,hit:acceptedHit,sourceProjectileAndPhysiologyCallbacks:true,nativePhysXIntegrationVerified:false,woundPixelsVerified:false};
+    combatReport={status:'passed',shotsBefore:combatBefore.shotsFired,shotsAfter:attempts.at(-1).shotsAfter,occupantsBefore:combatBefore.occupants.length,exteriorVisibility,cameraFrame,combatLane,attempts,hit:acceptedHit,sourceProjectileAndPhysiologyCallbacks:true,nativePhysXIntegrationVerified:false,woundPixelsVerified:false};
   }
   const mobilePage = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   mobilePage.on('pageerror', error => pageErrors.push(String(error)));

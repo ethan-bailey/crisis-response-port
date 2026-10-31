@@ -342,7 +342,9 @@ public sealed class FullSourceActorBridge
         dynamicFovMax.SetValue(interior,fieldOfView);
         interior.overrideFieldOfView=true;
         interior.fieldOfViewOverride=fieldOfView;
-        interior.centerOffset=0.45f;
+        // Center the full-source Operator and the forward Mission lane in the packaged wide frame.
+        // The source InteriorCamera still owns orientation, smoothing, and subject tracking.
+        interior.centerOffset=0.3f;
         interior.interiorCamera.aspect=aspect;
         interior.interiorCamera.fieldOfView=fieldOfView;
         return SourceCameraSnapshot();
