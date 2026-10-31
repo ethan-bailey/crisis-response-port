@@ -155,6 +155,17 @@ public class Room : MonoBehaviour
 		{
 			exteriorGeometry.gameObject.SetActive(!hide);
 		}
+		else if (exterior)
+		{
+			// The authored Mission entrance wall belongs to an exterior Room but
+			// is not assigned to exteriorGeometry. Keep the Extra's visibility
+			// behavior consistent for its renderer and ballistic/movement collider.
+			Transform entranceExteriorWall = base.transform.Find("Geometry/Entrance exterior wall");
+			if (entranceExteriorWall != null)
+			{
+				entranceExteriorWall.gameObject.SetActive(!hide);
+			}
+		}
 		foreach (Renderer item in hideForMarksman)
 		{
 			item.enabled = !hide;
