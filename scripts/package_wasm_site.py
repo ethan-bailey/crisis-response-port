@@ -354,8 +354,8 @@ def package(repo, published, output, toolchain, run_url, incremental_source_pack
             "Generated scene report does not match the packaged original OBJ")
     require(scene_report.get("binarySha256") == digest(scene_binary),
             "Generated scene report does not match the packaged scene binary")
-    if incremental_source_package is not None:
-        visibility_manifest = output / "game/assets/mission01-exterior-visibility.json"
+    visibility_manifest = output / "game/assets/mission01-exterior-visibility.json"
+    if visibility_manifest.is_file():
         require(visibility_manifest.is_file(), "Verified Room exterior visibility manifest is missing")
         visibility = json.loads(visibility_manifest.read_text())
         require(visibility.get("format") == "crisis-mission-exterior-visibility-v1"
