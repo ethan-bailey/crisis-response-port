@@ -439,6 +439,7 @@ try {
       'the combat view must use the original Mission Extra that disables exterior walls');
     assert.ok(exteriorVisibility.matchingRoomExteriorHierarchies>0,
       `the source Room event must deactivate its authored Exterior hierarchies: ${JSON.stringify(exteriorVisibility)}`);
+    const viewport=await page.evaluate(()=>({width:innerWidth,height:innerHeight}));
     const operatorFrame=await page.evaluate(()=>{
       const root=window.__gameState().grounding.sourceRoot;
       return window.__sourceCombatScreenPoint([root[0],root[1]+0.8,root[2]]);
@@ -494,7 +495,6 @@ try {
         `production movement must clear the entrance fixture cluster before source firing: ${JSON.stringify(combatLane)}`);
     }
     const candidates=[];
-    const viewport=await page.evaluate(()=>({width:innerWidth,height:innerHeight}));
     let nearestUnavailable=null;
     const scanVisibleLimbs=async(snapshot,allLimbs)=>{
       for(const victim of snapshot.occupants.filter(value=>value.alive)){
