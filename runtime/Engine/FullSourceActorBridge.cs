@@ -478,6 +478,18 @@ public sealed class FullSourceActorBridge
         var weapon = body.ActiveWeapon;
         if (!weapon || body.Equipment == null) return null;
         var pointer=controller.WeaponPointer;
+        var pointerRayField=typeof(WeaponPointer).GetField("ray",BindingFlags.Instance|BindingFlags.NonPublic);
+        var pointerHitField=typeof(WeaponPointer).GetField("raycastHit",BindingFlags.Instance|BindingFlags.NonPublic);
+        var pointerLocalPointField=typeof(WeaponPointer).GetField("localPoint",BindingFlags.Instance|BindingFlags.NonPublic);
+        var sourceRay=pointerRayField?.GetValue(pointer) is Ray ray?ray:default;
+        var sourceHit=pointerHitField?.GetValue(pointer) is RaycastHit hit?hit:default;
+        var hitCollider=sourceHit.collider;
+        var mousePosition=Input.mousePosition;
+        var interiorMode=Global.Context.Mission?.InteriorMode;
+        var alternateCamera=interiorMode?.AlternateCamera;
+        var inputCamera=alternateCamera!=null&&alternateCamera.enabled?alternateCamera.Camera:interiorMode?.interiorCamera?.interiorCamera;
+        var inputCameraPosition=inputCamera?inputCamera.transform.position:Vector3.zero;
+        var inputCameraRotation=inputCamera?inputCamera.transform.rotation:Quaternion.identity;
         var aimAlignment=pointer==null?180f:Vector3.Angle(pointer.WorldPoint-weapon.Muzzle.position,weapon.transform.right);
         var aimConverged=body.rightArm.OnTarget&&body.leftArm.OnTarget&&aimAlignment<=2f;
         var magazine = weapon.Magazine;
@@ -494,6 +506,15 @@ public sealed class FullSourceActorBridge
             aimAlignment,
             aimConverged,
             sourceAimPoint = pointer == null ? null : new[] { pointer.WorldPoint.x, pointer.WorldPoint.y, pointer.WorldPoint.z },
+            sourcePointer = pointer == null ? null : new
+            {
+                mousePosition=new[]{mousePosition.x,mousePosition.y,mousePosition.z},
+                rayOrigin=new[]{sourceRay.origin.x,sourceRay.origin.y,sourceRay.origin.z},
+                rayDirection=new[]{sourceRay.direction.x,sourceRay.direction.y,sourceRay.direction.z},
+                raycastHit=hitCollider?new { name=hitCollider.name,layer=hitCollider.gameObject.layer,point=new[]{sourceHit.point.x,sourceHit.point.y,sourceHit.point.z},distance=sourceHit.distance }:null,
+                localPoint=pointerLocalPointField?.GetValue(pointer) is Vector3 local?new[]{local.x,local.y,local.z}:null,
+                inputCamera= new { isAlternate=alternateCamera!=null&&alternateCamera.enabled,position=new[]{inputCameraPosition.x,inputCameraPosition.y,inputCameraPosition.z},rotation=new[]{inputCameraRotation.x,inputCameraRotation.y,inputCameraRotation.z,inputCameraRotation.w},fov=inputCamera?inputCamera.fieldOfView:0f,pixelWidth=inputCamera?inputCamera.pixelWidth:0,pixelHeight=inputCamera?inputCamera.pixelHeight:0 }
+            },
             reserve,
             reloading = body.IsManipulatingEquipment
         };
