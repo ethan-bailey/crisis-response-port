@@ -357,6 +357,10 @@ public sealed class FullSourceActorBridge
         var source=interior.interiorCamera??throw new InvalidOperationException("Original Mission InteriorCamera has no Camera");
         var position=source.transform.position;
         var rotation=source.transform.rotation;
+        var screenWidth=0;
+        var screenHeight=0;
+        try { var resolution=Screen.currentResolution; screenWidth=resolution.width; screenHeight=resolution.height; }
+        catch (NotSupportedException) { }
         return new
         {
             position=new[]{position.x,position.y,position.z},
@@ -367,7 +371,9 @@ public sealed class FullSourceActorBridge
             far=source.farClipPlane,
             aspect=source.aspect,
             pixelWidth=source.pixelWidth,
-            pixelHeight=source.pixelHeight
+            pixelHeight=source.pixelHeight,
+            screenWidth,
+            screenHeight
         };
     }
 

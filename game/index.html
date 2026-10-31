@@ -625,9 +625,9 @@ async function frame(now){
   const frameAimGeneration=aimGeneration;
   await aimQuadTarget();
   const sourceScreen=sourceActorSnapshot.sourceCamera;
-  const sourceWidth=sourceScreen?.pixelWidth>0?sourceScreen.pixelWidth:1280;
-  const sourceHeight=sourceScreen?.pixelHeight>0?sourceScreen.pixelHeight:720;
-  const mouseX=(pointerNdc.x+1)*sourceWidth/2,mouseY=(1-pointerNdc.y)*sourceHeight/2;
+  const sourceWidth=sourceScreen?.screenWidth>0?sourceScreen.screenWidth:(sourceScreen?.pixelWidth>0?sourceScreen.pixelWidth:1280);
+  const sourceHeight=sourceScreen?.screenHeight>0?sourceScreen.screenHeight:(sourceScreen?.pixelHeight>0?sourceScreen.pixelHeight:720);
+  const mouseX=(pointerNdc.x+1)*sourceWidth/2,mouseY=(pointerNdc.y+1)*sourceHeight/2;
   const sourceMoveDirection=rawActions.left?-1:rawActions.right?1:0;
   const sourceMoveMagnitude=sourceMoveDirection===0?1:input.movementProfile(sourceMoveDirection,
    contactPhysics.data.character.movement.walkSpeed,contactPhysics.data.character.movement.sprintSpeed,rawActions.sprint).magnitude;
