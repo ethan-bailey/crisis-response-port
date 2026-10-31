@@ -439,16 +439,22 @@ try {
       'the combat view must use the original Mission Extra that disables exterior walls');
     assert.ok(exteriorVisibility.matchingRoomExteriorHierarchies>0,
       `the source Room event must deactivate its authored Exterior hierarchies: ${JSON.stringify(exteriorVisibility)}`);
-    const cameraFrame={
-      operator:await page.evaluate(()=>{
-        const root=window.__gameState().grounding.sourceRoot;
-        return window.__sourceCombatScreenPoint([root[0],root[1]+0.8,root[2]]);
-      }),
-      occupant:await page.evaluate(point=>window.__sourceCombatScreenPoint(point),
-        combatBefore.occupants.find(victim=>victim.alive&&victim.limbs.length)?.limbs[0].aimPoint),
-    };
-    assert.ok(cameraFrame.operator.inside&&cameraFrame.occupant.inside,
-      `the synchronized source camera must frame the original Operator and Occupant: ${JSON.stringify(cameraFrame)}`);
+    const operatorFrame=await page.evaluate(()=>{
+      const root=window.__gameState().grounding.sourceRoot;
+      return window.__sourceCombatScreenPoint([root[0],root[1]+0.8,root[2]]);
+    });
+    const occupantTargets=combatBefore.occupants.filter(victim=>victim.alive)
+      .flatMap(victim=>victim.limbs.map(limb=>({body:victim.body,limb:limb.limb,aimPoint:limb.aimPoint})));
+    const occupantFrames=await page.evaluate(targets=>targets.map(target=>({
+      body:target.body,limb:target.limb,...window.__sourceCombatScreenPoint(target.aimPoint),
+    })),occupantTargets);
+    const visibleOccupantFrames=occupantFrames.filter(point=>point.inside&&point.visible);
+    visibleOccupantFrames.sort((a,b)=>Math.hypot(a.x-innerWidth/2,a.y-innerHeight/2)-
+      Math.hypot(b.x-innerWidth/2,b.y-innerHeight/2));
+    const cameraFrame={operator:operatorFrame,occupant:visibleOccupantFrames[0]??null,
+      visibleOccupants:visibleOccupantFrames.length,limbFrames:occupantFrames.length};
+    assert.ok(cameraFrame.operator.inside&&cameraFrame.occupant,
+      `the synchronized source camera must frame the original Operator and at least one visible Occupant limb: ${JSON.stringify(cameraFrame)}`);
     // Projectile traces showed the starting muzzle overlaps the entrance fixture
     // cluster. Clear it in short production joystick pulses and sample after each
     // release so the smoke cannot keep driving the source actor past the doorway.
