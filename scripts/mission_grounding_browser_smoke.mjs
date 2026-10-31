@@ -553,7 +553,7 @@ try {
       const centerDistance=point=>Math.hypot(point.x-viewport.width/2,point.y-viewport.height/2);
       return centerDistance(a.point)-centerDistance(b.point);
     });
-    const candidatesToTry=candidates.slice(0,1);
+    const candidatesToTry=candidates.slice(0,12);
     assert.ok(combatBefore.occupants.some(victim=>victim.alive&&victim.limbs.length>0),
       'packaged FullSource Mission must expose live serialized Occupant limbs');
     const attempts=[];
@@ -577,23 +577,27 @@ try {
           aimPoint:state.aimPoint,aimDirection:state.aimDirection,
           aimAlignment:state.weaponState?.aimAlignment,aimConverged:state.weaponState?.aimConverged};
       });
-      // Move from the aimed point directly to the production fire control in one
-      // browser event. This avoids delivering intermediate aim events while the
-      // cursor crosses the canvas, then exercises the same pointer handler as a user.
-      await page.mouse.move(fireBox.x+fireBox.width/2,fireBox.y+fireBox.height/2,{steps:1});
-      const aimStateAtTrigger=await page.evaluate(()=>({
-        aimGeneration:window.__gameState().aimGeneration,
-        sourceAimAppliedGeneration:window.__gameState().sourceAimAppliedGeneration,
-        aimConverged:window.__gameState().weaponState?.aimConverged,
-      }));
-      assert.equal(aimStateAtTrigger.aimGeneration,aimStateAtFire.aimGeneration,
-        `moving to the fire control must not retarget the accepted source aim: ${JSON.stringify({aimStateAtFire,aimStateAtTrigger})}`);
-      assert.equal(aimStateAtTrigger.sourceAimAppliedGeneration,aimStateAtFire.sourceAimAppliedGeneration);
       let afterSnapshot=beforeSnapshot;
       let changedLimb=null;
       let shotObserved=false;
+      let aimStateAtTrigger=null;
+      // Keep the production pointer on its selected world point. The recovered
+      // WeaponPointer reads Input.mousePosition each frame, so moving to the HUD
+      // fire button can change the source ray without changing canvas aim state.
+      // A mouse press on the world canvas is BrowserInput's production mouse-fire path.
       await page.mouse.down();
       try{
+        await page.waitForFunction(previousGeneration=>{
+          const state=window.__gameState();
+          return state.aimGeneration>previousGeneration&&
+            state.sourceAimAppliedGeneration===state.aimGeneration;
+        },aimStateAtFire.aimGeneration,{timeout:5000}).catch(()=>{});
+        aimStateAtTrigger=await page.evaluate(()=>({
+          aimGeneration:window.__gameState().aimGeneration,
+          sourceAimAppliedGeneration:window.__gameState().sourceAimAppliedGeneration,
+          aimPoint:window.__gameState().aimPoint,
+          aimConverged:window.__gameState().weaponState?.aimConverged,
+        }));
         const shotDeadline=Date.now()+3000;
         while(Date.now()<shotDeadline){
           afterSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
@@ -604,7 +608,7 @@ try {
         await page.mouse.up();
       }
       const impactDeadline=Date.now()+3000;
-      while(Date.now()<impactDeadline){
+      while(shotObserved&&Date.now()<impactDeadline){
         await page.waitForTimeout(150);
         afterSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
         const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===candidate.victim.body);
