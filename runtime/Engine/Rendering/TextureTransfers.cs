@@ -65,7 +65,7 @@ public sealed class CpuTextureTransferDriver:IRenderTargetDriver,ITextureTransfe
     int primitiveMode,matrixDepth;
     float pixelLeft,pixelRight,pixelBottom,pixelTop;
     bool pixelMatrixLoaded;
-    Color currentGlColor=Color.white;
+    Color currentGlColor=UnityEngine.Color.white;
     public RenderTexture ActiveTarget {get;private set;}
     public CpuTextureTransferDriver(RuntimeWorld world) {this.world=world??throw new ArgumentNullException(nameof(world));}
     public void Bind() {RenderTexture.Bind(world,this);Graphics.Bind(world,this);GL.Bind(world,this);}
