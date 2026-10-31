@@ -344,7 +344,7 @@ public sealed class FullSourceActorBridge
         interior.fieldOfViewOverride=fieldOfView;
         // Center the full-source Operator and the forward Mission lane in the packaged wide frame.
         // The source InteriorCamera still owns orientation, smoothing, and subject tracking.
-        interior.centerOffset=0.3f;
+        interior.centerOffset=0.49f;
         interior.interiorCamera.aspect=aspect;
         interior.interiorCamera.fieldOfView=fieldOfView;
         return SourceCameraSnapshot();
