@@ -565,7 +565,13 @@ try {
     const attempts=[];
     let acceptedHit=null;
     for(const candidate of candidatesToTry){
-      const point=candidate.point;
+      const projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),camera:window.__gameState().sourceCamera}),candidate.limb.aimPoint);
+      const point=projection.point;
+      if(!point.inside||!point.visible){
+        attempts.push({victim:candidate.victim.body,aimedLimb:candidate.limb.limb,aimPoint:candidate.limb.aimPoint,
+          scannedScreenPoint:candidate.point,screenPoint:point,cameraAtProjection:projection.camera,skipped:'target left current camera frame or became occluded'});
+        continue;
+      }
       const beforeSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
       const beforeVictim=beforeSnapshot.occupants.find(victim=>victim.body===candidate.victim.body);
       const shotsBefore=beforeSnapshot.shotsFired;
@@ -632,7 +638,9 @@ try {
         victim:candidate.victim.body,
         aimedLimb:candidate.limb.limb,
         aimPoint:candidate.limb.aimPoint,
+        scannedScreenPoint:candidate.point,
         screenPoint:{x:point.x,y:point.y,visible:point.visible,blocker:point.blocker},
+        cameraAtProjection:projection.camera,
         aimStateAtFire,aimStateAtTrigger,shotObserved,
         shotsBefore,
         shotsAfter:afterSnapshot.shotsFired,
