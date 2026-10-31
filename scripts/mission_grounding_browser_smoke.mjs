@@ -579,6 +579,8 @@ try {
         damagedLimb:changedLimb,
         projectiles:afterSnapshot.projectiles,
         spawnedProjectiles:afterSnapshot.spawnedProjectiles,
+        projectileInteractions:afterSnapshot.projectileInteractions,
+        limbPosition:candidate.limb.position,
       });
       if(afterSnapshot.shotsFired>shotsBefore&&changedLimb){
         acceptedHit={body:candidate.victim.body,limb:changedLimb.limb,damageBefore:beforeVictim.limbs.find(item=>item.limb===changedLimb.limb),damageAfter:changedLimb};

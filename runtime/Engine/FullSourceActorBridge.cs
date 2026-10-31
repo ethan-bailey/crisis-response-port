@@ -27,6 +27,7 @@ public sealed class FullSourceActorBridge
     readonly Action<Rigidbody,Vector3,ForceMode> priorWorldPhysicsTorqueSink;
     readonly List<object> worldPhysicsCommands=[];
     readonly List<object> projectileSpawnEvidence=[];
+    readonly List<object> projectileInteractionEvidence=[];
     readonly Dictionary<int, GameObject> trackedCasingObjects=[];
     readonly FieldInfo accelerationField;
     readonly FieldInfo accelerationMagnitudeField;
@@ -83,6 +84,8 @@ public sealed class FullSourceActorBridge
                     energy = projectile.Energy,
                     precision = projectile.FiredWithPrecision
                 });
+                projectile.onInteraction.AddListener(hit => RecordProjectileInteraction(hit, "material", null));
+                projectile.onLimbInteraction.AddListener((hit, limb) => RecordProjectileInteraction(hit, "limb", limb ? limb.id.ToString() : null));
                 if (projectileSpawnEvidence.Count > 32) projectileSpawnEvidence.RemoveAt(0);
             });
         }
@@ -194,6 +197,22 @@ public sealed class FullSourceActorBridge
         movementInputWasActive = hasMovementInput;
         lastFixedSteps = Math.Max(0, (int)MathF.Round((Time.fixedTime - fixedTimeBefore) / Time.fixedDeltaTime));
         return Snapshot(audioEventQueue?.Drain() ?? [], (world.ParticleSystemDriver as BrowserParticleEventQueue)?.Drain() ?? []);
+    }
+
+    void RecordProjectileInteraction(SourceProjectile projectile, string kind, string limb)
+    {
+        projectileInteractionEvidence.Add(new
+        {
+            time = Time.time,
+            id = projectile.Id,
+            kind,
+            limb,
+            owner = projectile.Owner?.name,
+            firstHitCharacter = projectile.FirstHitCharacter?.name,
+            position = new[] { projectile.transform.position.x, projectile.transform.position.y, projectile.transform.position.z },
+            status = projectile.Status.ToString()
+        });
+        if (projectileInteractionEvidence.Count > 64) projectileInteractionEvidence.RemoveAt(0);
     }
 
     void CaptureActorForce(Vector3 force, Vector3 position, ForceMode mode)
@@ -520,7 +539,8 @@ public sealed class FullSourceActorBridge
             mission = Global.Context?.Mission?.gameObject.name,
             occupants,
             projectiles,
-            spawnedProjectiles = projectileSpawnEvidence.ToArray()
+            spawnedProjectiles = projectileSpawnEvidence.ToArray(),
+            projectileInteractions = projectileInteractionEvidence.ToArray()
         };
     }
 
