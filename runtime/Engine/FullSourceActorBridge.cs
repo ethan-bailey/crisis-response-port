@@ -26,6 +26,7 @@ public sealed class FullSourceActorBridge
     readonly Action<Rigidbody,Vector3,Vector3,ForceMode> priorWorldPhysicsForceSink;
     readonly Action<Rigidbody,Vector3,ForceMode> priorWorldPhysicsTorqueSink;
     readonly List<object> worldPhysicsCommands=[];
+    readonly List<object> projectileSpawnEvidence=[];
     readonly Dictionary<int, GameObject> trackedCasingObjects=[];
     readonly FieldInfo accelerationField;
     readonly FieldInfo accelerationMagnitudeField;
@@ -60,6 +61,31 @@ public sealed class FullSourceActorBridge
         controller = candidates[0];
         if (!body.IsPlayer)
             throw new InvalidOperationException("Requested FullSource CharacterBody is not the original player actor");
+
+        // Retain the original projectile's muzzle ray before its source Update
+        // can hit and destroy it. This makes browser combat failures attributable
+        // to the actual FullSource fire line rather than an empty post-hit pool.
+        foreach (var weapon in world.Objects.OfType<WeaponBase>().Where(candidate => candidate))
+        {
+            weapon.onSpawnProjectile.AddListener(projectile =>
+            {
+                if (!ReferenceEquals(weapon.Owner, body)) return;
+                var aim = controller.WeaponPointer.WorldPoint;
+                projectileSpawnEvidence.Add(new
+                {
+                    time = Time.time,
+                    id = projectile.Id,
+                    owner = projectile.Owner?.name,
+                    position = new[] { projectile.transform.position.x, projectile.transform.position.y, projectile.transform.position.z },
+                    forward = new[] { projectile.transform.forward.x, projectile.transform.forward.y, projectile.transform.forward.z },
+                    target = new[] { aim.x, aim.y, aim.z },
+                    velocity = projectile.Velocity,
+                    energy = projectile.Energy,
+                    precision = projectile.FiredWithPrecision
+                });
+                if (projectileSpawnEvidence.Count > 32) projectileSpawnEvidence.RemoveAt(0);
+            });
+        }
 
         rigidbody = body.Rigidbody ? body.Rigidbody : throw new InvalidOperationException("FullSource player actor has no authored Rigidbody");
         accelerationField = typeof(CharacterBody).GetField("acceleration", BindingFlags.Instance | BindingFlags.NonPublic)
@@ -493,7 +519,8 @@ public sealed class FullSourceActorBridge
             shotsFired = body.ShotsFired,
             mission = Global.Context?.Mission?.gameObject.name,
             occupants,
-            projectiles
+            projectiles,
+            spawnedProjectiles = projectileSpawnEvidence.ToArray()
         };
     }
 
