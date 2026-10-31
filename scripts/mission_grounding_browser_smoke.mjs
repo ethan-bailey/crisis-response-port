@@ -529,6 +529,18 @@ try {
           aimPoint:state.aimPoint,aimDirection:state.aimDirection,
           aimAlignment:state.weaponState?.aimAlignment,aimConverged:state.weaponState?.aimConverged};
       });
+      // Move from the aimed point directly to the production fire control in one
+      // browser event. This avoids delivering intermediate aim events while the
+      // cursor crosses the canvas, then exercises the same pointer handler as a user.
+      await page.mouse.move(fireBox.x+fireBox.width/2,fireBox.y+fireBox.height/2,{steps:1});
+      const aimStateAtTrigger=await page.evaluate(()=>({
+        aimGeneration:window.__gameState().aimGeneration,
+        sourceAimAppliedGeneration:window.__gameState().sourceAimAppliedGeneration,
+        aimConverged:window.__gameState().weaponState?.aimConverged,
+      }));
+      assert.equal(aimStateAtTrigger.aimGeneration,aimStateAtFire.aimGeneration,
+        `moving to the fire control must not retarget the accepted source aim: ${JSON.stringify({aimStateAtFire,aimStateAtTrigger})}`);
+      assert.equal(aimStateAtTrigger.sourceAimAppliedGeneration,aimStateAtFire.sourceAimAppliedGeneration);
       let afterSnapshot=beforeSnapshot;
       let changedLimb=null;
       let shotObserved=false;
@@ -560,7 +572,7 @@ try {
         aimedLimb:candidate.limb.limb,
         aimPoint:candidate.limb.aimPoint,
         screenPoint:{x:point.x,y:point.y,visible:point.visible,blocker:point.blocker},
-        aimStateAtFire,shotObserved,
+        aimStateAtFire,aimStateAtTrigger,shotObserved,
         shotsBefore,
         shotsAfter:afterSnapshot.shotsFired,
         lastHitLimb:afterVictim?.lastHitLimb??null,
