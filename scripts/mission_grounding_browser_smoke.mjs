@@ -474,7 +474,7 @@ try {
           travelX:(rect.width-thumb.offsetWidth)/2-4};
       });
       let position=laneStart;
-      for(let pulse=0;pulse<1&&position[0]<combatLane.targetX;pulse++){
+      for(let pulse=0;pulse<4&&position[0]<combatLane.targetX;pulse++){
         await page.mouse.move(geometry.center.x,geometry.center.y);
         await page.mouse.down();
         try{
@@ -587,7 +587,7 @@ try {
         const state=window.__gameState();
         return {aimGeneration:state.aimGeneration,sourceAimAppliedGeneration:state.sourceAimAppliedGeneration,
           aimPoint:state.aimPoint,aimDirection:state.aimDirection,
-          sourceAimPoint:state.weaponState?.sourceAimPoint,sourceCamera:state.sourceCamera,
+          sourceAimPoint:state.weaponState?.sourceAimPoint,sourcePointer:state.weaponState?.sourcePointer,sourceCamera:state.sourceCamera,
           aimAlignment:state.weaponState?.aimAlignment,aimConverged:state.weaponState?.aimConverged};
       });
       let afterSnapshot=beforeSnapshot;
@@ -610,6 +610,7 @@ try {
           sourceAimAppliedGeneration:window.__gameState().sourceAimAppliedGeneration,
           aimPoint:window.__gameState().aimPoint,
           sourceAimPoint:window.__gameState().weaponState?.sourceAimPoint,
+          sourcePointer:window.__gameState().weaponState?.sourcePointer,
           sourceCamera:window.__gameState().sourceCamera,
           aimConverged:window.__gameState().weaponState?.aimConverged,
         }));
