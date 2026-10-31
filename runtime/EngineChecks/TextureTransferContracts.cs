@@ -23,10 +23,11 @@ static class TextureTransferContracts {
         var triangleTarget=new RenderTexture(4,4,24,RenderTextureFormat.ARGB32);
         RenderTexture.active=triangleTarget;
         GL.PushMatrix();GL.LoadPixelMatrix(0,4,4,0);GL.Begin(4);GL.Color(Color.green);
-        GL.Vertex3(0,4,0);GL.Vertex3(4,4,0);GL.Vertex3(2,0,0);GL.End();GL.PopMatrix();
+        GL.Vertex3(0,4,0);GL.Vertex3(4,4,0);GL.Vertex3(2,0,0);
         var triangleReadback=new Texture2D(4,4,TextureFormat.RGBA32,false);
         triangleReadback.ReadPixels(new Rect(0,0,4,4),0,0);
-        Check(triangleReadback.GetPixels().Any(pixel=>pixel.g>0.5f&&pixel.a>0),"CPU GL driver rasterizes triangle lists used by original wound decals");
+        Check(triangleReadback.GetPixels().Any(pixel=>pixel.g>0.5f&&pixel.a>0),"CPU GL driver exposes completed wound triangles to source readback before GL.End");
+        GL.End();GL.PopMatrix();
         var shader=new Shader{name="GUI/Text Shader",isSupported=true,passCount=1};
         var passMaterial=new Material(shader);
         Check(passMaterial.SetPass(0)&&!passMaterial.SetPass(1),"material pass binding returns false for unavailable passes and accepts the supported source mask pass");

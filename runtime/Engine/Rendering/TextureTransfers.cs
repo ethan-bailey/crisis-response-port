@@ -88,15 +88,9 @@ public sealed class CpuTextureTransferDriver:IRenderTargetDriver,ITextureTransfe
         primitiveMode=mode;glVertices.Clear();
     }
     public void End() {
-        int mode=primitiveMode;
-        if(mode==0)throw new InvalidOperationException("No GL primitive is open");
+        if(primitiveMode==0)throw new InvalidOperationException("No GL primitive is open");
         try {
-            int stride=mode==4?3:4;
-            if(glVertices.Count%stride!=0)throw new InvalidOperationException($"GL primitive mode {mode} has an incomplete vertex group");
-            for(int i=0;i<glVertices.Count;i+=stride) {
-                Rasterize(glVertices[i],glVertices[i+1],glVertices[i+2]);
-                if(mode==7)Rasterize(glVertices[i],glVertices[i+2],glVertices[i+3]);
-            }
+            if(glVertices.Count!=0)throw new InvalidOperationException($"GL primitive mode {primitiveMode} has an incomplete vertex group");
         } finally {
             primitiveMode=0;glVertices.Clear();
         }
@@ -109,6 +103,12 @@ public sealed class CpuTextureTransferDriver:IRenderTargetDriver,ITextureTransfe
         if(primitiveMode==0)throw new InvalidOperationException("GL vertex requires an open primitive");
         if(!float.IsFinite(x)||!float.IsFinite(y)||!float.IsFinite(z))throw new ArgumentOutOfRangeException(nameof(x),"GL vertices must be finite");
         glVertices.Add(new GlVertex(MapX(x),MapY(y),currentGlColor));
+        int stride=primitiveMode==4?3:4;
+        if(glVertices.Count==stride) {
+            Rasterize(glVertices[0],glVertices[1],glVertices[2]);
+            if(primitiveMode==7)Rasterize(glVertices[0],glVertices[2],glVertices[3]);
+            glVertices.Clear();
+        }
     }
     float MapX(float x)=>(x-pixelLeft)/(pixelRight-pixelLeft)*ActiveTarget.width;
     float MapY(float y)=>(y-pixelBottom)/(pixelTop-pixelBottom)*ActiveTarget.height;
