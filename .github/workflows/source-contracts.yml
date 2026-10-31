@@ -250,6 +250,8 @@ jobs:
         run: |
           set -euo pipefail
           printf '{"dotnet":"8.0.426","recoveryArchiveSha256":"%s","sourceIndexSha256":"%s"}\n' "$RECOVERY_SHA256" "$SOURCE_INDEX_SHA256" > "$RUNNER_TEMP/cpr-toolchain.json"
+          python3 scripts/export_mission_exterior_visibility.py "$RUNNER_TEMP/recovery-artifact/export/ExportedProject/Assets/Scenes/Mission 01.unity" "$RUNNER_TEMP/cpr-mission-exterior-visibility.json"
+          cmp "$RUNNER_TEMP/cpr-mission-exterior-visibility.json" "$GITHUB_WORKSPACE/game/assets/mission01-exterior-visibility.json"
           python3 scripts/package_wasm_site.py build --repo "$GITHUB_WORKSPACE" --published "$RUNNER_TEMP/cpr-browser-publish/wwwroot" --output "$RUNNER_TEMP/cpr-site-package" --toolchain "$RUNNER_TEMP/cpr-toolchain.json" --incremental-source-package "$RUNNER_TEMP/cpr-full-source.json" --incremental-profile global-ui-mission-operator --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" | tee "$RUNNER_TEMP/cpr-package-build.json"
           dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -c Release -- --browser-entryteam-session-contract "$RUNNER_TEMP/cpr-site-package/scene-data/fullsource/global-ui-mission-operator" | tee "$RUNNER_TEMP/cpr-browser-entryteam-contract.json"
           dotnet run --project runtime/Checks/Crisis.Runtime.Checks.csproj -c Release -- --mission-hurt-audio-contract "$RUNNER_TEMP/cpr-site-package/scene-data/fullsource/global-ui-mission-operator" | tee "$RUNNER_TEMP/cpr-mission-hurt-audio-contract.json"

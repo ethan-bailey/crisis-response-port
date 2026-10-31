@@ -1,0 +1,3091 @@
+{
+  "colliderFileIDs": [
+    "4783",
+    "4786",
+    "4789",
+    "4797",
+    "4800",
+    "4805",
+    "4811",
+    "4814",
+    "4816",
+    "4817",
+    "4819",
+    "4822",
+    "4824",
+    "4826",
+    "4827",
+    "4849",
+    "4854",
+    "4856",
+    "4857",
+    "4858",
+    "4864",
+    "4868",
+    "4869",
+    "4872",
+    "4874",
+    "4875",
+    "4876",
+    "4883",
+    "4884",
+    "4886",
+    "4888",
+    "4889",
+    "4894",
+    "4896",
+    "4901",
+    "4904",
+    "4905",
+    "4909",
+    "4915",
+    "4917",
+    "4920",
+    "4921",
+    "4922",
+    "4926",
+    "4928",
+    "4929",
+    "4934",
+    "4936",
+    "4939",
+    "4940",
+    "4944",
+    "4945",
+    "4947",
+    "4949",
+    "4950",
+    "4951",
+    "4960",
+    "4967",
+    "4968",
+    "4970",
+    "4972",
+    "4975",
+    "4979",
+    "4982",
+    "4983",
+    "4985",
+    "4988",
+    "4991",
+    "4995",
+    "5000",
+    "5002",
+    "5006",
+    "5007",
+    "5008",
+    "5009",
+    "5010",
+    "5014",
+    "5015",
+    "5018",
+    "5020",
+    "5022",
+    "5023",
+    "5025",
+    "5028",
+    "5033",
+    "5034",
+    "5035",
+    "5037",
+    "5038",
+    "5039",
+    "5040",
+    "5042",
+    "5043",
+    "5050",
+    "5055",
+    "5056",
+    "5060",
+    "5063",
+    "5066",
+    "5067",
+    "5071",
+    "5080",
+    "5081",
+    "5082",
+    "5084",
+    "5085",
+    "5087",
+    "5092",
+    "5093",
+    "5094",
+    "5095",
+    "5106",
+    "5107",
+    "5108",
+    "5112",
+    "5115",
+    "5120",
+    "5121",
+    "5122",
+    "5125",
+    "5129",
+    "5132",
+    "5134",
+    "5139",
+    "5148",
+    "5149",
+    "5154",
+    "5155",
+    "5164",
+    "5166",
+    "5168",
+    "5170",
+    "5171",
+    "5182",
+    "5184",
+    "5185",
+    "5191",
+    "5192",
+    "5194",
+    "5198",
+    "5200",
+    "5201",
+    "5205",
+    "5206",
+    "5209",
+    "5212",
+    "5213",
+    "5215",
+    "5216",
+    "5221",
+    "5226",
+    "5227",
+    "5232",
+    "5233",
+    "5235",
+    "5241",
+    "5242",
+    "5245",
+    "5246",
+    "5250",
+    "5261",
+    "5263",
+    "5266",
+    "5267",
+    "5268",
+    "5271",
+    "5272",
+    "5274",
+    "5279",
+    "5281",
+    "5284",
+    "5285",
+    "5287",
+    "5291",
+    "5292",
+    "5297",
+    "5298",
+    "5302",
+    "5305",
+    "5307",
+    "5313",
+    "5318",
+    "5322",
+    "5323",
+    "5324",
+    "5328",
+    "5332",
+    "5333",
+    "5339",
+    "5340",
+    "5341",
+    "5344",
+    "5347",
+    "5356",
+    "5358",
+    "5363",
+    "5365",
+    "5367",
+    "5370",
+    "5373",
+    "5375",
+    "5384",
+    "5387",
+    "5388",
+    "5389",
+    "5390",
+    "5394",
+    "5397",
+    "5398",
+    "5401",
+    "5402",
+    "5403",
+    "5404",
+    "5406"
+  ],
+  "format": "crisis-mission-exterior-visibility-v1",
+  "roomCount": 8,
+  "roomScriptGuid": "f3a1fb7605bda3ec004b5ea521a048f9",
+  "rooms": [
+    {
+      "colliderFileIDs": [
+        "4824",
+        "4857",
+        "4858",
+        "4888",
+        "4905",
+        "4909",
+        "4944",
+        "4949",
+        "4983",
+        "5025",
+        "5035",
+        "5043",
+        "5081",
+        "5082",
+        "5122",
+        "5129",
+        "5154",
+        "5192",
+        "5216",
+        "5221",
+        "5246",
+        "5268",
+        "5271",
+        "5285",
+        "5292",
+        "5302",
+        "5323",
+        "5363",
+        "5397",
+        "5403"
+      ],
+      "colliders": [
+        {
+          "classID": 65,
+          "componentFileID": "4824",
+          "gameObjectFileID": "95"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4857",
+          "gameObjectFileID": "183"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4858",
+          "gameObjectFileID": "187"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4888",
+          "gameObjectFileID": "262"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4905",
+          "gameObjectFileID": "307"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4909",
+          "gameObjectFileID": "311"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4944",
+          "gameObjectFileID": "376"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4949",
+          "gameObjectFileID": "390"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4983",
+          "gameObjectFileID": "489"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5025",
+          "gameObjectFileID": "598"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5035",
+          "gameObjectFileID": "630"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5043",
+          "gameObjectFileID": "646"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5081",
+          "gameObjectFileID": "728"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5082",
+          "gameObjectFileID": "732"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5122",
+          "gameObjectFileID": "844"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5129",
+          "gameObjectFileID": "859"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5154",
+          "gameObjectFileID": "909"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5192",
+          "gameObjectFileID": "998"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5216",
+          "gameObjectFileID": "1050"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5221",
+          "gameObjectFileID": "1060"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5246",
+          "gameObjectFileID": "1108"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5268",
+          "gameObjectFileID": "1177"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5271",
+          "gameObjectFileID": "1181"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5285",
+          "gameObjectFileID": "1222"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5292",
+          "gameObjectFileID": "1237"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5302",
+          "gameObjectFileID": "1268"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5323",
+          "gameObjectFileID": "1318"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5363",
+          "gameObjectFileID": "1426"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5397",
+          "gameObjectFileID": "1497"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5403",
+          "gameObjectFileID": "1512"
+        }
+      ],
+      "componentFileID": "6112",
+      "exteriorTransformFileID": "2369",
+      "gameObjectFileID": "154",
+      "gameObjectFileIDs": [
+        "8",
+        "71",
+        "95",
+        "97",
+        "122",
+        "140",
+        "176",
+        "183",
+        "184",
+        "185",
+        "187",
+        "262",
+        "272",
+        "283",
+        "307",
+        "311",
+        "329",
+        "357",
+        "376",
+        "385",
+        "390",
+        "407",
+        "460",
+        "480",
+        "481",
+        "489",
+        "512",
+        "513",
+        "562",
+        "598",
+        "600",
+        "602",
+        "630",
+        "642",
+        "646",
+        "660",
+        "728",
+        "732",
+        "758",
+        "767",
+        "802",
+        "844",
+        "852",
+        "859",
+        "909",
+        "970",
+        "972",
+        "977",
+        "998",
+        "1012",
+        "1030",
+        "1050",
+        "1060",
+        "1108",
+        "1130",
+        "1153",
+        "1154",
+        "1177",
+        "1181",
+        "1222",
+        "1223",
+        "1237",
+        "1268",
+        "1286",
+        "1288",
+        "1306",
+        "1318",
+        "1363",
+        "1426",
+        "1454",
+        "1477",
+        "1497",
+        "1512"
+      ],
+      "name": "Room 1",
+      "renderers": [
+        {
+          "componentFileID": "2825",
+          "firstSubMesh": 545,
+          "gameObjectFileID": "8",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "2866",
+          "firstSubMesh": 552,
+          "gameObjectFileID": "71",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "2900",
+          "firstSubMesh": 180,
+          "gameObjectFileID": "122",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "2913",
+          "firstSubMesh": 177,
+          "gameObjectFileID": "140",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "2932",
+          "firstSubMesh": 542,
+          "gameObjectFileID": "176",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "2934",
+          "firstSubMesh": 548,
+          "gameObjectFileID": "184",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "2935",
+          "firstSubMesh": 176,
+          "gameObjectFileID": "185",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "2985",
+          "firstSubMesh": 534,
+          "gameObjectFileID": "272",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3017",
+          "firstSubMesh": 531,
+          "gameObjectFileID": "329",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3044",
+          "firstSubMesh": 539,
+          "gameObjectFileID": "385",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3054",
+          "firstSubMesh": 537,
+          "gameObjectFileID": "407",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3081",
+          "firstSubMesh": 172,
+          "gameObjectFileID": "460",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3098",
+          "firstSubMesh": 553,
+          "gameObjectFileID": "480",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3099",
+          "firstSubMesh": 533,
+          "gameObjectFileID": "481",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3121",
+          "firstSubMesh": 579,
+          "gameObjectFileID": "512",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3122",
+          "firstSubMesh": 526,
+          "gameObjectFileID": "513",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3143",
+          "firstSubMesh": 527,
+          "gameObjectFileID": "562",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3162",
+          "firstSubMesh": 524,
+          "gameObjectFileID": "600",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3164",
+          "firstSubMesh": 540,
+          "gameObjectFileID": "602",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3181",
+          "firstSubMesh": 530,
+          "gameObjectFileID": "642",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3193",
+          "firstSubMesh": 532,
+          "gameObjectFileID": "660",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3244",
+          "firstSubMesh": 535,
+          "gameObjectFileID": "758",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3249",
+          "firstSubMesh": 173,
+          "gameObjectFileID": "767",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3268",
+          "firstSubMesh": 546,
+          "gameObjectFileID": "802",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3290",
+          "firstSubMesh": 585,
+          "gameObjectFileID": "844",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3295",
+          "firstSubMesh": 525,
+          "gameObjectFileID": "852",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3357",
+          "firstSubMesh": 547,
+          "gameObjectFileID": "970",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3358",
+          "firstSubMesh": 536,
+          "gameObjectFileID": "972",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3360",
+          "firstSubMesh": 538,
+          "gameObjectFileID": "977",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3441",
+          "firstSubMesh": 554,
+          "gameObjectFileID": "1130",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3453",
+          "firstSubMesh": 573,
+          "gameObjectFileID": "1153",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3495",
+          "firstSubMesh": 591,
+          "gameObjectFileID": "1222",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3496",
+          "firstSubMesh": 549,
+          "gameObjectFileID": "1223",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3532",
+          "firstSubMesh": 550,
+          "gameObjectFileID": "1288",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3545",
+          "firstSubMesh": 179,
+          "gameObjectFileID": "1306",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3579",
+          "firstSubMesh": 551,
+          "gameObjectFileID": "1363",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3635",
+          "firstSubMesh": 555,
+          "gameObjectFileID": "1454",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3651",
+          "firstSubMesh": 556,
+          "gameObjectFileID": "1477",
+          "subMeshCount": 1
+        }
+      ],
+      "submeshIndices": [
+        172,
+        173,
+        176,
+        177,
+        179,
+        180,
+        524,
+        525,
+        526,
+        527,
+        530,
+        531,
+        532,
+        533,
+        534,
+        535,
+        536,
+        537,
+        538,
+        539,
+        540,
+        542,
+        545,
+        546,
+        547,
+        548,
+        549,
+        550,
+        551,
+        552,
+        553,
+        554,
+        555,
+        556,
+        573,
+        574,
+        575,
+        576,
+        577,
+        578,
+        579,
+        580,
+        581,
+        582,
+        583,
+        584,
+        585,
+        586,
+        587,
+        588,
+        589,
+        590,
+        591,
+        592,
+        593,
+        594,
+        595,
+        596
+      ]
+    },
+    {
+      "colliderFileIDs": [
+        "4814",
+        "4822",
+        "4826",
+        "4827",
+        "4854",
+        "4868",
+        "4872",
+        "4922",
+        "4928",
+        "4929",
+        "4934",
+        "4947",
+        "4951",
+        "4960",
+        "4967",
+        "4982",
+        "4991",
+        "5014",
+        "5033",
+        "5034",
+        "5050",
+        "5063",
+        "5087",
+        "5108",
+        "5115",
+        "5120",
+        "5139",
+        "5149",
+        "5164",
+        "5184",
+        "5235",
+        "5250",
+        "5261",
+        "5266",
+        "5267",
+        "5279",
+        "5291",
+        "5333",
+        "5340",
+        "5341",
+        "5358",
+        "5365",
+        "5373",
+        "5389",
+        "5402",
+        "5406"
+      ],
+      "colliders": [
+        {
+          "classID": 65,
+          "componentFileID": "4814",
+          "gameObjectFileID": "75"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4822",
+          "gameObjectFileID": "93"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4826",
+          "gameObjectFileID": "100"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4827",
+          "gameObjectFileID": "101"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4854",
+          "gameObjectFileID": "173"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4868",
+          "gameObjectFileID": "213"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4872",
+          "gameObjectFileID": "221"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4922",
+          "gameObjectFileID": "334"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4928",
+          "gameObjectFileID": "344"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4929",
+          "gameObjectFileID": "346"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4934",
+          "gameObjectFileID": "356"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4947",
+          "gameObjectFileID": "387"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4951",
+          "gameObjectFileID": "398"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4960",
+          "gameObjectFileID": "423"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4967",
+          "gameObjectFileID": "444"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4982",
+          "gameObjectFileID": "483"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4991",
+          "gameObjectFileID": "506"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5014",
+          "gameObjectFileID": "572"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5033",
+          "gameObjectFileID": "620"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5034",
+          "gameObjectFileID": "628"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5050",
+          "gameObjectFileID": "666"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5063",
+          "gameObjectFileID": "691"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5087",
+          "gameObjectFileID": "741"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5108",
+          "gameObjectFileID": "803"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5115",
+          "gameObjectFileID": "825"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5120",
+          "gameObjectFileID": "840"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5139",
+          "gameObjectFileID": "877"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5149",
+          "gameObjectFileID": "894"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5164",
+          "gameObjectFileID": "924"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5184",
+          "gameObjectFileID": "983"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5235",
+          "gameObjectFileID": "1088"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5250",
+          "gameObjectFileID": "1123"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5261",
+          "gameObjectFileID": "1160"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5266",
+          "gameObjectFileID": "1175"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5267",
+          "gameObjectFileID": "1176"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5279",
+          "gameObjectFileID": "1210"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5291",
+          "gameObjectFileID": "1233"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5333",
+          "gameObjectFileID": "1360"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5340",
+          "gameObjectFileID": "1380"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5341",
+          "gameObjectFileID": "1382"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5358",
+          "gameObjectFileID": "1415"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5365",
+          "gameObjectFileID": "1430"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5373",
+          "gameObjectFileID": "1446"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5389",
+          "gameObjectFileID": "1476"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5402",
+          "gameObjectFileID": "1506"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5406",
+          "gameObjectFileID": "1517"
+        }
+      ],
+      "componentFileID": "6474",
+      "exteriorTransformFileID": "2011",
+      "gameObjectFileID": "684",
+      "gameObjectFileIDs": [
+        "12",
+        "21",
+        "75",
+        "93",
+        "100",
+        "101",
+        "169",
+        "173",
+        "209",
+        "213",
+        "221",
+        "334",
+        "344",
+        "346",
+        "356",
+        "379",
+        "387",
+        "398",
+        "402",
+        "411",
+        "423",
+        "441",
+        "444",
+        "483",
+        "497",
+        "506",
+        "508",
+        "572",
+        "583",
+        "617",
+        "620",
+        "628",
+        "666",
+        "691",
+        "741",
+        "803",
+        "817",
+        "825",
+        "840",
+        "877",
+        "894",
+        "924",
+        "983",
+        "1048",
+        "1088",
+        "1123",
+        "1160",
+        "1174",
+        "1175",
+        "1176",
+        "1193",
+        "1210",
+        "1233",
+        "1360",
+        "1380",
+        "1382",
+        "1383",
+        "1415",
+        "1417",
+        "1424",
+        "1430",
+        "1446",
+        "1476",
+        "1503",
+        "1506",
+        "1517"
+      ],
+      "name": "Room 3",
+      "renderers": [
+        {
+          "componentFileID": "2829",
+          "firstSubMesh": 185,
+          "gameObjectFileID": "12",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "2836",
+          "firstSubMesh": 159,
+          "gameObjectFileID": "21",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "2881",
+          "firstSubMesh": 618,
+          "gameObjectFileID": "93",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "2951",
+          "firstSubMesh": 157,
+          "gameObjectFileID": "209",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3042",
+          "firstSubMesh": 187,
+          "gameObjectFileID": "379",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3074",
+          "firstSubMesh": 560,
+          "gameObjectFileID": "441",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3111",
+          "firstSubMesh": 648,
+          "gameObjectFileID": "497",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3277",
+          "firstSubMesh": 149,
+          "gameObjectFileID": "817",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3281",
+          "firstSubMesh": 630,
+          "gameObjectFileID": "825",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3393",
+          "firstSubMesh": 182,
+          "gameObjectFileID": "1048",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3415",
+          "firstSubMesh": 636,
+          "gameObjectFileID": "1088",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3464",
+          "firstSubMesh": 160,
+          "gameObjectFileID": "1174",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3465",
+          "firstSubMesh": 624,
+          "gameObjectFileID": "1176",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3475",
+          "firstSubMesh": 186,
+          "gameObjectFileID": "1193",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3591",
+          "firstSubMesh": 642,
+          "gameObjectFileID": "1383",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3616",
+          "firstSubMesh": 156,
+          "gameObjectFileID": "1424",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3667",
+          "firstSubMesh": 612,
+          "gameObjectFileID": "1503",
+          "subMeshCount": 6
+        }
+      ],
+      "submeshIndices": [
+        149,
+        156,
+        157,
+        159,
+        160,
+        182,
+        185,
+        186,
+        187,
+        560,
+        612,
+        613,
+        614,
+        615,
+        616,
+        617,
+        618,
+        619,
+        620,
+        621,
+        622,
+        623,
+        624,
+        625,
+        626,
+        627,
+        628,
+        629,
+        630,
+        631,
+        632,
+        633,
+        634,
+        635,
+        636,
+        637,
+        638,
+        639,
+        640,
+        641,
+        642,
+        643,
+        644,
+        645,
+        646,
+        647,
+        648,
+        649,
+        650,
+        651,
+        652,
+        653
+      ]
+    },
+    {
+      "componentFileID": "6696",
+      "exteriorTransformFileID": "0",
+      "gameObjectFileID": "951"
+    },
+    {
+      "colliderFileIDs": [
+        "4789",
+        "4805",
+        "4816",
+        "4849",
+        "4883",
+        "4886",
+        "4894",
+        "4896",
+        "4915",
+        "4945",
+        "4995",
+        "5006",
+        "5008",
+        "5023",
+        "5039",
+        "5055",
+        "5071",
+        "5084",
+        "5132",
+        "5148",
+        "5185",
+        "5201",
+        "5215",
+        "5272",
+        "5274",
+        "5281",
+        "5287",
+        "5298",
+        "5328",
+        "5339",
+        "5388"
+      ],
+      "colliders": [
+        {
+          "classID": 65,
+          "componentFileID": "4789",
+          "gameObjectFileID": "24"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4805",
+          "gameObjectFileID": "57"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4816",
+          "gameObjectFileID": "81"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4849",
+          "gameObjectFileID": "159"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4883",
+          "gameObjectFileID": "247"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4886",
+          "gameObjectFileID": "256"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4894",
+          "gameObjectFileID": "277"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4896",
+          "gameObjectFileID": "281"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4915",
+          "gameObjectFileID": "320"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4945",
+          "gameObjectFileID": "383"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4995",
+          "gameObjectFileID": "517"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5006",
+          "gameObjectFileID": "551"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5008",
+          "gameObjectFileID": "558"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5023",
+          "gameObjectFileID": "590"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5039",
+          "gameObjectFileID": "638"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5055",
+          "gameObjectFileID": "677"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5071",
+          "gameObjectFileID": "708"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5084",
+          "gameObjectFileID": "738"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5132",
+          "gameObjectFileID": "862"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5148",
+          "gameObjectFileID": "890"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5185",
+          "gameObjectFileID": "986"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5201",
+          "gameObjectFileID": "1017"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5215",
+          "gameObjectFileID": "1049"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5272",
+          "gameObjectFileID": "1183"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5274",
+          "gameObjectFileID": "1194"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5281",
+          "gameObjectFileID": "1213"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5287",
+          "gameObjectFileID": "1227"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5298",
+          "gameObjectFileID": "1254"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5328",
+          "gameObjectFileID": "1333"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5339",
+          "gameObjectFileID": "1374"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5388",
+          "gameObjectFileID": "1474"
+        }
+      ],
+      "componentFileID": "6713",
+      "exteriorTransformFileID": "1960",
+      "gameObjectFileID": "973",
+      "gameObjectFileIDs": [
+        "24",
+        "29",
+        "34",
+        "35",
+        "57",
+        "81",
+        "82",
+        "131",
+        "159",
+        "247",
+        "256",
+        "277",
+        "281",
+        "320",
+        "383",
+        "490",
+        "517",
+        "519",
+        "521",
+        "551",
+        "558",
+        "590",
+        "599",
+        "638",
+        "673",
+        "677",
+        "708",
+        "738",
+        "813",
+        "862",
+        "890",
+        "978",
+        "986",
+        "1017",
+        "1049",
+        "1117",
+        "1183",
+        "1185",
+        "1194",
+        "1213",
+        "1227",
+        "1254",
+        "1333",
+        "1374",
+        "1474"
+      ],
+      "name": "Room 6",
+      "renderers": [
+        {
+          "componentFileID": "2843",
+          "firstSubMesh": 356,
+          "gameObjectFileID": "35",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "2873",
+          "firstSubMesh": 175,
+          "gameObjectFileID": "82",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "2905",
+          "firstSubMesh": 350,
+          "gameObjectFileID": "131",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "2970",
+          "firstSubMesh": 362,
+          "gameObjectFileID": "247",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3105",
+          "firstSubMesh": 564,
+          "gameObjectFileID": "490",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3161",
+          "firstSubMesh": 178,
+          "gameObjectFileID": "599",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3202",
+          "firstSubMesh": 152,
+          "gameObjectFileID": "673",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3206",
+          "firstSubMesh": 338,
+          "gameObjectFileID": "677",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3361",
+          "firstSubMesh": 158,
+          "gameObjectFileID": "978",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3435",
+          "firstSubMesh": 170,
+          "gameObjectFileID": "1117",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3472",
+          "firstSubMesh": 161,
+          "gameObjectFileID": "1185",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3476",
+          "firstSubMesh": 344,
+          "gameObjectFileID": "1194",
+          "subMeshCount": 6
+        }
+      ],
+      "submeshIndices": [
+        152,
+        158,
+        161,
+        170,
+        175,
+        178,
+        338,
+        339,
+        340,
+        341,
+        342,
+        343,
+        344,
+        345,
+        346,
+        347,
+        348,
+        349,
+        350,
+        351,
+        352,
+        353,
+        354,
+        355,
+        356,
+        357,
+        358,
+        359,
+        360,
+        361,
+        362,
+        363,
+        364,
+        365,
+        366,
+        367,
+        564
+      ]
+    },
+    {
+      "colliderFileIDs": [
+        "4783",
+        "4800",
+        "4817",
+        "4874",
+        "4921",
+        "4926",
+        "4975",
+        "4979",
+        "5007",
+        "5092",
+        "5094",
+        "5095",
+        "5106",
+        "5112",
+        "5121",
+        "5209",
+        "5233",
+        "5263",
+        "5305",
+        "5313",
+        "5332",
+        "5367",
+        "5394",
+        "5398"
+      ],
+      "colliders": [
+        {
+          "classID": 65,
+          "componentFileID": "4783",
+          "gameObjectFileID": "6"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4800",
+          "gameObjectFileID": "50"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4817",
+          "gameObjectFileID": "83"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4874",
+          "gameObjectFileID": "224"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4921",
+          "gameObjectFileID": "333"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4926",
+          "gameObjectFileID": "341"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4975",
+          "gameObjectFileID": "463"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4979",
+          "gameObjectFileID": "470"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5007",
+          "gameObjectFileID": "552"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5092",
+          "gameObjectFileID": "765"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5094",
+          "gameObjectFileID": "772"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5095",
+          "gameObjectFileID": "775"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5106",
+          "gameObjectFileID": "799"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5112",
+          "gameObjectFileID": "809"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5121",
+          "gameObjectFileID": "842"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5209",
+          "gameObjectFileID": "1038"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5233",
+          "gameObjectFileID": "1086"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5263",
+          "gameObjectFileID": "1167"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5305",
+          "gameObjectFileID": "1275"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5313",
+          "gameObjectFileID": "1295"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5332",
+          "gameObjectFileID": "1356"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5367",
+          "gameObjectFileID": "1432"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5394",
+          "gameObjectFileID": "1491"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5398",
+          "gameObjectFileID": "1498"
+        }
+      ],
+      "componentFileID": "6839",
+      "exteriorTransformFileID": "2720",
+      "gameObjectFileID": "1143",
+      "gameObjectFileIDs": [
+        "6",
+        "50",
+        "83",
+        "84",
+        "224",
+        "261",
+        "333",
+        "341",
+        "463",
+        "470",
+        "552",
+        "753",
+        "765",
+        "772",
+        "775",
+        "799",
+        "809",
+        "842",
+        "906",
+        "1023",
+        "1038",
+        "1086",
+        "1167",
+        "1219",
+        "1247",
+        "1263",
+        "1275",
+        "1295",
+        "1325",
+        "1328",
+        "1356",
+        "1423",
+        "1432",
+        "1491",
+        "1498"
+      ],
+      "name": "Room 4",
+      "renderers": [
+        {
+          "componentFileID": "2874",
+          "firstSubMesh": 151,
+          "gameObjectFileID": "84",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "2979",
+          "firstSubMesh": 150,
+          "gameObjectFileID": "261",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3137",
+          "firstSubMesh": 399,
+          "gameObjectFileID": "552",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3240",
+          "firstSubMesh": 393,
+          "gameObjectFileID": "753",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3493",
+          "firstSubMesh": 168,
+          "gameObjectFileID": "1219",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3509",
+          "firstSubMesh": 167,
+          "gameObjectFileID": "1247",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3518",
+          "firstSubMesh": 405,
+          "gameObjectFileID": "1263",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3663",
+          "firstSubMesh": 411,
+          "gameObjectFileID": "1498",
+          "subMeshCount": 6
+        }
+      ],
+      "submeshIndices": [
+        150,
+        151,
+        167,
+        168,
+        393,
+        394,
+        395,
+        396,
+        397,
+        398,
+        399,
+        400,
+        401,
+        402,
+        403,
+        404,
+        405,
+        406,
+        407,
+        408,
+        409,
+        410,
+        411,
+        412,
+        413,
+        414,
+        415,
+        416
+      ]
+    },
+    {
+      "colliderFileIDs": [
+        "4786",
+        "4797",
+        "4811",
+        "4819",
+        "4856",
+        "4864",
+        "4875",
+        "4876",
+        "4901",
+        "4904",
+        "4920",
+        "4936",
+        "4939",
+        "4940",
+        "4968",
+        "4972",
+        "4985",
+        "4988",
+        "5002",
+        "5009",
+        "5020",
+        "5022",
+        "5038",
+        "5040",
+        "5060",
+        "5066",
+        "5067",
+        "5085",
+        "5093",
+        "5107",
+        "5134",
+        "5155",
+        "5168",
+        "5170",
+        "5171",
+        "5182",
+        "5194",
+        "5198",
+        "5200",
+        "5205",
+        "5206",
+        "5227",
+        "5241",
+        "5242",
+        "5245",
+        "5284",
+        "5297",
+        "5318",
+        "5322",
+        "5324",
+        "5344",
+        "5347",
+        "5356",
+        "5370",
+        "5375",
+        "5384",
+        "5401",
+        "5404"
+      ],
+      "colliders": [
+        {
+          "classID": 65,
+          "componentFileID": "4786",
+          "gameObjectFileID": "16"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4797",
+          "gameObjectFileID": "46"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4811",
+          "gameObjectFileID": "67"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4819",
+          "gameObjectFileID": "87"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4856",
+          "gameObjectFileID": "177"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4864",
+          "gameObjectFileID": "204"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4875",
+          "gameObjectFileID": "226"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4876",
+          "gameObjectFileID": "227"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4901",
+          "gameObjectFileID": "298"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4904",
+          "gameObjectFileID": "303"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4920",
+          "gameObjectFileID": "331"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4936",
+          "gameObjectFileID": "360"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4939",
+          "gameObjectFileID": "369"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4940",
+          "gameObjectFileID": "370"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4968",
+          "gameObjectFileID": "447"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4972",
+          "gameObjectFileID": "459"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4985",
+          "gameObjectFileID": "494"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4988",
+          "gameObjectFileID": "503"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5002",
+          "gameObjectFileID": "541"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5009",
+          "gameObjectFileID": "560"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5020",
+          "gameObjectFileID": "582"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5022",
+          "gameObjectFileID": "587"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5038",
+          "gameObjectFileID": "637"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5040",
+          "gameObjectFileID": "640"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5060",
+          "gameObjectFileID": "682"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5066",
+          "gameObjectFileID": "695"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5067",
+          "gameObjectFileID": "696"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5085",
+          "gameObjectFileID": "739"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5093",
+          "gameObjectFileID": "771"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5107",
+          "gameObjectFileID": "800"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5134",
+          "gameObjectFileID": "866"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5155",
+          "gameObjectFileID": "910"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5168",
+          "gameObjectFileID": "934"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5170",
+          "gameObjectFileID": "945"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5171",
+          "gameObjectFileID": "947"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5182",
+          "gameObjectFileID": "976"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5194",
+          "gameObjectFileID": "1001"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5198",
+          "gameObjectFileID": "1009"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5200",
+          "gameObjectFileID": "1014"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5205",
+          "gameObjectFileID": "1026"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5206",
+          "gameObjectFileID": "1032"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5227",
+          "gameObjectFileID": "1072"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5241",
+          "gameObjectFileID": "1098"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5242",
+          "gameObjectFileID": "1100"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5245",
+          "gameObjectFileID": "1106"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5284",
+          "gameObjectFileID": "1221"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5297",
+          "gameObjectFileID": "1253"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5318",
+          "gameObjectFileID": "1312"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5322",
+          "gameObjectFileID": "1317"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5324",
+          "gameObjectFileID": "1324"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5344",
+          "gameObjectFileID": "1388"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5347",
+          "gameObjectFileID": "1395"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5356",
+          "gameObjectFileID": "1409"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5370",
+          "gameObjectFileID": "1440"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5375",
+          "gameObjectFileID": "1448"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5384",
+          "gameObjectFileID": "1469"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5401",
+          "gameObjectFileID": "1504"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5404",
+          "gameObjectFileID": "1515"
+        }
+      ],
+      "componentFileID": "6958",
+      "exteriorTransformFileID": "2001",
+      "gameObjectFileID": "1284",
+      "gameObjectFileIDs": [
+        "14",
+        "16",
+        "33",
+        "46",
+        "67",
+        "87",
+        "172",
+        "177",
+        "204",
+        "226",
+        "227",
+        "285",
+        "298",
+        "303",
+        "331",
+        "360",
+        "367",
+        "369",
+        "370",
+        "447",
+        "459",
+        "494",
+        "503",
+        "533",
+        "541",
+        "560",
+        "571",
+        "578",
+        "582",
+        "587",
+        "637",
+        "640",
+        "672",
+        "682",
+        "695",
+        "696",
+        "739",
+        "755",
+        "762",
+        "771",
+        "778",
+        "800",
+        "865",
+        "866",
+        "888",
+        "910",
+        "934",
+        "945",
+        "947",
+        "976",
+        "1001",
+        "1009",
+        "1014",
+        "1026",
+        "1032",
+        "1072",
+        "1098",
+        "1100",
+        "1106",
+        "1107",
+        "1118",
+        "1198",
+        "1221",
+        "1225",
+        "1253",
+        "1294",
+        "1304",
+        "1312",
+        "1317",
+        "1324",
+        "1353",
+        "1357",
+        "1377",
+        "1388",
+        "1395",
+        "1400",
+        "1409",
+        "1440",
+        "1448",
+        "1469",
+        "1486",
+        "1504",
+        "1515"
+      ],
+      "name": "Room 5",
+      "renderers": [
+        {
+          "componentFileID": "2830",
+          "firstSubMesh": 189,
+          "gameObjectFileID": "14",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "2992",
+          "firstSubMesh": 192,
+          "gameObjectFileID": "285",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3034",
+          "firstSubMesh": 463,
+          "gameObjectFileID": "367",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3201",
+          "firstSubMesh": 441,
+          "gameObjectFileID": "672",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3241",
+          "firstSubMesh": 164,
+          "gameObjectFileID": "755",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3248",
+          "firstSubMesh": 191,
+          "gameObjectFileID": "762",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3254",
+          "firstSubMesh": 435,
+          "gameObjectFileID": "778",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3305",
+          "firstSubMesh": 155,
+          "gameObjectFileID": "865",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3320",
+          "firstSubMesh": 183,
+          "gameObjectFileID": "888",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3429",
+          "firstSubMesh": 181,
+          "gameObjectFileID": "1107",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3436",
+          "firstSubMesh": 451,
+          "gameObjectFileID": "1118",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3480",
+          "firstSubMesh": 153,
+          "gameObjectFileID": "1198",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3537",
+          "firstSubMesh": 154,
+          "gameObjectFileID": "1294",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3573",
+          "firstSubMesh": 171,
+          "gameObjectFileID": "1353",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3574",
+          "firstSubMesh": 163,
+          "gameObjectFileID": "1357",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3595",
+          "firstSubMesh": 469,
+          "gameObjectFileID": "1388",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3603",
+          "firstSubMesh": 190,
+          "gameObjectFileID": "1400",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3609",
+          "firstSubMesh": 457,
+          "gameObjectFileID": "1409",
+          "subMeshCount": 6
+        }
+      ],
+      "submeshIndices": [
+        153,
+        154,
+        155,
+        163,
+        164,
+        171,
+        181,
+        183,
+        189,
+        190,
+        191,
+        192,
+        435,
+        436,
+        437,
+        438,
+        439,
+        440,
+        441,
+        442,
+        443,
+        444,
+        445,
+        446,
+        451,
+        452,
+        453,
+        454,
+        455,
+        456,
+        457,
+        458,
+        459,
+        460,
+        461,
+        462,
+        463,
+        464,
+        465,
+        466,
+        467,
+        468,
+        469,
+        470,
+        471,
+        472,
+        473,
+        474
+      ]
+    },
+    {
+      "componentFileID": "6991",
+      "exteriorTransformFileID": "0",
+      "gameObjectFileID": "1329"
+    },
+    {
+      "colliderFileIDs": [
+        "4869",
+        "4884",
+        "4889",
+        "4917",
+        "4950",
+        "4970",
+        "5000",
+        "5010",
+        "5015",
+        "5018",
+        "5028",
+        "5037",
+        "5042",
+        "5056",
+        "5080",
+        "5125",
+        "5166",
+        "5191",
+        "5212",
+        "5213",
+        "5226",
+        "5232",
+        "5307",
+        "5387",
+        "5390"
+      ],
+      "colliders": [
+        {
+          "classID": 65,
+          "componentFileID": "4869",
+          "gameObjectFileID": "215"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4884",
+          "gameObjectFileID": "251"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4889",
+          "gameObjectFileID": "263"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4917",
+          "gameObjectFileID": "325"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4950",
+          "gameObjectFileID": "393"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "4970",
+          "gameObjectFileID": "450"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5000",
+          "gameObjectFileID": "535"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5010",
+          "gameObjectFileID": "561"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5015",
+          "gameObjectFileID": "575"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5018",
+          "gameObjectFileID": "580"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5028",
+          "gameObjectFileID": "605"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5037",
+          "gameObjectFileID": "635"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5042",
+          "gameObjectFileID": "644"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5056",
+          "gameObjectFileID": "678"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5080",
+          "gameObjectFileID": "726"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5125",
+          "gameObjectFileID": "853"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5166",
+          "gameObjectFileID": "932"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5191",
+          "gameObjectFileID": "997"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5212",
+          "gameObjectFileID": "1044"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5213",
+          "gameObjectFileID": "1046"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5226",
+          "gameObjectFileID": "1070"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5232",
+          "gameObjectFileID": "1085"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5307",
+          "gameObjectFileID": "1280"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5387",
+          "gameObjectFileID": "1473"
+        },
+        {
+          "classID": 65,
+          "componentFileID": "5390",
+          "gameObjectFileID": "1478"
+        }
+      ],
+      "componentFileID": "7083",
+      "exteriorTransformFileID": "1558",
+      "gameObjectFileID": "1441",
+      "gameObjectFileIDs": [
+        "45",
+        "142",
+        "175",
+        "215",
+        "251",
+        "263",
+        "325",
+        "393",
+        "415",
+        "450",
+        "535",
+        "537",
+        "561",
+        "574",
+        "575",
+        "580",
+        "605",
+        "616",
+        "635",
+        "644",
+        "678",
+        "707",
+        "726",
+        "853",
+        "932",
+        "997",
+        "1044",
+        "1046",
+        "1070",
+        "1085",
+        "1109",
+        "1280",
+        "1297",
+        "1425",
+        "1473",
+        "1478",
+        "1479"
+      ],
+      "name": "Room 2",
+      "renderers": [
+        {
+          "componentFileID": "2915",
+          "firstSubMesh": 166,
+          "gameObjectFileID": "142",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "2980",
+          "firstSubMesh": 79,
+          "gameObjectFileID": "263",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3060",
+          "firstSubMesh": 91,
+          "gameObjectFileID": "415",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3150",
+          "firstSubMesh": 103,
+          "gameObjectFileID": "574",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3222",
+          "firstSubMesh": 558,
+          "gameObjectFileID": "707",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3406",
+          "firstSubMesh": 97,
+          "gameObjectFileID": "1070",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3431",
+          "firstSubMesh": 169,
+          "gameObjectFileID": "1109",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3539",
+          "firstSubMesh": 165,
+          "gameObjectFileID": "1297",
+          "subMeshCount": 1
+        },
+        {
+          "componentFileID": "3650",
+          "firstSubMesh": 85,
+          "gameObjectFileID": "1473",
+          "subMeshCount": 6
+        },
+        {
+          "componentFileID": "3652",
+          "firstSubMesh": 162,
+          "gameObjectFileID": "1479",
+          "subMeshCount": 1
+        }
+      ],
+      "submeshIndices": [
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99,
+        100,
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108,
+        162,
+        165,
+        166,
+        169,
+        558
+      ]
+    }
+  ],
+  "scenePath": "Assets/Scenes/Mission 01.unity",
+  "sceneSha256": "c43b36c415b4df14ef6223eaced686a8ddcead6c46f7504346aecb1a03c5743e",
+  "submeshCount": 764,
+  "submeshIndices": [
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95,
+    96,
+    97,
+    98,
+    99,
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    149,
+    150,
+    151,
+    152,
+    153,
+    154,
+    155,
+    156,
+    157,
+    158,
+    159,
+    160,
+    161,
+    162,
+    163,
+    164,
+    165,
+    166,
+    167,
+    168,
+    169,
+    170,
+    171,
+    172,
+    173,
+    175,
+    176,
+    177,
+    178,
+    179,
+    180,
+    181,
+    182,
+    183,
+    185,
+    186,
+    187,
+    189,
+    190,
+    191,
+    192,
+    338,
+    339,
+    340,
+    341,
+    342,
+    343,
+    344,
+    345,
+    346,
+    347,
+    348,
+    349,
+    350,
+    351,
+    352,
+    353,
+    354,
+    355,
+    356,
+    357,
+    358,
+    359,
+    360,
+    361,
+    362,
+    363,
+    364,
+    365,
+    366,
+    367,
+    393,
+    394,
+    395,
+    396,
+    397,
+    398,
+    399,
+    400,
+    401,
+    402,
+    403,
+    404,
+    405,
+    406,
+    407,
+    408,
+    409,
+    410,
+    411,
+    412,
+    413,
+    414,
+    415,
+    416,
+    435,
+    436,
+    437,
+    438,
+    439,
+    440,
+    441,
+    442,
+    443,
+    444,
+    445,
+    446,
+    451,
+    452,
+    453,
+    454,
+    455,
+    456,
+    457,
+    458,
+    459,
+    460,
+    461,
+    462,
+    463,
+    464,
+    465,
+    466,
+    467,
+    468,
+    469,
+    470,
+    471,
+    472,
+    473,
+    474,
+    524,
+    525,
+    526,
+    527,
+    530,
+    531,
+    532,
+    533,
+    534,
+    535,
+    536,
+    537,
+    538,
+    539,
+    540,
+    542,
+    545,
+    546,
+    547,
+    548,
+    549,
+    550,
+    551,
+    552,
+    553,
+    554,
+    555,
+    556,
+    558,
+    560,
+    564,
+    573,
+    574,
+    575,
+    576,
+    577,
+    578,
+    579,
+    580,
+    581,
+    582,
+    583,
+    584,
+    585,
+    586,
+    587,
+    588,
+    589,
+    590,
+    591,
+    592,
+    593,
+    594,
+    595,
+    596,
+    612,
+    613,
+    614,
+    615,
+    616,
+    617,
+    618,
+    619,
+    620,
+    621,
+    622,
+    623,
+    624,
+    625,
+    626,
+    627,
+    628,
+    629,
+    630,
+    631,
+    632,
+    633,
+    634,
+    635,
+    636,
+    637,
+    638,
+    639,
+    640,
+    641,
+    642,
+    643,
+    644,
+    645,
+    646,
+    647,
+    648,
+    649,
+    650,
+    651,
+    652,
+    653
+  ]
+}

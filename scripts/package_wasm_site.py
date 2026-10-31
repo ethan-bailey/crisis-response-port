@@ -354,6 +354,21 @@ def package(repo, published, output, toolchain, run_url, incremental_source_pack
             "Generated scene report does not match the packaged original OBJ")
     require(scene_report.get("binarySha256") == digest(scene_binary),
             "Generated scene report does not match the packaged scene binary")
+    if incremental_source_package is not None:
+        visibility_manifest = output / "game/assets/mission01-exterior-visibility.json"
+        require(visibility_manifest.is_file(), "Verified Room exterior visibility manifest is missing")
+        visibility = json.loads(visibility_manifest.read_text())
+        require(visibility.get("format") == "crisis-mission-exterior-visibility-v1"
+                and visibility.get("roomCount") == 8 and visibility.get("submeshCount") == 764,
+                "Mission exterior visibility manifest identity is invalid")
+        cutaway_binary = output / "game/assets/mission01-cutaway.crg"
+        subprocess.run([sys.executable, str(scene_builder), str(scene_obj), str(cutaway_binary),
+                        str(visibility_manifest)], check=True, cwd=repo)
+        cutaway_report = json.loads(cutaway_binary.with_suffix(".report.json").read_text())
+        require(cutaway_report.get("sourceSha256") == digest(scene_obj)
+                and cutaway_report.get("sourceSceneSha256") == visibility.get("sceneSha256")
+                and cutaway_report.get("omittedSubmeshes") == visibility.get("submeshIndices"),
+                "Cutaway mesh was not built from the verified Room exterior hierarchy")
     shutil.copytree(published, output / "runtime-web")
     scene_ignore = None if include_original_scene_smoke else shutil.ignore_patterns(SCENE_ARCHIVE)
     shutil.copytree(repo / "scene-data", output / "scene-data", ignore=scene_ignore)

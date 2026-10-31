@@ -433,6 +433,11 @@ try {
     const combatBefore=await page.evaluate(()=>window.__sourceCombatSnapshot());
     assert.ok(combatBefore.shotsFired>=ammunitionBefore.magazine-ammunitionSpent.magazine,
       `combat snapshot must observe the source Operator after its real fire-control presses: ${JSON.stringify(combatBefore)}`);
+    const exteriorVisibility=await page.evaluate(()=>window.__setSourceExteriorWallsHidden(true));
+    assert.equal(exteriorVisibility.disableExteriorWalls,true,
+      'the combat view must use the original Mission Extra that disables exterior walls');
+    assert.ok(exteriorVisibility.matchingRoomExteriorHierarchies>0,
+      `the source Room event must deactivate its authored Exterior hierarchies: ${JSON.stringify(exteriorVisibility)}`);
     const candidates=[];
     const viewport=await page.evaluate(()=>({width:innerWidth,height:innerHeight}));
     let nearestUnavailable=null;
@@ -553,7 +558,7 @@ try {
     assert.ok(attempts.at(-1)?.projectiles?.every(projectile => projectile.status !== 'Error'),
       `accepted injury must not leave an errored original projectile: ${JSON.stringify(attempts.at(-1)?.projectiles)}`);
     assert.deepEqual(pageErrors, [], 'packaged FullSource projectile hit and injury callbacks must not throw browser runtime errors');
-    combatReport={status:'passed',shotsBefore:combatBefore.shotsFired,shotsAfter:attempts.at(-1).shotsAfter,occupantsBefore:combatBefore.occupants.length,attempts,hit:acceptedHit,sourceProjectileAndPhysiologyCallbacks:true,nativePhysXIntegrationVerified:false,woundPixelsVerified:false};
+    combatReport={status:'passed',shotsBefore:combatBefore.shotsFired,shotsAfter:attempts.at(-1).shotsAfter,occupantsBefore:combatBefore.occupants.length,exteriorVisibility,attempts,hit:acceptedHit,sourceProjectileAndPhysiologyCallbacks:true,nativePhysXIntegrationVerified:false,woundPixelsVerified:false};
   }
   const mobilePage = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   mobilePage.on('pageerror', error => pageErrors.push(String(error)));

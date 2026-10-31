@@ -417,6 +417,26 @@ public sealed class FullSourceActorBridge
 
     public object Snapshot() => Snapshot([], []);
 
+    /// <summary>Apply the original extra setting that hides authored Room exterior hierarchies.</summary>
+    public object SetExteriorWallsHidden(bool hidden)
+    {
+        world.MakeCurrent();
+        var extras = Global.Context?.Settings?.Extras
+            ?? throw new InvalidOperationException("FullSource Room exterior visibility requires original Settings/Extras");
+        extras.disableExteriorWalls = hidden;
+        extras.onChanged.Invoke(extras);
+        var rooms = world.Objects.OfType<Room>().Where(room => room).ToArray();
+        var matchingRooms = rooms.Count(room => room.exteriorGeometry != null &&
+            room.exteriorGeometry.gameObject.activeSelf == !hidden);
+        return new
+        {
+            owner = "Global.Context.Settings.Extras.disableExteriorWalls",
+            disableExteriorWalls = extras.disableExteriorWalls,
+            matchingRoomExteriorHierarchies = matchingRooms,
+            roomCount = rooms.Length
+        };
+    }
+
     /// <summary>Read-only combat evidence for the packaged source projectile acceptance.</summary>
     public object CombatSnapshot()
     {
