@@ -515,12 +515,35 @@ try {
       const beforeSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
       const beforeVictim=beforeSnapshot.occupants.find(victim=>victim.body===candidate.victim.body);
       const shotsBefore=beforeSnapshot.shotsFired;
+      const aimGenerationBefore=await page.evaluate(()=>window.__gameState().aimGeneration);
       await page.mouse.move(point.x,point.y);
-      await page.waitForFunction(()=>window.__gameState()?.weaponState?.aimConverged===true,null,{timeout:15000});
-      await fireButton.click({delay:80});
-      const impactDeadline=Date.now()+3000;
+      await page.waitForFunction(previousGeneration=>{
+        const state=window.__gameState();
+        return state.aimGeneration>previousGeneration&&
+          state.sourceAimAppliedGeneration===state.aimGeneration&&
+          state.weaponState?.aimConverged===true;
+      },aimGenerationBefore,{timeout:15000});
+      const aimStateAtFire=await page.evaluate(()=>{
+        const state=window.__gameState();
+        return {aimGeneration:state.aimGeneration,sourceAimAppliedGeneration:state.sourceAimAppliedGeneration,
+          aimPoint:state.aimPoint,aimDirection:state.aimDirection,
+          aimAlignment:state.weaponState?.aimAlignment,aimConverged:state.weaponState?.aimConverged};
+      });
       let afterSnapshot=beforeSnapshot;
       let changedLimb=null;
+      let shotObserved=false;
+      await page.mouse.down();
+      try{
+        const shotDeadline=Date.now()+3000;
+        while(Date.now()<shotDeadline){
+          afterSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
+          if(afterSnapshot.shotsFired>shotsBefore){shotObserved=true;break;}
+          await page.waitForTimeout(50);
+        }
+      }finally{
+        await page.mouse.up();
+      }
+      const impactDeadline=Date.now()+3000;
       while(Date.now()<impactDeadline){
         await page.waitForTimeout(150);
         afterSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
@@ -537,6 +560,7 @@ try {
         aimedLimb:candidate.limb.limb,
         aimPoint:candidate.limb.aimPoint,
         screenPoint:{x:point.x,y:point.y,visible:point.visible,blocker:point.blocker},
+        aimStateAtFire,shotObserved,
         shotsBefore,
         shotsAfter:afterSnapshot.shotsFired,
         lastHitLimb:afterVictim?.lastHitLimb??null,
@@ -550,6 +574,8 @@ try {
     }
     assert.ok(acceptedHit,
       `production fire input must reach an original FullSource projectile, limb hit callback, and injury state change at a visible serialized Occupant aim point: ${JSON.stringify({attempts,lateralReposition,initiallyVisible:candidates.length>0})}`);
+    assert.equal(acceptedHit.limb,attempts.at(-1)?.aimedLimb,
+      `the hit limb must match the selected serialized aim limb: ${JSON.stringify(attempts.at(-1))}`);
     const postHitRuntimeUi = await page.evaluate(() => ({
       errorVisible: Boolean(document.querySelector('#error') && !document.querySelector('#error').hidden),
       errorText: document.querySelector('#errorDetails')?.textContent ?? '',
