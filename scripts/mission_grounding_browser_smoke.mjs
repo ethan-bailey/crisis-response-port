@@ -435,7 +435,7 @@ try {
       `combat snapshot must observe the source Operator after its real fire-control presses: ${JSON.stringify(combatBefore)}`);
     const candidates=[];
     const viewport=await page.evaluate(()=>({width:innerWidth,height:innerHeight}));
-    let nearestOffscreen=null;
+    let nearestUnavailable=null;
     const scanVisibleLimbs=async(snapshot,allLimbs)=>{
       for(const victim of snapshot.occupants.filter(value=>value.alive)){
         const orderedLimbs=[...victim.limbs]
@@ -443,25 +443,26 @@ try {
           .sort((a,b)=>(a.limb==='Torso'?-1:b.limb==='Torso'?1:a.limb==='Head'?-1:b.limb==='Head'?1:0));
         for(const limb of orderedLimbs){
           const point=await page.evaluate(position=>window.__sourceCombatScreenPoint(position),limb.aimPoint);
-          if(point.inside)candidates.push({victim,limb,point});
+          if(point.inside&&point.visible)candidates.push({victim,limb,point});
           else if(allLimbs){
             const distance=Math.hypot(point.x-viewport.width/2,point.y-viewport.height/2);
-            if(!nearestOffscreen||distance<nearestOffscreen.distance)nearestOffscreen={victim,limb,point,distance};
+            if(!nearestUnavailable||distance<nearestUnavailable.distance)nearestUnavailable={victim,limb,point,distance};
           }
         }
       }
     };
     await scanVisibleLimbs(combatBefore,true);
     const lateralReposition={attempted:false,scans:0};
-    if(candidates.length===0&&nearestOffscreen){
+    if(candidates.length===0&&nearestUnavailable){
       const start=await page.evaluate(()=>window.__gameState().grounding.sourceRoot);
-      const targetX=nearestOffscreen.victim.position[0];
-      const screenSide=nearestOffscreen.point.x-viewport.width/2;
+      const targetX=nearestUnavailable.victim.position[0];
+      const screenSide=nearestUnavailable.point.x-viewport.width/2;
       const worldSide=targetX-start[0];
       const key=screenSide===0?(worldSide<0?'KeyA':'KeyD'):(screenSide<0?'KeyA':'KeyD');
       lateralReposition.attempted=true;
-      Object.assign(lateralReposition,{key,nearestVictim:nearestOffscreen.victim.body,
-        aimedLimb:nearestOffscreen.limb.limb,projectedPoint:{x:nearestOffscreen.point.x,y:nearestOffscreen.point.y},
+      Object.assign(lateralReposition,{key,nearestVictim:nearestUnavailable.victim.body,
+        aimedLimb:nearestUnavailable.limb.limb,projectedPoint:{x:nearestUnavailable.point.x,y:nearestUnavailable.point.y},
+        blocker:nearestUnavailable.point.blocker,
         startX:start[0],targetX});
       const sprintDirection=screenSide<0?-1:1;
       const movementStick=page.locator('#movementStick');
@@ -529,7 +530,7 @@ try {
         victim:candidate.victim.body,
         aimedLimb:candidate.limb.limb,
         aimPoint:candidate.limb.aimPoint,
-        screenPoint:{x:point.x,y:point.y},
+        screenPoint:{x:point.x,y:point.y,visible:point.visible,blocker:point.blocker},
         shotsBefore,
         shotsAfter:afterSnapshot.shotsFired,
         lastHitLimb:afterVictim?.lastHitLimb??null,
