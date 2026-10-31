@@ -485,6 +485,7 @@ public sealed class FullSourceActorBridge
             chamberLive = weapon.ChamberStatus == WeaponBase.ChamberState.Live,
             aimAlignment,
             aimConverged,
+            sourceAimPoint = pointer == null ? null : new[] { pointer.WorldPoint.x, pointer.WorldPoint.y, pointer.WorldPoint.z },
             reserve,
             reloading = body.IsManipulatingEquipment
         };

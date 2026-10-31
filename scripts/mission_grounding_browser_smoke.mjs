@@ -581,6 +581,7 @@ try {
         const state=window.__gameState();
         return {aimGeneration:state.aimGeneration,sourceAimAppliedGeneration:state.sourceAimAppliedGeneration,
           aimPoint:state.aimPoint,aimDirection:state.aimDirection,
+          sourceAimPoint:state.weaponState?.sourceAimPoint,
           aimAlignment:state.weaponState?.aimAlignment,aimConverged:state.weaponState?.aimConverged};
       });
       let afterSnapshot=beforeSnapshot;
@@ -602,6 +603,7 @@ try {
           aimGeneration:window.__gameState().aimGeneration,
           sourceAimAppliedGeneration:window.__gameState().sourceAimAppliedGeneration,
           aimPoint:window.__gameState().aimPoint,
+          sourceAimPoint:window.__gameState().weaponState?.sourceAimPoint,
           aimConverged:window.__gameState().weaponState?.aimConverged,
         }));
         const shotDeadline=Date.now()+3000;
