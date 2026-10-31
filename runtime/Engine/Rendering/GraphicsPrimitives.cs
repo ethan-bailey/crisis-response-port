@@ -24,7 +24,7 @@ namespace UnityEngine {
  public sealed class Material:Object {
   public static Action<string,Texture> TextureDriver {get;set;}
   public Material(){}
-  public Material(Shader shader){this.shader=shader??throw new ArgumentNullException(nameof(shader));world=RuntimeWorld.Current;}
+  public Material(Shader shader){this.shader=shader??throw new ArgumentNullException(nameof(shader));passCount=this.shader.passCount;world=RuntimeWorld.Current;}
   public Shader shader {get;set;}
   public int renderQueue {get;set;}=-1;
   public bool enableInstancing {get;set;}
@@ -32,7 +32,9 @@ namespace UnityEngine {
   public int lightmapFlags {get;set;}
   public HideFlags hideFlags {get;set;}
   public int passCount {get;set;}
-  public bool SetPass(int pass){if(pass<0||pass>=passCount)throw new ArgumentOutOfRangeException(nameof(pass));return false;}
+  // Unity's SetPass reports unavailable/out-of-range passes as false; callers
+  // decide whether they can continue with a bound source-compatible driver.
+  public bool SetPass(int pass)=>pass>=0&&pass<passCount&&shader!=null&&shader.isSupported;
   Texture2D texture;
   readonly Dictionary<string,Color> colors=new();
   readonly Dictionary<string,float> floats=new();

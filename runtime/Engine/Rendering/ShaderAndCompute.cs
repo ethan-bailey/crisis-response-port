@@ -21,6 +21,8 @@ public enum HideFlags { None=0, HideInHierarchy=1, HideInInspector=2, DontSaveIn
 public class Shader : Object {
     public static Func<string,Shader> Resolver { get; set; }
     public bool isSupported { get; set; }
+    // Pass count is recovered from the shader binding used by the runtime host.
+    public int passCount { get; set; }
     public static Shader Find(string name) {
         ArgumentException.ThrowIfNullOrEmpty(name);
         return Resolver?.Invoke(name);

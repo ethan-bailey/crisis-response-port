@@ -43,7 +43,9 @@ public static class BrowserEntryTeamMission
         Resources.Configure(package, world);
         Screen.Bind(world, new DisplayDriver());
         QualitySettings.Bind(world, new QualityDriver());
-        Shader.Resolver ??= name => new Shader { name = name, isSupported = false };
+        // The CPU GL adapter below supports the original GUI/Text Shader subset
+        // used by LimbRenderer: constant-color triangles/quads into RGBA masks.
+        Shader.Resolver ??= name => new Shader { name = name, isSupported = name == "GUI/Text Shader", passCount = name == "GUI/Text Shader" ? 1 : 0 };
         UnityEngine.SceneManagement.SceneManager.Bind(world, new SceneDriver());
         Material.TextureDriver ??= (_, _) => { };
         UnityEngine.Audio.AudioMixer.Bind(world, audioEvents);
