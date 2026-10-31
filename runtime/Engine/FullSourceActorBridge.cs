@@ -201,6 +201,33 @@ public sealed class FullSourceActorBridge
 
     void RecordProjectileInteraction(SourceProjectile projectile, string kind, string limb)
     {
+        var impactPosition = projectile.transform.position;
+        var nearbyBallisticColliders = world.Objects.OfType<Collider>()
+            .Where(collider => collider && ((1 << collider.gameObject.layer) & Masks.Instance.BallisticTargets) != 0)
+            .Select(collider => new
+            {
+                collider,
+                distance = Vector3.Distance(collider.transform.position, impactPosition)
+            })
+            .OrderBy(candidate => candidate.distance)
+            .Take(8)
+            .Select(candidate =>
+            {
+                var collider = candidate.collider;
+                return new
+                {
+                    name = collider.name,
+                    gameObject = collider.gameObject.name,
+                    layer = collider.gameObject.layer,
+                    colliderType = collider.GetType().Name,
+                    distance = candidate.distance,
+                    position = new[] { collider.transform.position.x, collider.transform.position.y, collider.transform.position.z },
+                    hasBallisticMaterial = collider.GetComponent<BallisticMaterial>() != null,
+                    ownerBody = collider.GetComponentInParent<CharacterBody>()?.name,
+                    ownerWeapon = collider.GetComponentInParent<WeaponBase>()?.name
+                };
+            })
+            .ToArray();
         projectileInteractionEvidence.Add(new
         {
             time = Time.time,
@@ -210,7 +237,8 @@ public sealed class FullSourceActorBridge
             owner = projectile.Owner?.name,
             firstHitCharacter = projectile.FirstHitCharacter?.name,
             position = new[] { projectile.transform.position.x, projectile.transform.position.y, projectile.transform.position.z },
-            status = projectile.Status.ToString()
+            status = projectile.Status.ToString(),
+            nearbyBallisticColliders
         });
         if (projectileInteractionEvidence.Count > 64) projectileInteractionEvidence.RemoveAt(0);
     }
