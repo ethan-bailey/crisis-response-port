@@ -439,6 +439,42 @@ try {
       'the combat view must use the original Mission Extra that disables exterior walls');
     assert.ok(exteriorVisibility.matchingRoomExteriorHierarchies>0,
       `the source Room event must deactivate its authored Exterior hierarchies: ${JSON.stringify(exteriorVisibility)}`);
+    // Projectile traces showed the starting muzzle overlaps the entrance fixture
+    // cluster. Use the production movement stick to clear that authored geometry
+    // before assessing source fire and injury callbacks.
+    const combatLane={attempted:false,reason:'muzzle already past entrance fixtures'};
+    const laneStart=await page.evaluate(()=>window.__gameState().grounding.sourceRoot);
+    if(laneStart[0]<-0.1){
+      combatLane.attempted=true;
+      Object.assign(combatLane,{startX:laneStart[0],targetX:-0.1,control:'production movement joystick sprint',direction:1});
+      const movementStick=page.locator('#movementStick');
+      const stickBox=await movementStick.boundingBox();
+      assert.ok(stickBox,'combat lane clearance requires the production movement joystick');
+      const geometry=await movementStick.evaluate(surface=>{
+        const thumb=surface.querySelector('.stick-thumb');
+        const rect=surface.getBoundingClientRect();
+        return {center:{x:rect.left+rect.width/2,y:rect.top+rect.height/2},
+          travelX:(rect.width-thumb.offsetWidth)/2-4};
+      });
+      await page.mouse.move(geometry.center.x,geometry.center.y);
+      await page.mouse.down();
+      try{
+        await page.mouse.move(geometry.center.x+geometry.travelX*1.8,geometry.center.y,{steps:4});
+        await page.waitForFunction(()=>document.querySelector('#movementStick')?.classList.contains('sprinting'),
+          null,{timeout:5000});
+        const deadline=Date.now()+12000;
+        while(Date.now()<deadline){
+          const position=await page.evaluate(()=>window.__gameState().grounding.sourceRoot);
+          combatLane.endX=position[0];
+          if(position[0]>=combatLane.targetX)break;
+          await page.waitForTimeout(200);
+        }
+      }finally{
+        await page.mouse.up();
+      }
+      assert.ok(combatLane.endX>=combatLane.targetX,
+        `production movement must clear the entrance fixture cluster before source firing: ${JSON.stringify(combatLane)}`);
+    }
     const candidates=[];
     const viewport=await page.evaluate(()=>({width:innerWidth,height:innerHeight}));
     let nearestUnavailable=null;
@@ -600,7 +636,7 @@ try {
     assert.ok(attempts.at(-1)?.projectiles?.every(projectile => projectile.status !== 'Error'),
       `accepted injury must not leave an errored original projectile: ${JSON.stringify(attempts.at(-1)?.projectiles)}`);
     assert.deepEqual(pageErrors, [], 'packaged FullSource projectile hit and injury callbacks must not throw browser runtime errors');
-    combatReport={status:'passed',shotsBefore:combatBefore.shotsFired,shotsAfter:attempts.at(-1).shotsAfter,occupantsBefore:combatBefore.occupants.length,exteriorVisibility,attempts,hit:acceptedHit,sourceProjectileAndPhysiologyCallbacks:true,nativePhysXIntegrationVerified:false,woundPixelsVerified:false};
+    combatReport={status:'passed',shotsBefore:combatBefore.shotsFired,shotsAfter:attempts.at(-1).shotsAfter,occupantsBefore:combatBefore.occupants.length,exteriorVisibility,combatLane,attempts,hit:acceptedHit,sourceProjectileAndPhysiologyCallbacks:true,nativePhysXIntegrationVerified:false,woundPixelsVerified:false};
   }
   const mobilePage = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   mobilePage.on('pageerror', error => pageErrors.push(String(error)));
