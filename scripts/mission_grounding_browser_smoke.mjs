@@ -461,7 +461,7 @@ try {
         await page.mouse.move(geometry.center.x,geometry.center.y);
         await page.mouse.down();
         try{
-          await page.mouse.move(geometry.center.x+geometry.travelX,geometry.center.y,{steps:2});
+          await page.mouse.move(geometry.center.x+geometry.travelX*1.8,geometry.center.y,{steps:2});
           await page.waitForFunction(()=>document.querySelector('#movementStick')?.classList.contains('sprinting'),
             null,{timeout:5000});
           await page.waitForTimeout(180);
