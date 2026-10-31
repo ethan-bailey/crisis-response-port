@@ -7,6 +7,7 @@ public static class PrefabCloner {
     public static T Clone<T>(T original,Transform parent=null,bool worldPositionStays=true,Vector3? position=null,Quaternion? rotation=null) where T:Object {
         if(!original)throw new ArgumentException("Cannot instantiate a null/destroyed original object");
         if(original is Texture2D texture)return (T)(Object)texture.CloneTexture(parent?.world??RuntimeWorld.Current);
+        if(original is Material material)return (T)(Object)material.CloneForRenderer(parent?.world??RuntimeWorld.Current);
         var root=original as GameObject??(original as Component)?.gameObject;
         if(root==null)throw new NotSupportedException($"Asset cloning for {original.GetType().Name} is not implemented");
         var world=parent?.world??RuntimeWorld.Current;
