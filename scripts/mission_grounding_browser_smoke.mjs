@@ -505,8 +505,8 @@ try {
     const attempts=[];
     const acceptedHits=[];
     const failures=[];
-    const visibleTorsoTargets=await page.evaluate(()=>{
-      const snapshot=window.__sourceCombatSnapshot();
+    const visibleTorsoTargets=await page.evaluate(async()=>{
+      const snapshot=await window.__sourceCombatSnapshot();
       return snapshot.occupants.filter(victim=>victim.alive)
         .map(victim=>({body:victim.body,position:victim.position,torso:victim.limbs.find(limb=>limb.limb==='Torso')}))
         .filter(target=>target.torso);
@@ -529,8 +529,8 @@ try {
       const aimDeadline=Date.now()+5000;
       let projection=null,point=candidate,aimDistance=Infinity,aimStateAtFire=null,lastAimState=null;
       while(Date.now()<aimDeadline){
-        const live=await page.evaluate(body=>{
-          const snapshot=window.__sourceCombatSnapshot(),victim=snapshot.occupants.find(value=>value.body===body);
+        const live=await page.evaluate(async body=>{
+          const snapshot=await window.__sourceCombatSnapshot(),victim=snapshot.occupants.find(value=>value.body===body);
           const limb=victim?.limbs.find(value=>value.limb==='Torso'),state=window.__gameState();
           return {victim,limb,state,point:limb?window.__sourceCombatScreenPoint(limb.aimPoint):null};
         },candidate.body);
@@ -556,8 +556,8 @@ try {
         try{
           const shotDeadline=Date.now()+3000;
           while(Date.now()<shotDeadline){
-            const live=await page.evaluate(body=>{
-              const snapshot=window.__sourceCombatSnapshot(),victim=snapshot.occupants.find(value=>value.body===body);
+            const live=await page.evaluate(async body=>{
+              const snapshot=await window.__sourceCombatSnapshot(),victim=snapshot.occupants.find(value=>value.body===body);
               const limb=victim?.limbs.find(value=>value.limb==='Torso');
               return {snapshot,limb,point:limb?window.__sourceCombatScreenPoint(limb.aimPoint):null,camera:window.__gameState().sourceCamera};
             },candidate.body);
