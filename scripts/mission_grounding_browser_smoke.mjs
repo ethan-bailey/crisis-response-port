@@ -514,7 +514,7 @@ try {
       const beforeVictim=beforeSnapshot.occupants.find(victim=>victim.body===scenario.target);
       const beforeTorso=beforeVictim?.limbs.find(limb=>limb.limb==='Torso');
       const shotsBefore=beforeSnapshot.shotsFired;
-      let point=null,projection=null,aimStateAtFire=null,lastAimState=null,aimDistance=Infinity,shotObserved=false;
+      let point=null,projection=null,aimStateAtFire=null,lastAimState=null,aimDistance=Infinity,fireInputObserved=false,shotObserved=false;
       if(beforeVictim?.alive&&beforeTorso){
         point=await page.evaluate(position=>window.__sourceCombatScreenPoint(position),beforeTorso.aimPoint);
         const aimGenerationBefore=await page.evaluate(()=>window.__gameState().aimGeneration);
@@ -539,7 +539,6 @@ try {
         }
       }
       if(aimStateAtFire){
-        let fireInputObserved=false;
         await page.mouse.move(point.x,point.y);
         await page.mouse.down();
         try{
