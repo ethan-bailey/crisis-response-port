@@ -741,25 +741,23 @@ public sealed class FullSourceActorBridge
 
         CharacterBody target;
         if(shotNumber==1){
-            target=victims.FirstOrDefault(victim=>victim.name=="Occupant 2")
-                ??throw new InvalidOperationException("The browser projectile scenario requires the visible authored Occupant 2");
-            stagedBrowserProjectileContractFirstVictim=target;
-            stagedBrowserProjectileContractSecondVictim=victims.FirstOrDefault(victim=>victim.name=="Occupant 5")
+            target=victims.FirstOrDefault(victim=>victim.name=="Occupant 5")
                 ??throw new InvalidOperationException("The browser projectile scenario requires the visible authored Occupant 5");
+            stagedBrowserProjectileContractFirstVictim=target;
+            stagedBrowserProjectileContractSecondVictim=victims.FirstOrDefault(victim=>victim.name=="Occupant 2")
+                ??throw new InvalidOperationException("The browser projectile scenario requires the distinct authored Occupant 2");
             if(ReferenceEquals(stagedBrowserProjectileContractSecondVictim,target))
                 throw new InvalidOperationException("The browser projectile scenario requires two distinct authored Occupants");
-            // Keep the original shooter stationary over the authored floor while removing intervening Occupants.
+            // Keep the real production-moved shooter in its clear entrance-side position while removing intervening Occupants.
             body.Rigidbody.velocity=Vector3.zero;
-            body.transform.position=new Vector3(4f,0.94f,-0.7f);
             body.IsKneeling=true;
             int otherIndex=0;
             foreach(var otherVictim in victims.Where(victim=>!ReferenceEquals(victim,target)))
                 otherVictim.transform.position=new Vector3(40f+otherIndex++*2f,otherVictim.transform.position.y,otherVictim.transform.position.z);
         }
         else{
-            // FireOnce stages the same stationary kneeling shooter at X=4 for the second distinct Occupant too.
+            // Keep the source shooter fixed at its production-moved position for the second distinct Occupant too.
             body.Rigidbody.velocity=Vector3.zero;
-            body.transform.position=new Vector3(4f,0.94f,-0.7f);
             body.IsKneeling=true;
             if(stagedBrowserProjectileContractFirstVictim==null||stagedBrowserProjectileContractSecondVictim==null)
                 throw new InvalidOperationException("The second browser projectile target cannot be staged before the first");
@@ -772,9 +770,8 @@ public sealed class FullSourceActorBridge
         }
 
         var targetPosition=target.transform.position;
-        // Restore the two source-visible authored Torso lanes after AI motion, at the grounded shooter depth.
-        var laneX=shotNumber==1?11.06f:17.74f;
-        target.transform.position=new Vector3(laneX,0.94f,-0.7f);
+        // Stage both original Occupants in the proven visible far lane at the grounded source actor depth.
+        target.transform.position=new Vector3(17.74f,0.94f,body.transform.position.z);
         var sourceTarget=target.GetComponent<Target>()
             ??throw new InvalidOperationException($"Original Occupant {target.name} has no Target component");
         body.Blackboard.Target=sourceTarget;

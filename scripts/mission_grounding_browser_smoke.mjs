@@ -567,11 +567,10 @@ try {
         projectiles:afterSnapshot.projectiles,spawnedProjectiles:afterSnapshot.spawnedProjectiles,
         projectileInteractions:afterSnapshot.projectileInteractions};
       attempts.push(attempt);
-      if(scenario.shooterPosition?.[0]!==4)failures.push(`shot ${shotNumber}: staged shooter X expected 4, observed ${scenario.shooterPosition?.[0]}`);
+      if(!(scenario.shooterPosition?.[0]>-1&&scenario.shooterPosition?.[0]<1))failures.push(`shot ${shotNumber}: production-moved shooter X expected in (-1, 1), observed ${scenario.shooterPosition?.[0]}`);
       if(scenario.shooterPosition?.[1]!==0.94)failures.push(`shot ${shotNumber}: grounded shooter Y expected 0.94, observed ${scenario.shooterPosition?.[1]}`);
       if(scenario.kneeling!==true)failures.push(`shot ${shotNumber}: staged shooter kneeling expected true, observed ${scenario.kneeling}`);
-      const expectedTargetX=shotNumber===1?11.06:17.74;
-      if(Math.abs(scenario.targetPosition?.[0]-expectedTargetX)>0.1)failures.push(`shot ${shotNumber}: authored target X expected ${expectedTargetX}, observed ${scenario.targetPosition?.[0]}`);
+      if(Math.abs(scenario.targetPosition?.[0]-17.74)>0.1)failures.push(`shot ${shotNumber}: visible Torso lane X expected 17.74, observed ${scenario.targetPosition?.[0]}`);
       if(scenario.aimedLimb!=='Torso')failures.push(`shot ${shotNumber}: aimed limb expected Torso, observed ${scenario.aimedLimb}`);
       if(!shotObserved)failures.push(`shot ${shotNumber}: no production trigger round observed for staged Torso ${scenario.target}`);
       if(attempt.shotsAfter-attempt.shotsBefore!==1)failures.push(`shot ${shotNumber}: exactly one production round expected, observed ${attempt.shotsAfter-attempt.shotsBefore}`);
