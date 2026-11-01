@@ -651,7 +651,7 @@ public sealed class FullSourceActorBridge
             // The preceding browser movement setup can leave velocity on the original actor;
             // the source contract starts this fixture from rest and keeps it staged at X=4.
             body.Rigidbody.velocity=Vector3.zero;
-            body.transform.position=new Vector3(4f,body.transform.position.y,body.transform.position.z);
+            body.transform.position=new Vector3(4f,body.transform.position.y,-0.7f);
             body.IsKneeling=true;
             int otherIndex=0;
             foreach(var otherVictim in victims.Where(victim=>!ReferenceEquals(victim,target)))
@@ -660,7 +660,7 @@ public sealed class FullSourceActorBridge
         else{
             // FireOnce stages the same stationary kneeling shooter at X=4 for the second distinct Occupant too.
             body.Rigidbody.velocity=Vector3.zero;
-            body.transform.position=new Vector3(4f,body.transform.position.y,body.transform.position.z);
+            body.transform.position=new Vector3(4f,body.transform.position.y,-0.7f);
             body.IsKneeling=true;
             if(stagedProjectileContractFirstVictim==null)
                 throw new InvalidOperationException("The second projectile contract target cannot be staged before the first");
@@ -674,7 +674,9 @@ public sealed class FullSourceActorBridge
         }
 
         var targetPosition=target.transform.position;
-        target.transform.position=new Vector3(7f,targetPosition.y+.75f,targetPosition.z);
+        // Keep the original actors on the authored continuous X=4..7 floor strip.
+        // The serialized floor boxes cover Z=-1..3, while the scene spawn Z=-1.5 falls off that platform.
+        target.transform.position=new Vector3(7f,targetPosition.y+.75f,-0.7f);
         var sourceTarget=target.GetComponent<Target>()
             ??throw new InvalidOperationException($"Original Occupant {target.name} has no Target component");
         body.Blackboard.Target=sourceTarget;
