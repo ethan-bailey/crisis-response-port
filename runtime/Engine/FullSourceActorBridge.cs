@@ -641,7 +641,7 @@ public sealed class FullSourceActorBridge
         if(shotNumber is not (1 or 2))throw new ArgumentOutOfRangeException(nameof(shotNumber));
         var victims=world.Objects.OfType<CharacterBody>()
             .Where(candidate=>candidate&&candidate.GetComponent<Occupant>()!=null).ToArray();
-        if(victims.Length<2)throw new InvalidOperationException($"The projectile contract scenario requires two original Occupants; found {victims.Length}");
+        if(victims.Length<2)throw new InvalidOperationException($"The projectile contract scenario requires two live original Occupants; found {victims.Length}");
 
         CharacterBody target;
         if(shotNumber==1){
@@ -741,11 +741,14 @@ public sealed class FullSourceActorBridge
 
         CharacterBody target;
         if(shotNumber==1){
-            target=victims.FirstOrDefault(victim=>victim.name=="Occupant 5")
-                ??throw new InvalidOperationException("The browser projectile scenario requires the visible authored Occupant 5");
+            // AI lifecycle can remove a particular serialized Occupant before
+            // the browser-only combat fixture begins. Select from the original
+            // actors still owned by this Mission world, preferring the
+            // previously proven visible Occupant when it is present.
+            target=victims.FirstOrDefault(victim=>victim.name=="Occupant 5")??victims[0];
             stagedBrowserProjectileContractFirstVictim=target;
-            stagedBrowserProjectileContractSecondVictim=victims.FirstOrDefault(victim=>victim.name=="Occupant 2")
-                ??throw new InvalidOperationException("The browser projectile scenario requires the distinct authored Occupant 2");
+            stagedBrowserProjectileContractSecondVictim=victims.FirstOrDefault(victim=>!ReferenceEquals(victim,target))
+                ??throw new InvalidOperationException("The browser projectile scenario requires a second live original Occupant");
             if(ReferenceEquals(stagedBrowserProjectileContractSecondVictim,target))
                 throw new InvalidOperationException("The browser projectile scenario requires two distinct authored Occupants");
             // Keep the real production-moved shooter in its clear entrance-side position while removing intervening Occupants.
