@@ -571,7 +571,7 @@ try {
           await page.waitForTimeout(50);
         }
       }
-      let fireModeToggleObserved=false,fireModeAtFire=null,fireInputAtPress=null;
+      let fireModeToggleObserved=false,fireModeAtFire=null,fireInputAtPress=null,boltCycleAfterAim=false;
       if(aimStateAtFire){
         let fireState=await page.evaluate(()=>window.__gameState().weaponState);
         const modeDeadline=Date.now()+5000;
@@ -587,7 +587,6 @@ try {
             if(fireState?.fireMode&&fireState.fireMode!==modeBefore){fireModeToggleObserved=true;break;}
           }
         }
-        let boltCycleAfterAim=false;
         if(fireState?.readyToFire===false){
           boltCycleAfterAim=true;
           await page.keyboard.down('b');
