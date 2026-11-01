@@ -28,8 +28,10 @@ public sealed class AnimationCurve {
     public AnimationCurve(params Keyframe[] keys){values=keys.OrderBy(k=>k.time).ToArray();
         for(int i=1;i<values.Length;i++)if(values[i].time<=values[i-1].time)throw new NotSupportedException("Duplicate curve key time");}
     public float Evaluate(float time){
-        if(!float.IsFinite(time))throw new ArgumentOutOfRangeException(nameof(time));
         if(values.Length==0)return 0;
+        if(float.IsNaN(time))return values[0].value;
+        if(float.IsPositiveInfinity(time))time=values[^1].time;
+        else if(float.IsNegativeInfinity(time))time=values[0].time;
         if(values.Length==1)return values[0].value;
         var mode=time<values[0].time?preWrapMode:postWrapMode;
         // Unity curves with the default wrap mode hold their endpoint outside the keyed range.
