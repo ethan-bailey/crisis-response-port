@@ -32,6 +32,8 @@ public sealed class AnimationCurve {
         if(values.Length==0)return 0;
         if(values.Length==1)return values[0].value;
         var mode=time<values[0].time?preWrapMode:postWrapMode;
+        // Unity curves with the default wrap mode hold their endpoint outside the keyed range.
+        if(mode==WrapMode.Default)mode=WrapMode.ClampForever;
         if(time<values[0].time||time>values[^1].time){
             float first=values[0].time,last=values[^1].time,duration=last-first;
             if(mode is WrapMode.Once or WrapMode.ClampForever)time=Math.Clamp(time,first,last);

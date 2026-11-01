@@ -55,6 +55,8 @@ public class WeaponBarrel : MonoBehaviour
 
 	public void Animate(bool opening, float boltOffset, float openRatio, float cycle)
 	{
+		if (!float.IsFinite(openRatio)) openRatio = opening ? 1f : 0f;
+		openRatio = Mathf.Clamp01(openRatio);
 		if (animateBarrel)
 		{
 			float num = Mathf.Min(followDistance, boltOffset);
