@@ -29,6 +29,7 @@ public sealed class FullSourceActorBridge
     readonly List<object> projectileSpawnEvidence=[];
     readonly List<object> projectileInteractionEvidence=[];
     readonly Dictionary<int, GameObject> trackedCasingObjects=[];
+    CharacterBody? stagedProjectileContractFirstVictim;
     readonly FieldInfo accelerationField;
     readonly FieldInfo accelerationMagnitudeField;
     readonly BrowserAudioEventQueue audioEventQueue;
@@ -628,6 +629,62 @@ public sealed class FullSourceActorBridge
             projectiles,
             spawnedProjectiles = projectileSpawnEvidence.ToArray(),
             projectileInteractions = projectileInteractionEvidence.ToArray()
+        };
+    }
+
+    /// <summary>Stage the original actors in the same clear lane used by MissionProjectileContracts.</summary>
+    public object StageProjectileContractScenario(int shotNumber)
+    {
+        world.MakeCurrent();
+        if(shotNumber is not (1 or 2))throw new ArgumentOutOfRangeException(nameof(shotNumber));
+        var victims=world.Objects.OfType<CharacterBody>()
+            .Where(candidate=>candidate&&candidate.GetComponent<Occupant>()!=null).ToArray();
+        if(victims.Length<2)throw new InvalidOperationException($"The projectile contract scenario requires two original Occupants; found {victims.Length}");
+
+        CharacterBody target;
+        if(shotNumber==1){
+            target=victims.OrderBy(victim=>MathF.Abs(victim.transform.position.x-2f))
+                .FirstOrDefault(victim=>MathF.Abs(victim.transform.position.x-2f)>6f)
+                ??throw new InvalidOperationException("The projectile contract scenario has no Occupant beyond the authored roof lane");
+            stagedProjectileContractFirstVictim=target;
+            body.transform.position=new Vector3(4f,body.transform.position.y,body.transform.position.z);
+            body.IsKneeling=true;
+            int otherIndex=0;
+            foreach(var otherVictim in victims.Where(victim=>!ReferenceEquals(victim,target)))
+                otherVictim.transform.position=new Vector3(40f+otherIndex++*2f,otherVictim.transform.position.y,otherVictim.transform.position.z);
+        }
+        else{
+            if(stagedProjectileContractFirstVictim==null)
+                throw new InvalidOperationException("The second projectile contract target cannot be staged before the first");
+            target=victims.FirstOrDefault(victim=>!ReferenceEquals(victim,stagedProjectileContractFirstVictim))
+                ??throw new InvalidOperationException("The projectile contract scenario has no second Occupant");
+            var firstPosition=stagedProjectileContractFirstVictim.transform.position;
+            stagedProjectileContractFirstVictim.transform.position=new Vector3(40f,firstPosition.y,firstPosition.z);
+            int otherIndex=0;
+            foreach(var otherVictim in victims.Where(victim=>!ReferenceEquals(victim,stagedProjectileContractFirstVictim)&&!ReferenceEquals(victim,target)))
+                otherVictim.transform.position=new Vector3(42f+otherIndex++*2f,otherVictim.transform.position.y,otherVictim.transform.position.z);
+        }
+
+        var targetPosition=target.transform.position;
+        target.transform.position=new Vector3(7f,targetPosition.y+.75f,targetPosition.z);
+        var sourceTarget=target.GetComponent<Target>()
+            ??throw new InvalidOperationException($"Original Occupant {target.name} has no Target component");
+        body.Blackboard.Target=sourceTarget;
+        body.WeaponAimer.Mode=WeaponAimer.AimMode.Ready;
+        world.Invoke(body.WeaponAimer,"Update");
+        var torso=target.limbMap.TryGetValue(LimbId.Torso,out var targetTorso)?targetTorso
+            :throw new InvalidOperationException($"Original Occupant {target.name} has no Torso limb");
+        body.AimPoint=torso.AimPointWithExtents(body.RightUpperArm.transform.position);
+        return new{
+            shotNumber,
+            shooter=body.name,
+            shooterPosition=new[]{body.transform.position.x,body.transform.position.y,body.transform.position.z},
+            kneeling=body.IsKneeling,
+            target=target.name,
+            targetPosition=new[]{target.transform.position.x,target.transform.position.y,target.transform.position.z},
+            aimedLimb=torso.id.ToString(),
+            aimPoint=new[]{body.AimPoint.x,body.AimPoint.y,body.AimPoint.z},
+            sourceSnapshot=Snapshot()
         };
     }
 

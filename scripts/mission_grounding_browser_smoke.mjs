@@ -61,6 +61,7 @@ const page = await browser.newPage({ viewport: { width: 1600, height: 720 }, dev
 const pageErrors = [];
 page.on('pageerror', error => pageErrors.push(String(error)));
 let report;
+let combatEvidence=null;
 try {
   await page.goto(`http://127.0.0.1:${address.port}/game/`, { waitUntil: 'domcontentloaded', timeout: 120000 });
   await page.waitForFunction(() => {
@@ -431,7 +432,7 @@ try {
   assert.deepEqual(pageErrors, [], 'source reload and audio callbacks must not throw browser runtime errors');
   let combatReport={skipped:true,reason:'reload-only acceptance'};
   if(!reloadOnly){
-    const combatBefore=await page.evaluate(()=>window.__sourceCombatSnapshot());
+    let combatBefore=await page.evaluate(()=>window.__sourceCombatSnapshot());
     assert.ok(combatBefore.shotsFired>=ammunitionBefore.magazine-ammunitionSpent.magazine,
       `combat snapshot must observe the source Operator after its real fire-control presses: ${JSON.stringify(combatBefore)}`);
     const exteriorVisibility=await page.evaluate(()=>window.__setSourceExteriorWallsHidden(true));
@@ -499,217 +500,110 @@ try {
       combatLane.released={x:released.playerX,y:released.playerY,velocity:released.velocity,
         animation:released.animation,rightPressed:released.originalInput?.right?.Pressed};
     }
-    const candidates=[];
-    let nearestUnavailable=null;
-    const scanVisibleLimbs=async(snapshot)=>{
-      const victims=snapshot.occupants.filter(value=>value.alive);
-      const targets=victims.flatMap(victim=>victim.limbs
-        .filter(limb=>limb.limb==='Torso')
-        .map(limb=>({victimBody:victim.body,limb,aimPoint:limb.aimPoint})));
-      const projected=await page.evaluate(targets=>targets.map(target=>({
-        ...window.__sourceCombatScreenPoint(target.aimPoint),
-        victimBody:target.victimBody,
-        limb:target.limb,
-      })),targets);
-      for(const result of projected){
-        const victim=victims.find(value=>value.body===result.victimBody);
-        const {victimBody,limb,...point}=result;
-        if(point.inside&&point.visible)candidates.push({victim,limb,point});
-        else{
-          const distance=Math.hypot(point.x-viewport.width/2,point.y-viewport.height/2);
-          if(!nearestUnavailable||distance<nearestUnavailable.distance)nearestUnavailable={victim,limb,point,distance};
-        }
-      }
-    };
-    const combatTargets=await page.evaluate(()=>window.__sourceCombatSnapshot());
-    await scanVisibleLimbs(combatTargets);
-    const lateralReposition={attempted:false,scans:0};
-    if(candidates.length===0&&nearestUnavailable){
-      const start=await page.evaluate(()=>window.__gameState().grounding.sourceRoot);
-      const targetX=nearestUnavailable.victim.position[0];
-      const screenSide=nearestUnavailable.point.x-viewport.width/2;
-      const worldSide=targetX-start[0];
-      const key=screenSide===0?(worldSide<0?'KeyA':'KeyD'):(screenSide<0?'KeyA':'KeyD');
-      lateralReposition.attempted=true;
-      Object.assign(lateralReposition,{key,nearestVictim:nearestUnavailable.victim.body,
-        aimedLimb:nearestUnavailable.limb.limb,projectedPoint:{x:nearestUnavailable.point.x,y:nearestUnavailable.point.y},
-        blocker:nearestUnavailable.point.blocker,
-        startX:start[0],targetX});
-      const sprintDirection=screenSide<0?-1:1;
-      const movementStick=page.locator('#movementStick');
-      const stickBox=await movementStick.boundingBox();
-      assert.ok(stickBox,'combat reposition requires the production movement joystick');
-      const stickGeometry=await movementStick.evaluate(surface=>{
-        const thumb=surface.querySelector('.stick-thumb');
-        const rect=surface.getBoundingClientRect();
-        return {center:{x:rect.left+rect.width/2,y:rect.top+rect.height/2},
-          travelX:(rect.width-thumb.offsetWidth)/2-4};
-      });
-      Object.assign(lateralReposition,{control:'production movement joystick sprint',sprintDirection});
-      await page.mouse.move(stickGeometry.center.x,stickGeometry.center.y);
-      await page.mouse.down();
-      try{
-        await page.mouse.move(stickGeometry.center.x+stickGeometry.travelX*sprintDirection*1.8,
-          stickGeometry.center.y,{steps:4});
-        await page.waitForFunction(()=>document.querySelector('#movementStick')?.classList.contains('sprinting'),
-          null,{timeout:5000});
-        const deadline=Date.now()+15000;
-        while(Date.now()<deadline&&candidates.length===0){
-          await page.waitForTimeout(500);
-          const live=await page.evaluate(()=>window.__sourceCombatSnapshot());
-          const position=await page.evaluate(()=>window.__gameState().grounding.sourceRoot);
-          lateralReposition.scans++;
-          lateralReposition.endX=position[0];
-          await scanVisibleLimbs(live);
-        }
-      }finally{
-        await page.mouse.up();
-      }
-    }
-    candidates.sort((a,b)=>{
-      const centerDistance=point=>Math.hypot(point.x-viewport.width/2,point.y-viewport.height/2);
-      return centerDistance(a.point)-centerDistance(b.point);
-    });
-    const candidatesToTry=candidates.slice(0,12);
-    assert.ok(combatBefore.occupants.some(victim=>victim.alive&&victim.limbs.length>0),
-      'packaged FullSource Mission must expose live serialized Occupant limbs');
+    assert.ok(combatBefore.occupants.some(victim=>victim.alive&&victim.limbs.some(limb=>limb.limb==='Torso')),
+      'packaged FullSource Mission must expose live serialized Occupant Torso limbs');
     const attempts=[];
     const acceptedHits=[];
-    const hitBodies=new Set();
-    for(const candidate of candidatesToTry){
-      if(hitBodies.has(candidate.victim.body))continue;
-      let projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),camera:window.__gameState().sourceCamera}),candidate.limb.aimPoint);
-      let point=projection.point;
-      if(!point.inside||!point.visible){
-        attempts.push({victim:candidate.victim.body,aimedLimb:candidate.limb.limb,aimPoint:candidate.limb.aimPoint,
-          scannedScreenPoint:candidate.point,screenPoint:point,cameraAtProjection:projection.camera,skipped:'target left current camera frame or became occluded'});
-        continue;
-      }
+    let firstScenarioBefore=null;
+    const fireContractTarget=async shotNumber=>{
+      const scenario=await page.evaluate(shotNumber=>window.__stageSourceProjectileContractScenario(shotNumber),shotNumber);
+      await page.waitForTimeout(250);
       const beforeSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
-      const beforeVictim=beforeSnapshot.occupants.find(victim=>victim.body===candidate.victim.body);
+      if(shotNumber===1){combatBefore=beforeSnapshot;firstScenarioBefore=beforeSnapshot;}
+      const beforeVictim=beforeSnapshot.occupants.find(victim=>victim.body===scenario.target);
       const shotsBefore=beforeSnapshot.shotsFired;
+      const aimPoint=scenario.aimPoint;
+      let projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),camera:window.__gameState().sourceCamera}),aimPoint);
+      let point=projection.point;
       const aimGenerationBefore=await page.evaluate(()=>window.__gameState().aimGeneration);
       const aimDeadline=Date.now()+5000;
       let aimStateAtFire=null;
       let aimDistance=Infinity;
       while(Date.now()<aimDeadline){
-        projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),camera:window.__gameState().sourceCamera}),candidate.limb.aimPoint);
+        projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),camera:window.__gameState().sourceCamera}),aimPoint);
         point=projection.point;
         if(!point.inside||!point.visible)break;
         await page.mouse.move(point.x,point.y);
         const state=await page.evaluate(()=>window.__gameState());
         const sourcePoint=state.weaponState?.sourceAimPoint;
-        aimDistance=sourcePoint?Math.hypot(sourcePoint[0]-candidate.limb.aimPoint[0],sourcePoint[1]-candidate.limb.aimPoint[1],sourcePoint[2]-candidate.limb.aimPoint[2]):Infinity;
+        aimDistance=sourcePoint?Math.hypot(sourcePoint[0]-aimPoint[0],sourcePoint[1]-aimPoint[1],sourcePoint[2]-aimPoint[2]):Infinity;
         if(state.aimGeneration>aimGenerationBefore&&state.sourceAimAppliedGeneration===state.aimGeneration&&
           state.weaponState?.aimConverged===true&&aimDistance<=0.55){
           aimStateAtFire={aimGeneration:state.aimGeneration,sourceAimAppliedGeneration:state.sourceAimAppliedGeneration,
-            aimPoint:state.aimPoint,aimDirection:state.aimDirection,sourceAimPoint:sourcePoint,
-            sourcePointer:state.weaponState?.sourcePointer,sourceCamera:state.sourceCamera,
-            aimAlignment:state.weaponState?.aimAlignment,aimConverged:state.weaponState?.aimConverged,aimDistance};
+            aimPoint:state.aimPoint,sourceAimPoint:sourcePoint,sourcePointer:state.weaponState?.sourcePointer,
+            sourceCamera:state.sourceCamera,aimAlignment:state.weaponState?.aimAlignment,
+            aimConverged:state.weaponState?.aimConverged,aimDistance};
           break;
         }
         await page.waitForTimeout(50);
       }
-      if(!aimStateAtFire){
-        attempts.push({victim:candidate.victim.body,aimedLimb:candidate.limb.limb,aimPoint:candidate.limb.aimPoint,
-          scannedScreenPoint:candidate.point,screenPoint:point,cameraAtProjection:projection.camera,
-          aimFailure:{aimDistance,lastState:await page.evaluate(()=>{const state=window.__gameState();return {
-            aimGeneration:state.aimGeneration,sourceAimAppliedGeneration:state.sourceAimAppliedGeneration,
-            sourceAimPoint:state.weaponState?.sourceAimPoint,sourcePointer:state.weaponState?.sourcePointer,
-            aimConverged:state.weaponState?.aimConverged,sourceCamera:state.sourceCamera};})}});
-        continue;
-      }
       let afterSnapshot=beforeSnapshot;
       let changedLimb=null;
       let shotObserved=false;
-      let aimStateAtTrigger=null;
-      // Keep the production pointer on its selected world point. The recovered
-      // WeaponPointer reads Input.mousePosition each frame, so moving to the HUD
-      // fire button can change the source ray without changing canvas aim state.
-      // Track the projected serialized aim point while firing because the source
-      // actor and its camera continue moving after the sprint input is released.
-      await page.mouse.down();
-      try{
+      if(aimStateAtFire){
+        // The documented production tap on the aimed game surface feeds the
+        // original PlayerController fire input and WeaponBase trigger once.
+        await page.mouse.click(point.x,point.y,{delay:5});
         const shotDeadline=Date.now()+3000;
         while(Date.now()<shotDeadline){
-          projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),camera:window.__gameState().sourceCamera}),candidate.limb.aimPoint);
-          point=projection.point;
-          if(!point.inside||!point.visible)break;
-          await page.mouse.move(point.x,point.y);
-          const triggerState=await page.evaluate(()=>window.__gameState());
-          const sourcePoint=triggerState.weaponState?.sourceAimPoint;
-          const triggerDistance=sourcePoint?Math.hypot(sourcePoint[0]-candidate.limb.aimPoint[0],sourcePoint[1]-candidate.limb.aimPoint[1],sourcePoint[2]-candidate.limb.aimPoint[2]):Infinity;
-          if(triggerDistance<=0.55||aimStateAtTrigger===null){
-            aimStateAtTrigger={aimGeneration:triggerState.aimGeneration,
-              sourceAimAppliedGeneration:triggerState.sourceAimAppliedGeneration,
-              aimPoint:triggerState.aimPoint,sourceAimPoint:sourcePoint,
-              sourcePointer:triggerState.weaponState?.sourcePointer,sourceCamera:triggerState.sourceCamera,
-              aimConverged:triggerState.weaponState?.aimConverged,aimDistance:triggerDistance};
-          }
           afterSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
           if(afterSnapshot.shotsFired>shotsBefore){shotObserved=true;break;}
           await page.waitForTimeout(50);
         }
-      }finally{
-        await page.mouse.up();
       }
       const impactDeadline=Date.now()+3000;
       while(shotObserved&&Date.now()<impactDeadline){
-        await page.waitForTimeout(150);
         afterSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
-        const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===candidate.victim.body);
+        const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===scenario.target);
         changedLimb=afterVictim?.limbs.find(limb=>{
-          const prior=beforeVictim.limbs.find(item=>item.limb===limb.limb);
+          const prior=beforeVictim?.limbs.find(item=>item.limb===limb.limb);
           return prior&&(limb.wounds>prior.wounds||limb.woundCavityVolume>prior.woundCavityVolume||limb.damagedTissueVolume>prior.damagedTissueVolume);
         })??null;
-        if(afterSnapshot.shotsFired>shotsBefore&&changedLimb)break;
+        if(changedLimb)break;
+        await page.waitForTimeout(100);
       }
-      const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===candidate.victim.body);
-      attempts.push({
-        victim:candidate.victim.body,
-        aimedLimb:candidate.limb.limb,
-        aimPoint:candidate.limb.aimPoint,
-        scannedScreenPoint:candidate.point,
-        screenPoint:{x:point.x,y:point.y,visible:point.visible,blocker:point.blocker},
-        cameraAtProjection:projection.camera,
-        aimStateAtFire,aimStateAtTrigger,shotObserved,
-        shotsBefore,
-        shotsAfter:afterSnapshot.shotsFired,
-        lastHitLimb:afterVictim?.lastHitLimb??null,
-        damagedLimb:changedLimb,
-        projectiles:afterSnapshot.projectiles,
-        spawnedProjectiles:afterSnapshot.spawnedProjectiles,
-        projectileInteractions:afterSnapshot.projectileInteractions,
-        limbPosition:candidate.limb.position,
-      });
-      if(afterSnapshot.shotsFired>shotsBefore&&changedLimb){
-        acceptedHits.push({body:candidate.victim.body,limb:changedLimb.limb,aimedLimb:candidate.limb.limb,
+      const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===scenario.target);
+      const attempt={shotNumber,stagedScenario:scenario,aimedLimb:'Torso',aimPoint,
+        screenPoint:{x:point.x,y:point.y,inside:point.inside,visible:point.visible,blocker:point.blocker},
+        cameraAtProjection:projection.camera,aimStateAtFire,aimDistance,shotObserved,shotsBefore,shotsAfter:afterSnapshot.shotsFired,
+        lastHitLimb:afterVictim?.lastHitLimb??null,damagedLimb:changedLimb,
+        projectiles:afterSnapshot.projectiles,spawnedProjectiles:afterSnapshot.spawnedProjectiles,
+        projectileInteractions:afterSnapshot.projectileInteractions};
+      attempts.push(attempt);
+      if(changedLimb){
+        acceptedHits.push({body:scenario.target,limb:changedLimb.limb,aimedLimb:'Torso',
           damageBefore:beforeVictim.limbs.find(item=>item.limb===changedLimb.limb),damageAfter:changedLimb,
-          physiologyBefore:beforeVictim.physiology,physiologyAfter:afterVictim?.physiology,sourceDeltaTime:afterSnapshot.sourceDeltaTime});
-        hitBodies.add(candidate.victim.body);
-        if(acceptedHits.length===2)break;
+          physiologyBefore:beforeVictim.physiology,physiologyAfter:afterVictim?.physiology,
+          sourceDeltaTime:afterSnapshot.sourceDeltaTime,shotsBefore,shotsAfter:afterSnapshot.shotsFired});
       }
+      return attempt;
+    };
+    await fireContractTarget(1);
+    await fireContractTarget(2);
+    const distinctHitBodies=new Set(acceptedHits.map(hit=>hit.body));
+    const failures=[];
+    if(distinctHitBodies.size!==2)failures.push(`two distinct Occupants expected, observed ${distinctHitBodies.size}`);
+    for(const attempt of attempts){
+      if(attempt.stagedScenario?.shooterPosition?.[0]!==4)failures.push(`shot ${attempt.shotNumber}: staged shooter X expected 4, observed ${attempt.stagedScenario?.shooterPosition?.[0]}`);
+      if(attempt.stagedScenario?.kneeling!==true)failures.push(`shot ${attempt.shotNumber}: staged shooter kneeling expected true, observed ${attempt.stagedScenario?.kneeling}`);
+      if(attempt.stagedScenario?.targetPosition?.[0]!==7)failures.push(`shot ${attempt.shotNumber}: staged target X expected 7, observed ${attempt.stagedScenario?.targetPosition?.[0]}`);
+      if(attempt.stagedScenario?.aimedLimb!=='Torso')failures.push(`shot ${attempt.shotNumber}: aimed limb expected Torso, observed ${attempt.stagedScenario?.aimedLimb}`);
+      if(!attempt.shotObserved)failures.push(`shot ${attempt.shotNumber}: one production trigger round expected, observed none`);
+      if(attempt.shotsAfter-attempt.shotsBefore!==1)failures.push(`shot ${attempt.shotNumber}: exactly one round expected, observed ${attempt.shotsAfter-attempt.shotsBefore}`);
+      if(attempt.damagedLimb?.limb!=='Torso')failures.push(`shot ${attempt.shotNumber}: callback limb expected Torso, observed ${attempt.damagedLimb?.limb??'none'}`);
     }
-    assert.equal(acceptedHits.length,2,
-      `two production fire inputs must hit two distinct Occupants' serialized Torso limbs through the original projectile and injury callbacks: ${JSON.stringify({acceptedHits,attempts,cameraFrame,combatLane,lateralReposition,initiallyVisible:candidates.length>0})}`);
-    assert.equal(new Set(acceptedHits.map(hit=>hit.body)).size,2,'the torso hit scenario must use two distinct Occupants, matching the source contract');
     for(const hit of acceptedHits){
-      assert.equal(hit.limb,'Torso',`source contract comparison requires a Torso hit: ${JSON.stringify(hit)}`);
-      assert.equal(hit.limb,hit.aimedLimb,`the hit limb must match the selected serialized Torso aim limb: ${JSON.stringify(hit)}`);
-      assert.ok(hit.damageAfter.wounds>hit.damageBefore.wounds,`source Torso wound count must increase: ${JSON.stringify(hit)}`);
-      assert.ok(hit.damageAfter.woundCavityVolume>hit.damageBefore.woundCavityVolume,`source Torso wound cavity must increase: ${JSON.stringify(hit)}`);
-      assert.ok(hit.damageAfter.damagedTissueVolume>hit.damageBefore.damagedTissueVolume,`source Torso damaged tissue must increase: ${JSON.stringify(hit)}`);
-      const beforeBody=combatBefore.occupants.find(victim=>victim.body===hit.body);
-      assert.ok(hit.physiologyAfter.shock>beforeBody.shock,`source body shock must increase on the selected Occupant: ${JSON.stringify(hit)}`);
+      if(!(hit.damageAfter.wounds>hit.damageBefore.wounds))failures.push(`${hit.body} Torso wound count expected to increase, observed ${hit.damageBefore.wounds}→${hit.damageAfter.wounds}`);
+      if(!(hit.damageAfter.woundCavityVolume>hit.damageBefore.woundCavityVolume))failures.push(`${hit.body} Torso cavity expected to increase, observed ${hit.damageBefore.woundCavityVolume}→${hit.damageAfter.woundCavityVolume}`);
+      if(!(hit.damageAfter.damagedTissueVolume>hit.damageBefore.damagedTissueVolume))failures.push(`${hit.body} Torso damaged tissue expected to increase, observed ${hit.damageBefore.damagedTissueVolume}→${hit.damageAfter.damagedTissueVolume}`);
+      if(!(hit.physiologyAfter?.shock>hit.physiologyBefore?.shock))failures.push(`${hit.body} shock expected to increase, observed ${hit.physiologyBefore?.shock}→${hit.physiologyAfter?.shock}`);
     }
     const postHitRuntimeUi = await page.evaluate(() => ({
       errorVisible: Boolean(document.querySelector('#error') && !document.querySelector('#error').hidden),
       errorText: document.querySelector('#errorDetails')?.textContent ?? '',
     }));
-    assert.equal(postHitRuntimeUi.errorVisible, false,
-      `packaged projectile acceptance must not leave the application's fatal error dialog visible: ${postHitRuntimeUi.errorText.slice(0, 1200)}`);
-    assert.ok(attempts.at(-1)?.projectiles?.every(projectile => projectile.status !== 'Error'),
-      `accepted injury must not leave an errored original projectile: ${JSON.stringify(attempts.at(-1)?.projectiles)}`);
+    if(postHitRuntimeUi.errorVisible)failures.push(`runtime error dialog visible: ${postHitRuntimeUi.errorText.slice(0,1200)}`);
+    if(!attempts.at(-1)?.projectiles?.every(projectile => projectile.status !== 'Error'))failures.push(`last original projectile entered Error status: ${JSON.stringify(attempts.at(-1)?.projectiles)}`);
     const projectileCleanupDeadline=Date.now()+5000;
     let cleanupSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
     while(Date.now()<projectileCleanupDeadline&&cleanupSnapshot.projectiles.some(projectile=>projectile.owner===cleanupSnapshot.shooter)){
@@ -717,21 +611,29 @@ try {
       cleanupSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
     }
     const ownedProjectilesAfterCleanup=cleanupSnapshot.projectiles.filter(projectile=>projectile.owner===cleanupSnapshot.shooter);
-    assert.equal(ownedProjectilesAfterCleanup.length,0,
-      `original source projectiles must leave the active registry after source hit/lifetime cleanup: ${JSON.stringify(ownedProjectilesAfterCleanup)}`);
-    assert.deepEqual(pageErrors, [], 'packaged FullSource projectile hit and injury callbacks must not throw browser runtime errors');
-    combatReport={status:'passed',shotsBefore:combatBefore.shotsFired,shotsAfter:attempts.at(-1).shotsAfter,occupantsBefore:combatBefore.occupants.length,exteriorVisibility,cameraFrame,combatLane,attempts,hits:acceptedHits,chainComparison:{
-      hitCallback:{contractExpected:'production/source projectile callback reaches each original Occupant Torso',packagedObserved:acceptedHits.map(hit=>({body:hit.body,limb:hit.limb,shotCount:attempts.find(attempt=>attempt.victim===hit.body)?.shotsAfter-attempts.find(attempt=>attempt.victim===hit.body)?.shotsBefore}))},
-      woundState:{contractExpected:'wounds increase on both selected Torso limbs',packagedObserved:acceptedHits.map(hit=>({body:hit.body,before:hit.damageBefore.wounds,after:hit.damageAfter.wounds}))},
-      tissue:{contractExpected:'damaged tissue increases through original source trauma',packagedObserved:acceptedHits.map(hit=>({body:hit.body,before:hit.damageBefore.damagedTissueVolume,after:hit.damageAfter.damagedTissueVolume}))},
-      shock:{contractExpected:'source body shock increases on each hit',packagedObserved:acceptedHits.map(hit=>({body:hit.body,before:hit.physiologyBefore.shock,after:hit.physiologyAfter.shock}))},
-      bleeding:{contractExpected:'MissionProjectileContract asserts torso injury deltas only; MissionPhysiologyContract separately asserts cavity × local pressure × deltaTime (500 ml cap, 3.2515774 ml/tick in its controlled fixture)',packagedObserved:acceptedHits.map(hit=>({body:hit.body,limb:hit.limb,cavity:hit.damageAfter.woundCavityVolume,internalBloodVolume:hit.damageAfter.internalBloodVolume,internalHemorrhaging:hit.damageAfter.internalHemorrhaging,expectedFromCurrentTick:hit.damageAfter.woundCavityVolume*hit.damageAfter.localPressure*hit.sourceDeltaTime,hemorrhaging:hit.damageAfter.hemorrhaging,localPressure:hit.damageAfter.localPressure,sourceDeltaTime:hit.sourceDeltaTime}))},
-      oxygenAndDeath:{contractExpected:'MissionPhysiologyContract separately drains 4,852 ml: oxygen reaches 0, unconscious/ragdoll at 0.1 s, brain trauma 0.05 by 3.2 s, death at 30.2 s',packagedObserved:acceptedHits.map(hit=>({body:hit.body,bloodVolume:hit.physiologyAfter.bloodVolume,bloodOxygen:hit.physiologyAfter.bloodOxygen,alive:hit.physiologyAfter.alive,conscious:hit.physiologyAfter.conscious}))},
+    if(ownedProjectilesAfterCleanup.length!==0)failures.push(`source projectile cleanup expected 0 active owned projectiles, observed ${ownedProjectilesAfterCleanup.length}`);
+    if(pageErrors.length)failures.push(`browser page errors expected none, observed ${JSON.stringify(pageErrors)}`);
+    const firstDivergingLink=attempts.some(attempt=>!attempt.shotObserved||attempt.shotsAfter-attempt.shotsBefore!==1||attempt.damagedLimb?.limb!=='Torso')?'hitCallback':
+      acceptedHits.some(hit=>!(hit.damageAfter.wounds>hit.damageBefore.wounds))?'woundState':
+      acceptedHits.some(hit=>!(hit.damageAfter.damagedTissueVolume>hit.damageBefore.damagedTissueVolume))?'tissue':
+      acceptedHits.some(hit=>!(hit.physiologyAfter?.shock>hit.physiologyBefore?.shock))?'shock':
+      ownedProjectilesAfterCleanup.length!==0?'cleanup':failures.length?'assertion':null;
+    combatReport={status:failures.length?'failed':'passed',failures,firstDivergingLink,shotsBefore:combatBefore.shotsFired,shotsAfter:attempts.at(-1)?.shotsAfter??combatBefore.shotsFired,occupantsBefore:combatBefore.occupants.length,exteriorVisibility,cameraFrame,combatLane,attempts,hits:acceptedHits,chainComparison:{
+      hitCallback:{contractExpected:'one production trigger call per staged target; original projectile callback must hit the selected Occupant Torso',packagedObserved:attempts.map(attempt=>({body:attempt.stagedScenario?.target,aimedLimb:attempt.stagedScenario?.aimedLimb,callbackLimb:attempt.damagedLimb?.limb??null,shots:attempt.shotsAfter-attempt.shotsBefore}))},
+      woundState:{contractExpected:'source projectile contract: each hit limb wound count increases; torso-profile acceptance requires +1 per Torso hit',packagedObserved:acceptedHits.map(hit=>({body:hit.body,limb:hit.limb,before:hit.damageBefore.wounds,after:hit.damageAfter.wounds}))},
+      tissue:{contractExpected:'source projectile contract: each hit limb damaged tissue increases',packagedObserved:acceptedHits.map(hit=>({body:hit.body,limb:hit.limb,before:hit.damageBefore.damagedTissueVolume,after:hit.damageAfter.damagedTissueVolume}))},
+      shock:{contractExpected:'source projectile contract captures body shock; torso-profile acceptance requires shock to increase on each hit',packagedObserved:acceptedHits.map(hit=>({body:hit.body,before:hit.physiologyBefore?.shock,after:hit.physiologyAfter?.shock}))},
+      bleeding:{contractExpected:{torsoHit:'injury contract asserts increased cavity/tissue, not a fixed hemorrhage amount',controlledPhysiologyFixture:{cavityCapMl:500,pressure:.06503155,deltaTimeSeconds:.1,internalBleedMlPerTick:3.2515774,stopHemorrhage:{cavityMl:0,internalBloodMl:0,hemorrhagingMlPerSecond:0}}},packagedObserved:acceptedHits.map(hit=>({body:hit.body,limb:hit.limb,cavityMl:hit.damageAfter.woundCavityVolume,internalBloodMl:hit.damageAfter.internalBloodVolume,internalHemorrhagingMlPerSecond:hit.damageAfter.internalHemorrhaging,hemorrhagingMlPerSecond:hit.damageAfter.hemorrhaging,localPressure:hit.damageAfter.localPressure,sourceDeltaTime:hit.sourceDeltaTime,expectedCurrentTickMl:hit.damageAfter.woundCavityVolume*hit.damageAfter.localPressure*hit.sourceDeltaTime}))},
+      oxygenAndDeath:{contractExpected:{controlledHypoxiaFixture:{drainedBloodMl:4852,bloodOxygenAt100ms:'<=0.5',conscious:false,ragdoll:true,brainTraumaAt3200ms:'>0',aliveAt30200ms:false,eventOrder:['ragdoll','unconscious','death']}},packagedObserved:acceptedHits.map(hit=>({body:hit.body,bloodVolumeMl:hit.physiologyAfter?.bloodVolume,bloodOxygen:hit.physiologyAfter?.bloodOxygen,alive:hit.physiologyAfter?.alive,conscious:hit.physiologyAfter?.conscious,ragdoll:hit.physiologyAfter?.ragdoll})),exercisedByTorsoScenario:false},
       missionOutcome:{contractExpected:'MissionOutcomeContract asserts ended=true and success=true after all rooms are checked and all Occupants are restrained',packagedObserved:cleanupSnapshot.missionOutcome,exercisedByTorsoScenario:false},
       cleanup:{contractExpected:'zero source-owned projectiles after original source termination',packagedObserved:{activeOwnedProjectiles:ownedProjectilesAfterCleanup.length,shotsAfter:cleanupSnapshot.shotsFired}},
       nativePhysXIntegration:{status:'open',evidenceRequired:'source ragdoll Rigidbody/HingeJoint actors step in the packaged runtime and match a Unity 2017.2 reference',packagedObservedBackend:'browser PhysX 5.6.1; nativeUnityPhysXVerified=false',blocker:'the package has a browser PhysX 5.6.1 adapter, but no Unity 2017.2 native solver or reference trajectory/contact callback is exercised'},
       woundPixels:{status:'open',evidenceRequired:'before/after affected Torso UV or pixel-region comparison on the packaged renderer',packagedObserved:'injury state and full-page screenshot are captured; no Torso UV/pixel delta is asserted',blocker:'the current harness lacks a serialized-UV wound-pixel readback/comparison; source state change alone cannot establish rendered wound pixels'}
-    },sourceProjectileAndPhysiologyCallbacks:true,nativePhysXIntegrationVerified:false,woundPixelsVerified:false};
+    },sourceProjectileAndPhysiologyCallbacks:acceptedHits.length>0,nativePhysXIntegrationVerified:false,woundPixelsVerified:false};
+    combatEvidence=combatReport;
+    assert.equal(ownedProjectilesAfterCleanup.length,0,`source projectile cleanup expected 0 active owned projectiles, observed ${ownedProjectilesAfterCleanup.length}`);
+    assert.deepEqual(pageErrors, [], 'packaged FullSource projectile hit and injury callbacks must not throw browser runtime errors');
+    assert.deepEqual(failures,[],`packaged torso scenario diverged from source contract: ${JSON.stringify(failures)}`);
   }
   const mobilePage = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   mobilePage.on('pageerror', error => pageErrors.push(String(error)));
@@ -776,6 +678,7 @@ try {
 } catch (error) {
   report = {
     status: 'failed', sourceCommit: build.sourceCommit, error: String(error), pageErrors,
+    combat:combatEvidence,
     pageError: await page.locator('#errorDetails').textContent().catch(() => null),
     missionDiagnostics: await page.evaluate(() => window.__missionSourceDiagnostics ?? null).catch(() => null),
     game: await page.evaluate(() => window.__gameState?.() ?? null).catch(() => null),
