@@ -575,7 +575,7 @@ try {
       if(aimStateAtFire){
         let fireState=await page.evaluate(()=>window.__gameState().weaponState);
         const modeDeadline=Date.now()+5000;
-        while(fireState?.fireMode&&fireState.fireMode!=='Semi'&&Date.now()<modeDeadline){
+        while(fireState?.fireMode&&fireState.fireMode!=='Auto'&&Date.now()<modeDeadline){
           await page.keyboard.down('t');
           await page.waitForTimeout(120);
           await page.keyboard.up('t');
@@ -587,10 +587,28 @@ try {
             if(fireState?.fireMode&&fireState.fireMode!==modeBefore){fireModeToggleObserved=true;break;}
           }
         }
+        let boltCycleAfterAim=false;
+        if(fireState?.readyToFire===false){
+          boltCycleAfterAim=true;
+          await page.keyboard.down('b');
+          await page.waitForTimeout(120);
+          await page.keyboard.up('b');
+          const readyDeadline=Date.now()+8000;
+          while(Date.now()<readyDeadline){
+            await page.waitForTimeout(50);
+            fireState=await page.evaluate(()=>window.__gameState().weaponState);
+            if(fireState?.readyToFire===true&&fireState?.aimConverged===true)break;
+          }
+        }
         fireModeAtFire=fireState?.fireMode??null;
+        const fireAimPoint=fireState?.sourceAimPoint;
+        const fireAimDistance=fireAimPoint?Math.hypot(fireAimPoint[0]-beforeTorso.aimPoint[0],
+          fireAimPoint[1]-beforeTorso.aimPoint[1],fireAimPoint[2]-beforeTorso.aimPoint[2]):Infinity;
         aimStateAtFire={...aimStateAtFire,fireMode:fireModeAtFire,readyToFire:fireState?.readyToFire,
           rightArmOnTarget:fireState?.rightArmOnTarget,leftArmOnTarget:fireState?.leftArmOnTarget,
-          manipulatingEquipment:fireState?.manipulatingEquipment};
+          manipulatingEquipment:fireState?.manipulatingEquipment,boltStatus:fireState?.boltStatus,
+          boltLive:fireState?.boltLive,boltCarriesLiveRound:fireState?.boltCarriesLiveRound,
+          aimConverged:fireState?.aimConverged,aimAlignment:fireState?.aimAlignment,aimDistance:fireAimDistance};
         await page.mouse.move(point.x,point.y);
         await page.mouse.down();
         try{
@@ -626,7 +644,7 @@ try {
       const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===scenario.target);
       const attempt={shotNumber,stagedScenario:scenario,victim:scenario.target,aimedLimb:'Torso',
         aimPoint:beforeTorso?.aimPoint??scenario.aimPoint,screenPoint:point,cameraAtProjection:projection?.camera,
-        aimStateAtFire,lastAimState,aimDistance,boltCycleAttempted,readyToFireAfterBolt,
+        aimStateAtFire,lastAimState,aimDistance,boltCycleAttempted,readyToFireAfterBolt,boltCycleAfterAim,
         fireModeToggleObserved,fireModeAtFire,fireInputObserved,fireInputAtPress,
         shotObserved,shotsBefore,shotsAfter:afterSnapshot.shotsFired,
         lastHitLimb:afterVictim?.lastHitLimb??null,damagedLimb:changedLimb,
