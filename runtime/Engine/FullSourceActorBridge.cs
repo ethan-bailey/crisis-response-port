@@ -683,6 +683,15 @@ public sealed class FullSourceActorBridge
         var torso=target.limbMap.TryGetValue(LimbId.Torso,out var targetTorso)?targetTorso
             :throw new InvalidOperationException($"Original Occupant {target.name} has no Torso limb");
         body.AimPoint=torso.AimPointWithExtents(body.RightUpperArm.transform.position);
+        var torsoCollider=torso.GetComponent<Collider>()
+            ??throw new InvalidOperationException($"Original Occupant {target.name} Torso has no serialized collider");
+        var torsoBounds=torsoCollider.bounds;
+        var aimPointCandidates=new[]{
+            body.AimPoint,
+            torsoBounds.center,
+            torsoBounds.center+Vector3.down*(torsoBounds.extents.y*.5f),
+            torsoBounds.center+Vector3.down*(torsoBounds.extents.y*.85f)
+        }.Select(point=>new[]{point.x,point.y,point.z}).ToArray();
         return new{
             shotNumber,
             shooter=body.name,
@@ -692,6 +701,7 @@ public sealed class FullSourceActorBridge
             targetPosition=new[]{target.transform.position.x,target.transform.position.y,target.transform.position.z},
             aimedLimb=torso.id.ToString(),
             aimPoint=new[]{body.AimPoint.x,body.AimPoint.y,body.AimPoint.z},
+            aimPointCandidates,
             sourceSnapshot=Snapshot()
         };
     }

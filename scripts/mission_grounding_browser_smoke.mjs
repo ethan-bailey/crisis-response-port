@@ -512,7 +512,13 @@ try {
       if(shotNumber===1){combatBefore=beforeSnapshot;firstScenarioBefore=beforeSnapshot;}
       const beforeVictim=beforeSnapshot.occupants.find(victim=>victim.body===scenario.target);
       const shotsBefore=beforeSnapshot.shotsFired;
-      const aimPoint=scenario.aimPoint;
+      const aimPointCandidates=scenario.aimPointCandidates?.length?scenario.aimPointCandidates:[scenario.aimPoint];
+      const candidateProjections=await page.evaluate(points=>points.map(position=>({
+        position,point:window.__sourceCombatScreenPoint(position)
+      })),aimPointCandidates);
+      // Keep the aim point within the serialized Torso collider and prefer a visible point through the original scene geometry.
+      const visibleTorsoCandidate=candidateProjections.find(candidate=>candidate.point.inside&&candidate.point.visible);
+      const aimPoint=visibleTorsoCandidate?.position??scenario.aimPoint;
       let projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),camera:window.__gameState().sourceCamera}),aimPoint);
       let point=projection.point;
       const aimGenerationBefore=await page.evaluate(()=>window.__gameState().aimGeneration);
