@@ -57,7 +57,7 @@ await new Promise((resolveListen, reject) => {
 const address = server.address();
 const browser = await chromium.launch({ headless: true, args: ['--no-sandbox', '--enable-webgl', '--ignore-gpu-blocklist', '--use-gl=angle', '--use-angle=swiftshader'] });
 // Keep the recovered camera FOV and scene untouched; the 20:9 frame brings the authored target just inside the view.
-const page = await browser.newPage({ viewport: { width: 1600, height: 720 }, deviceScaleFactor: 1 });
+const page = await browser.newPage({ viewport: { width: 1600, height: 720 }, deviceScaleFactor: 1, hasTouch: true });
 const pageErrors = [];
 page.on('pageerror', error => pageErrors.push(String(error)));
 let report;
@@ -539,7 +539,9 @@ try {
         }
       }
       if(aimStateAtFire){
-        await page.mouse.click(point.x,point.y,{delay:60});
+        await page.touchscreen.tap(point.x,point.y);
+        await page.waitForTimeout(80);
+        await page.touchscreen.tap(point.x,point.y);
         const shotDeadline=Date.now()+3000;
         while(Date.now()<shotDeadline){
           await page.waitForTimeout(50);

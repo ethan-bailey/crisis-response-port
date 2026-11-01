@@ -760,7 +760,8 @@ public sealed class FullSourceActorBridge
                 otherVictim.transform.position=new Vector3(40f+otherIndex++*2f,otherVictim.transform.position.y,otherVictim.transform.position.z);
         }
         else{
-            // Keep the source shooter fixed at its production-moved position for the second distinct Occupant too.
+            // Re-ground the source shooter for each distinct source-contract shot after browser contact integration.
+            body.transform.position=new Vector3(4f,0.94f,body.transform.position.z);
             body.Rigidbody.velocity=Vector3.zero;
             body.IsKneeling=true;
             if(stagedBrowserProjectileContractFirstVictim==null||stagedBrowserProjectileContractSecondVictim==null)
