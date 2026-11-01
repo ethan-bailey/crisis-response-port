@@ -741,13 +741,13 @@ public sealed class FullSourceActorBridge
 
         CharacterBody target;
         if(shotNumber==1){
-            target=victims.OrderBy(victim=>MathF.Abs(victim.transform.position.x-11.06f))
-                .FirstOrDefault(victim=>MathF.Abs(victim.transform.position.x-11.06f)<1.5f)
-                ??throw new InvalidOperationException("The browser projectile scenario has no visible authored Occupant near X=11.06");
+            target=victims.FirstOrDefault(victim=>victim.name=="Occupant 2")
+                ??throw new InvalidOperationException("The browser projectile scenario requires the visible authored Occupant 2");
             stagedBrowserProjectileContractFirstVictim=target;
-            stagedBrowserProjectileContractSecondVictim=victims.Where(victim=>!ReferenceEquals(victim,target))
-                .OrderByDescending(victim=>victim.transform.position.x).FirstOrDefault()
-                ??throw new InvalidOperationException("The browser projectile scenario has no second Occupant");
+            stagedBrowserProjectileContractSecondVictim=victims.FirstOrDefault(victim=>victim.name=="Occupant 5")
+                ??throw new InvalidOperationException("The browser projectile scenario requires the visible authored Occupant 5");
+            if(ReferenceEquals(stagedBrowserProjectileContractSecondVictim,target))
+                throw new InvalidOperationException("The browser projectile scenario requires two distinct authored Occupants");
             // Keep the original shooter stationary over the authored floor while removing intervening Occupants.
             body.Rigidbody.velocity=Vector3.zero;
             body.transform.position=new Vector3(4f,0.94f,-0.7f);
@@ -772,8 +772,9 @@ public sealed class FullSourceActorBridge
         }
 
         var targetPosition=target.transform.position;
-        // Preserve each visible authored Torso's source X/Y; align its depth with the grounded X=4 shooter.
-        target.transform.position=new Vector3(targetPosition.x,targetPosition.y,-0.7f);
+        // Restore the two source-visible authored Torso lanes after AI motion, at the grounded shooter depth.
+        var laneX=shotNumber==1?11.06f:17.74f;
+        target.transform.position=new Vector3(laneX,0.94f,-0.7f);
         var sourceTarget=target.GetComponent<Target>()
             ??throw new InvalidOperationException($"Original Occupant {target.name} has no Target component");
         body.Blackboard.Target=sourceTarget;
