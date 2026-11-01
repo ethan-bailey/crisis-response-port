@@ -512,13 +512,17 @@ try {
       if(shotNumber===1){combatBefore=beforeSnapshot;firstScenarioBefore=beforeSnapshot;}
       const beforeVictim=beforeSnapshot.occupants.find(victim=>victim.body===scenario.target);
       const shotsBefore=beforeSnapshot.shotsFired;
-      const aimPointCandidates=scenario.aimPointCandidates?.length?scenario.aimPointCandidates:[scenario.aimPoint];
-      const candidateProjections=await page.evaluate(points=>points.map(position=>({
-        position,point:window.__sourceCombatScreenPoint(position)
+      const aimPointCandidates=scenario.aimPointCandidates?.length?scenario.aimPointCandidates:[{
+        pointerPoint:scenario.aimPoint,torsoPoint:scenario.aimPoint
+      }];
+      const candidateProjections=await page.evaluate(candidates=>candidates.map(candidate=>({
+        position:candidate.pointerPoint,torsoHitPoint:candidate.torsoPoint,
+        point:window.__sourceCombatScreenPoint(candidate.pointerPoint)
       })),aimPointCandidates);
-      // Keep the aim point within the serialized Torso collider and prefer a visible point through the original scene geometry.
+      // Project the source WeaponPointer's AimQuad point whose muzzle ray crosses the original Torso collider.
       const visibleTorsoCandidate=candidateProjections.find(candidate=>candidate.point.inside&&candidate.point.visible);
       const aimPoint=visibleTorsoCandidate?.position??scenario.aimPoint;
+      const torsoHitPoint=visibleTorsoCandidate?.torsoHitPoint??scenario.aimPoint;
       let projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),camera:window.__gameState().sourceCamera}),aimPoint);
       let point=projection.point;
       const aimGenerationBefore=await page.evaluate(()=>window.__gameState().aimGeneration);
@@ -569,7 +573,7 @@ try {
         await page.waitForTimeout(100);
       }
       const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===scenario.target);
-      const attempt={shotNumber,stagedScenario:scenario,aimedLimb:'Torso',aimPoint,
+      const attempt={shotNumber,stagedScenario:scenario,aimedLimb:'Torso',aimPoint,torsoHitPoint,
         screenPoint:{x:point.x,y:point.y,inside:point.inside,visible:point.visible,blocker:point.blocker},
         cameraAtProjection:projection.camera,aimStateAtFire,aimDistance,shotObserved,shotsBefore,shotsAfter:afterSnapshot.shotsFired,
         lastHitLimb:afterVictim?.lastHitLimb??null,damagedLimb:changedLimb,

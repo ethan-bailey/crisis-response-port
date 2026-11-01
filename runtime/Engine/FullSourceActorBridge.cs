@@ -688,12 +688,30 @@ public sealed class FullSourceActorBridge
         var torsoCollider=torso.GetComponent<Collider>()
             ??throw new InvalidOperationException($"Original Occupant {target.name} Torso has no serialized collider");
         var torsoBounds=torsoCollider.bounds;
-        var aimPointCandidates=new[]{
+        var torsoHitPointCandidates=new[]{
             body.AimPoint,
             torsoBounds.center,
             torsoBounds.center+Vector3.down*(torsoBounds.extents.y*.5f),
             torsoBounds.center+Vector3.down*(torsoBounds.extents.y*.85f)
-        }.Select(point=>new[]{point.x,point.y,point.z}).ToArray();
+        };
+        var muzzle=body.ActiveWeapon?.Muzzle
+            ??throw new InvalidOperationException($"Original shooter {body.name} has no active weapon muzzle");
+        var aimQuadX=body.Position+body.Direction*20f;
+        var aimPointCandidates=torsoHitPointCandidates.Select(torsoPoint=>{
+            var muzzlePosition=muzzle.position;
+            var horizontalSpan=torsoPoint.x-muzzlePosition.x;
+            if(Mathf.Abs(horizontalSpan)<.01f)
+                throw new InvalidOperationException("Torso hit point is too close to the muzzle for AimQuad projection");
+            var distanceFactor=(aimQuadX-muzzlePosition.x)/horizontalSpan;
+            var pointerPoint=new Vector3(
+                aimQuadX,
+                muzzlePosition.y+(torsoPoint.y-muzzlePosition.y)*distanceFactor,
+                -1.5f);
+            return new{
+                pointerPoint=new[]{pointerPoint.x,pointerPoint.y,pointerPoint.z},
+                torsoPoint=new[]{torsoPoint.x,torsoPoint.y,torsoPoint.z}
+            };
+        }).ToArray();
         return new{
             shotNumber,
             shooter=body.name,
