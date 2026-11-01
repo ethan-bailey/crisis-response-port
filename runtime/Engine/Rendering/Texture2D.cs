@@ -122,7 +122,13 @@ public sealed class Texture2D:Texture {
         return result;
     }
     public void SetPixels(Color[] values)=>SetPixels(0,0,width,height,values);
-    public void SetPixel(int x,int y,Color value)=>SetPixels(x,y,1,1,new[]{value});
+    // The recovered source writes occasional floor-pool samples beyond its CPU mask.
+    // Unity ignores those single-pixel writes; keep that behavior in the adapter so
+    // invalid paint coordinates cannot abort subsequent RuntimeWorld ticks.
+    public void SetPixel(int x,int y,Color value) {
+        if(x<0||y<0||x>=width||y>=height)return;
+        SetPixels(x,y,1,1,new[]{value});
+    }
     public void SetPixels(int x,int y,int w,int h,Color[] values) {
         ArgumentNullException.ThrowIfNull(values);ValidateRegion(x,y,w,h,width,height);
         if(values.Length!=checked(w*h))throw new ArgumentException("Color count does not match the pixel region",nameof(values));
