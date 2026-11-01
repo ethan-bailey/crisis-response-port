@@ -512,6 +512,8 @@ public sealed class FullSourceActorBridge
                 rayOrigin=new[]{sourceRay.origin.x,sourceRay.origin.y,sourceRay.origin.z},
                 rayDirection=new[]{sourceRay.direction.x,sourceRay.direction.y,sourceRay.direction.z},
                 raycastHit=hitCollider?new { name=hitCollider.name,layer=hitCollider.gameObject.layer,point=new[]{sourceHit.point.x,sourceHit.point.y,sourceHit.point.z},distance=sourceHit.distance }:null,
+                interactionMenuVisible=interiorMode?.UI?.InteractionMenu?.Visible??false,
+                pointerVisible=pointer?.Visible??false,
                 localPoint=pointerLocalPointField?.GetValue(pointer) is Vector3 local?new[]{local.x,local.y,local.z}:null,
                 inputCamera= new { isAlternate=alternateCamera!=null&&alternateCamera.enabled,position=new[]{inputCameraPosition.x,inputCameraPosition.y,inputCameraPosition.z},rotation=new[]{inputCameraRotation.x,inputCameraRotation.y,inputCameraRotation.z,inputCameraRotation.w},fov=inputCamera?inputCamera.fieldOfView:0f,pixelWidth=inputCamera?inputCamera.pixelWidth:0,pixelHeight=inputCamera?inputCamera.pixelHeight:0 }
             },

@@ -577,8 +577,8 @@ try {
     const attempts=[];
     let acceptedHit=null;
     for(const candidate of candidatesToTry){
-      const projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),camera:window.__gameState().sourceCamera}),candidate.limb.aimPoint);
-      const point=projection.point;
+      let projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),camera:window.__gameState().sourceCamera}),candidate.limb.aimPoint);
+      let point=projection.point;
       if(!point.inside||!point.visible){
         attempts.push({victim:candidate.victim.body,aimedLimb:candidate.limb.limb,aimPoint:candidate.limb.aimPoint,
           scannedScreenPoint:candidate.point,screenPoint:point,cameraAtProjection:projection.camera,skipped:'target left current camera frame or became occluded'});
@@ -588,20 +588,36 @@ try {
       const beforeVictim=beforeSnapshot.occupants.find(victim=>victim.body===candidate.victim.body);
       const shotsBefore=beforeSnapshot.shotsFired;
       const aimGenerationBefore=await page.evaluate(()=>window.__gameState().aimGeneration);
-      await page.mouse.move(point.x,point.y);
-      await page.waitForFunction(previousGeneration=>{
-        const state=window.__gameState();
-        return state.aimGeneration>previousGeneration&&
-          state.sourceAimAppliedGeneration===state.aimGeneration&&
-          state.weaponState?.aimConverged===true;
-      },aimGenerationBefore,{timeout:15000});
-      const aimStateAtFire=await page.evaluate(()=>{
-        const state=window.__gameState();
-        return {aimGeneration:state.aimGeneration,sourceAimAppliedGeneration:state.sourceAimAppliedGeneration,
-          aimPoint:state.aimPoint,aimDirection:state.aimDirection,
-          sourceAimPoint:state.weaponState?.sourceAimPoint,sourcePointer:state.weaponState?.sourcePointer,sourceCamera:state.sourceCamera,
-          aimAlignment:state.weaponState?.aimAlignment,aimConverged:state.weaponState?.aimConverged};
-      });
+      const aimDeadline=Date.now()+5000;
+      let aimStateAtFire=null;
+      let aimDistance=Infinity;
+      while(Date.now()<aimDeadline){
+        projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),camera:window.__gameState().sourceCamera}),candidate.limb.aimPoint);
+        point=projection.point;
+        if(!point.inside||!point.visible)break;
+        await page.mouse.move(point.x,point.y);
+        const state=await page.evaluate(()=>window.__gameState());
+        const sourcePoint=state.weaponState?.sourceAimPoint;
+        aimDistance=sourcePoint?Math.hypot(sourcePoint[0]-candidate.limb.aimPoint[0],sourcePoint[1]-candidate.limb.aimPoint[1],sourcePoint[2]-candidate.limb.aimPoint[2]):Infinity;
+        if(state.aimGeneration>aimGenerationBefore&&state.sourceAimAppliedGeneration===state.aimGeneration&&
+          state.weaponState?.aimConverged===true&&aimDistance<=0.55){
+          aimStateAtFire={aimGeneration:state.aimGeneration,sourceAimAppliedGeneration:state.sourceAimAppliedGeneration,
+            aimPoint:state.aimPoint,aimDirection:state.aimDirection,sourceAimPoint:sourcePoint,
+            sourcePointer:state.weaponState?.sourcePointer,sourceCamera:state.sourceCamera,
+            aimAlignment:state.weaponState?.aimAlignment,aimConverged:state.weaponState?.aimConverged,aimDistance};
+          break;
+        }
+        await page.waitForTimeout(50);
+      }
+      if(!aimStateAtFire){
+        attempts.push({victim:candidate.victim.body,aimedLimb:candidate.limb.limb,aimPoint:candidate.limb.aimPoint,
+          scannedScreenPoint:candidate.point,screenPoint:point,cameraAtProjection:projection.camera,
+          aimFailure:{aimDistance,lastState:await page.evaluate(()=>{const state=window.__gameState();return {
+            aimGeneration:state.aimGeneration,sourceAimAppliedGeneration:state.sourceAimAppliedGeneration,
+            sourceAimPoint:state.weaponState?.sourceAimPoint,sourcePointer:state.weaponState?.sourcePointer,
+            aimConverged:state.weaponState?.aimConverged,sourceCamera:state.sourceCamera};})}});
+        continue;
+      }
       let afterSnapshot=beforeSnapshot;
       let changedLimb=null;
       let shotObserved=false;
@@ -609,25 +625,26 @@ try {
       // Keep the production pointer on its selected world point. The recovered
       // WeaponPointer reads Input.mousePosition each frame, so moving to the HUD
       // fire button can change the source ray without changing canvas aim state.
-      // A mouse press on the world canvas is BrowserInput's production mouse-fire path.
+      // Track the projected serialized aim point while firing because the source
+      // actor and its camera continue moving after the sprint input is released.
       await page.mouse.down();
       try{
-        await page.waitForFunction(previousGeneration=>{
-          const state=window.__gameState();
-          return state.aimGeneration>previousGeneration&&
-            state.sourceAimAppliedGeneration===state.aimGeneration;
-        },aimStateAtFire.aimGeneration,{timeout:5000}).catch(()=>{});
-        aimStateAtTrigger=await page.evaluate(()=>({
-          aimGeneration:window.__gameState().aimGeneration,
-          sourceAimAppliedGeneration:window.__gameState().sourceAimAppliedGeneration,
-          aimPoint:window.__gameState().aimPoint,
-          sourceAimPoint:window.__gameState().weaponState?.sourceAimPoint,
-          sourcePointer:window.__gameState().weaponState?.sourcePointer,
-          sourceCamera:window.__gameState().sourceCamera,
-          aimConverged:window.__gameState().weaponState?.aimConverged,
-        }));
         const shotDeadline=Date.now()+3000;
         while(Date.now()<shotDeadline){
+          projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),camera:window.__gameState().sourceCamera}),candidate.limb.aimPoint);
+          point=projection.point;
+          if(!point.inside||!point.visible)break;
+          await page.mouse.move(point.x,point.y);
+          const triggerState=await page.evaluate(()=>window.__gameState());
+          const sourcePoint=triggerState.weaponState?.sourceAimPoint;
+          const triggerDistance=sourcePoint?Math.hypot(sourcePoint[0]-candidate.limb.aimPoint[0],sourcePoint[1]-candidate.limb.aimPoint[1],sourcePoint[2]-candidate.limb.aimPoint[2]):Infinity;
+          if(triggerDistance<=0.55||aimStateAtTrigger===null){
+            aimStateAtTrigger={aimGeneration:triggerState.aimGeneration,
+              sourceAimAppliedGeneration:triggerState.sourceAimAppliedGeneration,
+              aimPoint:triggerState.aimPoint,sourceAimPoint:sourcePoint,
+              sourcePointer:triggerState.weaponState?.sourcePointer,sourceCamera:triggerState.sourceCamera,
+              aimConverged:triggerState.weaponState?.aimConverged,aimDistance:triggerDistance};
+          }
           afterSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
           if(afterSnapshot.shotsFired>shotsBefore){shotObserved=true;break;}
           await page.waitForTimeout(50);
