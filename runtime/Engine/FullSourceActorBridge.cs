@@ -647,6 +647,10 @@ public sealed class FullSourceActorBridge
                 .FirstOrDefault(victim=>MathF.Abs(victim.transform.position.x-2f)>6f)
                 ??throw new InvalidOperationException("The projectile contract scenario has no Occupant beyond the authored roof lane");
             stagedProjectileContractFirstVictim=target;
+            // Match the source contract's stationary X=4 kneeling shooter before each tap.
+            // The preceding browser movement setup can leave velocity on the original actor;
+            // the source contract starts this fixture from rest and keeps it staged at X=4.
+            body.Rigidbody.velocity=Vector3.zero;
             body.transform.position=new Vector3(4f,body.transform.position.y,body.transform.position.z);
             body.IsKneeling=true;
             int otherIndex=0;
@@ -654,6 +658,10 @@ public sealed class FullSourceActorBridge
                 otherVictim.transform.position=new Vector3(40f+otherIndex++*2f,otherVictim.transform.position.y,otherVictim.transform.position.z);
         }
         else{
+            // FireOnce stages the same stationary kneeling shooter at X=4 for the second distinct Occupant too.
+            body.Rigidbody.velocity=Vector3.zero;
+            body.transform.position=new Vector3(4f,body.transform.position.y,body.transform.position.z);
+            body.IsKneeling=true;
             if(stagedProjectileContractFirstVictim==null)
                 throw new InvalidOperationException("The second projectile contract target cannot be staged before the first");
             target=victims.FirstOrDefault(victim=>!ReferenceEquals(victim,stagedProjectileContractFirstVictim))
