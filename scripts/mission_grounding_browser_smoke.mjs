@@ -505,7 +505,6 @@ try {
     const attempts=[];
     const acceptedHits=[];
     const failures=[];
-    const viewport=await page.evaluate(()=>({width:innerWidth,height:innerHeight}));
     const visibleTorsoTargets=await page.evaluate(()=>{
       const snapshot=window.__sourceCombatSnapshot();
       return snapshot.occupants.filter(victim=>victim.alive)

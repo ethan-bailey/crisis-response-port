@@ -35,7 +35,7 @@ export function createOriginalCasingRuntime({THREE,source,physics,scene,normalTe
   if(!Number.isSafeInteger(id))throw new Error('Source casing Rigidbody identity is invalid: '+JSON.stringify({body:command.body,name:command.name}));
   // This recovered mesh/collider is specifically the 5.56x45mm casing prefab.
   // Keep other authored casing prefabs on their source Rigidbody path.
-  if(typeof command.name!=='string'||!command.name.startsWith('Casing 5.56x45mm')){
+  if(typeof command.name==='string'&&!command.name.startsWith('Casing 5.56x45mm')){
    unsupported.add(id);
    return null;
   }
@@ -108,6 +108,6 @@ export function createOriginalCasingRuntime({THREE,source,physics,scene,normalTe
   }
  }
  return {consume,stepVisuals,syncSourceStates,reconcile,
-  snapshot(){return {active:casings.size,settled:settled.size,unsupportedSourcePrefabs:unsupported.size,bodyIds:[...casings.keys()]};},
+  snapshot(){return {active:casings.size,settled:settled.size,bodyIds:[...casings.keys()]};},
   dispose(){for(const id of [...casings.keys()])remove(id);for(const visual of settled.values())scene.remove(visual);settled.clear();geometry.dispose();brass.dispose();}};
 }
