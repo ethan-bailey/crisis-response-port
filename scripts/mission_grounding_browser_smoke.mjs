@@ -502,17 +502,23 @@ try {
     const candidates=[];
     let nearestUnavailable=null;
     const scanVisibleLimbs=async(snapshot,allLimbs)=>{
-      for(const victim of snapshot.occupants.filter(value=>value.alive)){
-        const orderedLimbs=[...victim.limbs]
-          .filter(limb=>allLimbs||limb.limb==='Torso'||limb.limb==='Head')
-          .sort((a,b)=>(a.limb==='Torso'?-1:b.limb==='Torso'?1:a.limb==='Head'?-1:b.limb==='Head'?1:0));
-        for(const limb of orderedLimbs){
-          const point=await page.evaluate(position=>window.__sourceCombatScreenPoint(position),limb.aimPoint);
-          if(point.inside&&point.visible)candidates.push({victim,limb,point});
-          else if(allLimbs){
-            const distance=Math.hypot(point.x-viewport.width/2,point.y-viewport.height/2);
-            if(!nearestUnavailable||distance<nearestUnavailable.distance)nearestUnavailable={victim,limb,point,distance};
-          }
+      const victims=snapshot.occupants.filter(value=>value.alive);
+      const targets=victims.flatMap(victim=>victim.limbs
+        .filter(limb=>allLimbs||limb.limb==='Torso'||limb.limb==='Head')
+        .sort((a,b)=>(a.limb==='Torso'?-1:b.limb==='Torso'?1:a.limb==='Head'?-1:b.limb==='Head'?1:0))
+        .map(limb=>({victimBody:victim.body,limb,aimPoint:limb.aimPoint})));
+      const projected=await page.evaluate(targets=>targets.map(target=>({
+        ...window.__sourceCombatScreenPoint(target.aimPoint),
+        victimBody:target.victimBody,
+        limb:target.limb,
+      })),targets);
+      for(const result of projected){
+        const victim=victims.find(value=>value.body===result.victimBody);
+        const {victimBody,limb,...point}=result;
+        if(point.inside&&point.visible)candidates.push({victim,limb,point});
+        else if(allLimbs){
+          const distance=Math.hypot(point.x-viewport.width/2,point.y-viewport.height/2);
+          if(!nearestUnavailable||distance<nearestUnavailable.distance)nearestUnavailable={victim,limb,point,distance};
         }
       }
     };

@@ -16,7 +16,9 @@ namespace UnityEngine {
   static Matrix4x4 Matrix4x4FromTransform(Transform value){var result=new Matrix4x4();result.SetTRS(value.position,value.rotation,Vector3.one);return result;}
   public Ray ScreenPointToRay(Vector2 screenPoint) {
    if(pixelWidth<=0||pixelHeight<=0||!float.IsFinite(fieldOfView)||fieldOfView<=0||fieldOfView>=180)throw new InvalidOperationException("Camera projection settings are invalid");
-   float nx=(screenPoint.x/pixelWidth-.5f)*2f,ny=(screenPoint.y/pixelHeight-.5f)*2f;
+   var inputResolution=Screen.currentResolution;
+   if(inputResolution.width<=0||inputResolution.height<=0)throw new InvalidOperationException("Screen input resolution is invalid");
+   float nx=(screenPoint.x/inputResolution.width-.5f)*2f,ny=(screenPoint.y/inputResolution.height-.5f)*2f;
    float halfHeight=MathF.Tan(fieldOfView*MathF.PI/360f);
    float cameraAspect=aspect>0?aspect:(float)pixelWidth/pixelHeight;
    var direction=(transform.forward+transform.right*(nx*halfHeight*cameraAspect)+transform.up*(ny*halfHeight)).normalized;
