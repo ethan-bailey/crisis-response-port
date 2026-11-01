@@ -193,6 +193,10 @@ public class PaintableSurface : MonoBehaviour
 		Vector2 vector = delegatedWorldToPixel(worldPoint);
 		int x = (int)vector.x;
 		int y = (int)vector.y;
+		if (x < 0 || y < 0 || x >= bloodMask.width || y >= bloodMask.height)
+		{
+			return false;
+		}
 		bool flag = bloodMask.GetPixel(x, y).a <= 0.5f;
 		if (flag)
 		{
