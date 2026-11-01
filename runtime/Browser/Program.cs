@@ -149,6 +149,8 @@ public static class RuntimeBridge {
         var point=(fullSourceActor??throw new InvalidOperationException("FullSource actor bridge is not initialized")).SetAimWorldPoint(x,y,z);
         return JsonSerializer.Serialize(new{x=point.x,y=point.y,z=point.z});
     }
+    [JSInvokable] public static string StageFullSourceBrowserProjectileContractScenario(int shotNumber)=>
+        JsonSerializer.Serialize((fullSourceActor??throw new InvalidOperationException("FullSource actor bridge is not initialized")).StageBrowserProjectileContractScenario(shotNumber));
     [JSInvokable] public static string StageFullSourceProjectileContractScenario(int shotNumber)=>
         JsonSerializer.Serialize((fullSourceActor??throw new InvalidOperationException("FullSource actor bridge is not initialized")).StageProjectileContractScenario(shotNumber));
     [JSInvokable] public static string SetFullSourceCameraFraming(float fieldOfView,float aspect)=>

@@ -651,6 +651,102 @@ public sealed class FullSourceActorBridge
             // The preceding browser movement setup can leave velocity on the original actor;
             // the source contract starts this fixture from rest and keeps it staged at X=4.
             body.Rigidbody.velocity=Vector3.zero;
+            body.transform.position=new Vector3(4f,body.transform.position.y,-0.7f);
+            body.IsKneeling=true;
+            int otherIndex=0;
+            foreach(var otherVictim in victims.Where(victim=>!ReferenceEquals(victim,target)))
+                otherVictim.transform.position=new Vector3(40f+otherIndex++*2f,otherVictim.transform.position.y,otherVictim.transform.position.z);
+        }
+        else{
+            // FireOnce stages the same stationary kneeling shooter at X=4 for the second distinct Occupant too.
+            body.Rigidbody.velocity=Vector3.zero;
+            body.transform.position=new Vector3(4f,body.transform.position.y,-0.7f);
+            body.IsKneeling=true;
+            if(stagedProjectileContractFirstVictim==null)
+                throw new InvalidOperationException("The second projectile contract target cannot be staged before the first");
+            target=victims.FirstOrDefault(victim=>!ReferenceEquals(victim,stagedProjectileContractFirstVictim))
+                ??throw new InvalidOperationException("The projectile contract scenario has no second Occupant");
+            var firstPosition=stagedProjectileContractFirstVictim.transform.position;
+            stagedProjectileContractFirstVictim.transform.position=new Vector3(40f,firstPosition.y,firstPosition.z);
+            int otherIndex=0;
+            foreach(var otherVictim in victims.Where(victim=>!ReferenceEquals(victim,stagedProjectileContractFirstVictim)&&!ReferenceEquals(victim,target)))
+                otherVictim.transform.position=new Vector3(42f+otherIndex++*2f,otherVictim.transform.position.y,otherVictim.transform.position.z);
+        }
+
+        var targetPosition=target.transform.position;
+        // Keep the original actors on the authored continuous X=4..7 floor strip.
+        // The serialized floor boxes cover Z=-1..3, while the scene spawn Z=-1.5 falls off that platform.
+        target.transform.position=new Vector3(7f,targetPosition.y+.75f,-0.7f);
+        var sourceTarget=target.GetComponent<Target>()
+            ??throw new InvalidOperationException($"Original Occupant {target.name} has no Target component");
+        body.Blackboard.Target=sourceTarget;
+        body.WeaponAimer.Mode=WeaponAimer.AimMode.Ready;
+        world.Invoke(body.WeaponAimer,"Update");
+        var torso=target.limbMap.TryGetValue(LimbId.Torso,out var targetTorso)?targetTorso
+            :throw new InvalidOperationException($"Original Occupant {target.name} has no Torso limb");
+        body.AimPoint=torso.AimPointWithExtents(body.RightUpperArm.transform.position);
+        var torsoCollider=torso.GetComponent<Collider>()
+            ??throw new InvalidOperationException($"Original Occupant {target.name} Torso has no serialized collider");
+        var torsoBounds=torsoCollider.bounds;
+        var torsoHitPointCandidates=new[]{
+            body.AimPoint,
+            torsoBounds.center,
+            torsoBounds.center+Vector3.down*(torsoBounds.extents.y*.5f),
+            torsoBounds.center+Vector3.down*(torsoBounds.extents.y*.85f)
+        };
+        var muzzle=body.ActiveWeapon?.Muzzle
+            ??throw new InvalidOperationException($"Original shooter {body.name} has no active weapon muzzle");
+        var muzzlePosition=muzzle.position;
+        var aimQuadX=body.Position+body.Direction*20f;
+        var aimPointCandidates=torsoHitPointCandidates.Select(torsoPoint=>{
+            var muzzlePosition=muzzle.position;
+            var horizontalSpan=torsoPoint.x-muzzlePosition.x;
+            if(Mathf.Abs(horizontalSpan)<.01f)
+                throw new InvalidOperationException("Torso hit point is too close to the muzzle for AimQuad projection");
+            var distanceFactor=(aimQuadX-muzzlePosition.x)/horizontalSpan;
+            var pointerPoint=new Vector3(
+                aimQuadX,
+                muzzlePosition.y+(torsoPoint.y-muzzlePosition.y)*distanceFactor,
+                -1.5f);
+            return new{
+                pointerPoint=new[]{pointerPoint.x,pointerPoint.y,pointerPoint.z},
+                torsoPoint=new[]{torsoPoint.x,torsoPoint.y,torsoPoint.z}
+            };
+        }).ToArray();
+        return new{
+            shotNumber,
+            shooter=body.name,
+            shooterPosition=new[]{body.transform.position.x,body.transform.position.y,body.transform.position.z},
+            kneeling=body.IsKneeling,
+            target=target.name,
+            targetPosition=new[]{target.transform.position.x,target.transform.position.y,target.transform.position.z},
+            aimedLimb=torso.id.ToString(),
+            aimPoint=new[]{body.AimPoint.x,body.AimPoint.y,body.AimPoint.z},
+            muzzlePosition=new[]{muzzlePosition.x,muzzlePosition.y,muzzlePosition.z},
+            torsoColliderRadius=torsoBounds.extents.z,
+            aimPointCandidates,
+            sourceSnapshot=Snapshot()
+        };
+    }
+
+    public object StageBrowserProjectileContractScenario(int shotNumber)
+    {
+        world.MakeCurrent();
+        if(shotNumber is not (1 or 2))throw new ArgumentOutOfRangeException(nameof(shotNumber));
+        var victims=world.Objects.OfType<CharacterBody>()
+            .Where(candidate=>candidate&&candidate.GetComponent<Occupant>()!=null).ToArray();
+        if(victims.Length<2)throw new InvalidOperationException($"The projectile contract scenario requires two original Occupants; found {victims.Length}");
+
+        CharacterBody target;
+        if(shotNumber==1){
+            target=victims.OrderBy(victim=>MathF.Abs(victim.transform.position.x-2f))
+                .FirstOrDefault(victim=>MathF.Abs(victim.transform.position.x-2f)>6f)
+                ??throw new InvalidOperationException("The projectile contract scenario has no Occupant beyond the authored roof lane");
+            stagedProjectileContractFirstVictim=target;
+            // Match the source contract's stationary X=4 kneeling shooter before each tap.
+            // The preceding browser movement setup can leave velocity on the original actor;
+            // the source contract starts this fixture from rest and keeps it staged at X=4.
+            body.Rigidbody.velocity=Vector3.zero;
             body.transform.position=new Vector3(4f,0.94f,-0.7f);
             body.IsKneeling=true;
             int otherIndex=0;
