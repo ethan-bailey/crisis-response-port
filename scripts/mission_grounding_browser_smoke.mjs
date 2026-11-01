@@ -574,15 +574,17 @@ try {
       let fireModeToggleObserved=false,fireModeAtFire=null,fireInputAtPress=null;
       if(aimStateAtFire){
         let fireState=await page.evaluate(()=>window.__gameState().weaponState);
-        if(fireState?.fireMode==='Safe'){
+        const modeDeadline=Date.now()+5000;
+        while(fireState?.fireMode&&fireState.fireMode!=='Semi'&&Date.now()<modeDeadline){
           await page.keyboard.down('t');
           await page.waitForTimeout(120);
           await page.keyboard.up('t');
-          const modeDeadline=Date.now()+2500;
-          while(Date.now()<modeDeadline){
+          const transitionDeadline=Date.now()+1000;
+          const modeBefore=fireState.fireMode;
+          while(Date.now()<transitionDeadline){
             await page.waitForTimeout(50);
             fireState=await page.evaluate(()=>window.__gameState().weaponState);
-            if(fireState?.fireMode&&fireState.fireMode!=='Safe'){fireModeToggleObserved=true;break;}
+            if(fireState?.fireMode&&fireState.fireMode!==modeBefore){fireModeToggleObserved=true;break;}
           }
         }
         fireModeAtFire=fireState?.fireMode??null;
@@ -592,18 +594,22 @@ try {
         await page.mouse.move(point.x,point.y);
         await page.mouse.down();
         try{
-          await page.waitForFunction(()=>window.__gameState().originalInput?.fire?.Pressed===true,
-            null,{timeout:2000});
-          fireInputObserved=true;
-          fireInputAtPress=await page.evaluate(()=>window.__gameState().originalInput?.fire??null);
-        }catch{}
-        finally{await page.mouse.up();}
-        const shotDeadline=Date.now()+3000;
-        while(Date.now()<shotDeadline){
-          await page.waitForTimeout(50);
-          const current=await page.evaluate(()=>window.__sourceCombatSnapshot());
-          if(current.shotsFired>shotsBefore){shotObserved=true;break;}
-        }
+          try{
+            await page.waitForFunction(()=>window.__gameState().originalInput?.fire?.Pressed===true,
+              null,{timeout:2000});
+            fireInputObserved=true;
+            fireInputAtPress=await page.evaluate(()=>window.__gameState().originalInput?.fire??null);
+          }catch{}
+          // Keep the source action level held across additional RuntimeWorld ticks:
+          // InputHandler.Update may publish Pressed after PlayerController.Update
+          // has already consumed that frame, especially for the Auto-to-Semi cycle.
+          const shotDeadline=Date.now()+3000;
+          while(Date.now()<shotDeadline){
+            await page.waitForTimeout(50);
+            const current=await page.evaluate(()=>window.__sourceCombatSnapshot());
+            if(current.shotsFired>shotsBefore){shotObserved=true;break;}
+          }
+        }finally{await page.mouse.up();}
       }
       let afterSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
       let changedLimb=null;
