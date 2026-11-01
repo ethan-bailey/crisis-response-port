@@ -1,8 +1,7 @@
 # Crisis Response Port — current handoff
 
-- Work branch: `develop/wasm`; verified source SHA: `8df6347217de05ef76874fb49a0779f93a90ad81`.
-- CI run #232 passed: https://github.com/ethan-bailey/crisis-response-port/actions/runs/41264459082. Step 29, package retention, and independent reload evidence passed after exact source/package verification and Step 28 IndexedDB acceptance.
-- Packaged production fire input reached the original FullSource projectile and injury callback: Occupant 1 RightToes wounds changed 0→1, with wound cavity and damaged tissue each increasing to 0.5133886. The live aim tracker reached 0.344 units from the serialized RightToes aim point before firing. Retained grounding report artifact: `13066913167`.
-- The camera input ray now normalizes against `Screen.currentResolution`; limb projection is batched and the smoke follows the current serialized target while firing. EngineChecks includes `DisplaySettings.cs` so the engine compatibility build covers that dependency.
-- No full-game parity is claimed. Native PhysX integration, wound-pixel verification, rendered IK/gait parity, and iPhone Safari acceptance remain unverified. No Site publication occurred.
-- Canonical gate status and dependencies are in [docs/GATE_DEPENDENCY_INDEX.md](docs/GATE_DEPENDENCY_INDEX.md). Continue from this verified source SHA and follow [docs/CONTINUE_UNTIL_GATES_PASS.md](docs/CONTINUE_UNTIL_GATES_PASS.md). Use expected-head protection for GitHub ref updates.
+- Work branch: `develop/wasm`. Latest packaged runtime source evaluated: `50cf1ded161df70354904755d7acf1de61bf6004`.
+- CI #235 failed: https://github.com/ethan-bailey/crisis-response-port/actions/runs/41273482509. Source contracts, package build/integrity, and IndexedDB acceptance passed; packaged Step 29 failed before a new torso trigger.
+- Local contract values and packaged observations are in [docs/GATE_DEPENDENCY_INDEX.md](docs/GATE_DEPENDENCY_INDEX.md). The first packaged divergence was input visibility/setup state: target point hidden behind the recovered combined mesh; shooter residual velocity was 2.509 m/s, and stray earlier rounds caused a RightFoot `FloorPoolPainter.Update` pixel-region exception. This is the third cited attempt at the torso callback; preserve the discrepancy and move to independent open Gate 4 items.
+- Gate 4 remains open. Native PhysX integration has no Unity 2017.2 reference trajectory/contact evidence. Wound-pixel verification has no affected Torso UV/pixel delta; the RightFoot texture exception is not that evidence.
+- No Site publication occurred. Canonical gate status is in [docs/GATE_DEPENDENCY_INDEX.md](docs/GATE_DEPENDENCY_INDEX.md); continuation rules are in [docs/CONTINUE_UNTIL_GATES_PASS.md](docs/CONTINUE_UNTIL_GATES_PASS.md).
