@@ -30,6 +30,8 @@ public sealed class FullSourceActorBridge
     readonly List<object> projectileInteractionEvidence=[];
     readonly Dictionary<int, GameObject> trackedCasingObjects=[];
     CharacterBody? stagedProjectileContractFirstVictim;
+    CharacterBody? stagedBrowserProjectileContractFirstVictim;
+    CharacterBody? stagedBrowserProjectileContractSecondVictim;
     readonly FieldInfo accelerationField;
     readonly FieldInfo accelerationMagnitudeField;
     readonly BrowserAudioEventQueue audioEventQueue;
@@ -739,13 +741,14 @@ public sealed class FullSourceActorBridge
 
         CharacterBody target;
         if(shotNumber==1){
-            target=victims.OrderBy(victim=>MathF.Abs(victim.transform.position.x-2f))
-                .FirstOrDefault(victim=>MathF.Abs(victim.transform.position.x-2f)>6f)
-                ??throw new InvalidOperationException("The projectile contract scenario has no Occupant beyond the authored roof lane");
-            stagedProjectileContractFirstVictim=target;
-            // Match the source contract's stationary X=4 kneeling shooter before each tap.
-            // The preceding browser movement setup can leave velocity on the original actor;
-            // the source contract starts this fixture from rest and keeps it staged at X=4.
+            target=victims.OrderBy(victim=>MathF.Abs(victim.transform.position.x-11.06f))
+                .FirstOrDefault(victim=>MathF.Abs(victim.transform.position.x-11.06f)<1.5f)
+                ??throw new InvalidOperationException("The browser projectile scenario has no visible authored Occupant near X=11.06");
+            stagedBrowserProjectileContractFirstVictim=target;
+            stagedBrowserProjectileContractSecondVictim=victims.Where(victim=>!ReferenceEquals(victim,target))
+                .OrderByDescending(victim=>victim.transform.position.x).FirstOrDefault()
+                ??throw new InvalidOperationException("The browser projectile scenario has no second Occupant");
+            // Keep the original shooter stationary over the authored floor while removing intervening Occupants.
             body.Rigidbody.velocity=Vector3.zero;
             body.transform.position=new Vector3(4f,0.94f,-0.7f);
             body.IsKneeling=true;
@@ -758,21 +761,19 @@ public sealed class FullSourceActorBridge
             body.Rigidbody.velocity=Vector3.zero;
             body.transform.position=new Vector3(4f,0.94f,-0.7f);
             body.IsKneeling=true;
-            if(stagedProjectileContractFirstVictim==null)
-                throw new InvalidOperationException("The second projectile contract target cannot be staged before the first");
-            target=victims.FirstOrDefault(victim=>!ReferenceEquals(victim,stagedProjectileContractFirstVictim))
-                ??throw new InvalidOperationException("The projectile contract scenario has no second Occupant");
-            var firstPosition=stagedProjectileContractFirstVictim.transform.position;
-            stagedProjectileContractFirstVictim.transform.position=new Vector3(40f,firstPosition.y,firstPosition.z);
+            if(stagedBrowserProjectileContractFirstVictim==null||stagedBrowserProjectileContractSecondVictim==null)
+                throw new InvalidOperationException("The second browser projectile target cannot be staged before the first");
+            target=stagedBrowserProjectileContractSecondVictim;
+            var firstPosition=stagedBrowserProjectileContractFirstVictim.transform.position;
+            stagedBrowserProjectileContractFirstVictim.transform.position=new Vector3(40f,firstPosition.y,firstPosition.z);
             int otherIndex=0;
-            foreach(var otherVictim in victims.Where(victim=>!ReferenceEquals(victim,stagedProjectileContractFirstVictim)&&!ReferenceEquals(victim,target)))
+            foreach(var otherVictim in victims.Where(victim=>!ReferenceEquals(victim,stagedBrowserProjectileContractFirstVictim)&&!ReferenceEquals(victim,target)))
                 otherVictim.transform.position=new Vector3(42f+otherIndex++*2f,otherVictim.transform.position.y,otherVictim.transform.position.z);
         }
 
         var targetPosition=target.transform.position;
-        // Keep the source actors over the continuous floor strip at X=4..10.
-        // The serialized floor boxes cover Z=-1..3, while the scene spawn Z=-1.5 falls off that platform.
-        target.transform.position=new Vector3(10f,1.75f,-0.7f);
+        // Preserve each visible authored Torso's source X/Y; align its depth with the grounded X=4 shooter.
+        target.transform.position=new Vector3(targetPosition.x,targetPosition.y,-0.7f);
         var sourceTarget=target.GetComponent<Target>()
             ??throw new InvalidOperationException($"Original Occupant {target.name} has no Target component");
         body.Blackboard.Target=sourceTarget;
