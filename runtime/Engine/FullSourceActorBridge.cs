@@ -751,7 +751,8 @@ public sealed class FullSourceActorBridge
                 ??throw new InvalidOperationException("The browser projectile scenario requires a second live original Occupant");
             if(ReferenceEquals(stagedBrowserProjectileContractSecondVictim,target))
                 throw new InvalidOperationException("The browser projectile scenario requires two distinct authored Occupants");
-            // Keep the real production-moved shooter in its clear entrance-side position while removing intervening Occupants.
+            // After real movement updates the source camera, reproduce the source contract's grounded firing lane.
+            body.transform.position=new Vector3(4f,0.94f,body.transform.position.z);
             body.Rigidbody.velocity=Vector3.zero;
             body.IsKneeling=true;
             int otherIndex=0;
