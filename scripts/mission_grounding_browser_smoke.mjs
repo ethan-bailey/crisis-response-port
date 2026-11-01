@@ -493,6 +493,22 @@ try {
       }
       assert.ok(combatLane.endX>=combatLane.targetX,
         `production movement must clear the entrance fixture cluster before source firing: ${JSON.stringify(combatLane)}`);
+      await page.waitForFunction(() => {
+        const state=window.__gameState?.();
+        return state && Math.abs(state.velocity)<0.05 && state.animation==='Body stand' &&
+          !state.originalInput?.left?.Pressed && !state.originalInput?.right?.Pressed;
+      },null,{timeout:30000});
+      const settledBefore=await page.evaluate(()=>window.__gameState());
+      await page.waitForTimeout(400);
+      const settledAfter=await page.evaluate(()=>window.__gameState());
+      assert.ok(Math.abs(settledAfter.playerX-settledBefore.playerX)<0.02 &&
+        Math.abs(settledAfter.playerY-settledBefore.playerY)<0.02,
+        `the source actor must remain settled after releasing the lane-clearance pulse: ${JSON.stringify({
+          before:{x:settledBefore.playerX,y:settledBefore.playerY,velocity:settledBefore.velocity,animation:settledBefore.animation},
+          after:{x:settledAfter.playerX,y:settledAfter.playerY,velocity:settledAfter.velocity,animation:settledAfter.animation}
+        })}`);
+      combatLane.settled={x:settledAfter.playerX,y:settledAfter.playerY,velocity:settledAfter.velocity,
+        animation:settledAfter.animation};
     }
     const candidates=[];
     let nearestUnavailable=null;
@@ -511,7 +527,8 @@ try {
         }
       }
     };
-    await scanVisibleLimbs(combatBefore,true);
+    const combatTargets=await page.evaluate(()=>window.__sourceCombatSnapshot());
+    await scanVisibleLimbs(combatTargets,true);
     const lateralReposition={attempted:false,scans:0};
     if(candidates.length===0&&nearestUnavailable){
       const start=await page.evaluate(()=>window.__gameState().grounding.sourceRoot);
