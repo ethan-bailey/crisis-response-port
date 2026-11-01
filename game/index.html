@@ -231,7 +231,7 @@ async function initializeOriginalRuntime(){
 for (const button of document.querySelectorAll("button[data-action]")) input.bindButton(button, button.dataset.action);
 // Original InputMapping.cs bindings, plus arrow-key movement aliases.
 input.bindKeyboard(window, {KeyA:"left", ArrowLeft:"left", KeyD:"right", ArrowRight:"right",
- ShiftLeft:"sprint", KeyR:"magazine", KeyT:"fireMode", Tab:"switchWeapons", KeyS:"kneel", KeyW:"stand"});
+ ShiftLeft:"sprint", KeyR:"magazine", KeyB:"bolt", KeyT:"fireMode", Tab:"switchWeapons", KeyS:"kneel", KeyW:"stand"});
 let stickAimBaseY=pointerNdc.y,stickAimBaseVertical=0;
 input.bindMovementStick(document.querySelector("#movementStick"),document.querySelector("#movementStick .stick-thumb"),{onAimStart(vertical){stickAimBaseY=pointerNdc.y;stickAimBaseVertical=vertical;},onAim(vertical,active=true){if(!active)return;const targetY=Math.max(-1,Math.min(1,stickAimBaseY+vertical-stickAimBaseVertical));if(Math.abs(pointerNdc.y-targetY)>0.001){pointerNdc.y=targetY;aimDirty=true;aimGeneration++;}}});
 input.bindLifecycle(window, document);
@@ -501,7 +501,7 @@ const exteriorVisibilityReady=json("./assets/mission01-exterior-visibility.json"
    return {...source,renderedExteriorSubmeshesHidden:hidden?exteriorVisibilityManifest.submeshIndices.length:0,
     contactPhysicsBoxesHidden:hidden?fullContactPhysicsData.boxes.length-cutawayContactPhysicsData.boxes.length:0};
   };
-  window.__sourceCombatScreenPoint=point=>{const target=new THREE.Vector3(point[0],point[1],-point[2]),projected=target.clone().project(camera),rect=renderer.domElement.getBoundingClientRect(),targetDistance=camera.position.distanceTo(target),raycaster=new THREE.Raycaster();raycaster.setFromCamera(new THREE.Vector2(projected.x,projected.y),camera);raycaster.near=0;raycaster.far=targetDistance;const blocker=sceneMesh?raycaster.intersectObject(sceneMesh,false).find(hit=>hit.distance<targetDistance-.03):null;return{x:rect.left+(projected.x+1)*rect.width/2,y:rect.top+(1-projected.y)*rect.height/2,inside:projected.x>=-1&&projected.x<=1&&projected.y>=-1&&projected.y<=1,visible:!blocker,blocker:blocker?{name:blocker.object.name,distance:blocker.distance,targetDistance}:null};};
+  window.__sourceCombatScreenPoint=point=>{const target=new THREE.Vector3(point[0],point[1],-point[2]),projected=target.clone().project(camera),rect=renderer.domElement.getBoundingClientRect(),targetDistance=camera.position.distanceTo(target),raycaster=new THREE.Raycaster();raycaster.setFromCamera(new THREE.Vector2(projected.x,projected.y),camera);raycaster.near=0;raycaster.far=targetDistance;const blocker=sceneMesh?raycaster.intersectObject(sceneMesh,false).find(hit=>hit.distance<targetDistance-.03):null;return{x:rect.left+(projected.x+1)*rect.width/2,y:rect.top+(1-projected.y)*rect.height/2,viewportWidth:rect.width,viewportHeight:rect.height,inside:projected.x>=-1&&projected.x<=1&&projected.y>=-1&&projected.y<=1,visible:!blocker,blocker:blocker?{name:blocker.object.name,distance:blocker.distance,targetDistance}:null};};
   status.textContent="Original C# camera and arm IK · tap or drag to aim; tap same spot to fire.";
   positionLabel.textContent="Walk 1.5 m/s · Sprint 4.2 m/s · original spawn X −3";
   const startOriginalMission=async()=>{

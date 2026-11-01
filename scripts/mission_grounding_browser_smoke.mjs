@@ -510,6 +510,21 @@ try {
     for(let shotNumber=1;shotNumber<=2;shotNumber++){
       const scenario=await page.evaluate(number=>window.__stageSourceProjectileContractScenario(number),shotNumber);
       await page.waitForTimeout(500);
+      let boltCycleAttempted=false,readyToFireAfterBolt=null;
+      let readinessState=await page.evaluate(()=>window.__gameState().weaponState);
+      if(readinessState?.readyToFire===false){
+        boltCycleAttempted=true;
+        await page.keyboard.down('b');
+        await page.waitForTimeout(120);
+        await page.keyboard.up('b');
+        const boltDeadline=Date.now()+8000;
+        while(Date.now()<boltDeadline){
+          await page.waitForTimeout(50);
+          readinessState=await page.evaluate(()=>window.__gameState().weaponState);
+          if(readinessState?.readyToFire===true)break;
+        }
+      }
+      readyToFireAfterBolt=readinessState?.readyToFire??null;
       const beforeSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
       const beforeVictim=beforeSnapshot.occupants.find(victim=>victim.body===scenario.target);
       const beforeTorso=beforeVictim?.limbs.find(limb=>limb.limb==='Torso');
@@ -524,6 +539,18 @@ try {
             camera:window.__gameState().sourceCamera}),beforeTorso.aimPoint);
           point=projection.point;
           if(!point.inside||!point.visible)break;
+          if(lastAimState?.sourceAimPoint&&projection.camera&&point.viewportWidth>0&&point.viewportHeight>0){
+            const cameraPosition=projection.camera.position;
+            const distance=Math.hypot(beforeTorso.aimPoint[0]-cameraPosition[0],
+              beforeTorso.aimPoint[1]-cameraPosition[1],beforeTorso.aimPoint[2]-cameraPosition[2]);
+            const tangent=Math.tan((projection.camera.fov??75)*Math.PI/360);
+            const unitsPerPixelX=2*distance*tangent*(projection.camera.aspect??(point.viewportWidth/point.viewportHeight))/point.viewportWidth;
+            const unitsPerPixelY=2*distance*tangent/point.viewportHeight;
+            const correctedX=point.x+(beforeTorso.aimPoint[0]-lastAimState.sourceAimPoint[0])/unitsPerPixelX;
+            const correctedY=point.y-(beforeTorso.aimPoint[1]-lastAimState.sourceAimPoint[1])/unitsPerPixelY;
+            if(correctedX>=0&&correctedX<=point.viewportWidth&&correctedY>=0&&correctedY<=point.viewportHeight)
+              point={...point,x:correctedX,y:correctedY};
+          }
           await page.mouse.move(point.x,point.y);
           const state=await page.evaluate(()=>window.__gameState());
           const sourcePoint=state.weaponState?.sourceAimPoint;
@@ -535,7 +562,10 @@ try {
             aimConverged:state.weaponState?.aimConverged,fireMode:state.weaponState?.fireMode,
             readyToFire:state.weaponState?.readyToFire,rightArmOnTarget:state.weaponState?.rightArmOnTarget,
             leftArmOnTarget:state.weaponState?.leftArmOnTarget,
-            manipulatingEquipment:state.weaponState?.manipulatingEquipment,aimDistance};
+            manipulatingEquipment:state.weaponState?.manipulatingEquipment,
+            boltStatus:state.weaponState?.boltStatus,boltLive:state.weaponState?.boltLive,
+            boltMoving:state.weaponState?.boltMoving,boltMalfunctioned:state.weaponState?.boltMalfunctioned,
+            boltCarriesLiveRound:state.weaponState?.boltCarriesLiveRound,aimDistance};
           if(state.aimGeneration>aimGenerationBefore&&state.sourceAimAppliedGeneration===state.aimGeneration&&
             state.weaponState?.aimConverged===true&&aimDistance<=0.55){aimStateAtFire={...lastAimState};break;}
           await page.waitForTimeout(50);
@@ -590,8 +620,9 @@ try {
       const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===scenario.target);
       const attempt={shotNumber,stagedScenario:scenario,victim:scenario.target,aimedLimb:'Torso',
         aimPoint:beforeTorso?.aimPoint??scenario.aimPoint,screenPoint:point,cameraAtProjection:projection?.camera,
-        aimStateAtFire,lastAimState,aimDistance,fireModeToggleObserved,fireModeAtFire,
-        fireInputObserved,fireInputAtPress,shotObserved,shotsBefore,shotsAfter:afterSnapshot.shotsFired,
+        aimStateAtFire,lastAimState,aimDistance,boltCycleAttempted,readyToFireAfterBolt,
+        fireModeToggleObserved,fireModeAtFire,fireInputObserved,fireInputAtPress,
+        shotObserved,shotsBefore,shotsAfter:afterSnapshot.shotsFired,
         lastHitLimb:afterVictim?.lastHitLimb??null,damagedLimb:changedLimb,
         projectiles:afterSnapshot.projectiles,spawnedProjectiles:afterSnapshot.spawnedProjectiles,
         projectileInteractions:afterSnapshot.projectileInteractions};
