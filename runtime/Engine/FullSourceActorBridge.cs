@@ -696,6 +696,7 @@ public sealed class FullSourceActorBridge
         };
         var muzzle=body.ActiveWeapon?.Muzzle
             ??throw new InvalidOperationException($"Original shooter {body.name} has no active weapon muzzle");
+        var muzzlePosition=muzzle.position;
         var aimQuadX=body.Position+body.Direction*20f;
         var aimPointCandidates=torsoHitPointCandidates.Select(torsoPoint=>{
             var muzzlePosition=muzzle.position;
@@ -721,6 +722,8 @@ public sealed class FullSourceActorBridge
             targetPosition=new[]{target.transform.position.x,target.transform.position.y,target.transform.position.z},
             aimedLimb=torso.id.ToString(),
             aimPoint=new[]{body.AimPoint.x,body.AimPoint.y,body.AimPoint.z},
+            muzzlePosition=new[]{muzzlePosition.x,muzzlePosition.y,muzzlePosition.z},
+            torsoColliderRadius=torsoBounds.extents.z,
             aimPointCandidates,
             sourceSnapshot=Snapshot()
         };

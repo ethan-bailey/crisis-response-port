@@ -520,29 +520,42 @@ try {
         point:window.__sourceCombatScreenPoint(candidate.pointerPoint)
       })),aimPointCandidates);
       // Project the source WeaponPointer's AimQuad point whose muzzle ray crosses the original Torso collider.
-      const visibleTorsoCandidate=candidateProjections.find(candidate=>candidate.point.inside&&candidate.point.visible);
-      const aimPoint=visibleTorsoCandidate?.position??scenario.aimPoint;
-      const torsoHitPoint=visibleTorsoCandidate?.torsoHitPoint??scenario.aimPoint;
+      // WeaponPointer raycasts only the original AimQuad layer; scene-mesh visibility is not its raycast mask.
+      const aimQuadCandidate=candidateProjections.find(candidate=>candidate.point.inside);
+      const aimPoint=aimQuadCandidate?.position??scenario.aimPoint;
+      const torsoHitPoint=aimQuadCandidate?.torsoHitPoint??scenario.aimPoint;
       let projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),camera:window.__gameState().sourceCamera}),aimPoint);
       let point=projection.point;
       const aimGenerationBefore=await page.evaluate(()=>window.__gameState().aimGeneration);
       const aimDeadline=Date.now()+5000;
       let aimStateAtFire=null;
       let aimDistance=Infinity;
+      let torsoLineError=Infinity;
+      let lastAimState=null;
       while(Date.now()<aimDeadline){
         projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),camera:window.__gameState().sourceCamera}),aimPoint);
         point=projection.point;
-        if(!point.inside||!point.visible)break;
+        if(!point.inside)break;
         await page.mouse.move(point.x,point.y);
         const state=await page.evaluate(()=>window.__gameState());
         const sourcePoint=state.weaponState?.sourceAimPoint;
         aimDistance=sourcePoint?Math.hypot(sourcePoint[0]-aimPoint[0],sourcePoint[1]-aimPoint[1],sourcePoint[2]-aimPoint[2]):Infinity;
+        if(sourcePoint&&scenario.muzzlePosition&&torsoHitPoint){
+          const ray=sourcePoint.map((value,index)=>value-scenario.muzzlePosition[index]);
+          const pointFromMuzzle=torsoHitPoint.map((value,index)=>value-scenario.muzzlePosition[index]);
+          const rayLengthSquared=ray.reduce((sum,value)=>sum+value*value,0);
+          const scale=rayLengthSquared>0?Math.max(0,pointFromMuzzle.reduce((sum,value,index)=>sum+value*ray[index],0)/rayLengthSquared):0;
+          const closest=scenario.muzzlePosition.map((value,index)=>value+ray[index]*scale);
+          torsoLineError=Math.hypot(...closest.map((value,index)=>value-torsoHitPoint[index]));
+        }
+        lastAimState={aimGeneration:state.aimGeneration,sourceAimAppliedGeneration:state.sourceAimAppliedGeneration,
+          aimPoint:state.aimPoint,sourceAimPoint:sourcePoint,sourcePointer:state.weaponState?.sourcePointer,
+          sourceCamera:state.sourceCamera,aimAlignment:state.weaponState?.aimAlignment,
+          aimConverged:state.weaponState?.aimConverged,aimDistance,torsoLineError};
         if(state.aimGeneration>aimGenerationBefore&&state.sourceAimAppliedGeneration===state.aimGeneration&&
-          state.weaponState?.aimConverged===true&&aimDistance<=0.55){
-          aimStateAtFire={aimGeneration:state.aimGeneration,sourceAimAppliedGeneration:state.sourceAimAppliedGeneration,
-            aimPoint:state.aimPoint,sourceAimPoint:sourcePoint,sourcePointer:state.weaponState?.sourcePointer,
-            sourceCamera:state.sourceCamera,aimAlignment:state.weaponState?.aimAlignment,
-            aimConverged:state.weaponState?.aimConverged,aimDistance};
+          state.weaponState?.aimConverged===true&&state.weaponState?.sourcePointer?.raycastHit&&
+          torsoLineError<=scenario.torsoColliderRadius){
+          aimStateAtFire={...lastAimState};
           break;
         }
         await page.waitForTimeout(50);
@@ -574,8 +587,9 @@ try {
       }
       const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===scenario.target);
       const attempt={shotNumber,stagedScenario:scenario,aimedLimb:'Torso',aimPoint,torsoHitPoint,
+        candidateProjections,lastAimState,
         screenPoint:{x:point.x,y:point.y,inside:point.inside,visible:point.visible,blocker:point.blocker},
-        cameraAtProjection:projection.camera,aimStateAtFire,aimDistance,shotObserved,shotsBefore,shotsAfter:afterSnapshot.shotsFired,
+        cameraAtProjection:projection.camera,aimStateAtFire,aimDistance,torsoLineError,shotObserved,shotsBefore,shotsAfter:afterSnapshot.shotsFired,
         lastHitLimb:afterVictim?.lastHitLimb??null,damagedLimb:changedLimb,
         projectiles:afterSnapshot.projectiles,spawnedProjectiles:afterSnapshot.spawnedProjectiles,
         projectileInteractions:afterSnapshot.projectileInteractions};
