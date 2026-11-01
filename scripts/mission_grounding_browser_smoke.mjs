@@ -539,9 +539,15 @@ try {
         }
       }
       if(aimStateAtFire){
-        await page.touchscreen.tap(point.x,point.y);
-        await page.waitForTimeout(80);
-        await page.touchscreen.tap(point.x,point.y);
+        let fireInputObserved=false;
+        await page.mouse.move(point.x,point.y);
+        await page.mouse.down();
+        try{
+          await page.waitForFunction(()=>window.__gameState().originalInput?.fire?.Pressed===true,
+            null,{timeout:2000});
+          fireInputObserved=true;
+        }catch{}
+        finally{await page.mouse.up();}
         const shotDeadline=Date.now()+3000;
         while(Date.now()<shotDeadline){
           await page.waitForTimeout(50);
@@ -564,7 +570,7 @@ try {
       const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===scenario.target);
       const attempt={shotNumber,stagedScenario:scenario,victim:scenario.target,aimedLimb:'Torso',
         aimPoint:beforeTorso?.aimPoint??scenario.aimPoint,screenPoint:point,cameraAtProjection:projection?.camera,
-        aimStateAtFire,lastAimState,aimDistance,shotObserved,shotsBefore,shotsAfter:afterSnapshot.shotsFired,
+        aimStateAtFire,lastAimState,aimDistance,fireInputObserved,shotObserved,shotsBefore,shotsAfter:afterSnapshot.shotsFired,
         lastHitLimb:afterVictim?.lastHitLimb??null,damagedLimb:changedLimb,
         projectiles:afterSnapshot.projectiles,spawnedProjectiles:afterSnapshot.spawnedProjectiles,
         projectileInteractions:afterSnapshot.projectileInteractions};
