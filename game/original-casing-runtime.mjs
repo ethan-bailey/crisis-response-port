@@ -23,7 +23,7 @@ export function createOriginalCasingRuntime({THREE,source,physics,scene,normalTe
   aoMap:occlusionTexture,aoMapIntensity:materialData.occlusionStrength,side:THREE.DoubleSide});
  brass.color.setRGB(...materialData.colorLinear,THREE.LinearSRGBColorSpace);
  const meshTemplate=new THREE.Mesh(geometry,brass);meshTemplate.name='Original Casing 5.56x45mm MeshRenderer';
- const casings=new Map(),settled=new Map();
+ const casings=new Map(),settled=new Map(),unsupported=new Set();
  function remove(id,{keepVisual=false}={}){
   const value=casings.get(id);if(!value)return;
   physics.removeDynamic(value.body);casings.delete(id);
@@ -31,14 +31,22 @@ export function createOriginalCasingRuntime({THREE,source,physics,scene,normalTe
   else scene.remove(value.visual);
  }
  function create(command){
-  const id=command.body;if(!Number.isSafeInteger(id)||!finite3(command.sourcePosition)||!finite4(command.sourceRotation)||
+  const id=command.body;
+  if(!Number.isSafeInteger(id))throw new Error('Source casing Rigidbody identity is invalid: '+JSON.stringify({body:command.body,name:command.name}));
+  // This recovered mesh/collider is specifically the 5.56x45mm casing prefab.
+  // Keep other authored casing prefabs on their source Rigidbody path.
+  if(typeof command.name!=='string'||!command.name.startsWith('Casing 5.56x45mm')){
+   unsupported.add(id);
+   return null;
+  }
+  if(!finite3(command.sourcePosition)||!finite4(command.sourceRotation)||
      !Number.isFinite(command.mass)||Math.abs(command.mass-collider.massKg)>1e-6)
-   throw new Error('Source casing Rigidbody identity, pose, or authored 2 g mass is invalid: '+JSON.stringify({body:command.body,name:command.name,sourcePosition:command.sourcePosition,sourceRotation:command.sourceRotation,mass:command.mass,expectedMass:collider.massKg}));
+   throw new Error('Source 5.56 casing Rigidbody identity, pose, or authored 2 g mass is invalid: '+JSON.stringify({body:command.body,name:command.name,sourcePosition:command.sourcePosition,sourceRotation:command.sourceRotation,mass:command.mass,expectedMass:collider.massKg}));
   if(casings.has(id)||settled.has(id))throw new Error('Duplicate source casing Rigidbody: '+id);
   const body=physics.createOriginalCasing({position:command.sourcePosition,rotation:command.sourceRotation,
    mass:command.mass,halfExtents:collider.size.map(x=>x/2),center:collider.center,
    linearDamping:collider.drag,angularDamping:collider.angularDrag});
-  const visual=meshTemplate.clone();visual.material=brass;visual.name=command.name||'Casing 5.56x45mm';
+  const visual=meshTemplate.clone();visual.material=brass;visual.name=command.name;
   visual.userData={source:'FullSource.Casing',sourceBodyId:id,sourceMeshGuid:source.source.meshGuid};scene.add(visual);
   const value={id,body,visual};casings.set(id,value);return value;
  }
@@ -50,8 +58,9 @@ export function createOriginalCasingRuntime({THREE,source,physics,scene,normalTe
    if(command.operation==='force'){
     if(value)throw new Error('Original casing force spawned the same Rigidbody twice');
     value=create(command);
-    physics.addDynamicForce(value.body,command.force,command.position,command.mode);
+    if(value)physics.addDynamicForce(value.body,command.force,command.position,command.mode);
    }else if(command.operation==='torque'){
+    if(unsupported.has(command.body))continue;
     if(!value)throw new Error('Original casing torque arrived before its source Rigidbody force');
     physics.addDynamicTorque(value.body,command.torque,command.mode);
    }else throw new Error('Unsupported source casing world command: '+command.operation);
@@ -62,6 +71,7 @@ export function createOriginalCasingRuntime({THREE,source,physics,scene,normalTe
   const active=new Set();
   for(const sourceState of sourceStates){
    if(!Number.isSafeInteger(sourceState.body))throw new Error('Source casing state is missing its Rigidbody ID');
+   if(unsupported.has(sourceState.body))continue;
    const value=casings.get(sourceState.body);
    if(!value){if(settled.has(sourceState.body))continue;throw new Error('Source casing state has no browser PhysX actor: '+sourceState.body);}
    active.add(sourceState.body);
@@ -98,6 +108,6 @@ export function createOriginalCasingRuntime({THREE,source,physics,scene,normalTe
   }
  }
  return {consume,stepVisuals,syncSourceStates,reconcile,
-  snapshot(){return {active:casings.size,settled:settled.size,bodyIds:[...casings.keys()]};},
+  snapshot(){return {active:casings.size,settled:settled.size,unsupportedSourcePrefabs:unsupported.size,bodyIds:[...casings.keys()]};},
   dispose(){for(const id of [...casings.keys()])remove(id);for(const visual of settled.values())scene.remove(visual);settled.clear();geometry.dispose();brass.dispose();}};
 }

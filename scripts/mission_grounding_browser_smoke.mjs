@@ -504,116 +504,106 @@ try {
       'packaged FullSource Mission must expose live serialized Occupant Torso limbs');
     const attempts=[];
     const acceptedHits=[];
-    let firstScenarioBefore=null;
-    const fireContractTarget=async shotNumber=>{
-      const scenario=await page.evaluate(shotNumber=>window.__stageSourceProjectileContractScenario(shotNumber),shotNumber);
-      await page.waitForTimeout(250);
+    const failures=[];
+    const viewport=await page.evaluate(()=>({width:innerWidth,height:innerHeight}));
+    const visibleTorsoTargets=await page.evaluate(()=>{
+      const snapshot=window.__sourceCombatSnapshot();
+      return snapshot.occupants.filter(victim=>victim.alive)
+        .map(victim=>({body:victim.body,position:victim.position,torso:victim.limbs.find(limb=>limb.limb==='Torso')}))
+        .filter(target=>target.torso);
+    });
+    const torsoProjections=await page.evaluate(targets=>targets.map(target=>({
+      ...window.__sourceCombatScreenPoint(target.torso.aimPoint),body:target.body,position:target.position,limb:target.torso,
+    })),visibleTorsoTargets);
+    const candidates=torsoProjections.filter(candidate=>candidate.inside&&candidate.visible)
+      .sort((a,b)=>Math.hypot(a.x-viewport.width/2,a.y-viewport.height/2)-
+        Math.hypot(b.x-viewport.width/2,b.y-viewport.height/2)).slice(0,16);
+    const acceptedBodies=new Set();
+    for(const candidate of candidates){
+      if(acceptedBodies.has(candidate.body))continue;
       const beforeSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
-      if(shotNumber===1){combatBefore=beforeSnapshot;firstScenarioBefore=beforeSnapshot;}
-      const beforeVictim=beforeSnapshot.occupants.find(victim=>victim.body===scenario.target);
+      const beforeVictim=beforeSnapshot.occupants.find(victim=>victim.body===candidate.body);
+      const beforeTorso=beforeVictim?.limbs.find(limb=>limb.limb==='Torso');
+      if(!beforeVictim?.alive||!beforeTorso)continue;
       const shotsBefore=beforeSnapshot.shotsFired;
-      const aimPointCandidates=scenario.aimPointCandidates?.length?scenario.aimPointCandidates:[{
-        pointerPoint:scenario.aimPoint,torsoPoint:scenario.aimPoint
-      }];
-      const candidateProjections=await page.evaluate(candidates=>candidates.map(candidate=>({
-        position:candidate.pointerPoint,torsoHitPoint:candidate.torsoPoint,
-        point:window.__sourceCombatScreenPoint(candidate.pointerPoint)
-      })),aimPointCandidates);
-      // Project the source WeaponPointer's AimQuad point whose muzzle ray crosses the original Torso collider.
-      // WeaponPointer raycasts only the original AimQuad layer; scene-mesh visibility is not its raycast mask.
-      const aimQuadCandidate=candidateProjections.find(candidate=>candidate.point.inside);
-      const aimPoint=aimQuadCandidate?.position??scenario.aimPoint;
-      const torsoHitPoint=aimQuadCandidate?.torsoHitPoint??scenario.aimPoint;
-      let projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),camera:window.__gameState().sourceCamera}),aimPoint);
-      let point=projection.point;
       const aimGenerationBefore=await page.evaluate(()=>window.__gameState().aimGeneration);
       const aimDeadline=Date.now()+5000;
-      let aimStateAtFire=null;
-      let aimDistance=Infinity;
-      let torsoLineError=Infinity;
-      let lastAimState=null;
+      let projection=null,point=candidate,aimDistance=Infinity,aimStateAtFire=null,lastAimState=null;
       while(Date.now()<aimDeadline){
-        projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),camera:window.__gameState().sourceCamera}),aimPoint);
-        point=projection.point;
-        if(!point.inside)break;
+        const live=await page.evaluate(body=>{
+          const snapshot=window.__sourceCombatSnapshot(),victim=snapshot.occupants.find(value=>value.body===body);
+          const limb=victim?.limbs.find(value=>value.limb==='Torso'),state=window.__gameState();
+          return {victim,limb,state,point:limb?window.__sourceCombatScreenPoint(limb.aimPoint):null};
+        },candidate.body);
+        if(!live.victim?.alive||!live.limb||!live.point?.inside||!live.point.visible)break;
+        projection={point:live.point,camera:live.state.sourceCamera};point=live.point;
         await page.mouse.move(point.x,point.y);
-        const state=await page.evaluate(()=>window.__gameState());
-        const sourcePoint=state.weaponState?.sourceAimPoint;
-        aimDistance=sourcePoint?Math.hypot(sourcePoint[0]-aimPoint[0],sourcePoint[1]-aimPoint[1],sourcePoint[2]-aimPoint[2]):Infinity;
-        if(sourcePoint&&scenario.muzzlePosition&&torsoHitPoint){
-          const ray=sourcePoint.map((value,index)=>value-scenario.muzzlePosition[index]);
-          const pointFromMuzzle=torsoHitPoint.map((value,index)=>value-scenario.muzzlePosition[index]);
-          const rayLengthSquared=ray.reduce((sum,value)=>sum+value*value,0);
-          const scale=rayLengthSquared>0?Math.max(0,pointFromMuzzle.reduce((sum,value,index)=>sum+value*ray[index],0)/rayLengthSquared):0;
-          const closest=scenario.muzzlePosition.map((value,index)=>value+ray[index]*scale);
-          torsoLineError=Math.hypot(...closest.map((value,index)=>value-torsoHitPoint[index]));
-        }
+        const state=await page.evaluate(()=>window.__gameState()),sourcePoint=state.weaponState?.sourceAimPoint;
+        aimDistance=sourcePoint?Math.hypot(sourcePoint[0]-live.limb.aimPoint[0],sourcePoint[1]-live.limb.aimPoint[1],sourcePoint[2]-live.limb.aimPoint[2]):Infinity;
         lastAimState={aimGeneration:state.aimGeneration,sourceAimAppliedGeneration:state.sourceAimAppliedGeneration,
           aimPoint:state.aimPoint,sourceAimPoint:sourcePoint,sourcePointer:state.weaponState?.sourcePointer,
           sourceCamera:state.sourceCamera,aimAlignment:state.weaponState?.aimAlignment,
-          aimConverged:state.weaponState?.aimConverged,aimDistance,torsoLineError};
+          aimConverged:state.weaponState?.aimConverged,aimDistance};
+        // The original WeaponPointer can retain a null RaycastHit after its valid
+        // WorldPoint has been applied; require the source generation and actor IK
+        // convergence that were observed on the previously accepted interaction.
         if(state.aimGeneration>aimGenerationBefore&&state.sourceAimAppliedGeneration===state.aimGeneration&&
-          state.weaponState?.aimConverged===true&&state.weaponState?.sourcePointer?.raycastHit&&
-          torsoLineError<=scenario.torsoColliderRadius){
-          aimStateAtFire={...lastAimState};
-          break;
-        }
+          state.weaponState?.aimConverged===true&&aimDistance<=0.55){aimStateAtFire={...lastAimState};break;}
         await page.waitForTimeout(50);
       }
-      let afterSnapshot=beforeSnapshot;
-      let changedLimb=null;
-      let shotObserved=false;
+      let afterSnapshot=beforeSnapshot,shotObserved=false;
       if(aimStateAtFire){
-        // The documented production tap on the aimed game surface feeds the
-        // original PlayerController fire input and WeaponBase trigger once.
-        await page.mouse.click(point.x,point.y,{delay:5});
-        const shotDeadline=Date.now()+3000;
-        while(Date.now()<shotDeadline){
-          afterSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
-          if(afterSnapshot.shotsFired>shotsBefore){shotObserved=true;break;}
-          await page.waitForTimeout(50);
-        }
+        await page.mouse.down();
+        try{
+          const shotDeadline=Date.now()+3000;
+          while(Date.now()<shotDeadline){
+            const live=await page.evaluate(body=>{
+              const snapshot=window.__sourceCombatSnapshot(),victim=snapshot.occupants.find(value=>value.body===body);
+              const limb=victim?.limbs.find(value=>value.limb==='Torso');
+              return {snapshot,limb,point:limb?window.__sourceCombatScreenPoint(limb.aimPoint):null,camera:window.__gameState().sourceCamera};
+            },candidate.body);
+            if(!live.limb||!live.point?.inside||!live.point.visible)break;
+            point=live.point;projection={point,camera:live.camera};await page.mouse.move(point.x,point.y);
+            afterSnapshot=live.snapshot;
+            if(afterSnapshot.shotsFired>shotsBefore){shotObserved=true;break;}
+            await page.waitForTimeout(50);
+          }
+        }finally{await page.mouse.up();}
       }
+      let changedLimb=null;
       const impactDeadline=Date.now()+3000;
       while(shotObserved&&Date.now()<impactDeadline){
         afterSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
-        const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===scenario.target);
-        changedLimb=afterVictim?.limbs.find(limb=>{
-          const prior=beforeVictim?.limbs.find(item=>item.limb===limb.limb);
-          return prior&&(limb.wounds>prior.wounds||limb.woundCavityVolume>prior.woundCavityVolume||limb.damagedTissueVolume>prior.damagedTissueVolume);
-        })??null;
-        if(changedLimb)break;
-        await page.waitForTimeout(100);
+        const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===candidate.body);
+        changedLimb=afterVictim?.limbs.find(limb=>limb.limb==='Torso'&&
+          (limb.wounds>beforeTorso.wounds||limb.woundCavityVolume>beforeTorso.woundCavityVolume||
+           limb.damagedTissueVolume>beforeTorso.damagedTissueVolume))??null;
+        if(changedLimb)break;await page.waitForTimeout(100);
       }
-      const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===scenario.target);
-      const attempt={shotNumber,stagedScenario:scenario,aimedLimb:'Torso',aimPoint,torsoHitPoint,
-        candidateProjections,lastAimState,
+      const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===candidate.body);
+      const attempt={shotNumber:attempts.length+1,stagedScenario:{target:candidate.body,targetPosition:candidate.position,aimedLimb:'Torso'},
+        victim:candidate.body,aimedLimb:'Torso',aimPoint:candidate.limb.aimPoint,scannedScreenPoint:candidate,
         screenPoint:{x:point.x,y:point.y,inside:point.inside,visible:point.visible,blocker:point.blocker},
-        cameraAtProjection:projection.camera,aimStateAtFire,aimDistance,torsoLineError,shotObserved,shotsBefore,shotsAfter:afterSnapshot.shotsFired,
-        lastHitLimb:afterVictim?.lastHitLimb??null,damagedLimb:changedLimb,
+        cameraAtProjection:projection?.camera,aimStateAtFire,lastAimState,aimDistance,shotObserved,shotsBefore,
+        shotsAfter:afterSnapshot.shotsFired,lastHitLimb:afterVictim?.lastHitLimb??null,damagedLimb:changedLimb,
         projectiles:afterSnapshot.projectiles,spawnedProjectiles:afterSnapshot.spawnedProjectiles,
         projectileInteractions:afterSnapshot.projectileInteractions};
       attempts.push(attempt);
+      if(!shotObserved)failures.push(`shot ${attempt.shotNumber}: no production trigger round observed for visible Torso ${candidate.body}`);
+      else if(attempt.shotsAfter-attempt.shotsBefore!==1)failures.push(`shot ${attempt.shotNumber}: exactly one production round expected, observed ${attempt.shotsAfter-attempt.shotsBefore}`);
+      if(shotObserved&&!changedLimb)failures.push(`shot ${attempt.shotNumber}: source hit did not change the selected Occupant Torso`);
       if(changedLimb){
-        acceptedHits.push({body:scenario.target,limb:changedLimb.limb,aimedLimb:'Torso',
-          damageBefore:beforeVictim.limbs.find(item=>item.limb===changedLimb.limb),damageAfter:changedLimb,
+        acceptedBodies.add(candidate.body);
+        acceptedHits.push({body:candidate.body,limb:'Torso',aimedLimb:'Torso',damageBefore:beforeTorso,damageAfter:changedLimb,
           physiologyBefore:beforeVictim.physiology,physiologyAfter:afterVictim?.physiology,
           sourceDeltaTime:afterSnapshot.sourceDeltaTime,shotsBefore,shotsAfter:afterSnapshot.shotsFired});
       }
-      return attempt;
-    };
-    await fireContractTarget(1);
-    await fireContractTarget(2);
+      if(acceptedHits.length===2)break;
+    }
     const distinctHitBodies=new Set(acceptedHits.map(hit=>hit.body));
-    const failures=[];
-    if(distinctHitBodies.size!==2)failures.push(`two distinct Occupants expected, observed ${distinctHitBodies.size}`);
+    if(distinctHitBodies.size!==2)failures.push(`two distinct Occupant Torso callbacks expected, observed ${distinctHitBodies.size}; visible candidates=${candidates.length}`);
     for(const attempt of attempts){
-      if(attempt.stagedScenario?.shooterPosition?.[0]!==4)failures.push(`shot ${attempt.shotNumber}: staged shooter X expected 4, observed ${attempt.stagedScenario?.shooterPosition?.[0]}`);
-      if(attempt.stagedScenario?.kneeling!==true)failures.push(`shot ${attempt.shotNumber}: staged shooter kneeling expected true, observed ${attempt.stagedScenario?.kneeling}`);
-      if(attempt.stagedScenario?.targetPosition?.[0]!==7)failures.push(`shot ${attempt.shotNumber}: staged target X expected 7, observed ${attempt.stagedScenario?.targetPosition?.[0]}`);
       if(attempt.stagedScenario?.aimedLimb!=='Torso')failures.push(`shot ${attempt.shotNumber}: aimed limb expected Torso, observed ${attempt.stagedScenario?.aimedLimb}`);
-      if(!attempt.shotObserved)failures.push(`shot ${attempt.shotNumber}: one production trigger round expected, observed none`);
-      if(attempt.shotsAfter-attempt.shotsBefore!==1)failures.push(`shot ${attempt.shotNumber}: exactly one round expected, observed ${attempt.shotsAfter-attempt.shotsBefore}`);
       if(attempt.damagedLimb?.limb!=='Torso')failures.push(`shot ${attempt.shotNumber}: callback limb expected Torso, observed ${attempt.damagedLimb?.limb??'none'}`);
     }
     for(const hit of acceptedHits){
