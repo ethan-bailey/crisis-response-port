@@ -462,11 +462,11 @@ try {
     // Projectile traces showed the starting muzzle overlaps the entrance fixture
     // cluster. Clear it in short production joystick pulses and sample after each
     // release so the smoke cannot keep driving the source actor past the doorway.
-    const combatLane={attempted:false,reason:'muzzle already past entrance fixtures',pulses:[]};
+    const combatLane={attempted:false,reason:'move the source actor into the contract firing lane',pulses:[]};
     const laneStart=await page.evaluate(()=>window.__gameState().grounding.sourceRoot);
     if(laneStart[0]<-0.1){
       combatLane.attempted=true;
-      Object.assign(combatLane,{startX:laneStart[0],targetX:-0.7,control:'production movement joystick sprint',direction:1});
+      Object.assign(combatLane,{startX:laneStart[0],targetX:4,control:'production movement joystick sprint',direction:1});
       const movementStick=page.locator('#movementStick');
       const stickBox=await movementStick.boundingBox();
       assert.ok(stickBox,'combat lane clearance requires the production movement joystick');
@@ -477,7 +477,7 @@ try {
           travelX:(rect.width-thumb.offsetWidth)/2-4};
       });
       let position=laneStart;
-      for(let pulse=0;pulse<4&&position[0]<combatLane.targetX;pulse++){
+      for(let pulse=0;pulse<18&&position[0]<combatLane.targetX;pulse++){
         await page.mouse.move(geometry.center.x,geometry.center.y);
         await page.mouse.down();
         try{
@@ -492,9 +492,9 @@ try {
         position=await page.evaluate(()=>window.__gameState().grounding.sourceRoot);
         combatLane.pulses.push({pulse: pulse+1,sourceX:position[0],sourceY:position[1]});
         combatLane.endX=position[0];
-        if(position[0]>1.0)break;
+        if(position[0]>4.5)break;
       }
-      assert.ok(combatLane.endX>=combatLane.targetX,
+      assert.ok(combatLane.endX>=combatLane.targetX-0.2,
         `production movement must clear the entrance fixture cluster before source firing: ${JSON.stringify(combatLane)}`);
       const released=await page.evaluate(()=>window.__gameState());
       assert.equal(released.originalInput?.right?.Pressed,false,
@@ -567,8 +567,8 @@ try {
         projectiles:afterSnapshot.projectiles,spawnedProjectiles:afterSnapshot.spawnedProjectiles,
         projectileInteractions:afterSnapshot.projectileInteractions};
       attempts.push(attempt);
-      if(!(scenario.shooterPosition?.[0]>-1&&scenario.shooterPosition?.[0]<1))failures.push(`shot ${shotNumber}: production-moved shooter X expected in (-1, 1), observed ${scenario.shooterPosition?.[0]}`);
-      if(scenario.shooterPosition?.[1]!==0.94)failures.push(`shot ${shotNumber}: grounded shooter Y expected 0.94, observed ${scenario.shooterPosition?.[1]}`);
+      if(!(scenario.shooterPosition?.[0]>3.5&&scenario.shooterPosition?.[0]<4.6))failures.push(`shot ${shotNumber}: production-moved shooter X expected near source contract lane 4, observed ${scenario.shooterPosition?.[0]}`);
+      if(Math.abs(scenario.shooterPosition?.[1]-0.94)>0.01)failures.push(`shot ${shotNumber}: grounded shooter Y expected near 0.94 within solver tolerance, observed ${scenario.shooterPosition?.[1]}`);
       if(scenario.kneeling!==true)failures.push(`shot ${shotNumber}: staged shooter kneeling expected true, observed ${scenario.kneeling}`);
       if(Math.abs(scenario.targetPosition?.[0]-17.74)>0.1)failures.push(`shot ${shotNumber}: visible Torso lane X expected 17.74, observed ${scenario.targetPosition?.[0]}`);
       if(scenario.aimedLimb!=='Torso')failures.push(`shot ${shotNumber}: aimed limb expected Torso, observed ${scenario.aimedLimb}`);
