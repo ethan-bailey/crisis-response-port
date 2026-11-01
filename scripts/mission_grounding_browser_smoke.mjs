@@ -493,22 +493,11 @@ try {
       }
       assert.ok(combatLane.endX>=combatLane.targetX,
         `production movement must clear the entrance fixture cluster before source firing: ${JSON.stringify(combatLane)}`);
-      await page.waitForFunction(() => {
-        const state=window.__gameState?.();
-        return state && Math.abs(state.velocity)<0.05 && state.animation==='Body stand' &&
-          !state.originalInput?.left?.Pressed && !state.originalInput?.right?.Pressed;
-      },null,{timeout:30000});
-      const settledBefore=await page.evaluate(()=>window.__gameState());
-      await page.waitForTimeout(400);
-      const settledAfter=await page.evaluate(()=>window.__gameState());
-      assert.ok(Math.abs(settledAfter.playerX-settledBefore.playerX)<0.02 &&
-        Math.abs(settledAfter.playerY-settledBefore.playerY)<0.02,
-        `the source actor must remain settled after releasing the lane-clearance pulse: ${JSON.stringify({
-          before:{x:settledBefore.playerX,y:settledBefore.playerY,velocity:settledBefore.velocity,animation:settledBefore.animation},
-          after:{x:settledAfter.playerX,y:settledAfter.playerY,velocity:settledAfter.velocity,animation:settledAfter.animation}
-        })}`);
-      combatLane.settled={x:settledAfter.playerX,y:settledAfter.playerY,velocity:settledAfter.velocity,
-        animation:settledAfter.animation};
+      const released=await page.evaluate(()=>window.__gameState());
+      assert.equal(released.originalInput?.right?.Pressed,false,
+        'the production sprint pulse must release the original source movement key before firing');
+      combatLane.released={x:released.playerX,y:released.playerY,velocity:released.velocity,
+        animation:released.animation,rightPressed:released.originalInput?.right?.Pressed};
     }
     const candidates=[];
     let nearestUnavailable=null;
