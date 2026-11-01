@@ -323,7 +323,7 @@ jobs:
           retention-days: 14
 
       - name: Install Chromium for full-profile persistence acceptance
-        run: game/node_modules/.bin/playwright install --with-deps chromium
+        run: game/node_modules/.bin/playwright install chromium
 
       - name: Exercise production loader with the complete Mission profile in IndexedDB
         run: node scripts/indexeddb_fullprofile_browser_smoke.mjs "$RUNNER_TEMP/cpr-site-package/scene-data/fullsource/global-ui-mission-operator"
