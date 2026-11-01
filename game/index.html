@@ -231,7 +231,7 @@ async function initializeOriginalRuntime(){
 for (const button of document.querySelectorAll("button[data-action]")) input.bindButton(button, button.dataset.action);
 // Original InputMapping.cs bindings, plus arrow-key movement aliases.
 input.bindKeyboard(window, {KeyA:"left", ArrowLeft:"left", KeyD:"right", ArrowRight:"right",
- ShiftLeft:"sprint", KeyR:"magazine", Tab:"switchWeapons", KeyS:"kneel", KeyW:"stand"});
+ ShiftLeft:"sprint", KeyR:"magazine", KeyT:"fireMode", Tab:"switchWeapons", KeyS:"kneel", KeyW:"stand"});
 let stickAimBaseY=pointerNdc.y,stickAimBaseVertical=0;
 input.bindMovementStick(document.querySelector("#movementStick"),document.querySelector("#movementStick .stick-thumb"),{onAimStart(vertical){stickAimBaseY=pointerNdc.y;stickAimBaseVertical=vertical;},onAim(vertical,active=true){if(!active)return;const targetY=Math.max(-1,Math.min(1,stickAimBaseY+vertical-stickAimBaseVertical));if(Math.abs(pointerNdc.y-targetY)>0.001){pointerNdc.y=targetY;aimDirty=true;aimGeneration++;}}});
 input.bindLifecycle(window, document);

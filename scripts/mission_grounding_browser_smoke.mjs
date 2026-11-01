@@ -532,19 +532,40 @@ try {
           lastAimState={aimGeneration:state.aimGeneration,sourceAimAppliedGeneration:state.sourceAimAppliedGeneration,
             aimPoint:state.aimPoint,sourceAimPoint:sourcePoint,sourcePointer:state.weaponState?.sourcePointer,
             sourceCamera:state.sourceCamera,aimAlignment:state.weaponState?.aimAlignment,
-            aimConverged:state.weaponState?.aimConverged,aimDistance};
+            aimConverged:state.weaponState?.aimConverged,fireMode:state.weaponState?.fireMode,
+            readyToFire:state.weaponState?.readyToFire,rightArmOnTarget:state.weaponState?.rightArmOnTarget,
+            leftArmOnTarget:state.weaponState?.leftArmOnTarget,
+            manipulatingEquipment:state.weaponState?.manipulatingEquipment,aimDistance};
           if(state.aimGeneration>aimGenerationBefore&&state.sourceAimAppliedGeneration===state.aimGeneration&&
             state.weaponState?.aimConverged===true&&aimDistance<=0.55){aimStateAtFire={...lastAimState};break;}
           await page.waitForTimeout(50);
         }
       }
+      let fireModeToggleObserved=false,fireModeAtFire=null,fireInputAtPress=null;
       if(aimStateAtFire){
+        let fireState=await page.evaluate(()=>window.__gameState().weaponState);
+        if(fireState?.fireMode==='Safe'){
+          await page.keyboard.down('t');
+          await page.waitForTimeout(120);
+          await page.keyboard.up('t');
+          const modeDeadline=Date.now()+2500;
+          while(Date.now()<modeDeadline){
+            await page.waitForTimeout(50);
+            fireState=await page.evaluate(()=>window.__gameState().weaponState);
+            if(fireState?.fireMode&&fireState.fireMode!=='Safe'){fireModeToggleObserved=true;break;}
+          }
+        }
+        fireModeAtFire=fireState?.fireMode??null;
+        aimStateAtFire={...aimStateAtFire,fireMode:fireModeAtFire,readyToFire:fireState?.readyToFire,
+          rightArmOnTarget:fireState?.rightArmOnTarget,leftArmOnTarget:fireState?.leftArmOnTarget,
+          manipulatingEquipment:fireState?.manipulatingEquipment};
         await page.mouse.move(point.x,point.y);
         await page.mouse.down();
         try{
           await page.waitForFunction(()=>window.__gameState().originalInput?.fire?.Pressed===true,
             null,{timeout:2000});
           fireInputObserved=true;
+          fireInputAtPress=await page.evaluate(()=>window.__gameState().originalInput?.fire??null);
         }catch{}
         finally{await page.mouse.up();}
         const shotDeadline=Date.now()+3000;
@@ -569,7 +590,8 @@ try {
       const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===scenario.target);
       const attempt={shotNumber,stagedScenario:scenario,victim:scenario.target,aimedLimb:'Torso',
         aimPoint:beforeTorso?.aimPoint??scenario.aimPoint,screenPoint:point,cameraAtProjection:projection?.camera,
-        aimStateAtFire,lastAimState,aimDistance,fireInputObserved,shotObserved,shotsBefore,shotsAfter:afterSnapshot.shotsFired,
+        aimStateAtFire,lastAimState,aimDistance,fireModeToggleObserved,fireModeAtFire,
+        fireInputObserved,fireInputAtPress,shotObserved,shotsBefore,shotsAfter:afterSnapshot.shotsFired,
         lastHitLimb:afterVictim?.lastHitLimb??null,damagedLimb:changedLimb,
         projectiles:afterSnapshot.projectiles,spawnedProjectiles:afterSnapshot.spawnedProjectiles,
         projectileInteractions:afterSnapshot.projectileInteractions};
