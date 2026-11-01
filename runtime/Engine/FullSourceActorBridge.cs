@@ -563,7 +563,11 @@ public sealed class FullSourceActorBridge
                         aimPoint = new[] { limb.AimPoint.x, limb.AimPoint.y, limb.AimPoint.z },
                         wounds = limb.LimbPhysiology?.wounds.Count ?? 0,
                         woundCavityVolume = limb.LimbPhysiology?.WoundCavityVolume ?? 0f,
-                        damagedTissueVolume = limb.LimbPhysiology?.DamagedTissueVolume ?? 0f
+                        damagedTissueVolume = limb.LimbPhysiology?.DamagedTissueVolume ?? 0f,
+                        localPressure = limb.LimbPhysiology?.LocalPressure ?? 0f,
+                        internalBloodVolume = limb.LimbPhysiology?.InternalBloodVolume ?? 0f,
+                        internalHemorrhaging = limb.LimbPhysiology?.InternalHemorrhaging ?? 0f,
+                        hemorrhaging = limb.LimbPhysiology?.Hemorrhaging ?? 0f
                     })
                     .ToArray();
                 var lastHit = victim.LastHitLimb;
@@ -575,6 +579,18 @@ public sealed class FullSourceActorBridge
                     alive = victim.Physiology?.Alive,
                     conscious = victim.Physiology?.Conscious,
                     shock = victim.Physiology?.Shock,
+                    bloodVolume = victim.Physiology?.BloodVolume,
+                    bloodOxygen = victim.Physiology?.BloodOxygen,
+                    ragdoll = victim.IsRagdoll,
+                    restrained = victim.IsRestrained,
+                    physiology = victim.Physiology == null ? null : new
+                    {
+                        alive = victim.Physiology.Alive,
+                        conscious = victim.Physiology.Conscious,
+                        shock = victim.Physiology.Shock,
+                        bloodVolume = victim.Physiology.BloodVolume,
+                        bloodOxygen = victim.Physiology.BloodOxygen
+                    },
                     limbs
                 };
             })
@@ -598,7 +614,16 @@ public sealed class FullSourceActorBridge
             observer = "FullSourceActorBridge",
             shooter = body.name,
             shotsFired = body.ShotsFired,
+            sourceDeltaTime = UnityEngine.Time.deltaTime,
             mission = Global.Context?.Mission?.gameObject.name,
+            missionOutcome = Global.Context?.Mission == null ? null : new
+            {
+                started = Global.Context.Mission.Started,
+                ended = Global.Context.Mission.missionEnded,
+                success = Global.Context.Mission.missionSuccess,
+                occupantsAllRenderedSafe = Global.Context.Mission.Occupants?.AllRenderedSafe,
+                occupantsAllRestrained = Global.Context.Mission.Occupants?.AllRestrained
+            },
             occupants,
             projectiles,
             spawnedProjectiles = projectileSpawnEvidence.ToArray(),

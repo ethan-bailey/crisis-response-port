@@ -501,11 +501,10 @@ try {
     }
     const candidates=[];
     let nearestUnavailable=null;
-    const scanVisibleLimbs=async(snapshot,allLimbs)=>{
+    const scanVisibleLimbs=async(snapshot)=>{
       const victims=snapshot.occupants.filter(value=>value.alive);
       const targets=victims.flatMap(victim=>victim.limbs
-        .filter(limb=>allLimbs||limb.limb==='Torso'||limb.limb==='Head')
-        .sort((a,b)=>(a.limb==='Torso'?-1:b.limb==='Torso'?1:a.limb==='Head'?-1:b.limb==='Head'?1:0))
+        .filter(limb=>limb.limb==='Torso')
         .map(limb=>({victimBody:victim.body,limb,aimPoint:limb.aimPoint})));
       const projected=await page.evaluate(targets=>targets.map(target=>({
         ...window.__sourceCombatScreenPoint(target.aimPoint),
@@ -516,14 +515,14 @@ try {
         const victim=victims.find(value=>value.body===result.victimBody);
         const {victimBody,limb,...point}=result;
         if(point.inside&&point.visible)candidates.push({victim,limb,point});
-        else if(allLimbs){
+        else{
           const distance=Math.hypot(point.x-viewport.width/2,point.y-viewport.height/2);
           if(!nearestUnavailable||distance<nearestUnavailable.distance)nearestUnavailable={victim,limb,point,distance};
         }
       }
     };
     const combatTargets=await page.evaluate(()=>window.__sourceCombatSnapshot());
-    await scanVisibleLimbs(combatTargets,true);
+    await scanVisibleLimbs(combatTargets);
     const lateralReposition={attempted:false,scans:0};
     if(candidates.length===0&&nearestUnavailable){
       const start=await page.evaluate(()=>window.__gameState().grounding.sourceRoot);
@@ -561,7 +560,7 @@ try {
           const position=await page.evaluate(()=>window.__gameState().grounding.sourceRoot);
           lateralReposition.scans++;
           lateralReposition.endX=position[0];
-          await scanVisibleLimbs(live,false);
+          await scanVisibleLimbs(live);
         }
       }finally{
         await page.mouse.up();
@@ -575,8 +574,10 @@ try {
     assert.ok(combatBefore.occupants.some(victim=>victim.alive&&victim.limbs.length>0),
       'packaged FullSource Mission must expose live serialized Occupant limbs');
     const attempts=[];
-    let acceptedHit=null;
+    const acceptedHits=[];
+    const hitBodies=new Set();
     for(const candidate of candidatesToTry){
+      if(hitBodies.has(candidate.victim.body))continue;
       let projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),camera:window.__gameState().sourceCamera}),candidate.limb.aimPoint);
       let point=projection.point;
       if(!point.inside||!point.visible){
@@ -682,14 +683,25 @@ try {
         limbPosition:candidate.limb.position,
       });
       if(afterSnapshot.shotsFired>shotsBefore&&changedLimb){
-        acceptedHit={body:candidate.victim.body,limb:changedLimb.limb,damageBefore:beforeVictim.limbs.find(item=>item.limb===changedLimb.limb),damageAfter:changedLimb};
-        break;
+        acceptedHits.push({body:candidate.victim.body,limb:changedLimb.limb,aimedLimb:candidate.limb.limb,
+          damageBefore:beforeVictim.limbs.find(item=>item.limb===changedLimb.limb),damageAfter:changedLimb,
+          physiologyBefore:beforeVictim.physiology,physiologyAfter:afterVictim?.physiology,sourceDeltaTime:afterSnapshot.sourceDeltaTime});
+        hitBodies.add(candidate.victim.body);
+        if(acceptedHits.length===2)break;
       }
     }
-    assert.ok(acceptedHit,
-      `production fire input must reach an original FullSource projectile, limb hit callback, and injury state change at a visible serialized Occupant aim point: ${JSON.stringify({attempts,cameraFrame,combatLane,lateralReposition,initiallyVisible:candidates.length>0})}`);
-    assert.equal(acceptedHit.limb,attempts.at(-1)?.aimedLimb,
-      `the hit limb must match the selected serialized aim limb: ${JSON.stringify(attempts.at(-1))}`);
+    assert.equal(acceptedHits.length,2,
+      `two production fire inputs must hit two distinct Occupants' serialized Torso limbs through the original projectile and injury callbacks: ${JSON.stringify({acceptedHits,attempts,cameraFrame,combatLane,lateralReposition,initiallyVisible:candidates.length>0})}`);
+    assert.equal(new Set(acceptedHits.map(hit=>hit.body)).size,2,'the torso hit scenario must use two distinct Occupants, matching the source contract');
+    for(const hit of acceptedHits){
+      assert.equal(hit.limb,'Torso',`source contract comparison requires a Torso hit: ${JSON.stringify(hit)}`);
+      assert.equal(hit.limb,hit.aimedLimb,`the hit limb must match the selected serialized Torso aim limb: ${JSON.stringify(hit)}`);
+      assert.ok(hit.damageAfter.wounds>hit.damageBefore.wounds,`source Torso wound count must increase: ${JSON.stringify(hit)}`);
+      assert.ok(hit.damageAfter.woundCavityVolume>hit.damageBefore.woundCavityVolume,`source Torso wound cavity must increase: ${JSON.stringify(hit)}`);
+      assert.ok(hit.damageAfter.damagedTissueVolume>hit.damageBefore.damagedTissueVolume,`source Torso damaged tissue must increase: ${JSON.stringify(hit)}`);
+      const beforeBody=combatBefore.occupants.find(victim=>victim.body===hit.body);
+      assert.ok(hit.physiologyAfter.shock>beforeBody.shock,`source body shock must increase on the selected Occupant: ${JSON.stringify(hit)}`);
+    }
     const postHitRuntimeUi = await page.evaluate(() => ({
       errorVisible: Boolean(document.querySelector('#error') && !document.querySelector('#error').hidden),
       errorText: document.querySelector('#errorDetails')?.textContent ?? '',
@@ -698,8 +710,28 @@ try {
       `packaged projectile acceptance must not leave the application's fatal error dialog visible: ${postHitRuntimeUi.errorText.slice(0, 1200)}`);
     assert.ok(attempts.at(-1)?.projectiles?.every(projectile => projectile.status !== 'Error'),
       `accepted injury must not leave an errored original projectile: ${JSON.stringify(attempts.at(-1)?.projectiles)}`);
+    const projectileCleanupDeadline=Date.now()+5000;
+    let cleanupSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
+    while(Date.now()<projectileCleanupDeadline&&cleanupSnapshot.projectiles.some(projectile=>projectile.owner===cleanupSnapshot.shooter)){
+      await page.waitForTimeout(100);
+      cleanupSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
+    }
+    const ownedProjectilesAfterCleanup=cleanupSnapshot.projectiles.filter(projectile=>projectile.owner===cleanupSnapshot.shooter);
+    assert.equal(ownedProjectilesAfterCleanup.length,0,
+      `original source projectiles must leave the active registry after source hit/lifetime cleanup: ${JSON.stringify(ownedProjectilesAfterCleanup)}`);
     assert.deepEqual(pageErrors, [], 'packaged FullSource projectile hit and injury callbacks must not throw browser runtime errors');
-    combatReport={status:'passed',shotsBefore:combatBefore.shotsFired,shotsAfter:attempts.at(-1).shotsAfter,occupantsBefore:combatBefore.occupants.length,exteriorVisibility,cameraFrame,combatLane,attempts,hit:acceptedHit,sourceProjectileAndPhysiologyCallbacks:true,nativePhysXIntegrationVerified:false,woundPixelsVerified:false};
+    combatReport={status:'passed',shotsBefore:combatBefore.shotsFired,shotsAfter:attempts.at(-1).shotsAfter,occupantsBefore:combatBefore.occupants.length,exteriorVisibility,cameraFrame,combatLane,attempts,hits:acceptedHits,chainComparison:{
+      hitCallback:{contractExpected:'production/source projectile callback reaches each original Occupant Torso',packagedObserved:acceptedHits.map(hit=>({body:hit.body,limb:hit.limb,shotCount:attempts.find(attempt=>attempt.victim===hit.body)?.shotsAfter-attempts.find(attempt=>attempt.victim===hit.body)?.shotsBefore}))},
+      woundState:{contractExpected:'wounds increase on both selected Torso limbs',packagedObserved:acceptedHits.map(hit=>({body:hit.body,before:hit.damageBefore.wounds,after:hit.damageAfter.wounds}))},
+      tissue:{contractExpected:'damaged tissue increases through original source trauma',packagedObserved:acceptedHits.map(hit=>({body:hit.body,before:hit.damageBefore.damagedTissueVolume,after:hit.damageAfter.damagedTissueVolume}))},
+      shock:{contractExpected:'source body shock increases on each hit',packagedObserved:acceptedHits.map(hit=>({body:hit.body,before:hit.physiologyBefore.shock,after:hit.physiologyAfter.shock}))},
+      bleeding:{contractExpected:'MissionProjectileContract asserts torso injury deltas only; MissionPhysiologyContract separately asserts cavity × local pressure × deltaTime (500 ml cap, 3.2515774 ml/tick in its controlled fixture)',packagedObserved:acceptedHits.map(hit=>({body:hit.body,limb:hit.limb,cavity:hit.damageAfter.woundCavityVolume,internalBloodVolume:hit.damageAfter.internalBloodVolume,internalHemorrhaging:hit.damageAfter.internalHemorrhaging,expectedFromCurrentTick:hit.damageAfter.woundCavityVolume*hit.damageAfter.localPressure*hit.sourceDeltaTime,hemorrhaging:hit.damageAfter.hemorrhaging,localPressure:hit.damageAfter.localPressure,sourceDeltaTime:hit.sourceDeltaTime}))},
+      oxygenAndDeath:{contractExpected:'MissionPhysiologyContract separately drains 4,852 ml: oxygen reaches 0, unconscious/ragdoll at 0.1 s, brain trauma 0.05 by 3.2 s, death at 30.2 s',packagedObserved:acceptedHits.map(hit=>({body:hit.body,bloodVolume:hit.physiologyAfter.bloodVolume,bloodOxygen:hit.physiologyAfter.bloodOxygen,alive:hit.physiologyAfter.alive,conscious:hit.physiologyAfter.conscious}))},
+      missionOutcome:{contractExpected:'MissionOutcomeContract asserts ended=true and success=true after all rooms are checked and all Occupants are restrained',packagedObserved:cleanupSnapshot.missionOutcome,exercisedByTorsoScenario:false},
+      cleanup:{contractExpected:'zero source-owned projectiles after original source termination',packagedObserved:{activeOwnedProjectiles:ownedProjectilesAfterCleanup.length,shotsAfter:cleanupSnapshot.shotsFired}},
+      nativePhysXIntegration:{status:'open',evidenceRequired:'source ragdoll Rigidbody/HingeJoint actors step in the packaged runtime and match a Unity 2017.2 reference',packagedObservedBackend:'browser PhysX 5.6.1; nativeUnityPhysXVerified=false',blocker:'the package has a browser PhysX 5.6.1 adapter, but no Unity 2017.2 native solver or reference trajectory/contact callback is exercised'},
+      woundPixels:{status:'open',evidenceRequired:'before/after affected Torso UV or pixel-region comparison on the packaged renderer',packagedObserved:'injury state and full-page screenshot are captured; no Torso UV/pixel delta is asserted',blocker:'the current harness lacks a serialized-UV wound-pixel readback/comparison; source state change alone cannot establish rendered wound pixels'}
+    },sourceProjectileAndPhysiologyCallbacks:true,nativePhysXIntegrationVerified:false,woundPixelsVerified:false};
   }
   const mobilePage = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   mobilePage.on('pageerror', error => pageErrors.push(String(error)));
