@@ -762,7 +762,7 @@ public sealed class FullSourceActorBridge
             if(ReferenceEquals(stagedBrowserProjectileContractSecondVictim,target))
                 throw new InvalidOperationException("The browser projectile scenario requires two distinct authored Occupants");
             // After real movement updates the source camera, reproduce the source contract's grounded firing lane.
-            body.transform.position=new Vector3(4f,0.94f,body.transform.position.z);
+            body.transform.position=new Vector3(4f,0.94f,-0.7f);
             body.Rigidbody.velocity=Vector3.zero;
             body.IsKneeling=true;
             int otherIndex=0;
@@ -771,7 +771,7 @@ public sealed class FullSourceActorBridge
         }
         else{
             // Re-ground the source shooter for each distinct source-contract shot after browser contact integration.
-            body.transform.position=new Vector3(4f,0.94f,body.transform.position.z);
+            body.transform.position=new Vector3(4f,0.94f,-0.7f);
             body.Rigidbody.velocity=Vector3.zero;
             body.IsKneeling=true;
             if(stagedBrowserProjectileContractFirstVictim==null||stagedBrowserProjectileContractSecondVictim==null)
@@ -786,7 +786,7 @@ public sealed class FullSourceActorBridge
 
         var targetPosition=target.transform.position;
         // Stage both original Occupants in the proven visible far lane at the grounded source actor depth.
-        target.transform.position=new Vector3(17.74f,0.94f,body.transform.position.z);
+        target.transform.position=new Vector3(17.74f,0.94f,-0.7f);
         var sourceTarget=target.GetComponent<Target>()
             ??throw new InvalidOperationException($"Original Occupant {target.name} has no Target component");
         body.Blackboard.Target=sourceTarget;
