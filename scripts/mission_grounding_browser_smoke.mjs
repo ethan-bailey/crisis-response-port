@@ -459,56 +459,20 @@ try {
       `the synchronized source camera must frame the original Operator: ${JSON.stringify(cameraFrame)}`);
     // Initial AI/scene motion can leave every un-staged Occupant behind the combined mesh.
     // The staged combat loop below independently requires a visible Torso point before each tap.
-    // Projectile traces showed the starting muzzle overlaps the entrance fixture
-    // cluster. Clear it in short production joystick pulses and sample after each
-    // release so the smoke cannot keep driving the source actor past the doorway.
-    const combatLane={attempted:false,reason:'move the source actor into the contract firing lane',pulses:[]};
-    const laneStart=await page.evaluate(()=>window.__gameState().grounding.sourceRoot);
-    if(laneStart[0]<-0.1){
-      combatLane.attempted=true;
-      Object.assign(combatLane,{startX:laneStart[0],targetX:4,control:'production movement joystick sprint',direction:1});
-      const movementStick=page.locator('#movementStick');
-      const stickBox=await movementStick.boundingBox();
-      assert.ok(stickBox,'combat lane clearance requires the production movement joystick');
-      const geometry=await movementStick.evaluate(surface=>{
-        const thumb=surface.querySelector('.stick-thumb');
-        const rect=surface.getBoundingClientRect();
-        return {center:{x:rect.left+rect.width/2,y:rect.top+rect.height/2},
-          travelX:(rect.width-thumb.offsetWidth)/2-4};
-      });
-      let position=laneStart;
-      for(let pulse=0;pulse<18&&position[0]<combatLane.targetX;pulse++){
-        await page.mouse.move(geometry.center.x,geometry.center.y);
-        await page.mouse.down();
-        try{
-          await page.mouse.move(geometry.center.x+geometry.travelX*1.8,geometry.center.y,{steps:2});
-          await page.waitForFunction(()=>document.querySelector('#movementStick')?.classList.contains('sprinting'),
-            null,{timeout:5000});
-          await page.waitForTimeout(180);
-        }finally{
-          await page.mouse.up();
-        }
-        await page.waitForTimeout(250);
-        position=await page.evaluate(()=>window.__gameState().grounding.sourceRoot);
-        combatLane.pulses.push({pulse: pulse+1,sourceX:position[0],sourceY:position[1]});
-        combatLane.endX=position[0];
-        if(position[0]>4.5)break;
-      }
-      assert.ok(combatLane.endX>=combatLane.targetX-0.2,
-        `production movement must clear the entrance fixture cluster before source firing: ${JSON.stringify(combatLane)}`);
-      const released=await page.evaluate(()=>window.__gameState());
-      assert.equal(released.originalInput?.right?.Pressed,false,
-        'the production sprint pulse must release the original source movement key before firing');
-      combatLane.released={x:released.playerX,y:released.playerY,velocity:released.velocity,
-        animation:released.animation,rightPressed:released.originalInput?.right?.Pressed};
-    }
+    // Stage the shooter and target on the source contract's supported floor
+    // before combat aiming. The prior lane sprint began at Z=-1.5, outside that
+    // floor strip, and left the original actor below the floor before it was re-staged.
+    const stagedFirstScenario=await page.evaluate(()=>window.__stageSourceProjectileContractScenario(1));
+    const combatLane={attempted:false,reason:'source contract staged shooter and target on supported firing lane',
+      stagedShooter:stagedFirstScenario.shooterPosition,stagedTarget:stagedFirstScenario.targetPosition,pulses:[]};
     assert.ok(combatBefore.occupants.some(victim=>victim.alive&&victim.limbs.some(limb=>limb.limb==='Torso')),
       'packaged FullSource Mission must expose live serialized Occupant Torso limbs');
     const attempts=[];
     const acceptedHits=[];
     const failures=[];
     for(let shotNumber=1;shotNumber<=2;shotNumber++){
-      const scenario=await page.evaluate(number=>window.__stageSourceProjectileContractScenario(number),shotNumber);
+      const scenario=shotNumber===1?stagedFirstScenario:
+        await page.evaluate(number=>window.__stageSourceProjectileContractScenario(number),shotNumber);
       await page.waitForTimeout(500);
       let boltCycleAttempted=false,readyToFireAfterBolt=null;
       let readinessState=await page.evaluate(()=>window.__gameState().weaponState);
@@ -559,7 +523,12 @@ try {
           lastAimState={aimGeneration:state.aimGeneration,sourceAimAppliedGeneration:state.sourceAimAppliedGeneration,
             aimPoint:state.aimPoint,sourceAimPoint:sourcePoint,sourcePointer:state.weaponState?.sourcePointer,
             sourceCamera:state.sourceCamera,aimAlignment:state.weaponState?.aimAlignment,
-            aimConverged:state.weaponState?.aimConverged,fireMode:state.weaponState?.fireMode,
+            aimConverged:state.weaponState?.aimConverged,weaponAngle:state.weaponState?.weaponAngle,
+            weaponRight:state.weaponState?.weaponRight,muzzleForward:state.weaponState?.muzzleForward,
+            weaponAlignPoint:state.weaponState?.weaponAlignPoint,
+            weaponAimAlignment:state.weaponState?.weaponAimAlignment,weaponMode:state.weaponState?.weaponMode,
+            sprinting:state.weaponState?.sprinting,usingPrecision:state.weaponState?.usingPrecision,
+            fireMode:state.weaponState?.fireMode,
             readyToFire:state.weaponState?.readyToFire,rightArmOnTarget:state.weaponState?.rightArmOnTarget,
             leftArmOnTarget:state.weaponState?.leftArmOnTarget,
             manipulatingEquipment:state.weaponState?.manipulatingEquipment,
@@ -629,6 +598,12 @@ try {
                 aimPoint:reAimState.aimPoint,sourceAimPoint:pointer,
                 sourcePointer:reAimState.weaponState?.sourcePointer,sourceCamera:reAimState.sourceCamera,
                 aimAlignment:reAimState.weaponState?.aimAlignment,aimConverged:reAimState.weaponState?.aimConverged,
+                weaponAngle:reAimState.weaponState?.weaponAngle,weaponRight:reAimState.weaponState?.weaponRight,
+                muzzleForward:reAimState.weaponState?.muzzleForward,
+                weaponAlignPoint:reAimState.weaponState?.weaponAlignPoint,
+                weaponAimAlignment:reAimState.weaponState?.weaponAimAlignment,
+                weaponMode:reAimState.weaponState?.weaponMode,sprinting:reAimState.weaponState?.sprinting,
+                usingPrecision:reAimState.weaponState?.usingPrecision,
                 fireMode:reAimState.weaponState?.fireMode,readyToFire:reAimState.weaponState?.readyToFire,
                 rightArmOnTarget:reAimState.weaponState?.rightArmOnTarget,
                 leftArmOnTarget:reAimState.weaponState?.leftArmOnTarget,
