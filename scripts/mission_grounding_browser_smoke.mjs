@@ -575,7 +575,7 @@ try {
       let fireModeToggleObserved=false,fireModeAtFire=null,fireInputAtPress=null,boltCycleAfterAim=false;
       let fireState=null,sourceTriggerReady=false;
       if(aimStateAtFire){
-        let fireState=await page.evaluate(()=>window.__gameState().weaponState);
+        fireState=await page.evaluate(()=>window.__gameState().weaponState);
         const modeDeadline=Date.now()+5000;
         while(fireState?.fireMode&&fireState.fireMode!=='Auto'&&Date.now()<modeDeadline){
           await page.keyboard.down('t');
