@@ -573,6 +573,7 @@ try {
         }
       }
       let fireModeToggleObserved=false,fireModeAtFire=null,fireInputAtPress=null,boltCycleAfterAim=false;
+      let fireState=null,sourceTriggerReady=false;
       if(aimStateAtFire){
         let fireState=await page.evaluate(()=>window.__gameState().weaponState);
         const modeDeadline=Date.now()+5000;
@@ -588,36 +589,72 @@ try {
             if(fireState?.fireMode&&fireState.fireMode!==modeBefore){fireModeToggleObserved=true;break;}
           }
         }
-        if(fireState?.readyToFire===false){
-          boltCycleAfterAim=true;
-          await page.keyboard.down('b');
-          await page.waitForTimeout(120);
-          await page.keyboard.up('b');
-          const readyDeadline=Date.now()+8000;
-          while(Date.now()<readyDeadline){
-            await page.waitForTimeout(50);
-            fireState=await page.evaluate(()=>window.__gameState().weaponState);
-            const pointerPoint=fireState?.sourceAimPoint;
-            const pointerError=pointerPoint?Math.hypot(pointerPoint[0]-beforeTorso.aimPoint[0],
-              pointerPoint[1]-beforeTorso.aimPoint[1],pointerPoint[2]-beforeTorso.aimPoint[2]):Infinity;
-            if(fireState?.readyToFire===true&&fireState?.rightArmOnTarget===true&&
-              fireState?.leftArmOnTarget===true&&pointerError<=0.55)break;
+        const aimErrorForState=state=>{
+          const pointer=state?.sourceAimPoint;
+          return pointer?Math.hypot(pointer[0]-beforeTorso.aimPoint[0],
+            pointer[1]-beforeTorso.aimPoint[1],pointer[2]-beforeTorso.aimPoint[2]):Infinity;
+        };
+        const sourceAimReady=state=>state?.rightArmOnTarget===true&&state?.leftArmOnTarget===true&&
+          aimErrorForState(state)<=0.55;
+        for(let cycle=0;cycle<2;cycle++){
+          if(fireState?.readyToFire!==true){
+            boltCycleAfterAim=true;
+            await page.keyboard.down('b');
+            await page.waitForTimeout(120);
+            await page.keyboard.up('b');
+            const readyDeadline=Date.now()+8000;
+            while(Date.now()<readyDeadline){
+              await page.waitForTimeout(50);
+              fireState=await page.evaluate(()=>window.__gameState().weaponState);
+              if(fireState?.readyToFire===true)break;
+            }
           }
+          if(fireState?.readyToFire!==true)break;
+          if(boltCycleAfterAim||!sourceAimReady(fireState)){
+            const reAimGenerationBefore=await page.evaluate(()=>window.__gameState().aimGeneration);
+            const reAimDeadline=Date.now()+5000;
+            while(Date.now()<reAimDeadline){
+              projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),
+                camera:window.__gameState().sourceCamera}),beforeTorso.aimPoint);
+              point=projection.point;
+              if(!point?.inside||!point.visible)break;
+              await page.mouse.move(point.x,point.y);
+              const reAimState=await page.evaluate(()=>window.__gameState());
+              const pointer=reAimState.weaponState?.sourceAimPoint;
+              aimDistance=pointer?Math.hypot(pointer[0]-beforeTorso.aimPoint[0],
+                pointer[1]-beforeTorso.aimPoint[1],pointer[2]-beforeTorso.aimPoint[2]):Infinity;
+              lastAimState={aimGeneration:reAimState.aimGeneration,
+                sourceAimAppliedGeneration:reAimState.sourceAimAppliedGeneration,
+                aimPoint:reAimState.aimPoint,sourceAimPoint:pointer,
+                sourcePointer:reAimState.weaponState?.sourcePointer,sourceCamera:reAimState.sourceCamera,
+                aimAlignment:reAimState.weaponState?.aimAlignment,aimConverged:reAimState.weaponState?.aimConverged,
+                fireMode:reAimState.weaponState?.fireMode,readyToFire:reAimState.weaponState?.readyToFire,
+                rightArmOnTarget:reAimState.weaponState?.rightArmOnTarget,
+                leftArmOnTarget:reAimState.weaponState?.leftArmOnTarget,
+                manipulatingEquipment:reAimState.weaponState?.manipulatingEquipment,
+                boltStatus:reAimState.weaponState?.boltStatus,boltLive:reAimState.weaponState?.boltLive,
+                boltMoving:reAimState.weaponState?.boltMoving,
+                boltMalfunctioned:reAimState.weaponState?.boltMalfunctioned,
+                boltCarriesLiveRound:reAimState.weaponState?.boltCarriesLiveRound,aimDistance};
+              if(reAimState.aimGeneration>reAimGenerationBefore&&
+                reAimState.sourceAimAppliedGeneration===reAimState.aimGeneration&&sourceAimReady(reAimState.weaponState))break;
+              await page.waitForTimeout(50);
+            }
+            fireState=await page.evaluate(()=>window.__gameState().weaponState);
+          }
+          if(fireState?.readyToFire===true&&sourceAimReady(fireState))break;
+          if(cycle===1)break;
         }
         fireModeAtFire=fireState?.fireMode??null;
-        const fireAimPoint=fireState?.sourceAimPoint;
-        const fireAimDistance=fireAimPoint?Math.hypot(fireAimPoint[0]-beforeTorso.aimPoint[0],
-          fireAimPoint[1]-beforeTorso.aimPoint[1],fireAimPoint[2]-beforeTorso.aimPoint[2]):Infinity;
-        aimStateAtFire={...aimStateAtFire,fireMode:fireModeAtFire,readyToFire:fireState?.readyToFire,
+        const finalAimDistance=aimErrorForState(fireState);
+        aimStateAtFire={...(lastAimState??aimStateAtFire),fireMode:fireModeAtFire,
+          sourceAimPoint:fireState?.sourceAimPoint,sourcePointer:fireState?.sourcePointer,
+          sourceCamera:fireState?.sourceCamera,readyToFire:fireState?.readyToFire,
           rightArmOnTarget:fireState?.rightArmOnTarget,leftArmOnTarget:fireState?.leftArmOnTarget,
           manipulatingEquipment:fireState?.manipulatingEquipment,boltStatus:fireState?.boltStatus,
           boltLive:fireState?.boltLive,boltCarriesLiveRound:fireState?.boltCarriesLiveRound,
-          aimConverged:fireState?.aimConverged,aimAlignment:fireState?.aimAlignment,aimDistance:fireAimDistance};
-        const finalPointer=fireState?.sourceAimPoint;
-        const finalAimDistance=finalPointer?Math.hypot(finalPointer[0]-beforeTorso.aimPoint[0],
-          finalPointer[1]-beforeTorso.aimPoint[1],finalPointer[2]-beforeTorso.aimPoint[2]):Infinity;
-        const sourceTriggerReady=fireState?.readyToFire===true&&fireState?.rightArmOnTarget===true&&
-          fireState?.leftArmOnTarget===true&&finalAimDistance<=0.55;
+          aimConverged:fireState?.aimConverged,aimAlignment:fireState?.aimAlignment,aimDistance:finalAimDistance};
+        sourceTriggerReady=fireState?.readyToFire===true&&sourceAimReady(fireState);
         if(sourceTriggerReady){
           await page.mouse.move(point.x,point.y);
           await page.mouse.down();
@@ -628,9 +665,7 @@ try {
               fireInputObserved=true;
               fireInputAtPress=await page.evaluate(()=>window.__gameState().originalInput?.fire??null);
             }catch{}
-            // Keep the source action level held across additional RuntimeWorld ticks:
-            // InputHandler.Update may publish Pressed after PlayerController.Update
-            // has already consumed that frame, especially for the Auto-to-Semi cycle.
+            // Keep the source action level held across additional RuntimeWorld ticks.
             const shotDeadline=Date.now()+3000;
             while(Date.now()<shotDeadline){
               await page.waitForTimeout(50);
@@ -657,8 +692,7 @@ try {
         aimPoint:beforeTorso?.aimPoint??scenario.aimPoint,screenPoint:point,cameraAtProjection:projection?.camera,
         aimStateAtFire,lastAimState,aimDistance,boltCycleAttempted,readyToFireAfterBolt,boltCycleAfterAim,
         fireModeToggleObserved,fireModeAtFire,fireInputObserved,fireInputAtPress,
-        sourceTriggerReady:aimStateAtFire?.readyToFire===true&&aimStateAtFire?.rightArmOnTarget===true&&
-          aimStateAtFire?.leftArmOnTarget===true&&Number.isFinite(aimStateAtFire?.aimDistance)&&aimStateAtFire.aimDistance<=0.55,
+        sourceTriggerReady,
         shotObserved,shotsBefore,shotsAfter:afterSnapshot.shotsFired,
         lastHitLimb:afterVictim?.lastHitLimb??null,damagedLimb:changedLimb,
         projectiles:afterSnapshot.projectiles,spawnedProjectiles:afterSnapshot.spawnedProjectiles,
