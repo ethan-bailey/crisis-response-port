@@ -567,7 +567,8 @@ try {
             boltMoving:state.weaponState?.boltMoving,boltMalfunctioned:state.weaponState?.boltMalfunctioned,
             boltCarriesLiveRound:state.weaponState?.boltCarriesLiveRound,aimDistance};
           if(state.aimGeneration>aimGenerationBefore&&state.sourceAimAppliedGeneration===state.aimGeneration&&
-            state.weaponState?.aimConverged===true&&aimDistance<=0.55){aimStateAtFire={...lastAimState};break;}
+            state.weaponState?.rightArmOnTarget===true&&state.weaponState?.leftArmOnTarget===true&&aimDistance<=0.55){
+            aimStateAtFire={...lastAimState};break;}
           await page.waitForTimeout(50);
         }
       }
@@ -596,7 +597,11 @@ try {
           while(Date.now()<readyDeadline){
             await page.waitForTimeout(50);
             fireState=await page.evaluate(()=>window.__gameState().weaponState);
-            if(fireState?.readyToFire===true&&fireState?.aimConverged===true)break;
+            const pointerPoint=fireState?.sourceAimPoint;
+            const pointerError=pointerPoint?Math.hypot(pointerPoint[0]-beforeTorso.aimPoint[0],
+              pointerPoint[1]-beforeTorso.aimPoint[1],pointerPoint[2]-beforeTorso.aimPoint[2]):Infinity;
+            if(fireState?.readyToFire===true&&fireState?.rightArmOnTarget===true&&
+              fireState?.leftArmOnTarget===true&&pointerError<=0.55)break;
           }
         }
         fireModeAtFire=fireState?.fireMode??null;
@@ -608,25 +613,32 @@ try {
           manipulatingEquipment:fireState?.manipulatingEquipment,boltStatus:fireState?.boltStatus,
           boltLive:fireState?.boltLive,boltCarriesLiveRound:fireState?.boltCarriesLiveRound,
           aimConverged:fireState?.aimConverged,aimAlignment:fireState?.aimAlignment,aimDistance:fireAimDistance};
-        await page.mouse.move(point.x,point.y);
-        await page.mouse.down();
-        try{
+        const finalPointer=fireState?.sourceAimPoint;
+        const finalAimDistance=finalPointer?Math.hypot(finalPointer[0]-beforeTorso.aimPoint[0],
+          finalPointer[1]-beforeTorso.aimPoint[1],finalPointer[2]-beforeTorso.aimPoint[2]):Infinity;
+        const sourceTriggerReady=fireState?.readyToFire===true&&fireState?.rightArmOnTarget===true&&
+          fireState?.leftArmOnTarget===true&&finalAimDistance<=0.55;
+        if(sourceTriggerReady){
+          await page.mouse.move(point.x,point.y);
+          await page.mouse.down();
           try{
-            await page.waitForFunction(()=>window.__gameState().originalInput?.fire?.Pressed===true,
-              null,{timeout:2000});
-            fireInputObserved=true;
-            fireInputAtPress=await page.evaluate(()=>window.__gameState().originalInput?.fire??null);
-          }catch{}
-          // Keep the source action level held across additional RuntimeWorld ticks:
-          // InputHandler.Update may publish Pressed after PlayerController.Update
-          // has already consumed that frame, especially for the Auto-to-Semi cycle.
-          const shotDeadline=Date.now()+3000;
-          while(Date.now()<shotDeadline){
-            await page.waitForTimeout(50);
-            const current=await page.evaluate(()=>window.__sourceCombatSnapshot());
-            if(current.shotsFired>shotsBefore){shotObserved=true;break;}
-          }
-        }finally{await page.mouse.up();}
+            try{
+              await page.waitForFunction(()=>window.__gameState().originalInput?.fire?.Pressed===true,
+                null,{timeout:2000});
+              fireInputObserved=true;
+              fireInputAtPress=await page.evaluate(()=>window.__gameState().originalInput?.fire??null);
+            }catch{}
+            // Keep the source action level held across additional RuntimeWorld ticks:
+            // InputHandler.Update may publish Pressed after PlayerController.Update
+            // has already consumed that frame, especially for the Auto-to-Semi cycle.
+            const shotDeadline=Date.now()+3000;
+            while(Date.now()<shotDeadline){
+              await page.waitForTimeout(50);
+              const current=await page.evaluate(()=>window.__sourceCombatSnapshot());
+              if(current.shotsFired>shotsBefore){shotObserved=true;break;}
+            }
+          }finally{await page.mouse.up();}
+        }
       }
       let afterSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
       let changedLimb=null;
@@ -645,6 +657,8 @@ try {
         aimPoint:beforeTorso?.aimPoint??scenario.aimPoint,screenPoint:point,cameraAtProjection:projection?.camera,
         aimStateAtFire,lastAimState,aimDistance,boltCycleAttempted,readyToFireAfterBolt,boltCycleAfterAim,
         fireModeToggleObserved,fireModeAtFire,fireInputObserved,fireInputAtPress,
+        sourceTriggerReady:fireState?.readyToFire===true&&fireState?.rightArmOnTarget===true&&
+          fireState?.leftArmOnTarget===true&&Number.isFinite(aimStateAtFire?.aimDistance)&&aimStateAtFire.aimDistance<=0.55,
         shotObserved,shotsBefore,shotsAfter:afterSnapshot.shotsFired,
         lastHitLimb:afterVictim?.lastHitLimb??null,damagedLimb:changedLimb,
         projectiles:afterSnapshot.projectiles,spawnedProjectiles:afterSnapshot.spawnedProjectiles,
