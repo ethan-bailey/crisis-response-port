@@ -657,8 +657,8 @@ try {
         aimPoint:beforeTorso?.aimPoint??scenario.aimPoint,screenPoint:point,cameraAtProjection:projection?.camera,
         aimStateAtFire,lastAimState,aimDistance,boltCycleAttempted,readyToFireAfterBolt,boltCycleAfterAim,
         fireModeToggleObserved,fireModeAtFire,fireInputObserved,fireInputAtPress,
-        sourceTriggerReady:fireState?.readyToFire===true&&fireState?.rightArmOnTarget===true&&
-          fireState?.leftArmOnTarget===true&&Number.isFinite(aimStateAtFire?.aimDistance)&&aimStateAtFire.aimDistance<=0.55,
+        sourceTriggerReady:aimStateAtFire?.readyToFire===true&&aimStateAtFire?.rightArmOnTarget===true&&
+          aimStateAtFire?.leftArmOnTarget===true&&Number.isFinite(aimStateAtFire?.aimDistance)&&aimStateAtFire.aimDistance<=0.55,
         shotObserved,shotsBefore,shotsAfter:afterSnapshot.shotsFired,
         lastHitLimb:afterVictim?.lastHitLimb??null,damagedLimb:changedLimb,
         projectiles:afterSnapshot.projectiles,spawnedProjectiles:afterSnapshot.spawnedProjectiles,
