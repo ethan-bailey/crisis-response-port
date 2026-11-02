@@ -518,6 +518,14 @@ public sealed class FullSourceActorBridge
             boltCarriesLiveRound = weapon.cyclingBolt?.CarryingLiveRound ?? false,
             aimAlignment,
             aimConverged,
+            weaponAngle = weapon.Angle,
+            weaponRight = new[] { weapon.transform.right.x, weapon.transform.right.y, weapon.transform.right.z },
+            muzzleForward = new[] { weapon.Muzzle.forward.x, weapon.Muzzle.forward.y, weapon.Muzzle.forward.z },
+            weaponAlignPoint = new[] { body.WeaponAlignPoint.x, body.WeaponAlignPoint.y, body.WeaponAlignPoint.z },
+            weaponAimAlignment = body.WeaponAimAlignment(),
+            weaponMode = body.weaponMode.ToString(),
+            sprinting = body.IsSprinting,
+            usingPrecision = body.IsUsingPrecision,
             sourceAimPoint = pointer == null ? null : new[] { pointer.WorldPoint.x, pointer.WorldPoint.y, pointer.WorldPoint.z },
             sourcePointer = pointer == null ? null : new
             {
@@ -764,6 +772,7 @@ public sealed class FullSourceActorBridge
             // After real movement updates the source camera, reproduce the source contract's grounded firing lane.
             body.transform.position=new Vector3(4f,0.94f,-0.7f);
             body.Rigidbody.velocity=Vector3.zero;
+            body.IsSprinting=false;
             body.IsKneeling=true;
             int otherIndex=0;
             foreach(var otherVictim in victims.Where(victim=>!ReferenceEquals(victim,target)))
@@ -773,6 +782,7 @@ public sealed class FullSourceActorBridge
             // Re-ground the source shooter for each distinct source-contract shot after browser contact integration.
             body.transform.position=new Vector3(4f,0.94f,-0.7f);
             body.Rigidbody.velocity=Vector3.zero;
+            body.IsSprinting=false;
             body.IsKneeling=true;
             if(stagedBrowserProjectileContractFirstVictim==null||stagedBrowserProjectileContractSecondVictim==null)
                 throw new InvalidOperationException("The second browser projectile target cannot be staged before the first");

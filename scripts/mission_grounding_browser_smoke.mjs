@@ -567,7 +567,8 @@ try {
             boltMoving:state.weaponState?.boltMoving,boltMalfunctioned:state.weaponState?.boltMalfunctioned,
             boltCarriesLiveRound:state.weaponState?.boltCarriesLiveRound,aimDistance};
           if(state.aimGeneration>aimGenerationBefore&&state.sourceAimAppliedGeneration===state.aimGeneration&&
-            state.weaponState?.rightArmOnTarget===true&&state.weaponState?.leftArmOnTarget===true&&aimDistance<=0.55){
+            state.weaponState?.rightArmOnTarget===true&&state.weaponState?.leftArmOnTarget===true&&
+            state.weaponState?.aimConverged===true&&aimDistance<=0.55){
             aimStateAtFire={...lastAimState};break;}
           await page.waitForTimeout(50);
         }
@@ -595,7 +596,7 @@ try {
             pointer[1]-beforeTorso.aimPoint[1],pointer[2]-beforeTorso.aimPoint[2]):Infinity;
         };
         const sourceAimReady=state=>state?.rightArmOnTarget===true&&state?.leftArmOnTarget===true&&
-          aimErrorForState(state)<=0.55;
+          state?.aimConverged===true&&aimErrorForState(state)<=0.55;
         for(let cycle=0;cycle<2;cycle++){
           if(fireState?.readyToFire!==true){
             boltCycleAfterAim=true;
@@ -665,13 +666,13 @@ try {
               fireInputObserved=true;
               fireInputAtPress=await page.evaluate(()=>window.__gameState().originalInput?.fire??null);
             }catch{}
-            // Keep the source action level held across additional RuntimeWorld ticks.
-            const shotDeadline=Date.now()+3000;
-            while(Date.now()<shotDeadline){
-              await page.waitForTimeout(50);
-              const current=await page.evaluate(()=>window.__sourceCombatSnapshot());
-              if(current.shotsFired>shotsBefore){shotObserved=true;break;}
-            }
+            // Release on the first source shot observed at browser-frame cadence,
+            // so Auto fire cannot turn one contract press into multiple rounds.
+            try{
+              await page.waitForFunction(before=>window.__sourceCombatSnapshot().shotsFired>before,
+                shotsBefore,{timeout:3000,polling:'raf'});
+              shotObserved=true;
+            }catch{}
           }finally{await page.mouse.up();}
         }
       }
