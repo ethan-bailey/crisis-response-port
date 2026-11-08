@@ -524,6 +524,9 @@ public sealed class FullSourceActorBridge
             weaponAlignPoint = new[] { body.WeaponAlignPoint.x, body.WeaponAlignPoint.y, body.WeaponAlignPoint.z },
             weaponAimAlignment = body.WeaponAimAlignment(),
             weaponMode = body.weaponMode.ToString(),
+            isLoweringWeapon = body.IsLoweringWeapon,
+            weaponBlocked = weapon.IsBlocked,
+            collisionClearance = weapon.CollisionClearance,
             sprinting = body.IsSprinting,
             usingPrecision = body.IsUsingPrecision,
             sourceAimPoint = pointer == null ? null : new[] { pointer.WorldPoint.x, pointer.WorldPoint.y, pointer.WorldPoint.z },
@@ -797,9 +800,11 @@ public sealed class FullSourceActorBridge
         var targetPosition=target.transform.position;
         // Stage both original Occupants in the proven visible far lane at the grounded source actor depth.
         target.transform.position=new Vector3(17.74f,0.94f,-0.7f);
-        var sourceTarget=target.GetComponent<Target>()
-            ??throw new InvalidOperationException($"Original Occupant {target.name} has no Target component");
-        body.Blackboard.Target=sourceTarget;
+        // This is the original player actor: PlayerController and WeaponPointer
+        // own its live aim. Do not attach the browser fixture's target to the
+        // AI blackboard, which can let a BehaviorTree change the player's weapon mode.
+        if(target.GetComponent<Target>()==null)
+            throw new InvalidOperationException($"Original Occupant {target.name} has no Target component");
         body.WeaponAimer.Mode=WeaponAimer.AimMode.Ready;
         world.Invoke(body.WeaponAimer,"Update");
         var torso=target.limbMap.TryGetValue(LimbId.Torso,out var targetTorso)?targetTorso
