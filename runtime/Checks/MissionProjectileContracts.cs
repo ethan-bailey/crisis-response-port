@@ -203,8 +203,13 @@ public static class MissionProjectileContracts
                         .Where(projectile=>projectile&&ReferenceEquals(projectile.Owner,shooter))
                         .Select(projectile=>Time.time-projectile.SpawnTime).ToArray();
                     int sourceTerminationTicks=0;
-                    while(sourceTerminationTicks<260&&world.Objects.OfType<SourceProjectile>()
-                        .Any(projectile=>projectile&&ReferenceEquals(projectile.Owner,shooter))){
+                    // RuntimeWorld.Tick accepts real elapsed time, while source
+                    // Time.time advances at Mission timeScale. Wait for the
+                    // authored one-second projectile lifetime, not a fixed tick
+                    // count that can expire early when timeScale is reduced.
+                    while(sourceTerminationTicks<2000&&
+                        (Time.time-secondShotNewestSpawnTime<1.05f||world.Objects.OfType<SourceProjectile>()
+                            .Any(projectile=>projectile&&ReferenceEquals(projectile.Owner,shooter)))){
                         world.Tick(.005f,()=>{
                             foreach(var source in world.Objects.OfType<AudioSource>())source.Driver??=new MissionContractSilentAudioDriver();
                             foreach(var system in world.Objects.OfType<ParticleSystem>())system.Driver??=particleDriver;
@@ -228,6 +233,7 @@ public static class MissionProjectileContracts
                         liveOwnedProjectilesImmediatelyAfterImpact=secondLiveProjectilesImmediatelyAfterImpact,
                         liveProjectileAgesAtImpact,
                         sourceLifetimeSeconds=1f,
+                        sourceTimeScaleAtCleanupCheck=Time.timeScale,
                         sourceTerminationTicks,
                         sourceAgeSecondsAtCleanupCheck,
                         liveOwnedProjectilesAfterSourceTermination=secondLiveProjectilesAfterSourceTermination,
