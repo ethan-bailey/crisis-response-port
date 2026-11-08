@@ -678,7 +678,7 @@ try {
         projectiles:afterSnapshot.projectiles,spawnedProjectiles:afterSnapshot.spawnedProjectiles,
         projectileInteractions:afterSnapshot.projectileInteractions};
       attempts.push(attempt);
-      if(!(scenario.shooterPosition?.[0]>3.5&&scenario.shooterPosition?.[0]<4.6))failures.push(`shot ${shotNumber}: production-moved shooter X expected near source contract lane 4, observed ${scenario.shooterPosition?.[0]}`);
+      if(!(scenario.shooterPosition?.[0]>5.2&&scenario.shooterPosition?.[0]<5.9))failures.push(`shot ${shotNumber}: production-moved shooter X expected beyond the authored Left section wall at 5.5, observed ${scenario.shooterPosition?.[0]}`);
       if(Math.abs(scenario.shooterPosition?.[1]-0.94)>0.01)failures.push(`shot ${shotNumber}: grounded shooter Y expected near 0.94 within solver tolerance, observed ${scenario.shooterPosition?.[1]}`);
       if(scenario.kneeling!==true)failures.push(`shot ${shotNumber}: staged shooter kneeling expected true, observed ${scenario.kneeling}`);
       if(Math.abs(scenario.targetPosition?.[0]-17.74)>0.1)failures.push(`shot ${shotNumber}: visible Torso lane X expected 17.74, observed ${scenario.targetPosition?.[0]}`);

@@ -783,8 +783,10 @@ public sealed class FullSourceActorBridge
                 ??throw new InvalidOperationException("The browser projectile scenario requires a second live original Occupant");
             if(ReferenceEquals(stagedBrowserProjectileContractSecondVictim,target))
                 throw new InvalidOperationException("The browser projectile scenario requires two distinct authored Occupants");
-            // After real movement updates the source camera, reproduce the source contract's grounded firing lane.
-            body.transform.position=new Vector3(4f,0.94f,-0.7f);
+            // Stage beyond the authored Left section wall at X≈5; the original
+            // WeaponBase muzzle-clearance ray correctly lowers a weapon held in
+            // the wall at the source contract's X=4 staging point.
+            body.transform.position=new Vector3(5.5f,0.94f,-0.7f);
             body.Rigidbody.velocity=Vector3.zero;
             body.IsSprinting=false;
             body.IsKneeling=true;
@@ -794,7 +796,7 @@ public sealed class FullSourceActorBridge
         }
         else{
             // Re-ground the source shooter for each distinct source-contract shot after browser contact integration.
-            body.transform.position=new Vector3(4f,0.94f,-0.7f);
+            body.transform.position=new Vector3(5.5f,0.94f,-0.7f);
             body.Rigidbody.velocity=Vector3.zero;
             body.IsSprinting=false;
             body.IsKneeling=true;
