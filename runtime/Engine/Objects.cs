@@ -36,7 +36,14 @@ public class Object {
     public override bool Equals(object other) => other is Object obj ? this==obj : other is null && destroyed;
     public override int GetHashCode() => instanceID;
     public static void Destroy(Object obj) { if(obj) obj.world.QueueDestroy(obj); }
-    public static void DestroyImmediate(Object obj,bool allowDestroyingAssets=false) { if(obj)obj.world.DestroyNow(obj); }
+    public static void DestroyImmediate(Object obj,bool allowDestroyingAssets=false) {
+        if(!obj)return;
+        // Runtime-created Unity objects such as BloodStream's dynamic Mesh are
+        // not necessarily registered in a scene world. Unity can still destroy
+        // those owned native objects; marking the local object dead preserves
+        // that lifecycle without trying to invoke a missing world driver.
+        if(obj.world!=null)obj.world.DestroyNow(obj);else obj.destroyed=true;
+    }
     public static void DontDestroyOnLoad(Object obj) { if(!obj)throw new ArgumentNullException(nameof(obj)); }
     public static T[] FindObjectsOfType<T>() where T:Object => RuntimeWorld.Current.Objects.OfType<T>().Where(o=>o&&! (o is Component c && !c.gameObject.activeInHierarchy)).ToArray();
     public static T[] FindObjectsOfType<T>(bool includeInactive) where T:Object=>RuntimeWorld.Current.Objects.OfType<T>().Where(o=>o&&(includeInactive||o is not Component c||c.gameObject.activeInHierarchy)).ToArray();

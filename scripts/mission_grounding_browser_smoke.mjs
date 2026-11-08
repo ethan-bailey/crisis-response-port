@@ -539,7 +539,7 @@ try {
             boltCarriesLiveRound:state.weaponState?.boltCarriesLiveRound,aimDistance};
           if(state.aimGeneration>aimGenerationBefore&&state.sourceAimAppliedGeneration===state.aimGeneration&&
             state.weaponState?.rightArmOnTarget===true&&state.weaponState?.leftArmOnTarget===true&&
-            state.weaponState?.aimConverged===true&&aimDistance<=0.55){
+            state.weaponState?.aimConverged===true&&aimDistance<=0.15){
             aimStateAtFire={...lastAimState};break;}
           await page.waitForTimeout(50);
         }
@@ -549,7 +549,7 @@ try {
       if(aimStateAtFire){
         fireState=await page.evaluate(()=>window.__gameState().weaponState);
         const modeDeadline=Date.now()+5000;
-        while(fireState?.fireMode&&fireState.fireMode!=='Auto'&&Date.now()<modeDeadline){
+        while(fireState?.fireMode&&fireState.fireMode!=='Semi'&&Date.now()<modeDeadline){
           await page.keyboard.down('t');
           await page.waitForTimeout(120);
           await page.keyboard.up('t');
@@ -567,7 +567,7 @@ try {
             pointer[1]-beforeTorso.aimPoint[1],pointer[2]-beforeTorso.aimPoint[2]):Infinity;
         };
         const sourceAimReady=state=>state?.rightArmOnTarget===true&&state?.leftArmOnTarget===true&&
-          state?.aimConverged===true&&aimErrorForState(state)<=0.55;
+          state?.aimConverged===true&&aimErrorForState(state)<=0.15;
         for(let cycle=0;cycle<2;cycle++){
           if(fireState?.readyToFire!==true){
             boltCycleAfterAim=true;
