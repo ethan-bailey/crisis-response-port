@@ -483,10 +483,13 @@ public sealed class FullSourceActorBridge
         var pointer=controller.WeaponPointer;
         var pointerRayField=typeof(WeaponPointer).GetField("ray",BindingFlags.Instance|BindingFlags.NonPublic);
         var pointerHitField=typeof(WeaponPointer).GetField("raycastHit",BindingFlags.Instance|BindingFlags.NonPublic);
+        var weaponHitField=typeof(WeaponBase).GetField("raycastHit",BindingFlags.Instance|BindingFlags.NonPublic);
         var pointerLocalPointField=typeof(WeaponPointer).GetField("localPoint",BindingFlags.Instance|BindingFlags.NonPublic);
         var sourceRay=pointerRayField?.GetValue(pointer) is Ray ray?ray:default;
         var sourceHit=pointerHitField?.GetValue(pointer) is RaycastHit hit?hit:default;
         var hitCollider=sourceHit.collider;
+        var weaponBlockHit=weaponHitField?.GetValue(weapon) is RaycastHit blockHit?blockHit:default;
+        var weaponBlockCollider=weaponBlockHit.collider;
         var mousePosition=Input.mousePosition;
         var interiorMode=Global.Context.Mission?.InteriorMode;
         var alternateCamera=interiorMode?.AlternateCamera;
@@ -527,6 +530,14 @@ public sealed class FullSourceActorBridge
             isLoweringWeapon = body.IsLoweringWeapon,
             weaponBlocked = weapon.IsBlocked,
             collisionClearance = weapon.CollisionClearance,
+            weaponBlockedHit = weapon.IsBlocked && weaponBlockCollider ? new
+            {
+                name = weaponBlockCollider.name,
+                layer = weaponBlockCollider.gameObject.layer,
+                point = new[] { weaponBlockHit.point.x, weaponBlockHit.point.y, weaponBlockHit.point.z },
+                distance = weaponBlockHit.distance,
+                normal = new[] { weaponBlockHit.normal.x, weaponBlockHit.normal.y, weaponBlockHit.normal.z }
+            } : null,
             sprinting = body.IsSprinting,
             usingPrecision = body.IsUsingPrecision,
             sourceAimPoint = pointer == null ? null : new[] { pointer.WorldPoint.x, pointer.WorldPoint.y, pointer.WorldPoint.z },
