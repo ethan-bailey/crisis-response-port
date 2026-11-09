@@ -512,6 +512,8 @@ public sealed class FullSourceActorBridge
             chamberLive = weapon.ChamberStatus == WeaponBase.ChamberState.Live,
             fireMode = weapon.ActiveFireMode.ToString(),
             readyToFire = weapon.ReadyToFire,
+            isFiring = weapon.IsFiring,
+            recoilKick = weapon.RecoilKick,
             rightArmOnTarget = body.rightArm?.OnTarget ?? false,
             leftArmOnTarget = body.leftArm?.OnTarget ?? false,
             manipulatingEquipment = body.IsManipulatingEquipment,
