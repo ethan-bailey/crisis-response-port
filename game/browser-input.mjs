@@ -228,6 +228,17 @@ export class BrowserInput {
         }
       }
     };
+    // A right mouse press starts the browser's active mouse pointer, so a
+    // later left press while precision is held emits mousedown but no second
+    // pointerdown. Forward that combined-button fire level through the same
+    // BrowserInput action used by the normal pointer path.
+    this.listen(surface, 'mousedown', event => {
+      if (event.button === 0 && (event.buttons & 2) !== 0)
+        this.set('fire', 'mouse:precision-fire', true);
+    });
+    this.listen(surface, 'mouseup', event => {
+      if (event.button === 0) this.set('fire', 'mouse:precision-fire', false);
+    });
     this.listen(surface, 'pointerdown', event => {
       if (event.button !== 0 || pointer !== null) return;
       event.preventDefault(); pointer = event.pointerId;
