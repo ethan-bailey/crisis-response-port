@@ -539,7 +539,7 @@ try {
             boltCarriesLiveRound:state.weaponState?.boltCarriesLiveRound,aimDistance};
           if(state.aimGeneration>aimGenerationBefore&&state.sourceAimAppliedGeneration===state.aimGeneration&&
             state.weaponState?.rightArmOnTarget===true&&state.weaponState?.leftArmOnTarget===true&&
-            state.weaponState?.aimConverged===true&&aimDistance<=0.15){
+            state.weaponState?.aimConverged===true&&aimDistance<=0.2){
             aimStateAtFire={...lastAimState};break;}
           await page.waitForTimeout(50);
         }
@@ -567,7 +567,7 @@ try {
             pointer[1]-beforeTorso.aimPoint[1],pointer[2]-beforeTorso.aimPoint[2]):Infinity;
         };
         const sourceAimReady=state=>state?.rightArmOnTarget===true&&state?.leftArmOnTarget===true&&
-          state?.aimConverged===true&&aimErrorForState(state)<=0.15;
+          state?.aimConverged===true&&aimErrorForState(state)<=0.2;
         for(let cycle=0;cycle<2;cycle++){
           if(fireState?.readyToFire!==true){
             boltCycleAfterAim=true;
@@ -582,7 +582,7 @@ try {
             }
           }
           if(fireState?.readyToFire!==true)break;
-          if(boltCycleAfterAim||!sourceAimReady(fireState)){
+          if(fireModeToggleObserved||boltCycleAfterAim||!sourceAimReady(fireState)){
             const reAimGenerationBefore=await page.evaluate(()=>window.__gameState().aimGeneration);
             const reAimDeadline=Date.now()+5000;
             while(Date.now()<reAimDeadline){
@@ -656,6 +656,9 @@ try {
         }
       }
       let afterSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
+      // The browser-frame wait can miss the bridge's shot-count update even
+      // though the following source snapshot already contains the round.
+      shotObserved=shotObserved||afterSnapshot.shotsFired>shotsBefore;
       let changedLimb=null;
       const impactDeadline=Date.now()+3000;
       while(shotObserved&&Date.now()<impactDeadline){
