@@ -722,6 +722,10 @@ public sealed class FullSourceActorBridge
         var torsoCollider=torso.GetComponent<Collider>()
             ??throw new InvalidOperationException($"Original Occupant {target.name} Torso has no serialized collider");
         var torsoBounds=torsoCollider.bounds;
+        // Aim at the serialized Torso collider center. The authored Limb aim
+        // point sits on its upper edge beside the Neck and can classify a
+        // centerline source round as Neck despite correct weapon convergence.
+        body.AimPoint=torsoBounds.center;
         var torsoHitPointCandidates=new[]{
             body.AimPoint,
             torsoBounds.center,

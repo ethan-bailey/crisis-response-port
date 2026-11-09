@@ -492,34 +492,35 @@ try {
       const beforeSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
       const beforeVictim=beforeSnapshot.occupants.find(victim=>victim.body===scenario.target);
       const beforeTorso=beforeVictim?.limbs.find(limb=>limb.limb==='Torso');
+      const targetAimPoint=scenario.aimPoint??beforeTorso?.aimPoint??null;
       const shotsBefore=beforeSnapshot.shotsFired;
       let point=null,projection=null,aimStateAtFire=null,lastAimState=null,aimDistance=Infinity,fireInputObserved=false,shotObserved=false;
       if(beforeVictim?.alive&&beforeTorso){
-        point=await page.evaluate(position=>window.__sourceCombatScreenPoint(position),beforeTorso.aimPoint);
+        point=await page.evaluate(position=>window.__sourceCombatScreenPoint(position),targetAimPoint);
         const aimGenerationBefore=await page.evaluate(()=>window.__gameState().aimGeneration);
         const aimDeadline=Date.now()+5000;
         while(Date.now()<aimDeadline&&point?.inside&&point.visible){
           projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),
-            camera:window.__gameState().sourceCamera}),beforeTorso.aimPoint);
+            camera:window.__gameState().sourceCamera}),targetAimPoint);
           point=projection.point;
           if(!point.inside||!point.visible)break;
           if(lastAimState?.sourceAimPoint&&projection.camera&&point.viewportWidth>0&&point.viewportHeight>0){
             const cameraPosition=projection.camera.position;
-            const distance=Math.hypot(beforeTorso.aimPoint[0]-cameraPosition[0],
-              beforeTorso.aimPoint[1]-cameraPosition[1],beforeTorso.aimPoint[2]-cameraPosition[2]);
+            const distance=Math.hypot(targetAimPoint[0]-cameraPosition[0],
+              targetAimPoint[1]-cameraPosition[1],targetAimPoint[2]-cameraPosition[2]);
             const tangent=Math.tan((projection.camera.fov??75)*Math.PI/360);
             const unitsPerPixelX=2*distance*tangent*(projection.camera.aspect??(point.viewportWidth/point.viewportHeight))/point.viewportWidth;
             const unitsPerPixelY=2*distance*tangent/point.viewportHeight;
-            const correctedX=point.x+(beforeTorso.aimPoint[0]-lastAimState.sourceAimPoint[0])/unitsPerPixelX;
-            const correctedY=point.y-(beforeTorso.aimPoint[1]-lastAimState.sourceAimPoint[1])/unitsPerPixelY;
+            const correctedX=point.x+(targetAimPoint[0]-lastAimState.sourceAimPoint[0])/unitsPerPixelX;
+            const correctedY=point.y-(targetAimPoint[1]-lastAimState.sourceAimPoint[1])/unitsPerPixelY;
             if(correctedX>=0&&correctedX<=point.viewportWidth&&correctedY>=0&&correctedY<=point.viewportHeight)
               point={...point,x:correctedX,y:correctedY};
           }
           await page.mouse.move(point.x,point.y);
           const state=await page.evaluate(()=>window.__gameState());
           const sourcePoint=state.weaponState?.sourceAimPoint;
-          aimDistance=sourcePoint?Math.hypot(sourcePoint[0]-beforeTorso.aimPoint[0],
-            sourcePoint[1]-beforeTorso.aimPoint[1],sourcePoint[2]-beforeTorso.aimPoint[2]):Infinity;
+          aimDistance=sourcePoint?Math.hypot(sourcePoint[0]-targetAimPoint[0],
+            sourcePoint[1]-targetAimPoint[1],sourcePoint[2]-targetAimPoint[2]):Infinity;
           lastAimState={aimGeneration:state.aimGeneration,sourceAimAppliedGeneration:state.sourceAimAppliedGeneration,
             aimPoint:state.aimPoint,sourceAimPoint:sourcePoint,sourcePointer:state.weaponState?.sourcePointer,
             sourceCamera:state.sourceCamera,aimAlignment:state.weaponState?.aimAlignment,
@@ -563,8 +564,8 @@ try {
         }
         const aimErrorForState=state=>{
           const pointer=state?.sourceAimPoint;
-          return pointer?Math.hypot(pointer[0]-beforeTorso.aimPoint[0],
-            pointer[1]-beforeTorso.aimPoint[1],pointer[2]-beforeTorso.aimPoint[2]):Infinity;
+          return pointer?Math.hypot(pointer[0]-targetAimPoint[0],
+            pointer[1]-targetAimPoint[1],pointer[2]-targetAimPoint[2]):Infinity;
         };
         const sourceAimReady=state=>state?.rightArmOnTarget===true&&state?.leftArmOnTarget===true&&
           state?.aimConverged===true&&aimErrorForState(state)<=0.2;
@@ -587,14 +588,14 @@ try {
             const reAimDeadline=Date.now()+5000;
             while(Date.now()<reAimDeadline){
               projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),
-                camera:window.__gameState().sourceCamera}),beforeTorso.aimPoint);
+                camera:window.__gameState().sourceCamera}),targetAimPoint);
               point=projection.point;
               if(!point?.inside||!point.visible)break;
               await page.mouse.move(point.x,point.y);
               const reAimState=await page.evaluate(()=>window.__gameState());
               const pointer=reAimState.weaponState?.sourceAimPoint;
-              aimDistance=pointer?Math.hypot(pointer[0]-beforeTorso.aimPoint[0],
-                pointer[1]-beforeTorso.aimPoint[1],pointer[2]-beforeTorso.aimPoint[2]):Infinity;
+              aimDistance=pointer?Math.hypot(pointer[0]-targetAimPoint[0],
+                pointer[1]-targetAimPoint[1],pointer[2]-targetAimPoint[2]):Infinity;
               lastAimState={aimGeneration:reAimState.aimGeneration,
                 sourceAimAppliedGeneration:reAimState.sourceAimAppliedGeneration,
                 aimPoint:reAimState.aimPoint,sourceAimPoint:pointer,
@@ -672,7 +673,7 @@ try {
       }
       const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===scenario.target);
       const attempt={shotNumber,stagedScenario:scenario,victim:scenario.target,aimedLimb:'Torso',
-        aimPoint:beforeTorso?.aimPoint??scenario.aimPoint,screenPoint:point,cameraAtProjection:projection?.camera,
+        aimPoint:targetAimPoint,screenPoint:point,cameraAtProjection:projection?.camera,
         aimStateAtFire,lastAimState,aimDistance,boltCycleAttempted,readyToFireAfterBolt,boltCycleAfterAim,
         fireModeToggleObserved,fireModeAtFire,fireInputObserved,fireInputAtPress,
         sourceTriggerReady,
