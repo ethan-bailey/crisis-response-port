@@ -830,8 +830,10 @@ public sealed class FullSourceActorBridge
         // can sit above the serialized capsule: the packaged trace fired from
         // that point and passed outside the Torso capsule into Abdomen.
         var torsoSourceAimPoint=torso.transform.position;
-        body.AimPoint=torsoSourceAimPoint;
+        body.AimPoint=shotNumber==1?torsoSourceAimPoint:
+            torsoSourceAimPoint+Vector3.down*(torsoBounds.extents.y*.5f);
         var torsoHitPointCandidates=new[]{
+            body.AimPoint,
             torsoSourceAimPoint,
             torsoBounds.center,
             torsoBounds.center+Vector3.down*(torsoBounds.extents.y*.5f),
