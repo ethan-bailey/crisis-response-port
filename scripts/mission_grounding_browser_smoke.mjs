@@ -533,7 +533,7 @@ try {
           targetAimPoint=[liveAimPoint[0],liveAimPoint[1]-0.1,liveAimPoint[2]];
       };
       const shotsBefore=beforeSnapshot.shotsFired;
-      let point=null,projection=null,aimStateAtFire=null,lastAimState=null,aimDistance=Infinity,fireInputObserved=false,shotObserved=false;
+      let point=null,projection=null,aimStateAtFire=null,lastAimState=null,aimDistance=Infinity,fireInputObserved=false,precisionInputObserved=false,shotObserved=false;
       if(beforeVictim?.alive&&beforeTorso){
         point=await page.evaluate(position=>window.__sourceCombatScreenPoint(position),targetAimPoint);
         const aimGenerationBefore=await page.evaluate(()=>window.__gameState().aimGeneration);
@@ -683,22 +683,30 @@ try {
         sourceTriggerReady=fireState?.readyToFire===true&&sourceAimReady(fireState);
         if(sourceTriggerReady){
           await page.mouse.move(point.x,point.y);
-          await page.mouse.down();
+          await page.mouse.down({button:'right'});
           try{
             try{
-              await page.waitForFunction(()=>window.__gameState().originalInput?.fire?.Pressed===true,
-                null,{timeout:2000});
-              fireInputObserved=true;
-              fireInputAtPress=await page.evaluate(()=>window.__gameState().originalInput?.fire??null);
+              await page.waitForFunction(()=>window.__gameState().originalInput?.precision?.Pressed===true&&
+                window.__gameState().weaponState?.usingPrecision===true,null,{timeout:2000});
+              precisionInputObserved=true;
             }catch{}
-            // Release on the first source shot observed at browser-frame cadence,
-            // so Auto fire cannot turn one contract press into multiple rounds.
+            await page.mouse.down();
             try{
-              await page.waitForFunction(before=>window.__sourceCombatSnapshot().shotsFired>before,
-                shotsBefore,{timeout:3000,polling:'raf'});
-              shotObserved=true;
-            }catch{}
-          }finally{await page.mouse.up();}
+              try{
+                await page.waitForFunction(()=>window.__gameState().originalInput?.fire?.Pressed===true,
+                  null,{timeout:2000});
+                fireInputObserved=true;
+                fireInputAtPress=await page.evaluate(()=>window.__gameState().originalInput?.fire??null);
+              }catch{}
+              // Release on the first source shot observed at browser-frame cadence,
+              // so Auto fire cannot turn one contract press into multiple rounds.
+              try{
+                await page.waitForFunction(before=>window.__sourceCombatSnapshot().shotsFired>before,
+                  shotsBefore,{timeout:3000,polling:'raf'});
+                shotObserved=true;
+              }catch{}
+            }finally{await page.mouse.up();}
+          }finally{await page.mouse.up({button:'right'});}
         }
       }
       let afterSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
@@ -719,7 +727,7 @@ try {
       const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===scenario.target);
       const attempt={shotNumber,stagedScenario:scenario,victim:scenario.target,aimedLimb:'Torso',
         aimPoint:targetAimPoint,screenPoint:point,cameraAtProjection:projection?.camera,
-        aimStateAtFire,lastAimState,aimDistance,boltCycleAttempted,readyToFireAfterBolt,boltCycleAfterAim,
+        aimStateAtFire,lastAimState,aimDistance,precisionInputObserved,boltCycleAttempted,readyToFireAfterBolt,boltCycleAfterAim,
         fireModeToggleObserved,fireModeAtFire,fireInputObserved,fireInputAtPress,
         sourceTriggerReady,
         shotObserved,shotsBefore,shotsAfter:afterSnapshot.shotsFired,
@@ -736,7 +744,7 @@ try {
       if(scenario.kneeling!==true)failures.push(`shot ${shotNumber}: staged shooter kneeling expected true, observed ${scenario.kneeling}`);
       if(Math.abs(scenario.targetPosition?.[0]-17.74)>0.1)failures.push(`shot ${shotNumber}: visible Torso lane X expected 17.74, observed ${scenario.targetPosition?.[0]}`);
       if(scenario.aimedLimb!=='Torso')failures.push(`shot ${shotNumber}: aimed limb expected Torso, observed ${scenario.aimedLimb}`);
-      if(!shotObserved)failures.push(`shot ${shotNumber}: no production trigger round observed for staged Torso ${scenario.target}`);
+      if(!shotObserved)failures.push(`shot ${shotNumber}: no production trigger round observed for staged Torso ${scenario.target}`);\n      if(!precisionInputObserved)failures.push(`shot ${shotNumber}: original precision input and source precision mode expected true, observed false`);
       if(attempt.shotsAfter-attempt.shotsBefore!==1)failures.push(`shot ${shotNumber}: exactly one production round expected, observed ${attempt.shotsAfter-attempt.shotsBefore}`);
       if(attempt.damagedLimb?.limb!=='Torso')failures.push(`shot ${shotNumber}: callback limb expected Torso, observed ${attempt.damagedLimb?.limb??'none'}`);
       if(!(attempt.woundMaskPixelDelta>0))failures.push(`shot ${shotNumber}: original Torso damage mask expected a positive source pixel delta, observed ${attempt.woundMaskPixelDelta??'unavailable'}`);
