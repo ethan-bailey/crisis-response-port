@@ -516,7 +516,9 @@ try {
         const liveSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
         const liveTorso=liveSnapshot.occupants.find(victim=>victim.body===scenario.target)
           ?.limbs.find(limb=>limb.limb==='Torso');
-        const liveAimPoint=liveTorso?.aimPoint;
+        // The source AI AimPoint is intentionally offset inside the limb; the hit contract
+        // must converge on the live Torso transform position inside its collider.
+        const liveAimPoint=liveTorso?.position;
         if(Array.isArray(liveAimPoint)&&liveAimPoint.length===3&&liveAimPoint.every(Number.isFinite))
           targetAimPoint=liveAimPoint;
       };
@@ -601,6 +603,7 @@ try {
         const sourceAimReady=state=>state?.rightArmOnTarget===true&&state?.leftArmOnTarget===true&&
           state?.aimConverged===true&&aimErrorForState(state)<=0.2;
         for(let cycle=0;cycle<2;cycle++){
+          await refreshTargetAimPoint(true);
           if(fireState?.readyToFire!==true){
             boltCycleAfterAim=true;
             await page.keyboard.down('b');
@@ -659,7 +662,6 @@ try {
           if(cycle===1)break;
         }
         fireModeAtFire=fireState?.fireMode??null;
-        await refreshTargetAimPoint(true);
         const finalAimDistance=aimErrorForState(fireState);
         aimStateAtFire={...(lastAimState??aimStateAtFire),fireMode:fireModeAtFire,
           sourceAimPoint:fireState?.sourceAimPoint,sourcePointer:fireState?.sourcePointer,
