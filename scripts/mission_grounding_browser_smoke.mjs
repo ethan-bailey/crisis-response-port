@@ -523,7 +523,7 @@ try {
           targetAimPoint=[liveAimPoint[0],liveAimPoint[1]-0.1,liveAimPoint[2]];
       };
       const shotsBefore=beforeSnapshot.shotsFired;
-      let point=null,projection=null,aimStateAtFire=null,lastAimState=null,aimDistance=Infinity,fireInputObserved=false,shotObserved=false;
+      let point=null,projection=null,aimStateAtFire=null,lastAimState=null,aimDistance=Infinity,fireInputObserved=false,precisionInputObserved=false,shotObserved=false;
       if(beforeVictim?.alive&&beforeTorso){
         point=await page.evaluate(position=>window.__sourceCombatScreenPoint(position),targetAimPoint);
         const aimGenerationBefore=await page.evaluate(()=>window.__gameState().aimGeneration);
@@ -673,8 +673,14 @@ try {
         sourceTriggerReady=fireState?.readyToFire===true&&sourceAimReady(fireState);
         if(sourceTriggerReady){
           await page.mouse.move(point.x,point.y);
-          await page.mouse.down();
+          await page.mouse.down({button:'right'});
           try{
+            try{
+              await page.waitForFunction(()=>window.__gameState().weaponState?.usingPrecision===true,
+                null,{timeout:2000});
+              precisionInputObserved=true;
+            }catch{}
+            await page.mouse.down();
             try{
               await page.waitForFunction(()=>window.__gameState().originalInput?.fire?.Pressed===true,
                 null,{timeout:2000});
@@ -688,7 +694,10 @@ try {
                 shotsBefore,{timeout:3000,polling:'raf'});
               shotObserved=true;
             }catch{}
-          }finally{await page.mouse.up();}
+          }finally{
+            await page.mouse.up();
+            await page.mouse.up({button:'right'});
+          }
         }
       }
       let afterSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
@@ -710,7 +719,7 @@ try {
       const attempt={shotNumber,stagedScenario:scenario,victim:scenario.target,aimedLimb:'Torso',
         aimPoint:targetAimPoint,screenPoint:point,cameraAtProjection:projection?.camera,
         aimStateAtFire,lastAimState,aimDistance,boltCycleAttempted,readyToFireAfterBolt,boltCycleAfterAim,
-        fireModeToggleObserved,fireModeAtFire,fireInputObserved,fireInputAtPress,
+        fireModeToggleObserved,fireModeAtFire,fireInputObserved,fireInputAtPress,precisionInputObserved,
         sourceTriggerReady,
         shotObserved,shotsBefore,shotsAfter:afterSnapshot.shotsFired,
         lastHitLimb:afterVictim?.lastHitLimb??null,damagedLimb:changedLimb,
