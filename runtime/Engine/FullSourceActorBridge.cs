@@ -877,7 +877,7 @@ public sealed class FullSourceActorBridge
             // the browser-only combat fixture begins. Select from the original
             // actors still owned by this Mission world, preferring the
             // previously proven visible Occupant when it is present.
-            target=victims.FirstOrDefault(victim=>victim.name=="Occupant 5")??victims[0];
+            target=victims.FirstOrDefault(victim=>victim.name=="Occupant 1")??victims[0];
             stagedBrowserProjectileContractFirstVictim=target;
             stagedBrowserProjectileContractSecondVictim=victims.FirstOrDefault(victim=>!ReferenceEquals(victim,target))
                 ??throw new InvalidOperationException("The browser projectile scenario requires a second live original Occupant");
