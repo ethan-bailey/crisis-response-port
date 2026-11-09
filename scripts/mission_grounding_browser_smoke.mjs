@@ -344,6 +344,22 @@ try {
   while (Date.now() < fireDeadline) {
     await fireButton.click({ delay: 80 });
     await page.waitForTimeout(350);
+    const observedAmmunition = await page.evaluate(() => ({
+      magazine: window.__gameState().weaponState.magazine,
+      reserve: window.__gameState().weaponState.reserve,
+      chamberLive: window.__gameState().weaponState.chamberLive,
+    }));
+    if (observedAmmunition.magazine < ammunitionSpent.magazine) {
+      try {
+        await page.waitForFunction(() => {
+          const weapon = window.__gameState()?.weaponState;
+          return weapon?.readyToFire === true && weapon.chamberLive === true && weapon.boltStatus === 'Closed';
+        }, null, { timeout: 5000 });
+      } catch {
+        // Preserve the final weapon snapshot for the assertion below; the
+        // bounded wait cannot turn a failed source bolt cycle into a pass.
+      }
+    }
     ammunitionSpent = await page.evaluate(() => ({
       magazine: window.__gameState().weaponState.magazine,
       reserve: window.__gameState().weaponState.reserve,
