@@ -583,7 +583,8 @@ public sealed class FullSourceActorBridge
     void EnsureWoundMaskReadback()
     {
         var torso = world.Objects.OfType<Limb>()
-            .FirstOrDefault(candidate => candidate && candidate.id == LimbId.Torso && candidate.limbRenderer != null);
+            .FirstOrDefault(candidate => candidate && candidate.id == LimbId.Torso &&
+                candidate.Body?.GetComponent<Occupant>() != null && candidate.limbRenderer != null);
         if (torso?.limbRenderer == null) return;
         const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
         var data = typeof(LimbRenderer).GetField("textureData", flags)?.GetValue(torso.limbRenderer);
@@ -614,7 +615,19 @@ public sealed class FullSourceActorBridge
         {
             var activeTarget = RenderTexture.active;
             if (readbackTarget == null || readbackTarget.width != dynamicDamage.width ||
-                readbackTarget.height != dynamicDamage.height) return null;
+                readbackTarget.height != dynamicDamage.height)
+            {
+                return new
+                {
+                    source = "dynamic wound-mask readback unavailable",
+                    rendererDynamic = renderer.IsDynamic,
+                    dynamicDamageTargetCreated = dynamicDamage.IsCreated(),
+                    skinDimensions = new[] { skin.width, skin.height },
+                    staticDamageDimensions = new[] { staticDamage.width, staticDamage.height },
+                    dynamicDamageDimensions = new[] { dynamicDamage.width, dynamicDamage.height },
+                    readbackDimensions = readbackTarget == null ? null : new[] { readbackTarget.width, readbackTarget.height }
+                };
+            }
             try
             {
                 RenderTexture.active = dynamicDamage;
