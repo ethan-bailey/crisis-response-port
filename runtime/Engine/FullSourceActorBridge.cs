@@ -826,11 +826,10 @@ public sealed class FullSourceActorBridge
         var torsoCollider=torso.GetComponent<Collider>()
             ??throw new InvalidOperationException($"Original Occupant {target.name} Torso has no serialized collider");
         var torsoBounds=torsoCollider.bounds;
-        // Prefer the original limb's authored source aim point. The animated
-        // collider bounds center can drift below the torso's AimPointWithExtents
-        // between browser frames, causing the source convergence check to reject
-        // a shot even though the limb aim point remains stable.
-        var torsoSourceAimPoint=torso.AimPointWithExtents(body.RightUpperArm.transform.position);
+        // Aim at the original Torso limb transform center. AimPointWithExtents
+        // can sit above the serialized capsule: the packaged trace fired from
+        // that point and passed outside the Torso capsule into Abdomen.
+        var torsoSourceAimPoint=torso.transform.position;
         body.AimPoint=torsoSourceAimPoint;
         var torsoHitPointCandidates=new[]{
             torsoSourceAimPoint,
