@@ -588,13 +588,33 @@ public sealed class FullSourceActorBridge
         if (data == null) return null;
         var dataType = data.GetType();
         var skin = dataType.GetField("skinTexture", flags)?.GetValue(data) as Texture2D;
-        var damage = dataType.GetField("staticDamage", flags)?.GetValue(data) as Texture2D;
-        if (skin == null || damage == null || skin.width != damage.width || skin.height != damage.height) return null;
+        var staticDamage = dataType.GetField("staticDamage", flags)?.GetValue(data) as Texture2D;
+        var dynamicDamage = renderer.debugDynamicDamage;
+        if (skin == null || staticDamage == null || skin.width != staticDamage.width || skin.height != staticDamage.height) return null;
 
         var sourcePixels = skin.GetPixels();
-        var damagePixels = damage.GetPixels();
+        var readDynamic = renderer.IsDynamic && dynamicDamage != null && dynamicDamage.IsCreated();
+        Color[] damagePixels;
+        if (readDynamic)
+        {
+            var activeTarget = RenderTexture.active;
+            var readback = new Texture2D(dynamicDamage.width, dynamicDamage.height, TextureFormat.RGBA32, false);
+            try
+            {
+                RenderTexture.active = dynamicDamage;
+                readback.ReadPixels(new Rect(0, 0, dynamicDamage.width, dynamicDamage.height), 0, 0);
+                readback.Apply();
+                damagePixels = readback.GetPixels();
+            }
+            finally
+            {
+                RenderTexture.active = activeTarget;
+                UnityEngine.Object.Destroy(readback);
+            }
+        }
+        else damagePixels = staticDamage.GetPixels();
         if (sourcePixels.Length != damagePixels.Length) return null;
-        int changed = 0, minX = damage.width, minY = damage.height, maxX = -1, maxY = -1;
+        int changed = 0, minX = staticDamage.width, minY = staticDamage.height, maxX = -1, maxY = -1;
         const float epsilon = 0.001f;
         for (int i = 0; i < sourcePixels.Length; i++)
         {
@@ -607,15 +627,17 @@ public sealed class FullSourceActorBridge
                 MathF.Abs(actual.a - source.a) > epsilon;
             if (!differs) continue;
             changed++;
-            int x = i % damage.width, y = i / damage.width;
+            int x = i % staticDamage.width, y = i / staticDamage.width;
             minX = Math.Min(minX, x); minY = Math.Min(minY, y);
             maxX = Math.Max(maxX, x); maxY = Math.Max(maxY, y);
         }
         return new
         {
-            source = "LimbTextureData.staticDamage compared with its original skin-alpha initialization",
-            width = damage.width,
-            height = damage.height,
+            source = readDynamic
+                ? "LimbRenderer.debugDynamicDamage RenderTexture readback compared with its original skin-alpha initialization"
+                : "LimbTextureData.staticDamage compared with its original skin-alpha initialization",
+            width = staticDamage.width,
+            height = staticDamage.height,
             changedPixels = changed,
             changedBounds = changed == 0 ? null : new[] { minX, minY, maxX, maxY },
             rendererDynamic = renderer.IsDynamic,
