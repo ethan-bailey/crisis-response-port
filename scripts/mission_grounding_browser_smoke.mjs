@@ -744,7 +744,8 @@ try {
       if(scenario.kneeling!==true)failures.push(`shot ${shotNumber}: staged shooter kneeling expected true, observed ${scenario.kneeling}`);
       if(Math.abs(scenario.targetPosition?.[0]-17.74)>0.1)failures.push(`shot ${shotNumber}: visible Torso lane X expected 17.74, observed ${scenario.targetPosition?.[0]}`);
       if(scenario.aimedLimb!=='Torso')failures.push(`shot ${shotNumber}: aimed limb expected Torso, observed ${scenario.aimedLimb}`);
-      if(!shotObserved)failures.push(`shot ${shotNumber}: no production trigger round observed for staged Torso ${scenario.target}`);\n      if(!precisionInputObserved)failures.push(`shot ${shotNumber}: original precision input and source precision mode expected true, observed false`);
+      if(!shotObserved)failures.push(`shot ${shotNumber}: no production trigger round observed for staged Torso ${scenario.target}`);
+      if(!precisionInputObserved)failures.push(`shot ${shotNumber}: original precision input and source precision mode expected true, observed false`);
       if(attempt.shotsAfter-attempt.shotsBefore!==1)failures.push(`shot ${shotNumber}: exactly one production round expected, observed ${attempt.shotsAfter-attempt.shotsBefore}`);
       if(attempt.damagedLimb?.limb!=='Torso')failures.push(`shot ${shotNumber}: callback limb expected Torso, observed ${attempt.damagedLimb?.limb??'none'}`);
       if(!(attempt.woundMaskPixelDelta>0))failures.push(`shot ${shotNumber}: original Torso damage mask expected a positive source pixel delta, observed ${attempt.woundMaskPixelDelta??'unavailable'}`);
