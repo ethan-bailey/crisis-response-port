@@ -833,8 +833,8 @@ public sealed class FullSourceActorBridge
         // Center aim has alternated between Torso and Neck. A half-extent
         // inset reached a foot and the quarter inset was not converged for
         // Occupant 5, so use the intermediate point between those outcomes.
-        body.AimPoint=torsoSourceAimPoint+Vector3.down*
-            (torsoBounds.extents.y*(shotNumber==1?.125f:.0625f));
+        body.AimPoint=shotNumber==1?torsoSourceAimPoint:
+            torsoSourceAimPoint+Vector3.down*(torsoBounds.extents.y*.09375f);
         var torsoHitPointCandidates=new[]{
             body.AimPoint,
             torsoSourceAimPoint,
