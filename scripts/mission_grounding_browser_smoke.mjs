@@ -695,6 +695,10 @@ try {
         sourceTriggerReady,
         shotObserved,shotsBefore,shotsAfter:afterSnapshot.shotsFired,
         lastHitLimb:afterVictim?.lastHitLimb??null,damagedLimb:changedLimb,
+        woundMaskPixelsBefore:beforeTorso?.woundMaskPixels??null,
+        woundMaskPixelsAfter:changedLimb?.woundMaskPixels??null,
+        woundMaskPixelDelta:changedLimb?.woundMaskPixels&&beforeTorso?.woundMaskPixels
+          ?changedLimb.woundMaskPixels.changedPixels-beforeTorso.woundMaskPixels.changedPixels:null,
         projectiles:afterSnapshot.projectiles,spawnedProjectiles:afterSnapshot.spawnedProjectiles,
         projectileInteractions:afterSnapshot.projectileInteractions};
       attempts.push(attempt);
@@ -706,9 +710,13 @@ try {
       if(!shotObserved)failures.push(`shot ${shotNumber}: no production trigger round observed for staged Torso ${scenario.target}`);
       if(attempt.shotsAfter-attempt.shotsBefore!==1)failures.push(`shot ${shotNumber}: exactly one production round expected, observed ${attempt.shotsAfter-attempt.shotsBefore}`);
       if(attempt.damagedLimb?.limb!=='Torso')failures.push(`shot ${shotNumber}: callback limb expected Torso, observed ${attempt.damagedLimb?.limb??'none'}`);
+      if(!(attempt.woundMaskPixelDelta>0))failures.push(`shot ${shotNumber}: original Torso damage mask expected a positive source pixel delta, observed ${attempt.woundMaskPixelDelta??'unavailable'}`);
       if(changedLimb)acceptedHits.push({body:scenario.target,limb:'Torso',aimedLimb:'Torso',
         damageBefore:beforeTorso,damageAfter:changedLimb,physiologyBefore:beforeVictim?.physiology,
         physiologyAfter:afterVictim?.physiology,sourceDeltaTime:afterSnapshot.sourceDeltaTime,
+        woundMaskPixelsBefore:beforeTorso?.woundMaskPixels??null,
+        woundMaskPixelsAfter:changedLimb.woundMaskPixels??null,
+        woundMaskPixelDelta:attempt.woundMaskPixelDelta,
         shotsBefore,shotsAfter:afterSnapshot.shotsFired});
     }
     const distinctHitBodies=new Set(acceptedHits.map(hit=>hit.body));
@@ -717,6 +725,7 @@ try {
       if(!(hit.damageAfter.wounds>hit.damageBefore.wounds))failures.push(`${hit.body} Torso wound count expected to increase, observed ${hit.damageBefore.wounds}→${hit.damageAfter.wounds}`);
       if(!(hit.damageAfter.woundCavityVolume>hit.damageBefore.woundCavityVolume))failures.push(`${hit.body} Torso cavity expected to increase, observed ${hit.damageBefore.woundCavityVolume}→${hit.damageAfter.woundCavityVolume}`);
       if(!(hit.damageAfter.damagedTissueVolume>hit.damageBefore.damagedTissueVolume))failures.push(`${hit.body} Torso damaged tissue expected to increase, observed ${hit.damageBefore.damagedTissueVolume}→${hit.damageAfter.damagedTissueVolume}`);
+      if(!(hit.woundMaskPixelDelta>0))failures.push(`${hit.body} Torso source damage mask expected a positive pixel delta, observed ${hit.woundMaskPixelDelta??'unavailable'}`);
       if(!(hit.physiologyAfter?.shock>hit.physiologyBefore?.shock))failures.push(`${hit.body} shock expected to increase, observed ${hit.physiologyBefore?.shock}→${hit.physiologyAfter?.shock}`);
     }
     const postHitRuntimeUi = await page.evaluate(() => ({
@@ -735,12 +744,14 @@ try {
     if(ownedProjectilesAfterCleanup.length!==0)failures.push(`source projectile cleanup expected 0 active owned projectiles, observed ${ownedProjectilesAfterCleanup.length}`);
     if(pageErrors.length)failures.push(`browser page errors expected none, observed ${JSON.stringify(pageErrors)}`);
     const firstDivergingLink=attempts.some(attempt=>!attempt.shotObserved||attempt.shotsAfter-attempt.shotsBefore!==1||attempt.damagedLimb?.limb!=='Torso')?'hitCallback':
+      acceptedHits.some(hit=>!(hit.woundMaskPixelDelta>0))?'woundPixels':
       acceptedHits.some(hit=>!(hit.damageAfter.wounds>hit.damageBefore.wounds))?'woundState':
       acceptedHits.some(hit=>!(hit.damageAfter.damagedTissueVolume>hit.damageBefore.damagedTissueVolume))?'tissue':
       acceptedHits.some(hit=>!(hit.physiologyAfter?.shock>hit.physiologyBefore?.shock))?'shock':
       ownedProjectilesAfterCleanup.length!==0?'cleanup':failures.length?'assertion':null;
     combatReport={status:failures.length?'failed':'passed',failures,firstDivergingLink,shotsBefore:combatBefore.shotsFired,shotsAfter:attempts.at(-1)?.shotsAfter??combatBefore.shotsFired,occupantsBefore:combatBefore.occupants.length,exteriorVisibility,cameraFrame,combatLane,attempts,hits:acceptedHits,chainComparison:{
       hitCallback:{contractExpected:'one production trigger call per staged target; original projectile callback must hit the selected Occupant Torso',packagedObserved:attempts.map(attempt=>({body:attempt.stagedScenario?.target,aimedLimb:attempt.stagedScenario?.aimedLimb,callbackLimb:attempt.damagedLimb?.limb??null,shots:attempt.shotsAfter-attempt.shotsBefore}))},
+      woundMaskPixels:{contractExpected:'each original Torso damage mask must differ from its skin-alpha initialization after the source wound callback',packagedObserved:acceptedHits.map(hit=>({body:hit.body,limb:hit.limb,source:hit.woundMaskPixelsAfter?.source,dimensions:[hit.woundMaskPixelsAfter?.width,hit.woundMaskPixelsAfter?.height],changedPixelsBefore:hit.woundMaskPixelsBefore?.changedPixels,changedPixelsAfter:hit.woundMaskPixelsAfter?.changedPixels,delta:hit.woundMaskPixelDelta,changedBounds:hit.woundMaskPixelsAfter?.changedBounds,rendererDynamic:hit.woundMaskPixelsAfter?.rendererDynamic,dynamicDamageTargetCreated:hit.woundMaskPixelsAfter?.dynamicDamageTargetCreated}))},
       woundState:{contractExpected:'source projectile contract: each hit limb wound count increases; torso-profile acceptance requires +1 per Torso hit',packagedObserved:acceptedHits.map(hit=>({body:hit.body,limb:hit.limb,before:hit.damageBefore.wounds,after:hit.damageAfter.wounds}))},
       tissue:{contractExpected:'source projectile contract: each hit limb damaged tissue increases',packagedObserved:acceptedHits.map(hit=>({body:hit.body,limb:hit.limb,before:hit.damageBefore.damagedTissueVolume,after:hit.damageAfter.damagedTissueVolume}))},
       shock:{contractExpected:'source projectile contract captures body shock; torso-profile acceptance requires shock to increase on each hit',packagedObserved:acceptedHits.map(hit=>({body:hit.body,before:hit.physiologyBefore?.shock,after:hit.physiologyAfter?.shock}))},

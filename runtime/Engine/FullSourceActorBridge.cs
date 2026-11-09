@@ -579,6 +579,50 @@ public sealed class FullSourceActorBridge
         };
     }
 
+    static object? WoundMaskPixelSnapshot(Limb limb)
+    {
+        var renderer = limb.limbRenderer;
+        if (renderer == null) return null;
+        const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+        var data = typeof(LimbRenderer).GetField("textureData", flags)?.GetValue(renderer);
+        if (data == null) return null;
+        var dataType = data.GetType();
+        var skin = dataType.GetField("skinTexture", flags)?.GetValue(data) as Texture2D;
+        var damage = dataType.GetField("staticDamage", flags)?.GetValue(data) as Texture2D;
+        if (skin == null || damage == null || skin.width != damage.width || skin.height != damage.height) return null;
+
+        var sourcePixels = skin.GetPixels();
+        var damagePixels = damage.GetPixels();
+        if (sourcePixels.Length != damagePixels.Length) return null;
+        int changed = 0, minX = damage.width, minY = damage.height, maxX = -1, maxY = -1;
+        const float epsilon = 0.001f;
+        for (int i = 0; i < sourcePixels.Length; i++)
+        {
+            var source = sourcePixels[i];
+            var actual = damagePixels[i];
+            float originalGreen = source.a > 0f ? 0f : 1f;
+            bool differs = MathF.Abs(actual.r) > epsilon ||
+                MathF.Abs(actual.g - originalGreen) > epsilon ||
+                MathF.Abs(actual.b) > epsilon ||
+                MathF.Abs(actual.a - source.a) > epsilon;
+            if (!differs) continue;
+            changed++;
+            int x = i % damage.width, y = i / damage.width;
+            minX = Math.Min(minX, x); minY = Math.Min(minY, y);
+            maxX = Math.Max(maxX, x); maxY = Math.Max(maxY, y);
+        }
+        return new
+        {
+            source = "LimbTextureData.staticDamage compared with its original skin-alpha initialization",
+            width = damage.width,
+            height = damage.height,
+            changedPixels = changed,
+            changedBounds = changed == 0 ? null : new[] { minX, minY, maxX, maxY },
+            rendererDynamic = renderer.IsDynamic,
+            dynamicDamageTargetCreated = renderer.debugDynamicDamage?.IsCreated() ?? false
+        };
+    }
+
     /// <summary>Read-only combat evidence for the packaged source projectile acceptance.</summary>
     public object CombatSnapshot()
     {
@@ -602,7 +646,8 @@ public sealed class FullSourceActorBridge
                         localPressure = limb.LimbPhysiology?.LocalPressure ?? 0f,
                         internalBloodVolume = limb.LimbPhysiology?.InternalBloodVolume ?? 0f,
                         internalHemorrhaging = limb.LimbPhysiology?.InternalHemorrhaging ?? 0f,
-                        hemorrhaging = limb.LimbPhysiology?.Hemorrhaging ?? 0f
+                        hemorrhaging = limb.LimbPhysiology?.Hemorrhaging ?? 0f,
+                        woundMaskPixels = limb.id == LimbId.Torso ? WoundMaskPixelSnapshot(limb) : null
                     })
                     .ToArray();
                 var lastHit = victim.LastHitLimb;
