@@ -214,7 +214,7 @@ copyMissionProgressButton.addEventListener("click",async()=>{
  catch{errorDetails.textContent=report;errorBox.hidden=false;errorHint.textContent="Transfer report is shown below. Scroll, select, and copy it.";missionProgressText.textContent="Transfer report opened below.";}
 });
 document.querySelector("#dismissError").addEventListener("click",()=>{errorBox.hidden=true;copyErrorStatus.textContent="";});
-const rawActions={left:false,right:false,sprint:false,fire:false,kneel:false,stand:false,magazine:false,switchWeapons:false};
+const rawActions={left:false,right:false,sprint:false,fire:false,precision:false,kneel:false,stand:false,magazine:false,switchWeapons:false};
 const input = new BrowserInput({onPress(action){if(action==="magazine")reloadPending=true;},onChange(action,pressed){rawActions[action]=pressed;document.querySelector(`[data-action="${action}"]`)?.classList.toggle("active",pressed)}});
 const magazineHud=createOriginalM4MagazineHud(document.querySelector("#magazineTouch"),{onReload:()=>{reloadPending=true;}});
 async function initializeOriginalRuntime(){
@@ -236,6 +236,8 @@ let stickAimBaseY=pointerNdc.y,stickAimBaseVertical=0;
 input.bindMovementStick(document.querySelector("#movementStick"),document.querySelector("#movementStick .stick-thumb"),{onAimStart(vertical){stickAimBaseY=pointerNdc.y;stickAimBaseVertical=vertical;},onAim(vertical,active=true){if(!active)return;const targetY=Math.max(-1,Math.min(1,stickAimBaseY+vertical-stickAimBaseVertical));if(Math.abs(pointerNdc.y-targetY)>0.001){pointerNdc.y=targetY;aimDirty=true;aimGeneration++;}}});
 input.bindLifecycle(window, document);
 document.addEventListener("contextmenu",event=>event.preventDefault());
+document.addEventListener("mousedown",event=>{if(event.button===2){event.preventDefault();input.set("precision","mouse:right",true);}});
+document.addEventListener("mouseup",event=>{if(event.button===2){event.preventDefault();input.set("precision","mouse:right",false);}});
 document.addEventListener("selectstart",event=>event.preventDefault());
 const controlsHelp=document.querySelector("#controlsHelp"),controlsGuide=document.querySelector("#controlsGuide");
 function setControlsGuide(open){controlsGuide.hidden=!open;controlsHelp.setAttribute("aria-expanded",String(open));controlsHelp.setAttribute("aria-label",open?"Hide touch controls":"Show touch controls");}
