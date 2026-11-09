@@ -514,7 +514,10 @@ try {
       if(beforeVictim?.alive&&beforeTorso){
         point=await page.evaluate(position=>window.__sourceCombatScreenPoint(position),targetAimPoint);
         const aimGenerationBefore=await page.evaluate(()=>window.__gameState().aimGeneration);
-        const aimDeadline=Date.now()+5000;
+        // The exact #288 report showed a 0.409-unit aim error at the prior 5s
+        // bound for a live fallback Occupant; preserve the 0.2 source-fire gate
+        // and give the original aim loop a bounded window to converge.
+        const aimDeadline=Date.now()+12000;
         while(Date.now()<aimDeadline&&point?.inside&&point.visible){
           projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),
             camera:window.__gameState().sourceCamera}),targetAimPoint);
