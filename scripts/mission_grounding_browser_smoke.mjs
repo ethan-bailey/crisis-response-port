@@ -490,6 +490,16 @@ try {
       const scenario=shotNumber===1?stagedFirstScenario:
         await page.evaluate(number=>window.__stageSourceProjectileContractScenario(number),shotNumber);
       await page.waitForTimeout(500);
+      if(shotNumber>1){
+        // The previous source shot remains in WeaponBase.IsFiring for 0.5s;
+        // let source recoil settle before asking the arms to acquire the next target.
+        const recoilSettleDeadline=Date.now()+4000;
+        while(Date.now()<recoilSettleDeadline){
+          const previousShotState=await page.evaluate(()=>window.__gameState().weaponState);
+          if(previousShotState?.isFiring===false&&(previousShotState?.recoilKick??Infinity)<=0.05)break;
+          await page.waitForTimeout(50);
+        }
+      }
       let boltCycleAttempted=false,readyToFireAfterBolt=null;
       let readinessState=await page.evaluate(()=>window.__gameState().weaponState);
       if(readinessState?.readyToFire===false){
@@ -523,7 +533,7 @@ try {
           targetAimPoint=[liveAimPoint[0],liveAimPoint[1]-0.1,liveAimPoint[2]];
       };
       const shotsBefore=beforeSnapshot.shotsFired;
-      let point=null,projection=null,aimStateAtFire=null,lastAimState=null,aimDistance=Infinity,fireInputObserved=false,precisionInputObserved=false,shotObserved=false;
+      let point=null,projection=null,aimStateAtFire=null,lastAimState=null,aimDistance=Infinity,fireInputObserved=false,shotObserved=false;
       if(beforeVictim?.alive&&beforeTorso){
         point=await page.evaluate(position=>window.__sourceCombatScreenPoint(position),targetAimPoint);
         const aimGenerationBefore=await page.evaluate(()=>window.__gameState().aimGeneration);
@@ -673,14 +683,8 @@ try {
         sourceTriggerReady=fireState?.readyToFire===true&&sourceAimReady(fireState);
         if(sourceTriggerReady){
           await page.mouse.move(point.x,point.y);
-          await page.mouse.down({button:'right'});
+          await page.mouse.down();
           try{
-            try{
-              await page.waitForFunction(()=>window.__gameState().weaponState?.usingPrecision===true,
-                null,{timeout:2000});
-              precisionInputObserved=true;
-            }catch{}
-            await page.mouse.down();
             try{
               await page.waitForFunction(()=>window.__gameState().originalInput?.fire?.Pressed===true,
                 null,{timeout:2000});
@@ -694,10 +698,7 @@ try {
                 shotsBefore,{timeout:3000,polling:'raf'});
               shotObserved=true;
             }catch{}
-          }finally{
-            await page.mouse.up();
-            await page.mouse.up({button:'right'});
-          }
+          }finally{await page.mouse.up();}
         }
       }
       let afterSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
@@ -719,7 +720,7 @@ try {
       const attempt={shotNumber,stagedScenario:scenario,victim:scenario.target,aimedLimb:'Torso',
         aimPoint:targetAimPoint,screenPoint:point,cameraAtProjection:projection?.camera,
         aimStateAtFire,lastAimState,aimDistance,boltCycleAttempted,readyToFireAfterBolt,boltCycleAfterAim,
-        fireModeToggleObserved,fireModeAtFire,fireInputObserved,fireInputAtPress,precisionInputObserved,
+        fireModeToggleObserved,fireModeAtFire,fireInputObserved,fireInputAtPress,
         sourceTriggerReady,
         shotObserved,shotsBefore,shotsAfter:afterSnapshot.shotsFired,
         lastHitLimb:afterVictim?.lastHitLimb??null,damagedLimb:changedLimb,
