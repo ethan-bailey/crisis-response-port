@@ -830,8 +830,11 @@ public sealed class FullSourceActorBridge
         // can sit above the serialized capsule: the packaged trace fired from
         // that point and passed outside the Torso capsule into Abdomen.
         var torsoSourceAimPoint=torso.transform.position;
+        // Center aim has alternated between Torso and Neck. A half-extent
+        // inset reached a foot and the quarter inset was not converged for
+        // Occupant 5, so use the intermediate point between those outcomes.
         body.AimPoint=torsoSourceAimPoint+
-            Vector3.down*(torsoBounds.extents.y*.25f);
+            Vector3.down*(torsoBounds.extents.y*.125f);
         var torsoHitPointCandidates=new[]{
             body.AimPoint,
             torsoSourceAimPoint,
