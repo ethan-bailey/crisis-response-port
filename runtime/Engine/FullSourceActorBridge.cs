@@ -613,6 +613,7 @@ public sealed class FullSourceActorBridge
         var sourcePixels = skin.GetPixels();
         var readDynamic = renderer.IsDynamic && dynamicDamage != null && dynamicDamage.IsCreated();
         Color[] damagePixels;
+        var staticDamagePixels = staticDamage.GetPixels();
         if (readDynamic)
         {
             var activeTarget = RenderTexture.active;
@@ -642,20 +643,27 @@ public sealed class FullSourceActorBridge
                 RenderTexture.active = activeTarget;
             }
         }
-        else damagePixels = staticDamage.GetPixels();
-        if (sourcePixels.Length != damagePixels.Length) return null;
-        int changed = 0, minX = staticDamage.width, minY = staticDamage.height, maxX = -1, maxY = -1;
+        else damagePixels = staticDamagePixels;
+        if (sourcePixels.Length != damagePixels.Length || sourcePixels.Length != staticDamagePixels.Length) return null;
+        int changed = 0, dynamicChanged = 0, staticChanged = 0, minX = staticDamage.width, minY = staticDamage.height, maxX = -1, maxY = -1;
         const float epsilon = 0.001f;
         for (int i = 0; i < sourcePixels.Length; i++)
         {
             var source = sourcePixels[i];
             var actual = damagePixels[i];
+            var staticActual = staticDamagePixels[i];
             float originalGreen = source.a > 0f ? 0f : 1f;
             bool differs = MathF.Abs(actual.r) > epsilon ||
                 MathF.Abs(actual.g - originalGreen) > epsilon ||
                 MathF.Abs(actual.b) > epsilon ||
                 MathF.Abs(actual.a - source.a) > epsilon;
-            if (!differs) continue;
+            bool staticDiffers = MathF.Abs(staticActual.r) > epsilon ||
+                MathF.Abs(staticActual.g - originalGreen) > epsilon ||
+                MathF.Abs(staticActual.b) > epsilon ||
+                MathF.Abs(staticActual.a - source.a) > epsilon;
+            if (differs) dynamicChanged++;
+            if (staticDiffers) staticChanged++;
+            if (!differs && !staticDiffers) continue;
             changed++;
             int x = i % staticDamage.width, y = i / staticDamage.width;
             minX = Math.Min(minX, x); minY = Math.Min(minY, y);
@@ -669,6 +677,8 @@ public sealed class FullSourceActorBridge
             width = staticDamage.width,
             height = staticDamage.height,
             changedPixels = changed,
+            dynamicDamageChangedPixels = readDynamic ? dynamicChanged : (int?)null,
+            staticDamageChangedPixels = staticChanged,
             changedBounds = changed == 0 ? null : new[] { minX, minY, maxX, maxY },
             rendererDynamic = renderer.IsDynamic,
             dynamicDamageTargetCreated = renderer.debugDynamicDamage?.IsCreated() ?? false
