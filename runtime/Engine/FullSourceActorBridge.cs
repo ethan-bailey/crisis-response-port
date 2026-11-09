@@ -826,12 +826,14 @@ public sealed class FullSourceActorBridge
         var torsoCollider=torso.GetComponent<Collider>()
             ??throw new InvalidOperationException($"Original Occupant {target.name} Torso has no serialized collider");
         var torsoBounds=torsoCollider.bounds;
-        // The two serialized target poses respond differently to a center aim:
-        // Occupant 5's center hit Torso; Occupant 1 needs a small lower inset.
-        body.AimPoint=shotNumber==1?torsoBounds.center:
-            torsoBounds.center+Vector3.down*(torsoBounds.extents.y*.25f);
+        // Prefer the original limb's authored source aim point. The animated
+        // collider bounds center can drift below the torso's AimPointWithExtents
+        // between browser frames, causing the source convergence check to reject
+        // a shot even though the limb aim point remains stable.
+        var torsoSourceAimPoint=torso.AimPointWithExtents(body.RightUpperArm.transform.position);
+        body.AimPoint=torsoSourceAimPoint;
         var torsoHitPointCandidates=new[]{
-            body.AimPoint,
+            torsoSourceAimPoint,
             torsoBounds.center,
             torsoBounds.center+Vector3.down*(torsoBounds.extents.y*.5f),
             torsoBounds.center+Vector3.down*(torsoBounds.extents.y*.85f)
