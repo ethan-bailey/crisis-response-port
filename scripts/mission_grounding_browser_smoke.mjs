@@ -508,7 +508,18 @@ try {
       const beforeSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
       const beforeVictim=beforeSnapshot.occupants.find(victim=>victim.body===scenario.target);
       const beforeTorso=beforeVictim?.limbs.find(limb=>limb.limb==='Torso');
-      const targetAimPoint=scenario.aimPoint??beforeTorso?.aimPoint??null;
+      let targetAimPoint=scenario.aimPoint??beforeTorso?.aimPoint??null;
+      let nextTargetAimRefresh=0;
+      const refreshTargetAimPoint=async(force=false)=>{
+        if(!force&&Date.now()<nextTargetAimRefresh)return;
+        nextTargetAimRefresh=Date.now()+250;
+        const liveSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
+        const liveTorso=liveSnapshot.occupants.find(victim=>victim.body===scenario.target)
+          ?.limbs.find(limb=>limb.limb==='Torso');
+        const liveAimPoint=liveTorso?.aimPoint;
+        if(Array.isArray(liveAimPoint)&&liveAimPoint.length===3&&liveAimPoint.every(Number.isFinite))
+          targetAimPoint=liveAimPoint;
+      };
       const shotsBefore=beforeSnapshot.shotsFired;
       let point=null,projection=null,aimStateAtFire=null,lastAimState=null,aimDistance=Infinity,fireInputObserved=false,shotObserved=false;
       if(beforeVictim?.alive&&beforeTorso){
@@ -519,6 +530,7 @@ try {
         // and give the original aim loop a bounded window to converge.
         const aimDeadline=Date.now()+12000;
         while(Date.now()<aimDeadline&&point?.inside&&point.visible){
+          await refreshTargetAimPoint();
           projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),
             camera:window.__gameState().sourceCamera}),targetAimPoint);
           point=projection.point;
@@ -606,6 +618,7 @@ try {
             const reAimGenerationBefore=await page.evaluate(()=>window.__gameState().aimGeneration);
             const reAimDeadline=Date.now()+5000;
             while(Date.now()<reAimDeadline){
+              await refreshTargetAimPoint();
               projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),
                 camera:window.__gameState().sourceCamera}),targetAimPoint);
               point=projection.point;
@@ -646,6 +659,7 @@ try {
           if(cycle===1)break;
         }
         fireModeAtFire=fireState?.fireMode??null;
+        await refreshTargetAimPoint(true);
         const finalAimDistance=aimErrorForState(fireState);
         aimStateAtFire={...(lastAimState??aimStateAtFire),fireMode:fireModeAtFire,
           sourceAimPoint:fireState?.sourceAimPoint,sourcePointer:fireState?.sourcePointer,
