@@ -721,7 +721,12 @@ try {
         changedLimb=afterVictim?.limbs.find(limb=>limb.limb==='Torso'&&
           (limb.wounds>beforeTorso.wounds||limb.woundCavityVolume>beforeTorso.woundCavityVolume||
            limb.damagedTissueVolume>beforeTorso.damagedTissueVolume))??null;
-        if(changedLimb)break;
+        const maskDelta=changedLimb?.woundMaskPixels&&beforeTorso?.woundMaskPixels
+          ?changedLimb.woundMaskPixels.changedPixels-beforeTorso.woundMaskPixels.changedPixels:0;
+        // The source wound callback updates limb state before the next render
+        // pass finishes its damage texture. Keep sampling for the full bounded
+        // window until source pixels catch up with the accepted wound.
+        if(changedLimb&&maskDelta>0)break;
         await page.waitForTimeout(100);
       }
       const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===scenario.target);
