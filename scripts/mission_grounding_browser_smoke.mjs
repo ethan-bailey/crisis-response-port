@@ -520,7 +520,7 @@ try {
         // must converge on the live Torso transform position inside its collider.
         const liveAimPoint=liveTorso?.position;
         if(Array.isArray(liveAimPoint)&&liveAimPoint.length===3&&liveAimPoint.every(Number.isFinite))
-          targetAimPoint=liveAimPoint;
+          targetAimPoint=[liveAimPoint[0],liveAimPoint[1]-0.2,liveAimPoint[2]];
       };
       const shotsBefore=beforeSnapshot.shotsFired;
       let point=null,projection=null,aimStateAtFire=null,lastAimState=null,aimDistance=Infinity,fireInputObserved=false,shotObserved=false;
