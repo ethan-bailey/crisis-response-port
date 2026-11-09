@@ -29,6 +29,7 @@ public sealed class FullSourceActorBridge
     readonly List<object> projectileSpawnEvidence=[];
     readonly List<object> projectileInteractionEvidence=[];
     readonly Dictionary<int, GameObject> trackedCasingObjects=[];
+    Texture2D? woundMaskReadback;
     CharacterBody? stagedProjectileContractFirstVictim;
     CharacterBody? stagedBrowserProjectileContractFirstVictim;
     CharacterBody? stagedBrowserProjectileContractSecondVictim;
@@ -579,7 +580,21 @@ public sealed class FullSourceActorBridge
         };
     }
 
-    static object? WoundMaskPixelSnapshot(Limb limb)
+    void EnsureWoundMaskReadback()
+    {
+        var torso = world.Objects.OfType<Limb>()
+            .FirstOrDefault(candidate => candidate && candidate.id == LimbId.Torso && candidate.limbRenderer != null);
+        if (torso?.limbRenderer == null) return;
+        const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+        var data = typeof(LimbRenderer).GetField("textureData", flags)?.GetValue(torso.limbRenderer);
+        var baseline = data?.GetType().GetField("staticDamage", flags)?.GetValue(data) as Texture2D;
+        if (baseline == null || woundMaskReadback != null &&
+            woundMaskReadback.width == baseline.width && woundMaskReadback.height == baseline.height) return;
+        if (woundMaskReadback != null) UnityEngine.Object.Destroy(woundMaskReadback);
+        woundMaskReadback = new Texture2D(baseline.width, baseline.height, TextureFormat.RGBA32, false);
+    }
+
+    static object? WoundMaskPixelSnapshot(Limb limb, Texture2D? readbackTarget)
     {
         var renderer = limb.limbRenderer;
         if (renderer == null) return null;
@@ -598,18 +613,18 @@ public sealed class FullSourceActorBridge
         if (readDynamic)
         {
             var activeTarget = RenderTexture.active;
-            var readback = new Texture2D(dynamicDamage.width, dynamicDamage.height, TextureFormat.RGBA32, false);
+            if (readbackTarget == null || readbackTarget.width != dynamicDamage.width ||
+                readbackTarget.height != dynamicDamage.height) return null;
             try
             {
                 RenderTexture.active = dynamicDamage;
-                readback.ReadPixels(new Rect(0, 0, dynamicDamage.width, dynamicDamage.height), 0, 0);
-                readback.Apply();
-                damagePixels = readback.GetPixels();
+                readbackTarget.ReadPixels(new Rect(0, 0, dynamicDamage.width, dynamicDamage.height), 0, 0);
+                readbackTarget.Apply();
+                damagePixels = readbackTarget.GetPixels();
             }
             finally
             {
                 RenderTexture.active = activeTarget;
-                UnityEngine.Object.Destroy(readback);
             }
         }
         else damagePixels = staticDamage.GetPixels();
@@ -649,6 +664,9 @@ public sealed class FullSourceActorBridge
     public object CombatSnapshot()
     {
         world.MakeCurrent();
+        // Allocate persistent pixel readback storage before enumerating actors. Creating
+        // or destroying Unity objects inside WoundMaskPixelSnapshot would mutate world.Objects.
+        EnsureWoundMaskReadback();
         var occupants = world.Objects.OfType<CharacterBody>()
             .Where(candidate => candidate && candidate.GetComponent<Occupant>() != null)
             .Select(victim =>
@@ -669,7 +687,7 @@ public sealed class FullSourceActorBridge
                         internalBloodVolume = limb.LimbPhysiology?.InternalBloodVolume ?? 0f,
                         internalHemorrhaging = limb.LimbPhysiology?.InternalHemorrhaging ?? 0f,
                         hemorrhaging = limb.LimbPhysiology?.Hemorrhaging ?? 0f,
-                        woundMaskPixels = limb.id == LimbId.Torso ? WoundMaskPixelSnapshot(limb) : null
+                        woundMaskPixels = limb.id == LimbId.Torso ? WoundMaskPixelSnapshot(limb, woundMaskReadback) : null
                     })
                     .ToArray();
                 var lastHit = victim.LastHitLimb;
