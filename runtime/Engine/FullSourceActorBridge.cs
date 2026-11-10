@@ -867,6 +867,12 @@ public sealed class FullSourceActorBridge
             kneeling=body.IsKneeling,
             target=target.name,
             targetPosition=new[]{target.transform.position.x,target.transform.position.y,target.transform.position.z},
+            targetKneeling=target.IsKneeling,
+            targetIsRagdoll=target.IsRagdoll,
+            targetTorsoPosition=new[]{torso.transform.position.x,torso.transform.position.y,torso.transform.position.z},
+            targetHeadPosition=new[]{target.Head.transform.position.x,target.Head.transform.position.y,target.Head.transform.position.z},
+            targetAbdomenPosition=new[]{target.Abdomen.transform.position.x,target.Abdomen.transform.position.y,target.Abdomen.transform.position.z},
+            targetNeckPosition=new[]{target.Neck.transform.position.x,target.Neck.transform.position.y,target.Neck.transform.position.z},
             aimedLimb=torso.id.ToString(),
             aimPoint=new[]{body.AimPoint.x,body.AimPoint.y,body.AimPoint.z},
             muzzlePosition=new[]{muzzlePosition.x,muzzlePosition.y,muzzlePosition.z},
@@ -941,6 +947,11 @@ public sealed class FullSourceActorBridge
         var targetPosition=target.transform.position;
         // Stage both original Occupants in the proven visible far lane at the grounded source actor depth.
         target.transform.position=new Vector3(17.74f,0.94f,-0.7f);
+        // Keep the serialized source animation and colliders active, but normalize
+        // the live stance so torso height does not inherit an arbitrary AI crouch.
+        target.IsKneeling=false;
+        target.IsSprinting=false;
+        target.Rigidbody.velocity=Vector3.zero;
         // This is the original player actor: PlayerController and WeaponPointer
         // own its live aim. Do not attach the browser fixture's target to the
         // AI blackboard, which can let a BehaviorTree change the player's weapon mode.
