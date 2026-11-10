@@ -526,9 +526,8 @@ try {
         const liveSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
         const liveTorso=liveSnapshot.occupants.find(victim=>victim.body===scenario.target)
           ?.limbs.find(limb=>limb.limb==='Torso');
-        // The source AI AimPoint is intentionally offset inside the limb; the hit contract
-        // must converge on the live Torso transform position inside its collider.
-        const liveAimPoint=liveTorso?.colliderBoundsCenter;
+        // Aim at the source-authored Limb.AimPoint, which is derived from the live Torso transform.
+        const liveAimPoint=liveTorso?.aimPoint;
         if(Array.isArray(liveAimPoint)&&liveAimPoint.length===3&&liveAimPoint.every(Number.isFinite))
           targetAimPoint=[liveAimPoint[0],liveAimPoint[1]-0.05,liveAimPoint[2]];
       };
