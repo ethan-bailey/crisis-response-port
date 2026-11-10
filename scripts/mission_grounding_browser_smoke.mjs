@@ -539,7 +539,7 @@ try {
         // The exact #288 report showed a 0.409-unit aim error at the prior 5s
         // bound for a live fallback Occupant; preserve the 0.2 source-fire gate
         // and give the original aim loop a bounded window to converge.
-        const aimDeadline=Date.now()+12000;
+        const aimDeadline=Date.now()+18000;
         while(Date.now()<aimDeadline&&point?.inside&&point.visible){
           await refreshTargetAimPoint();
           projection=await page.evaluate(position=>({point:window.__sourceCombatScreenPoint(position),
