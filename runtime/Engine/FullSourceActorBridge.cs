@@ -707,6 +707,7 @@ public sealed class FullSourceActorBridge
                         limb = limb.id.ToString(),
                         name = limb.name,
                         position = new[] { limb.transform.position.x, limb.transform.position.y, limb.transform.position.z },
+                        colliderBoundsCenter = limb.GetComponent<Collider>() is { } limbCollider ? new[] { limbCollider.bounds.center.x, limbCollider.bounds.center.y, limbCollider.bounds.center.z } : null,
                         aimPoint = new[] { limb.AimPoint.x, limb.AimPoint.y, limb.AimPoint.z },
                         wounds = limb.LimbPhysiology?.wounds.Count ?? 0,
                         woundCavityVolume = limb.LimbPhysiology?.WoundCavityVolume ?? 0f,
