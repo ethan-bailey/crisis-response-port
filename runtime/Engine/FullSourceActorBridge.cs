@@ -884,6 +884,21 @@ public sealed class FullSourceActorBridge
             .Where(candidate=>candidate&&candidate.GetComponent<Occupant>()!=null).ToArray();
         if(victims.Length<2)throw new InvalidOperationException($"The projectile contract scenario requires two original Occupants; found {victims.Length}");
 
+        // Keep the acceptance targets stable while preserving their original bodies,
+        // colliders, limbs, animation, physiology, and source projectile callbacks.
+        // Behavior.OnDisable removes each occupant tree from BehaviorManager; setting
+        // PauseWhenDisabled first prevents its source task from being restarted later.
+        if(shotNumber==1)
+        {
+            foreach(var victim in victims)
+            foreach(var behavior in world.Objects.OfType<BehaviorDesigner.Runtime.Behavior>()
+                .Where(candidate=>candidate&&ReferenceEquals(candidate.GetComponentInParent<CharacterBody>(),victim)))
+            {
+                behavior.PauseWhenDisabled=true;
+                behavior.enabled=false;
+            }
+        }
+
         CharacterBody target;
         if(shotNumber==1){
             // AI lifecycle can remove a particular serialized Occupant before
