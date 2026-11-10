@@ -530,7 +530,7 @@ try {
         // must converge on the live Torso transform position inside its collider.
         const liveAimPoint=liveTorso?.position;
         if(Array.isArray(liveAimPoint)&&liveAimPoint.length===3&&liveAimPoint.every(Number.isFinite))
-          targetAimPoint=[liveAimPoint[0],liveAimPoint[1]-0.1,liveAimPoint[2]];
+          targetAimPoint=[liveAimPoint[0],liveAimPoint[1]+(shotNumber===1?-0.1:0.15),liveAimPoint[2]];
       };
       const shotsBefore=beforeSnapshot.shotsFired;
       let point=null,projection=null,aimStateAtFire=null,lastAimState=null,aimDistance=Infinity,fireInputObserved=false,precisionInputObserved=false,shotObserved=false;
@@ -748,7 +748,7 @@ try {
       attempts.push(attempt);
       if(!(scenario.shooterPosition?.[0]>5.2&&scenario.shooterPosition?.[0]<5.9))failures.push(`shot ${shotNumber}: production-moved shooter X expected beyond the authored Left section wall at 5.5, observed ${scenario.shooterPosition?.[0]}`);
       if(Math.abs(scenario.shooterPosition?.[1]-0.94)>0.01)failures.push(`shot ${shotNumber}: grounded shooter Y expected near 0.94 within solver tolerance, observed ${scenario.shooterPosition?.[1]}`);
-      if(Math.abs(scenario.shooterPosition?.[2]+1)>0.01||Math.abs(scenario.targetPosition?.[2]+1)>0.01)failures.push(`shot ${shotNumber}: visible near-lane Z expected near -1, observed shooter=${scenario.shooterPosition?.[2]} target=${scenario.targetPosition?.[2]}`);
+      if(Math.abs(scenario.shooterPosition?.[2]+0.85)>0.01||Math.abs(scenario.targetPosition?.[2]+0.85)>0.01)failures.push(`shot ${shotNumber}: supported near-lane Z expected near -0.85, observed shooter=${scenario.shooterPosition?.[2]} target=${scenario.targetPosition?.[2]}`);
       if(scenario.kneeling!==true)failures.push(`shot ${shotNumber}: staged shooter kneeling expected true, observed ${scenario.kneeling}`);
       if(Math.abs(scenario.targetPosition?.[0]-17.74)>0.1)failures.push(`shot ${shotNumber}: visible Torso lane X expected 17.74, observed ${scenario.targetPosition?.[0]}`);
       if(scenario.aimedLimb!=='Torso')failures.push(`shot ${shotNumber}: aimed limb expected Torso, observed ${scenario.aimedLimb}`);
