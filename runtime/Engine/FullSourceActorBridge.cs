@@ -914,7 +914,7 @@ public sealed class FullSourceActorBridge
             // Stage beyond the authored Left section wall at X≈5; the original
             // WeaponBase muzzle-clearance ray correctly lowers a weapon held in
             // the wall at the source contract's X=4 staging point.
-            body.transform.position=new Vector3(5.5f,0.94f,2f);
+            body.transform.position=new Vector3(5.5f,0.94f,-1f);
             body.Rigidbody.velocity=Vector3.zero;
             body.IsSprinting=false;
             body.IsKneeling=true;
@@ -924,7 +924,7 @@ public sealed class FullSourceActorBridge
         }
         else{
             // Re-ground the source shooter for each distinct source-contract shot after browser contact integration.
-            body.transform.position=new Vector3(5.5f,0.94f,2f);
+            body.transform.position=new Vector3(5.5f,0.94f,-1f);
             body.Rigidbody.velocity=Vector3.zero;
             body.IsSprinting=false;
             body.IsKneeling=true;
@@ -940,7 +940,7 @@ public sealed class FullSourceActorBridge
 
         var targetPosition=target.transform.position;
         // Stage both original Occupants in the proven visible far lane at the grounded source actor depth.
-        target.transform.position=new Vector3(17.74f,0.94f,2f);
+        target.transform.position=new Vector3(17.74f,0.94f,-1f);
         // This is the original player actor: PlayerController and WeaponPointer
         // own its live aim. Do not attach the browser fixture's target to the
         // AI blackboard, which can let a BehaviorTree change the player's weapon mode.
