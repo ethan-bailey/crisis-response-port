@@ -526,12 +526,12 @@ try {
         const liveSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
         const liveTorso=liveSnapshot.occupants.find(victim=>victim.body===scenario.target)
           ?.limbs.find(limb=>limb.limb==='Torso');
-        // Aim at the live Torso transform center. Limb.AimPoint can swing sideways
-        // with the occupant's authored animation and put the production projectile
-        // outside the torso even when the source arms report a settled aim.
+        // The confirmed source Torso callback landed about 0.1 units left and
+        // 0.24 units above the live Torso center. Keep this upper-left chest point
+        // stable against the larger sideways swing in the animated Limb.AimPoint.
         const liveTorsoPosition=liveTorso?.position;
         if(Array.isArray(liveTorsoPosition)&&liveTorsoPosition.length===3&&liveTorsoPosition.every(Number.isFinite))
-          targetAimPoint=[liveTorsoPosition[0],liveTorsoPosition[1]+0.1,liveTorsoPosition[2]];
+          targetAimPoint=[liveTorsoPosition[0]-0.1,liveTorsoPosition[1]+0.24,liveTorsoPosition[2]];
       };
       const shotsBefore=beforeSnapshot.shotsFired;
       let point=null,projection=null,aimStateAtFire=null,lastAimState=null,aimDistance=Infinity,fireInputObserved=false,precisionInputObserved=false,shotObserved=false;
