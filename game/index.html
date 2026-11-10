@@ -215,6 +215,11 @@ copyMissionProgressButton.addEventListener("click",async()=>{
 });
 document.querySelector("#dismissError").addEventListener("click",()=>{errorBox.hidden=true;copyErrorStatus.textContent="";});
 const rawActions={left:false,right:false,sprint:false,fire:false,precision:false,kneel:false,stand:false,magazine:false,switchWeapons:false};
+let sourceRandomSeedForNextShot=null;
+window.__setSourceRandomSeedForNextShot=seed=>{
+ if(!Number.isInteger(seed))throw new TypeError("Source random seed must be an integer");
+ sourceRandomSeedForNextShot=seed;
+};
 const input = new BrowserInput({onPress(action){if(action==="magazine")reloadPending=true;},onChange(action,pressed){rawActions[action]=pressed;document.querySelector(`[data-action="${action}"]`)?.classList.toggle("active",pressed)}});
 const magazineHud=createOriginalM4MagazineHud(document.querySelector("#magazineTouch"),{onReload:()=>{reloadPending=true;}});
 async function initializeOriginalRuntime(){
@@ -642,6 +647,10 @@ async function frame(now){
   const sourceMoveDirection=rawActions.left?-1:rawActions.right?1:0;
   const sourceMoveMagnitude=sourceMoveDirection===0?1:input.movementProfile(sourceMoveDirection,
    contactPhysics.data.character.movement.walkSpeed,contactPhysics.data.character.movement.sprintSpeed,rawActions.sprint).magnitude;
+  if(rawActions.fire&&rawActions.precision&&sourceRandomSeedForNextShot!==null){
+   rawActions.sourceRandomSeed=sourceRandomSeedForNextShot;
+   sourceRandomSeedForNextShot=null;
+  }else delete rawActions.sourceRandomSeed;
   sourceActorSnapshot=JSON.parse(await runtimeCall("TickFullSourceActorBridge",dt,JSON.stringify(rawActions),mouseX,mouseY,sourceMoveMagnitude));
   if(frameAimGeneration===aimGeneration)sourceAimAppliedGeneration=frameAimGeneration;
   originalInputState=sourceActorSnapshot.originalInput;
