@@ -690,6 +690,8 @@ try {
                 window.__gameState().weaponState?.usingPrecision===true,null,{timeout:2000});
               precisionInputObserved=true;
             }catch{}
+            const sourceRandomSeed=123450+shotNumber;
+            await page.evaluate(seed=>window.__setSourceRandomSeedForNextShot(seed),sourceRandomSeed);
             await page.mouse.down();
             try{
               try{
@@ -730,7 +732,7 @@ try {
         await page.waitForTimeout(100);
       }
       const afterVictim=afterSnapshot.occupants.find(victim=>victim.body===scenario.target);
-      const attempt={shotNumber,stagedScenario:scenario,victim:scenario.target,aimedLimb:'Torso',
+      const attempt={shotNumber,sourceRandomSeed:123450+shotNumber,stagedScenario:scenario,victim:scenario.target,aimedLimb:'Torso',
         aimPoint:targetAimPoint,screenPoint:point,cameraAtProjection:projection?.camera,
         aimStateAtFire,lastAimState,aimDistance,precisionInputObserved,boltCycleAttempted,readyToFireAfterBolt,boltCycleAfterAim,
         fireModeToggleObserved,fireModeAtFire,fireInputObserved,fireInputAtPress,
