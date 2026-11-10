@@ -184,6 +184,9 @@ public sealed class FullSourceActorBridge
                 lastTickWalkSpeedCap = body.walkSpeed;
                 lastTickSprintSpeedCap = body.sprintSpeed;
             }
+            if (values.TryGetProperty("sourceRandomSeed", out var sourceRandomSeed) &&
+                sourceRandomSeed.ValueKind == JsonValueKind.Number)
+                UnityEngine.Random.InitState(sourceRandomSeed.GetInt32());
             world.Tick(elapsedSeconds,()=>
             {
                 foreach(var key in drivenKeys.Concat(nextKeys).Distinct())Input.SetKey(key,nextKeys.Contains(key));
