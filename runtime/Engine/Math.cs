@@ -126,7 +126,8 @@ public static class Mathf {
 [AttributeUsage(AttributeTargets.Field)] public sealed class SerializeField:Attribute { }
 
 public static class Random {
- static readonly System.Random source=new();
+ static System.Random source=new();
+ public static void InitState(int seed)=>source=new System.Random(seed);
  public static Vector2 insideUnitCircle {get{float x,y;do{x=Range(-1f,1f);y=Range(-1f,1f);}while(x*x+y*y>1);return new(x,y);}}
  public static Vector3 insideUnitSphere {get{Vector3 value;do{value=new(Range(-1f,1f),Range(-1f,1f),Range(-1f,1f));}while(value.sqrMagnitude>1f);return value;}}
  public static Vector3 onUnitSphere {get{float z=Range(-1f,1f),a=Range(0f,2*MathF.PI),r=MathF.Sqrt(1-z*z);return new(r*MathF.Cos(a),r*MathF.Sin(a),z);}}
