@@ -526,12 +526,12 @@ try {
         const liveSnapshot=await page.evaluate(()=>window.__sourceCombatSnapshot());
         const liveTorso=liveSnapshot.occupants.find(victim=>victim.body===scenario.target)
           ?.limbs.find(limb=>limb.limb==='Torso');
-        // The staged head and neck sit about 0.26 units left of the Torso.
-        // Aim through the Torso centerline and above its center to keep the
-        // production projectile clear of the animated head/neck colliders.
+        // The previous source callbacks bracketed the Torso horizontally:
+        // the farther-left aim hit Neck, while the farther-right aim passed clear.
+        // Use the midpoint above the live Torso center to cross its central width.
         const liveTorsoPosition=liveTorso?.position;
         if(Array.isArray(liveTorsoPosition)&&liveTorsoPosition.length===3&&liveTorsoPosition.every(Number.isFinite))
-          targetAimPoint=[liveTorsoPosition[0]+0.185,liveTorsoPosition[1]+0.24,liveTorsoPosition[2]];
+          targetAimPoint=[liveTorsoPosition[0]+0.12,liveTorsoPosition[1]+0.24,liveTorsoPosition[2]];
       };
       const shotsBefore=beforeSnapshot.shotsFired;
       let point=null,projection=null,aimStateAtFire=null,lastAimState=null,aimDistance=Infinity,fireInputObserved=false,precisionInputObserved=false,shotObserved=false;
